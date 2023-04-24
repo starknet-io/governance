@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:latest
+    container_name: governanceDB
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: governance
+      POSTGRES_DB: governance
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
