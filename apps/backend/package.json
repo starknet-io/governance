@@ -8,8 +8,8 @@
     "start": "nodemon --exec ts-node --transpile-only src/index.ts",
     "build": "tsc",
     "serve": "node dist/index.js",
-    "migration:generate": "drizzle-kit generate:pg --config ./drizzle.config.json",
-    "migration:run": "drizzle-kit up:pg --out=./migrations",
+    "migration:generate": "drizzle-kit generate:pg",
+    "migration:run": "drizzle-kit up:pg",
     "migration:revert": "drizzle-kit drop"
   },
   "keywords": [],
@@ -17,19 +17,20 @@
   "license": "ISC",
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.16.0",
     "@types/pg": "^8.6.6",
-    "drizzle-kit": "^0.17.5",
+    "drizzle-kit": "^0.17.6",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@trpc/server": "^10.21.0",
+    "@trpc/server": "^10.21.1",
     "@types/express": "^4.17.17",
     "dotenv": "^16.0.3",
-    "drizzle-orm": "^0.24.0",
+    "dotenv-cli": "^7.2.1",
+    "drizzle-orm": "^0.25.2",
     "express": "^4.18.2",
     "pg": "^8.10.0"
   }

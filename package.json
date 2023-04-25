@@ -1,8 +1,5 @@
 {
   "name": "governance",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "private": true,
   "workspaces": [
     "apps/*"
@@ -11,13 +8,8 @@
     "backend": "yarn workspace backend start",
     "start": "concurrently \"yarn backend\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "concurrently": "^8.0.1"
   },
-  "engines": {
-    "node": ">=16.0.0"
-  }
+  "packageManager": "yarn@3.5.0"
 }

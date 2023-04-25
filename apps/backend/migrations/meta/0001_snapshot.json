@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "573311d7-7634-48a7-a1cb-889d9ecf1367",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "c06d61dd-38e8-4d48-9e09-65b1ad95ad3a",
+  "prevId": "573311d7-7634-48a7-a1cb-889d9ecf1367",
   "tables": {
     "users": {
       "name": "users",
@@ -16,6 +16,12 @@
         },
         "full_name": {
           "name": "full_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "name": "last_name",
           "type": "text",
           "primaryKey": false,
           "notNull": false
