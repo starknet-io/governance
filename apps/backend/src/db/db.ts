@@ -11,4 +11,7 @@ const pool = new Pool({
 });
 
 const db = drizzle(pool);
+
 migrate(db, { migrationsFolder: './migrations' });
+
+export { db, pool }
