@@ -3,13 +3,12 @@
   "compilerOptions": {
     "outDir": ".types",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "types": ["vite/client", "@cloudflare/workers-types", "@types/gapi"],
+    "types": ["vite/client"],
     "jsx": "react-jsx",
-    "resolveJsonModule": true,
     "baseUrl": "."
   },
-  "include": ["src/**/*", "*.json"],
+  "include": ["src/**/*"],
   "references": [
-    {"path": "../components"}
+    
   ]
 }

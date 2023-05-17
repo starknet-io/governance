@@ -1,5 +1,5 @@
 {
-  "name": "@starknet-io/governance-frontend",
+  "name": "@yukilabs/governance-frontend",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -15,19 +15,20 @@
     "@chakra-ui/pro-theme": "^0.0.66",
     "@chakra-ui/react": "^2.6.1",
     "@cloudflare/kv-asset-handler": "^0.3.0",
-    "@cloudflare/workers-types": "^4.20230404.0",
+    "@cloudflare/workers-types": "^4.20230511.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@types/compression": "^1.7.2",
     "@types/gapi": "^0.0.44",
     "@types/itty-router-extras": "^0.4.0",
-    "@types/node": "^20.1.4",
+    "@types/node": "^20.1.7",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "@vitejs/plugin-react": "^4.0.0",
+    "@yukilabs/governance-components": "workspace:*",
     "compression": "^1.7.4",
     "express": "^4.18.2",
-    "framer-motion": "^10.12.10",
+    "framer-motion": "^10.12.12",
     "fsevents": "^2.3.2",
     "itty-cors": "^0.3.6",
     "itty-router": "^3.0.12",
@@ -36,13 +37,13 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-streaming": "^0.3.10",
-    "vite": "^4.3.3",
-    "vite-node": "^0.30.1",
-    "vite-plugin-ssr": "^0.4.120",
+    "vite": "^4.3.7",
+    "vite-node": "^0.31.0",
+    "vite-plugin-ssr": "^0.4.123",
     "vite-tsconfig-paths": "^4.2.0",
     "wrangler": "^2.20.0"
   },
   "devDependencies": {
-    "@miniflare/tre": "next"
+    "@miniflare/tre": "^3.0.0-next.13"
   }
 }

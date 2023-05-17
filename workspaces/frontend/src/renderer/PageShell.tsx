@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect } from "react";
 import { PageContextProvider } from "./PageContextProvider";
 import type { PageContext } from "./types";
-import { ThemeProvider } from "./ThemeProvider";
+import { ThemeProvider } from "@yukilabs/governance-components/src/ThemeProvider";
 
 interface Props {
   readonly pageContext: PageContext;

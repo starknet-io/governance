@@ -3,7 +3,10 @@
   "include": [],
   "references": [
     {
-      "path": "./apps/frontend"
+      "path": "./workspaces/frontend"
+    },
+    {
+      "path": "./workspaces/components"
     }
   ]
 }
