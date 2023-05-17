@@ -1,8 +1,7 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "@starknet-io/governance-backend",
+  "private": true,
+  "version": "0.0.0",
   "scripts": {
     "test": "jest",
     "start": "nodemon --exec ts-node --transpile-only src/index.ts",
@@ -12,9 +11,6 @@
     "migration:run": "drizzle-kit up:pg",
     "migration:revert": "drizzle-kit drop"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^29.5.1",

@@ -1,0 +1,48 @@
+{
+  "name": "@starknet-io/governance-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite-node ./src/dev-server -c vite-dev-server.config.ts",
+    "build": "yarn build-ssr && yarn build-worker",
+    "build-worker": "vite build -c vite-worker.config.ts",
+    "build-ssr": "vite build -c vite.config.ts",
+    "preview": "wrangler dev",
+    "preview-local": "wrangler dev --local",
+    "preview-experimental-local": "wrangler dev --experimental-local"
+  },
+  "dependencies": {
+    "@chakra-ui/pro-theme": "^0.0.66",
+    "@chakra-ui/react": "^2.6.1",
+    "@cloudflare/kv-asset-handler": "^0.3.0",
+    "@cloudflare/workers-types": "^4.20230404.0",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@types/compression": "^1.7.2",
+    "@types/gapi": "^0.0.44",
+    "@types/itty-router-extras": "^0.4.0",
+    "@types/node": "^20.1.4",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "@vitejs/plugin-react": "^4.0.0",
+    "compression": "^1.7.4",
+    "express": "^4.18.2",
+    "framer-motion": "^10.12.10",
+    "fsevents": "^2.3.2",
+    "itty-cors": "^0.3.6",
+    "itty-router": "^3.0.12",
+    "itty-router-extras": "^0.4.2",
+    "node-fetch": "^3.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-streaming": "^0.3.10",
+    "vite": "^4.3.3",
+    "vite-node": "^0.30.1",
+    "vite-plugin-ssr": "^0.4.120",
+    "vite-tsconfig-paths": "^4.2.0",
+    "wrangler": "^2.20.0"
+  },
+  "devDependencies": {
+    "@miniflare/tre": "next"
+  }
+}

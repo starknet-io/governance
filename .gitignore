@@ -1,6 +1,10 @@
 /data/
 node_modules
 
+# typescript
+.types
+.types-*
+
 # yarn
 .pnp.*
 .yarn/*
