@@ -1,11 +1,11 @@
 {
-  "name": "governance",
+  "name": "@starknet-io/governance-workspaces",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "workspaces/*"
   ],
   "scripts": {
-    "backend": "yarn workspace backend start",
+    "backend": "yarn workspace @starknet-io/governance-backend start",
     "start": "concurrently \"yarn backend\""
   },
   "devDependencies": {
