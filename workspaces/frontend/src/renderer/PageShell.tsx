@@ -1,7 +1,7 @@
-import React, { Suspense, useEffect } from "react";
-import { PageContextProvider } from "./PageContextProvider";
-import type { PageContext } from "./types";
-import { ThemeProvider } from "@yukilabs/governance-components/src/ThemeProvider";
+import React, { Suspense, useEffect } from 'react';
+import { PageContextProvider } from './PageContextProvider';
+import type { PageContext } from './types';
+import { ThemeProvider } from '@yukilabs/governance-components';
 
 interface Props {
   readonly pageContext: PageContext;
@@ -24,7 +24,9 @@ export function PageShell(props: Props) {
         <ThemeProvider>
           <Suspense fallback={<p>Loading...</p>}>
             {(pageContext.hasLayout ?? true) === true ? (
-              <PageLayout pageContext={pageContext}>{children}</PageLayout>
+              <PageLayout pageContext={pageContext}>
+                {children}
+              </PageLayout>
             ) : (
               children
             )}
