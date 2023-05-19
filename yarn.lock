@@ -5560,7 +5560,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yukilabs/governance-components@workspace:workspaces/components"
   dependencies:
+    "@chakra-ui/pro-theme": ^0.0.66
+    "@chakra-ui/react": ^2.6.1
     "@chakra-ui/storybook-addon": ^4.0.17
+    "@emotion/react": ^11.11.0
+    "@emotion/styled": ^11.11.0
     "@heroicons/react": ^2.0.18
     "@storybook/addon-essentials": ^7.0.12
     "@storybook/addon-interactions": ^7.0.12
@@ -5568,6 +5572,7 @@ __metadata:
     "@storybook/addons": ^7.0.12
     "@storybook/react-vite": ^7.0.12
     "@yukilabs/governance-frontend": "workspace:*"
+    framer-motion: ^10.12.12
     react: ^18.2.0
     react-dom: ^18.2.0
     react-icons: ^4.8.0
@@ -5582,12 +5587,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yukilabs/governance-frontend@workspace:workspaces/frontend"
   dependencies:
-    "@chakra-ui/pro-theme": ^0.0.66
-    "@chakra-ui/react": ^2.6.1
     "@cloudflare/kv-asset-handler": ^0.3.0
     "@cloudflare/workers-types": ^4.20230511.0
-    "@emotion/react": ^11.11.0
-    "@emotion/styled": ^11.11.0
     "@miniflare/tre": ^3.0.0-next.13
     "@types/compression": ^1.7.2
     "@types/gapi": ^0.0.44
@@ -5599,7 +5600,6 @@ __metadata:
     "@yukilabs/governance-components": "workspace:*"
     compression: ^1.7.4
     express: ^4.18.2
-    framer-motion: ^10.12.12
     fsevents: ^2.3.2
     itty-cors: ^0.3.6
     itty-router: ^3.0.12
