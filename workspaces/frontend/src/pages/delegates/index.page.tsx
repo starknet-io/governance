@@ -71,7 +71,9 @@ export function Page() {
           </Box>
         </Box>
         <Box display="flex" marginLeft="auto">
-          <Button variant="outline">Create delegate</Button>
+          <Button as="a" href="/delegates/create" variant="outline">
+            Create delegate
+          </Button>
         </Box>
       </AppBar>
       <SimpleGrid

@@ -6,6 +6,7 @@ import {
   Box,
   Avatar,
 } from '@chakra-ui/react';
+
 import { Heading } from '../Heading';
 import { Text } from '../Text';
 import { Button } from 'src/Button';
@@ -29,7 +30,7 @@ export const DelegateCard = (props: Props) => {
     noOfVotes = '7.5m votes', // assuming this is the default number of votes
   } = props;
   return (
-    <Card variant="outline">
+    <Card as="a" href="/delegates/profile" variant="outline">
       <CardHeader>
         <Box
           width="100%"
@@ -60,6 +61,8 @@ export const DelegateCard = (props: Props) => {
           flexDirection="row"
           alignItems="center"
           justifyContent="space-between"
+          zIndex="200000"
+          position="relative"
         >
           <Tag variant="listCard">{role}</Tag>
           <Button variant="outline" onClick={onClick}>
