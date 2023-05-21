@@ -19,7 +19,12 @@ export const SearchInput = (props: Props) => {
           boxSize="5"
         />
       </InputLeftElement>
-      <Input placeholder="Search by address or .eth" />
+      <Input
+        minWidth={{ base: '100%', md: '232px' }}
+        height="36px"
+        fontSize="13px"
+        placeholder="Search by address or .eth"
+      />
     </InputGroup>
   );
 };
