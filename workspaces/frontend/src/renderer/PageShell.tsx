@@ -1,7 +1,24 @@
 import React, { Suspense, useEffect } from 'react';
 import { PageContextProvider } from './PageContextProvider';
 import type { PageContext } from './types';
-import { ThemeProvider } from '@yukilabs/governance-components';
+import {
+  HiOutlineAcademicCap,
+  HiOutlineChatBubbleLeftRight,
+  HiOutlineCodeBracketSquare,
+  HiOutlineDocumentText,
+  HiOutlineLockClosed,
+  HiOutlineQuestionMarkCircle,
+  HiOutlineUserCircle,
+  Logo,
+  NavGroup,
+  NavItem,
+  ThemeProvider,
+  Layout,
+  Header,
+  Heading,
+  Connect,
+  Box,
+} from '@yukilabs/governance-components';
 
 interface Props {
   readonly pageContext: PageContext;
@@ -40,5 +57,54 @@ export function PageShell(props: Props) {
 function PageLayout(props: Props) {
   const { children } = props;
 
-  return <>{children}</>;
+  return (
+    <Layout.Root>
+      <Layout.LeftAside>
+        <Logo />
+        <NavItem
+          href="/"
+          icon={<HiOutlineDocumentText />}
+          label="Proposals"
+        />
+        <NavItem
+          icon={<HiOutlineUserCircle />}
+          href="/delegates"
+          label="Delegates"
+        />
+        <NavGroup label="Councils">
+          <NavItem
+            icon={<HiOutlineCodeBracketSquare />}
+            label="Builders"
+            href="/councils/builders"
+          />
+          <NavItem
+            icon={<HiOutlineLockClosed />}
+            label="Security"
+            href="/councils/security"
+          />
+        </NavGroup>
+        <NavGroup alignEnd>
+          <NavItem icon={<HiOutlineAcademicCap />} label="Learn" />
+          <NavItem
+            icon={<HiOutlineQuestionMarkCircle />}
+            label="Support"
+          />
+          <NavItem
+            icon={<HiOutlineChatBubbleLeftRight />}
+            label="Feedback"
+          />
+        </NavGroup>
+      </Layout.LeftAside>
+      <Layout.Main>
+        <Header>
+          <Heading variant="h3">Page.title</Heading>
+          <Box display="flex" marginLeft="auto">
+            <Connect address="0x2456...5678" isConnected={true} />
+          </Box>
+        </Header>
+
+        {children}
+      </Layout.Main>
+    </Layout.Root>
+  );
 }
