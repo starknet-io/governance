@@ -26,14 +26,14 @@ const outline = defineStyle({
     color: 'grey.greyDusk',
     borderColor: 'grey.morning',
     borderWidth: '1px',
-    boxShadow: 'inset 0px 4px 0px rgba(0, 0, 0, 0.1)',
+    // boxShadow: 'inset 0px 4px 0px rgba(0, 0, 0, 0.1)',
     outlineWidth: 1,
     _focus: {
       bg: 'bg.200',
       color: 'grey.greyDusk',
       borderColor: 'grey.morning',
       borderWidth: '1px',
-      boxShadow: 'inset 0px 4px 0px rgba(0, 0, 0, 0.1)',
+      // boxShadow: 'inset 0px 4px 0px rgba(0, 0, 0, 0.1)',
       outlineWidth: 1,
     },
     _dark: {
