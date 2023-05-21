@@ -35,7 +35,7 @@ export const ListRow = (props: Props) => {
         </Text>
       </Box>
       <Box flex="1">
-        <Text variant="cardBody" noOfLines={1}>
+        <Text variant="cardBody" noOfLines={1} fontWeight="500">
           {props.title}
         </Text>
       </Box>
