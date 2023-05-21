@@ -7,10 +7,14 @@ export function Page() {
     <>
       <AppBar>
         <Box>
-          <Box>/</Box>
+          <Box>
+            <Button as="a" href="/" variant="outline">
+              Back
+            </Button>
+          </Box>
         </Box>
         <Box display="flex" marginLeft="auto">
-          <Button variant="outline">Add Post</Button>
+          <Button variant="outline">Edit</Button>
         </Box>
       </AppBar>
     </>

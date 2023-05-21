@@ -71,7 +71,9 @@ export function Page() {
           </Box>
         </Box>
         <Box display="flex" marginLeft="auto">
-          <Button variant="outline">Create proposal</Button>
+          <Button as="a" href="vote/create" variant="outline">
+            Create proposal
+          </Button>
         </Box>
       </AppBar>
 

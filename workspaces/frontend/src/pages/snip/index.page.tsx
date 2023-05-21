@@ -14,7 +14,9 @@ export function Page() {
       <AppBar>
         <Box>
           <Box>
-            <Button variant="outline">Back</Button>
+            <Button as="a" href="/" variant="outline">
+              Back
+            </Button>
           </Box>
         </Box>
         <Box display="flex" marginLeft="auto">
