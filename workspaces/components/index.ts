@@ -47,6 +47,7 @@ import {
   RadioGroup,
   Checkbox,
   CheckboxGroup,
+  Avatar,
 } from '@chakra-ui/react';
 
 export {
@@ -68,4 +69,5 @@ export {
   RadioGroup,
   Checkbox,
   CheckboxGroup,
+  Avatar,
 };
