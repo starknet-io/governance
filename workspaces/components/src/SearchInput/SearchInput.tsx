@@ -4,7 +4,6 @@ import {
   InputGroup,
   InputLeftElement,
 } from '@chakra-ui/react';
-import React from 'react';
 import { HiOutlineMagnifyingGlass } from 'react-icons/hi2';
 
 type Props = {};

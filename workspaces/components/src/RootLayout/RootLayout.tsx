@@ -1,8 +1,8 @@
-import { Box, Container, Flex, Stack } from '@chakra-ui/react';
-import React from 'react';
+import { Box, Flex } from '@chakra-ui/react';
+import { ReactNode } from 'react';
 
 type LeftAsideProps = {
-  children: React.ReactNode;
+  children?: ReactNode | undefined;
 };
 
 const LeftAside = ({ children }: LeftAsideProps) => {
@@ -46,7 +46,7 @@ const RightAside = () => {
   );
 };
 type MainProps = {
-  children: React.ReactNode;
+  children?: ReactNode | undefined;
 };
 const Main = ({ children }: MainProps) => {
   return (
@@ -63,7 +63,7 @@ const Main = ({ children }: MainProps) => {
 };
 
 type LayoutProps = {
-  children: React.ReactNode;
+  children?: ReactNode | undefined;
 };
 
 const Root = ({ children }: LayoutProps) => {
