@@ -86,7 +86,7 @@ export function Page() {
             against={data.against}
             noOfComments={data.noOfComments}
             type={data.type}
-            href={`/${data.type}/${data.id}`}
+            href={`/${data.type}`}
           />
         ))}
       </ListRowContainer>
