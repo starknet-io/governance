@@ -8,7 +8,7 @@
     "frontend": "yarn workspace @yukilabs/governance-frontend dev",
     "backend": "yarn workspace @yukilabs/governance-backend dev",
     "components": "yarn workspace @yukilabs/governance-components dev",
-    "dev": "concurrently \"yarn frontend\" \"yarn backend\" \"yarn components\""
+    "dev": "concurrently \"yarn frontend\" \"yarn backend\""
   },
   "devDependencies": {
     "concurrently": "^8.0.1"

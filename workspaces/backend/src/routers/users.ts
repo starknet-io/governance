@@ -1,49 +1,57 @@
-import { userService } from "../services";
-import { t } from "../trpc";
-import { z } from "zod";
+import { router, publicProcedure } from '../trpc';
+import { z } from 'zod';
+import { users } from '../db/schema';
+import { db } from '../db/db';
+import { eq } from 'drizzle-orm';
 
-const userProcedure = t.procedure
+export const userRouter = router({
+  getAll: publicProcedure.query(() => db.select().from(users)),
 
-export const userRouter = t.router({
-  getAll: userProcedure
-    .query(async () => {
-      const users = await userService.getAll();
-      return users
-    }),
-
-  saveUser: userProcedure
-    .input(z.object({
-      fullName: z.string(),
-      lastName: z.string(),
-    }))
+  saveUser: publicProcedure
+    .input(
+      z.object({
+        fullName: z.string(),
+        lastName: z.string(),
+      })
+    )
     .query(async (opts) => {
-      const newUser = {
-        fullName: opts.input.fullName,
-        lastName: opts.input.lastName,
-      };
-      return await userService.saveUser(newUser);
+      const insertedUser = await db
+        .insert(users)
+        .values({
+          fullName: opts.input.fullName,
+          lastName: opts.input.lastName,
+        })
+        .returning();
+      return insertedUser[0];
     }),
 
-  editUser: userProcedure
-    .input(z.object({
-      id: z.number(),
-      fullName: z.string(),
-      lastName: z.string(),
-    }))
+  editUser: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        fullName: z.string(),
+        lastName: z.string(),
+      })
+    )
     .query(async (opts) => {
-      const user = {
-        id: opts.input.id,
-        fullName: opts.input.fullName,
-        lastName: opts.input.lastName,
-      };
-      return await userService.editUser(user);
+      const updatedUser = await db
+        .update(users)
+        .set({
+          fullName: opts.input.fullName,
+          lastName: opts.input.lastName,
+        })
+        .where(eq(users.id, opts.input.id))
+        .returning();
+      return updatedUser[0];
     }),
 
-  deleteUser: userProcedure
-    .input(z.object({
-      id: z.number(),
-    }))
+  deleteUser: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
     .query(async (opts) => {
-      return await userService.deleteUser(opts.input.id);
+      await db.delete(users).where(eq(users.id, opts.input.id)).execute();
     }),
-})
+});

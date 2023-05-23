@@ -7,6 +7,7 @@ import {
   ListRowContainer,
   ListRow,
 } from '@yukilabs/governance-components';
+import { trpc } from 'src/utils/trpc';
 
 type DataType = {
   id: number;
@@ -60,6 +61,10 @@ const mockData: DataType[] = [
 ];
 
 export function Page() {
+  const userQuery = trpc.users.getAll.useQuery();
+
+  console.log(userQuery.data)
+
   return (
     <>
       <AppBar>
@@ -76,6 +81,8 @@ export function Page() {
           </Button>
         </Box>
       </AppBar>
+      
+      {userQuery.data?.map((u, i) => <pre key={i}>{JSON.stringify(u,undefined,"  ")}</pre>)}
 
       <ListRowContainer>
         {mockData.map((data) => (

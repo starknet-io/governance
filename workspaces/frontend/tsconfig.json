@@ -9,7 +9,5 @@
     "baseUrl": "."
   },
   "include": ["src/**/*", "*.json"],
-  "references": [
-    {"path": "../components"}
-  ]
+  "references": [{ "path": "../components" }, { "path": "../backend" }]
 }
