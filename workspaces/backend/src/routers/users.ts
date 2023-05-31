@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { users } from '../db/schema';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
+const crypto = require('crypto');
 
 export const userRouter = router({
   getAll: publicProcedure.query(() => db.select().from(users)),
@@ -10,16 +11,24 @@ export const userRouter = router({
   saveUser: publicProcedure
     .input(
       z.object({
-        fullName: z.string(),
-        lastName: z.string(),
+        address: z.string(),
+        walletName: z.string(),
+        walletProvider: z.string(),
+        publicIdentifier: z.string(),
+        dynamicId: z.string(),
       })
     )
-    .query(async (opts) => {
+    .mutation(async (opts) => {
       const insertedUser = await db
         .insert(users)
         .values({
-          fullName: opts.input.fullName,
-          lastName: opts.input.lastName,
+          id: crypto.randomUUID(),
+          address: opts.input.address,
+          walletName: opts.input.walletName,
+          walletProvider: opts.input.walletProvider,
+          publicIdentifier: opts.input.publicIdentifier,
+          dynamicId: opts.input.dynamicId,
+          createdAt: new Date(),
         })
         .returning();
       return insertedUser[0];
@@ -28,17 +37,24 @@ export const userRouter = router({
   editUser: publicProcedure
     .input(
       z.object({
-        id: z.number(),
-        fullName: z.string(),
-        lastName: z.string(),
+        id: z.string(),
+        address: z.string().optional(),
+        walletName: z.string().optional(),
+        walletProvider: z.string().optional(),
+        publicIdentifier: z.string().optional(),
+        dynamicId: z.string().optional(),
       })
     )
     .query(async (opts) => {
       const updatedUser = await db
         .update(users)
         .set({
-          fullName: opts.input.fullName,
-          lastName: opts.input.lastName,
+          address: opts.input.address,
+          walletName: opts.input.walletName,
+          walletProvider: opts.input.walletProvider,
+          publicIdentifier: opts.input.publicIdentifier,
+          dynamicId: opts.input.dynamicId,
+          updatedAt: new Date(),
         })
         .where(eq(users.id, opts.input.id))
         .returning();
@@ -48,7 +64,7 @@ export const userRouter = router({
   deleteUser: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.string(),
       })
     )
     .query(async (opts) => {

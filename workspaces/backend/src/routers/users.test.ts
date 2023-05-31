@@ -6,10 +6,16 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db/db';
 import { pool } from '../db/db';
 
+import httpMocks from 'node-mocks-http';
+
 describe('Users', () => {
 
   test('getUsers', async () => {
-    const caller = await appRouter.createCaller({ session: null });
+
+    const req = httpMocks.createRequest();
+    const res = httpMocks.createResponse();
+
+    const caller = await appRouter.createCaller({ req, res });
 
     const allUsers = await caller.users.getAll();
 
@@ -17,46 +23,62 @@ describe('Users', () => {
   })
 
   test('saveUser', async () => {
-    const caller = await appRouter.createCaller({ session: null });
+    const req = httpMocks.createRequest();
+    const res = httpMocks.createResponse();
+
+    const caller = await appRouter.createCaller({ req, res });
 
     const newUser = {
-      fullName: "John Doe",
-      lastName: "Doe",
+      address: 'address',
+      walletName: 'walletName',
+      walletProvider: 'walletProvider',
+      publicIdentifier: 'publicIdentifier',
+      dynamicId: 'dynamicId',
     };
-    const createdUser = await caller.users.saveUser(newUser);
 
-    expect(createdUser.fullName).toBe(newUser.fullName);
+    const createdUser = await caller.users.saveUser(newUser);
 
     await db.delete(users).where(eq(users.id, createdUser.id)).execute();
   })
 
   test('editUser', async () => {
-    const caller = await appRouter.createCaller({ session: null });
+    const req = httpMocks.createRequest();
+    const res = httpMocks.createResponse();
+
+    const caller = await appRouter.createCaller({ req, res });
 
     const newUser = {
-      fullName: "John Doe",
-      lastName: "Doe",
+      address: 'address',
+      walletName: 'walletName',
+      walletProvider: 'walletProvider',
+      publicIdentifier: 'publicIdentifier',
+      dynamicId: 'dynamicId',
     };
     const createdUser = await caller.users.saveUser(newUser);
 
     const editedUser = {
       id: createdUser.id,
-      fullName: "Jane Doe",
-      lastName: "Doe",
+      address: 'updatedAddress'
     };
     const updatedUser = await caller.users.editUser(editedUser);
 
-    expect(updatedUser.fullName).toBe(editedUser.fullName);
+    expect(updatedUser.address).toBe(editedUser.address);
 
     await db.delete(users).where(eq(users.id, createdUser.id)).execute();
   })
 
   test('deleteUser', async () => {
-    const caller = await appRouter.createCaller({ session: null });
+    const req = httpMocks.createRequest();
+    const res = httpMocks.createResponse();
+
+    const caller = await appRouter.createCaller({ req, res });
 
     const newUser = {
-      fullName: "John Doe",
-      lastName: "Doe",
+      address: 'address',
+      walletName: 'walletName',
+      walletProvider: 'walletProvider',
+      publicIdentifier: 'publicIdentifier',
+      dynamicId: 'dynamicId',
     };
     const createdUser = await caller.users.saveUser(newUser);
 

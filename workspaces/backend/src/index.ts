@@ -3,20 +3,25 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { appRouter } from './routers';
+import { createContext } from './createContex';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 8000;
 
-async function bootstrap() {
-  app.use(cors())
-  app.use("/trpc", createExpressMiddleware({ router: appRouter }));
+app.use(cookieParser());
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
+app.use("/trpc", createExpressMiddleware({
+  router: appRouter,
+  createContext
+}));
 
-  app.listen(port, () => {
-    console.log(`Express app listening at http://localhost:${port}`);
-  });
 
-}
+app.listen(port, () => {
+  console.log(`Express app listening at http://localhost:${port}`);
+});
 
-bootstrap();
+
+export default app;

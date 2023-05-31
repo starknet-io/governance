@@ -16,14 +16,15 @@ export const passToClient = [
 
 export async function onBeforeRender(pageContext: PageContextServer) {
   return {
-    pageContext: await getDefaultPageContext(pageContext)
+    pageContext: await getDefaultPageContext(pageContext),
   };
 }
 
 export async function render(pageContext: PageContextServer) {
   const { Page, pageProps } = pageContext;
 
-  const documentProps = pageContext.documentProps ?? pageContext.exports.documentProps
+  const documentProps =
+    pageContext.documentProps ?? pageContext.exports.documentProps;
 
   const page = (
     <PageShell pageContext={pageContext}>
@@ -45,23 +46,29 @@ export async function render(pageContext: PageContextServer) {
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
 
       <!-- Primary Meta Tags -->
-      <title>${documentProps?.title ?? 'Starknet'}</title>
-      <meta name="title" content="${documentProps?.title ?? 'Starknet'}">
-      <meta name="description" content="${documentProps?.description ?? ''}">
+      <title>${documentProps?.title ?? "Starknet"}</title>
+      <meta name="title" content="${documentProps?.title ?? "Starknet"}">
+      <meta name="description" content="${documentProps?.description ?? ""}">
 
       <!-- Open Graph / Facebook -->
       <meta property="og:type" content="website">
       <meta property="og:url" content="${pageContext.urlOriginal}">
-      <meta property="og:title" content="${documentProps?.title ?? 'Starknet'}">
-      <meta property="og:description" content="${documentProps?.description ?? ''}">
-      <meta property="og:image" content="${documentProps?.image ?? ''}">
+      <meta property="og:title" content="${documentProps?.title ?? "Starknet"}">
+      <meta property="og:description" content="${
+        documentProps?.description ?? ""
+      }">
+      <meta property="og:image" content="${documentProps?.image ?? ""}">
 
       <!-- Twitter -->
       <meta property="twitter:card" content="summary_large_image">
       <meta property="twitter:url" content="${pageContext.urlOriginal}">
-      <meta property="twitter:title" content="${documentProps?.title ?? 'Starknet'}">
-      <meta property="twitter:description" content="${documentProps?.description ?? ''}">
-      <meta property="twitter:image" content="${documentProps?.image ?? ''}">
+      <meta property="twitter:title" content="${
+        documentProps?.title ?? "Starknet"
+      }">
+      <meta property="twitter:description" content="${
+        documentProps?.description ?? ""
+      }">
+      <meta property="twitter:image" content="${documentProps?.image ?? ""}">
 
       <!-- Google tag (gtag.js) -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}"></script>
@@ -71,6 +78,9 @@ export async function render(pageContext: PageContextServer) {
         gtag('js', new Date());
 
         gtag('config', '${GOOGLE_TAG_ID}');
+      </script>
+      <script>
+        window.global = window;
       </script>
     </head>
     <body>

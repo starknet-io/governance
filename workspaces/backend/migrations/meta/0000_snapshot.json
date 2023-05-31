@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "573311d7-7634-48a7-a1cb-889d9ecf1367",
+  "id": "b78e23ab-3ab2-4fc9-9b1c-8ed2308a650f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "users": {
@@ -10,15 +10,53 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
-        "full_name": {
-          "name": "full_name",
+        "address": {
+          "name": "address",
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "walletName": {
+          "name": "walletName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "walletProvider": {
+          "name": "walletProvider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "publicIdentifier": {
+          "name": "publicIdentifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dynamicId": {
+          "name": "dynamicId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},

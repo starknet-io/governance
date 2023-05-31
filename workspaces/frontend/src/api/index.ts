@@ -1,5 +1,4 @@
-import { Router } from "itty-router";
-import { json } from "itty-router-extras";
+import { Router, json } from "itty-router";
 import { createCors } from "itty-cors";
 
 // now let's create a router (note the lack of "new")
@@ -9,7 +8,6 @@ const { preflight, corsify } = createCors({
   origins: ["http://127.0.0.1:1234", "http://localhost:1234"],
 });
 
-// @ts-expect-error
 apiRouter.all("*", preflight);
 
 apiRouter.get(

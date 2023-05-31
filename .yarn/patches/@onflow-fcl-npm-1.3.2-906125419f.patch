@@ -1,0 +1,13 @@
+diff --git a/dist/fcl.module.js b/dist/fcl.module.js
+index 01154a59254c16ef2f606530d89be2b546a2662b..460b5b5fc4d9666627646f05274782b964bf3c1c 100644
+--- a/dist/fcl.module.js
++++ b/dist/fcl.module.js
+@@ -21,7 +21,7 @@ import { Buffer, encode } from '@onflow/rlp';
+ import _toConsumableArray from '@babel/runtime/helpers/toConsumableArray';
+ import { log, LEVELS } from '@onflow/util-logger';
+ import { uid } from '@onflow/util-uid';
+-import require$$0 from 'buffer';
++import * as require$$0 from 'buffer';
+ export { template as cadence, template as cdc } from '@onflow/util-template';
+ 
+ var isServerSide = function isServerSide() {

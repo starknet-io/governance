@@ -1,4 +1,4 @@
-import { DocumentProps } from 'src/renderer/types';
+import { DocumentProps } from "src/renderer/types";
 
 import {
   Box,
@@ -6,64 +6,62 @@ import {
   Button,
   ListRowContainer,
   ListRow,
-} from '@yukilabs/governance-components';
-import { trpc } from 'src/utils/trpc';
+} from "@yukilabs/governance-components";
+import { trpc } from "src/utils/trpc";
 
 type DataType = {
   id: number;
   title: string;
-  status: 'last_call' | 'review';
+  status: "last_call" | "review";
   for: number;
   against: number;
   noOfComments: number;
-  type: 'snip' | 'vote';
+  type: "snip" | "vote";
 };
 
 const mockData: DataType[] = [
   {
     id: 1,
-    title: 'Support for scoped storage variables',
-    status: 'last_call',
+    title: "Support for scoped storage variables",
+    status: "last_call",
     for: 2,
     against: 12,
     noOfComments: 18,
-    type: 'snip',
+    type: "snip",
   },
   {
     id: 2,
     title:
-      'Starknet Decentralized Protocol II - Candidate for Leader Elections',
-    status: 'last_call',
+      "Starknet Decentralized Protocol II - Candidate for Leader Elections",
+    status: "last_call",
     for: 0,
     against: 344,
     noOfComments: 77,
-    type: 'vote',
+    type: "vote",
   },
   {
     id: 3,
-    title: 'Transition to full Proof of stake',
-    status: 'last_call',
+    title: "Transition to full Proof of stake",
+    status: "last_call",
     for: 4567,
     against: 0,
 
     noOfComments: 32,
-    type: 'vote',
+    type: "vote",
   },
   {
     id: 4,
-    title: 'Starknet Account Abstraction Model - Part 2',
-    status: 'last_call',
+    title: "Starknet Account Abstraction Model - Part 2",
+    status: "last_call",
     for: 6702,
     against: 1222,
     noOfComments: 120,
-    type: 'snip',
+    type: "snip",
   },
 ];
 
 export function Page() {
   const userQuery = trpc.users.getAll.useQuery();
-
-  console.log(userQuery.data)
 
   return (
     <>
@@ -81,8 +79,10 @@ export function Page() {
           </Button>
         </Box>
       </AppBar>
-      
-      {userQuery.data?.map((u, i) => <pre key={i}>{JSON.stringify(u,undefined,"  ")}</pre>)}
+
+      {userQuery.data?.map((u, i) => (
+        <pre key={i}>{JSON.stringify(u, undefined, "  ")}</pre>
+      ))}
 
       <ListRowContainer>
         {mockData.map((data) => (
@@ -104,5 +104,5 @@ export function Page() {
 }
 
 export const documentProps = {
-  title: 'Proposals',
+  title: "Proposals",
 } satisfies DocumentProps;

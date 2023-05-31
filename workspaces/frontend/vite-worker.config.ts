@@ -1,8 +1,14 @@
 import type { UserConfig } from "vite";
 import path from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 
 export default {
+  resolve: {
+    alias: {
+      stream: 'stream-browserify',
+    },
+  },
   plugins: [tsconfigPaths()],
   build: {
     outDir: 'dist/worker',
@@ -29,4 +35,13 @@ export default {
       ],
     },
   },
+  optimizeDeps: {
+    esbuildOptions: {
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          process: true,
+        }),
+      ],
+    },
+  }
 } as UserConfig;

@@ -1,10 +1,15 @@
 import { InferModel } from 'drizzle-orm';
-import { pgTable, serial, text } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  fullName: text('full_name'),
-  lastName: text('last_name'),
+  id: uuid('id').primaryKey(),
+  address: text('address'),
+  walletName: text('walletName'),
+  walletProvider: text('walletProvider'),
+  publicIdentifier: text('publicIdentifier'),
+  dynamicId: text('dynamicId'),
+  createdAt: timestamp('createdAt', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt', { withTimezone: true }).notNull().defaultNow(),
 });
 
 export type User = InferModel<typeof users>;
