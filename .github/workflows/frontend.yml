@@ -46,6 +46,7 @@ jobs:
         run: yarn workspace @yukilabs/governance-frontend build
         env:
           VITE_SITE_URL: https://governance-frontend-${{ env.GITHUB_REF_SLUG }}.yukilabs.workers.dev
+          VITE_APP_DYNAMIC_ID: a99f1241-3620-4df1-9673-96b3a3684cdf
 
       - name: Publish
         run: yarn workspace @yukilabs/governance-frontend exec wrangler publish --env ${{ env.GITHUB_REF_SLUG }}
