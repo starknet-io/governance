@@ -4,102 +4,54 @@ import {
   Box,
   AppBar,
   Button,
-  ListRowContainer,
+  PageTitle,
+  ButtonGroup,
   ListRow,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 
-type DataType = {
-  id: number;
-  title: string;
-  status: "last_call" | "review";
-  for: number;
-  against: number;
-  noOfComments: number;
-  type: "snip" | "vote";
-};
-
-const mockData: DataType[] = [
-  {
-    id: 1,
-    title: "Support for scoped storage variables",
-    status: "last_call",
-    for: 2,
-    against: 12,
-    noOfComments: 18,
-    type: "snip",
-  },
-  {
-    id: 2,
-    title:
-      "Starknet Decentralized Protocol II - Candidate for Leader Elections",
-    status: "last_call",
-    for: 0,
-    against: 344,
-    noOfComments: 77,
-    type: "vote",
-  },
-  {
-    id: 3,
-    title: "Transition to full Proof of stake",
-    status: "last_call",
-    for: 4567,
-    against: 0,
-
-    noOfComments: 32,
-    type: "vote",
-  },
-  {
-    id: 4,
-    title: "Starknet Account Abstraction Model - Part 2",
-    status: "last_call",
-    for: 6702,
-    against: 1222,
-    noOfComments: 120,
-    type: "snip",
-  },
-];
-
 export function Page() {
-  const userQuery = trpc.users.getAll.useQuery();
+  const proposals = trpc.proposals.getAll.useQuery();
 
   return (
-    <>
+    <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px">
+      <PageTitle title="Proposals" />
       <AppBar>
         <Box>
           <Box>
-            <Button variant="outline">All</Button>
-            <Button variant="outline">SNIPS</Button>
-            <Button variant="outline">Votes</Button>
+            <ButtonGroup
+              spacing="8px"
+              bg="#EEEEF1"
+              padding="2px "
+              borderRadius="8px"
+            >
+              <Button variant="switcher" isActive>
+                All
+              </Button>
+              <Button variant="switcher">SNIPS</Button>
+              <Button variant="switcher">Votes</Button>
+            </ButtonGroup>
           </Box>
         </Box>
         <Box display="flex" marginLeft="auto">
-          <Button as="a" href="vote/create" variant="outline">
-            Create proposal
+          <Button as="a" href="snip/create" size="sm" variant="solid">
+            Create SNIP
           </Button>
         </Box>
       </AppBar>
+      <ListRow.Container>
+        {proposals.data?.map((data) => (
+          <ListRow.Root key={data.id} href={`/${data.type}/${data.id}`}>
+            <ListRow.MutedText id={data.id} type={data.type} />
+            <ListRow.Title label={data.title} />
+            {/* <ListRow.Date /> */}
 
-      {userQuery.data?.map((u, i) => (
-        <pre key={i}>{JSON.stringify(u, undefined, "  ")}</pre>
-      ))}
-
-      <ListRowContainer>
-        {mockData.map((data) => (
-          <ListRow
-            key={data.id}
-            id={data.id}
-            title={data.title}
-            status="last_call"
-            for={data.for}
-            against={data.against}
-            noOfComments={data.noOfComments}
-            type={data.type}
-            href={`/${data.type}`}
-          />
+            <ListRow.Comments count={0} />
+            <ListRow.Status status={data.status} />
+          </ListRow.Root>
         ))}
-      </ListRowContainer>
-    </>
+      </ListRow.Container>
+    </Box>
   );
 }
 

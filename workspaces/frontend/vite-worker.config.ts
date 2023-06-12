@@ -30,8 +30,6 @@ export default {
 
         // src/api/index.ts
         "itty-router",
-        "itty-router-extras",
-        "itty-cors",
       ],
     },
   },

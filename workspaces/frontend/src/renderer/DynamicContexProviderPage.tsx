@@ -19,12 +19,23 @@ import {
   ThemeProvider,
   Layout,
   Header,
-  Heading,
   Box,
+  MdOutlineHowToVote,
+  MdOutlineAssignment,
 } from "@yukilabs/governance-components";
 import { Suspense, useEffect, useState } from "react";
 import { PageContext } from "./types";
 import { trpc } from "src/utils/trpc";
+
+// need to move this override to a better place
+const cssOverrides = `
+
+  .button--padding-large {
+    padding: 0.74rem 1rem;
+    border-radius: 4px;
+  }
+
+`;
 
 interface Props {
   readonly pageContext: PageContext;
@@ -43,10 +54,11 @@ interface AuthSuccessParams {
 const DynamicContextProviderPage = (props: Props) => {
   const { pageContext, children } = props;
   const [authArgs, setAuthArgs] = useState<AuthSuccessParams | null>(null);
-  const mutation = trpc.auth.authUser.useMutation();
+  const authMutation = trpc.auth.authUser.useMutation();
+  const logoutMutation = trpc.auth.logout.useMutation();
 
   const authUser = async (args: AuthSuccessParams) => {
-    mutation.mutate({ authToken: args.authToken });
+    authMutation.mutate({ authToken: args.authToken });
   };
 
   useEffect(() => {
@@ -61,7 +73,9 @@ const DynamicContextProviderPage = (props: Props) => {
         environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
         eventsCallbacks: {
           onAuthSuccess: (params: AuthSuccessParams) => setAuthArgs(params),
+          onLogout: () => logoutMutation.mutate(),
         },
+        cssOverrides,
       }}
     >
       <ThemeProvider>
@@ -84,7 +98,8 @@ function PageLayout(props: Props) {
     <Layout.Root>
       <Layout.LeftAside>
         <Logo />
-        <NavItem href="/" icon={<HiOutlineDocumentText />} label="Proposals" />
+        <NavItem href="/" icon={<MdOutlineHowToVote />} label="Proposals" />
+        <NavItem href="/" icon={<MdOutlineAssignment />} label="Snips" />
         <NavItem
           icon={<HiOutlineUserCircle />}
           href="/delegates"
@@ -110,13 +125,11 @@ function PageLayout(props: Props) {
       </Layout.LeftAside>
       <Layout.Main>
         <Header>
-          <Heading variant="h3">Page.title</Heading>
           <Box display="flex" marginLeft="auto">
             <DynamicWidget />
           </Box>
         </Header>
-
-        {children}
+        <Layout.Content>{children}</Layout.Content>
       </Layout.Main>
     </Layout.Root>
   );

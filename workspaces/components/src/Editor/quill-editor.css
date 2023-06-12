@@ -1,0 +1,40 @@
+/* Override Quill Editor's default styles */
+
+/* Styles for readonly mode */
+.quill_readonly .ql-toolbar {
+  display: none !important;
+}
+.quill_readonly .ql-container {
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+.quill_readonly .ql-editor {
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+
+/* Styles for editable mode */
+.ql-editor {
+  background-color: #fff;
+}
+.ql-toolbar {
+  border: 1px solid #E4E5E7 !important;
+  background-color: #fff;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  box-shadow: 0px 1px 1px rgba(228, 229, 231, 0.5);
+}
+.ql-container {
+  border-top: none;
+  border: 1px solid #E4E5E7 !important;
+  background-color: #fff;
+  box-shadow: 0px 1px 1px rgba(228, 229, 231, 0.5);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.ql-editor {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  min-height: 200px;
+}

@@ -1,6 +1,6 @@
-import { Box, HStack } from '@chakra-ui/react';
-import { ReactElement, ReactNode } from 'react';
-import { BsCaretRightFill } from 'react-icons/bs';
+import { Box, HStack } from "@chakra-ui/react";
+import { ReactElement, ReactNode } from "react";
+import { BsCaretRightFill } from "react-icons/bs";
 
 interface NavItemProps {
   href?: string;
@@ -13,8 +13,7 @@ interface NavItemProps {
 }
 
 export const NavItem = (props: NavItemProps) => {
-  const { active, subtle, icon, children, label, endElement, href } =
-    props;
+  const { active, subtle, icon, children, label, endElement, href } = props;
   return (
     <HStack
       as="a"
@@ -27,28 +26,23 @@ export const NavItem = (props: NavItemProps) => {
       userSelect="none"
       rounded="md"
       transition="all 0.2s"
-      bg={active ? '#EEEEF1' : undefined}
-      _hover={{ bg: '#EEEEF1' }}
-      _active={{ bg: '#EEEEF1' }}
+      bg={active ? "#EEEEF1" : undefined}
+      _hover={{ bg: "#EEEEF1" }}
+      _active={{ bg: "#EEEEF1" }}
     >
-      <Box
-        fontSize="14px"
-        color={active ? 'currentcolor' : '#33333E'}
-      >
+      <Box fontSize="19px" color={active ? "currentcolor" : "#6C6C75"}>
         {icon}
       </Box>
       <Box
         flex="1"
         fontWeight="inherit"
         fontSize="14px"
-        color={subtle ? '#33333E' : undefined}
+        color={subtle ? "#6C6C75" : undefined}
       >
         {label}
       </Box>
       {endElement && !children && <Box>{endElement}</Box>}
-      {children && (
-        <Box fontSize="xs" flexShrink={0} as={BsCaretRightFill} />
-      )}
+      {children && <Box fontSize="xs" flexShrink={0} as={BsCaretRightFill} />}
     </HStack>
   );
 };

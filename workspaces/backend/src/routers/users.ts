@@ -1,11 +1,10 @@
-import { router, publicProcedure } from '../trpc';
+import { router, publicProcedure } from '../utils/trpc';
 import { z } from 'zod';
-import { users } from '../db/schema';
+import { users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
-const crypto = require('crypto');
 
-export const userRouter = router({
+export const usersRouter = router({
   getAll: publicProcedure.query(() => db.select().from(users)),
 
   saveUser: publicProcedure
@@ -22,7 +21,6 @@ export const userRouter = router({
       const insertedUser = await db
         .insert(users)
         .values({
-          id: crypto.randomUUID(),
           address: opts.input.address,
           walletName: opts.input.walletName,
           walletProvider: opts.input.walletProvider,
@@ -45,7 +43,7 @@ export const userRouter = router({
         dynamicId: z.string().optional(),
       })
     )
-    .query(async (opts) => {
+    .mutation(async (opts) => {
       const updatedUser = await db
         .update(users)
         .set({
@@ -67,7 +65,7 @@ export const userRouter = router({
         id: z.string(),
       })
     )
-    .query(async (opts) => {
+    .mutation(async (opts) => {
       await db.delete(users).where(eq(users.id, opts.input.id)).execute();
     }),
 });

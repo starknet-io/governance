@@ -1,0 +1,260 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "id": "8ce475d8-4014-4ddc-9e31-ceb6845aee1f",
+  "prevId": "7d5525bc-2244-48ef-b7b1-c9775f98fc97",
+  "tables": {
+    "delegates": {
+      "name": "delegates",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "delegateStatement": {
+          "name": "delegateStatement",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "delegateType": {
+          "name": "delegateType",
+          "type": "delegateType",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "starknetWalletAddress": {
+          "name": "starknetWalletAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "twitter": {
+          "name": "twitter",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discord": {
+          "name": "discord",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discourse": {
+          "name": "discourse",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agreeTerms": {
+          "name": "agreeTerms",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "understandRole": {
+          "name": "understandRole",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "delegates_userId_users_id_fk": {
+          "name": "delegates_userId_users_id_fk",
+          "tableFrom": "delegates",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "proposals": {
+      "name": "proposals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "type",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "status",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {}
+    },
+    "users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "walletName": {
+          "name": "walletName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "walletProvider": {
+          "name": "walletProvider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "publicIdentifier": {
+          "name": "publicIdentifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dynamicId": {
+          "name": "dynamicId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {}
+    }
+  },
+  "enums": {
+    "delegateType": {
+      "name": "delegateType",
+      "values": {
+        "Cairo Dev": "Cairo Dev",
+        "DAOs": "DAOs",
+        "Governance": "Governance",
+        "Identity": "Identity",
+        "Infrastructure Starknet Dev": "Infrastructure Starknet Dev",
+        "Legal": "Legal",
+        "NFT": "NFT",
+        "Professional Delegates": "Professional Delegates",
+        "Security": "Security",
+        "Starknet Community": "Starknet Community",
+        "Web3 Community": "Web3 Community",
+        "Web3 Developer": "Web3 Developer"
+      }
+    },
+    "status": {
+      "name": "status",
+      "values": {
+        "last_call": "last_call",
+        "active": "active",
+        "review": "review",
+        "pending": "pending"
+      }
+    },
+    "type": {
+      "name": "type",
+      "values": {
+        "discussion": "discussion",
+        "vote": "vote"
+      }
+    },
+    "role": {
+      "name": "role",
+      "values": {
+        "user": "user",
+        "admin": "admin"
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

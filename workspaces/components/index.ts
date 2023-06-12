@@ -12,21 +12,31 @@ export {
   HiOutlineQuestionMarkCircle,
   HiOutlineChatBubbleLeftRight,
   HiOutlineChatBubbleLeftEllipsis,
+  MdOutlineHowToVote,
+  MdOutlineAssignment,
   Heading,
   Text,
   Connect,
   Logo,
   AppBar,
   Badge,
-  ListRow,
-  ListRowContainer,
   SearchInput,
   DelegateCard,
   Tag,
-} from './src';
+  PageTitle,
+  ContentContainer,
+  VoteStat,
+  IconButton,
+  QuillEditor,
+  Collapse,
+} from "./src";
 
-import * as Layout from './src/RootLayout/RootLayout';
-export { Layout };
+import * as Layout from "./src/RootLayout/RootLayout";
+import * as SummaryItems from "./src/SummaryItems/SummaryItems";
+import * as ListRow from "./src/ListRow/ListRowGeneric";
+import * as Stat from "./src/Stat/Stat";
+import * as ProfileSummaryCard from "./src/ProfileSummaryCard/ProfileSummaryCard";
+export { Layout, SummaryItems, ListRow, Stat, ProfileSummaryCard };
 
 import {
   Flex,
@@ -48,10 +58,13 @@ import {
   Checkbox,
   CheckboxGroup,
   Avatar,
-} from '@chakra-ui/react';
+  Divider,
+  ButtonGroup,
+} from "@chakra-ui/react";
 
 export {
   Flex,
+  ButtonGroup,
   Stack,
   Box,
   SimpleGrid,
@@ -70,4 +83,5 @@ export {
   Checkbox,
   CheckboxGroup,
   Avatar,
+  Divider,
 };

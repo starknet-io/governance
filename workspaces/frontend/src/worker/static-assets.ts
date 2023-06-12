@@ -16,7 +16,7 @@ const DEBUG = false;
 export async function handleStaticAssets(
   event: WorkerGlobalScopeEventMap["fetch"]
 ) {
-  let options: any = {};
+  const options: any = {};
 
   /**
    * You can add custom logic to how we fetch your assets
@@ -47,7 +47,7 @@ export async function handleStaticAssets(
     // if an error is thrown try to serve the asset at 404.html
     if (!DEBUG) {
       try {
-        let notFoundResponse = await getAssetFromKV(event, {
+        const notFoundResponse = await getAssetFromKV(event, {
           mapRequestToAsset: (req) =>
             new Request(`${new URL(req.url).origin}/404.html`, req),
         });
@@ -56,7 +56,9 @@ export async function handleStaticAssets(
           ...notFoundResponse,
           status: 404,
         });
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     return new Response(e.message || e.toString(), { status: 500 });

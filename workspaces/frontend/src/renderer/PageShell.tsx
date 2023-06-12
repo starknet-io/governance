@@ -22,10 +22,9 @@ export function PageShell(props: Props) {
     <React.StrictMode>
       <PageContextProvider pageContext={pageContext}>
         <TrpcProvider>
-          <DynamicContextProviderPage
-            pageContext={pageContext}
-            children={children}
-          />
+          <DynamicContextProviderPage pageContext={pageContext}>
+            {children}
+          </DynamicContextProviderPage>
         </TrpcProvider>
       </PageContextProvider>
     </React.StrictMode>

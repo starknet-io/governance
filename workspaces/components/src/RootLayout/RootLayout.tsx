@@ -15,12 +15,12 @@ const LeftAside = ({ children }: LeftAsideProps) => {
       role="complementary"
       width="234px"
       position={{ base: 'unset', lg: 'sticky' }}
-      bg="#FAFAFA"
+      bg="#FFFFFF"
       top="0"
       paddingLeft="12px"
       paddingRight="12px"
       display={{ base: 'none', lg: 'flex' }}
-      borderRight="1px solid #E2E8F0"
+      borderRight="1px solid #E4E5E7"
       paddingTop="34px"
       paddingBottom="24px"
     >
@@ -50,12 +50,23 @@ type MainProps = {
 };
 const Main = ({ children }: MainProps) => {
   return (
+    <Box display="flex" flexDirection="column" flex={1}>
+      {children}
+    </Box>
+  );
+};
+type ContentProps = {
+  children?: ReactNode | undefined;
+};
+const Content = ({ children }: ContentProps) => {
+  return (
     <Box
       as="main"
       role="main"
       flex={1}
-      paddingLeft="48px"
-      paddingRight="48px"
+      // paddingLeft="48px"
+      // paddingRight="48px"
+      // paddingTop="40px"
     >
       {children}
     </Box>
@@ -71,11 +82,21 @@ const Root = ({ children }: LayoutProps) => {
     <Box
       display="flex"
       flexDirection={{ base: 'column', md: 'row', lg: 'row' }}
-      maxWidth="1400px"
     >
       {children}
     </Box>
   );
 };
 
-export { Root, LeftAside, RightAside, Main };
+type HeaderProps = {
+  children?: ReactNode | undefined;
+};
+const Header = ({ children }: HeaderProps) => {
+  return (
+    <Box display="flex" flex={1}>
+      {children}
+    </Box>
+  );
+};
+
+export { Root, LeftAside, RightAside, Main, Header, Content };

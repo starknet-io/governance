@@ -6,8 +6,12 @@ export const styles = {
       padding: 0,
       margin: 0,
     },
+    '.dynamic-shadow-dom': {
+      ' --dynamic-connect-button-background': '#ffffff',
+    },
+
     body: {
-      background: 'bg-default',
+      background: '#FAFAFA',
       color: 'fg-default',
       padding: 0,
       margin: 0,

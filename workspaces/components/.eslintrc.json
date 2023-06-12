@@ -1,0 +1,14 @@
+{
+  "extends": "../../.eslintrc.json",
+  "rules": {
+    // Any package-specific rules here
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts", "**/*.tsx"], // your TypeScript file extensions
+      "rules": {
+        "react/prop-types": "off" // turn off prop-types rule
+      }
+    }
+  ]
+}

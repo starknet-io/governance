@@ -1,5 +1,4 @@
-import { Router, json } from "itty-router";
-import { createCors } from "itty-cors";
+import { Router, createCors, json } from "itty-router";
 
 // now let's create a router (note the lack of "new")
 export const apiRouter = Router({ base: "/api" });

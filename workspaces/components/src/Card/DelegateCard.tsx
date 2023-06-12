@@ -1,73 +1,61 @@
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Box,
-  Avatar,
-} from '@chakra-ui/react';
+import { Card, CardHeader, CardBody, CardFooter, Box } from "@chakra-ui/react";
 
-import { Heading } from '../Heading';
-import { Text } from '../Text';
-import { Button } from 'src/Button';
-import { Tag } from 'src/Tag';
+import { Text } from "../Text";
+import { Tag } from "../Tag";
+import { Button } from "../Button";
+import { truncateAddress } from "../utils";
+import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
+import { stripHtml } from "src/utils/helpers";
+
 type Props = {
-  address: string;
-  avatar: string;
-  role: string;
-  statementExcerpt: string;
-  onClick: () => void;
-  noOfVotes: string;
+  id: string;
+  starknetWalletAddress: string | null;
+  delegateType: string | null;
+  delegateStatement: string;
+  avatarUrl?: string | null;
+  address?: string | null;
+  userId?: string | null;
 };
 
 export const DelegateCard = (props: Props) => {
-  const {
-    address = 'cillianhunter.eth',
-    avatar = 'https://avatars.githubusercontent.com/u/1024025?v=4',
-    role = 'degen',
-    statementExcerpt = 'I have a background in theoretical computer science and cryptography and I have been deeply interested in the work...',
-    onClick = () => console.log('clicked'),
-    noOfVotes = '7.5m votes', // assuming this is the default number of votes
-  } = props;
+  const { id, userId, starknetWalletAddress, delegateType, delegateStatement } =
+    props;
+  const displayText = (htmlString: string) => {
+    return stripHtml(htmlString);
+  };
+  const addressToDisplay = starknetWalletAddress
+    ? truncateAddress(starknetWalletAddress)
+    : "";
+  const fakeEthAddress = `${starknetWalletAddress?.slice(0, 5)}.eth`;
+  console.log("USERID", userId);
   return (
-    <Card as="a" href="/delegates/profile" variant="outline">
+    <Card as="a" href={`/delegates/profile/${id}`} variant="outline">
       <CardHeader>
-        <Box
-          width="100%"
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="flex-start"
-          gap="16px"
-        >
-          <Avatar src={avatar} size="md" />
-          <Box flex="1">
-            <Heading variant="h5">{address}</Heading>
-            <Text fontSize="13px" color="#6B6B80">
-              {noOfVotes}
-            </Text>
-          </Box>
-        </Box>
+        <ProfileSummaryCard.Root>
+          <ProfileSummaryCard.Profile
+            size="sm"
+            address={starknetWalletAddress}
+            ethAddress={fakeEthAddress}
+            subtitle="7.5m Votes"
+            avatarString={userId}
+          ></ProfileSummaryCard.Profile>
+        </ProfileSummaryCard.Root>
       </CardHeader>
       <CardBody>
         <Text fontSize="13px" noOfLines={3} color="#6B6B80">
-          {statementExcerpt}
+          {displayText(delegateStatement)}
         </Text>
       </CardBody>
       <CardFooter>
-        <Box
-          width="100%"
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-          zIndex="200000"
-          position="relative"
-        >
-          <Tag variant="listCard">{role}</Tag>
-          <Button variant="outline" onClick={onClick}>
-            Delegate
-          </Button>
+        <Box width="100%" display="flex" flexDirection="column" gap="16px">
+          <Box display="flex" flexDirection="row" gap="16px">
+            <Tag variant="primary">{delegateType}</Tag>
+          </Box>
+          <Box>
+            <Button variant="outline" onClick={() => console.log("clicked")}>
+              Delegate
+            </Button>
+          </Box>
         </Box>
       </CardFooter>
     </Card>

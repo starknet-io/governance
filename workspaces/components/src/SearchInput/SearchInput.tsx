@@ -6,9 +6,7 @@ import {
 } from '@chakra-ui/react';
 import { HiOutlineMagnifyingGlass } from 'react-icons/hi2';
 
-type Props = {};
-
-export const SearchInput = (props: Props) => {
+export const SearchInput = () => {
   return (
     <InputGroup>
       <InputLeftElement pointerEvents="none">
@@ -19,6 +17,7 @@ export const SearchInput = (props: Props) => {
         />
       </InputLeftElement>
       <Input
+        variant="primary"
         minWidth={{ base: '100%', md: '232px' }}
         height="36px"
         fontSize="13px"

@@ -1,0 +1,188 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "id": "7d5525bc-2244-48ef-b7b1-c9775f98fc97",
+  "prevId": "b78e23ab-3ab2-4fc9-9b1c-8ed2308a650f",
+  "tables": {
+    "delegates": {
+      "name": "delegates",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "delegateStatement": {
+          "name": "delegateStatement",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "starknetType": {
+          "name": "starknetType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "starknetWalletAddress": {
+          "name": "starknetWalletAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "twitter": {
+          "name": "twitter",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discord": {
+          "name": "discord",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discourse": {
+          "name": "discourse",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agreeTerms": {
+          "name": "agreeTerms",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "understandRole": {
+          "name": "understandRole",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "delegates_userId_users_id_fk": {
+          "name": "delegates_userId_users_id_fk",
+          "tableFrom": "delegates",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "walletName": {
+          "name": "walletName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "walletProvider": {
+          "name": "walletProvider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "publicIdentifier": {
+          "name": "publicIdentifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dynamicId": {
+          "name": "dynamicId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {}
+    }
+  },
+  "enums": {
+    "role": {
+      "name": "role",
+      "values": {
+        "user": "user",
+        "admin": "admin"
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

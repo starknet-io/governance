@@ -1,0 +1,1 @@
+export { Indenticon } from "./Indenticon";

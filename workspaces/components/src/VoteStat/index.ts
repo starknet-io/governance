@@ -1,0 +1,1 @@
+export { VoteStat } from './VoteStat';

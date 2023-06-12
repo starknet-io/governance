@@ -20,39 +20,48 @@ const viteDevMiddleware = (
 app.use(viteDevMiddleware);
 
 app.all(/\/api(.*)/, async (req, res, next) => {
-  const httpResponse: Response = await apiRouter.handle({
-    method: req.method,
-    url: new URL(req.url, `http://localhost:${port}`).toString(),
-  });
+  const httpResponse: Response = await apiRouter.handle(
+    new Request(new URL(req.url, `http://localhost:${port}`), {
+      method: req.method,
+      body: req.body,
+      headers: Object.entries(req.headers) as HeadersInit,
+    })
+  );
 
   if (httpResponse != null) {
     httpResponse.headers.forEach((value, key) => {
       res.header(key, value);
     });
 
-    res.send(await httpResponse.text())
+    res.send(await httpResponse.text());
   } else {
-    next()
+    res.send("API!");
   }
 });
 
 app.get("*", async (req, res, next) => {
-  const userAgent = req.headers["user-agent"]!;
-  const pageContextInit = {
-    urlOriginal: req.originalUrl,
-    fetch: fetch as WindowOrWorkerGlobalScope["fetch"],
-    userAgent,
-  };
-  const pageContext: any = await renderPage(pageContextInit);
+  try {
+    const userAgent = req.headers["user-agent"]!;
+    const pageContextInit = {
+      urlOriginal: req.originalUrl,
+      fetch: fetch as WindowOrWorkerGlobalScope["fetch"],
+      userAgent,
+    };
 
-  if (pageContext.redirectTo) {
-    return res.redirect(pageContext.redirectTo);
+    const pageContext: any = await renderPage(pageContextInit);
+
+    if (pageContext.redirectTo) {
+      return res.redirect(pageContext.redirectTo);
+    }
+
+    const { httpResponse } = pageContext;
+    if (!httpResponse) return next();
+    res.type(httpResponse.contentType).status(httpResponse.statusCode);
+    httpResponse.pipe(res);
+
+  } catch (err) {
+    console.log(err)
   }
-
-  const { httpResponse } = pageContext;
-  if (!httpResponse) return next();
-  res.type(httpResponse.contentType).status(httpResponse.statusCode);
-  httpResponse.pipe(res);
 });
 
 const port = 3000;

@@ -3,12 +3,12 @@ import ssr from "vite-plugin-ssr/plugin";
 import { UserConfig, defineConfig } from "vite";
 import path from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 
 export default defineConfig({
   resolve: {
     alias: {
-      stream: 'stream-browserify',
+      stream: "stream-browserify",
     },
   },
   publicDir: path.resolve(__dirname, "../../public"),
@@ -24,5 +24,8 @@ export default defineConfig({
         }),
       ],
     },
-  }
+  },
+  ssr: {
+    noExternal: ["@chakra-ui/*", "react-icons"],
+  },
 }) as UserConfig;

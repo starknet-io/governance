@@ -1,10 +1,8 @@
-import { DocumentProps } from 'src/renderer/types';
+import { DocumentProps } from "src/renderer/types";
 
 import {
   Box,
-  AppBar,
   Button,
-  Container,
   Heading,
   FormControl,
   FormLabel,
@@ -12,97 +10,98 @@ import {
   Textarea,
   Stack,
   Select,
-  Checkbox,
-} from '@yukilabs/governance-components';
+  Flex,
+  ContentContainer,
+} from "@yukilabs/governance-components";
+import { trpc } from "src/utils/trpc";
+import { useForm } from "react-hook-form";
+import { RouterInput } from "@yukilabs/governance-backend/src/routers";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 export function Page() {
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isValid },
+  } = useForm<RouterInput["proposals"]["createSNIP"]>();
+  const createSNIP = trpc.proposals.createSNIP.useMutation();
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await createSNIP.mutateAsync(data);
+      navigate("/");
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+  });
+
   return (
     <>
-      <AppBar>
-        <Box>
-          <Box>
-            <Button as="a" variant="outline" href="/delegates">
-              Back
-            </Button>
-          </Box>
-        </Box>
-      </AppBar>
-      <Box>
-        <Container maxWidth="lg" pb={'200px'}>
+      <ContentContainer>
+        <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
-            Create Delegate
+            Create SNIP Proposal
           </Heading>
-          <Stack spacing="32px" direction={{ base: 'column' }}>
-            <FormControl id="delegate-statement">
-              <FormLabel>Delegate Statement</FormLabel>
-              <Textarea
-                placeholder="Enter your delegate statement here..."
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="starknet-type">
-              <FormLabel>Starknet type</FormLabel>
-              <Select placeholder="Select option">
-                <option value="option1">Builder</option>
-                <option value="option2">Degen</option>
-                <option value="option3">Crypto math</option>
-              </Select>
-            </FormControl>
-            <FormControl id="starknet-wallet-address">
-              <FormLabel>Starknet wallet address</FormLabel>
-              <Input
-                placeholder="0x..."
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="twitter">
-              {/* // idea to pull in their twitter avatar to use as delegate profile */}
-              <FormLabel>Twitter</FormLabel>
-              <Input
-                placeholder="@yourhandle"
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="discord">
-              <FormLabel>Discord</FormLabel>
-              <Input
-                placeholder="name#1234"
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="discourse">
-              <FormLabel>Discourse</FormLabel>
-              <Input
-                placeholder="yourusername"
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="terms">
-              <Checkbox defaultChecked={false}>
-                Agree with delegate terms
-              </Checkbox>
-            </FormControl>
-            <FormControl id="terms">
-              <Checkbox required defaultChecked={false}>
-                I understand the role of StarkNet delegates, we
-                encourage all to read the Delegate Expectations 328;
-                Starknet Governance announcements Part 1 98, Part 2
-                44, and Part 3 34; The Foundation Post 60; as well as
-                the Delegate Onboarding announcement 539 before
-                proceeding.
-              </Checkbox>
-            </FormControl>
+          <form onSubmit={onSubmit}>
+            <Stack spacing="32px" direction={{ base: "column" }}>
+              <FormControl id="delegate-statement">
+                <FormLabel>Title</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="SNIP title"
+                  {...register("title", {
+                    required: true,
+                  })}
+                />
+                {errors.title && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="delegate-statement">
+                <FormLabel>Proposal Body</FormLabel>
+                <Textarea
+                  variant="primary"
+                  placeholder="Enter your delegate statement here..."
+                  {...register("description", {
+                    required: true,
+                  })}
+                />
+                {errors.description && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="delegate-statement">
+                <FormLabel>Forum discussion(optional)</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="http://community.starknet.io/1234567890"
+                  {...register("discussionURL")}
+                />
+              </FormControl>
+              <FormControl id="starknet-type">
+                <FormLabel>Status</FormLabel>
+                <Select placeholder="Select option">
+                  <option value="option1">Draft</option>
+                  <option value="option2">Review</option>
+                  <option value="option3">Last call</option>
+                </Select>
+              </FormControl>
 
-            <Button variant={'outline'}>
-              Submit delegate profile
-            </Button>
-          </Stack>
-        </Container>
-      </Box>
+              <Flex justifyContent="flex-end">
+                <Button
+                  type="submit"
+                  size="sm"
+                  variant={"solid"}
+                  disabled={!isValid}
+                >
+                  Create SNIP
+                </Button>
+              </Flex>
+            </Stack>
+          </form>
+        </Box>
+      </ContentContainer>
     </>
   );
 }
 
 export const documentProps = {
-  title: 'Snip / Create',
+  title: "Snip / Create",
 } satisfies DocumentProps;

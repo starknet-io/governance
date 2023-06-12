@@ -11,7 +11,9 @@ export const Header = (props: Props) => {
       flexDirection="row"
       alignItems="center"
       justifyContent="flex-start"
-      height="88px"
+      height="72px"
+      borderBottom="1px solid #E4E5E7"
+      px="32px"
     >
       {props.children}
     </Box>

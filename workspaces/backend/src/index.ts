@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { appRouter } from './routers';
-import { createContext } from './createContex';
+import { createContext } from './utils/createContex';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();

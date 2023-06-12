@@ -1,10 +1,6 @@
-import { DocumentProps } from 'src/renderer/types';
-
+import { Controller, useForm } from "react-hook-form";
 import {
-  Box,
-  AppBar,
   Button,
-  Container,
   Heading,
   FormControl,
   FormLabel,
@@ -13,96 +9,183 @@ import {
   Stack,
   Select,
   Checkbox,
-} from '@yukilabs/governance-components';
+  ContentContainer,
+  Flex,
+  Box,
+  QuillEditor,
+} from "@yukilabs/governance-components";
+import { trpc } from "src/utils/trpc";
+import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
+import { DocumentProps } from "src/renderer/types";
+import { useState } from "react";
+
+const delegateTypeValues = delegateTypeEnum.enumValues;
+
+export type DelegateTypeValues = (typeof delegateTypeValues)[number];
+
+type FormValues = {
+  delegateStatement: string;
+  delegateType: DelegateTypeValues;
+  starknetWalletAddress: string;
+  twitter: string;
+  discord: string;
+  discourse: string;
+  agreeTerms: boolean;
+  understandRole: boolean;
+};
 
 export function Page() {
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { errors, isValid },
+  } = useForm<FormValues>();
+  const [editorValue, setEditorValue] = useState<string>("");
+  const createDelegate = trpc.delegates.saveDelegate.useMutation();
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      data.delegateStatement = editorValue;
+      await createDelegate
+        .mutateAsync(data)
+        .then((res) => {
+          window.location.href = `/delegates/profile/${res.id}`;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+  });
+
   return (
     <>
-      <AppBar>
-        <Box>
-          <Box>
-            <Button as="a" variant="outline" href="/delegates">
-              Back
-            </Button>
-          </Box>
-        </Box>
-      </AppBar>
-      <Box>
-        <Container maxWidth="lg" pb={'200px'}>
+      <ContentContainer>
+        <Box maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
-            Create Delegate
+            Create delegate profile
           </Heading>
-          <Stack spacing="24px" direction={{ base: 'column' }}>
-            <FormControl id="delegate-statement">
-              <FormLabel>Delegate Statement</FormLabel>
-              <Textarea
-                placeholder="Enter your delegate statement here..."
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="starknet-type">
-              <FormLabel>Starknet type</FormLabel>
-              <Select placeholder="Select option">
-                <option value="option1">Builder</option>
-                <option value="option2">Degen</option>
-                <option value="option3">Crypto math</option>
-              </Select>
-            </FormControl>
-            <FormControl id="starknet-wallet-address">
-              <FormLabel>Starknet wallet address</FormLabel>
-              <Input
-                placeholder="0x..."
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="twitter">
-              {/* // idea to pull in their twitter avatar to use as delegate profile */}
-              <FormLabel>Twitter</FormLabel>
-              <Input
-                placeholder="@yourhandle"
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="discord">
-              <FormLabel>Discord</FormLabel>
-              <Input
-                placeholder="name#1234"
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="discourse">
-              <FormLabel>Discourse</FormLabel>
-              <Input
-                placeholder="yourusername"
-                onChange={(e) => console.log(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="terms">
-              <Checkbox defaultChecked={false}>
-                Agree with delegate terms
-              </Checkbox>
-            </FormControl>
-            <FormControl id="terms">
-              <Checkbox required defaultChecked={false}>
-                I understand the role of StarkNet delegates, we
-                encourage all to read the Delegate Expectations 328;
-                Starknet Governance announcements Part 1 98, Part 2
-                44, and Part 3 34; The Foundation Post 60; as well as
-                the Delegate Onboarding announcement 539 before
-                proceeding.
-              </Checkbox>
-            </FormControl>
 
-            <Button variant={'outline'}>
-              Submit delegate profile
-            </Button>
-          </Stack>
-        </Container>
-      </Box>
+          <form onSubmit={onSubmit}>
+            <Stack spacing="24px" direction={{ base: "column" }}>
+              <FormControl id="delegate-statement">
+                <FormLabel>Delegate pitch</FormLabel>
+                <QuillEditor
+                  onChange={(e) => setEditorValue(e)}
+                  value={editorValue}
+                />
+                {errors.delegateStatement && (
+                  <span>This field is required.</span>
+                )}
+              </FormControl>
+              <FormControl id="starknet-type">
+                <FormLabel>Delegate type</FormLabel>
+                <Select
+                  placeholder="Select option"
+                  {...register("delegateType", { required: true })}
+                >
+                  {delegateTypeValues.map((delegateType) => (
+                    <option key={delegateType} value={delegateType}>
+                      {delegateType}
+                    </option>
+                  ))}
+                </Select>
+                {errors.delegateType && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="starknet-wallet-address">
+                <FormLabel>Starknet wallet address</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="0x..."
+                  {...register("starknetWalletAddress", {
+                    required: true,
+                  })}
+                />
+                {errors.starknetWalletAddress && (
+                  <span>This field is required.</span>
+                )}
+              </FormControl>
+              <FormControl id="twitter">
+                <FormLabel>Twitter</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="@yourhandle"
+                  {...register("twitter")}
+                />
+                {errors.twitter && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="discord">
+                <FormLabel>Discord</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="name#1234"
+                  {...register("discord")}
+                />
+                {errors.discord && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="discourse">
+                <FormLabel>Discourse</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="yourusername"
+                  {...register("discourse")}
+                />
+                {errors.discourse && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="agreeTerms">
+                <Controller
+                  control={control}
+                  name="agreeTerms"
+                  defaultValue={false}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Checkbox
+                      isChecked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    >
+                      Agree with delegate terms
+                    </Checkbox>
+                  )}
+                />
+                {errors.agreeTerms && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="understandRole">
+                <Controller
+                  control={control}
+                  name="understandRole"
+                  defaultValue={false}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Checkbox
+                      isChecked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    >
+                      I understand the role of StarkNet delegates, we encourage
+                      all to read the Delegate Expectations 328; Starknet
+                      Governance announcements Part 1 98, Part 2 44, and Part 3
+                      34; The Foundation Post 60; as well as the Delegate
+                      Onboarding announcement 539 before proceeding.
+                    </Checkbox>
+                  )}
+                />
+                {errors.understandRole && <span>This field is required.</span>}
+              </FormControl>
+              <Flex justifyContent="flex-end">
+                <Button type="submit" variant="solid" disabled={!isValid}>
+                  Submit delegate profile
+                </Button>
+              </Flex>
+            </Stack>
+          </form>
+        </Box>
+      </ContentContainer>
     </>
   );
 }
 
 export const documentProps = {
-  title: 'Delegates / Create',
+  title: "Delegates / Create",
 } satisfies DocumentProps;
