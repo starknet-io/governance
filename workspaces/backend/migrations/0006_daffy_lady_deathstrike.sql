@@ -1,0 +1,1 @@
+ALTER TABLE "delegates" DROP COLUMN IF EXISTS "delegateType";

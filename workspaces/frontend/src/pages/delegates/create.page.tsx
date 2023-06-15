@@ -12,6 +12,7 @@ import {
   Flex,
   Box,
   QuillEditor,
+  Multiselect,
   EditorTemplate,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";

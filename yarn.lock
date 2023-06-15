@@ -2941,6 +2941,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dynamic-labs/sdk-api@npm:0.0.189":
+  version: 0.0.189
+  resolution: "@dynamic-labs/sdk-api@npm:0.0.189"
+  checksum: c228c81ba159969d151e6af79143099a911d38dca81646c11642d31995cfcc103681c2a38fbd159c7c7d12e3efb829f4993352578525e06084834fbcdfe090d2
+  languageName: node
+  linkType: hard
+
 "@dynamic-labs/sdk-react-core@npm:0.16.16":
   version: 0.16.16
   resolution: "@dynamic-labs/sdk-react-core@npm:0.16.16"
@@ -2971,6 +2978,16 @@ __metadata:
   dependencies:
     "@dynamic-labs/sdk-react-core": 0.16.16
   checksum: e68e123e67f99b341399e4fd657478ef54448340ac6d3983077c5c5ccc1d5a3d2f4478737069c2439f2a31b8700a2488a4c29c9197b57df03e04ebb003a56975
+  languageName: node
+  linkType: hard
+
+"@dynamic-labs/types@npm:^0.17.0-RC.7":
+  version: 0.17.0-fix-on-render-primary-wallet.0
+  resolution: "@dynamic-labs/types@npm:0.17.0-fix-on-render-primary-wallet.0"
+  dependencies:
+    "@dynamic-labs/sdk-api": 0.0.189
+    ethers: 5.7.2
+  checksum: 484df91e21bde3314955af87f6daadfaad7a4e6f24159f001e4b72cf3d6d897ce63c170fdfed7f5e948ae72478154ca49237625f39d0c575519d5ca7c3ac7c0b
   languageName: node
   linkType: hard
 
@@ -7446,6 +7463,7 @@ __metadata:
     react-icons: ^4.9.0
     react-identicons: ^1.2.5
     react-quill: ^2.0.0
+    react-select: ^5.7.3
     storybook: ^7.0.18
     storybook-addon-dark-mode-toggle: ^0.0.6
     vite: ^4.3.9
@@ -7460,6 +7478,7 @@ __metadata:
     "@cloudflare/kv-asset-handler": ^0.3.0
     "@cloudflare/workers-types": ^4.20230518.0
     "@dynamic-labs/sdk-react": ^0.16.16
+    "@dynamic-labs/types": ^0.17.0-RC.7
     "@esbuild-plugins/node-globals-polyfill": ^0.2.3
     "@esbuild-plugins/node-modules-polyfill": ^0.2.2
     "@miniflare/tre": ^3.0.0-next.13
@@ -11037,7 +11056,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.7.2":
+"ethers@npm:5.7.2, ethers@npm:^5.7.2":
   version: 5.7.2
   resolution: "ethers@npm:5.7.2"
   dependencies:
@@ -16263,6 +16282,26 @@ __metadata:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: 3d29f7bb6dd66ad55396d820f05da6112f1d21b67526422a8ff5aa6cd47c783804c1b73042ac2949ba0871056a3dc68c06a73a8281abb61571e475d72bbd80dc
+  languageName: node
+  linkType: hard
+
+"react-select@npm:^5.7.3":
+  version: 5.7.3
+  resolution: "react-select@npm:5.7.3"
+  dependencies:
+    "@babel/runtime": ^7.12.0
+    "@emotion/cache": ^11.4.0
+    "@emotion/react": ^11.8.1
+    "@floating-ui/dom": ^1.0.1
+    "@types/react-transition-group": ^4.4.0
+    memoize-one: ^6.0.0
+    prop-types: ^15.6.0
+    react-transition-group: ^4.3.0
+    use-isomorphic-layout-effect: ^1.1.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 9ffa75afb395e7077076521c529611494164ace0c6b1ceb249406991ac668947cfd0424812c15c2a45c792bb2794b22f2df93c4c2f2515962b7dfc7c91b029ec
   languageName: node
   linkType: hard
 

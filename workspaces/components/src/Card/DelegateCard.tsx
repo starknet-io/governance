@@ -10,7 +10,7 @@ import { stripHtml } from "src/utils/helpers";
 type Props = {
   id: string;
   starknetWalletAddress: string | null;
-  delegateType: string | null;
+  delegateType: any;
   delegateStatement: string;
   avatarUrl?: string | null;
   address?: string | null;
@@ -49,7 +49,11 @@ export const DelegateCard = (props: Props) => {
       <CardFooter>
         <Box width="100%" display="flex" flexDirection="column" gap="16px">
           <Box display="flex" flexDirection="row" gap="16px">
-            <Tag variant="primary">{delegateType}</Tag>
+            {Array.isArray(delegateType) ? (
+              delegateType?.map((item: string) => <Tag key={item}>{item}</Tag>)
+            ) : (
+              <></>
+            )}
           </Box>
           <Box>
             <Button variant="outline" onClick={() => console.log("clicked")}>

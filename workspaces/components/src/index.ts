@@ -38,3 +38,5 @@ export {
 } from "./Icons";
 
 export { QuillEditor } from "./Editor";
+
+export { Multiselect } from "./Multiselect";

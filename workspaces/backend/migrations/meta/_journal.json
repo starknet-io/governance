@@ -43,6 +43,20 @@
       "when": 1686214005223,
       "tag": "0005_nice_nuke",
       "breakpoints": false
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1686572803189,
+      "tag": "0006_daffy_lady_deathstrike",
+      "breakpoints": false
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1686572848114,
+      "tag": "0007_dark_mesmero",
+      "breakpoints": false
     }
   ]
 }

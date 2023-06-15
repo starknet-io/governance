@@ -14,7 +14,7 @@ export const delegateRouter = router({
     .input(
       z.object({
         delegateStatement: z.string(),
-        delegateType: z.enum(values),
+        delegateType: z.any(),
         starknetWalletAddress: z.string(),
         twitter: z.string(),
         discord: z.string(),

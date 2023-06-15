@@ -1,0 +1,1 @@
+ALTER TABLE "delegates" ADD COLUMN "type" json DEFAULT '[]';

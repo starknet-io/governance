@@ -29,6 +29,7 @@ export {
   IconButton,
   QuillEditor,
   Collapse,
+  Multiselect,
   VoteButton,
   VoteComment,
   VoteModal,

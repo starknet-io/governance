@@ -1,6 +1,7 @@
 import { InferModel } from 'drizzle-orm';
 import {
   boolean,
+  json,
   pgEnum,
   pgTable,
   text,
@@ -27,7 +28,7 @@ export const delegateTypeEnum = pgEnum('delegateType', [
 export const delegates = pgTable('delegates', {
   id: uuid('id').primaryKey().defaultRandom(),
   delegateStatement: text('delegateStatement').notNull(),
-  delegateType: delegateTypeEnum('delegateType'),
+  delegateType: json('type').default('[]'),
   starknetWalletAddress: text('starknetWalletAddress'),
   twitter: text('twitter'),
   discord: text('discord'),
