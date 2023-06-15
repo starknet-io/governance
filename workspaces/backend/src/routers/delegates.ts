@@ -1,11 +1,9 @@
 import { z } from "zod";
 import { db } from "../db/db";
-import { delegateTypeEnum, delegates } from "../db/schema/delegates";
+import { delegates } from "../db/schema/delegates";
 import { protectedProcedure, publicProcedure, router } from "../utils/trpc";
 import { getUserByJWT } from "../utils/helpers";
 import { eq } from "drizzle-orm";
-
-const values = delegateTypeEnum.enumValues;
 
 export const delegateRouter = router({
   getAll: publicProcedure.query(() => db.select().from(delegates)),

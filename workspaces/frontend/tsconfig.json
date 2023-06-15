@@ -8,6 +8,6 @@
     "resolveJsonModule": true,
     "baseUrl": "."
   },
-  "include": ["src/**/*", "*.json", "../components/src/utils/helpers.ts"],
+  "include": ["src/**/*"],
   "references": [{ "path": "../components" }, { "path": "../backend" }]
 }

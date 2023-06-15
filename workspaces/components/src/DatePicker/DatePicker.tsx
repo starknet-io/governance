@@ -19,6 +19,7 @@ export const DatePicker = ({
   ...props
 }: Props & HTMLAttributes<HTMLElement>) => {
   return (
+    // @ts-expect-error todo
     <ReactDatePicker
       selected={selectedDate}
       onChange={onChange}

@@ -3,7 +3,7 @@ import { Card, CardHeader, CardBody, CardFooter, Box } from "@chakra-ui/react";
 import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { Button } from "../Button";
-import { truncateAddress } from "../utils";
+// import { truncateAddress } from "../utils";
 import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
 import { stripHtml } from "src/utils/helpers";
 
@@ -23,9 +23,9 @@ export const DelegateCard = (props: Props) => {
   const displayText = (htmlString: string) => {
     return stripHtml(htmlString);
   };
-  const addressToDisplay = starknetWalletAddress
-    ? truncateAddress(starknetWalletAddress)
-    : "";
+  // const addressToDisplay = starknetWalletAddress
+  //   ? truncateAddress(starknetWalletAddress)
+  //   : "";
   const fakeEthAddress = `${starknetWalletAddress?.slice(0, 5)}.eth`;
   console.log("USERID", userId);
   return (

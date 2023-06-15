@@ -11,7 +11,6 @@ import {
   Divider,
   Textarea,
   FormControl,
-  FormLabel,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";

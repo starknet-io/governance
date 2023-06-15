@@ -16,13 +16,13 @@ import {
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+// import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 export function Page() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   useEffect(() => {
-    const currentUrl = window.location.href;
-    const profileId = extractProfileId(currentUrl);
+    // const currentUrl = window.location.href;
+    // const profileId = extractProfileId(currentUrl);
   }, []);
 
   const extractProfileId = (url: string): string | null => {
@@ -54,7 +54,7 @@ export function Page() {
       updatedAt: new Date(item.updatedAt),
     }))[0] || null;
 
-  const { user: DynamicUser } = useDynamicContext();
+  // const { user: DynamicUser } = useDynamicContext();
   // console.log(DynamicUser);
   // temp eth address
   const fakeEthAddress = `${delegate?.starknetWalletAddress?.slice(0, 5)}.eth`;

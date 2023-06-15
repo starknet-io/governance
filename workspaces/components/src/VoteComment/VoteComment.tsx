@@ -1,4 +1,4 @@
-import { Box, Flex, VStack } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { Text } from "src/Text";
 import { truncateAddress } from "src/utils";
 

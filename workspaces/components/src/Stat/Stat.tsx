@@ -2,11 +2,11 @@ import { Badge, Box, Stack } from "@chakra-ui/react";
 import { Text as ChakraText } from "../Text";
 import moment from "moment";
 
-interface Props {
-  label: string | null;
-  value?: string | null;
-  component?: React.ReactNode;
-}
+// interface Props {
+//   label: string | null;
+//   value?: string | null;
+//   component?: React.ReactNode;
+// }
 
 interface RootProps {
   children?: React.ReactNode;

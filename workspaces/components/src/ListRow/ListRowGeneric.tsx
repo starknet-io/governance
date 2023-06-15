@@ -75,9 +75,9 @@ const Title = ({ label }: TitleProps) => {
   );
 };
 
-type DateProps = {
-  label?: string | null;
-};
+// type DateProps = {
+//   label?: string | null;
+// };
 
 const Date = () => {
   return (

@@ -2,7 +2,6 @@ import { DocumentProps } from "src/renderer/types";
 
 import {
   Box,
-  AppBar,
   Button,
   Heading,
   FormControl,
