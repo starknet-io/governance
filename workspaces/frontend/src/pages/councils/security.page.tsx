@@ -33,7 +33,7 @@ export function Page() {
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
             address="aasdfasdfas33332"
-            ethAddress="Security Council"
+            ethAddress="32423423423"
           >
             <ProfileSummaryCard.MoreActions
               onClick={() => console.log("red")}

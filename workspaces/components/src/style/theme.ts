@@ -9,6 +9,9 @@ import { cardTheme as Card } from "../Card/CardStyles";
 import { inputTheme as Input } from "../Input/InputStyles";
 import { textareaTheme as Textarea } from "../Textarea/TextareaStyles";
 import { iconButtonTheme as IconButton } from "../IconButton/IconButtonStyles";
+import { ProgressTheme as Progress } from "../Progress/ProgressStyles";
+import { modalTheme as Modal } from "../VoteModal/ModalStyles";
+import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
 
 const config = {
   initialColorMode: "light",
@@ -25,6 +28,8 @@ const theme = extendTheme(proTheme, {
     Card,
     Textarea,
     IconButton,
+    Modal,
+    Spinner,
     Checkbox: {
       baseStyle: {
         control: {
@@ -35,6 +40,7 @@ const theme = extendTheme(proTheme, {
       },
     },
     Input,
+    Progress,
   },
 });
 

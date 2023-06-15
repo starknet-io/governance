@@ -16,9 +16,14 @@ export { Tag } from "./Tag";
 export { ContentContainer } from "./ContentContainer";
 export { IconButton } from "./IconButton";
 export { Collapse } from "./Collapse";
-
+export { VoteButton } from "./VoteButton";
 export { VoteStat } from "./VoteStat";
-
+export { VoteComment } from "./VoteComment";
+export { VoteModal } from "./VoteModal";
+export { DelegateModal } from "./DelegateModal";
+export { DatePicker } from "./DatePicker";
+export { ConfirmModal } from "./ConfirmModal";
+export { LinkCard } from "./LinkCard";
 export {
   HiOutlineCodeBracketSquare,
   HiOutlineLockClosed,

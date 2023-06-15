@@ -5,7 +5,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea,
   Stack,
   Select,
   Checkbox,
@@ -13,6 +12,7 @@ import {
   Flex,
   Box,
   QuillEditor,
+  EditorTemplate,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -41,7 +41,9 @@ export function Page() {
     control,
     formState: { errors, isValid },
   } = useForm<FormValues>();
-  const [editorValue, setEditorValue] = useState<string>("");
+  const [editorValue, setEditorValue] = useState<string>(
+    EditorTemplate.delegate
+  );
   const createDelegate = trpc.delegates.saveDelegate.useMutation();
 
   const onSubmit = handleSubmit(async (data) => {

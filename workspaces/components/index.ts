@@ -29,6 +29,13 @@ export {
   IconButton,
   QuillEditor,
   Collapse,
+  VoteButton,
+  VoteComment,
+  VoteModal,
+  DelegateModal,
+  DatePicker,
+  ConfirmModal,
+  LinkCard,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -36,7 +43,17 @@ import * as SummaryItems from "./src/SummaryItems/SummaryItems";
 import * as ListRow from "./src/ListRow/ListRowGeneric";
 import * as Stat from "./src/Stat/Stat";
 import * as ProfileSummaryCard from "./src/ProfileSummaryCard/ProfileSummaryCard";
-export { Layout, SummaryItems, ListRow, Stat, ProfileSummaryCard };
+import * as EditorTemplate from "./src/Editor/templates";
+import * as Swap from "./src/Swap/Swap";
+export {
+  Layout,
+  SummaryItems,
+  ListRow,
+  Stat,
+  ProfileSummaryCard,
+  EditorTemplate,
+  Swap,
+};
 
 import {
   Flex,

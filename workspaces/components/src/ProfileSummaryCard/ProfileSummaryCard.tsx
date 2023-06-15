@@ -20,11 +20,11 @@ const Root = ({ children }: RootProps) => {
 
 type ProfileProps = {
   imgUrl?: string | null;
-  address: string | null | undefined;
+  address?: string | null | undefined;
   ethAddress?: string | null;
   subtitle?: string | null;
   children?: React.ReactNode;
-  size?: "sm" | "lg";
+  size?: "xs" | "sm" | "lg";
   avatarString?: string | null;
 };
 const Profile = ({
@@ -39,11 +39,24 @@ const Profile = ({
   const formattedAddress = address && truncateAddress(address);
 
   return (
-    <Box display="flex" alignItems="center" gap="16px">
+    <Box
+      display="flex"
+      alignItems="center"
+      gap={size === "lg" ? "16px" : size === "xs" ? "8px" : "16px"}
+    >
       {imgUrl ? (
-        <Avatar size={size === "lg" ? "lg" : "md"} src={imgUrl} />
+        // debug next line
+        // <Avatar size={size === "lg" ? "lg" || size ==="xs" ? "sm" : "md"} src={imgUrl} />
+
+        <Avatar
+          size={size === "lg" ? "lg" : size === "xs" ? "sm" : "md"}
+          src={imgUrl}
+        />
       ) : (
-        <Indenticon size={size === "lg" ? 64 : 48} address={avatarString} />
+        <Indenticon
+          size={size === "lg" ? 64 : size === "xs" ? 32 : 48}
+          address={avatarString}
+        />
       )}
       <Stack spacing="4px">
         <Heading

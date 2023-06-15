@@ -7,22 +7,6 @@ interface Props {
   value?: string | null;
   component?: React.ReactNode;
 }
-const Stat = (props: Props) => {
-  const { label, value, component, ...boxProps } = props;
-  return (
-    <Box {...boxProps}>
-      <Stack>
-        <ChakraText variant="breadcrumbs">{label}</ChakraText>
-        {value && (
-          <ChakraText fontWeight="bold" variant="breadcrumbs">
-            {value}
-          </ChakraText>
-        )}
-        {component && component}
-      </Stack>
-    </Box>
-  );
-};
 
 interface RootProps {
   children?: React.ReactNode;

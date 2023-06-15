@@ -9,7 +9,6 @@ import {
   HiOutlineAcademicCap,
   HiOutlineChatBubbleLeftRight,
   HiOutlineCodeBracketSquare,
-  HiOutlineDocumentText,
   HiOutlineLockClosed,
   HiOutlineQuestionMarkCircle,
   HiOutlineUserCircle,
@@ -92,35 +91,62 @@ const DynamicContextProviderPage = (props: Props) => {
 };
 
 function PageLayout(props: Props) {
-  const { children } = props;
+  const { children, pageContext } = props;
 
   return (
     <Layout.Root>
       <Layout.LeftAside>
         <Logo />
-        <NavItem href="/" icon={<MdOutlineHowToVote />} label="Proposals" />
-        <NavItem href="/" icon={<MdOutlineAssignment />} label="Snips" />
+        <NavItem
+          href="/voting-proposals"
+          //todo: fix how active state for menu works
+          active={pageContext.urlOriginal}
+          icon={<MdOutlineHowToVote />}
+          label="Voting proposals"
+        />
+        <NavItem
+          active={pageContext.urlOriginal}
+          href="/snips"
+          icon={<MdOutlineAssignment />}
+          label="Snips"
+        />
         <NavItem
           icon={<HiOutlineUserCircle />}
+          active={pageContext.urlOriginal}
           href="/delegates"
           label="Delegates"
         />
         <NavGroup label="Councils">
           <NavItem
+            active={pageContext.urlOriginal}
             icon={<HiOutlineCodeBracketSquare />}
             label="Builders"
             href="/councils/builders"
           />
           <NavItem
             icon={<HiOutlineLockClosed />}
+            active={pageContext.urlOriginal}
             label="Security"
             href="/councils/security"
           />
         </NavGroup>
         <NavGroup alignEnd>
-          <NavItem icon={<HiOutlineAcademicCap />} label="Learn" />
-          <NavItem icon={<HiOutlineQuestionMarkCircle />} label="Support" />
-          <NavItem icon={<HiOutlineChatBubbleLeftRight />} label="Feedback" />
+          <NavItem
+            href="/learn"
+            active={pageContext.urlOriginal}
+            icon={<HiOutlineAcademicCap />}
+            label="Learn"
+          />
+          <NavItem
+            active={pageContext.urlOriginal}
+            icon={<HiOutlineQuestionMarkCircle />}
+            label="Support"
+          />
+          <NavItem
+            active={pageContext.urlOriginal}
+            icon={<HiOutlineChatBubbleLeftRight />}
+            label="Feedback"
+          />
         </NavGroup>
       </Layout.LeftAside>
       <Layout.Main>

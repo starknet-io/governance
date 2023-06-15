@@ -1,33 +1,32 @@
-import { AvatarBadge, Box, HStack, Stack } from '@chakra-ui/react';
+import { Box, Flex, Progress, Stack } from "@chakra-ui/react";
 
-import { Text } from '../Text';
+import { Text } from "../Text";
+type Props = {
+  voteCount?: number;
+  type: "For" | "Against" | "Abstain";
+  active?: boolean;
+};
 
-export const VoteStat = () => {
+const variant = {
+  For: "success",
+  Against: "danger",
+  Abstain: "neutral",
+};
+
+export const VoteStat = (props: Props) => {
   return (
-    <Stack fontSize="sm" px="4" spacing="4">
-      <Stack direction="row" justify="space-between" spacing="4">
-        <HStack spacing="3">
-          <Box>
-            <Text fontWeight="medium" color="black">
-              sylve.eth
-            </Text>
-          </Box>
-          <Text color="black">10.5B votes</Text>
-        </HStack>
-      </Stack>
-      <Text
-        color="black"
-        sx={{
-          '-webkit-box-orient': 'vertical',
-          '-webkit-line-clamp': '2',
-          overflow: 'hidden',
-          display: '-webkit-box',
-        }}
-      >
-        The Builder’s council is excited about the new features but
-        expects higher quality of documentation for future releases.
-        For this reason the council has voted against...
-      </Text>
+    <Stack fontSize="10px" spacing="4px" textTransform="uppercase">
+      <Flex flexDirection="row" gap="8px" justifyContent="space-between">
+        <Box>
+          <Text fontWeight="medium" color="black">
+            55 % for
+          </Text>
+        </Box>
+        <Text color="black">8.68 Votes</Text>
+      </Flex>
+      <Box mb="20px" width="100%">
+        <Progress variant={variant[props.type]} height="4px" value={55} />
+      </Box>
     </Stack>
   );
 };

@@ -5,6 +5,7 @@ import { BsDiscord, BsGithub, BsTelegram, BsTwitter } from "react-icons/bs";
 import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { truncateAddress } from "src/utils";
+import { Heading } from "src/Heading";
 // import type { delegateTypeEnum } from '@yukilabs/governance-backend/src/db/schema/delegates';
 
 type RootProps = {
@@ -14,7 +15,6 @@ type RootProps = {
 const Root = ({ children, direction = "column" }: RootProps) => {
   return (
     <Box
-      my="32px"
       pt="40px"
       display="flex"
       position="relative"
@@ -40,7 +40,7 @@ const Item = (props: ItemProps) => {
   const { label, value, children, isTruncated } = props;
   return (
     <Flex justify="space-between" fontSize="sm">
-      <Text fontWeight="medium" color="gray.600">
+      <Text fontWeight="medium" color="#6C6C75">
         {label}
       </Text>
       {value ? (
@@ -64,9 +64,15 @@ const Title = (props: TitleProps) => {
   const { label, size = "md" } = props;
   return (
     <Box width="full" pos="absolute" top="0px">
-      <Text size={size} fontWeight="medium" color="gray.600">
+      <Heading
+        variant="h4"
+        size={size}
+        fontWeight="500"
+        color="#33333E"
+        fontSize="16px"
+      >
         {label}
-      </Text>
+      </Heading>
     </Box>
   );
 };

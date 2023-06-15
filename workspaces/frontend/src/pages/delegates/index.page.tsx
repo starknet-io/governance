@@ -32,7 +32,11 @@ export function Page() {
   return (
     <ContentContainer>
       <Box>
-        <PageTitle title="Delegates" />
+        <PageTitle
+          learnMoreLink="/learn"
+          title="Delegates"
+          description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol."
+        />
         <AppBar>
           <Box mr="8px">
             <SearchInput />

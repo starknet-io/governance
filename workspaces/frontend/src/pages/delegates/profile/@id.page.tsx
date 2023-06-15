@@ -2,7 +2,9 @@ import { DocumentProps } from "src/renderer/types";
 
 import {
   Box,
+  ConfirmModal,
   ContentContainer,
+  DelegateModal,
   Divider,
   Heading,
   ListRow,
@@ -10,14 +12,14 @@ import {
   QuillEditor,
   Stack,
   SummaryItems,
-  Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 export function Page() {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   useEffect(() => {
     const currentUrl = window.location.href;
     const profileId = extractProfileId(currentUrl);
@@ -64,6 +66,8 @@ export function Page() {
       flex="1"
       height="100%"
     >
+      <DelegateModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <ConfirmModal isOpen={false} onClose={() => setIsOpen(false)} />
       <Box
         pt="40px"
         px="32px"
@@ -85,12 +89,11 @@ export function Page() {
           </ProfileSummaryCard.Profile>
           <ProfileSummaryCard.PrimaryButton
             label="Delegate your votes"
-            onClick={() => console.log("red")}
+            onClick={() => setIsOpen(true)}
           />
         </ProfileSummaryCard.Root>
 
         <SummaryItems.Root>
-          <SummaryItems.Title label="Stats" />
           <SummaryItems.Item label="Proposals voted on" value="-" />
           <SummaryItems.Item label="Delegated votes" value="-" />
           <SummaryItems.Item label="Total comments" value="-" />
@@ -105,18 +108,16 @@ export function Page() {
             value={delegate?.starknetWalletAddress}
           />
         </SummaryItems.Root>
-        <Divider />
+        <Divider mt="32px" />
         <SummaryItems.Root direction="row">
-          <SummaryItems.Title label="Social" />
           <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
           <SummaryItems.Socials label="discourse" value={delegate?.discourse} />
           <SummaryItems.Socials label="discord" value={delegate?.discord} />
           {/* <SummaryItems.Socials label="telegram" value="@cillianh" />
           <SummaryItems.Socials label="github" value="@cillianh" /> */}
         </SummaryItems.Root>
-        <Divider />
+        <Divider mt="32px" />
         <SummaryItems.Root>
-          <SummaryItems.Title label="Expertise" />
           <SummaryItems.Tags type={delegate?.delegateType} />
         </SummaryItems.Root>
       </Box>

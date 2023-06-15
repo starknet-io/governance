@@ -1,5 +1,5 @@
 import { DocumentProps } from "src/renderer/types";
-
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -7,11 +7,12 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea,
   Stack,
   Select,
   Flex,
   ContentContainer,
+  QuillEditor,
+  EditorTemplate,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -24,10 +25,13 @@ export function Page() {
     register,
     formState: { errors, isValid },
   } = useForm<RouterInput["proposals"]["createSNIP"]>();
+  const [editorValue, setEditorValue] = useState<string>(EditorTemplate.snip);
   const createSNIP = trpc.proposals.createSNIP.useMutation();
 
   const onSubmit = handleSubmit(async (data) => {
+    console.log(data);
     try {
+      data.description = editorValue;
       await createSNIP.mutateAsync(data);
       navigate("/");
     } catch (error) {
@@ -56,16 +60,21 @@ export function Page() {
                 />
                 {errors.title && <span>This field is required.</span>}
               </FormControl>
-              <FormControl id="delegate-statement">
+              <FormControl id="proposal-body">
                 <FormLabel>Proposal Body</FormLabel>
-                <Textarea
+                <QuillEditor
+                  onChange={(e) => setEditorValue(e)}
+                  value={editorValue}
+                />
+                {errors.description && <span>This field is required.</span>}
+                {/* <Textarea
                   variant="primary"
                   placeholder="Enter your delegate statement here..."
                   {...register("description", {
                     required: true,
                   })}
                 />
-                {errors.description && <span>This field is required.</span>}
+                {errors.description && <span>This field is required.</span>} */}
               </FormControl>
               <FormControl id="delegate-statement">
                 <FormLabel>Forum discussion(optional)</FormLabel>

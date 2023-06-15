@@ -8,33 +8,68 @@
   border: none !important;
   box-shadow: none !important;
   background-color: transparent !important;
+  font-size: 15px !important;
+  font-family:"Inter";
+  min-height: auto;
+  box-shadow: none !important;
 }
 .quill_readonly .ql-editor {
   background-color: transparent !important;
   padding: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Styles for editable mode */
 .ql-editor {
   background-color: #fff;
+  color:#292932 !important;
 }
 .ql-toolbar {
-  border: 1px solid #E4E5E7 !important;
-  background-color: #fff;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  box-shadow: 0px 1px 1px rgba(228, 229, 231, 0.5);
+  border: none !important;
+  border-top: 1px solid #E4E5E7 !important;
+color:#6C6C75 !important;
+  background-color: transparent;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  box-shadow: none !important;
+  padding-left: 0px !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  position:absolute;
+  bottom:20px;
+  left:15px;
+  right: 15px;
+  height:30px;
+  z-index: 1;
 }
 .ql-container {
   border-top: none;
   border: 1px solid #E4E5E7 !important;
   background-color: #fff;
   box-shadow: 0px 1px 1px rgba(228, 229, 231, 0.5);
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-radius: 5px !important;
+  font-size: 14px;
+
 }
 .ql-editor {
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  min-height: 200px;
+border-radius: 5px !important;
+  line-height: 28px !important;
+  min-height: 172px;
+  position: relative;
+  background: #FFFFFF;
+    /* Stroke 1 */
+
+    /* border: 1px solid #E4E5E7; */
+    /* Input shadow */
+
+    box-shadow: 0px 1px 1px rgba(228, 229, 231, 0.5);
+    padding-bottom:72px;
+}
+
+.ql-snow .ql-stroke {
+  fill: none;
+  stroke: #6C6C75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
 }

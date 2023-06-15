@@ -6,14 +6,15 @@ interface NavItemProps {
   href?: string;
   label: string;
   subtle?: boolean;
-  active?: boolean;
-  icon: ReactElement;
+  active?: string;
+  icon?: ReactElement;
   endElement?: ReactElement;
   children?: ReactNode;
 }
 
 export const NavItem = (props: NavItemProps) => {
   const { active, subtle, icon, children, label, endElement, href } = props;
+  const isActive = active === href;
   return (
     <HStack
       as="a"
@@ -26,13 +27,15 @@ export const NavItem = (props: NavItemProps) => {
       userSelect="none"
       rounded="md"
       transition="all 0.2s"
-      bg={active ? "#EEEEF1" : undefined}
+      bg={isActive ? "#EEEEF1" : ""}
       _hover={{ bg: "#EEEEF1" }}
       _active={{ bg: "#EEEEF1" }}
     >
-      <Box fontSize="19px" color={active ? "currentcolor" : "#6C6C75"}>
-        {icon}
-      </Box>
+      {icon && (
+        <Box fontSize="19px" color={active ? "currentcolor" : "#6C6C75"}>
+          {icon}
+        </Box>
+      )}
       <Box
         flex="1"
         fontWeight="inherit"
