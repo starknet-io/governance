@@ -24,6 +24,14 @@ export { DelegateModal } from "./DelegateModal";
 export { DatePicker } from "./DatePicker";
 export { ConfirmModal } from "./ConfirmModal";
 export { LinkCard } from "./LinkCard";
+export { CheckboxFilter } from "./Filter/CheckboxFilter";
+export {
+  FilterPopoverButton,
+  FilterPopoverContent,
+  FilterPopoverIcon,
+} from "./Filter/FilterPopover";
+export { useFilterState } from "./Filter/useFilterState";
+
 export {
   HiOutlineCodeBracketSquare,
   HiOutlineLockClosed,
@@ -35,6 +43,7 @@ export {
   HiOutlineChatBubbleLeftEllipsis,
   MdOutlineHowToVote,
   MdOutlineAssignment,
+  HiAdjustmentsHorizontal,
 } from "./Icons";
 
 export { QuillEditor } from "./Editor";

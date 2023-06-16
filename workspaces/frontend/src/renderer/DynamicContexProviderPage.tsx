@@ -108,7 +108,7 @@ function PageLayout(props: Props) {
           active={pageContext.urlOriginal}
           href="/snips"
           icon={<MdOutlineAssignment />}
-          label="Snips"
+          label="SNIPs"
         />
         <NavItem
           icon={<HiOutlineUserCircle />}

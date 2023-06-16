@@ -2,7 +2,6 @@ import { DocumentProps } from "src/renderer/types";
 
 import {
   Box,
-  Text,
   Heading,
   ContentContainer,
   Stack,
@@ -11,6 +10,7 @@ import {
   Divider,
   Textarea,
   FormControl,
+  QuillEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -65,7 +65,11 @@ export function Page() {
                 Overview
               </Heading>
               {/* // markdown comp */}
-              <Text variant="body">{snip.data?.description}</Text>
+              {/* <Text variant="body">{snip.data?.description}</Text> */}
+              <QuillEditor
+                value={snip.data?.description || undefined}
+                readOnly
+              />
               <Divider my="32px" />
               <Heading color="#33333E" variant="h3">
                 Discussion

@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import { PageShell } from "./PageShell";
 import type { PageContextClient } from "./types";
+import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 export const clientRouting = true;
 export const hydrationCanBeAborted = true;
@@ -9,8 +10,10 @@ let root: ReactDOM.Root;
 
 export async function render(pageContext: PageContextClient) {
   const { Page, pageProps } = pageContext;
+  const apolloClient = makeApolloClient(pageContext.apolloIntialState)
+
   const page = (
-    <PageShell pageContext={pageContext}>
+    <PageShell pageContext={pageContext} apolloClient={apolloClient}>
       <Page {...pageProps} />
     </PageShell>
   );
@@ -36,4 +39,10 @@ export function onPageTransitionStart() {
 export function onPageTransitionEnd() {
   console.log("Page transition end");
   document.querySelector("body")!.classList.remove("page-is-transitioning");
+}
+function makeApolloClient(apolloIntialState: any) {
+  return new ApolloClient({
+    uri: 'https://hub.snapshot.org/graphql',
+    cache: new InMemoryCache().restore(apolloIntialState)
+  })
 }

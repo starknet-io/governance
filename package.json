@@ -24,6 +24,6 @@
     "typescript": "^5.1.3"
   },
   "resolutions": {
-    "@onflow/fcl@^1.3.2": "patch:@onflow/fcl@npm%3A1.3.2#./.yarn/patches/@onflow-fcl-npm-1.3.2-906125419f.patch"
+    "@onflow/fcl@1.3.2": "patch:@onflow/fcl@npm%3A1.3.2#./.yarn/patches/@onflow-fcl-npm-1.3.2-906125419f.patch"
   }
 }

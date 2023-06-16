@@ -17,8 +17,38 @@ import {
   VoteModal,
   VoteStat,
 } from "@yukilabs/governance-components";
+import { gql } from "src/gql";
+import { useQuery } from "@apollo/client";
+import { usePageContext } from "src/renderer/PageContextProvider";
 
 export function Page() {
+  const pageContext = usePageContext();
+
+  const { data } = useQuery(
+    gql(`query Proposal($id: String!) {
+    proposal(id:$id) {
+      id
+      title
+      choices
+      votes
+      scores
+      scores_by_strategy
+      scores_state
+      scores_total
+      scores_updated
+      strategies {
+        network
+        params
+      }
+    }
+  }`),
+    {
+      variables: {
+        id: pageContext.routeParams!.id,
+      },
+    }
+  );
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <Box
@@ -32,7 +62,7 @@ export function Page() {
         <Box width="100%" maxWidth="662px" pb="200px" mx="auto">
           <Stack spacing="24px" direction={{ base: "column" }} color="#545464">
             <Heading color="#33333E" variant="h3">
-              Support for scoped storage variables
+              {data?.proposal?.title}
             </Heading>
             <Flex gap="80px" paddingTop="24px">
               <Stat.Root>
@@ -41,7 +71,7 @@ export function Page() {
               </Stat.Root>
               <Stat.Root>
                 <Stat.Label>Status</Stat.Label>
-                <Stat.Status status={"Living"} />
+                <Stat.Status status={"closed"} />
               </Stat.Root>
               <Stat.Root>
                 <Stat.Label>Created on</Stat.Label>
@@ -134,9 +164,9 @@ export function Page() {
             Results
           </Heading>
 
-          <VoteStat type={"For"} />
-          <VoteStat type={"Against"} />
-          <VoteStat type={"Abstain"} />
+          {data?.proposal?.choices.map((choice) => (
+            <VoteStat key={choice} type="Abstain" />
+          ))}
         </Box>
         <Divider mb="40px" />
         <Box mb="40px">

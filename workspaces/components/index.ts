@@ -12,6 +12,7 @@ export {
   HiOutlineQuestionMarkCircle,
   HiOutlineChatBubbleLeftRight,
   HiOutlineChatBubbleLeftEllipsis,
+  HiAdjustmentsHorizontal,
   MdOutlineHowToVote,
   MdOutlineAssignment,
   Heading,
@@ -37,6 +38,11 @@ export {
   DatePicker,
   ConfirmModal,
   LinkCard,
+  CheckboxFilter,
+  FilterPopoverButton,
+  FilterPopoverContent,
+  useFilterState,
+  FilterPopoverIcon,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -78,6 +84,8 @@ import {
   Avatar,
   Divider,
   ButtonGroup,
+  Icon,
+  Popover,
 } from "@chakra-ui/react";
 
 export {
@@ -102,4 +110,6 @@ export {
   CheckboxGroup,
   Avatar,
   Divider,
+  Icon,
+  Popover,
 };

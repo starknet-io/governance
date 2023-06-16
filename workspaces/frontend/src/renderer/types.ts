@@ -8,6 +8,7 @@ import type {
   PageContextBuiltInClientWithServerRouting as PageContextBuiltInClient
   //*/
 } from "vite-plugin-ssr/types";
+import { ApolloClient } from '@apollo/client'
 
 type Page = (pageProps: PageProps) => React.ReactElement;
 
@@ -31,6 +32,8 @@ export type PageContextCustom = {
   event: null | WorkerGlobalScopeEventMap["fetch"];
   userAgent: string;
   redirectTo?: string;
+  apolloClient?: ApolloClient<any>;
+  apolloIntialState: any
 };
 
 export type PageContextServer = PageContextBuiltIn<Page> & PageContextCustom;

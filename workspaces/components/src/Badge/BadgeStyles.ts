@@ -6,37 +6,39 @@ const last_call = defineStyle({
   borderColor: "rgba(217, 12, 49, 0.1)",
 });
 const active = defineStyle({
-  background: "#D4F7E8",
-  color: "#187C52",
-  borderColor: "rgba(32, 162, 107, 0.12)",
+  background: "#20AC70",
+  color: "#fff",
 });
 const Draft = defineStyle({
-  background: "#D4F7E8",
-  color: "#187C52",
-  borderColor: "rgba(32, 162, 107, 0.12)",
+  background: "#3F8CFF",
+  color: "#fff",
 });
 const pending = defineStyle({
   background: "#F2F2F3",
   color: "#6C6C75",
-  borderColor: "rgba(114, 113, 122, 0.16)",
 });
 const review = defineStyle({
   background: "#F2F2F3",
-  color: "#6C6C75",
-  borderColor: "rgba(114, 113, 122, 0.16)",
+  color: "#fff",
+});
+const closed = defineStyle({
+  background: "#7136ED",
+  color: "#fff",
 });
 
 export const badgeTheme = defineStyleConfig({
   baseStyle: {
     paddingLeft: "8px",
     paddingRight: "8px",
-    borderRadius: "3px",
+    paddingTop: "4px",
+    paddingBottom: "4px",
+    borderRadius: "4px",
     height: "auto",
     color: "#fff",
     fontSize: "11px",
-    fontWeight: "medium",
+    fontWeight: "500",
     textTransform: "uppercase",
-    borderWidth: "1px",
+    borderWidth: "0px",
     borderStyle: "solid",
   },
   variants: {
@@ -45,5 +47,6 @@ export const badgeTheme = defineStyleConfig({
     pending,
     review,
     Draft,
+    closed,
   },
 });

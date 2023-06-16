@@ -1,4 +1,11 @@
-import { Card, CardHeader, CardBody, CardFooter, Box } from "@chakra-ui/react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Box,
+  Tooltip,
+} from "@chakra-ui/react";
 
 import { Text } from "../Text";
 import { Tag } from "../Tag";
@@ -50,7 +57,23 @@ export const DelegateCard = (props: Props) => {
         <Box width="100%" display="flex" flexDirection="column" gap="16px">
           <Box display="flex" flexDirection="row" gap="16px">
             {Array.isArray(delegateType) ? (
-              delegateType?.map((item: string) => <Tag key={item}>{item}</Tag>)
+              <>
+                {delegateType.slice(0, 2).map((item: string) => (
+                  <Tag variant="listCard" key={item}>
+                    {item}
+                  </Tag>
+                ))}
+                {delegateType.length > 2 && (
+                  <Tooltip
+                    hasArrow
+                    shouldWrapChildren
+                    placement="top"
+                    label={delegateType.slice(2).join(", ")}
+                  >
+                    <Tag variant="listCard">+{delegateType.length - 2}</Tag>
+                  </Tooltip>
+                )}
+              </>
             ) : (
               <></>
             )}

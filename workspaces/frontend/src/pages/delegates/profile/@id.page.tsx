@@ -116,9 +116,8 @@ export function Page() {
           {/* <SummaryItems.Socials label="telegram" value="@cillianh" />
           <SummaryItems.Socials label="github" value="@cillianh" /> */}
         </SummaryItems.Root>
-        <Divider />
+        <Divider mt="32px" />
         <SummaryItems.Root>
-          <SummaryItems.Title label="Expertise" />
           {Array.isArray(delegate?.delegateType) ? (
             delegate?.delegateType?.map((item: any) => (
               <SummaryItems.Tags key={item} type={item} />

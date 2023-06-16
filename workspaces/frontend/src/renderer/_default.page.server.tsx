@@ -1,8 +1,8 @@
-import { renderToStream } from "react-streaming/server";
-import { escapeInject } from "vite-plugin-ssr/server";
+import { dangerouslySkipEscape, escapeInject } from "vite-plugin-ssr/server";
 import { PageContextServer } from "./types";
 import { PageShell } from "./PageShell";
 import { getDefaultPageContext } from "./helpers";
+import { getDataFromTree } from '@apollo/client/react/ssr'
 
 // See https://vite-plugin-ssr.com/data-fetching
 export const passToClient = [
@@ -12,6 +12,7 @@ export const passToClient = [
   "documentProps",
   "locale",
   "data",
+  "apolloIntialState"
 ];
 
 export async function onBeforeRender(pageContext: PageContextServer) {
@@ -28,16 +29,24 @@ export async function render(pageContext: PageContextServer) {
   const documentProps =
     pageContext.documentProps ?? pageContext.exports.documentProps;
 
+  const { apolloClient } = pageContext;
+
+
+  // See https://www.apollographql.com/docs/react/performance/server-side-rendering/
   const page = (
-    <PageShell pageContext={pageContext}>
+    <PageShell pageContext={pageContext} apolloClient={apolloClient!}>
       <Page {...pageProps} />
     </PageShell>
   );
 
+  const pageHtml = await getDataFromTree(page)
+  const apolloIntialState = apolloClient!.extract()
+
+
   // Streaming is optional and we can use renderToString() instead
-  const stream = await renderToStream(page, {
-    userAgent: pageContext.userAgent,
-  });
+  // const stream = await renderToStream(page, {
+  //   userAgent: pageContext.userAgent,
+  // });
 
   const GOOGLE_TAG_ID = "G-WY42TERK5P";
 
@@ -86,9 +95,14 @@ export async function render(pageContext: PageContextServer) {
       </script>
     </head>
     <body>
-      <div id="page-view">${stream}</div>
+      <div id="page-view">${dangerouslySkipEscape(pageHtml)}</div>
     </body>
   </html>`;
 
-  return { documentHtml };
+  return {
+    documentHtml,
+    pageContext: {
+      apolloIntialState
+    }
+  }
 }

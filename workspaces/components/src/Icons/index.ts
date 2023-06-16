@@ -7,6 +7,7 @@ import {
   HiOutlineQuestionMarkCircle,
   HiOutlineChatBubbleLeftRight,
   HiOutlineChatBubbleLeftEllipsis,
+  HiAdjustmentsHorizontal,
 } from "react-icons/hi2";
 import { MdOutlineHowToVote, MdOutlineAssignment } from "react-icons/md";
 
@@ -21,4 +22,5 @@ export {
   HiOutlineChatBubbleLeftEllipsis,
   MdOutlineHowToVote,
   MdOutlineAssignment,
+  HiAdjustmentsHorizontal,
 };

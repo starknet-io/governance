@@ -26,6 +26,6 @@ export default defineConfig({
     },
   },
   ssr: {
-    noExternal: ["@chakra-ui/*", "react-icons"],
+    noExternal: ["@chakra-ui/*", "react-icons", "@apollo/client"],
   },
 }) as UserConfig;

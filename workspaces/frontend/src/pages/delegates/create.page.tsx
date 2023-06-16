@@ -6,13 +6,13 @@ import {
   FormLabel,
   Input,
   Stack,
-  Select,
   Checkbox,
   ContentContainer,
   Flex,
   Box,
   QuillEditor,
   EditorTemplate,
+  Multiselect,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -85,16 +85,22 @@ export function Page() {
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Delegate type</FormLabel>
-                <Select
-                  placeholder="Select option"
-                  {...register("delegateType", { required: true })}
-                >
-                  {delegateTypeValues.map((delegateType) => (
-                    <option key={delegateType} value={delegateType}>
-                      {delegateType}
-                    </option>
-                  ))}
-                </Select>
+                <Controller
+                  name="delegateType"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Multiselect
+                      options={delegateTypeValues.map((option) => ({
+                        value: option,
+                        label: option,
+                      }))}
+                      value={field.value as any}
+                      onChange={(values) => field.onChange(values)}
+                    />
+                  )}
+                />
+                {errors.delegateType && <span>This field is required</span>}
                 {errors.delegateType && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-wallet-address">

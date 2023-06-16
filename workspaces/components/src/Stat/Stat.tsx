@@ -34,11 +34,12 @@ interface StatusProps {
     | "Stagnant"
     | "Withdrawn"
     | "Living"
+    | "closed"
     | null;
 }
 const Status = ({ status }: StatusProps) => {
   return (
-    <Badge size="xs" variant={"active"}>
+    <Badge size="xs" variant={`${status}`}>
       {`${status}`}
     </Badge>
   );

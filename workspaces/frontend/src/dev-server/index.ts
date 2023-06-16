@@ -5,6 +5,7 @@ import { createServer } from "vite";
 import fetch from "node-fetch";
 import compression from "compression";
 import { apiRouter } from "../api";
+import  { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
 
 const app = express();
 
@@ -42,10 +43,12 @@ app.all(/\/api(.*)/, async (req, res, next) => {
 app.get("*", async (req, res, next) => {
   try {
     const userAgent = req.headers["user-agent"]!;
+    const apolloClient = makeApolloClient()
     const pageContextInit = {
       urlOriginal: req.originalUrl,
       fetch: fetch as WindowOrWorkerGlobalScope["fetch"],
       userAgent,
+      apolloClient
     };
 
     const pageContext: any = await renderPage(pageContextInit);
@@ -63,6 +66,19 @@ app.get("*", async (req, res, next) => {
     console.log(err)
   }
 });
+
+
+function makeApolloClient() {
+  const apolloClient = new ApolloClient({
+    ssrMode: true,
+    link: createHttpLink({
+      uri: 'https://hub.snapshot.org/graphql',
+      // fetch
+    }),
+    cache: new InMemoryCache()
+  })
+  return apolloClient
+}
 
 const port = 3000;
 app.listen(port);

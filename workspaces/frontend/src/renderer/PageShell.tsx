@@ -3,8 +3,11 @@ import { PageContextProvider } from "./PageContextProvider";
 import type { PageContext } from "./types";
 import { TrpcProvider } from "./TrpcProvider";
 import DynamicContextProviderPage from "./DynamicContexProviderPage";
+import { ApolloProvider, ApolloClient } from "@apollo/client";
+
 interface Props {
   readonly pageContext: PageContext;
+  readonly apolloClient: ApolloClient<any>;
   readonly children: React.ReactNode;
 }
 
@@ -21,11 +24,13 @@ export function PageShell(props: Props) {
   return (
     <React.StrictMode>
       <PageContextProvider pageContext={pageContext}>
-        <TrpcProvider>
-          <DynamicContextProviderPage pageContext={pageContext}>
-            {children}
-          </DynamicContextProviderPage>
-        </TrpcProvider>
+        <ApolloProvider client={props.apolloClient}>
+          <TrpcProvider>
+            <DynamicContextProviderPage pageContext={pageContext}>
+              {children}
+            </DynamicContextProviderPage>
+          </TrpcProvider>
+        </ApolloProvider>
       </PageContextProvider>
     </React.StrictMode>
   );

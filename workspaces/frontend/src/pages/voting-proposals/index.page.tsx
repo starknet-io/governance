@@ -1,3 +1,5 @@
+import { useQuery } from "@apollo/client";
+import { gql } from "src/gql/gql";
 import { DocumentProps } from "src/renderer/types";
 
 import {
@@ -9,10 +11,32 @@ import {
   ListRow,
   SearchInput,
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
+
+const GET_PROPOSALS = gql(`
+query proposals {
+  proposals(first: 20, skip: 0, where: {space_in: ["starknet.eth"]}, orderBy: "created", orderDirection: desc) {
+    id
+    title
+    body
+    choices
+    start
+    end
+    snapshot
+    state
+    author
+    space {
+      id
+      name
+    }
+  }
+}
+
+  `);
+
+
 
 export function Page() {
-  const proposals = trpc.proposals.getAll.useQuery();
+  const {data} = useQuery(GET_PROPOSALS);
 
   return (
     <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px">
@@ -45,14 +69,15 @@ export function Page() {
         </Box>
       </AppBar>
       <ListRow.Container>
-        {proposals.data?.map((data) => (
-          <ListRow.Root key={data.id} href={`/voting-proposals/1`}>
-            <ListRow.MutedText id={data.id} type={data.type} />
-            <ListRow.Title label={data.title} />
-            {/* <ListRow.Date /> */}
+
+        {data?.proposals?.map((data) => (
+          <ListRow.Root key={data!.id} href={`/voting-proposals/${data!.id}`}>
+            <ListRow.MutedText id={1} type="vote" />
+            <ListRow.Title label={data!.title} />
+            <ListRow.Date />
 
             <ListRow.Comments count={0} />
-            <ListRow.Status status={data.status} />
+            <ListRow.Status status={data!.state!} />
           </ListRow.Root>
         ))}
       </ListRow.Container>
