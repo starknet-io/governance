@@ -19,6 +19,7 @@
     "@cloudflare/workers-types": "^4.20230518.0",
     "@dynamic-labs/sdk-react": "^0.17.4",
     "@dynamic-labs/types": "^0.17.4",
+    "@dynamic-labs/wagmi-connector": "^0.15.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@graphql-codegen/cli": "^4.0.1",
     "@graphql-codegen/typescript": "^4.0.0",
@@ -38,6 +39,7 @@
     "@yukilabs/governance-backend": "workspace:*",
     "@yukilabs/governance-components": "workspace:*",
     "compression": "^1.7.4",
+    "ethers": "^5.7.2",
     "express": "^4.18.2",
     "fsevents": "^2.3.2",
     "graphql": "^16.6.0",
@@ -53,6 +55,7 @@
     "vite-node": "0.31.1",
     "vite-plugin-ssr": "^0.4.131",
     "vite-tsconfig-paths": "^4.2.0",
+    "wagmi": "^0.10.8",
     "wrangler": "^3.1.0"
   },
   "devDependencies": {

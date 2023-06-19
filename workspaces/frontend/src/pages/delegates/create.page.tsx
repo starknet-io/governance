@@ -100,7 +100,6 @@ export function Page() {
                     />
                   )}
                 />
-                {errors.delegateType && <span>This field is required</span>}
                 {errors.delegateType && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-wallet-address">

@@ -25,6 +25,7 @@ import {
 import { Suspense, useEffect, useState } from "react";
 import { PageContext } from "./types";
 import { trpc } from "src/utils/trpc";
+import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -80,7 +81,9 @@ const DynamicContextProviderPage = (props: Props) => {
       <ThemeProvider>
         <Suspense fallback={<p>Loading...</p>}>
           {(pageContext.hasLayout ?? true) === true ? (
-            <PageLayout pageContext={pageContext}>{children}</PageLayout>
+            <PageLayout pageContext={pageContext}>
+              <DynamicWagmiConnector>{children}</DynamicWagmiConnector>
+            </PageLayout>
           ) : (
             children
           )}

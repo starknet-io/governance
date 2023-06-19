@@ -12,16 +12,25 @@ const Root = ({ children }: Props) => {
   return <Flex flexDirection="column">{children}</Flex>;
 };
 
+const shortAddress = (address: string | null) => {
+  if (address) return address.slice(0, 3) + "..." + address.slice(-3);
+  return "test.eth";
+};
+
 type UserSummaryProps = {
   address?: string | null;
   ethAddress?: string | null;
   avatarString?: string | null;
   balance?: string | null;
+  text?: string | null;
+  symbol?: string;
 };
 const UserSummary = ({
   address = "0x23423423423423423423423432",
   ethAddress = "robwalsh.eth",
   balance = "100,000",
+  text = "From",
+  symbol = "STRK",
 }: UserSummaryProps) => {
   return (
     <Box
@@ -36,12 +45,12 @@ const UserSummary = ({
     >
       <Flex flexDirection="column" gap="8px">
         <Text color="#6C6C75" as="span">
-          From
+          {text}
         </Text>
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
             size="xs"
-            ethAddress={ethAddress}
+            ethAddress={shortAddress(ethAddress)}
             avatarString={address}
           ></ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>
@@ -51,7 +60,7 @@ const UserSummary = ({
           Available Balance
         </Text>
         <Text color="#292932" fontSize="16px">
-          {balance} STRK
+          {balance} {symbol}
         </Text>
       </Flex>
     </Box>

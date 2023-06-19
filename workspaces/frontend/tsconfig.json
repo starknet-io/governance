@@ -6,8 +6,9 @@
     "types": ["vite/client", "@cloudflare/workers-types", "@types/gapi"],
     "jsx": "react-jsx",
     "resolveJsonModule": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "strict": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/utils/abiJson.json"],
   "references": [{ "path": "../components" }, { "path": "../backend" }]
 }

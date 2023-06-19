@@ -34,7 +34,7 @@ export const DelegateCard = (props: Props) => {
   //   ? truncateAddress(starknetWalletAddress)
   //   : "";
   const fakeEthAddress = `${starknetWalletAddress?.slice(0, 5)}.eth`;
-  console.log("USERID", userId);
+
   return (
     <Card as="a" href={`/delegates/profile/${id}`} variant="outline">
       <CardHeader>

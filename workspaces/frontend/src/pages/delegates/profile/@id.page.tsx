@@ -15,11 +15,63 @@ import {
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
-import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
-// import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import {
+  Chain,
+  useAccount,
+  useBalance,
+  useContractWrite,
+  useEnsName,
+  useNetwork,
+} from "wagmi";
+import abiJson from "src/utils/abiJson.json";
+
+const abi = [...abiJson] as const;
+
+const WagmiData = (
+  address: `0x${string}` | undefined,
+  chain: (Chain & { unsupported?: boolean | undefined }) | undefined
+) => {
+  const { data: balance } = useBalance({
+    address,
+    chainId: chain?.id,
+    token: "0x65aFADD39029741B3b8f0756952C74678c9cEC93", //USDC Goerli test token address
+  });
+  const { data: ensName } = useEnsName({
+    address,
+  });
+
+  return {
+    address,
+    balance: balance?.formatted ?? "0",
+    ethAddress: ensName ?? address,
+    symbol: balance?.symbol ?? "STRK",
+  };
+};
+
+const id = "0x0000000000000000000000000000000000000000000000000000000000000000";
+
+const useSetDelegateContractWrite = (userAddress?: string) => {
+  const args = userAddress ? [id, userAddress] : undefined;
+
+  const { write, isLoading } = useContractWrite({
+    address: "0x469788fE6E9E9681C6ebF3bF78e7Fd26Fc015446",
+    abi,
+    functionName: "setDelegate",
+    mode: "recklesslyUnprepared",
+    args,
+  });
+
+  return { write, isLoading };
+};
 
 export function Page() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+
+  const { write, isLoading } = useSetDelegateContractWrite(userAddress);
+
   useEffect(() => {
     // const currentUrl = window.location.href;
     // const profileId = extractProfileId(currentUrl);
@@ -38,27 +90,39 @@ export function Page() {
   const getDelegate = () => {
     const profileId = extractProfileId(window.location.href);
     if (profileId) {
-      return trpc.delegates.getDelegateById.useQuery({
-        id: profileId,
-      });
+      return trpc.delegates.getDelegateById.useQuery(
+        {
+          id: profileId,
+        },
+        {
+          onSuccess: (data) => {
+            setUserAddress(data?.[0]?.users?.address);
+          },
+        }
+      );
     }
     return undefined;
   };
 
   const delegateResponse = typeof window !== "undefined" ? getDelegate() : null;
 
-  const delegate: Delegate | null =
-    delegateResponse?.data?.map((item) => ({
-      ...item,
-      createdAt: new Date(item.createdAt),
-      updatedAt: new Date(item.updatedAt),
-    }))[0] || null;
+  const delegate = delegateResponse?.data?.[0].delegates;
 
-  // const { user: DynamicUser } = useDynamicContext();
-  // console.log(DynamicUser);
+  const user = delegateResponse?.data?.[0].users;
+
   // temp eth address
   const fakeEthAddress = `${delegate?.starknetWalletAddress?.slice(0, 5)}.eth`;
-  console.log(delegate);
+
+  const senderData = WagmiData(address, chain);
+
+  const receiverData = WagmiData(user?.address as `0x${string}`, chain);
+
+  const transferTokens = (e?: any) => {
+    e?.preventDefault();
+    write?.();
+    setIsOpen(false);
+  };
+
   return (
     <Box
       display="flex"
@@ -66,8 +130,15 @@ export function Page() {
       flex="1"
       height="100%"
     >
-      <DelegateModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-      <ConfirmModal isOpen={false} onClose={() => setIsOpen(false)} />
+      <DelegateModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        isConnected
+        senderData={senderData}
+        receiverData={receiverData}
+        delegateTokens={() => transferTokens()}
+      />
+      <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
       <Box
         pt="40px"
         px="32px"
@@ -87,10 +158,14 @@ export function Page() {
               onClick={() => console.log("red")}
             />
           </ProfileSummaryCard.Profile>
-          <ProfileSummaryCard.PrimaryButton
-            label="Delegate your votes"
-            onClick={() => setIsOpen(true)}
-          />
+          {isConnected ? (
+            <ProfileSummaryCard.PrimaryButton
+              label="Delegate your votes"
+              onClick={() => setIsOpen(true)}
+            />
+          ) : (
+            <></>
+          )}
         </ProfileSummaryCard.Root>
 
         <SummaryItems.Root>

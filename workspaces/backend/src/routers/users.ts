@@ -1,4 +1,4 @@
-import { router, publicProcedure } from '../utils/trpc';
+import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';

@@ -13,10 +13,31 @@ import * as Swap from "../Swap/Swap";
 
 type Props = {
   isOpen: boolean;
+  isConnected: boolean;
+  senderData: {
+    address: string | undefined;
+    balance: string | undefined;
+    ethAddress: string | undefined;
+    symbol: string;
+  };
+  receiverData: {
+    address: string | undefined | null;
+    balance: string | undefined;
+    ethAddress: string | undefined | null;
+    symbol: string;
+  };
   onClose: () => void;
+  delegateTokens: () => void;
 };
 
-export const DelegateModal = ({ isOpen = false, onClose }: Props) => {
+export const DelegateModal = ({
+  isOpen = false,
+  isConnected = false,
+  senderData,
+  receiverData,
+  onClose,
+  delegateTokens,
+}: Props) => {
   return (
     <Modal
       motionPreset="slideInBottom"
@@ -51,18 +72,32 @@ export const DelegateModal = ({ isOpen = false, onClose }: Props) => {
 
             <Stack spacing="32px">
               <Swap.Root>
-                <Swap.UserSummary balance="100,000" />
+                <Swap.UserSummary
+                  address={senderData.address}
+                  balance={senderData.balance}
+                  ethAddress={senderData.ethAddress}
+                  symbol={senderData.symbol}
+                />
                 <Swap.Arrow />
                 <Swap.UserSummary
-                  address="0x03e61a95b01cB7d4b56f406aC2002FAB15Fb8B1f9B811cDb7eD58A08C7aE89232"
-                  balance="50,000,000,000"
-                  ethAddress="0x03e.eth"
+                  address={receiverData.address}
+                  balance={receiverData.balance}
+                  ethAddress={receiverData.ethAddress}
+                  symbol={receiverData.symbol}
+                  text={"To"}
                 />
               </Swap.Root>
 
-              <Button type="submit" variant="solid" size="lg">
-                Delegate your votes
-              </Button>
+              {isConnected && (
+                <Button
+                  type="submit"
+                  variant="solid"
+                  size="lg"
+                  onClick={delegateTokens}
+                >
+                  Delegate your votes
+                </Button>
+              )}
             </Stack>
           </Stack>
         </ModalBody>

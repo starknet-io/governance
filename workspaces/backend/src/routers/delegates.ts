@@ -4,6 +4,7 @@ import { delegates } from "../db/schema/delegates";
 import { protectedProcedure, publicProcedure, router } from "../utils/trpc";
 import { getUserByJWT } from "../utils/helpers";
 import { eq } from "drizzle-orm";
+import { users } from "../db/schema/users";
 
 export const delegateRouter = router({
   getAll: publicProcedure.query(() => db.select().from(delegates)),
@@ -52,6 +53,7 @@ export const delegateRouter = router({
         .select()
         .from(delegates)
         .where(eq(delegates.id, opts.input.id))
+        .leftJoin(users, eq(delegates.userId, users.id))
     }
     ),
 
