@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "query Proposal($id: String!) {\n    proposal(id:$id) {\n      id\n      title\n      choices\n      votes\n      scores\n      scores_by_strategy\n      scores_state\n      scores_total\n      scores_updated\n      strategies {\n        network\n        params\n      }\n    }\n  }": types.ProposalDocument,
-    "\nquery proposals {\n  proposals(first: 20, skip: 0, where: {space_in: [\"starknet.eth\"]}, orderBy: \"created\", orderDirection: desc) {\n    id\n    title\n    body\n    choices\n    start\n    end\n    snapshot\n    state\n    author\n    space {\n      id\n      name\n    }\n  }\n}\n\n  ": types.ProposalsDocument,
+    "\nquery proposals($space: String!) {\n  proposals(first: 20, skip: 0, where: {space: $space}, orderBy: \"created\", orderDirection: desc) {\n    id\n    title\n    choices\n    start\n    end\n    snapshot\n    state\n    scores\n    scores_total\n    author\n    space {\n      id\n      name\n    }\n  }\n}\n  ": types.ProposalsDocument,
 };
 
 /**
@@ -38,7 +38,7 @@ export function gql(source: "query Proposal($id: String!) {\n    proposal(id:$id
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery proposals {\n  proposals(first: 20, skip: 0, where: {space_in: [\"starknet.eth\"]}, orderBy: \"created\", orderDirection: desc) {\n    id\n    title\n    body\n    choices\n    start\n    end\n    snapshot\n    state\n    author\n    space {\n      id\n      name\n    }\n  }\n}\n\n  "): (typeof documents)["\nquery proposals {\n  proposals(first: 20, skip: 0, where: {space_in: [\"starknet.eth\"]}, orderBy: \"created\", orderDirection: desc) {\n    id\n    title\n    body\n    choices\n    start\n    end\n    snapshot\n    state\n    author\n    space {\n      id\n      name\n    }\n  }\n}\n\n  "];
+export function gql(source: "\nquery proposals($space: String!) {\n  proposals(first: 20, skip: 0, where: {space: $space}, orderBy: \"created\", orderDirection: desc) {\n    id\n    title\n    choices\n    start\n    end\n    snapshot\n    state\n    scores\n    scores_total\n    author\n    space {\n      id\n      name\n    }\n  }\n}\n  "): (typeof documents)["\nquery proposals($space: String!) {\n  proposals(first: 20, skip: 0, where: {space: $space}, orderBy: \"created\", orderDirection: desc) {\n    id\n    title\n    choices\n    start\n    end\n    snapshot\n    state\n    scores\n    scores_total\n    author\n    space {\n      id\n      name\n    }\n  }\n}\n  "];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

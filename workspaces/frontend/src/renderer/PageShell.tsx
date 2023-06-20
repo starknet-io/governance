@@ -4,6 +4,7 @@ import type { PageContext } from "./types";
 import { TrpcProvider } from "./TrpcProvider";
 import DynamicContextProviderPage from "./DynamicContexProviderPage";
 import { ApolloProvider, ApolloClient } from "@apollo/client";
+import { ThemeProvider } from "@yukilabs/governance-components";
 
 interface Props {
   readonly pageContext: PageContext;
@@ -24,13 +25,15 @@ export function PageShell(props: Props) {
   return (
     <React.StrictMode>
       <PageContextProvider pageContext={pageContext}>
-        <ApolloProvider client={props.apolloClient}>
-          <TrpcProvider>
-            <DynamicContextProviderPage pageContext={pageContext}>
-              {children}
-            </DynamicContextProviderPage>
-          </TrpcProvider>
-        </ApolloProvider>
+        <ThemeProvider>
+          <ApolloProvider client={props.apolloClient}>
+            <TrpcProvider>
+              <DynamicContextProviderPage pageContext={pageContext}>
+                {children}
+              </DynamicContextProviderPage>
+            </TrpcProvider>
+          </ApolloProvider>
+        </ThemeProvider>
       </PageContextProvider>
     </React.StrictMode>
   );

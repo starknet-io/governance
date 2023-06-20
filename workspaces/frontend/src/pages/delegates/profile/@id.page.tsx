@@ -57,7 +57,7 @@ const useSetDelegateContractWrite = (userAddress?: string) => {
     address: "0x469788fE6E9E9681C6ebF3bF78e7Fd26Fc015446",
     abi,
     functionName: "setDelegate",
-    mode: "recklesslyUnprepared",
+    // mode: "recklesslyUnprepared",
     args,
   });
 

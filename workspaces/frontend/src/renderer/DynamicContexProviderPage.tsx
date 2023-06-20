@@ -78,17 +78,15 @@ const DynamicContextProviderPage = (props: Props) => {
         cssOverrides,
       }}
     >
-      <ThemeProvider>
+      <DynamicWagmiConnector>
         <Suspense fallback={<p>Loading...</p>}>
           {(pageContext.hasLayout ?? true) === true ? (
-            <PageLayout pageContext={pageContext}>
-              <DynamicWagmiConnector>{children}</DynamicWagmiConnector>
-            </PageLayout>
+            <PageLayout pageContext={pageContext}>{children}</PageLayout>
           ) : (
             children
           )}
         </Suspense>
-      </ThemeProvider>
+      </DynamicWagmiConnector>
     </DynamicContextProvider>
   );
 };

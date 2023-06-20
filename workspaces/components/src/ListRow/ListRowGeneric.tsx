@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Icon } from "@chakra-ui/react";
+import { Badge, Box, Flex, Icon, Tooltip } from "@chakra-ui/react";
 import {
   HiHandThumbUp,
   HiOutlineChatBubbleLeftEllipsis,
@@ -34,7 +34,7 @@ const Root = ({ children, href }: RootProps) => {
       href={href}
       display="flex"
       flexDirection="row"
-      gap="16px"
+      gap="32px"
       borderBottom="1px solid #ECEDEE"
       minHeight="68px"
       alignItems="center"
@@ -49,11 +49,11 @@ const Root = ({ children, href }: RootProps) => {
 };
 
 type StatusProps = {
-  status: string | null;
+  status: string | null | undefined;
   width?: string | null;
 };
 
-const Status = ({ status, width = "100" }: StatusProps) => {
+const Status = ({ status, width = "80" }: StatusProps) => {
   return (
     <Box minWidth={`${width}px`} justifyContent="flex-end" display="flex">
       <Badge variant={status ?? "outline"}>{status}</Badge>
@@ -62,10 +62,10 @@ const Status = ({ status, width = "100" }: StatusProps) => {
 };
 
 type TitleProps = {
-  label: string | null;
+  label: string | null | undefined;
 };
 
-const Title = ({ label }: TitleProps) => {
+const Title = ({ label = "" }: TitleProps) => {
   return (
     <Box flex="1">
       <Text variant="cardBody" noOfLines={1} fontWeight="500">
@@ -203,6 +203,128 @@ const Comments = ({ count, width }: CommentsProps) => {
   );
 };
 
+import moment from "moment";
+
+function dateDiff(now: moment.Moment, futureDate: moment.Moment) {
+  const diff = moment.duration(futureDate.diff(now));
+
+  let unit = "day";
+  let count = diff.days();
+
+  if (count === 0) {
+    count = diff.hours();
+    unit = "hour";
+  } else if (count >= 7 && count < 30) {
+    count = diff.weeks();
+    unit = "week";
+  } else if (count >= 30 && count < 365) {
+    count = diff.months();
+    unit = "month";
+  } else if (count >= 365) {
+    count = diff.years();
+    unit = "year";
+  }
+
+  unit = count > 1 ? unit + "s" : unit; // pluralize the unit if necessary
+
+  return `${count} ${unit}`;
+}
+
+type DateRangeProps = {
+  start?: number;
+  end?: number;
+  state: string | null | undefined;
+};
+
+const DateRange = ({ start, end, state }: DateRangeProps) => {
+  const now = moment();
+
+  const startDate = moment.unix(Number(start));
+  const endDate = moment.unix(Number(end));
+
+  let dateText = "";
+  if (state === "pending") {
+    dateText = "Starting in " + dateDiff(now, startDate);
+  } else if (state === "active") {
+    dateText = "Ending in " + dateDiff(now, endDate);
+  } else if (state === "closed") {
+    dateText = "Ended " + dateDiff(endDate, now) + " ago";
+  }
+
+  return (
+    <Box width="120px">
+      <Text
+        variant="breadcrumbs"
+        fontSize="12px"
+        noOfLines={1}
+        fontWeight="500"
+        color="#6C6C7A"
+      >
+        {dateText}
+      </Text>
+    </Box>
+  );
+};
+
+const colors: { [key: string]: string } = {
+  For: "#29AB87",
+  Against: "#E54D66",
+  Abstain: "#6C6C7A",
+  Yes: "#29AB87",
+  No: " #6C6C7A",
+};
+
+interface VoteResultsProps {
+  choices: string[];
+  scores: number[];
+}
+
+const VoteResults: React.FC<VoteResultsProps> = ({ choices, scores }) => {
+  const total = scores.reduce((a, b) => a + b, 0);
+  const noVotes = total === 0;
+  const onlyOneVote = total === Math.max(...scores);
+  return (
+    <Box
+      display="flex"
+      width="100%"
+      maxWidth="74px"
+      gap="2px"
+      overflow="hidden"
+    >
+      {choices.map((choice, i) => {
+        const rawVotePercentage = (scores[i] / total) * 100;
+        const votePercentage = isNaN(rawVotePercentage)
+          ? 0
+          : rawVotePercentage.toFixed(2);
+        const voteCount = scores[i] || 0;
+        const isNoVote = voteCount === 0;
+        return (
+          <Tooltip
+            label={`${choice}: ${voteCount} votes (${votePercentage}%)`}
+            key={choice}
+          >
+            <Box
+              height="4px"
+              borderRadius="2px"
+              backgroundColor={
+                noVotes || (onlyOneVote && isNoVote)
+                  ? "#D7D7DB"
+                  : colors[choice]
+              }
+              width={
+                noVotes
+                  ? `${100 / choices.length}%`
+                  : onlyOneVote && isNoVote
+                  ? "3px"
+                  : `${votePercentage}%`
+              }
+            />
+          </Tooltip>
+        );
+      })}
+    </Box>
+  );
+};
 export {
   Root,
   Status,
@@ -214,4 +336,6 @@ export {
   CommentSummary,
   Comments,
   Container,
+  DateRange,
+  VoteResults,
 };

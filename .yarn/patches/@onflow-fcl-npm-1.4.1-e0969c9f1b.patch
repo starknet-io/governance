@@ -1,0 +1,13 @@
+diff --git a/dist/fcl.module.js b/dist/fcl.module.js
+index 2781ac66dfacff5d11115d3caa4e29ac14881d3a..0a9f1e6618fec46cce02b5425cc727f802b75ae5 100644
+--- a/dist/fcl.module.js
++++ b/dist/fcl.module.js
+@@ -13,7 +13,7 @@ import { subscriber, snapshoter, send, spawn, INIT, SUBSCRIBE, UNSUBSCRIBE, UPDA
+ import * as rlp from '@onflow/rlp';
+ import { Buffer, encode } from '@onflow/rlp';
+ import { uid } from '@onflow/util-uid';
+-import require$$0 from 'buffer';
++import * as require$$0 from 'buffer';
+ export { template as cadence, template as cdc } from '@onflow/util-template';
+ 
+ async function getChainIdFromAccessNode() {

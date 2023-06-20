@@ -13,16 +13,17 @@ import {
 } from "@yukilabs/governance-components";
 
 const GET_PROPOSALS = gql(`
-query proposals {
-  proposals(first: 20, skip: 0, where: {space_in: ["starknet.eth"]}, orderBy: "created", orderDirection: desc) {
+query proposals($space: String!) {
+  proposals(first: 20, skip: 0, where: {space: $space}, orderBy: "created", orderDirection: desc) {
     id
     title
-    body
     choices
     start
     end
     snapshot
     state
+    scores
+    scores_total
     author
     space {
       id
@@ -30,13 +31,16 @@ query proposals {
     }
   }
 }
-
   `);
 
-
-
 export function Page() {
-  const {data} = useQuery(GET_PROPOSALS);
+  const { data } = useQuery(GET_PROPOSALS, {
+    variables: {
+      space: "robwalsh.eth",
+    },
+  });
+
+  console.log(JSON.stringify(data?.proposals, null, 2));
 
   return (
     <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px">
@@ -47,7 +51,7 @@ export function Page() {
       />
       <AppBar>
         <Box mr="8px">
-          <SearchInput />
+          <SearchInput placeholder="Search proposals..." />
         </Box>
         <ButtonGroup>
           <Button as="a" href="/delegates/create" variant="outline">
@@ -69,15 +73,29 @@ export function Page() {
         </Box>
       </AppBar>
       <ListRow.Container>
-
         {data?.proposals?.map((data) => (
-          <ListRow.Root key={data!.id} href={`/voting-proposals/${data!.id}`}>
+          <ListRow.Root key={data?.id} href={`/voting-proposals/${data?.id}`}>
             <ListRow.MutedText id={1} type="vote" />
-            <ListRow.Title label={data!.title} />
-            <ListRow.Date />
+            <ListRow.Title label={data?.title} />
+            <ListRow.VoteResults
+              choices={
+                data?.choices?.map((choice) => choice || "")?.filter(Boolean) ||
+                []
+              }
+              scores={
+                data?.scores
+                  ?.map((score) => score || 0)
+                  ?.filter(Number.isFinite) || []
+              }
+            />
 
+            <ListRow.DateRange
+              start={data?.start}
+              end={data?.end}
+              state={data?.state}
+            />
             <ListRow.Comments count={0} />
-            <ListRow.Status status={data!.state!} />
+            <ListRow.Status status={data?.state} />
           </ListRow.Root>
         ))}
       </ListRow.Container>
