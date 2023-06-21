@@ -7,36 +7,33 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { Heading } from "../Heading";
-import { ReviewForm } from "./ReviewForm";
-import { Button } from "src/Button";
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  children?: React.ReactNode;
+  children: React.ReactNode;
+  title: string;
 };
 
-// const choices: {
-//   [index: number]: string;
-// } = {
-//   1: "For",
-//   2: "Against",
-//   3: "Abstain",
-// };
-
-export const VoteModal = ({ children, isOpen = false, onClose }: Props) => {
+export const InfoModal = ({
+  title,
+  children,
+  isOpen = false,
+  onClose,
+}: Props) => {
   return (
     <Modal
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
+      size="md"
       isCentered
       variant="unstyled"
     >
       <ModalOverlay />
       <ModalContent
         borderRadius="xl"
-        mx={{ base: "2.5", lg: "16" }}
+        mx={{ base: "32px", lg: "32px" }}
         overflow="hidden"
       >
         <ModalCloseButton
@@ -47,15 +44,20 @@ export const VoteModal = ({ children, isOpen = false, onClose }: Props) => {
           borderBottomLeftRadius="md"
         />
         <ModalBody
-          px={{ base: "5", md: "12", lg: "16" }}
-          py={{ base: "10", md: "12", lg: "16" }}
-          pb={{ base: "6" }}
+          px={{ base: "32px" }}
+          py={{ base: "32px" }}
+          pb={{ base: "32px" }}
         >
-          <Stack spacing="6">
-            <Heading fontSize="21px" fontWeight="semibold" variant="h3">
-              Confirm Vote
+          <Stack spacing="32px">
+            <Heading
+              textAlign={"center"}
+              fontSize="21px"
+              fontWeight="600"
+              variant="h3"
+              mb="0"
+            >
+              {title}
             </Heading>
-
             {children}
           </Stack>
         </ModalBody>

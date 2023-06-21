@@ -30,10 +30,6 @@ export const DelegateCard = (props: Props) => {
   const displayText = (htmlString: string) => {
     return stripHtml(htmlString);
   };
-  // const addressToDisplay = starknetWalletAddress
-  //   ? truncateAddress(starknetWalletAddress)
-  //   : "";
-  const fakeEthAddress = `${starknetWalletAddress?.slice(0, 5)}.eth`;
 
   return (
     <Card as="a" href={`/delegates/profile/${id}`} variant="outline">
@@ -42,7 +38,6 @@ export const DelegateCard = (props: Props) => {
           <ProfileSummaryCard.Profile
             size="sm"
             address={starknetWalletAddress}
-            ethAddress={fakeEthAddress}
             subtitle="7.5m Votes"
             avatarString={userId}
           ></ProfileSummaryCard.Profile>

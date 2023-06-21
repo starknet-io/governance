@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DocumentProps } from "src/renderer/types";
 
 import {
@@ -14,28 +15,18 @@ import {
   SummaryItems,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useEffect, useState } from "react";
-import {
-  Chain,
-  useAccount,
-  useBalance,
-  useContractWrite,
-  useEnsName,
-  useNetwork,
-} from "wagmi";
-import abiJson from "src/utils/abiJson.json";
+import { useState } from "react";
+import { useAccount, useBalance, useEnsName } from "wagmi";
+import { usePageContext } from "src/renderer/PageContextProvider";
+import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
 
-const abi = [...abiJson] as const;
-
-const WagmiData = (
-  address: `0x${string}` | undefined,
-  chain: (Chain & { unsupported?: boolean | undefined }) | undefined
-) => {
+const useBalanceData = (address: `0x${string}` | undefined) => {
   const { data: balance } = useBalance({
     address,
-    chainId: chain?.id,
+    chainId: 5,
     token: "0x65aFADD39029741B3b8f0756952C74678c9cEC93", //USDC Goerli test token address
   });
+
   const { data: ensName } = useEnsName({
     address,
   });
@@ -48,63 +39,18 @@ const WagmiData = (
   };
 };
 
-const id = "0x0000000000000000000000000000000000000000000000000000000000000000";
+export function Page() {
+  const pageContext = usePageContext();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { address, isConnected } = useAccount();
 
-const useSetDelegateContractWrite = (userAddress?: string) => {
-  const args = userAddress ? [id, userAddress] : undefined;
-
-  const { write, isLoading } = useContractWrite({
+  const { isLoading, write } = useDelegateRegistrySetDelegate({
     address: "0x469788fE6E9E9681C6ebF3bF78e7Fd26Fc015446",
-    abi,
-    functionName: "setDelegate",
-    // mode: "recklesslyUnprepared",
-    args,
   });
 
-  return { write, isLoading };
-};
-
-export function Page() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
-
-  const { write, isLoading } = useSetDelegateContractWrite(userAddress);
-
-  useEffect(() => {
-    // const currentUrl = window.location.href;
-    // const profileId = extractProfileId(currentUrl);
-  }, []);
-
-  const extractProfileId = (url: string): string | null => {
-    const parts = url.split("/delegates/profile/");
-    if (parts.length > 1) {
-      const profileId = parts[1].split("/")[0];
-      return profileId;
-    }
-
-    return null;
-  };
-
-  const getDelegate = () => {
-    const profileId = extractProfileId(window.location.href);
-    if (profileId) {
-      return trpc.delegates.getDelegateById.useQuery(
-        {
-          id: profileId,
-        },
-        {
-          onSuccess: (data) => {
-            setUserAddress(data?.[0]?.users?.address);
-          },
-        }
-      );
-    }
-    return undefined;
-  };
-
-  const delegateResponse = typeof window !== "undefined" ? getDelegate() : null;
+  const delegateResponse = trpc.delegates.getDelegateById.useQuery({
+    id: pageContext.routeParams!.id,
+  });
 
   const delegate = delegateResponse?.data?.[0].delegates;
 
@@ -113,15 +59,9 @@ export function Page() {
   // temp eth address
   const fakeEthAddress = `${delegate?.starknetWalletAddress?.slice(0, 5)}.eth`;
 
-  const senderData = WagmiData(address, chain);
+  const senderData = useBalanceData(address);
 
-  const receiverData = WagmiData(user?.address as `0x${string}`, chain);
-
-  const transferTokens = (e?: any) => {
-    e?.preventDefault();
-    write?.();
-    setIsOpen(false);
-  };
+  const receiverData = useBalanceData(user?.address as `0x${string}`);
 
   return (
     <Box
@@ -136,7 +76,15 @@ export function Page() {
         isConnected
         senderData={senderData}
         receiverData={receiverData}
-        delegateTokens={() => transferTokens()}
+        delegateTokens={() => {
+          write?.({
+            args: [
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              user?.address as any,
+            ],
+          });
+          setIsOpen(false);
+        }}
       />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
       <Box
@@ -151,7 +99,6 @@ export function Page() {
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
             address={delegate?.starknetWalletAddress}
-            ethAddress={fakeEthAddress}
             avatarString={delegate?.userId}
           >
             <ProfileSummaryCard.MoreActions
@@ -168,22 +115,24 @@ export function Page() {
           )}
         </ProfileSummaryCard.Root>
 
-        <SummaryItems.Root>
-          <SummaryItems.Item label="Proposals voted on" value="-" />
-          <SummaryItems.Item label="Delegated votes" value="-" />
-          <SummaryItems.Item label="Total comments" value="-" />
-          <SummaryItems.Item label="For/against/abstain" value="-" />
-          <SummaryItems.Item
-            label="Delegation agreement"
-            value={delegate?.agreeTerms ? "Yes" : "No"}
-          />
-          <SummaryItems.Item
-            isTruncated
-            label="Starknet address"
-            value={delegate?.starknetWalletAddress}
-          />
-        </SummaryItems.Root>
-        <Divider mt="32px" />
+        <Box mt="32px">
+          <SummaryItems.Root>
+            <SummaryItems.Item label="Proposals voted on" value="-" />
+            <SummaryItems.Item label="Delegated votes" value="-" />
+            <SummaryItems.Item label="Total comments" value="-" />
+            <SummaryItems.Item label="For/against/abstain" value="-" />
+            <SummaryItems.Item
+              label="Delegation agreement"
+              value={delegate?.agreeTerms ? "Yes" : "No"}
+            />
+            <SummaryItems.Item
+              isTruncated
+              label="Starknet address"
+              value={delegate?.starknetWalletAddress}
+            />
+          </SummaryItems.Root>
+        </Box>
+        <Divider mt="32px" mb="32px" />
         <SummaryItems.Root direction="row">
           <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
           <SummaryItems.Socials label="discourse" value={delegate?.discourse} />
@@ -191,7 +140,7 @@ export function Page() {
           {/* <SummaryItems.Socials label="telegram" value="@cillianh" />
           <SummaryItems.Socials label="github" value="@cillianh" /> */}
         </SummaryItems.Root>
-        <Divider mt="32px" />
+        <Divider mt="32px" mb="32px" />
         <SummaryItems.Root>
           {Array.isArray(delegate?.delegateType) ? (
             delegate?.delegateType?.map((item: any) => (

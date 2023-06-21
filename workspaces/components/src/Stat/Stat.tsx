@@ -1,6 +1,13 @@
-import { Badge, Box, Stack } from "@chakra-ui/react";
+import {
+  Badge,
+  Box,
+  Stack,
+  Link as ChakraLink,
+  Button as ChakraButton,
+} from "@chakra-ui/react";
 import { Text as ChakraText } from "../Text";
 import moment from "moment";
+import { truncateAddress } from "src/utils";
 
 // interface Props {
 //   label: string | null;
@@ -35,7 +42,8 @@ interface StatusProps {
     | "Withdrawn"
     | "Living"
     | "closed"
-    | null;
+    | null
+    | string;
 }
 const Status = ({ status }: StatusProps) => {
   return (
@@ -49,23 +57,64 @@ interface TextProps {
   label: string | null | undefined;
 }
 const Text = ({ label }: TextProps) => {
+  const displayLabel =
+    label && label.startsWith("By 0x") ? truncateAddress(label) : label;
+
   return (
-    <ChakraText fontWeight="bold" variant="breadcrumbs">
-      <span style={{ textTransform: "uppercase" }}> {label}</span>
+    <ChakraText variant="breadcrumbs" fontWeight="500" color="#4D4D56">
+      {displayLabel}
     </ChakraText>
   );
 };
 
 // use date type and format with moment
 interface DateProps {
-  timestamp?: string;
+  timestamp?: number;
 }
 const Date = ({ timestamp }: DateProps) => {
-  const formattedDate = moment(timestamp).format("MMMM Do YYYY, h:mm:ss a");
+  const formattedDate = moment(timestamp && timestamp * 1000).format(
+    "MMMM Do YYYY"
+  );
   return (
-    <ChakraText fontWeight="bold" variant="breadcrumbs">
+    <ChakraText variant="breadcrumbs" fontWeight="500" color="#4D4D56">
       {timestamp && formattedDate}
     </ChakraText>
   );
 };
-export { Root, Label, Status, Text, Date };
+
+interface LinkProps {
+  label: string | null | undefined;
+}
+const Link = ({ label }: LinkProps) => {
+  return (
+    <ChakraLink
+      fontWeight="500"
+      fontSize="12px"
+      padding="0"
+      color="#4D4D56"
+      href="#sdf"
+    >
+      {label}
+    </ChakraLink>
+  );
+};
+interface ButtonProps {
+  label: string | null | undefined;
+  onClick?: () => void;
+}
+const Button = ({ label, onClick }: ButtonProps) => {
+  return (
+    <ChakraButton
+      variant="ghost"
+      onClick={onClick}
+      fontWeight="500"
+      fontSize="12px"
+      padding="0"
+      color="#4D4D56"
+    >
+      {label}
+    </ChakraButton>
+  );
+};
+
+export { Root, Label, Status, Text, Date, Link, Button };

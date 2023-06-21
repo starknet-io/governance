@@ -11,6 +11,7 @@
     "preview": "wrangler dev",
     "preview-local": "wrangler dev --local",
     "preview-experimental-local": "wrangler dev --experimental-local",
+    "wagmi-generate": "wagmi generate",
     "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
@@ -35,6 +36,7 @@
     "@types/react": "^18.2.12",
     "@types/react-dom": "^18.2.5",
     "@vitejs/plugin-react": "^4.0.0",
+    "@wagmi/cli": "^1.2.0",
     "@wagmi/core": "^1.2.0",
     "@yukilabs/governance-backend": "workspace:*",
     "@yukilabs/governance-components": "workspace:*",

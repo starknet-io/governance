@@ -11,6 +11,8 @@ import {
   Textarea,
   FormControl,
   QuillEditor,
+  IconButton,
+  HiEllipsisHorizontal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -23,7 +25,7 @@ export function Page() {
   });
 
   console.log(snip.data);
-
+  const commentCount = 0;
   return (
     <>
       <Box
@@ -33,34 +35,47 @@ export function Page() {
         height="100%"
       >
         <ContentContainer>
-          <Box width="100%" maxWidth="662px" pb="200px" mx="auto">
+          <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
             <Stack
               spacing="24px"
               direction={{ base: "column" }}
               color="#545464"
             >
-              <Heading color="#33333E" variant="h3">
-                {snip.data?.title}
-              </Heading>
-              <Flex gap="90px" paddingTop="24px">
+              <Box display="flex" alignItems="center">
+                <Box flex="1">
+                  <Heading
+                    color="#33333E"
+                    variant="h3"
+                    maxWidth="90%"
+                    lineHeight="1.4em"
+                  >
+                    {snip.data?.title}
+                  </Heading>
+                </Box>
+                <IconButton
+                  variant="simple"
+                  onClick={() => console.log("clicked")}
+                  aria-label="Search database"
+                  icon={<HiEllipsisHorizontal size="24px" />}
+                />
+              </Box>
+              <Flex gap="16px" paddingTop="0" alignItems="center">
                 <Stat.Root>
-                  <Stat.Label>Type</Stat.Label>
-                  <Stat.Text label={snip.data?.type} />
-                </Stat.Root>
-                <Stat.Root>
-                  <Stat.Label>Status</Stat.Label>
                   <Stat.Status status={snip.data?.status} />
                 </Stat.Root>
                 <Stat.Root>
-                  <Stat.Label>Created on</Stat.Label>
-                  <Stat.Date timestamp={`${snip.data?.createdAt}`} />
+                  <Stat.Text label={`By cillian`} />
                 </Stat.Root>
                 <Stat.Root>
-                  <Stat.Label>Created by</Stat.Label>
-                  <Stat.Text label={"-"} />
+                  <Stat.Date timestamp={snip?.data?.createdAt} />
+                </Stat.Root>
+
+                <Stat.Root>
+                  <Stat.Link label={`${commentCount} comments`} />
                 </Stat.Root>
               </Flex>
               <Divider />
+
               <Heading color="#33333E" variant="h3">
                 Overview
               </Heading>

@@ -94,7 +94,9 @@ export function Page() {
               end={data?.end}
               state={data?.state}
             />
-            <ListRow.Comments count={0} />
+            <Box display={{ base: "none", md: "flex" }}>
+              <ListRow.Comments count={0} />
+            </Box>
             <ListRow.Status status={data?.state} />
           </ListRow.Root>
         ))}
