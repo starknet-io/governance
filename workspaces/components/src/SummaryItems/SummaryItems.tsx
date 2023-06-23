@@ -6,6 +6,7 @@ import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { truncateAddress } from "src/utils";
 import { Heading } from "src/Heading";
+import moment from "moment";
 // import type { delegateTypeEnum } from '@yukilabs/governance-backend/src/db/schema/delegates';
 
 type RootProps = {
@@ -15,7 +16,6 @@ type RootProps = {
 const Root = ({ children, direction = "column" }: RootProps) => {
   return (
     <Box
-      pt="40px"
       display="flex"
       position="relative"
       rowGap={{ base: "16px" }}
@@ -147,4 +147,30 @@ const Tags = (props: TagsProps) => {
   );
 };
 
-export { Root, Item, Title, Socials, Tags };
+type DateProps = {
+  value: number | null;
+  label: string;
+};
+
+const Date = (props: DateProps) => {
+  const { value, label } = props;
+  let displayValue = "N/A";
+
+  if (value !== null) {
+    const timestamp = value < 10000000000 ? value * 1000 : value;
+    displayValue = moment(timestamp).format("MMM DD, YYYY");
+  }
+
+  return (
+    <Flex justify="space-between" fontSize="sm">
+      <Text fontWeight="medium" color="#6C6C75">
+        {label}
+      </Text>
+      <Text color="#292932" fontWeight="medium">
+        {displayValue}
+      </Text>
+    </Flex>
+  );
+};
+
+export { Root, Item, Title, Socials, Tags, Date };

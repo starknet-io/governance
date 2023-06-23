@@ -67,7 +67,7 @@ const Profile = ({
           {ethAddress ? ethAddress : formattedAddress}
         </Heading>
         <Text variant="breadcrumbs" fontSize="12px" color="#6C6C75">
-          {address && subtitle == null ? formattedAddress : subtitle}
+          {address && subtitle === null ? formattedAddress : subtitle}
         </Text>
       </Stack>
       <Box marginLeft="auto">{children}</Box>

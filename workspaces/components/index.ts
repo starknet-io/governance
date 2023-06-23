@@ -13,6 +13,7 @@ export {
   HiOutlineChatBubbleLeftRight,
   HiOutlineChatBubbleLeftEllipsis,
   HiAdjustmentsHorizontal,
+  HiEllipsisHorizontal,
   MdOutlineHowToVote,
   MdOutlineAssignment,
   Heading,
@@ -43,6 +44,11 @@ export {
   FilterPopoverContent,
   useFilterState,
   FilterPopoverIcon,
+  CommentInput,
+  CommentList,
+  InfoModal,
+  PlaceholderImage,
+  VoteReview,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";

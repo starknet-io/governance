@@ -37,10 +37,6 @@ export const ReviewForm = (props: React.ComponentProps<"form">) => (
           resize="none"
         />
       </FormControl>
-
-      <Button type="submit" variant="solid" size="lg">
-        Submit vote
-      </Button>
     </Stack>
   </form>
 );

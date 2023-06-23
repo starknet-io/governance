@@ -1,31 +1,31 @@
 const snip = `
-#Preamble <br>
-#Abstract <br>
-#Motivation (optional) <br>
-#Specification <br>
-#Rationale <br>
-#Backwards compatibility <br>
-#Test cases <br>
-#Reference implementation <br>
-#Security considerations  <br>
+<p>#Preamble</p>
+<p>#Abstract</p>
+<p>#Motivation (optional)</p>
+<p>#Specification</p>
+<p>#Rationale</p>
+<p>#Backwards compatibility</p>
+<p>#Test cases</p>
+<p>#Reference implementation</p>
+<p>#Security considerations</p>
   `;
 
 const proposal = `
-#Preamble <br>
-#Abstract <br>
-#Motivation (optional) <br>
-#Specification <br>
-#Rationale <br>
-#Backwards compatibility <br>
-#Test cases <br>
-#Reference implementation <br>
-#Security considerations  <br>
+<p>#Preamble</p>
+<p>#Abstract</p>
+<p>#Motivation (optional)</p>
+<p>#Specification</p>
+<p>#Rationale</p>
+<p>#Backwards compatibility</p>
+<p>#Test cases</p>
+<p>#Reference implementation</p>
+<p>#Security considerations</p>
   `;
 
 const delegate = `
-#Brief intro and background <br>
-#Why you want to be a delegate <br>
-#Areas of interest <br>
+<p>#Brief intro and background</p>
+<p>#Why you want to be a delegate</p>
+<p>#Areas of interest</p>
   `;
 
 export { snip, proposal, delegate };

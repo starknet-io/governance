@@ -3,20 +3,20 @@ import { MdStopCircle, MdThumbDownAlt, MdThumbUpAlt } from "react-icons/md";
 
 type Props = {
   label: string;
-  type: "for" | "against" | "abstain";
+  type: "For" | "Against" | "Abstain" | string | null;
   active?: boolean;
   onClick?: () => void;
 };
 const currentVariation = {
-  for: "#20AC70",
-  against: "#E1503E",
-  abstain: "#6C6C75",
+  For: "#20AC70",
+  Against: "#E1503E",
+  Abstain: "#6C6C75",
 };
 //todo: add some kind of animation for voting
 export const VoteButton = ({
   active,
   label = "label",
-  type = "for",
+  type = "For",
   onClick,
 }: Props) => {
   return (
@@ -51,13 +51,13 @@ export const VoteButton = ({
         justify="center"
         alignItems="center"
       >
-        {type === "for" && (
+        {type === "For" && (
           <Icon as={MdThumbUpAlt} boxSize="16px" aria-label="For" />
         )}
-        {type === "against" && (
+        {type === "Against" && (
           <Icon as={MdThumbDownAlt} boxSize="16px" aria-label="For" />
         )}
-        {type === "abstain" && (
+        {type === "Abstain" && (
           <Icon as={MdStopCircle} boxSize="16px" aria-label="For" />
         )}
 

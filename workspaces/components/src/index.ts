@@ -20,6 +20,9 @@ export { VoteButton } from "./VoteButton";
 export { VoteStat } from "./VoteStat";
 export { VoteComment } from "./VoteComment";
 export { VoteModal } from "./VoteModal";
+export { InfoModal } from "./InfoModal";
+export { PlaceholderImage } from "./PlaceholderImage";
+export { VoteReview } from "./VoteReview";
 export { DelegateModal } from "./DelegateModal";
 export { DatePicker } from "./DatePicker";
 export { ConfirmModal } from "./ConfirmModal";
@@ -44,8 +47,11 @@ export {
   MdOutlineHowToVote,
   MdOutlineAssignment,
   HiAdjustmentsHorizontal,
+  HiEllipsisHorizontal,
 } from "./Icons";
 
 export { QuillEditor } from "./Editor";
 
 export { Multiselect } from "./Multiselect";
+
+export { CommentInput, CommentList } from "./Comment";

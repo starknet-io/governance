@@ -11,6 +11,7 @@ import {
   ListRow,
   SearchInput,
 } from "@yukilabs/governance-components";
+import { trpc } from "src/utils/trpc";
 
 const GET_PROPOSALS = gql(`
 query proposals($space: String!) {
@@ -32,6 +33,34 @@ query proposals($space: String!) {
   }
 }
   `);
+
+function Proposal({ data }: any) {
+  const comments = trpc.comments.getProposalComments.useQuery({
+    proposalId: data.id,
+  });
+
+  const count = comments.data ? comments.data.length : 0;
+
+  return (
+    <ListRow.Root key={data.id} href={`/voting-proposals/${data.id}`}>
+      <ListRow.MutedText id={1} type="vote" />
+      <ListRow.Title label={data.title} />
+      <ListRow.VoteResults
+        choices={
+          data.choices?.map((choice) => choice || "")?.filter(Boolean) || []
+        }
+        scores={
+          data.scores?.map((score) => score || 0)?.filter(Number.isFinite) || []
+        }
+      />
+      <ListRow.DateRange start={data.start} end={data.end} state={data.state} />
+      <Box display={{ base: "none", md: "flex" }}>
+        <ListRow.Comments count={count} />
+      </Box>
+      <ListRow.Status status={data.state} />
+    </ListRow.Root>
+  );
+}
 
 export function Page() {
   const { data } = useQuery(GET_PROPOSALS, {
@@ -74,29 +103,7 @@ export function Page() {
       </AppBar>
       <ListRow.Container>
         {data?.proposals?.map((data) => (
-          <ListRow.Root key={data?.id} href={`/voting-proposals/${data?.id}`}>
-            <ListRow.MutedText id={1} type="vote" />
-            <ListRow.Title label={data?.title} />
-            <ListRow.VoteResults
-              choices={
-                data?.choices?.map((choice) => choice || "")?.filter(Boolean) ||
-                []
-              }
-              scores={
-                data?.scores
-                  ?.map((score) => score || 0)
-                  ?.filter(Number.isFinite) || []
-              }
-            />
-
-            <ListRow.DateRange
-              start={data?.start}
-              end={data?.end}
-              state={data?.state}
-            />
-            <ListRow.Comments count={0} />
-            <ListRow.Status status={data?.state} />
-          </ListRow.Root>
+          <Proposal key={data?.id} data={data} />
         ))}
       </ListRow.Container>
     </Box>
