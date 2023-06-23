@@ -4,6 +4,8 @@ import {
   Box,
   Button,
   ButtonGroup,
+  CommentInput,
+  CommentList,
   ConfirmModal,
   ContentContainer,
   Divider,
@@ -37,6 +39,8 @@ import snapshot from "@snapshot-labs/snapshot.js";
 import { providers } from "ethers";
 import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { set } from "react-hook-form";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { trpc } from "src/utils/trpc";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -138,6 +142,28 @@ export function Page() {
   const [isSuccessModalOpen, setisSuccessModalOpen] = useState(false);
   const [currentChoice, setcurrentChoice] = useState<number>(0);
   const [comment, setComment] = useState("");
+  const { user } = useDynamicContext();
+  const comments = trpc.comments.getProposalComments.useQuery({
+    proposalId: data?.proposal?.id ?? "",
+  });
+  const saveComment = trpc.comments.saveComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const handleCommentSend = async (value: string) => {
+    try {
+      await saveComment.mutateAsync({
+        content: value,
+        proposalId: data?.proposal?.id,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log(value);
+  };
 
   if (data == null) return null;
   return (
@@ -269,6 +295,16 @@ export function Page() {
 
             <QuillEditor readOnly value={data?.proposal?.body} />
           </Stack>
+          {user ? (
+            <FormControl id="delegate-statement">
+              <CommentInput onSend={handleCommentSend} />
+            </FormControl>
+          ) : (
+            <></>
+          )}
+          <Box marginTop="3rem">
+            <CommentList commentsList={comments.data || []} />
+          </Box>
         </Box>
       </ContentContainer>
       <Box

@@ -1,7 +1,7 @@
 import { InferModel } from 'drizzle-orm';
 import { integer, pgEnum, pgTable, serial, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { users } from './users';
-import { proposals } from './proposals';
+import { snips } from './snips';
 
 export const voteEnum = pgEnum('vote', ['For', 'Against', 'Abstain']);
 
@@ -9,7 +9,7 @@ export const votes = pgTable('votes', {
   id: serial('id').primaryKey(),
 
   userId: uuid('user_id').references(() => users.id),
-  proposalId: integer('proposal_id').references(() => proposals.id),
+  snipId: integer('snip_id').references(() => snips.id),
 
   vote: voteEnum('voteType'),
 

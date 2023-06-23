@@ -6,16 +6,16 @@ import { councilsRouter } from './councils';
 import { delegateRouter } from './delegates';
 import { pagesRouter } from './pages';
 import { postsRouter } from './posts';
-import { proposalsRouter } from './proposals';
+import { snipsRouter } from './snips';
 import { usersRouter } from './users';
 import { votesRouter } from './votes';
 
 export const appRouter = router({
-  commemts: commentsRouter,
+  comments: commentsRouter,
   councils: councilsRouter,
   pages: pagesRouter,
   posts: postsRouter,
-  proposals: proposalsRouter,
+  snips: snipsRouter,
   users: usersRouter,
   votes: votesRouter,
   auth: authRouter,

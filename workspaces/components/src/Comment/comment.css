@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  height: 50px;
+  background: #F4F4F6;
+  border: 1px solid #E4E5E7;
+  border-radius: 6px;
+  margin-top: 15px;
+}
+.compact-comment {
+  text-align: center;
+}
+.submit-button {
+  position: absolute;
+  right: 40px;
+  bottom: 8px;
+  z-index: 1;
+}
+.comment-list .ql-editor {
+  padding: 0;
+  margin: 0;
+  min-height: 50px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+}

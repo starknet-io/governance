@@ -10,7 +10,7 @@ import * as councils from './schema/councils'
 import * as delegates from './schema/delegates'
 import * as pages from './schema/pages'
 import * as posts from './schema/posts'
-import * as proposals from './schema/proposals'
+import * as snips from './schema/snips'
 import * as users from './schema/users'
 import * as votes from './schema/votes'
 
@@ -27,7 +27,7 @@ const db = drizzle(pool, {
     ...delegates,
     ...pages,
     ...posts,
-    ...proposals,
+    ...snips,
     ...users,
     ...votes,
   }

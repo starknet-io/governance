@@ -53,3 +53,5 @@ export {
 export { QuillEditor } from "./Editor";
 
 export { Multiselect } from "./Multiselect";
+
+export { CommentInput, CommentList } from "./Comment";

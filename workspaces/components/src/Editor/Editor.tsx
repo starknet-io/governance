@@ -11,13 +11,14 @@ interface QuillEditorProps {
   value: string | undefined;
   onChange?: (content: string) => void;
   readOnly?: boolean;
+  maxLength?: number;
 }
+
 const modules = {
   toolbar: [
     ["bold", "italic"],
     [{ header: "1" }, { header: "2" }],
     [{ size: [] }],
-
     [{ list: "ordered" }, { list: "bullet" }],
     ["link", "image"],
   ],
@@ -26,16 +27,31 @@ const modules = {
     matchVisual: false,
   },
 };
+
 export const QuillEditor: React.FC<QuillEditorProps> = ({
   onChange,
   value,
   readOnly = false,
+  maxLength = Infinity,
 }) => {
   const [isBrowser, setIsBrowser] = useState(false);
+  const [characterCount, setCharacterCount] = useState(0);
 
   useEffect(() => {
     setIsBrowser(typeof window !== "undefined");
-  }, []);
+  });
+
+  const handleQuillChange = (
+    content: any,
+    delta: any,
+    source: any,
+    editor: any
+  ) => {
+    if (editor.getLength()) {
+      setCharacterCount(editor.getLength());
+    }
+    onChange?.(content);
+  };
 
   if (isBrowser) {
     return (
@@ -46,14 +62,28 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
           </Box>
         }
       >
-        <Quill
-          className={readOnly ? "quill_readonly" : ""}
-          onChange={onChange}
-          theme="snow"
-          value={value}
-          readOnly={readOnly}
-          modules={modules}
-        />
+        {readOnly ? (
+          <></>
+        ) : (
+          <Box display="flex" justifyContent="end">
+            {" "}
+            <span>
+              {characterCount}/{maxLength}
+            </span>
+          </Box>
+        )}
+        <div>
+          <Quill
+            className={readOnly ? "quill_readonly" : ""}
+            onChange={(content, delta, source, editor) =>
+              handleQuillChange(content, delta, source, editor)
+            }
+            theme="snow"
+            value={value}
+            readOnly={readOnly}
+            modules={modules}
+          />
+        </div>
       </Suspense>
     );
   } else {

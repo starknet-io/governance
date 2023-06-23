@@ -18,7 +18,7 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 export function Page() {
   const pageContext = usePageContext();
 
-  const snip = trpc.proposals.getSNIP.useQuery({
+  const snip = trpc.snips.getSNIP.useQuery({
     id: parseInt(pageContext.routeParams!.id),
   });
 

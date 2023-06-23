@@ -6,6 +6,7 @@ import { TRPCError } from "@trpc/server";
 import { db } from "../db/db";
 import { users } from "../db/schema/users";
 import { checkDelegation } from "../utils/helpers";
+import { eq } from "drizzle-orm";
 
 export interface DecodedToken extends JwtPayload {
   new_user?: boolean;
@@ -43,16 +44,22 @@ export const authRouter = router({
             }
           });
         });
-        if (decodedToken?.new_user && decodedToken.verified_credentials?.[0].address) {
-          await db.insert(users)
-            .values({
-              address: decodedToken.verified_credentials?.[0].address,
-              walletName: decodedToken.verified_credentials?.[0].wallet_name,
-              walletProvider: decodedToken.verified_credentials?.[0].wallet_provider,
-              publicIdentifier: decodedToken.verified_credentials?.[0].public_identifier,
-              dynamicId: decodedToken.verified_credentials?.[0].id,
-              createdAt: new Date(),
-            })
+        if (decodedToken.verified_credentials?.[0].address) {
+          const user = await db.query.users.findFirst({
+            where: eq(users.address, decodedToken.verified_credentials?.[0].address)
+          })
+
+          if (!user) {
+            await db.insert(users)
+              .values({
+                address: decodedToken.verified_credentials?.[0].address,
+                walletName: decodedToken.verified_credentials?.[0].wallet_name,
+                walletProvider: decodedToken.verified_credentials?.[0].wallet_provider,
+                publicIdentifier: decodedToken.verified_credentials?.[0].public_identifier,
+                dynamicId: decodedToken.verified_credentials?.[0].id,
+                createdAt: new Date(),
+              })
+          }
         }
         opts.ctx.res.cookie('JWT', opts.input.authToken, { httpOnly: true });
         return

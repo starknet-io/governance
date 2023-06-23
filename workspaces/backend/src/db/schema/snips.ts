@@ -1,6 +1,7 @@
 import { pgEnum, pgTable, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { users } from './users';
 import { InferModel, relations } from 'drizzle-orm';
+import { comments } from './comments';
 
 export const proposalType = pgEnum('type', ['snip', 'vote']);
 export const proposalStatus = pgEnum('status', [
@@ -13,7 +14,7 @@ export const proposalStatus = pgEnum('status', [
   'Living',
 ]);
 
-export const proposals = pgTable('proposals', {
+export const snips = pgTable('snips', {
   id: serial('id').primaryKey(),
   type: proposalType('type'),
   status: proposalStatus('status'),
@@ -30,13 +31,13 @@ export const proposals = pgTable('proposals', {
     .defaultNow(),
 });
 
-
-export const author = relations(proposals, ({ one }) => ({
+export const proposalRelations = relations(snips, ({ one, many }) => ({
   author: one(users, {
-    fields: [proposals.userId],
+    fields: [snips.userId],
     references: [users.id],
   }),
+  comments: many(comments),
 }));
 
-export type Proposal = InferModel<typeof proposals>;
-export type NewProposal = InferModel<typeof proposals, 'insert'>;
+export type Snip = InferModel<typeof snips>;
+export type NewSnip = InferModel<typeof snips, 'insert'>;

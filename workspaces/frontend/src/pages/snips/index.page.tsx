@@ -10,9 +10,10 @@ import {
   SearchInput,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
+import { useEffect } from "react";
 
 export function Page() {
-  const proposals = trpc.proposals.getAll.useQuery();
+  const snips = trpc.snips.getAll.useQuery();
 
   return (
     <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px">
@@ -40,13 +41,13 @@ export function Page() {
         </Box>
       </AppBar>
       <ListRow.Container>
-        {proposals.data?.map((data) => (
+        {snips.data?.map((data) => (
           <ListRow.Root key={data.id} href={`/${data.type}s/${data.id}`}>
             <ListRow.MutedText id={data.id} type={data.type} />
             <ListRow.Title label={data.title} />
             {/* <ListRow.Date /> */}
 
-            <ListRow.Comments count={0} />
+            <ListRow.Comments count={data.comments?.length ?? null} />
             <ListRow.Status status={data.status} />
           </ListRow.Root>
         ))}

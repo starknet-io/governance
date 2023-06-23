@@ -8,24 +8,46 @@ import {
   Flex,
   Stat,
   Divider,
-  Textarea,
   FormControl,
   QuillEditor,
+  CommentInput,
+  CommentList,
   IconButton,
   HiEllipsisHorizontal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { useEffect } from "react";
 
 export function Page() {
   const pageContext = usePageContext();
 
-  const snip = trpc.proposals.getSNIP.useQuery({
+  const { user } = useDynamicContext();
+
+  const snip = trpc.snips.getSNIP.useQuery({
     id: parseInt(pageContext.routeParams!.id),
   });
 
-  console.log(snip.data);
-  const commentCount = 0;
+  const saveComment = trpc.comments.saveComment.useMutation({
+    onSuccess: () => {
+      snip.refetch();
+    },
+  });
+
+  const handleCommentSend = async (value: string) => {
+    try {
+      await saveComment.mutateAsync({
+        content: value,
+        snipId: parseInt(pageContext.routeParams!.id),
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log(value);
+  };
+
   return (
     <>
       <Box
@@ -71,7 +93,7 @@ export function Page() {
                 </Stat.Root>
 
                 <Stat.Root>
-                  <Stat.Link label={`${commentCount} comments`} />
+                  <Stat.Link label={`${snip.data?.comments.length} comments`} />
                 </Stat.Root>
               </Flex>
               <Divider />
@@ -79,8 +101,6 @@ export function Page() {
               <Heading color="#33333E" variant="h3">
                 Overview
               </Heading>
-              {/* // markdown comp */}
-              {/* <Text variant="body">{snip.data?.description}</Text> */}
               <QuillEditor
                 value={snip.data?.description || undefined}
                 readOnly
@@ -89,13 +109,14 @@ export function Page() {
               <Heading color="#33333E" variant="h3">
                 Discussion
               </Heading>
-              <FormControl id="delegate-statement">
-                <Textarea
-                  rows={1}
-                  variant="comment"
-                  placeholder="Type your message..."
-                />
-              </FormControl>
+              {user ? (
+                <FormControl id="delegate-statement">
+                  <CommentInput onSend={handleCommentSend} />
+                </FormControl>
+              ) : (
+                <></>
+              )}
+              <CommentList commentsList={snip.data?.comments || []} />
             </Stack>
           </Box>
         </ContentContainer>

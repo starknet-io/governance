@@ -44,6 +44,8 @@ export {
   FilterPopoverContent,
   useFilterState,
   FilterPopoverIcon,
+  CommentInput,
+  CommentList,
   InfoModal,
   PlaceholderImage,
   VoteReview,

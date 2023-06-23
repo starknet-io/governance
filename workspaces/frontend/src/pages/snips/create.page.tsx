@@ -24,16 +24,15 @@ export function Page() {
     handleSubmit,
     register,
     formState: { errors, isValid },
-  } = useForm<RouterInput["proposals"]["createSNIP"]>();
+  } = useForm<RouterInput["snips"]["createSNIP"]>();
   const [editorValue, setEditorValue] = useState<string>(EditorTemplate.snip);
-  const createSNIP = trpc.proposals.createSNIP.useMutation();
+  const createSNIP = trpc.snips.createSNIP.useMutation();
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
     try {
       data.description = editorValue;
       await createSNIP.mutateAsync(data);
-      navigate("/");
+      navigate("/snips");
     } catch (error) {
       // Handle error
       console.log(error);
