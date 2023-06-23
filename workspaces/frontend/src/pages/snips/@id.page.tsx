@@ -18,7 +18,6 @@ import {
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
-import { useEffect } from "react";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -89,7 +88,7 @@ export function Page() {
                   <Stat.Text label={`By cillian`} />
                 </Stat.Root>
                 <Stat.Root>
-                  <Stat.Date timestamp={snip?.data?.createdAt} />
+                  <Stat.Date date={snip?.data?.createdAt} />
                 </Stat.Root>
 
                 <Stat.Root>

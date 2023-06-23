@@ -47,10 +47,10 @@ function Proposal({ data }: any) {
       <ListRow.Title label={data.title} />
       <ListRow.VoteResults
         choices={
-          data.choices?.map((choice) => choice || "")?.filter(Boolean) || []
+          data.choices?.map((choice: any) => choice || "")?.filter(Boolean) || []
         }
         scores={
-          data.scores?.map((score) => score || 0)?.filter(Number.isFinite) || []
+          data.scores?.map((score: any) => score || 0)?.filter(Number.isFinite) || []
         }
       />
       <ListRow.DateRange start={data.start} end={data.end} state={data.state} />

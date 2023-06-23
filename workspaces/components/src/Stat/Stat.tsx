@@ -69,15 +69,15 @@ const Text = ({ label }: TextProps) => {
 
 // use date type and format with moment
 interface DateProps {
-  timestamp?: number;
+  date?: Date;
 }
-const Date = ({ timestamp }: DateProps) => {
-  const formattedDate = moment(timestamp && timestamp * 1000).format(
+const Date = ({ date }: DateProps) => {
+  const formattedDate = moment(date).format(
     "MMMM Do YYYY"
   );
   return (
     <ChakraText variant="breadcrumbs" fontWeight="500" color="#4D4D56">
-      {timestamp && formattedDate}
+      {date && formattedDate}
     </ChakraText>
   );
 };

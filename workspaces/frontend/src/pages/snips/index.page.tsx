@@ -10,7 +10,6 @@ import {
   SearchInput,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useEffect } from "react";
 
 export function Page() {
   const snips = trpc.snips.getAll.useQuery();

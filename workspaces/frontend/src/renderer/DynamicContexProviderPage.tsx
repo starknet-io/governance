@@ -15,7 +15,6 @@ import {
   Logo,
   NavGroup,
   NavItem,
-  ThemeProvider,
   Layout,
   Header,
   Box,

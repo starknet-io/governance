@@ -1,5 +1,4 @@
 import { Box, Icon } from "@chakra-ui/react";
-import React from "react";
 import { MdStopCircle, MdThumbDown, MdThumbUp } from "react-icons/md";
 
 type Props = {

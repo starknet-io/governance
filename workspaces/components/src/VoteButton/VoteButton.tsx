@@ -3,7 +3,7 @@ import { MdStopCircle, MdThumbDownAlt, MdThumbUpAlt } from "react-icons/md";
 
 type Props = {
   label: string;
-  type: "For" | "Against" | "Abstain" | string | null;
+  type: (keyof typeof currentVariation) | undefined;
   active?: boolean;
   onClick?: () => void;
 };

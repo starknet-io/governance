@@ -38,7 +38,6 @@ import { useWalletClient } from "wagmi";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { providers } from "ethers";
 import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
-import { set } from "react-hook-form";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { trpc } from "src/utils/trpc";
 
@@ -267,7 +266,7 @@ export function Page() {
                 <Stat.Text label={`By ${data?.proposal?.author}`} />
               </Stat.Root>
               <Stat.Root>
-                <Stat.Date timestamp={data?.proposal?.start} />
+                <Stat.Date date={data?.proposal?.start ? new Date(data?.proposal?.start*1000):undefined} />
               </Stat.Root>
               <Stat.Root>
                 <Stat.Link label={`${commentCount} comments`} />
@@ -293,7 +292,7 @@ export function Page() {
               <></>
             )}
 
-            <QuillEditor readOnly value={data?.proposal?.body} />
+            <QuillEditor readOnly value={data?.proposal?.body ?? undefined} />
           </Stack>
           {user ? (
             <FormControl id="delegate-statement">
@@ -338,6 +337,7 @@ export function Page() {
                       setIsOpen(true);
                     }}
                     active={false}
+                    // @ts-expect-error todo
                     type={choice}
                     label={`${choice}`}
                   />
@@ -352,10 +352,10 @@ export function Page() {
 
               {data?.proposal?.choices.map((choice, index) => {
                 const totalVotes = data?.proposal?.scores?.reduce(
-                  (a, b) => a + b,
+                  (a, b) => a! + b!,
                   0
                 );
-                const voteCount = data?.proposal?.scores[index];
+                const voteCount = data?.proposal?.scores![index];
                 const userVote = false;
                 const strategies = data?.proposal?.strategies;
                 const scoresByStrategy =
@@ -363,10 +363,14 @@ export function Page() {
                 return (
                   <VoteStat
                     key={choice}
+                    // @ts-expect-error todo
                     type={choice}
+                    // @ts-expect-error todo
                     totalVotes={totalVotes}
+                    // @ts-expect-error todo
                     voteCount={voteCount}
                     userVote={userVote}
+                    // @ts-expect-error todo
                     strategies={strategies}
                     scoresByStrategy={scoresByStrategy}
                   />

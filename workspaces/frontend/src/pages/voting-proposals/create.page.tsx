@@ -10,7 +10,6 @@ import {
   Stack,
   Select,
   InputGroup,
-  InputLeftAddon,
   QuillEditor,
   DatePicker,
   ContentContainer,
@@ -40,7 +39,7 @@ export function Page() {
     control,
     register,
     setValue,
-    formState: { errors, isValid, defaultValues },
+    formState: { isValid, defaultValues },
   } = useForm<FieldValues>({
     async defaultValues() {
       return {

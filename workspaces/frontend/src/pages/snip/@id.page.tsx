@@ -53,7 +53,7 @@ export function Page() {
                 </Stat.Root>
                 <Stat.Root>
                   <Stat.Label>Created on</Stat.Label>
-                  <Stat.Date timestamp={`${snip.data?.createdAt}`} />
+                  <Stat.Date date={snip.data?.createdAt} />
                 </Stat.Root>
                 <Stat.Root>
                   <Stat.Label>Created by</Stat.Label>

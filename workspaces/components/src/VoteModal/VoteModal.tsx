@@ -7,8 +7,6 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { Heading } from "../Heading";
-import { ReviewForm } from "./ReviewForm";
-import { Button } from "src/Button";
 type Props = {
   isOpen: boolean;
   onClose: () => void;

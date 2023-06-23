@@ -21,11 +21,9 @@ import { useState } from "react";
 
 const delegateTypeValues = delegateTypeEnum.enumValues;
 
-export type DelegateTypeValues = (typeof delegateTypeValues)[number];
-
 type FormValues = {
   delegateStatement: string;
-  delegateType: DelegateTypeValues;
+  delegateType: string[];
   starknetWalletAddress: string;
   twitter: string;
   discord: string;

@@ -57,7 +57,7 @@ export function Page() {
   const user = delegateResponse?.data?.[0].users;
 
   // temp eth address
-  const fakeEthAddress = `${delegate?.starknetWalletAddress?.slice(0, 5)}.eth`;
+  // const fakeEthAddress = `${delegate?.starknetWalletAddress?.slice(0, 5)}.eth`;
 
   const senderData = useBalanceData(address);
 

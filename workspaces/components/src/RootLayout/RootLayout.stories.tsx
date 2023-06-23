@@ -28,7 +28,7 @@ export const Solid = () => (
         </NavGroup>
       </Layout.LeftAside>
       <Layout.Main />
-      <Layout.RightAside />
+      {/* <Layout.RightAside /> */}
     </Layout.Root>
   </ThemeProvider>
 );
