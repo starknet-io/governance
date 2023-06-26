@@ -103,7 +103,7 @@ export function Page() {
             }
           : undefined
       );
-
+console.log(data)
       const params: Vote = {
         // from?: string;
         space: "robwalsh.eth",
@@ -173,7 +173,12 @@ export function Page() {
       height="100%"
     >
       <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <VoteReview choice={currentChoice} voteCount={10} />
+
+        <VoteReview
+          choice={currentChoice}
+          // @ts-expect-error todo
+          voteCount={data?.vp?.vp}
+        />
         <FormControl id="comment">
           <FormLabel color={"#292932"}>Reason for vote (optional)</FormLabel>
           <Textarea
@@ -293,17 +298,23 @@ export function Page() {
             )}
 
             <QuillEditor readOnly value={data?.proposal?.body ?? undefined} />
-          </Stack>
+
+            <Divider my="32px" />
+              <Heading color="#33333E" variant="h3">
+                Discussion
+              </Heading>
           {user ? (
             <FormControl id="delegate-statement">
               <CommentInput onSend={handleCommentSend} />
             </FormControl>
           ) : (
-            <></>
+            <Box>
+                    Show logged out state for comment input
+                </Box>
           )}
-          <Box marginTop="3rem">
+
             <CommentList commentsList={comments.data || []} />
-          </Box>
+                   </Stack>
         </Box>
       </ContentContainer>
       <Box

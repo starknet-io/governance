@@ -141,8 +141,10 @@ export function Page() {
     },
   });
 
+  console.log(delegates?.data)
+
   const filteredDelegates = delegates?.data?.filter((data) =>
-    data?.starknetWalletAddress?.includes(searchQuery)
+    data?.author?.address?.includes(searchQuery)
   );
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
@@ -230,7 +232,7 @@ export function Page() {
         >
           {filteredDelegates && filteredDelegates.length > 0 ? (
             filteredDelegates.map((data) => (
-              <DelegateCard key={data.starknetWalletAddress} {...data} />
+              <DelegateCard key={data.starknetWalletAddress} address={data?.author?.address} {...data} />
             ))
           ) : (
             <Box

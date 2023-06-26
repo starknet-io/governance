@@ -84,15 +84,16 @@ const Date = ({ date }: DateProps) => {
 
 interface LinkProps {
   label: string | null | undefined;
+  href?: string ;
 }
-const Link = ({ label }: LinkProps) => {
+const Link = ({ label, href }: LinkProps) => {
   return (
     <ChakraLink
       fontWeight="500"
       fontSize="12px"
       padding="0"
       color="#4D4D56"
-      href="#sdf"
+      href={href}
     >
       {label}
     </ChakraLink>

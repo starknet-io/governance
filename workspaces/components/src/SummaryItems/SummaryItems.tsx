@@ -7,6 +7,7 @@ import { Tag } from "../Tag";
 import { truncateAddress } from "src/utils";
 import { Heading } from "src/Heading";
 import moment from "moment";
+import { CopyToClipboard } from "src/CopyToClipboard";
 // import type { delegateTypeEnum } from '@yukilabs/governance-backend/src/db/schema/delegates';
 
 type RootProps = {
@@ -34,19 +35,27 @@ type ItemProps = {
   value?: string | null;
   children?: React.ReactNode;
   isTruncated?: boolean;
+  isCopiable?: boolean;
 };
 
 const Item = (props: ItemProps) => {
-  const { label, value, children, isTruncated } = props;
+  const { label, value, children, isTruncated,isCopiable } = props;
   return (
     <Flex justify="space-between" fontSize="sm">
       <Text fontWeight="medium" color="#6C6C75">
         {label}
       </Text>
       {value ? (
-        <Text color="#292932" fontWeight="medium" title={value}>
-          {isTruncated ? truncateAddress(value) : value}
-        </Text>
+        isCopiable ? (
+          <CopyToClipboard text={value}>
+            <Text color="#292932" fontWeight="medium" title={value}>
+                {isTruncated ? truncateAddress(value) : value}
+            </Text>
+          </CopyToClipboard> ) : (
+            <Text color="#292932" fontWeight="medium" title={value}>
+              {isTruncated ? truncateAddress(value) : value}
+            </Text>
+          )
       ) : (
         children
       )}

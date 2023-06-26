@@ -31,14 +31,14 @@ export const CommentList: React.FC<CommentListProps> = ({ commentsList }) => {
   console.log("commentsList: ", commentsList);
 
   return (
-    <Box className="comment-list">
+    <Flex flexDirection="column" gap="32px" >
       {commentsList.map((comment, index) => {
         const { author, createdAt, content } = comment;
         return (
-          <Flex key={index} display="flex" marginBottom="16px">
-            <Box paddingRight="16px">
+          <Box  display="flex" height={"auto"} key={index} gap="16px">
+            <Box minWidth="40px">
               <Indenticon size={40} address={author?.address || ""} />
-            </Box>
+              </Box>
             <Box>
               <Flex>
                 <Text fontWeight="bold" fontSize="14px">
@@ -54,11 +54,11 @@ export const CommentList: React.FC<CommentListProps> = ({ commentsList }) => {
                   {daysAgo(createdAt)}
                 </Text>
               </Flex>
-              <QuillEditor value={content || ""} readOnly={true} />
+              <QuillEditor value={content || ""} readOnly={true}  />
             </Box>
-          </Flex>
+          </Box>
         );
       })}
-    </Box>
+    </Flex>
   );
 };

@@ -19,12 +19,22 @@ import { useState } from "react";
 import { useAccount, useBalance, useEnsName } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
+import { useQuery } from "@apollo/client";
+import { gql } from "src/gql";
+
+const GET_DELEGATE_STATS = gql(`
+query Votes($where: VoteWhere) {
+  votes(where: $where)  {
+    id,
+    choice
+  }}`);
 
 const useBalanceData = (address: `0x${string}` | undefined) => {
   const { data: balance } = useBalance({
     address,
     chainId: 5,
     token: "0x65aFADD39029741B3b8f0756952C74678c9cEC93", //USDC Goerli test token address
+    // token: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", //USDC Mainnet test token address
   });
 
   const { data: ensName } = useEnsName({
@@ -35,9 +45,22 @@ const useBalanceData = (address: `0x${string}` | undefined) => {
     address,
     balance: balance?.formatted ?? "0",
     ethAddress: ensName ?? address,
-    symbol: balance?.symbol ?? "STRK",
+    symbol: balance?.symbol ?? "USDC",
   };
 };
+
+function getChoiceStats(data: any[]) {
+  const stats: { [key: string]: number } = { 1: 0, 2: 0, 3: 0 };
+  data?.forEach((vote) => {
+    if (vote.choice in stats) {
+      stats[vote.choice] += 1;
+    } else {
+      stats[vote.choice] = 1;
+    }
+  });
+
+  return stats;
+}
 
 export function Page() {
   const pageContext = usePageContext();
@@ -56,13 +79,20 @@ export function Page() {
 
   const user = delegateResponse?.data?.[0].users;
 
-  // temp eth address
-  // const fakeEthAddress = `${delegate?.starknetWalletAddress?.slice(0, 5)}.eth`;
-
   const senderData = useBalanceData(address);
 
   const receiverData = useBalanceData(user?.address as `0x${string}`);
 
+  const { data } = useQuery(GET_DELEGATE_STATS, {
+    variables: {
+      where: {
+        space: "robwalsh.eth",
+        voter: user?.address,
+      },
+    },
+  });
+  const stats = getChoiceStats(data?.votes as any[]);
+  console.log(data);
   return (
     <Box
       display="flex"
@@ -98,8 +128,8 @@ export function Page() {
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
-            address={delegate?.starknetWalletAddress}
-            avatarString={delegate?.userId}
+            address={user?.address}
+            avatarString={user?.address}
           >
             <ProfileSummaryCard.MoreActions
               onClick={() => console.log("red")}
@@ -117,15 +147,22 @@ export function Page() {
 
         <Box mt="32px">
           <SummaryItems.Root>
-            <SummaryItems.Item label="Proposals voted on" value="-" />
+            <SummaryItems.Item
+              label="Proposals voted on"
+              value={`${data?.votes?.length}`}
+            />
             <SummaryItems.Item label="Delegated votes" value="-" />
             <SummaryItems.Item label="Total comments" value="-" />
-            <SummaryItems.Item label="For/against/abstain" value="-" />
+            <SummaryItems.Item
+              label="For/against/abstain"
+              value={`${stats[1]}/${stats[2]}/${stats[3]}`}
+            />
             <SummaryItems.Item
               label="Delegation agreement"
               value={delegate?.agreeTerms ? "Yes" : "No"}
             />
             <SummaryItems.Item
+              isCopiable
               isTruncated
               label="Starknet address"
               value={delegate?.starknetWalletAddress}
@@ -137,8 +174,7 @@ export function Page() {
           <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
           <SummaryItems.Socials label="discourse" value={delegate?.discourse} />
           <SummaryItems.Socials label="discord" value={delegate?.discord} />
-          {/* <SummaryItems.Socials label="telegram" value="@cillianh" />
-          <SummaryItems.Socials label="github" value="@cillianh" /> */}
+
         </SummaryItems.Root>
         <Divider mt="32px" mb="32px" />
         <SummaryItems.Root>

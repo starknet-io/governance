@@ -16,16 +16,14 @@ import { stripHtml } from "src/utils/helpers";
 
 type Props = {
   id: string;
-  starknetWalletAddress: string | null;
   delegateType: any;
   delegateStatement: string;
   avatarUrl?: string | null;
   address?: string | null;
-  userId?: string | null;
 };
 
 export const DelegateCard = (props: Props) => {
-  const { id, userId, starknetWalletAddress, delegateType, delegateStatement } =
+  const { id, address, delegateType, delegateStatement } =
     props;
   const displayText = (htmlString: string) => {
     return stripHtml(htmlString);
@@ -37,9 +35,9 @@ export const DelegateCard = (props: Props) => {
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
             size="sm"
-            address={starknetWalletAddress}
+            address={address}
             subtitle="7.5m Votes"
-            avatarString={userId}
+            avatarString={address}
           ></ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>
       </CardHeader>
@@ -50,29 +48,49 @@ export const DelegateCard = (props: Props) => {
       </CardBody>
       <CardFooter>
         <Box width="100%" display="flex" flexDirection="column" gap="16px">
-          <Box display="flex" flexDirection="row" gap="16px">
-            {Array.isArray(delegateType) ? (
-              <>
-                {delegateType.slice(0, 2).map((item: string) => (
-                  <Tag variant="listCard" key={item}>
-                    {item}
-                  </Tag>
-                ))}
-                {delegateType.length > 2 && (
-                  <Tooltip
-                    hasArrow
-                    shouldWrapChildren
-                    placement="top"
-                    label={delegateType.slice(2).join(", ")}
-                  >
-                    <Tag variant="listCard">+{delegateType.length - 2}</Tag>
-                  </Tooltip>
-                )}
-              </>
-            ) : (
-              <></>
-            )}
-          </Box>
+<Box display="flex" flexDirection="row" gap="16px">
+  {Array.isArray(delegateType) ? (
+    <>
+      {delegateType[0].length > 20 ? (
+        <>
+          <Tag variant="listCard" key={delegateType[0]}>
+            {delegateType[0]}
+          </Tag>
+          {delegateType.length > 1 && (
+            <Tooltip
+              hasArrow
+              shouldWrapChildren
+              placement="top"
+              label={delegateType.slice(1).join(", ")}
+            >
+              <Tag variant="listCard">+{delegateType.length - 1}</Tag>
+            </Tooltip>
+          )}
+        </>
+      ) : (
+        <>
+          {delegateType.slice(0, 2).map((item: string) => (
+            <Tag variant="listCard" key={item}>
+              {item}
+            </Tag>
+          ))}
+          {delegateType.length > 2 && (
+            <Tooltip
+              hasArrow
+              shouldWrapChildren
+              placement="top"
+              label={delegateType.slice(2).join(", ")}
+            >
+              <Tag variant="listCard">+{delegateType.length - 2}</Tag>
+            </Tooltip>
+          )}
+        </>
+      )}
+    </>
+  ) : (
+    <></>
+  )}
+</Box>
           <Box>
             <Button variant="outline" onClick={() => console.log("clicked")}>
               Delegate

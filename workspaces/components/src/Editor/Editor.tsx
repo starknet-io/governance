@@ -12,6 +12,7 @@ interface QuillEditorProps {
   onChange?: (content: string) => void;
   readOnly?: boolean;
   maxLength?: number;
+  minHeight?: number;
 }
 
 const modules = {
@@ -33,6 +34,7 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
   value,
   readOnly = false,
   maxLength = Infinity,
+  minHeight= 50
 }) => {
   const [isBrowser, setIsBrowser] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
@@ -62,33 +64,40 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
           </Box>
         }
       >
-        {readOnly ? (
-          <></>
-        ) : (
-          <Box display="flex" justifyContent="end">
-            {" "}
-            <span>
-              {characterCount}/{maxLength}
-            </span>
-          </Box>
-        )}
-        <div>
+        <Box position={"relative"}>
+          {readOnly ? (
+            <></>
+          ) : (
+            <Box
+              position={"absolute"}
+              top="-32px"
+              right="0"
+              display="flex"
+              justifyContent="end"
+              fontSize="12px"
+            >
+              <span>
+                {characterCount}/{maxLength}
+              </span>
+            </Box>
+          )}
           <Quill
             className={readOnly ? "quill_readonly" : ""}
             onChange={(content, delta, source, editor) =>
               handleQuillChange(content, delta, source, editor)
             }
+            style={{minHeight: `${minHeight}px`}}
             theme="snow"
             value={value}
             readOnly={readOnly}
             modules={modules}
           />
-        </div>
+        </Box>
       </Suspense>
     );
   } else {
     return (
-      <HStack minHeight="147px" alignItems="center" justifyContent="center">
+      <HStack minHeight="50px" alignItems="center" justifyContent="center">
         <Spinner />
       </HStack>
     );

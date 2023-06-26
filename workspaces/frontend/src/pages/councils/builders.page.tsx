@@ -51,7 +51,7 @@ export function Page() {
         </Box>
         <Divider my="24px" />
         <SummaryItems.Root>
-          <SummaryItems.Title label="Stats" />
+
           <SummaryItems.Item label="Proposals voted on" value="6" />
           <SummaryItems.Item label="Delegated votes" value="7,000,000" />
 

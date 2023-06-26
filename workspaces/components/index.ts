@@ -49,6 +49,7 @@ export {
   InfoModal,
   PlaceholderImage,
   VoteReview,
+  CopyToClipboard
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";

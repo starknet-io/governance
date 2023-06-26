@@ -92,7 +92,7 @@ export function Page() {
                 </Stat.Root>
 
                 <Stat.Root>
-                  <Stat.Link label={`${snip.data?.comments.length} comments`} />
+                  <Stat.Link href="#discussion" label={`${snip.data?.comments.length} comments`} />
                 </Stat.Root>
               </Flex>
               <Divider />
@@ -105,7 +105,7 @@ export function Page() {
                 readOnly
               />
               <Divider my="32px" />
-              <Heading color="#33333E" variant="h3">
+              <Heading id="#discussion" color="#33333E" variant="h3">
                 Discussion
               </Heading>
               {user ? (
@@ -113,7 +113,9 @@ export function Page() {
                   <CommentInput onSend={handleCommentSend} />
                 </FormControl>
               ) : (
-                <></>
+                  <Box>
+                    Show logged out state for comment input
+                </Box>
               )}
               <CommentList commentsList={snip.data?.comments || []} />
             </Stack>

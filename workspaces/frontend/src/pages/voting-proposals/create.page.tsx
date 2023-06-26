@@ -13,6 +13,7 @@ import {
   QuillEditor,
   DatePicker,
   ContentContainer,
+  EditorTemplate,
 } from "@yukilabs/governance-components";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
@@ -38,13 +39,12 @@ export function Page() {
     handleSubmit,
     control,
     register,
-    setValue,
-    formState: { isValid, defaultValues },
+    formState: { isValid },
   } = useForm<FieldValues>({
     async defaultValues() {
       return {
         title: "",
-        body: "",
+        body: EditorTemplate.proposal,
         discussion: "",
         start: new Date(),
         end: new Date(new Date().getTime() + 3 * 60 * 60 * 24 * 1000),
@@ -121,17 +121,24 @@ export function Page() {
                 />
               </FormControl>
               <FormControl id="delegate-statement">
-                <FormLabel>Proposal Body</FormLabel>
-                <QuillEditor
-                  onChange={(value) => setValue("body", value)}
-                  value={defaultValues?.body}
+                <FormLabel>Proposal Body</FormLabel>{" "}
+                <Controller
+                  control={control}
+                  name="body"
+                  render={({ field: { onChange, onBlur, value, ref } }) => (
+                    <QuillEditor
+                      maxLength={10000}
+                      onChange={onChange}
+                      value={value}
+                    />
+                  )}
                 />
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Forum discussion (optional) </FormLabel>
 
                 <InputGroup maxW={{ md: "3xl" }}>
-                  {/* <InputLeftAddon>https://</InputLeftAddon> */}
+
                   <Input
                     variant="primary"
                     defaultValue="https://community.starknet.io/1234567890"

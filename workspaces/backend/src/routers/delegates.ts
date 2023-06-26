@@ -6,8 +6,14 @@ import { getUserByJWT } from "../utils/helpers";
 import { eq } from "drizzle-orm";
 import { users } from "../db/schema/users";
 
+//todo: join delegate and user
 export const delegateRouter = router({
-  getAll: publicProcedure.query(() => db.select().from(delegates)),
+  getAll: publicProcedure.query(async () => await db.query.delegates.findMany({
+    with: {
+      author: true
+    }
+  })
+  ),
 
   saveDelegate: protectedProcedure
     .input(

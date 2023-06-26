@@ -1,4 +1,4 @@
-import { InferModel } from 'drizzle-orm';
+import { InferModel, relations } from 'drizzle-orm';
 import {
   boolean,
   json,
@@ -43,6 +43,13 @@ export const delegates = pgTable('delegates', {
     .notNull()
     .defaultNow(),
 });
+
+export const delegateRelations = relations(delegates, ({ one }) => ({
+  author: one(users, {
+    fields: [delegates.userId],
+    references: [users.id],
+  }),
+}));
 
 export type Delegate = InferModel<typeof delegates>;
 export type NewDelegate = InferModel<typeof delegates, 'insert'>;

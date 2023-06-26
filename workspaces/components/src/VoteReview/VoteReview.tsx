@@ -21,8 +21,7 @@ export const VoteReview = ({ voteCount = 0, choice }: Props) => {
       {choice === 2 && <Icon mx="4px" color="#E54D66" as={MdThumbDown} />}
       {choice === 3 && (
         <Icon mx="4px" color="#4D4D56" as={MdStopCircle} />
-      )} with {voteCount}
-      votes
+      )} with {voteCount} votes
     </Box>
   );
 };

@@ -28,6 +28,7 @@ export { DatePicker } from "./DatePicker";
 export { ConfirmModal } from "./ConfirmModal";
 export { LinkCard } from "./LinkCard";
 export { CheckboxFilter } from "./Filter/CheckboxFilter";
+export  { CopyToClipboard } from './CopyToClipboard';
 export {
   FilterPopoverButton,
   FilterPopoverContent,

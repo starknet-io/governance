@@ -1,4 +1,4 @@
-.container {
+/* .container {
   display: flex;
   align-items: center;
   padding-left: 16px;
@@ -10,18 +10,19 @@
 }
 .compact-comment {
   text-align: center;
-}
+} */
 .submit-button {
   position: absolute;
-  right: 40px;
-  bottom: 8px;
+  right: 14px;
+  bottom: 14px;
   z-index: 1;
 }
-.comment-list .ql-editor {
+/* .comment-list .ql-editor {
   padding: 0;
   margin: 0;
   min-height: 50px;
   overflow-y: auto;
   overflow-x: hidden;
 
-}
+
+} */

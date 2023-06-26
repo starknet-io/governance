@@ -26,7 +26,7 @@
 }
 .ql-toolbar {
   border: none !important;
-  border-top: 1px solid #E4E5E7 !important;
+  border-top: 0px solid #E4E5E7 !important;
 color:#6C6C75 !important;
   background-color: transparent;
   border-top-left-radius: 0px;
@@ -54,7 +54,7 @@ color:#6C6C75 !important;
 .ql-editor {
 border-radius: 5px !important;
   line-height: 28px !important;
-  min-height: 172px;
+
   position: relative;
   background: #FFFFFF;
     /* Stroke 1 */
@@ -73,3 +73,13 @@ border-radius: 5px !important;
   stroke-linejoin: round;
   stroke-width: 2;
 }
+
+
+/* .ql-toolbar {
+  transition: opacity 0.5s ease-in-out!important;
+  opacity: 0.5!important;
+}
+
+.ql-editor:focus-within .ql-toolbar {
+  opacity: 1!important;
+} */
