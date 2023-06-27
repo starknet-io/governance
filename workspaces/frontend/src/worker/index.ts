@@ -2,6 +2,7 @@ import { apiRouter } from "../api";
 import { handleStaticAssets } from "./static-assets";
 import { renderPage } from "vite-plugin-ssr/server";
 import { IRequest, Router } from "itty-router";
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 
 export const router = Router();
 
@@ -23,7 +24,16 @@ router.get("/data/*", ittyAssetshandler);
 router.all("*", async (req, event: WorkerGlobalScopeEventMap["fetch"]) => {
   const userAgent = event.request.headers.get("User-Agent")!;
 
+  const apolloClient = new ApolloClient({
+    ssrMode: true,
+    link: createHttpLink({
+      uri: "https://hub.snapshot.org/graphql",
+    }),
+    cache: new InMemoryCache(),
+  });
+
   const pageContextInit = {
+    apolloClient,
     event,
     urlOriginal: event.request.url,
     fetch,
