@@ -9,6 +9,6 @@
     "baseUrl": ".",
     "strict": true
   },
-  "include": ["src/**/*", "src/utils/abiJson.json"],
+  "include": ["src/**/*"],
   "references": [{ "path": "../components" }, { "path": "../backend" }]
 }

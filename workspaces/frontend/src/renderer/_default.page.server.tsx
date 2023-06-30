@@ -3,6 +3,7 @@ import { PageContextServer } from "./types";
 import { PageShell } from "./PageShell";
 import { getDefaultPageContext } from "./helpers";
 import { getDataFromTree } from '@apollo/client/react/ssr'
+import  { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
 
 // See https://vite-plugin-ssr.com/data-fetching
 export const passToClient = [
@@ -21,6 +22,18 @@ export async function onBeforeRender(pageContext: PageContextServer) {
   };
 }
 
+function makeApolloClient() {
+  const apolloClient = new ApolloClient({
+    ssrMode: true,
+    link: createHttpLink({
+      uri: 'https://hub.snapshot.org/graphql',
+      // fetch
+    }),
+    cache: new InMemoryCache()
+  })
+  return apolloClient
+}
+
 export async function render(pageContext: PageContextServer) {
   const { Page, pageProps, redirectTo } = pageContext;
 
@@ -29,8 +42,7 @@ export async function render(pageContext: PageContextServer) {
   const documentProps =
     pageContext.documentProps ?? pageContext.exports.documentProps;
 
-  const { apolloClient } = pageContext;
-
+  const apolloClient = makeApolloClient()
 
   // See https://www.apollographql.com/docs/react/performance/server-side-rendering/
   const page = (

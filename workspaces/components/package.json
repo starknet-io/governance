@@ -2,6 +2,7 @@
   "name": "@yukilabs/governance-components",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "dev": "storybook dev -p 6006",

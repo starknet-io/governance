@@ -3,29 +3,23 @@ import ssr from "vite-plugin-ssr/plugin";
 import { UserConfig, defineConfig } from "vite";
 import path from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
+import nodePolyfills from 'vite-plugin-node-stdlib-browser'
 
-export default defineConfig({
-  resolve: {
-    alias: {
-      stream: "stream-browserify",
+export default defineConfig(env => {
+  return {
+    publicDir: path.resolve(__dirname, "../../public"),
+    plugins: [
+      tsconfigPaths(),
+      react(),
+      ssr(),
+      nodePolyfills(),
+    ],
+    build: {
+      emptyOutDir: true,
     },
-  },
-  publicDir: path.resolve(__dirname, "../../public"),
-  plugins: [tsconfigPaths(), react(), ssr()],
-  build: {
-    emptyOutDir: true,
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          process: true,
-        }),
-      ],
+    ssr: {
+      target: "node",
+      noExternal: ["react-icons", "@apollo/client", "color-hash"]
     },
-  },
-  ssr: {
-    noExternal: ["@chakra-ui/*", "react-icons", "@apollo/client"],
-  },
-}) as UserConfig;
+  } as UserConfig
+});

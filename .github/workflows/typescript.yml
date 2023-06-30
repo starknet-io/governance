@@ -34,4 +34,4 @@ jobs:
         run: yarn
 
       - name: TypeScript Type Check
-        run: yarn tsc -b
+        run: yarn tsc -b -f
