@@ -1,11 +1,11 @@
-name: Build Frontend
+name: Build Backend
 
 on:
   push:
 
 jobs:
-  build-frontend:
-    name: Build Frontend
+  build-backend:
+    name: Build Backend
     # environment:
     #   name: Governance Frontend ${{ github.ref_name }}
     #   url: https://governance-frontend-${{ env.GITHUB_REF_SLUG }}.yukilabs.workers.dev
@@ -40,8 +40,4 @@ jobs:
         uses: rlespinasse/github-slug-action@v4
 
       - name: Build project
-        run: yarn workspace @yukilabs/governance-frontend build
-        env:
-          VITE_SITE_URL: https://governance-frontend-${{ env.GITHUB_REF_SLUG }}.yukilabs.workers.dev
-          VITE_APP_DYNAMIC_ID: a99f1241-3620-4df1-9673-96b3a3684cdf
-          NODE_OPTIONS: --max-old-space-size=8192
+        run: yarn workspace @yukilabs/governance-backend build
