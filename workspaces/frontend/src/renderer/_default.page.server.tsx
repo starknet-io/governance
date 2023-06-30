@@ -4,6 +4,7 @@ import { PageShell } from "./PageShell";
 import { getDefaultPageContext } from "./helpers";
 import { getDataFromTree } from '@apollo/client/react/ssr'
 import  { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
+import fetch from 'cross-fetch';
 
 // See https://vite-plugin-ssr.com/data-fetching
 export const passToClient = [
@@ -27,7 +28,7 @@ function makeApolloClient() {
     ssrMode: true,
     link: createHttpLink({
       uri: 'https://hub.snapshot.org/graphql',
-      // fetch
+      fetch
     }),
     cache: new InMemoryCache()
   })
