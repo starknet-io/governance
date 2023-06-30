@@ -9,4 +9,4 @@ FROM mcr.microsoft.com/devcontainers/typescript-node:16
 RUN mkdir /runtime
 COPY --from=build /build/ /runtime/
 WORKDIR /runtime/workspaces/backend
-ENTRYPOINT [ "node", "dist/index.js" ]
+ENTRYPOINT [ "node", "dist/src/index.js" ]
