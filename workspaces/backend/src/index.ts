@@ -12,7 +12,7 @@ const app: Express = express();
 const port = process.env.PORT || 8000;
 
 app.use(cookieParser());
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
+app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000', credentials: true }))
 app.use("/trpc", createExpressMiddleware({
   router: appRouter,
   createContext

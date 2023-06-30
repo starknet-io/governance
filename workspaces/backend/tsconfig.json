@@ -11,6 +11,8 @@
     "strict": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
+    "noEmit": false,
+    "emitDeclarationOnly": false
   },
   "include": ["src/**/*"]
 }

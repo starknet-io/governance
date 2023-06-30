@@ -11,7 +11,7 @@ export function TrpcProvider({ children }: PropsWithChildren) {
       transformer: superjson,
       links: [
         httpBatchLink({
-          url: "http://localhost:8000/trpc",
+          url: import.meta.env.VITE_APP_TRPC_URL,
           fetch(url, options) {
             return fetch(url, {
               ...options,
