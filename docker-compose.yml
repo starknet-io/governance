@@ -24,7 +24,7 @@ services:
       PORT: 8000
       CLIENT_ORIGIN: https://yuki-governance-web.xsg.dev
       DATABASE_URL: postgresql://govhub:phylum-austin-doughty-solution@93.187.111.23:5432/govhub
-      DYNAMIC_PUBLIC_KEY: >
+      DYNAMIC_PUBLIC_KEY: |
         -----BEGIN PUBLIC KEY-----
         MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA3dNuD1XQP+7JDjrdNElu
         aFyhc8HNMnOuAWTekoCmZEyrc4QVH4EUw3IXZsKvoJ8j5405jGQ9s9xSH7AyZ/q7
