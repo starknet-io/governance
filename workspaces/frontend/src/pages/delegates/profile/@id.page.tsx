@@ -9,8 +9,9 @@ import {
   Divider,
   Heading,
   ListRow,
-  ProfileSummaryCard,
+  // MarkdownRenderer,
   QuillEditor,
+  ProfileSummaryCard,
   Stack,
   SummaryItems,
 } from "@yukilabs/governance-components";
@@ -174,7 +175,6 @@ export function Page() {
           <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
           <SummaryItems.Socials label="discourse" value={delegate?.discourse} />
           <SummaryItems.Socials label="discord" value={delegate?.discord} />
-
         </SummaryItems.Root>
         <Divider mt="32px" mb="32px" />
         <SummaryItems.Root>
@@ -198,6 +198,7 @@ export function Page() {
           <Heading color="#33333E" variant="h3">
             Delegate pitch
           </Heading>
+          {/* <MarkdownRenderer content={delegate?.delegateStatement || ""} /> */}
           <QuillEditor value={delegate?.delegateStatement} readOnly />
           <Box mt="24px">
             <Heading color="#33333E" variant="h3">

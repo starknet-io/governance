@@ -43,17 +43,28 @@ function Proposal({ data }: any) {
 
   return (
     <ListRow.Root key={data.id} href={`/voting-proposals/${data.id}`}>
-      <ListRow.MutedText id={1} type="vote" />
+      <Box display={{ base: "none", md: "flex" }}>
+        <ListRow.MutedText id={1} type="vote" />
+      </Box>
       <ListRow.Title label={data.title} />
       <ListRow.VoteResults
         choices={
-          data.choices?.map((choice: any) => choice || "")?.filter(Boolean) || []
+          data.choices?.map((choice: any) => choice || "")?.filter(Boolean) ||
+          []
         }
         scores={
-          data.scores?.map((score: any) => score || 0)?.filter(Number.isFinite) || []
+          data.scores
+            ?.map((score: any) => score || 0)
+            ?.filter(Number.isFinite) || []
         }
       />
-      <ListRow.DateRange start={data.start} end={data.end} state={data.state} />
+      <Box display={{ base: "none", md: "flex" }}>
+        <ListRow.DateRange
+          start={data.start}
+          end={data.end}
+          state={data.state}
+        />
+      </Box>
       <Box display={{ base: "none", md: "flex" }}>
         <ListRow.Comments count={count} />
       </Box>
@@ -82,7 +93,7 @@ export function Page() {
         <Box mr="8px">
           <SearchInput placeholder="Search proposals..." />
         </Box>
-        <ButtonGroup>
+        <ButtonGroup display={{ base: "none", md: "flex" }}>
           <Button as="a" href="/delegates/create" variant="outline">
             Filter by
           </Button>

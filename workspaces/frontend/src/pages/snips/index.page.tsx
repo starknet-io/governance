@@ -56,5 +56,5 @@ export function Page() {
 }
 
 export const documentProps = {
-  title: "Proposals",
+  title: "Core Snips",
 } satisfies DocumentProps;

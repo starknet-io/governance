@@ -9,11 +9,13 @@ import {
   Stat,
   Divider,
   FormControl,
-  QuillEditor,
   CommentInput,
   CommentList,
   IconButton,
   HiEllipsisHorizontal,
+  // MarkdownRenderer,
+  QuillEditor,
+  Iframely,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -46,6 +48,7 @@ export function Page() {
     }
     console.log(value);
   };
+  console.log(snip.data?.discussionURL);
 
   return (
     <>
@@ -92,14 +95,29 @@ export function Page() {
                 </Stat.Root>
 
                 <Stat.Root>
-                  <Stat.Link href="#discussion" label={`${snip.data?.comments.length} comments`} />
+                  <Stat.Link
+                    href="#discussion"
+                    label={`${snip.data?.comments.length} comments`}
+                  />
                 </Stat.Root>
               </Flex>
+              <Divider />
+
+              {snip?.data?.discussionURL !== "" ? (
+                <Iframely
+                  id={import.meta.env.VITE_APP_IFRAMELY_ID}
+                  url={`${snip?.data?.discussionURL}`}
+                />
+              ) : (
+                <></>
+              )}
               <Divider />
 
               <Heading color="#33333E" variant="h3">
                 Overview
               </Heading>
+
+              {/* <MarkdownRenderer content={snip.data?.description || ""} /> */}
               <QuillEditor
                 value={snip.data?.description || undefined}
                 readOnly
@@ -113,9 +131,7 @@ export function Page() {
                   <CommentInput onSend={handleCommentSend} />
                 </FormControl>
               ) : (
-                  <Box>
-                    Show logged out state for comment input
-                </Box>
+                <Box>Show logged out state for comment input</Box>
               )}
               <CommentList commentsList={snip.data?.comments || []} />
             </Stack>

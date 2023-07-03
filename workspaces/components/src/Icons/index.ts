@@ -1,4 +1,14 @@
 import {
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  Heading2Icon,
+  NumberedListIcon,
+  BulletedListIcon,
+  ImageIcon,
+  LinkIcon,
+} from "./ToolbarIcons";
+import {
   HiOutlineCodeBracketSquare,
   HiOutlineLockClosed,
   HiOutlineDocumentText,
@@ -9,7 +19,7 @@ import {
   HiOutlineChatBubbleLeftEllipsis,
   HiAdjustmentsHorizontal,
   HiEllipsisHorizontal,
-  HiTrash
+  HiTrash,
 } from "react-icons/hi2";
 import { MdOutlineHowToVote, MdOutlineAssignment } from "react-icons/md";
 
@@ -26,5 +36,13 @@ export {
   MdOutlineAssignment,
   HiAdjustmentsHorizontal,
   HiEllipsisHorizontal,
-  HiTrash
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  Heading2Icon,
+  NumberedListIcon,
+  BulletedListIcon,
+  ImageIcon,
+  LinkIcon,
+  HiTrash,
 };

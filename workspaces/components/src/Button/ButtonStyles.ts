@@ -130,12 +130,49 @@ const switcher = defineStyle({
     borderStyle: "solid",
   },
 });
+const toolbar = defineStyle({
+  bg: "white",
+  borderRadius: "4px",
+
+  _hover: {
+    bg: "hsla(253, 4%, 54%, 0.12)",
+  },
+  _active: {
+    outlineWidth: 1,
+    backgroundColor: "hsla(247, 4%, 45%, 1)",
+    color: "#fff",
+  },
+  _disabled: {
+    bg: "#444",
+    color: "#fff",
+    opacity: 1,
+    pointerEvents: "none",
+    _hover: {
+      bg: "#444",
+      color: "#fff",
+      opacity: 1,
+    },
+  },
+
+  _focus: {
+    boxShadow: "none",
+    borderColor: "selected.main",
+    borderWidth: "1px",
+    borderStyle: "solid",
+  },
+});
+
 const sizes = {
   sm: defineStyle({
     fontSize: "sm",
     borderRadius: "4px",
     px: "14px",
     fontWeight: "500", // Change font size to sm (14px)
+  }),
+  tb: defineStyle({
+    fontSize: "20px",
+    width: "32px",
+    height: "32px",
   }),
 };
 
@@ -145,5 +182,6 @@ export const buttonTheme = defineStyleConfig({
     outline,
     solid,
     switcher,
+    toolbar,
   },
 });

@@ -10,6 +10,7 @@ import {
   ListRow,
   ProfileSummaryCard,
   Collapse,
+  // MarkdownRenderer,
   QuillEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
@@ -58,6 +59,7 @@ export function Page() {
 
         <Divider my="24px" />
         <Box>
+          {/* <MarkdownRenderer content={council?.description || ""} /> */}
           <QuillEditor value={council?.description ?? ""} readOnly />
         </Box>
         <Divider my="24px" />
@@ -80,6 +82,8 @@ export function Page() {
               <Heading color="#33333E" variant="h3">
                 The role of the {council?.name ?? "Council"}
               </Heading>
+
+              {/* <MarkdownRenderer content={council?.statement || ""} /> */}
               <QuillEditor value={council?.statement ?? ""} readOnly />
             </Stack>
           </Collapse>

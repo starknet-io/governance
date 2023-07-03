@@ -141,7 +141,7 @@ export function Page() {
     },
   });
 
-  console.log(delegates?.data)
+  console.log(delegates?.data);
 
   const filteredDelegates = delegates?.data?.filter((data) =>
     data?.author?.address?.includes(searchQuery)
@@ -166,7 +166,7 @@ export function Page() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </Box>
-          <ButtonGroup>
+          <ButtonGroup display={{ base: "none", md: "flex" }}>
             {/* Sort by: most voting power, activity, most votes, most comments, by category  */}
 
             <Select
@@ -232,7 +232,11 @@ export function Page() {
         >
           {filteredDelegates && filteredDelegates.length > 0 ? (
             filteredDelegates.map((data) => (
-              <DelegateCard key={data.starknetWalletAddress} address={data?.author?.address} {...data} />
+              <DelegateCard
+                key={data.starknetWalletAddress}
+                address={data?.author?.address}
+                {...data}
+              />
             ))
           ) : (
             <Box

@@ -103,18 +103,19 @@ function PageLayout(props: Props) {
       <Layout.LeftAside>
         <Logo />
         <NavItem
+          active={pageContext.urlOriginal}
+          href="/snips"
+          icon={<MdOutlineAssignment />}
+          label="Core SNIPs"
+        />
+        <NavItem
           href="/voting-proposals"
           //todo: fix how active state for menu works
           active={pageContext.urlOriginal}
           icon={<MdOutlineHowToVote />}
           label="Voting proposals"
         />
-        <NavItem
-          active={pageContext.urlOriginal}
-          href="/snips"
-          icon={<MdOutlineAssignment />}
-          label="SNIPs"
-        />
+
         <NavItem
           icon={<HiOutlineUserCircle />}
           active={pageContext.urlOriginal}

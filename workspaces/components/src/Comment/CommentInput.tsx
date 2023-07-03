@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { QuillEditor } from "src/Editor";
 import "./comment.css";
 import { Button } from "src/Button";
@@ -121,5 +121,42 @@ export const CommentInput = ({ onSend }: CommentInputProps) => {
 //         <CommentExpanded onSend={handleSend} innerRef={commentExpandedRef} />
 //       )}
 //     </div>
+//   );
+// };
+
+// import { MarkdownEditor, useMarkdownEditor } from "src/Editor";
+// import "./comment.css";
+// import { Button } from "src/Button";
+// import { Box } from "@chakra-ui/react";
+
+// interface CommentInputProps {
+//   onSend: (value: string) => void;
+// }
+// export const CommentInput = ({ onSend }: CommentInputProps) => {
+//   const { editorValue, handleEditorChange } = useMarkdownEditor({});
+
+//   const handleSend = () => {
+//     onSend(editorValue);
+//     handleEditorChange({}); // clear the editor after sending
+//   };
+
+//   return (
+//     <Box mb="16px" position="relative">
+//       <MarkdownEditor
+//         onChange={(e) => handleEditorChange(e)}
+//         value={editorValue}
+//         // maxLength={10000}
+//         minHeight="86"
+//       />
+//       <Button
+//         className="submit-button"
+//         variant="solid"
+//         size="sm"
+//         type="submit"
+//         onClick={handleSend}
+//       >
+//         Send
+//       </Button>
+//     </Box>
 //   );
 // };

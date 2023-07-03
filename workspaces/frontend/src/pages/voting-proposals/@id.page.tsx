@@ -16,9 +16,7 @@ import {
   HiEllipsisHorizontal,
   IconButton,
   InfoModal,
-  LinkCard,
   PlaceholderImage,
-  QuillEditor,
   Stack,
   Stat,
   SummaryItems,
@@ -29,6 +27,8 @@ import {
   VoteModal,
   VoteReview,
   VoteStat,
+  MarkdownRenderer,
+  Iframely,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -103,7 +103,7 @@ export function Page() {
             }
           : undefined
       );
-console.log(data)
+      console.log(data);
       const params: Vote = {
         // from?: string;
         space: "robwalsh.eth",
@@ -173,7 +173,6 @@ console.log(data)
       height="100%"
     >
       <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-
         <VoteReview
           choice={currentChoice}
           // @ts-expect-error todo
@@ -271,7 +270,13 @@ console.log(data)
                 <Stat.Text label={`By ${data?.proposal?.author}`} />
               </Stat.Root>
               <Stat.Root>
-                <Stat.Date date={data?.proposal?.start ? new Date(data?.proposal?.start*1000):undefined} />
+                <Stat.Date
+                  date={
+                    data?.proposal?.start
+                      ? new Date(data?.proposal?.start * 1000)
+                      : undefined
+                  }
+                />
               </Stat.Root>
               <Stat.Root>
                 <Stat.Link label={`${commentCount} comments`} />
@@ -287,34 +292,30 @@ console.log(data)
             </Flex>
             <Divider />
             {data?.proposal?.discussion !== "" ? (
-              <Box mt="24px" mb="24px">
-                <LinkCard
-                  href={`${data?.proposal?.discussion}`}
-                  title={`${data?.proposal?.discussion}`}
-                />
-              </Box>
+              <Iframely
+                id={import.meta.env.VITE_APP_IFRAMELY_ID}
+                url={`${data?.proposal?.discussion}`}
+              />
             ) : (
               <></>
             )}
-
-            <QuillEditor readOnly value={data?.proposal?.body ?? undefined} />
+            <Divider />
+            <MarkdownRenderer content={data?.proposal?.body || ""} />
 
             <Divider my="32px" />
-              <Heading color="#33333E" variant="h3">
-                Discussion
-              </Heading>
-          {user ? (
-            <FormControl id="delegate-statement">
-              <CommentInput onSend={handleCommentSend} />
-            </FormControl>
-          ) : (
-            <Box>
-                    Show logged out state for comment input
-                </Box>
-          )}
+            <Heading color="#33333E" variant="h3">
+              Discussion
+            </Heading>
+            {user ? (
+              <FormControl id="delegate-statement">
+                <CommentInput onSend={handleCommentSend} />
+              </FormControl>
+            ) : (
+              <Box>Show logged out state for comment input</Box>
+            )}
 
             <CommentList commentsList={comments.data || []} />
-                   </Stack>
+          </Stack>
         </Box>
       </ContentContainer>
       <Box
