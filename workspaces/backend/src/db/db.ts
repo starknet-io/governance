@@ -13,6 +13,7 @@ import * as posts from './schema/posts'
 import * as snips from './schema/snips'
 import * as users from './schema/users'
 import * as votes from './schema/votes'
+import * as usersToCouncils from './schema/usersToCouncils'
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ const db = drizzle(pool, {
     ...snips,
     ...users,
     ...votes,
+    ...usersToCouncils
   }
 });
 

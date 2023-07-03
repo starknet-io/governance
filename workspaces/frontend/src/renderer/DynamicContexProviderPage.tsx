@@ -9,7 +9,6 @@ import {
   HiOutlineAcademicCap,
   HiOutlineChatBubbleLeftRight,
   HiOutlineCodeBracketSquare,
-  HiOutlineLockClosed,
   HiOutlineQuestionMarkCircle,
   HiOutlineUserCircle,
   Logo,
@@ -57,7 +56,11 @@ const DynamicContextProviderPage = (props: Props) => {
   const logoutMutation = trpc.auth.logout.useMutation();
 
   const authUser = async (args: AuthSuccessParams) => {
-    authMutation.mutate({ authToken: args.authToken });
+    authMutation.mutate({
+      authToken: args.authToken,
+      ensName: args.user.ens?.name,
+      ensAvatar: args.user.ens?.avatar,
+    });
   };
 
   useEffect(() => {
@@ -93,6 +96,8 @@ const DynamicContextProviderPage = (props: Props) => {
 function PageLayout(props: Props) {
   const { children, pageContext } = props;
 
+  const councilResp = trpc.councils.getAll.useQuery();
+
   return (
     <Layout.Root>
       <Layout.LeftAside>
@@ -117,18 +122,15 @@ function PageLayout(props: Props) {
           label="Delegates"
         />
         <NavGroup label="Councils">
-          <NavItem
-            active={pageContext.urlOriginal}
-            icon={<HiOutlineCodeBracketSquare />}
-            label="Builders"
-            href="/councils/builders"
-          />
-          <NavItem
-            icon={<HiOutlineLockClosed />}
-            active={pageContext.urlOriginal}
-            label="Security"
-            href="/councils/security"
-          />
+          {councilResp.data?.map((council) => (
+            <NavItem
+              key={council.id}
+              active={pageContext.urlOriginal}
+              icon={<HiOutlineCodeBracketSquare />}
+              label={council.name ?? "Unknown"}
+              href={council.slug ? `/councils/${council.slug}` : "/councils"}
+            />
+          ))}
         </NavGroup>
         <NavGroup alignEnd>
           <NavItem

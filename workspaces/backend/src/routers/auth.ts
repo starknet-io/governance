@@ -30,7 +30,9 @@ export const authRouter = router({
   authUser: publicProcedure
     .input(
       z.object({
-        authToken: z.string()
+        authToken: z.string(),
+        ensName: z.string().optional(),
+        ensAvatar: z.string().optional(),
       }))
     .mutation(async (opts) => {
       const token = opts.input.authToken;
@@ -57,8 +59,22 @@ export const authRouter = router({
                 walletProvider: decodedToken.verified_credentials?.[0].wallet_provider,
                 publicIdentifier: decodedToken.verified_credentials?.[0].public_identifier,
                 dynamicId: decodedToken.verified_credentials?.[0].id,
+                ensName: opts.input.ensName,
+                ensAvatar: opts.input.ensAvatar,
                 createdAt: new Date(),
               })
+          } else {
+            await db.update(users)
+              .set({
+                walletName: decodedToken.verified_credentials?.[0].wallet_name,
+                walletProvider: decodedToken.verified_credentials?.[0].wallet_provider,
+                publicIdentifier: decodedToken.verified_credentials?.[0].public_identifier,
+                dynamicId: decodedToken.verified_credentials?.[0].id,
+                ensName: opts.input.ensName,
+                ensAvatar: opts.input.ensAvatar,
+                updatedAt: new Date(),
+              })
+              .where(eq(users.address, decodedToken.verified_credentials?.[0].address))
           }
         }
         opts.ctx.res.cookie('JWT', opts.input.authToken, { httpOnly: true });

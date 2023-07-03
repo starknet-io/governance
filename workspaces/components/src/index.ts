@@ -28,7 +28,7 @@ export { DatePicker } from "./DatePicker";
 export { ConfirmModal } from "./ConfirmModal";
 export { LinkCard } from "./LinkCard";
 export { CheckboxFilter } from "./Filter/CheckboxFilter";
-export  { CopyToClipboard } from './CopyToClipboard';
+export { CopyToClipboard } from './CopyToClipboard';
 export {
   FilterPopoverButton,
   FilterPopoverContent,
@@ -49,6 +49,7 @@ export {
   MdOutlineAssignment,
   HiAdjustmentsHorizontal,
   HiEllipsisHorizontal,
+  HiTrash
 } from "./Icons";
 
 export { QuillEditor } from "./Editor";
@@ -56,3 +57,5 @@ export { QuillEditor } from "./Editor";
 export { Multiselect } from "./Multiselect";
 
 export { CommentInput, CommentList } from "./Comment";
+
+export { AddressList } from "./AddressList";

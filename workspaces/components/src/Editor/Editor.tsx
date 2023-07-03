@@ -13,6 +13,8 @@ interface QuillEditorProps {
   readOnly?: boolean;
   maxLength?: number;
   minHeight?: number;
+  noToolbar?: boolean;
+  placeholder?: string | undefined;
 }
 
 const modules = {
@@ -34,7 +36,9 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
   value,
   readOnly = false,
   maxLength = Infinity,
-  minHeight= 50
+  minHeight= 50,
+  noToolbar = false,
+  placeholder,
 }) => {
   const [isBrowser, setIsBrowser] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
@@ -90,7 +94,8 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
             theme="snow"
             value={value}
             readOnly={readOnly}
-            modules={modules}
+            modules={noToolbar ? { toolbar: null } : modules}
+            placeholder={placeholder ?? ""}
           />
         </Box>
       </Suspense>

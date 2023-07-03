@@ -49,7 +49,9 @@ export {
   InfoModal,
   PlaceholderImage,
   VoteReview,
-  CopyToClipboard
+  CopyToClipboard,
+  AddressList,
+  HiTrash
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -93,6 +95,7 @@ import {
   ButtonGroup,
   Icon,
   Popover,
+  Switch
 } from "@chakra-ui/react";
 
 export {
@@ -119,4 +122,5 @@ export {
   Divider,
   Icon,
   Popover,
+  Switch
 };

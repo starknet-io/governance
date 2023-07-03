@@ -28,4 +28,10 @@ const delegate = `
 <p>#Areas of interest</p>
   `;
 
-export { snip, proposal, delegate };
+const council = `
+<p>#The role of the council</p>
+<p>#How the Council works</p>
+<p>#Council members</p>
+`;
+
+export { snip, proposal, delegate, council };

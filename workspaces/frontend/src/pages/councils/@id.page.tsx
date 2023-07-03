@@ -7,13 +7,28 @@ import {
   ContentContainer,
   Stack,
   Heading,
-  Text,
   ListRow,
   ProfileSummaryCard,
   Collapse,
+  QuillEditor,
 } from "@yukilabs/governance-components";
+import { trpc } from "src/utils/trpc";
+import { usePageContext } from "src/renderer/PageContextProvider";
+import { useEffect } from "react";
 
 export function Page() {
+  const pageContext = usePageContext();
+
+  const councilResp = trpc.councils.getCouncilBySlug.useQuery({
+    slug: pageContext.routeParams!.id,
+  });
+
+  const { data: council } = councilResp;
+
+  useEffect(() => {
+    console.log("pageContext.routeParams", pageContext.routeParams);
+  });
+
   return (
     <Box
       display="flex"
@@ -32,25 +47,21 @@ export function Page() {
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
-            address="aasdfasdfas33332"
-            ethAddress="32423423423"
+            address="0x2EF324324234234234234234231234"
+            ethAddress={council?.name ?? "Council"}
           >
             <ProfileSummaryCard.MoreActions
               onClick={() => console.log("red")}
             />
           </ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>
+
         <Divider my="24px" />
         <Box>
-          <Text variant="body" color="#545464">
-            The Security Council is comprised of 17 builders from the Starknet
-            Ecosystem, chosen by the Foundation on merit of their expertise and
-            deep knowledge of Starknet.
-          </Text>
+          <QuillEditor value={council?.description ?? ""} readOnly />
         </Box>
         <Divider my="24px" />
         <SummaryItems.Root>
-
           <SummaryItems.Item label="Proposals voted on" value="6" />
           <SummaryItems.Item label="Delegated votes" value="7,000,000" />
 
@@ -67,38 +78,9 @@ export function Page() {
               color="#545464"
             >
               <Heading color="#33333E" variant="h3">
-                The role of the Security Council
+                The role of the {council?.name ?? "Council"}
               </Heading>
-
-              <Text variant="body">
-                Carry out an in-depth learning and discussion process for each
-                proposed decision, with the aim to lead to well-founded
-                decisions that will benefit StarkNet and its long-term vision.
-              </Text>
-              <Text variant="body">
-                Take an active part in encouraging discussions and votes during
-                the first phase on behalf of StarkNet community members.
-              </Text>
-              <Text variant="body">
-                Ensure transparency of the Council’s discussions, decisions, and
-                activities.
-              </Text>
-              <Text variant="body">
-                Take an active part in encouraging discussions and votes during
-                the first phase on behalf of StarkNet community members.
-              </Text>
-              <Text variant="body">
-                Ensure transparency of the Council’s discussions, decisions, and
-                activities.
-              </Text>
-              <Text variant="body">
-                Take an active part in encouraging discussions and votes during
-                the first phase on behalf of StarkNet community members.
-              </Text>
-              <Text variant="body">
-                Ensure transparency of the Council’s discussions, decisions, and
-                activities.
-              </Text>
+              <QuillEditor value={council?.statement ?? ""} readOnly />
             </Stack>
           </Collapse>
 
@@ -139,5 +121,5 @@ export function Page() {
 }
 
 export const documentProps = {
-  title: "Councils / Security Council",
+  title: "Councils / Builders",
 } satisfies DocumentProps;

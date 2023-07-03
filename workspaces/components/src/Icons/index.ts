@@ -9,6 +9,7 @@ import {
   HiOutlineChatBubbleLeftEllipsis,
   HiAdjustmentsHorizontal,
   HiEllipsisHorizontal,
+  HiTrash
 } from "react-icons/hi2";
 import { MdOutlineHowToVote, MdOutlineAssignment } from "react-icons/md";
 
@@ -25,4 +26,5 @@ export {
   MdOutlineAssignment,
   HiAdjustmentsHorizontal,
   HiEllipsisHorizontal,
+  HiTrash
 };
