@@ -25,7 +25,7 @@ export function Page() {
         <Box mr="8px">
           <SearchInput />
         </Box>
-        <ButtonGroup>
+        <ButtonGroup display={{ base: "none", md: "flex" }}>
           <Button as="a" href="/delegates/create" variant="outline">
             Filter by
           </Button>
@@ -45,8 +45,9 @@ export function Page() {
             <ListRow.MutedText id={data.id} type={data.type} />
             <ListRow.Title label={data.title} />
             {/* <ListRow.Date /> */}
-
-            <ListRow.Comments count={data.comments?.length ?? null} />
+            <Box display={{ base: "none", md: "flex" }}>
+              <ListRow.Comments count={data.comments?.length ?? null} />
+            </Box>
             <ListRow.Status status={data.status} />
           </ListRow.Root>
         ))}

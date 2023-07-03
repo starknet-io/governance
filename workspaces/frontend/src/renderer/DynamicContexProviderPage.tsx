@@ -19,6 +19,15 @@ import {
   LearnIcon,
   SupportIcon,
   FeedbackIcon,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  useDisclosure,
+  Button,
+  GiHamburgerMenu,
 } from "@yukilabs/governance-components";
 import { Suspense, useEffect, useState } from "react";
 import { PageContext } from "./types";
@@ -95,72 +104,155 @@ const DynamicContextProviderPage = (props: Props) => {
 
 function PageLayout(props: Props) {
   const { children, pageContext } = props;
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const councilResp = trpc.councils.getAll.useQuery();
 
   return (
-    <Layout.Root>
-      <Layout.LeftAside>
-        <Logo />
-        <NavItem
-          active={pageContext.urlOriginal}
-          href="/snips"
-          icon={<SnipsIcon />}
-          label="Core SNIPs"
-        />
-        <NavItem
-          href="/voting-proposals"
-          //todo: fix how active state for menu works
-          active={pageContext.urlOriginal}
-          icon={<ProposalsIcon />}
-          label="Voting proposals"
-        />
+    <>
+      <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader py="16px">Menu</DrawerHeader>
 
-        <NavItem
-          icon={<DelegatesIcon />}
-          active={pageContext.urlOriginal}
-          href="/delegates"
-          label="Delegates"
-        />
-        <NavGroup label="Councils">
-          {councilResp.data?.map((council) => (
+          <DrawerBody px="12px" py="16px" pt="0">
+            <NavGroup>
+              <NavItem
+                active={pageContext.urlOriginal}
+                icon={<FeedbackIcon />}
+                label="Feedback"
+              />
+              <NavItem
+                active={pageContext.urlOriginal}
+                icon={<SupportIcon />}
+                label="Support"
+              />
+              <NavItem
+                href="/learn"
+                active={pageContext.urlOriginal}
+                icon={<LearnIcon />}
+                label="Learn"
+              />
+            </NavGroup>
+            <NavGroup>
+              {councilResp.data?.map((council) => (
+                <NavItem
+                  key={council.id}
+                  active={pageContext.urlOriginal}
+                  icon={<SecurityIcon />}
+                  label={council.name ?? "Unknown"}
+                  href={
+                    council.slug ? `/councils/${council.slug}` : "/councils"
+                  }
+                />
+              ))}
+            </NavGroup>
+            <NavGroup>
+              <NavItem
+                icon={<DelegatesIcon />}
+                active={pageContext.urlOriginal}
+                href="/delegates"
+                label="Delegates"
+              />
+
+              <NavItem
+                href="/voting-proposals"
+                //todo: fix how active state for menu works
+                active={pageContext.urlOriginal}
+                icon={<ProposalsIcon />}
+                label="Voting proposals"
+              />
+              <NavItem
+                active={pageContext.urlOriginal}
+                href="/snips"
+                icon={<SnipsIcon />}
+                label="Core SNIPs"
+              />
+            </NavGroup>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+
+      <Layout.Root>
+        <Box
+          display={{ base: "block", md: "none" }}
+          zIndex="2"
+          position="fixed"
+          right="24px"
+          bottom="16px"
+        >
+          <Button
+            leftIcon={<GiHamburgerMenu />}
+            variant="solid"
+            colorScheme="teal"
+            onClick={onOpen}
+          >
+            Menu
+          </Button>
+        </Box>
+        <Layout.LeftAside>
+          <Logo />
+          <NavItem
+            active={pageContext.urlOriginal}
+            href="/snips"
+            icon={<SnipsIcon />}
+            label="Core SNIPs"
+          />
+          <NavItem
+            href="/voting-proposals"
+            //todo: fix how active state for menu works
+            active={pageContext.urlOriginal}
+            icon={<ProposalsIcon />}
+            label="Voting proposals"
+          />
+
+          <NavItem
+            icon={<DelegatesIcon />}
+            active={pageContext.urlOriginal}
+            href="/delegates"
+            label="Delegates"
+          />
+          <NavGroup label="Councils">
+            {councilResp.data?.map((council) => (
+              <NavItem
+                key={council.id}
+                active={pageContext.urlOriginal}
+                icon={<SecurityIcon />}
+                label={council.name ?? "Unknown"}
+                href={council.slug ? `/councils/${council.slug}` : "/councils"}
+              />
+            ))}
+          </NavGroup>
+          <NavGroup alignEnd>
             <NavItem
-              key={council.id}
+              href="/learn"
               active={pageContext.urlOriginal}
-              icon={<SecurityIcon />}
-              label={council.name ?? "Unknown"}
-              href={council.slug ? `/councils/${council.slug}` : "/councils"}
+              icon={<LearnIcon />}
+              label="Learn"
             />
-          ))}
-        </NavGroup>
-        <NavGroup alignEnd>
-          <NavItem
-            href="/learn"
-            active={pageContext.urlOriginal}
-            icon={<LearnIcon />}
-            label="Learn"
-          />
-          <NavItem
-            active={pageContext.urlOriginal}
-            icon={<SupportIcon />}
-            label="Support"
-          />
-          <NavItem
-            active={pageContext.urlOriginal}
-            icon={<FeedbackIcon />}
-            label="Feedback"
-          />
-        </NavGroup>
-      </Layout.LeftAside>
-      <Layout.Main>
-        <Header>
-          <Box display="flex" marginLeft="auto">
-            <DynamicWidget />
-          </Box>
-        </Header>
-        <Layout.Content>{children}</Layout.Content>
-      </Layout.Main>
-    </Layout.Root>
+            <NavItem
+              active={pageContext.urlOriginal}
+              icon={<SupportIcon />}
+              label="Support"
+            />
+            <NavItem
+              active={pageContext.urlOriginal}
+              icon={<FeedbackIcon />}
+              label="Feedback"
+            />
+          </NavGroup>
+        </Layout.LeftAside>
+        <Layout.Main>
+          <Header>
+            <Box display="flex" marginLeft="auto">
+              <DynamicWidget />
+            </Box>
+          </Header>
+          <Layout.Content>{children}</Layout.Content>
+        </Layout.Main>
+      </Layout.Root>
+    </>
   );
 }
 

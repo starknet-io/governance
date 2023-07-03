@@ -51,6 +51,7 @@ export {
   HiAdjustmentsHorizontal,
   HiEllipsisHorizontal,
   HiTrash,
+  GiHamburgerMenu,
 } from "./Icons";
 export {
   BoldIcon,

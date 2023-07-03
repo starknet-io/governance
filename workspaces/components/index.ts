@@ -72,6 +72,7 @@ export {
   SecurityIcon,
   SettingsIcon,
   SupportIcon,
+  GiHamburgerMenu,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -116,6 +117,14 @@ import {
   Icon,
   Popover,
   Switch,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 export {
@@ -143,4 +152,12 @@ export {
   Icon,
   Popover,
   Switch,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
+  useDisclosure,
 };

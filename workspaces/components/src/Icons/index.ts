@@ -33,7 +33,7 @@ import {
   HiTrash,
 } from "react-icons/hi2";
 import { MdOutlineHowToVote, MdOutlineAssignment } from "react-icons/md";
-
+import { GiHamburgerMenu } from "react-icons/gi";
 export {
   HiOutlineCodeBracketSquare,
   HiOutlineLockClosed,
@@ -65,4 +65,5 @@ export {
   SecurityIcon,
   SettingsIcon,
   SupportIcon,
+  GiHamburgerMenu,
 };
