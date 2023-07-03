@@ -22,8 +22,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8000
-      CLIENT_ORIGIN: https://yuki-governance-web.xsg.dev
-      DATABASE_URL: postgresql://govhub:phylum-austin-doughty-solution@93.187.111.23:5432/govhub
+      CLIENT_ORIGIN: http://localhost:3000
+      DATABASE_URL: postgresql://postgres:governance@localhost:5432/governance
       DYNAMIC_PUBLIC_KEY: |
         -----BEGIN PUBLIC KEY-----
         MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA3dNuD1XQP+7JDjrdNElu
@@ -42,7 +42,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - /srv/Governance/workspaces/backend/.env:/runtime/workspaces/backend/.env
+      - ./workspaces/backend/.env:/runtime/workspaces/backend/.env
 
   frontend:
     image: yukilabs/governance-frontend
@@ -53,7 +53,7 @@ services:
       NODE_ENV: production
       NODE_PATH: /runtime/node_modules
       VITE_APP_DYNAMIC_ID: a99f1241-3620-4df1-9673-96b3a3684cdf
-      VITE_APP_TRPC_URL: https://yuki-governance-api.xsg.dev/trpc
+      VITE_APP_TRPC_URL: http://localhost:8000/trpc
     ports:
-      - 3001:3000
+      - 3000:3000
 
