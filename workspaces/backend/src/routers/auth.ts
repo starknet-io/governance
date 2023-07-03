@@ -80,6 +80,8 @@ export const authRouter = router({
         opts.ctx.res.cookie('JWT', opts.input.authToken, { httpOnly: true });
         return
       } catch (err) {
+        console.error(err)
+
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR"
         });
