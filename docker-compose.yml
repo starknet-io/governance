@@ -22,7 +22,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8000
-      CLIENT_ORIGIN: https://yuki-governance-web.xsg.dev/
+      CLIENT_ORIGIN: https://yuki-governance-web.xsg.dev
       DATABASE_URL: postgresql://govhub:phylum-austin-doughty-solution@93.187.111.23:5432/govhub
       DYNAMIC_PUBLIC_KEY: >
         -----BEGIN PUBLIC KEY-----
