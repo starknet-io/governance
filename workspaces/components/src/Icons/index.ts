@@ -9,6 +9,17 @@ import {
   LinkIcon,
 } from "./ToolbarIcons";
 import {
+  ProposalsIcon,
+  SnipsIcon,
+  BuildersIcon,
+  DelegatesIcon,
+  FeedbackIcon,
+  LearnIcon,
+  SecurityIcon,
+  SettingsIcon,
+  SupportIcon,
+} from "./UiIcons";
+import {
   HiOutlineCodeBracketSquare,
   HiOutlineLockClosed,
   HiOutlineDocumentText,
@@ -45,4 +56,13 @@ export {
   ImageIcon,
   LinkIcon,
   HiTrash,
+  ProposalsIcon,
+  SnipsIcon,
+  BuildersIcon,
+  DelegatesIcon,
+  FeedbackIcon,
+  LearnIcon,
+  SecurityIcon,
+  SettingsIcon,
+  SupportIcon,
 };

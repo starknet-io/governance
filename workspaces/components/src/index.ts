@@ -62,6 +62,17 @@ export {
   ImageIcon,
   LinkIcon,
 } from "./Icons/ToolbarIcons";
+export {
+  ProposalsIcon,
+  SnipsIcon,
+  BuildersIcon,
+  DelegatesIcon,
+  FeedbackIcon,
+  LearnIcon,
+  SecurityIcon,
+  SettingsIcon,
+  SupportIcon,
+} from "./Icons/UiIcons";
 
 export { MarkdownEditor } from "./Editor";
 

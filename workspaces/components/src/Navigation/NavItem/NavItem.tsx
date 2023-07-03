@@ -1,4 +1,4 @@
-import { Box, HStack } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { ReactElement, ReactNode } from "react";
 import { BsCaretRightFill } from "react-icons/bs";
 
@@ -16,13 +16,16 @@ export const NavItem = (props: NavItemProps) => {
   const { active, subtle, icon, children, label, endElement, href } = props;
   const isActive = active === href;
   return (
-    <HStack
+    <Flex
+      flexDirection="row"
+      alignItems="center"
       as="a"
       href={href}
       w="full"
-      px="3"
-      py="2"
-      height="36px"
+      px="12px"
+      py="0"
+      gap="8px"
+      height="40px"
       cursor="pointer"
       userSelect="none"
       rounded="md"
@@ -32,7 +35,12 @@ export const NavItem = (props: NavItemProps) => {
       _active={{ bg: "#EEEEF1" }}
     >
       {icon && (
-        <Box fontSize="19px" color={active ? "currentcolor" : "#6C6C75"}>
+        <Box
+          position="relative"
+          mt="-4px"
+          fontSize="24px"
+          color={active ? "currentcolor" : "#6C6C75"}
+        >
           {icon}
         </Box>
       )}
@@ -46,6 +54,6 @@ export const NavItem = (props: NavItemProps) => {
       </Box>
       {endElement && !children && <Box>{endElement}</Box>}
       {children && <Box fontSize="xs" flexShrink={0} as={BsCaretRightFill} />}
-    </HStack>
+    </Flex>
   );
 };

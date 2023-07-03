@@ -6,19 +6,19 @@ import {
   WalletConnector,
 } from "@dynamic-labs/sdk-react";
 import {
-  HiOutlineAcademicCap,
-  HiOutlineChatBubbleLeftRight,
-  HiOutlineCodeBracketSquare,
-  HiOutlineQuestionMarkCircle,
-  HiOutlineUserCircle,
   Logo,
   NavGroup,
   NavItem,
   Layout,
   Header,
   Box,
-  MdOutlineHowToVote,
-  MdOutlineAssignment,
+  SnipsIcon,
+  ProposalsIcon,
+  DelegatesIcon,
+  SecurityIcon,
+  LearnIcon,
+  SupportIcon,
+  FeedbackIcon,
 } from "@yukilabs/governance-components";
 import { Suspense, useEffect, useState } from "react";
 import { PageContext } from "./types";
@@ -105,19 +105,19 @@ function PageLayout(props: Props) {
         <NavItem
           active={pageContext.urlOriginal}
           href="/snips"
-          icon={<MdOutlineAssignment />}
+          icon={<SnipsIcon />}
           label="Core SNIPs"
         />
         <NavItem
           href="/voting-proposals"
           //todo: fix how active state for menu works
           active={pageContext.urlOriginal}
-          icon={<MdOutlineHowToVote />}
+          icon={<ProposalsIcon />}
           label="Voting proposals"
         />
 
         <NavItem
-          icon={<HiOutlineUserCircle />}
+          icon={<DelegatesIcon />}
           active={pageContext.urlOriginal}
           href="/delegates"
           label="Delegates"
@@ -127,7 +127,7 @@ function PageLayout(props: Props) {
             <NavItem
               key={council.id}
               active={pageContext.urlOriginal}
-              icon={<HiOutlineCodeBracketSquare />}
+              icon={<SecurityIcon />}
               label={council.name ?? "Unknown"}
               href={council.slug ? `/councils/${council.slug}` : "/councils"}
             />
@@ -137,17 +137,17 @@ function PageLayout(props: Props) {
           <NavItem
             href="/learn"
             active={pageContext.urlOriginal}
-            icon={<HiOutlineAcademicCap />}
+            icon={<LearnIcon />}
             label="Learn"
           />
           <NavItem
             active={pageContext.urlOriginal}
-            icon={<HiOutlineQuestionMarkCircle />}
+            icon={<SupportIcon />}
             label="Support"
           />
           <NavItem
             active={pageContext.urlOriginal}
-            icon={<HiOutlineChatBubbleLeftRight />}
+            icon={<FeedbackIcon />}
             label="Feedback"
           />
         </NavGroup>

@@ -65,7 +65,7 @@ export const Logo = () => {
         </defs>
       </svg>
 
-      <Heading fontSize="16px" variant="h1" color="#0C0C4F">
+      <Heading fontSize="16px" fontWeight="500" variant="h1" color="#0C0C4F">
         Governance Hub
       </Heading>
     </Flex>

@@ -63,6 +63,15 @@ export {
   LinkIcon,
   AddressList,
   QuillEditor,
+  ProposalsIcon,
+  SnipsIcon,
+  BuildersIcon,
+  DelegatesIcon,
+  FeedbackIcon,
+  LearnIcon,
+  SecurityIcon,
+  SettingsIcon,
+  SupportIcon,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";

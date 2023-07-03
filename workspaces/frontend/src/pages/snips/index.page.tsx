@@ -18,7 +18,7 @@ export function Page() {
     <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px">
       <PageTitle
         learnMoreLink="/"
-        title="SNIPs"
+        title="Core SNIPs"
         description="Starknet Improvement Proposals are submitted by community members to pitch, discuss and obtain consensus on improvements to the core protocol. "
       />
       <AppBar>
