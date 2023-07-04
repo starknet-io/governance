@@ -46,7 +46,7 @@ export function Page() {
   const { data: walletClient } = useWalletClient();
 
   const { data } = useQuery(
-    gql(`query Proposal($voter: String!, $space: String!, $proposal: String) {
+    gql(`query Proposal($proposal: String) {
       proposal(id: $proposal) {
       id
       author
@@ -71,6 +71,16 @@ export function Page() {
           params
         }
       }
+
+    }`),
+    {
+      variables: {
+        proposal: pageContext.routeParams!.id,
+      },
+    }
+  );
+  const { data: vp } = useQuery(
+    gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
       vp(voter: $voter, space: $space, proposal: $proposal) {
         vp
         vp_by_strategy
@@ -97,10 +107,10 @@ export function Page() {
         walletClient.transport,
         walletClient?.chain != null
           ? {
-              chainId: walletClient.chain.id,
-              name: walletClient.chain.name,
-              ensAddress: walletClient.chain.contracts?.ensRegistry?.address,
-            }
+            chainId: walletClient.chain.id,
+            name: walletClient.chain.name,
+            ensAddress: walletClient.chain.contracts?.ensRegistry?.address,
+          }
           : undefined
       );
       console.log(data);
@@ -175,8 +185,7 @@ export function Page() {
       <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <VoteReview
           choice={currentChoice}
-          // @ts-expect-error todo
-          voteCount={data?.vp?.vp}
+          voteCount={vp?.vp?.vp as number}
         />
         <FormControl id="comment">
           <FormLabel color={"#292932"}>Reason for vote (optional)</FormLabel>
