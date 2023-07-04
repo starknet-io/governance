@@ -23,7 +23,7 @@ import {
   Text,
   Textarea,
   VoteButton,
-  VoteComment,
+  // VoteComment,
   VoteModal,
   VoteReview,
   VoteStat,
@@ -400,11 +400,11 @@ export function Page() {
             </Box>
             <Divider mb="40px" />
             <Box mb="40px">
-              <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
+              {/* <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
                 Votes
               </Heading>
               r
-              <VoteComment />
+              <VoteComment /> */}
               {/* <VoteComment voted="Against" />
               <VoteComment voted="Abstain" />
               <VoteComment /> */}

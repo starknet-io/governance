@@ -5,7 +5,7 @@ export const Logo = () => {
   return (
     <Flex
       as="a"
-      href="/"
+      href="/snips"
       gap="8px"
       height="88px"
       mt="-34px"

@@ -88,3 +88,11 @@
 .ql-editor:focus-within .ql-toolbar {
   opacity: 1!important;
 } */
+
+
+.ql-editor p {
+  font-family: "Inter Variable", sans-serif;
+}
+.ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4, .ql-editor h5, .ql-editor h6 {
+  font-family: "Poppins", sans-serif;
+}
