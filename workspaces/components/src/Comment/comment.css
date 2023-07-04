@@ -12,10 +12,10 @@
   text-align: center;
 } */
 .submit-button {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  z-index: 1;
+  position: absolute!important;
+  right: 14px!important;
+  bottom: 14px!important;
+  z-index: 1!important;
 }
 /* .comment-list .ql-editor {
   padding: 0;
