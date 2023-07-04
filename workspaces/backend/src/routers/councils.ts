@@ -1,7 +1,7 @@
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { councils } from '../db/schema/councils';
 import { db } from '../db/db';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import slugify from 'slugify';
@@ -9,8 +9,23 @@ import { users } from '../db/schema/users';
 import { usersToCouncils } from '../db/schema/usersToCouncils';
 
 const councilInsertSchema = createInsertSchema(councils).extend({
-  addresses: z.array(z.string())
+  members: z.array(
+    z.object({
+      address: z.string(),
+      name: z.string().optional().nullable(),
+      twitterHandle: z.string().optional().nullable(),
+      miniBio: z.string().optional().nullable(),
+    })
+  ),
 });
+
+type MemberType = {
+  address: string;
+  name?: string | null | undefined;
+  twitterHandle?: string | null | undefined;
+  miniBio?: string | null | undefined;
+};
+
 
 export const councilsRouter = router({
   getAll: publicProcedure.query(() => db.select().from(councils)),
@@ -25,19 +40,36 @@ export const councilsRouter = router({
           description: opts.input.description,
           statement: opts.input.statement,
           slug: slugify(opts.input.name ?? '', { replacement: "_", lower: true },),
-          enableComments: opts.input.enableComments,
-          enableUpdate: opts.input.enableUpdate,
+          address: opts.input.address,
         })
         .returning();
 
-      for (const address of opts.input.addresses) {
-        const user = await db.insert(users).values({
-          address: address
-        }).returning();
-        await db.insert(usersToCouncils).values({
-          userId: user[0].id,
-          councilId: insertedCouncil[0].id
-        }).execute();
+      for (const member of opts.input.members) {
+        const user = await db.query.users.findFirst({
+          where: eq(users.address, member.address)
+        });
+        if (!user) {
+          const newUser = await db.insert(users).values({
+            address: member.address,
+            name: member.name,
+            twitter: member.twitterHandle,
+            miniBio: member.miniBio,
+          }).returning();
+          await db.insert(usersToCouncils).values({
+            userId: newUser[0].id,
+            councilId: insertedCouncil[0].id
+          }).execute();
+        } else {
+          await db.update(users).set({
+            name: member.name,
+            twitter: member.twitterHandle,
+            miniBio: member.miniBio,
+          }).where(eq(users.id, user.id)).execute();
+          await db.insert(usersToCouncils).values({
+            userId: user.id,
+            councilId: insertedCouncil[0].id
+          }).execute();
+        }
       }
 
       return insertedCouncil[0];
@@ -46,13 +78,74 @@ export const councilsRouter = router({
   editCouncil: protectedProcedure
     .input(councilInsertSchema.required({ id: true }))
     .mutation(async (opts) => {
+      // Extract duplicate code into helper functions.
+      const insertUser = async (member: MemberType) => {
+        return await db.insert(users).values({
+          address: member.address,
+          name: member.name,
+          twitter: member.twitterHandle,
+          miniBio: member.miniBio,
+        }).returning();
+      };
+
+      const insertUserToCouncil = async (userId: string, councilId: number) => {
+        return await db.insert(usersToCouncils).values({
+          userId: userId,
+          councilId: councilId
+        }).execute();
+      };
+
+      const updateUser = async (userId: string, member: MemberType) => {
+        return await db.update(users).set({
+          name: member.name,
+          twitter: member.twitterHandle,
+          miniBio: member.miniBio,
+        }).where(eq(users.id, userId)).execute();
+      };
+
+      // Update council.
       const updatedCouncil = await db
         .update(councils)
-        .set(opts.input)
+        .set({
+          name: opts.input.name,
+          description: opts.input.description,
+          statement: opts.input.statement,
+          slug: slugify(opts.input.name ?? '', { replacement: "_", lower: true },),
+          address: opts.input.address,
+        })
         .where(eq(councils.id, opts.input.id))
         .returning();
+
+      // Process members.
+      for (const member of opts.input.members) {
+        const user = await db.query.users.findFirst({
+          where: eq(users.address, member.address)
+        });
+
+        if (!user) {
+          // User doesn't exist, create a new user.
+          const newUser = await insertUser(member);
+          await insertUserToCouncil(newUser[0].id, opts.input.id);
+          continue; // Skip to next member.
+        }
+
+        // User exists, check if they're connected to the council.
+        const userToCouncil = await db.query.usersToCouncils.findFirst({
+          where: (and(eq(usersToCouncils.userId, user.id), eq(usersToCouncils.councilId, opts.input.id)))
+        });
+
+        if (!userToCouncil) {
+          // User isn't connected to the council, connect them.
+          await insertUserToCouncil(user.id, opts.input.id);
+        } else {
+          // User is already connected to the council, update the user's info.
+          await updateUser(user.id, member);
+        }
+      }
+
       return updatedCouncil[0];
     }),
+
 
   deleteCouncil: publicProcedure
     .input(councilInsertSchema.required({ id: true }).pick({ id: true }))
@@ -89,6 +182,17 @@ export const councilsRouter = router({
           }
         }
       })
+    }),
+
+
+  deleteUserFromCouncil: protectedProcedure
+    .input(z.object({ userAddress: z.string(), councilId: z.number() }))
+    .mutation(async (opts) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.address, opts.input.userAddress)
+      });
+      if (!user) return;
+      await db.delete(usersToCouncils).where(and(eq(usersToCouncils.userId, user.id), eq(usersToCouncils.councilId, opts.input.councilId))).execute();
     }),
 
 });

@@ -29,6 +29,16 @@ export const delegateRouter = router({
       })
     )
     .mutation(async (opts) => {
+      const userAddress = (await getUserByJWT(opts.ctx.req.cookies.JWT))?.address
+      const user = await db.query.users.findFirst({
+        where: eq(users.address, userAddress),
+        with: {
+          delegationStatement: true,
+        }
+      });
+      if (user?.delegationStatement) {
+        throw new Error("You already have a delegate statement");
+      }
       const insertedDelegate = await db
         .insert(delegates)
         .values({

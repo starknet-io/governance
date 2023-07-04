@@ -38,6 +38,10 @@ export const commentsRelations = relations(comments, ({ one }) => ({
     fields: [comments.snipId],
     references: [snips.id],
   }),
+  posts: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+  }),
 }));
 
 export type Comment = InferModel<typeof comments>;

@@ -141,8 +141,6 @@ export function Page() {
     },
   });
 
-  console.log(delegates?.data);
-
   const filteredDelegates = delegates?.data?.filter((data) =>
     data?.author?.address?.includes(searchQuery)
   );

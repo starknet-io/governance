@@ -2,6 +2,7 @@ import { InferModel, relations } from 'drizzle-orm';
 import { pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { delegates } from './delegates';
 import { usersToCouncils } from './usersToCouncils';
+import { posts } from './posts';
 
 export const userRoleEnum = pgEnum('role', ['user', 'admin']);
 
@@ -15,6 +16,9 @@ export const users = pgTable('users', {
   role: userRoleEnum('role').notNull().default('user'),
   ensName: text('ensName'),
   ensAvatar: text('ensAvatar'),
+  name: text('name'),
+  twitter: text('twitter'),
+  miniBio: text('miniBio'),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -29,6 +33,7 @@ export const userDelegate = relations(users, ({ one, many }) => ({
     references: [delegates.userId],
   }),
   councils: many(usersToCouncils),
+  posts: many(posts),
 }));
 
 

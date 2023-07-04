@@ -82,5 +82,5 @@ export { Multiselect } from "./Multiselect";
 export { CommentInput, CommentList } from "./Comment";
 export { Iframely } from "./Iframely";
 
-export { AddressList } from "./AddressList";
+export { MembersList } from "./MembersList";
 export { QuillEditor } from "./Editor/QuillEditor";

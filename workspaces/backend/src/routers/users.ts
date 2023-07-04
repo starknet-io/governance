@@ -5,7 +5,13 @@ import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
 
 export const usersRouter = router({
-  getAll: publicProcedure.query(() => db.select().from(users)),
+  getAll: publicProcedure.query(() => db.query.users.findMany(
+    {
+      with: {
+        delegationStatement: true,
+      }
+    }
+  )),
 
   saveUser: publicProcedure
     .input(

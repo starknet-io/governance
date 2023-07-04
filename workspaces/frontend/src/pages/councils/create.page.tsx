@@ -12,12 +12,12 @@ import {
   ContentContainer,
   QuillEditor,
   EditorTemplate,
-  Switch,
-  AddressList,
+  MembersList,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
+import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 
 export function Page() {
   const {
@@ -29,19 +29,15 @@ export function Page() {
     EditorTemplate.council
   );
   const [descriptionValue, setDescriptionValue] = useState<string>("");
-  const [enableUpdate, setEnableUpdate] = useState(false);
-  const [enableComments, setEnableComments] = useState(false);
-  const [addresses, setAddresses] = useState<string[]>([]);
+  const [members, setMembers] = useState<MemberType[]>([]);
   const createCouncil = trpc.councils.saveCouncil.useMutation();
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       data.statement = statementValue;
       data.description = descriptionValue;
-      data.enableUpdate = enableUpdate;
-      data.enableComments = enableComments;
       data.slug = "";
-      data.addresses = addresses;
+      data.members = members;
       await createCouncil.mutateAsync(data);
       // navigate(/councils);
     } catch (error) {
@@ -93,48 +89,21 @@ export function Page() {
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="council-members">
-                <AddressList
-                  addresses={addresses}
-                  setAddresses={setAddresses}
+                <MembersList members={members} setMembers={setMembers} />
+              </FormControl>
+
+              <FormControl id="council-name">
+                <FormLabel>Multisig address</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="0x..."
+                  {...register("address")}
                 />
               </FormControl>
-              <Flex align="center">
-                <FormControl id="enable-update" display="flex">
-                  <FormLabel htmlFor="isChecked">
-                    Enable update posts by council members
-                  </FormLabel>
-                  <Switch
-                    id="isChecked"
-                    size="md"
-                    marginLeft="auto"
-                    onChange={() => setEnableUpdate(!enableUpdate)}
-                    isChecked={enableUpdate}
-                  />
-                </FormControl>
-              </Flex>
-              <Flex align="center">
-                <FormControl id="enable-comments" display="flex">
-                  <FormLabel htmlFor="isCommentChecked">
-                    Enable community to post comments
-                  </FormLabel>
-                  <Switch
-                    id="isCommentChecked"
-                    size="md"
-                    marginLeft="auto"
-                    onChange={() => setEnableComments(!enableComments)}
-                    isChecked={enableComments}
-                  />
-                </FormControl>
-              </Flex>
+
               <Flex justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  variant={"ghost"}
-                  disabled={!isValid}
-                  border="1px solid #E2E8F0"
-                  borderRadius="none"
-                >
-                  Submit
+                <Button type="submit" variant={"solid"} disabled={!isValid}>
+                  Create council
                 </Button>
               </Flex>
             </Stack>

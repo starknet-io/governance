@@ -12,38 +12,52 @@ import {
   ContentContainer,
   QuillEditor,
   EditorTemplate,
-  Switch,
+  MembersList,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
+import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 
 export function Page() {
   const {
     handleSubmit,
     register,
+    setValue,
     formState: { errors, isValid },
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
   const [statementValue, setStatementValue] = useState<string>(
     EditorTemplate.council
   );
   const [descriptionValue, setDescriptionValue] = useState<string>("");
-  const [enableUpdate, setEnableUpdate] = useState(false);
-  const [enableComments, setEnableComments] = useState(false);
+  const [members, setMembers] = useState<MemberType[]>([]);
   const editCouncil = trpc.councils.editCouncil.useMutation();
   const pageContext = usePageContext();
   const councilResp = trpc.councils.getCouncilBySlug.useQuery({
     slug: pageContext.routeParams!.id,
   });
+  const removeUserFromCouncilData =
+    trpc.councils.deleteUserFromCouncil.useMutation();
 
   const { data: council } = councilResp;
 
   useEffect(() => {
     if (council) {
+      setValue("name", council.name);
+      setValue("address", council.address);
       setDescriptionValue(council.description ?? "");
       setStatementValue(council.statement ?? "");
+      const tempMembers = council.members?.map((member) => {
+        return {
+          address: member.user.address,
+          name: member.user.name,
+          twitterHandle: member.user.twitter,
+          miniBio: member.user.miniBio,
+        };
+      });
+      setMembers(tempMembers ?? []);
     }
   }, [council]);
 
@@ -51,9 +65,14 @@ export function Page() {
     try {
       data.statement = statementValue;
       data.description = descriptionValue;
+      data.slug = "";
+      data.members = members;
+      if (!council?.id) {
+        return;
+      }
       const saveData = {
         ...data,
-        id: parseInt(pageContext.routeParams!.id),
+        id: council.id,
       };
       await editCouncil.mutateAsync(saveData).then(() => {
         navigate(`/councils/${pageContext.routeParams!.id}`);
@@ -64,12 +83,27 @@ export function Page() {
     }
   });
 
+  const removeUserFromCouncil = (address: string) => {
+    if (!council?.id) return;
+    removeUserFromCouncilData.mutate(
+      {
+        councilId: council?.id,
+        userAddress: address,
+      },
+      {
+        onSuccess: () => {
+          councilResp.refetch();
+        },
+      }
+    );
+  };
+
   return (
     <>
       <ContentContainer>
         <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
-            Create council
+            Edit council
           </Heading>
           <form onSubmit={onSubmit}>
             <Stack spacing="32px" direction={{ base: "column" }}>
@@ -107,34 +141,23 @@ export function Page() {
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>
 
-              <Flex align="center">
-                <FormControl id="enable-update" display="flex">
-                  <FormLabel htmlFor="isChecked">
-                    Enable update posts by council members
-                  </FormLabel>
-                  <Switch
-                    id="isChecked"
-                    size="md"
-                    marginLeft="auto"
-                    onChange={() => setEnableUpdate(!enableUpdate)}
-                    isChecked={enableUpdate}
-                  />
-                </FormControl>
-              </Flex>
-              <Flex align="center">
-                <FormControl id="enable-comments" display="flex">
-                  <FormLabel htmlFor="isCommentChecked">
-                    Enable community to post comments
-                  </FormLabel>
-                  <Switch
-                    id="isCommentChecked"
-                    size="md"
-                    marginLeft="auto"
-                    onChange={() => setEnableComments(!enableComments)}
-                    isChecked={enableComments}
-                  />
-                </FormControl>
-              </Flex>
+              <FormControl id="council-members">
+                <MembersList
+                  members={members}
+                  setMembers={setMembers}
+                  editMode
+                  removeUserFromCouncil={removeUserFromCouncil}
+                />
+              </FormControl>
+
+              <FormControl id="council-name">
+                <FormLabel>Multisig address</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="0x..."
+                  {...register("address")}
+                />
+              </FormControl>
 
               <Flex justifyContent="flex-end">
                 <Button

@@ -12,14 +12,16 @@ import {
   Collapse,
   // MarkdownRenderer,
   QuillEditor,
+  MembersList,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 
 export function Page() {
   const pageContext = usePageContext();
-
+  const [members, setMembers] = useState<MemberType[]>([]);
   const councilResp = trpc.councils.getCouncilBySlug.useQuery({
     slug: pageContext.routeParams!.id,
   });
@@ -27,8 +29,18 @@ export function Page() {
   const { data: council } = councilResp;
 
   useEffect(() => {
-    console.log("pageContext.routeParams", pageContext.routeParams);
-  });
+    if (council) {
+      const tempMembers = council.members?.map((member) => {
+        return {
+          address: member.user.address,
+          name: member.user.name,
+          twitterHandle: member.user.twitter,
+          miniBio: member.user.miniBio,
+        };
+      });
+      setMembers(tempMembers ?? []);
+    }
+  }, [council]);
 
   return (
     <Box
@@ -85,6 +97,18 @@ export function Page() {
 
               {/* <MarkdownRenderer content={council?.statement || ""} /> */}
               <QuillEditor value={council?.statement ?? ""} readOnly />
+              {members.length > 0 ? (
+                <Box mb="24px">
+                  <Heading color="#33333E" variant="h5">
+                    Members
+                  </Heading>
+                  <MembersList
+                    members={members}
+                    setMembers={setMembers}
+                    readonly
+                  />
+                </Box>
+              ) : null}
             </Stack>
           </Collapse>
 
