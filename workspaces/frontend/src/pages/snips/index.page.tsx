@@ -13,6 +13,9 @@ import { trpc } from "src/utils/trpc";
 
 export function Page() {
   const snips = trpc.snips.getAll.useQuery();
+  const sortedSnips = snips.data?.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   return (
     <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px">
@@ -40,7 +43,7 @@ export function Page() {
         </Box>
       </AppBar>
       <ListRow.Container>
-        {snips.data?.map((data) => (
+        {sortedSnips?.map((data) => (
           <ListRow.Root key={data.id} href={`/${data.type}s/${data.id}`}>
             <ListRow.MutedText id={data.id} type={data.type} />
             <ListRow.Title label={data.title} />
