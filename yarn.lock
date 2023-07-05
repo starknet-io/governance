@@ -3239,15 +3239,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/kv-asset-handler@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@cloudflare/kv-asset-handler@npm:0.3.0"
-  dependencies:
-    mime: ^3.0.0
-  checksum: 6d3754096728d082765a7eb08f50e7cebcadee9224896beaee0e998ee43d919aa2e1447c69fb0934ed9df7acc3f8125992653af07522546bb3217086e249f0fb
-  languageName: node
-  linkType: hard
-
 "@cloudflare/workerd-darwin-64@npm:1.20230518.0":
   version: 1.20230518.0
   resolution: "@cloudflare/workerd-darwin-64@npm:1.20230518.0"
@@ -3280,13 +3271,6 @@ __metadata:
   version: 1.20230518.0
   resolution: "@cloudflare/workerd-windows-64@npm:1.20230518.0"
   conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@cloudflare/workers-types@npm:^4.20230518.0":
-  version: 4.20230518.0
-  resolution: "@cloudflare/workers-types@npm:4.20230518.0"
-  checksum: 69c861437f1064b860b2a52129ed973f670090a8d2de9f4b205f86f8a2f40caec48b8c7614533c6531875d1fa254fc7d9da3ab52d7a6fff46be0f64079b394dc
   languageName: node
   linkType: hard
 
@@ -5346,6 +5330,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@import-meta-env/unplugin@npm:^0.4.8":
+  version: 0.4.8
+  resolution: "@import-meta-env/unplugin@npm:0.4.8"
+  dependencies:
+    magic-string: ^0.30.0
+    object-hash: ^3.0.0
+    picocolors: ^1.0.0
+    unplugin: 1.2.0
+  peerDependencies:
+    "@import-meta-env/cli": ^0.5.1 || ^0.6.0
+    dotenv: ^11.0.0 || ^12.0.4 || ^13.0.1 || ^14.3.2 || ^15.0.1 || ^16.0.0
+  peerDependenciesMeta:
+    "@import-meta-env/cli":
+      optional: true
+  checksum: b420e8f5f3b23f36e28367acce7b9571be4e782ebecbb8d6ffea53a010d6a969b4db6f64caabb34bd5692fa86f5103b78bbb14accef086655a46e785f55a0cf9
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -5680,7 +5682,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/sourcemap-codec@npm:^1.4.10, @jridgewell/sourcemap-codec@npm:^1.4.13":
+"@jridgewell/sourcemap-codec@npm:^1.4.10, @jridgewell/sourcemap-codec@npm:^1.4.13, @jridgewell/sourcemap-codec@npm:^1.4.15":
   version: 1.4.15
   resolution: "@jridgewell/sourcemap-codec@npm:1.4.15"
   checksum: b881c7e503db3fc7f3c1f35a1dd2655a188cc51a3612d76efc8a6eb74728bef5606e6758ee77423e564092b4a518aba569bbb21c9bac5ab7a35b0c6ae7e344c8
@@ -5866,30 +5868,6 @@ __metadata:
     semver: ^7.3.8
     superstruct: ^1.0.3
   checksum: 1ebc6677bb017e4d09d4af143621fe27194d8ed815234cfd76469c3c734dc1db2ea7b577c01a2096c21c04d8c9c4d721d3035b5353fe2ded3b4737f326755e43
-  languageName: node
-  linkType: hard
-
-"@miniflare/tre@npm:^3.0.0-next.13":
-  version: 3.0.0-next.13
-  resolution: "@miniflare/tre@npm:3.0.0-next.13"
-  dependencies:
-    acorn: ^8.8.0
-    acorn-walk: ^8.2.0
-    better-sqlite3: ^8.1.0
-    capnp-ts: ^0.7.0
-    exit-hook: ^2.2.1
-    get-port: ^5.1.1
-    glob-to-regexp: ^0.4.1
-    http-cache-semantics: ^4.1.0
-    kleur: ^4.1.5
-    source-map-support: 0.5.21
-    stoppable: ^1.1.0
-    undici: ^5.13.0
-    workerd: ^1.20230404.0
-    ws: ^8.11.0
-    youch: ^3.2.2
-    zod: ^3.20.6
-  checksum: 38c28c892a5b2352cf065bf39f6aa19ffd8dbf71ebf033d1784c593ad74f2cde242c40cadbdcd6c736437fb7c391b988c1e52bf3b9a81b1674c167c10f22e662
   languageName: node
   linkType: hard
 
@@ -6083,7 +6061,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/fcl@npm:1.4.1":
+"@onflow/fcl@npm:^1.3.2":
   version: 1.4.1
   resolution: "@onflow/fcl@npm:1.4.1"
   dependencies:
@@ -6101,27 +6079,6 @@ __metadata:
     "@onflow/util-uid": ^1.1.0
     cross-fetch: ^3.1.6
   checksum: 1b434f60c4c5774d2225c4af1694f1457a8ce07789313f8663b6f4ff1410e2e14f7d8fcdb616d85a645fdd9748228472af2083347936d1ce8bdd9024e45ed428
-  languageName: node
-  linkType: hard
-
-"@onflow/fcl@patch:@onflow/fcl@npm%3A1.4.1#./.yarn/patches/@onflow-fcl-npm-1.4.1-e0969c9f1b.patch::locator=%40yukilabs%2Fgovernance-workspaces%40workspace%3A.":
-  version: 1.4.1
-  resolution: "@onflow/fcl@patch:@onflow/fcl@npm%3A1.4.1#./.yarn/patches/@onflow-fcl-npm-1.4.1-e0969c9f1b.patch::version=1.4.1&hash=90b7b0&locator=%40yukilabs%2Fgovernance-workspaces%40workspace%3A."
-  dependencies:
-    "@babel/runtime": ^7.18.6
-    "@onflow/config": ^1.1.0
-    "@onflow/interaction": 0.0.11
-    "@onflow/rlp": ^1.1.0
-    "@onflow/sdk": ^1.2.0
-    "@onflow/types": ^1.1.0
-    "@onflow/util-actor": ^1.2.0
-    "@onflow/util-address": ^1.1.0
-    "@onflow/util-invariant": ^1.1.0
-    "@onflow/util-logger": ^1.2.0
-    "@onflow/util-template": ^1.1.0
-    "@onflow/util-uid": ^1.1.0
-    cross-fetch: ^3.1.6
-  checksum: bd609c0b2f249df41235a822fe0da960e197a326c7448882087b47a0b6c43e6ef9741ea409b178dc1396e94d588e7f442ee02823e3dca011f43cb95e3736898e
   languageName: node
   linkType: hard
 
@@ -8051,15 +8008,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/itty-router-extras@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@types/itty-router-extras@npm:0.4.0"
-  dependencies:
-    itty-router: ^2.3.10
-  checksum: 615c0de94e8a06d4db33262d2bb9a348ffb76aaad4a6ebf103771fae42d0458879815c1c604a601b7e95e553f11a662b780125a8054e101cd7fe124278a4d1a3
-  languageName: node
-  linkType: hard
-
 "@types/jest@npm:^29.5.2":
   version: 29.5.2
   resolution: "@types/jest@npm:29.5.2"
@@ -9604,8 +9552,6 @@ __metadata:
   resolution: "@yukilabs/governance-frontend@workspace:workspaces/frontend"
   dependencies:
     "@apollo/client": ^3.7.15
-    "@cloudflare/kv-asset-handler": ^0.3.0
-    "@cloudflare/workers-types": ^4.20230518.0
     "@dynamic-labs/sdk-react": 0.16.17-viem.0
     "@dynamic-labs/wagmi-connector": 0.16.17-viem.0
     "@graphql-codegen/cli": 4.0.1
@@ -9613,7 +9559,7 @@ __metadata:
     "@graphql-codegen/introspection": 4.0.0
     "@graphql-codegen/typescript": ^4.0.1
     "@graphql-codegen/typescript-resolvers": ^4.0.1
-    "@miniflare/tre": ^3.0.0-next.13
+    "@import-meta-env/unplugin": ^0.4.8
     "@snapshot-labs/snapshot.js": ^0.4.99
     "@tanstack/react-query": ^4.29.14
     "@trpc/client": ^10.31.0
@@ -9621,7 +9567,6 @@ __metadata:
     "@trpc/server": ^10.31.0
     "@types/compression": ^1.7.2
     "@types/gapi": ^0.0.44
-    "@types/itty-router-extras": ^0.4.0
     "@types/node": ^20.3.1
     "@types/react": ^18.2.12
     "@types/react-dom": ^18.2.5
@@ -9637,8 +9582,6 @@ __metadata:
     express: ^4.18.2
     fsevents: ^2.3.2
     graphql: ^16.6.0
-    itty-cors: ^0.3.6
-    itty-router: ^4.0.11
     node-fetch: ^3.3.1
     node-stdlib-browser: ^1.2.0
     prettier: ^2.8.8
@@ -9654,7 +9597,6 @@ __metadata:
     vite-plugin-ssr: ^0.4.131
     vite-tsconfig-paths: ^4.2.0
     wagmi: ^1.2.0
-    wrangler: ^3.1.0
   languageName: unknown
   linkType: soft
 
@@ -9669,6 +9611,7 @@ __metadata:
     eslint-plugin-react: ^7.32.2
     prettier: ^2.8.8
     typescript: ^5.1.3
+    wrangler: ^3.1.1
   languageName: unknown
   linkType: soft
 
@@ -16268,27 +16211,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"itty-cors@npm:^0.3.6":
-  version: 0.3.6
-  resolution: "itty-cors@npm:0.3.6"
-  checksum: 8979093d2790dc9abbcfe858fea4b41f6075545a8ba2c39798e0469be880a52ce6c5cedb102c77d12f4148f0249828113d79cc03d88754c2739c31d0b4da2d0c
-  languageName: node
-  linkType: hard
-
-"itty-router@npm:^2.3.10":
-  version: 2.6.6
-  resolution: "itty-router@npm:2.6.6"
-  checksum: 2117cba792e7a131f12af8e4f18ed7fddf643d632a440f235e4a3478eac4e4158272a859d160969e0d76e96f5a8659bd090f714afabdb95cffb7964c29d4a89f
-  languageName: node
-  linkType: hard
-
-"itty-router@npm:^4.0.11":
-  version: 4.0.11
-  resolution: "itty-router@npm:4.0.11"
-  checksum: 6ef6b2b98081a56dd92eecb75e0f6d5ea82ce3dadfab42d38ab4ee6afb87e42c3ec55b5f25dbe171c400f54474b01eea2364e161c134b9d3e49bb96c3d8eeec7
-  languageName: node
-  linkType: hard
-
 "jackspeak@npm:^2.0.3":
   version: 2.2.1
   resolution: "jackspeak@npm:2.2.1"
@@ -17511,6 +17433,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"magic-string@npm:^0.30.0":
+  version: 0.30.1
+  resolution: "magic-string@npm:0.30.1"
+  dependencies:
+    "@jridgewell/sourcemap-codec": ^1.4.15
+  checksum: 7bc7e4493e32a77068f3753bf8652d4ab44142122eb7fb9fa871af83bef2cd2c57518a6769701cd5d0379bd624a13bc8c72ca25ac5655b27e5a61adf1fd38db2
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^2.0.0, make-dir@npm:^2.1.0":
   version: 2.1.0
   resolution: "make-dir@npm:2.1.0"
@@ -18121,9 +18052,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "miniflare@npm:3.0.1"
+"miniflare@npm:^3.0.1":
+  version: 3.0.2
+  resolution: "miniflare@npm:3.0.2"
   dependencies:
     acorn: ^8.8.0
     acorn-walk: ^8.2.0
@@ -18140,7 +18071,7 @@ __metadata:
     ws: ^8.11.0
     youch: ^3.2.2
     zod: ^3.20.6
-  checksum: ba9fbfb15d90aa1bfd406d6cfb649ad9720064a03f2d7b0df1d9e1a5308d3f8481ee2ff135e8c4ce19d9bef4c75c917a6f418539dbbf2fbc705764fb1e29fb53
+  checksum: 9a210b17dc06db6972c206040878bd35bedd6fe921cfcd9b882b09d33ddf1e789447ff689adb18733d87131db2da97acd05d7c5bb9d035503df84d7c5413315a
   languageName: node
   linkType: hard
 
@@ -18801,6 +18732,13 @@ __metadata:
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
   checksum: fcc6e4ea8c7fe48abfbb552578b1c53e0d194086e2e6bbbf59e0a536381a292f39943c6e9628af05b5528aa5e3318bb30d6b2e53cadaf5b8fe9e12c4b69af23f
+  languageName: node
+  linkType: hard
+
+"object-hash@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "object-hash@npm:3.0.0"
+  checksum: 80b4904bb3857c52cc1bfd0b52c0352532ca12ed3b8a6ff06a90cd209dfda1b95cee059a7625eb9da29537027f68ac4619363491eedb2f5d3dddbba97494fd6c
   languageName: node
   linkType: hard
 
@@ -22820,10 +22758,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.2.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.5.0, tslib@npm:~2.5.0":
+"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.5.0, tslib@npm:~2.5.0":
   version: 2.5.3
   resolution: "tslib@npm:2.5.3"
   checksum: 88902b309afaf83259131c1e13da1dceb0ad1682a213143a1346a649143924d78cf3760c448b84d796938fd76127183894f8d85cbb3bf9c4fddbfcc140c0003c
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.2.0":
+  version: 2.6.0
+  resolution: "tslib@npm:2.6.0"
+  checksum: c01066038f950016a18106ddeca4649b4d76caa76ec5a31e2a26e10586a59fceb4ee45e96719bf6c715648e7c14085a81fee5c62f7e9ebee68e77a5396e5538f
   languageName: node
   linkType: hard
 
@@ -23249,6 +23194,18 @@ __metadata:
   version: 1.0.0
   resolution: "unpipe@npm:1.0.0"
   checksum: 4fa18d8d8d977c55cb09715385c203197105e10a6d220087ec819f50cb68870f02942244f1017565484237f1f8c5d3cd413631b1ae104d3096f24fdfde1b4aa2
+  languageName: node
+  linkType: hard
+
+"unplugin@npm:1.2.0":
+  version: 1.2.0
+  resolution: "unplugin@npm:1.2.0"
+  dependencies:
+    acorn: ^8.8.2
+    chokidar: ^3.5.3
+    webpack-sources: ^3.2.3
+    webpack-virtual-modules: ^0.5.0
+  checksum: 0526e03d47309c01f2e29018449ad15bb95fb7d47fd34c5bda61fd6eb5e7377579214d21c0dad60701b3ca1b6b3d38e716d5386c839a8c7c5c383668c75438f3
   languageName: node
   linkType: hard
 
@@ -23928,6 +23885,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"webpack-virtual-modules@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "webpack-virtual-modules@npm:0.5.0"
+  checksum: 22b59257b55c89d11ae295b588b683ee9fdf3aeb591bc7b6f88ac1d69cb63f4fcb507666ea986866dfae161a1fa534ad6fb4e2ea91bbcd0a6d454368d7d4c64b
+  languageName: node
+  linkType: hard
+
 "websocket@npm:^1.0.32":
   version: 1.0.34
   resolution: "websocket@npm:1.0.34"
@@ -24020,7 +23984,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workerd@npm:^1.20230404.0, workerd@npm:^1.20230512.0":
+"workerd@npm:^1.20230512.0":
   version: 1.20230518.0
   resolution: "workerd@npm:1.20230518.0"
   dependencies:
@@ -24046,9 +24010,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "wrangler@npm:3.1.0"
+"wrangler@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "wrangler@npm:3.1.1"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@esbuild-plugins/node-globals-polyfill": ^0.1.1
@@ -24057,7 +24021,7 @@ __metadata:
     chokidar: ^3.5.3
     esbuild: 0.16.3
     fsevents: ~2.3.2
-    miniflare: ^3.0.0
+    miniflare: ^3.0.1
     nanoid: ^3.3.3
     path-to-regexp: ^6.2.0
     selfsigned: ^2.0.1
@@ -24069,7 +24033,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 03ff3905cb32db214f5338ac514b306c22f3684f402405d12abf96d0672d94082a5fd9249b67bfa86710824b8643914987173ca1443a30340530ae6824a7c68b
+  checksum: f93c2690653ff85eb45fda73ccf17ddf86d3a72e488b487ab83adf7884736df366e4f661325f7f2ec2c0a6587dd145bf1c72710f8a791c1412787d4ca29ca639
   languageName: node
   linkType: hard
 

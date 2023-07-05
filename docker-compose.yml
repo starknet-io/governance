@@ -1,29 +1,33 @@
 version: "3.9"
 
-services:
+volumes:
+  db:
 
+services:
   db:
     image: postgres:latest
-    container_name: governanceDB
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: governance
       POSTGRES_DB: governance
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - 5432:5432
 
   backend:
     image: yukilabs/governance-backend
     build:
       dockerfile: backend.Dockerfile
     restart: unless-stopped
+    depends_on:
+      - db
     environment:
       NODE_ENV: production
       PORT: 8000
       CLIENT_ORIGIN: http://localhost:3000
-      DATABASE_URL: postgresql://postgres:governance@localhost:5432/governance
+      DATABASE_URL: postgresql://postgres:governance@db:5432/governance
       DYNAMIC_PUBLIC_KEY: |
         -----BEGIN PUBLIC KEY-----
         MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA3dNuD1XQP+7JDjrdNElu
@@ -41,14 +45,14 @@ services:
         -----END PUBLIC KEY-----
     ports:
       - 8000:8000
-    volumes:
-      - ./workspaces/backend/.env:/runtime/workspaces/backend/.env
 
   frontend:
     image: yukilabs/governance-frontend
     build:
       dockerfile: frontend.Dockerfile
     restart: unless-stopped
+    depends_on:
+      - backend
     environment:
       NODE_ENV: production
       NODE_PATH: /runtime/node_modules
@@ -58,4 +62,3 @@ services:
 
     ports:
       - 3000:3000
-
