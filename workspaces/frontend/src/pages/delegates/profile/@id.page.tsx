@@ -14,6 +14,7 @@ import {
   ProfileSummaryCard,
   Stack,
   SummaryItems,
+  MenuItem,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -132,9 +133,14 @@ export function Page() {
             address={user?.address}
             avatarString={user?.address}
           >
-            <ProfileSummaryCard.MoreActions
-              onClick={() => console.log("red")}
-            />
+            <ProfileSummaryCard.MoreActions>
+              <MenuItem as="a" href={`/delegate/edit/`}>
+                Edit
+              </MenuItem>
+              <MenuItem as="a" href={`/delegate/edit/`}>
+                Report
+              </MenuItem>
+            </ProfileSummaryCard.MoreActions>
           </ProfileSummaryCard.Profile>
           {isConnected ? (
             <ProfileSummaryCard.PrimaryButton

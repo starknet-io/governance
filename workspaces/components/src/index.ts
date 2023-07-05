@@ -73,6 +73,7 @@ export {
   SecurityIcon,
   SettingsIcon,
   SupportIcon,
+  ArrowLeftIcon,
 } from "./Icons/UiIcons";
 
 export { MarkdownEditor } from "./Editor";

@@ -74,6 +74,7 @@ export {
   SettingsIcon,
   SupportIcon,
   GiHamburgerMenu,
+  ArrowLeftIcon,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -126,6 +127,14 @@ import {
   DrawerBody,
   DrawerFooter,
   useDisclosure,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
 } from "@chakra-ui/react";
 
 export {
@@ -161,4 +170,12 @@ export {
   DrawerBody,
   DrawerFooter,
   useDisclosure,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
 };

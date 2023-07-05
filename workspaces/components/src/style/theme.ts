@@ -10,6 +10,7 @@ import { textareaTheme as Textarea } from "../Textarea/TextareaStyles";
 import { ProgressTheme as Progress } from "../Progress/ProgressStyles";
 import { modalTheme as Modal } from "../VoteModal/ModalStyles";
 import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
+import { menuTheme } from "src/Menu/MenuStyles";
 
 const config = {
   initialColorMode: "light",
@@ -24,6 +25,7 @@ const theme = extendTheme({
     Tag,
     Card,
     Textarea,
+    Menu: menuTheme,
     Modal,
     Spinner,
     Checkbox: {

@@ -39,7 +39,7 @@ type ItemProps = {
 };
 
 const Item = (props: ItemProps) => {
-  const { label, value, children, isTruncated,isCopiable } = props;
+  const { label, value, children, isTruncated, isCopiable } = props;
   return (
     <Flex justify="space-between" fontSize="sm">
       <Text fontWeight="medium" color="#6C6C75">
@@ -49,13 +49,14 @@ const Item = (props: ItemProps) => {
         isCopiable ? (
           <CopyToClipboard text={value}>
             <Text color="#292932" fontWeight="medium" title={value}>
-                {isTruncated ? truncateAddress(value) : value}
-            </Text>
-          </CopyToClipboard> ) : (
-            <Text color="#292932" fontWeight="medium" title={value}>
               {isTruncated ? truncateAddress(value) : value}
             </Text>
-          )
+          </CopyToClipboard>
+        ) : (
+          <Text color="#292932" fontWeight="medium" title={value}>
+            {isTruncated ? truncateAddress(value) : value}
+          </Text>
+        )
       ) : (
         children
       )}
@@ -149,9 +150,7 @@ const Tags = (props: TagsProps) => {
 
   return (
     <Box>
-      <Tag size="lg" variant="primary">
-        {`${type}`}
-      </Tag>
+      <Tag variant="listCard">{`${type}`}</Tag>
     </Box>
   );
 };

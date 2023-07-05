@@ -28,6 +28,7 @@ import {
   useDisclosure,
   Button,
   GiHamburgerMenu,
+  ArrowLeftIcon,
 } from "@yukilabs/governance-components";
 import { Suspense, useEffect, useState } from "react";
 import { PageContext } from "./types";
@@ -100,6 +101,37 @@ const DynamicContextProviderPage = (props: Props) => {
       </DynamicWagmiConnector>
     </DynamicContextProvider>
   );
+};
+
+interface BackButtonProps {
+  urlStart: string;
+  href: string;
+  buttonText: string;
+  pageContext: { urlOriginal: string };
+}
+
+const BackButton = ({
+  urlStart,
+  href,
+  buttonText,
+  pageContext,
+}: BackButtonProps) => {
+  if (pageContext.urlOriginal.startsWith(urlStart)) {
+    return (
+      <Box>
+        <Button
+          leftIcon={<ArrowLeftIcon boxSize="20px" />}
+          size={"sm"}
+          as="a"
+          href={href}
+          variant="ghost"
+        >
+          {buttonText}
+        </Button>
+      </Box>
+    );
+  }
+  return null;
 };
 
 function PageLayout(props: Props) {
@@ -245,6 +277,25 @@ function PageLayout(props: Props) {
         </Layout.LeftAside>
         <Layout.Main>
           <Header>
+            <BackButton
+              urlStart="/delegates/profile/"
+              href="/delegates"
+              buttonText="Back to delegates"
+              pageContext={pageContext}
+            />
+            <BackButton
+              urlStart="/voting-proposals/"
+              href="/voting-proposals"
+              buttonText="Back to voting proposals"
+              pageContext={pageContext}
+            />
+            <BackButton
+              urlStart="/snips/"
+              href="/snips"
+              buttonText="Back to core snips"
+              pageContext={pageContext}
+            />
+
             <Box display="flex" marginLeft="auto">
               <DynamicWidget />
             </Box>

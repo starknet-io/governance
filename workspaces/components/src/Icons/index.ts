@@ -18,6 +18,7 @@ import {
   SecurityIcon,
   SettingsIcon,
   SupportIcon,
+  ArrowLeftIcon,
 } from "./UiIcons";
 import {
   HiOutlineCodeBracketSquare,
@@ -66,4 +67,5 @@ export {
   SettingsIcon,
   SupportIcon,
   GiHamburgerMenu,
+  ArrowLeftIcon,
 };

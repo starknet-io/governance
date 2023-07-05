@@ -15,7 +15,7 @@ const LeftAside = ({ children }: LeftAsideProps) => {
       role="complementary"
       width="234px"
       position={{ base: "unset", lg: "sticky" }}
-      bg="#FFFFFF"
+      bg="#FDFCFD"
       top="0"
       paddingLeft="12px"
       paddingRight="12px"
@@ -65,6 +65,7 @@ const Root = ({ children }: LayoutProps) => {
   return (
     <Box
       display="flex"
+      bg="#FAFAFA"
       flexDirection={{ base: "column", md: "row", lg: "row" }}
     >
       {children}

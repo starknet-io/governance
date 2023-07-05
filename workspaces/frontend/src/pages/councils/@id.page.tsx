@@ -13,6 +13,7 @@ import {
   // MarkdownRenderer,
   QuillEditor,
   MembersList,
+  MenuItem,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -63,9 +64,12 @@ export function Page() {
             address="0x2EF324324234234234234234231234"
             ethAddress={council?.name ?? "Council"}
           >
-            <ProfileSummaryCard.MoreActions
-              onClick={() => console.log("red")}
-            />
+            <ProfileSummaryCard.MoreActions>
+              <MenuItem as="a" href={`/councils/edit/${council?.slug}`}>
+                Edit
+              </MenuItem>
+              <MenuItem>Delete</MenuItem>
+            </ProfileSummaryCard.MoreActions>
           </ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>
 
