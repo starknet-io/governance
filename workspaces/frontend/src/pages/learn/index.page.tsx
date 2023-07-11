@@ -10,9 +10,29 @@ import {
   Stat,
   Button,
   NavItem,
+  QuillEditor,
 } from "@yukilabs/governance-components";
+import { trpc } from "src/utils/trpc";
+import { useEffect, useState } from "react";
+import { Page as PageInterface } from "@yukilabs/governance-backend/src/db/schema/pages";
 
 export function Page() {
+  const [selectedPage, setSelectedPage] = useState<PageInterface | null>(null);
+  const pagesResp = trpc.pages.getAll.useQuery();
+  const pages = pagesResp.data ?? [];
+
+  useEffect(() => {
+    if (pages.length > 0) {
+      setSelectedPage(pages[0]);
+    }
+  }, [pages]);
+
+  const NavItemWrapper = ({ page }: { page: PageInterface }) => (
+    <div onClick={() => setSelectedPage(page)}>
+      <NavItem label={page.title ?? ""} />
+    </div>
+  );
+
   return (
     <Box
       display="flex"
@@ -35,20 +55,14 @@ export function Page() {
           color="#545464"
           mb="24px"
         >
-          <NavItem
-            href="/learn"
-            label="Governance for dummies"
-            active="/learn"
-          />
-          <NavItem href="/learn" label="What are SNIPs?" />
-          <NavItem href="/learn" label="How do votes work?" />
-          <NavItem href="/learn" label="What are delegates?" />
-          <NavItem href="/learn" label="How do I delegate my votes?" />
-          <NavItem href="/learn" label="What are councils?" />
-          <NavItem href="/learn" label="How can I get involved?" />
+          {pages.map((page: PageInterface) => (
+            <NavItemWrapper key={page.id} page={page} />
+          ))}
         </Stack>
         {/* // show for admin role */}
-        <Button variant="outline">Add new page</Button>
+        <Button variant="outline" href="learn/create">
+          Add new page
+        </Button>
       </Box>
       <Box ml="auto" mr="auto" pb="200px">
         <ContentContainer maxWidth="800px">
@@ -59,7 +73,7 @@ export function Page() {
               color="#545464"
             >
               <Heading color="#33333E" variant="h3">
-                Governance for dummies
+                {selectedPage?.title ?? "Select a page"}
               </Heading>
               <Flex gap="90px" paddingTop="24px">
                 <Stat.Root>
@@ -73,48 +87,7 @@ export function Page() {
                 </Stat.Root>
               </Flex>
 
-              <Text variant="body">
-                If youve ever wondered how the wild west of the Internet - the
-                land of decentralized protocols - manages to maintain some
-                semblance of order, then youre in the right place. Its like
-                stepping into a party where everyone has a say in the playlist,
-                and the chaos that ensues is precisely what makes it a blast.
-                Lets unravel this techno-mumbo-jumbo and understand how this
-                crowd-managed circus, also known as decentralized governance,
-                works.
-              </Text>
-              <Heading color="#33333E" variant="h3">
-                The big picture
-              </Heading>
-              <Text variant="body">
-                Picture the regular world - youve got governments, corporations,
-                boards - entities with power who make decisions. In the
-                decentralized world, its like taking that power and throwing it
-                into a crowd at a rock concert, hoping that they catch it and
-                make decisions collaboratively. Scary? Maybe. Exciting?
-                Definitely.
-              </Text>
-              <Text variant="body">
-                Protocols like Ethereum and StarkNet, at their core, operate on
-                this principle. Everyone has a voice, or more accurately, a
-                vote. The many manage themselves without the need for the few.
-              </Text>
-              <Text variant="body">
-                Take an active part in encouraging discussions and votes during
-                the first phase on behalf of StarkNet community members.
-              </Text>
-              <Text variant="body">
-                Ensure transparency of the Council’s discussions, decisions, and
-                activities.
-              </Text>
-              <Text variant="body">
-                Take an active part in encouraging discussions and votes during
-                the first phase on behalf of StarkNet community members.
-              </Text>
-              <Text variant="body">
-                Ensure transparency of the Council’s discussions, decisions, and
-                activities.
-              </Text>
+              <QuillEditor value={selectedPage?.content ?? ""} readOnly />
             </Stack>
           </Stack>
         </ContentContainer>

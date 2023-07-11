@@ -38,4 +38,17 @@ export const pagesRouter = router({
     .mutation(async (opts) => {
       await db.delete(pages).where(eq(pages.id, opts.input.id)).execute();
     }),
+
+  getPage: publicProcedure
+    .input(pageInsertSchema.required({ id: true }).pick({ id: true }))
+    .query(async (opts) => {
+      const page = await db.query.pages.findFirst({
+        where: eq(pages.id, opts.input.id),
+        with: {
+          author: true
+        }
+      });
+      return page;
+    }
+    )
 });

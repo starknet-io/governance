@@ -106,6 +106,13 @@
       "when": 1688637102370,
       "tag": "0014_third_nightshade",
       "breakpoints": false
+    },
+    {
+      "idx": 15,
+      "version": "5",
+      "when": 1689009414378,
+      "tag": "0015_low_scalphunter",
+      "breakpoints": false
     }
   ]
 }
