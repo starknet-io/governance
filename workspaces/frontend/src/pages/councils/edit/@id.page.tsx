@@ -85,17 +85,10 @@ export function Page() {
 
   const removeUserFromCouncil = (address: string) => {
     if (!council?.id) return;
-    removeUserFromCouncilData.mutate(
-      {
-        councilId: council?.id,
-        userAddress: address,
-      },
-      {
-        onSuccess: () => {
-          councilResp.refetch();
-        },
-      }
-    );
+    removeUserFromCouncilData.mutate({
+      councilId: council?.id,
+      userAddress: address,
+    });
   };
 
   return (
