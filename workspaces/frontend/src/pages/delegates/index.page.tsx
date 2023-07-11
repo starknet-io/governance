@@ -151,7 +151,7 @@ export function Page() {
 
   return (
     <ContentContainer>
-      <Box width="100%" maxWidth="1100px">
+      <Box width="100%">
         <PageTitle
           learnMoreLink="/learn"
           title="Delegates"

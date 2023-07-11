@@ -1,15 +1,16 @@
 import { InferModel, relations } from 'drizzle-orm';
-import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, integer, uuid } from 'drizzle-orm/pg-core';
 import { councils } from './councils';
 import { comments } from './comments';
 import { users } from './users';
+import { } from 'zod';
 
 export const posts = pgTable('posts', {
   id: serial('id').primaryKey(),
   title: text('title'),
   content: text('content'),
-  councilId: text('councilId'),
-  userId: text('userId'),
+  councilId: integer('councilId').references(() => councils.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  userId: uuid('userId').references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),

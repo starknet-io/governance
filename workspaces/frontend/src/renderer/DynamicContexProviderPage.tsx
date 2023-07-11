@@ -116,6 +116,26 @@ const BackButton = ({
   buttonText,
   pageContext,
 }: BackButtonProps) => {
+  if (
+    pageContext.urlOriginal.includes("/councils/") &&
+    pageContext.urlOriginal.startsWith(urlStart)
+  ) {
+    const goBack = () => {
+      window.history.back();
+    };
+    return (
+      <Box>
+        <Button
+          leftIcon={<ArrowLeftIcon boxSize="20px" />}
+          size={"sm"}
+          variant="ghost"
+          onClick={goBack}
+        >
+          {buttonText}
+        </Button>
+      </Box>
+    );
+  }
   if (pageContext.urlOriginal.startsWith(urlStart)) {
     return (
       <Box>
@@ -293,6 +313,12 @@ function PageLayout(props: Props) {
               urlStart="/snips/"
               href="/snips"
               buttonText="Back to core snips"
+              pageContext={pageContext}
+            />
+            <BackButton
+              urlStart="/councils/"
+              href="/councils"
+              buttonText="Back to councils"
               pageContext={pageContext}
             />
 

@@ -28,8 +28,6 @@ function daysAgo(date: Date): string {
 }
 
 export const CommentList: React.FC<CommentListProps> = ({ commentsList }) => {
-  console.log("commentsList: ", commentsList);
-
   return (
     <Flex flexDirection="column" gap="32px">
       {commentsList.map((comment, index) => {

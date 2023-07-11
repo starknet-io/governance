@@ -18,6 +18,7 @@ import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 export function Page() {
   const {
@@ -38,8 +39,11 @@ export function Page() {
       data.description = descriptionValue;
       data.slug = "";
       data.members = members;
-      await createCouncil.mutateAsync(data);
-      // navigate(/councils);
+      await createCouncil.mutateAsync(data, {
+        onSuccess: (res) => {
+          navigate(`/councils/${res.slug}`);
+        },
+      });
     } catch (error) {
       // Handle error
       console.log(error);

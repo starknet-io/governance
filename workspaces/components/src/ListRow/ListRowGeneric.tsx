@@ -42,6 +42,7 @@ const Root = ({ children, href }: RootProps) => {
         textDecoration: "none",
         backgroundColor: "#F9FAFB",
       }}
+      width={"100%"}
     >
       {children}
     </Box>
@@ -204,6 +205,7 @@ const Comments = ({ count, width }: CommentsProps) => {
 };
 
 import moment from "moment";
+import { stripHtml } from "src/utils/helpers";
 
 function dateDiff(now: moment.Moment, futureDate: moment.Moment) {
   const diff = moment.duration(futureDate.diff(now));
@@ -325,6 +327,33 @@ const VoteResults: React.FC<VoteResultsProps> = ({ choices, scores }) => {
     </Box>
   );
 };
+
+const Post = ({ post }: any) => {
+  return (
+    <Flex flexDirection="column" flex={1} gap="6px" width={"100%"}>
+      <Text
+        variant="breadcrumbs"
+        fontSize="12px"
+        noOfLines={1}
+        fontWeight="500"
+        color="#292932"
+        width={"100%"}
+      >
+        {post.title}
+      </Text>
+      <Text
+        color="#6C6C75"
+        variant="breadcrumbs"
+        noOfLines={1}
+        fontWeight="500"
+        width={"100%"}
+      >
+        {stripHtml(post.content ?? "")}
+      </Text>
+    </Flex>
+  );
+};
+
 export {
   Root,
   Status,
@@ -338,4 +367,5 @@ export {
   Container,
   DateRange,
   VoteResults,
+  Post,
 };

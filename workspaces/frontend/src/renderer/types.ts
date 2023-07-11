@@ -33,7 +33,8 @@ export type PageContextCustom = {
   userAgent: string;
   redirectTo?: string;
   apolloClient?: ApolloClient<any>;
-  apolloIntialState: any
+  apolloIntialState: any,
+  routeParams: any
 };
 
 export type PageContextServer = PageContextBuiltIn<Page> & PageContextCustom;

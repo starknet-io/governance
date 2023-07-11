@@ -77,9 +77,9 @@ export function Page() {
     id: pageContext.routeParams!.id,
   });
 
-  const delegate = delegateResponse?.data?.[0].delegates;
+  const delegate = delegateResponse.data;
 
-  const user = delegateResponse?.data?.[0].users;
+  const user = delegate?.author;
 
   const senderData = useBalanceData(address);
 
@@ -94,7 +94,6 @@ export function Page() {
     },
   });
   const stats = getChoiceStats(data?.votes as any[]);
-  console.log(data);
   return (
     <Box
       display="flex"
@@ -134,7 +133,7 @@ export function Page() {
             avatarString={user?.address}
           >
             <ProfileSummaryCard.MoreActions>
-              <MenuItem as="a" href={`/delegate/edit/`}>
+              <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
                 Edit
               </MenuItem>
               <MenuItem as="a" href={`/delegate/edit/`}>

@@ -21,7 +21,7 @@ export const snips = pgTable('snips', {
   title: text('title'),
   description: text('description'),
   discussionURL: text('discussionURL'),
-  userId: uuid('userId').references(() => users.id),
+  userId: uuid('userId').references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()

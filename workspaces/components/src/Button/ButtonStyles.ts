@@ -176,6 +176,30 @@ const sizes = {
   }),
 };
 
+const fullGhostBtn = defineStyle({
+  w: "100%",
+  bg: "transparent",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#1A152317",
+  color: "#6F6E77",
+  fontWeight: "500",
+  borderRadius: "4px",
+  boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.07)",
+  _focus: {
+    boxShadow: "none",
+    borderColor: "selected.main",
+    borderWidth: "1px",
+    borderStyle: "solid",
+  },
+  _hover: {
+    background: "gray.100",
+  },
+  _active: {
+    background: "gray.200",
+  }
+});
+
 export const buttonTheme = defineStyleConfig({
   sizes,
   variants: {
@@ -183,5 +207,6 @@ export const buttonTheme = defineStyleConfig({
     solid,
     switcher,
     toolbar,
+    fullGhostBtn
   },
 });

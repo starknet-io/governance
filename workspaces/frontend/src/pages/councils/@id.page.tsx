@@ -13,12 +13,15 @@ import {
   // MarkdownRenderer,
   QuillEditor,
   MembersList,
+  Button,
   MenuItem,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { useEffect, useState } from "react";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
+import { navigate } from "vite-plugin-ssr/client/router";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -28,6 +31,7 @@ export function Page() {
   });
 
   const { data: council } = councilResp;
+  const { user } = useDynamicContext();
 
   useEffect(() => {
     if (council) {
@@ -42,6 +46,11 @@ export function Page() {
       setMembers(tempMembers ?? []);
     }
   }, [council]);
+
+  const handleClick = (): void => {
+    if (!council?.id) return;
+    navigate(`/councils/posts/create?councilId=${council?.id.toString()}`);
+  };
 
   return (
     <Box
@@ -64,12 +73,16 @@ export function Page() {
             address="0x2EF324324234234234234234231234"
             ethAddress={council?.name ?? "Council"}
           >
-            <ProfileSummaryCard.MoreActions>
-              <MenuItem as="a" href={`/councils/edit/${council?.slug}`}>
-                Edit
-              </MenuItem>
-              <MenuItem>Delete</MenuItem>
-            </ProfileSummaryCard.MoreActions>
+            {user ? (
+              <ProfileSummaryCard.MoreActions>
+                <MenuItem as="a" href={`/councils/edit/${council?.slug}`}>
+                  Edit
+                </MenuItem>
+                {/* <MenuItem>Delete</MenuItem> */}
+              </ProfileSummaryCard.MoreActions>
+            ) : (
+              <></>
+            )}
           </ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>
 
@@ -77,6 +90,13 @@ export function Page() {
         <Box>
           {/* <MarkdownRenderer content={council?.description || ""} /> */}
           <QuillEditor value={council?.description ?? ""} readOnly />
+          {user ? (
+            <Button variant="fullGhostBtn" onClick={handleClick}>
+              Add new post
+            </Button>
+          ) : (
+            <></>
+          )}
         </Box>
         <Divider my="24px" />
         <SummaryItems.Root>
@@ -87,7 +107,7 @@ export function Page() {
         </SummaryItems.Root>
       </Box>
 
-      <ContentContainer maxWidth="800px">
+      <ContentContainer>
         <Stack spacing="24px" direction={{ base: "column" }} color="#545464">
           <Collapse startingHeight={100}>
             <Stack
@@ -121,17 +141,30 @@ export function Page() {
               Posts
             </Heading>
             <ListRow.Container>
-              <ListRow.Root>
-                <ListRow.CommentSummary />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-              <ListRow.Root>
-                <ListRow.CommentSummary />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
+              {council?.posts?.map((post) => {
+                return (
+                  <Box
+                    key={post.id}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <ListRow.Root href={`/councils/posts/${post.id}`}>
+                      <Box width={"100%"}>
+                        <ListRow.Post post={post} />
+                      </Box>
+                    </ListRow.Root>
+                    <div style={{ marginLeft: "auto" }}>
+                      <ListRow.Comments count={post.comments.length} />
+                    </div>
+                  </Box>
+                );
+              })}
             </ListRow.Container>
           </Box>
-          <Box mt="24px">
+          {/* <Box mt="24px">
             <Heading color="#33333E" variant="h3">
               Past Votes
             </Heading>
@@ -145,7 +178,7 @@ export function Page() {
                 <ListRow.Comments count={3} />
               </ListRow.Root>
             </ListRow.Container>
-          </Box>
+          </Box> */}
         </Stack>
       </ContentContainer>
     </Box>
