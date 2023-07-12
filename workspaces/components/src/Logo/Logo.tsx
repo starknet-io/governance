@@ -8,7 +8,7 @@ export const Logo = () => {
       href="/snips"
       gap="8px"
       height="78px"
-      mt="-34px"
+      // mt="-34px"
       display="flex"
       alignItems="center"
       paddingLeft="8px"
