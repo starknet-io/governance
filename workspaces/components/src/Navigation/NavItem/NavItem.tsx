@@ -10,10 +10,20 @@ interface NavItemProps {
   icon?: ReactElement;
   endElement?: ReactElement;
   children?: ReactNode;
+  activePage?: boolean;
 }
 
 export const NavItem = (props: NavItemProps) => {
-  const { active, subtle, icon, children, label, endElement, href } = props;
+  const {
+    active,
+    subtle,
+    icon,
+    children,
+    label,
+    endElement,
+    href,
+    activePage,
+  } = props;
   const isActive = active === href;
   return (
     <Flex
@@ -30,7 +40,7 @@ export const NavItem = (props: NavItemProps) => {
       userSelect="none"
       rounded="md"
       transition="all 0.2s"
-      bg={isActive ? "#EEEEF1" : ""}
+      bg={isActive ? "#EEEEF1" : activePage ? "#EEEEF1" : ""}
       _hover={{ bg: "#EEEEF1" }}
       _active={{ bg: "#EEEEF1" }}
     >
