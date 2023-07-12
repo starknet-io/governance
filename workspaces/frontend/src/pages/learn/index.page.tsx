@@ -27,7 +27,9 @@ export function Page() {
         display="flex"
         flexDirection="column"
         flexBasis={{ base: "100%", md: "270px" }}
-        height="100%"
+        position={{ base: "unset", lg: "sticky" }}
+        height="calc(100vh - 80px)"
+        top="0"
       >
         <Stack
           spacing="12px"
