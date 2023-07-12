@@ -1,8 +1,8 @@
 export const headingTheme = {
   h1: {
-    fontSize: "5rem",
+    fontSize: "1rem",
     lineHeight: "100%",
-    fontWeight: 600,
+    fontWeight: 500,
     fontFamily: "Poppins, sans-serif",
   },
   h2: {

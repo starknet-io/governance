@@ -7,8 +7,8 @@ export const Logo = () => {
       as="a"
       href="/snips"
       gap="8px"
-      height="88px"
-      mt="-34px"
+      height="78px"
+      // mt="-34px"
       display="flex"
       alignItems="center"
       paddingLeft="8px"
@@ -65,7 +65,12 @@ export const Logo = () => {
         </defs>
       </svg>
 
-      <Heading fontSize="16px" fontWeight="500" variant="h1" color="#0C0C4F">
+      <Heading
+        fontSize="16px"
+        fontWeight="300!important"
+        variant="h1"
+        color="#0C0C4F"
+      >
         Governance Hub
       </Heading>
     </Flex>

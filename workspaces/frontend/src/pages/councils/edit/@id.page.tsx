@@ -1,5 +1,5 @@
 import { DocumentProps } from "src/renderer/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -13,7 +13,15 @@ import {
   QuillEditor,
   EditorTemplate,
   MembersList,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure,
 } from "@yukilabs/governance-components";
+
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
@@ -22,6 +30,8 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 
 export function Page() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef(null);
   const {
     handleSubmit,
     register,
@@ -90,10 +100,54 @@ export function Page() {
       userAddress: address,
     });
   };
+  const deleteCouncil = trpc.councils.deleteCouncil.useMutation();
+  // Delete function
+  const handleDeleteCouncil = async () => {
+    if (!council?.id) return;
+
+    try {
+      await deleteCouncil.mutateAsync({ id: council.id });
+      navigate("/snips");
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+  };
 
   return (
     <>
       <ContentContainer>
+        <AlertDialog
+          leastDestructiveRef={cancelRef}
+          isOpen={isOpen}
+          onClose={onClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Delete Council
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure you want to delete this council?
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} variant="ghost" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="outline"
+                  color="#D83E2C"
+                  onClick={handleDeleteCouncil}
+                  ml={3}
+                >
+                  Delete
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
         <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
             Edit council
@@ -155,10 +209,10 @@ export function Page() {
               <Flex justifyContent="flex-end" gap="16px">
                 <Button
                   color="#D83E2C"
-                  type="submit"
                   size="sm"
                   variant={"outline"}
                   mr="auto"
+                  onClick={onOpen}
                 >
                   Delete
                 </Button>
