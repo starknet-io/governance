@@ -11,7 +11,7 @@ const LeftAside = ({ children }: LeftAsideProps) => {
       height="100vh"
       direction="column"
       as="aside"
-      order={{ base: "2", lg: "0" }}
+      order={{ base: "0", lg: "0" }}
       role="complementary"
       width="234px"
       position={{ base: "unset", lg: "sticky" }}
@@ -19,9 +19,9 @@ const LeftAside = ({ children }: LeftAsideProps) => {
       top="0"
       paddingLeft="12px"
       paddingRight="12px"
-      display={{ base: "none", lg: "flex" }}
+      display={{ base: "none", md: "flex" }}
       borderRight="1px solid #E4E5E7"
-      paddingTop="34px"
+      // paddingTop="34px"
       paddingBottom="24px"
     >
       {children}

@@ -66,7 +66,9 @@ export function Page() {
         display="flex"
         flexDirection="column"
         flexBasis={{ base: "100%", md: "391px" }}
-        height="100%"
+        position={{ base: "unset", lg: "sticky" }}
+        height="calc(100vh - 80px)"
+        top="0"
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
@@ -91,7 +93,7 @@ export function Page() {
           {/* <MarkdownRenderer content={council?.description || ""} /> */}
           <QuillEditor value={council?.description ?? ""} readOnly />
           {user ? (
-            <Button variant="fullGhostBtn" onClick={handleClick}>
+            <Button mt="24px" variant="fullGhostBtn" onClick={handleClick}>
               Add new post
             </Button>
           ) : (
@@ -107,8 +109,14 @@ export function Page() {
         </SummaryItems.Root>
       </Box>
 
-      <ContentContainer>
-        <Stack spacing="24px" direction={{ base: "column" }} color="#545464">
+      <ContentContainer center maxWidth="800px">
+        <Stack
+          width="100%"
+          spacing="24px"
+          direction={{ base: "column" }}
+          color="#545464"
+          paddingBottom="200px"
+        >
           <Collapse startingHeight={100}>
             <Stack
               spacing="24px"

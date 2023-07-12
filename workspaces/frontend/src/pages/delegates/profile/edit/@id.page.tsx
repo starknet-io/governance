@@ -201,14 +201,31 @@ export function Page() {
                 {errors.understandRole && <span>This field is required.</span>}
               </FormControl>
 
-              <Flex justifyContent="flex-end">
+              <Flex justifyContent="flex-end" gap="16px">
+                <Button
+                  color="#D83E2C"
+                  type="submit"
+                  size="sm"
+                  variant={"outline"}
+                  mr="auto"
+                >
+                  Delete
+                </Button>
+                <Button
+                  as="a"
+                  size="sm"
+                  variant={"ghost"}
+                  href={`/delegates/profile/${pageContext.routeParams!.id}`}
+                >
+                  Cancel
+                </Button>
                 <Button
                   type="submit"
                   size="sm"
                   variant={"solid"}
                   disabled={!isValid}
                 >
-                  Edit
+                  Save
                 </Button>
               </Flex>
             </Stack>

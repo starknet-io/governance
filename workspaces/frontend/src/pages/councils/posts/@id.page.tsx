@@ -77,7 +77,6 @@ export function Page() {
                     <MenuItem as="a" href={`/councils/posts/edit/${post?.id}`}>
                       Edit
                     </MenuItem>
-                    <MenuItem>Delete</MenuItem>
                   </ProfileSummaryCard.MoreActions>
                 ) : (
                   <></>

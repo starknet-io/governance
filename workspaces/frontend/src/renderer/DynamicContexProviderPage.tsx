@@ -245,27 +245,38 @@ function PageLayout(props: Props) {
         </Box>
         <Layout.LeftAside>
           <Logo />
-          <NavItem
-            active={pageContext.urlOriginal}
-            href="/snips"
-            icon={<SnipsIcon />}
-            label="Core SNIPs"
-          />
-          <NavItem
-            href="/voting-proposals"
-            //todo: fix how active state for menu works
-            active={pageContext.urlOriginal}
-            icon={<ProposalsIcon />}
-            label="Voting proposals"
-          />
+          <Box mt="-20px">
+            <NavGroup>
+              <NavItem
+                active={pageContext.urlOriginal}
+                href="/snips"
+                icon={<SnipsIcon />}
+                label="Core SNIPs"
+              />
+              <NavItem
+                href="/voting-proposals"
+                //todo: fix how active state for menu works
+                active={pageContext.urlOriginal}
+                icon={<ProposalsIcon />}
+                label="Voting proposals"
+              />
 
-          <NavItem
-            icon={<DelegatesIcon />}
-            active={pageContext.urlOriginal}
-            href="/delegates"
-            label="Delegates"
-          />
-          <NavGroup label="Councils">
+              <NavItem
+                icon={<DelegatesIcon />}
+                active={pageContext.urlOriginal}
+                href="/delegates"
+                label="Delegates"
+              />
+            </NavGroup>
+          </Box>
+          <NavGroup
+            label="Councils"
+            action={
+              <Button as="a" href="/councils/create" variant="icon" size="md">
+                +
+              </Button>
+            }
+          >
             {councilResp.data?.map((council) => (
               <NavItem
                 key={council.id}
@@ -300,19 +311,19 @@ function PageLayout(props: Props) {
             <BackButton
               urlStart="/delegates/profile/"
               href="/delegates"
-              buttonText="Back to delegates"
+              buttonText="Delegates"
               pageContext={pageContext}
             />
             <BackButton
               urlStart="/voting-proposals/"
               href="/voting-proposals"
-              buttonText="Back to voting proposals"
+              buttonText="Voting proposals"
               pageContext={pageContext}
             />
             <BackButton
               urlStart="/snips/"
               href="/snips"
-              buttonText="Back to core snips"
+              buttonText="Core snips"
               pageContext={pageContext}
             />
             <BackButton
