@@ -125,7 +125,9 @@ export function Page() {
         display="flex"
         flexDirection="column"
         flexBasis={{ base: "100%", md: "391px" }}
-        height="100%"
+        position={{ base: "unset", lg: "sticky" }}
+        height="calc(100vh - 80px)"
+        top="0"
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
@@ -193,7 +195,7 @@ export function Page() {
         </SummaryItems.Root>
       </Box>
 
-      <ContentContainer maxWidth="800">
+      <ContentContainer maxWidth="800px" center>
         <Stack
           spacing="24px"
           direction={{ base: "column" }}

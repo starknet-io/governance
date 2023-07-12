@@ -5,7 +5,6 @@ import { BsCaretRightFill } from "react-icons/bs";
 interface NavItemProps {
   href?: string;
   label: string;
-  subtle?: boolean;
   active?: string;
   icon?: ReactElement;
   endElement?: ReactElement;
@@ -13,7 +12,7 @@ interface NavItemProps {
 }
 
 export const NavItem = (props: NavItemProps) => {
-  const { active, subtle, icon, children, label, endElement, href } = props;
+  const { active, icon, children, label, endElement, href } = props;
   const isActive = active === href;
   return (
     <Flex
