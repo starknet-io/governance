@@ -245,26 +245,30 @@ function PageLayout(props: Props) {
         </Box>
         <Layout.LeftAside>
           <Logo />
-          <NavItem
-            active={pageContext.urlOriginal}
-            href="/snips"
-            icon={<SnipsIcon />}
-            label="Core SNIPs"
-          />
-          <NavItem
-            href="/voting-proposals"
-            //todo: fix how active state for menu works
-            active={pageContext.urlOriginal}
-            icon={<ProposalsIcon />}
-            label="Voting proposals"
-          />
+          <Box mt="-20px">
+            <NavGroup>
+              <NavItem
+                active={pageContext.urlOriginal}
+                href="/snips"
+                icon={<SnipsIcon />}
+                label="Core SNIPs"
+              />
+              <NavItem
+                href="/voting-proposals"
+                //todo: fix how active state for menu works
+                active={pageContext.urlOriginal}
+                icon={<ProposalsIcon />}
+                label="Voting proposals"
+              />
 
-          <NavItem
-            icon={<DelegatesIcon />}
-            active={pageContext.urlOriginal}
-            href="/delegates"
-            label="Delegates"
-          />
+              <NavItem
+                icon={<DelegatesIcon />}
+                active={pageContext.urlOriginal}
+                href="/delegates"
+                label="Delegates"
+              />
+            </NavGroup>
+          </Box>
           <NavGroup
             label="Councils"
             action={
