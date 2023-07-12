@@ -135,6 +135,12 @@ import {
   MenuGroup,
   MenuOptionGroup,
   MenuDivider,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 
 export {
@@ -178,4 +184,10 @@ export {
   MenuGroup,
   MenuOptionGroup,
   MenuDivider,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 };
