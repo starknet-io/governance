@@ -34,12 +34,7 @@ export const NavItem = (props: NavItemProps) => {
       _active={{ bg: "#EEEEF1" }}
     >
       {icon && (
-        <Box
-          position="relative"
-          mt="-4px"
-          fontSize="24px"
-          color={active ? "currentcolor" : "#6C6C75"}
-        >
+        <Box position="relative" mt="-4px" fontSize="24px">
           {icon}
         </Box>
       )}
@@ -48,7 +43,7 @@ export const NavItem = (props: NavItemProps) => {
         fontWeight="500"
         fontSize="14px"
         letterSpacing="0.07px"
-        color={subtle ? "#6C6C75" : undefined}
+        color={"#57565D"}
       >
         {label}
       </Box>
