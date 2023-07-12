@@ -19,11 +19,11 @@ export const NavGroup = (props: NavGroupProps) => {
       {label && (
         <Text
           px="3"
-          fontSize="12px"
-          fontWeight="semibold"
+          fontSize="10px"
+          fontWeight="600"
           textTransform="uppercase"
-          letterSpacing="widest"
-          color="gray.500"
+          letterSpacing="0.5px"
+          color="#57565D"
           mb="3"
           position="relative"
         >

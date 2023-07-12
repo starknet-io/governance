@@ -28,8 +28,7 @@ export const NavItem = (props: NavItemProps) => {
       height="40px"
       cursor="pointer"
       userSelect="none"
-      rounded="md"
-      transition="all 0.2s"
+      rounded="8px"
       bg={isActive ? "#EEEEF1" : ""}
       _hover={{ bg: "#EEEEF1" }}
       _active={{ bg: "#EEEEF1" }}
@@ -46,8 +45,9 @@ export const NavItem = (props: NavItemProps) => {
       )}
       <Box
         flex="1"
-        fontWeight="inherit"
+        fontWeight="500"
         fontSize="14px"
+        letterSpacing="0.07px"
         color={subtle ? "#6C6C75" : undefined}
       >
         {label}
