@@ -35,7 +35,7 @@ export const NavGroup = (props: NavGroupProps) => {
           )}
         </Text>
       )}
-      <Stack spacing="1">{children}</Stack>
+      <Stack spacing="4px">{children}</Stack>
     </Flex>
   );
 };
