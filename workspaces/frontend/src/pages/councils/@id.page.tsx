@@ -91,7 +91,7 @@ export function Page() {
           {/* <MarkdownRenderer content={council?.description || ""} /> */}
           <QuillEditor value={council?.description ?? ""} readOnly />
           {user ? (
-            <Button variant="fullGhostBtn" onClick={handleClick}>
+            <Button mt="24px" variant="fullGhostBtn" onClick={handleClick}>
               Add new post
             </Button>
           ) : (
@@ -107,8 +107,13 @@ export function Page() {
         </SummaryItems.Root>
       </Box>
 
-      <ContentContainer>
-        <Stack spacing="24px" direction={{ base: "column" }} color="#545464">
+      <ContentContainer maxWidth="1024px">
+        <Stack
+          width="100%"
+          spacing="24px"
+          direction={{ base: "column" }}
+          color="#545464"
+        >
           <Collapse startingHeight={100}>
             <Stack
               spacing="24px"

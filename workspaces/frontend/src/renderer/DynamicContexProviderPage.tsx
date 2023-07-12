@@ -300,25 +300,19 @@ function PageLayout(props: Props) {
             <BackButton
               urlStart="/delegates/profile/"
               href="/delegates"
-              buttonText="Back to delegates"
+              buttonText="Delegates"
               pageContext={pageContext}
             />
             <BackButton
               urlStart="/voting-proposals/"
               href="/voting-proposals"
-              buttonText="Back to voting proposals"
+              buttonText="Voting proposals"
               pageContext={pageContext}
             />
             <BackButton
               urlStart="/snips/"
               href="/snips"
-              buttonText="Back to core snips"
-              pageContext={pageContext}
-            />
-            <BackButton
-              urlStart="/councils/"
-              href="/councils"
-              buttonText="Back to councils"
+              buttonText="Core snips"
               pageContext={pageContext}
             />
 
