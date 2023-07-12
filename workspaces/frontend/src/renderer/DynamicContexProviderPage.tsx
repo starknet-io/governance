@@ -265,7 +265,14 @@ function PageLayout(props: Props) {
             href="/delegates"
             label="Delegates"
           />
-          <NavGroup label="Councils">
+          <NavGroup
+            label="Councils"
+            action={
+              <Button as="a" href="/councils/create" variant="icon" size="md">
+                +
+              </Button>
+            }
+          >
             {councilResp.data?.map((council) => (
               <NavItem
                 key={council.id}
