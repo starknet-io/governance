@@ -29,7 +29,7 @@ export const NavItem = (props: NavItemProps) => {
       userSelect="none"
       rounded="8px"
       bg={isActive ? "#EEEEF1" : ""}
-      _hover={{ bg: "#EEEEF1" }}
+      _hover={{ bg: "rgba(144, 142, 150, 0.06)" }}
       _active={{ bg: "#EEEEF1" }}
     >
       {icon && (
