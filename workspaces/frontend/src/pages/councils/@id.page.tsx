@@ -109,7 +109,7 @@ export function Page() {
         </SummaryItems.Root>
       </Box>
 
-      <ContentContainer center maxWidth="800">
+      <ContentContainer center maxWidth="800px">
         <Stack
           width="100%"
           spacing="24px"

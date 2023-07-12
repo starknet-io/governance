@@ -326,6 +326,12 @@ function PageLayout(props: Props) {
               buttonText="Core snips"
               pageContext={pageContext}
             />
+            <BackButton
+              urlStart="/councils/"
+              href="/councils"
+              buttonText="Back to councils"
+              pageContext={pageContext}
+            />
 
             <Box display="flex" marginLeft="auto">
               <DynamicWidget />
