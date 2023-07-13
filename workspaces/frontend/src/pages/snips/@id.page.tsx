@@ -13,8 +13,7 @@ import {
   CommentList,
   IconButton,
   HiEllipsisHorizontal,
-  // MarkdownRenderer,
-  QuillEditor,
+  MarkdownRenderer,
   Iframely,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
@@ -48,7 +47,7 @@ export function Page() {
     }
     console.log(value);
   };
-  console.log(snip.data?.discussionURL);
+  console.log(typeof snip.data?.discussionURL);
 
   return (
     <>
@@ -103,10 +102,10 @@ export function Page() {
               </Flex>
               <Divider />
 
-              {snip?.data?.discussionURL !== "" ? (
+              {snip?.data?.discussionURL ? (
                 <Iframely
                   id={import.meta.env.VITE_APP_IFRAMELY_ID}
-                  url={`${snip?.data?.discussionURL}`}
+                  url={snip?.data?.discussionURL || ""}
                 />
               ) : (
                 <></>
@@ -117,11 +116,8 @@ export function Page() {
                 Overview
               </Heading>
 
-              {/* <MarkdownRenderer content={snip.data?.description || ""} /> */}
-              <QuillEditor
-                value={snip.data?.description || undefined}
-                readOnly
-              />
+              <MarkdownRenderer content={snip.data?.description || ""} />
+
               <Divider my="32px" />
               <Heading id="#discussion" color="#33333E" variant="h3">
                 Discussion

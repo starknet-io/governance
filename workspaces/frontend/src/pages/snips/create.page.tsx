@@ -13,6 +13,8 @@ import {
   ContentContainer,
   QuillEditor,
   EditorTemplate,
+  useMarkdownEditor,
+  MarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -25,7 +27,9 @@ export function Page() {
     register,
     formState: { errors, isValid },
   } = useForm<RouterInput["snips"]["createSNIP"]>();
-  const [editorValue, setEditorValue] = useState<string>(EditorTemplate.snip);
+  // const [editorValue, setEditorValue] = useState<string>(EditorTemplate.snip);
+  const { editorValue, handleEditorChange } =
+    useMarkdownEditor("Initial value");
   const createSNIP = trpc.snips.createSNIP.useMutation();
 
   const onSubmit = handleSubmit(async (data) => {
@@ -61,9 +65,10 @@ export function Page() {
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Proposal Body</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setEditorValue(e)}
+                <MarkdownEditor
+                  onChange={handleEditorChange}
                   value={editorValue}
+                  initialValue={EditorTemplate.snip}
                 />
                 {errors.description && <span>This field is required.</span>}
                 {/* <Textarea
