@@ -7,7 +7,6 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 
-import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { Button } from "../Button";
 import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
@@ -81,9 +80,9 @@ export const DelegateCard = (props: Props) => {
             <></>
           )}
         </Box>
-        <Text fontSize="13px" noOfLines={3} color="#6B6B80">
+        <Box fontSize="13px" noOfLines={3} color="#6B6B80">
           <MarkdownRenderer content={delegateStatement || ""} />
-        </Text>
+        </Box>
       </CardBody>
       <CardFooter>
         <Box width="100%" display="flex" flexDirection="column" gap="16px">

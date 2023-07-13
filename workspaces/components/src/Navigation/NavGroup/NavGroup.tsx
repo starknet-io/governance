@@ -16,7 +16,7 @@ export const NavGroup = (props: NavGroupProps) => {
       marginTop={alignEnd ? "auto" : "24px"}
       padding="0"
     >
-      {label && (
+      <Box position="relative">
         <Text
           px="3"
           fontSize="10px"
@@ -28,13 +28,14 @@ export const NavGroup = (props: NavGroupProps) => {
           position="relative"
         >
           {label}
-          {action && (
-            <Box position="absolute" right="-16px" top="-12px">
-              {action}
-            </Box>
-          )}
         </Text>
-      )}
+        {action && (
+          <Box position="absolute" right="-16px" top="-12px">
+            {action}
+          </Box>
+        )}
+      </Box>
+
       <Stack spacing="4px">{children}</Stack>
     </Flex>
   );
