@@ -1,4 +1,5 @@
 import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
 import {
   Button,
   Heading,
@@ -10,14 +11,15 @@ import {
   ContentContainer,
   Flex,
   Box,
-  QuillEditor,
-  EditorTemplate,
   Multiselect,
+  useMarkdownEditor,
+  MarkdownEditor,
+  Divider,
+  EditorTemplate,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { DocumentProps } from "src/renderer/types";
-import { useState } from "react";
 
 const delegateTypeValues = delegateTypeEnum.enumValues;
 
@@ -39,14 +41,23 @@ export function Page() {
     control,
     formState: { errors, isValid },
   } = useForm<FormValues>();
-  const [editorValue, setEditorValue] = useState<string>(
-    EditorTemplate.delegate
-  );
+  const [isCustomAgreement, setCustomAgreement] = useState<boolean>(false);
+
+  const {
+    editorValue: delegatePitchValue,
+    handleEditorChange: handleDelegatePitchChange,
+  } = useMarkdownEditor("Initial value for delegate pitch");
+
+  const {
+    editorValue: delegateStatementValue,
+    handleEditorChange: handleDelegateStatementChange,
+  } = useMarkdownEditor("Initial value for delegate statement");
+
   const createDelegate = trpc.delegates.saveDelegate.useMutation();
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      data.delegateStatement = editorValue;
+      data.delegateStatement = delegatePitchValue;
       await createDelegate
         .mutateAsync(data)
         .then((res) => {
@@ -63,8 +74,8 @@ export function Page() {
 
   return (
     <>
-      <ContentContainer>
-        <Box maxWidth="538px" pb="200px" mx="auto">
+      <ContentContainer center maxWidth="670px">
+        <Box pb="200px">
           <Heading variant="h3" mb="24px">
             Create delegate profile
           </Heading>
@@ -73,16 +84,21 @@ export function Page() {
             <Stack spacing="24px" direction={{ base: "column" }}>
               <FormControl id="delegate-statement">
                 <FormLabel>Delegate pitch</FormLabel>
-                <QuillEditor
+                {/* <QuillEditor
                   onChange={(e) => setEditorValue(e)}
                   value={editorValue}
+                /> */}
+                <MarkdownEditor
+                  onChange={handleDelegatePitchChange}
+                  value={delegatePitchValue}
+                  initialValue={EditorTemplate.delegate}
                 />
                 {errors.delegateStatement && (
                   <span>This field is required.</span>
                 )}
               </FormControl>
-              <FormControl id="starknet-type">
-                <FormLabel>Delegate type</FormLabel>
+              <FormControl id="interests">
+                <FormLabel>Interests</FormLabel>
                 <Controller
                   name="delegateType"
                   control={control}
@@ -140,6 +156,9 @@ export function Page() {
                 />
                 {errors.discourse && <span>This field is required.</span>}
               </FormControl>
+              <Divider />
+              <Heading variant="h4">Delegate agreement</Heading>
+
               <FormControl id="agreeTerms">
                 <Controller
                   control={control}
@@ -148,10 +167,12 @@ export function Page() {
                   rules={{ required: true }}
                   render={({ field }) => (
                     <Checkbox
+                      size={"sm"}
                       isChecked={field.value}
                       onChange={(e) => field.onChange(e.target.checked)}
                     >
-                      Agree with delegate terms
+                      I agree with the Starknet foundation suggested delegate
+                      agreement View
                     </Checkbox>
                   )}
                 />
@@ -165,22 +186,35 @@ export function Page() {
                   rules={{ required: true }}
                   render={({ field }) => (
                     <Checkbox
+                      size={"sm"}
                       isChecked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
+                      onChange={(e) => {
+                        field.onChange(e.target.checked);
+                        setCustomAgreement(e.target.checked);
+                      }}
                     >
-                      I understand the role of StarkNet delegates, we encourage
-                      all to read the Delegate Expectations 328; Starknet
-                      Governance announcements Part 1 98, Part 2 44, and Part 3
-                      34; The Foundation Post 60; as well as the Delegate
-                      Onboarding announcement 539 before proceeding.
+                      I want to write a custom delegate agreement
                     </Checkbox>
                   )}
                 />
                 {errors.understandRole && <span>This field is required.</span>}
               </FormControl>
+              {isCustomAgreement && (
+                <FormControl id="your-delegate-statement">
+                  <FormLabel>Your delegate statement</FormLabel>
+                  <MarkdownEditor
+                    onChange={handleDelegateStatementChange}
+                    value={delegateStatementValue}
+                  />
+                  {errors.delegateStatement && (
+                    <span>This field is required.</span>
+                  )}
+                </FormControl>
+              )}
+
               <Flex justifyContent="flex-end">
                 <Button type="submit" variant="solid" disabled={!isValid}>
-                  Submit delegate profile
+                  Create delegate profile
                 </Button>
               </Flex>
             </Stack>
@@ -282,7 +316,7 @@ export const documentProps = {
 //                   <span>This field is required.</span>
 //                 )}
 //               </FormControl>
-//               <FormControl id="starknet-type">
+//               <FormControl id="interests">
 //                 <FormLabel>Delegate type</FormLabel>
 //                 <Controller
 //                   name="delegateType"
