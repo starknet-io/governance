@@ -315,6 +315,12 @@ function PageLayout(props: Props) {
               pageContext={pageContext}
             />
             <BackButton
+              urlStart="/delegates/create"
+              href="/delegates"
+              buttonText="Delegates"
+              pageContext={pageContext}
+            />
+            <BackButton
               urlStart="/voting-proposals/"
               href="/voting-proposals"
               buttonText="Voting proposals"
