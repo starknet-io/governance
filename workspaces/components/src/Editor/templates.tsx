@@ -1,37 +1,115 @@
-const snip = `
-<p>#Preamble</p>
-<p>#Abstract</p>
-<p>#Motivation (optional)</p>
-<p>#Specification</p>
-<p>#Rationale</p>
-<p>#Backwards compatibility</p>
-<p>#Test cases</p>
-<p>#Reference implementation</p>
-<p>#Security considerations</p>
-  `;
+const snip = [
+  {
+    type: "paragraph",
+    children: [{ text: "#Preamble" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Abstract" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Motivation (optional)" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Specification" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Rationale" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Backwards compatibility" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Test cases" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Reference implementation" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Security considerations" }],
+  },
+];
 
-const proposal = `
-<p>#Preamble</p>
-<p>#Abstract</p>
-<p>#Motivation (optional)</p>
-<p>#Specification</p>
-<p>#Rationale</p>
-<p>#Backwards compatibility</p>
-<p>#Test cases</p>
-<p>#Reference implementation</p>
-<p>#Security considerations</p>
-  `;
+const proposal = [
+  {
+    type: "paragraph",
+    children: [{ text: "#Preamble" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Abstract" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Motivation (optional)" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Specification" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Rationale" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Backwards compatibility" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Test cases" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Reference implementation" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Security considerations" }],
+  },
+];
 
-const delegate = `
-<p>#Brief intro and background</p>
-<p>#Why you want to be a delegate</p>
-<p>#Areas of interest</p>
-  `;
+const delegate = [
+  {
+    type: "paragraph",
+    children: [{ text: "#Brief intro and background" }],
+  },
 
-const council = `
-<p>#The role of the council</p>
-<p>#How the Council works</p>
-<p>#Council members</p>
-`;
+  {
+    type: "paragraph",
+    children: [{ text: "#Why you want to be a delegate" }],
+  },
+
+  {
+    type: "paragraph",
+    children: [{ text: "#Areas of interest" }],
+  },
+];
+
+const council = [
+  {
+    type: "paragraph",
+    children: [{ text: "TL;DR" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "The role of the [name] council " }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "How the [name] council works" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "FAQs" }],
+  },
+];
 
 export { snip, proposal, delegate, council };
