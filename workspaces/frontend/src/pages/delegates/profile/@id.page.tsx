@@ -9,8 +9,7 @@ import {
   Divider,
   Heading,
   ListRow,
-  // MarkdownRenderer,
-  QuillEditor,
+  MarkdownRenderer,
   ProfileSummaryCard,
   Stack,
   SummaryItems,
@@ -205,8 +204,7 @@ export function Page() {
           <Heading color="#33333E" variant="h3">
             Delegate pitch
           </Heading>
-          {/* <MarkdownRenderer content={delegate?.delegateStatement || ""} /> */}
-          <QuillEditor value={delegate?.delegateStatement} readOnly />
+          <MarkdownRenderer content={delegate?.delegateStatement || ""} />
           <Box mt="24px">
             <Heading color="#33333E" variant="h3">
               Past Votes
