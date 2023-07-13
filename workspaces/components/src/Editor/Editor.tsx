@@ -4,15 +4,27 @@ import { withHistory } from "slate-history";
 import { Toolbar } from "./EditorComponents";
 import { Box } from "@chakra-ui/react";
 import { EditableComponent } from "./EditableComponent";
-import { MarkdownEditorProps } from "./MarkdownEditorProps";
-import { initialValue } from "./initialValue";
+
 import { createEditor } from "slate";
 import MarkButton from "./MarkButton";
 import BlockButton from "./BlockButton";
 
+import { Descendant } from "slate";
+interface ParagraphElement {
+  type: string;
+  children: Descendant[];
+}
+interface MarkdownEditorProps {
+  onChange: (value: Descendant[]) => void;
+  value: Descendant[];
+  minHeight?: string;
+  initialValue?: ParagraphElement[];
+}
+
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   onChange,
   minHeight = "200",
+  initialValue = [{ type: "paragraph", children: [{ text: "Hello" }] }],
 }) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
