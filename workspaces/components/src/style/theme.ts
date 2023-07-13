@@ -11,6 +11,8 @@ import { ProgressTheme as Progress } from "../Progress/ProgressStyles";
 import { modalTheme as Modal } from "../VoteModal/ModalStyles";
 import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
 import { menuTheme } from "src/Menu/MenuStyles";
+import { formStyles } from "src/FormControl/FormControlStyles";
+import { checkboxTheme } from "src/Checkbox/CheckBoxStyles";
 
 const config = {
   initialColorMode: "light",
@@ -28,15 +30,8 @@ const theme = extendTheme({
     Menu: menuTheme,
     Modal,
     Spinner,
-    Checkbox: {
-      baseStyle: {
-        control: {
-          _checked: {
-            color: "#3b3b3b",
-          },
-        },
-      },
-    },
+    Form: formStyles,
+    Checkbox: checkboxTheme,
     fonts: {
       heading: `'Poppins', sans-serif`,
       body: `'Inter Variable', sans-serif`,
