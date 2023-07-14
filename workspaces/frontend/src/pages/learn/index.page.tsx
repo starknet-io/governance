@@ -5,20 +5,55 @@ import {
   ContentContainer,
   Stack,
   Heading,
-  Text,
   Flex,
   Stat,
   Button,
   NavItem,
+  QuillEditor,
+  ProfileSummaryCard,
+  MenuItem,
 } from "@yukilabs/governance-components";
+import { trpc } from "src/utils/trpc";
+import { useEffect, useState } from "react";
+import { Page as PageInterface } from "@yukilabs/governance-backend/src/db/schema/pages";
+import { User } from "@yukilabs/governance-backend/src/db/schema/users";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
+
+export interface PageWithUserInterface extends PageInterface {
+  author: User | null;
+}
 
 export function Page() {
+  const [selectedPage, setSelectedPage] =
+    useState<PageWithUserInterface | null>(null);
+  const pagesResp = trpc.pages.getAll.useQuery();
+  const pages = pagesResp.data ?? [];
+
+  const { user } = useDynamicContext();
+
+  useEffect(() => {
+    if (pages.length > 0) {
+      setSelectedPage(pages[0]);
+    }
+  }, [pages]);
+
+  const NavItemWrapper = ({ page }: { page: PageWithUserInterface }) => (
+    <div onClick={() => setSelectedPage(page)}>
+      <NavItem
+        label={page.title ?? ""}
+        activePage={selectedPage?.id === page.id}
+        active="learn"
+      />
+    </div>
+  );
+
   return (
     <Box
       display="flex"
       flexDirection={{ base: "column", md: "row" }}
       flex="1"
       height="100%"
+      justifyContent="center"
     >
       <Box
         pt="40px"
@@ -37,90 +72,70 @@ export function Page() {
           color="#545464"
           mb="24px"
         >
-          <NavItem
-            href="/learn"
-            label="Governance for dummies"
-            active="/learn"
-          />
-          <NavItem href="/learn" label="What are SNIPs?" />
-          <NavItem href="/learn" label="How do votes work?" />
-          <NavItem href="/learn" label="What are delegates?" />
-          <NavItem href="/learn" label="How do I delegate my votes?" />
-          <NavItem href="/learn" label="What are councils?" />
-          <NavItem href="/learn" label="How can I get involved?" />
+          {pages.map((page: PageWithUserInterface) => (
+            <NavItemWrapper key={page.id} page={page} />
+          ))}
         </Stack>
-        {/* // show for admin role */}
-        <Button variant="outline">Add new page</Button>
+        {user ? (
+          <Button variant="outline" href="learn/create">
+            Add new page
+          </Button>
+        ) : (
+          <></>
+        )}
       </Box>
-      <Box ml="auto" mr="auto" pb="200px">
-        <ContentContainer maxWidth="800px">
+      <ContentContainer>
+        <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
           <Stack spacing="24px" direction={{ base: "column" }} color="#545464">
-            <Stack
-              spacing="24px"
-              direction={{ base: "column" }}
-              color="#545464"
-            >
-              <Heading color="#33333E" variant="h3">
-                Governance for dummies
-              </Heading>
-              <Flex gap="90px" paddingTop="24px">
+            <Box display="flex" alignItems="center">
+              <Box flex="1" display="flex">
+                <Heading
+                  color="#33333E"
+                  variant="h3"
+                  maxWidth="90%"
+                  lineHeight="1.4em"
+                >
+                  {selectedPage?.title ?? "Select a page"}
+                </Heading>
+                {user ? (
+                  <Box margin="auto">
+                    <ProfileSummaryCard.MoreActions>
+                      <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
+                        Edit
+                      </MenuItem>
+                      <MenuItem>Delete</MenuItem>
+                    </ProfileSummaryCard.MoreActions>
+                  </Box>
+                ) : (
+                  <></>
+                )}
+              </Box>
+            </Box>
+            <Flex gap="90px" paddingTop="24px">
+              <Stat.Root>
+                <Stat.Label>Created on</Stat.Label>
                 <Stat.Root>
-                  <Stat.Label>Created on</Stat.Label>
-                  <Stat.Text label="Jun 25, 2023, 5:00 PM" />
+                  <Stat.Date date={selectedPage?.createdAt} />
                 </Stat.Root>
+              </Stat.Root>
 
-                <Stat.Root>
-                  <Stat.Label>Created by</Stat.Label>
-                  <Stat.Text label={"sylve.eth"} />
-                </Stat.Root>
-              </Flex>
+              <Stat.Root>
+                <Stat.Label>Created by</Stat.Label>
+                <Stat.Text
+                  label={
+                    selectedPage?.author?.ensName ??
+                    selectedPage?.author?.address.slice(0, 3) +
+                      "..." +
+                      selectedPage?.author?.address.slice(-3)
+                  }
+                />
+              </Stat.Root>
+            </Flex>
 
-              <Text variant="body">
-                If youve ever wondered how the wild west of the Internet - the
-                land of decentralized protocols - manages to maintain some
-                semblance of order, then youre in the right place. Its like
-                stepping into a party where everyone has a say in the playlist,
-                and the chaos that ensues is precisely what makes it a blast.
-                Lets unravel this techno-mumbo-jumbo and understand how this
-                crowd-managed circus, also known as decentralized governance,
-                works.
-              </Text>
-              <Heading color="#33333E" variant="h3">
-                The big picture
-              </Heading>
-              <Text variant="body">
-                Picture the regular world - youve got governments, corporations,
-                boards - entities with power who make decisions. In the
-                decentralized world, its like taking that power and throwing it
-                into a crowd at a rock concert, hoping that they catch it and
-                make decisions collaboratively. Scary? Maybe. Exciting?
-                Definitely.
-              </Text>
-              <Text variant="body">
-                Protocols like Ethereum and StarkNet, at their core, operate on
-                this principle. Everyone has a voice, or more accurately, a
-                vote. The many manage themselves without the need for the few.
-              </Text>
-              <Text variant="body">
-                Take an active part in encouraging discussions and votes during
-                the first phase on behalf of StarkNet community members.
-              </Text>
-              <Text variant="body">
-                Ensure transparency of the Council’s discussions, decisions, and
-                activities.
-              </Text>
-              <Text variant="body">
-                Take an active part in encouraging discussions and votes during
-                the first phase on behalf of StarkNet community members.
-              </Text>
-              <Text variant="body">
-                Ensure transparency of the Council’s discussions, decisions, and
-                activities.
-              </Text>
-            </Stack>
+            <QuillEditor value={selectedPage?.content ?? ""} readOnly />
           </Stack>
-        </ContentContainer>
-      </Box>
+        </Box>
+      </ContentContainer>
     </Box>
   );
 }

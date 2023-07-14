@@ -75,6 +75,7 @@ export {
   SupportIcon,
   GiHamburgerMenu,
   ArrowLeftIcon,
+  ReorderableList
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
