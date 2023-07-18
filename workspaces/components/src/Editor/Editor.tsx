@@ -19,12 +19,14 @@ interface MarkdownEditorProps {
   value: Descendant[];
   minHeight?: string;
   initialValue?: ParagraphElement[];
+  placeholder?: string;
 }
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   onChange,
+  placeholder,
   minHeight = "200",
-  initialValue = [{ type: "paragraph", children: [{ text: "Hello" }] }],
+  initialValue = [{ type: "paragraph", children: [{ text: "" }] }],
 }) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
@@ -39,7 +41,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
           <BlockButton format="bulleted-list" />
           <BlockButton format="numbered-list" />
         </Toolbar>
-        <EditableComponent minHeight={minHeight} />
+        <EditableComponent minHeight={minHeight} placeholder={placeholder} />
       </Slate>
     </Box>
   );

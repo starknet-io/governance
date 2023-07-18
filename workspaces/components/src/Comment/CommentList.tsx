@@ -5,6 +5,7 @@ import { QuillEditor } from "src/Editor";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
+import { MarkdownRenderer } from "src/MarkdownRenderer";
 
 type CommentWithAuthor = Comment & {
   author: User | null;
@@ -52,7 +53,8 @@ export const CommentList: React.FC<CommentListProps> = ({ commentsList }) => {
                   {daysAgo(createdAt)}
                 </Text>
               </Flex>
-              <QuillEditor value={content || ""} readOnly={true} />
+              {/* <QuillEditor value={content || ""} readOnly={true} /> */}
+              <MarkdownRenderer content={content || ""} />
             </Box>
           </Box>
         );

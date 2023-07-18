@@ -10,11 +10,13 @@ import isHotkey from "is-hotkey";
 interface EditableComponentProps {
   minHeight?: string;
   autoFocus?: boolean;
+  placeholder?: string;
 }
 
 export const EditableComponent = ({
   minHeight,
   autoFocus = false,
+  placeholder,
 }: EditableComponentProps) => {
   const renderElement = useCallback(
     (props: RenderElementProps) => <Element {...props} />,
@@ -31,7 +33,7 @@ export const EditableComponent = ({
     <Editable
       renderElement={renderElement}
       renderLeaf={renderLeaf}
-      placeholder=""
+      placeholder={placeholder}
       spellCheck
       autoFocus={autoFocus}
       onKeyDown={(event) => {
