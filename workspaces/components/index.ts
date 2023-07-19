@@ -77,7 +77,20 @@ export {
   ArrowLeftIcon,
   ReorderableList,
   FormModal,
-  DeletionDialog
+  DeletionDialog,
+  HiOutlinePencil,
+  HiOutlineTrash,
+  CommentIcon,
+  NoDelegatesIcon,
+  NoPostsIcon,
+  NoSnipsIcon,
+  PencilIcon,
+  TrashIcon,
+  SuccessIcon,
+  TrashWarningIcon,
+  VoteIcon,
+  WarningIcon,
+  BannerHome,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -144,7 +157,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  AlertDialogCloseButton
+  AlertDialogCloseButton,
 } from "@chakra-ui/react";
 
 export {
@@ -194,5 +207,5 @@ export {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  AlertDialogCloseButton
+  AlertDialogCloseButton,
 };

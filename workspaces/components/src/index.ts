@@ -30,6 +30,7 @@ export { LinkCard } from "./LinkCard";
 export { CheckboxFilter } from "./Filter/CheckboxFilter";
 export { useMarkdownEditor } from "./Editor/useMarkdownEditor";
 export { CopyToClipboard } from "./CopyToClipboard";
+export { BannerHome } from "./BannerHome";
 export {
   FilterPopoverButton,
   FilterPopoverContent,
@@ -52,6 +53,8 @@ export {
   HiEllipsisHorizontal,
   HiTrash,
   GiHamburgerMenu,
+  HiOutlinePencil,
+  HiOutlineTrash,
 } from "./Icons";
 export {
   BoldIcon,
@@ -74,6 +77,16 @@ export {
   SettingsIcon,
   SupportIcon,
   ArrowLeftIcon,
+  CommentIcon,
+  NoDelegatesIcon,
+  NoPostsIcon,
+  NoSnipsIcon,
+  PencilIcon,
+  TrashIcon,
+  SuccessIcon,
+  TrashWarningIcon,
+  VoteIcon,
+  WarningIcon,
 } from "./Icons/UiIcons";
 
 export { MarkdownEditor } from "./Editor";
@@ -87,4 +100,4 @@ export { MembersList } from "./MembersList";
 export { QuillEditor } from "./Editor/QuillEditor";
 export { ReorderableList } from "./ReorderableList";
 export { FormModal } from "./FormModal";
-export { DeletionDialog } from "./DeletionDialog"
+export { DeletionDialog } from "./DeletionDialog";
