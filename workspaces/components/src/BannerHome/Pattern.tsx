@@ -20,11 +20,11 @@ export const Pattern = () => {
           />
         </g>
       </g>
-      <path
+      {/* <path
         d="M1206 239H0V241H1206V239Z"
-        fill="#DCDBDD"
+        fill="red"
         mask="url(#path-1-inside-1_1126_116805)"
-      />
+      /> */}
       <defs>
         <linearGradient
           id="paint0_linear_1126_116805"

@@ -12,7 +12,13 @@ export const BannerHome = ({
   tagline = "Where the community propose, discuss and influence the direction of Starknet. ",
 }: Props) => {
   return (
-    <Box width="100%" height="240px" position="relative">
+    <Box
+      width="100%"
+      height="240px"
+      position="relative"
+      borderBottom="1px solid #DCDBDD"
+      overflow="hidden"
+    >
       <Box position="absolute" inset="0">
         <Pattern />
       </Box>
