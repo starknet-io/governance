@@ -9,9 +9,10 @@ import {
   Stat,
   Button,
   NavItem,
-  QuillEditor,
   ProfileSummaryCard,
   MenuItem,
+  QuillEditor,
+  Divider,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
@@ -67,7 +68,7 @@ export function Page() {
         top="0"
       >
         <Stack
-          spacing="12px"
+          spacing="1px"
           direction={{ base: "column" }}
           color="#545464"
           mb="24px"
@@ -84,57 +85,61 @@ export function Page() {
           <></>
         )}
       </Box>
-      <ContentContainer>
-        <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
-          <Stack spacing="24px" direction={{ base: "column" }} color="#545464">
-            <Box display="flex" alignItems="center">
-              <Box flex="1" display="flex">
-                <Heading
-                  color="#33333E"
-                  variant="h3"
-                  maxWidth="90%"
-                  lineHeight="1.4em"
-                >
-                  {selectedPage?.title ?? "Select a page"}
-                </Heading>
-                {user ? (
-                  <Box margin="auto">
-                    <ProfileSummaryCard.MoreActions>
-                      <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
-                        Edit
-                      </MenuItem>
-                      <MenuItem>Delete</MenuItem>
-                    </ProfileSummaryCard.MoreActions>
-                  </Box>
-                ) : (
-                  <></>
-                )}
-              </Box>
+      <ContentContainer maxWidth="800px" center>
+        <Stack
+          width="100%"
+          spacing="24px"
+          direction={{ base: "column" }}
+          color="#545464"
+        >
+          <Box display="flex" alignItems="center" width="100%">
+            <Box
+              display="flex"
+              alignItems="center"
+              width="100%"
+              justifyContent="space-between"
+            >
+              <Heading
+                color="#33333E"
+                variant="h3"
+                maxWidth="90%"
+                lineHeight="1.4em"
+              >
+                {selectedPage?.title ?? "Select a page"}
+              </Heading>
+
+              {user ? (
+                <Box>
+                  <ProfileSummaryCard.MoreActions>
+                    <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
+                      Edit
+                    </MenuItem>
+                    <MenuItem>Delete</MenuItem>
+                  </ProfileSummaryCard.MoreActions>
+                </Box>
+              ) : (
+                <></>
+              )}
             </Box>
-            <Flex gap="90px" paddingTop="24px">
-              <Stat.Root>
-                <Stat.Label>Created on</Stat.Label>
-                <Stat.Root>
-                  <Stat.Date date={selectedPage?.createdAt} />
-                </Stat.Root>
-              </Stat.Root>
-
-              <Stat.Root>
-                <Stat.Label>Created by</Stat.Label>
-                <Stat.Text
-                  label={
-                    selectedPage?.author?.ensName ??
-                    selectedPage?.author?.address.slice(0, 3) +
-                      "..." +
-                      selectedPage?.author?.address.slice(-3)
-                  }
-                />
-              </Stat.Root>
-            </Flex>
-
-            <QuillEditor value={selectedPage?.content ?? ""} readOnly />
-          </Stack>
-        </Box>
+          </Box>
+          <Flex gap="16px" paddingTop="24px">
+            <Stat.Root>
+              <Stat.Text
+                label={
+                  selectedPage?.author?.ensName ??
+                  selectedPage?.author?.address.slice(0, 3) +
+                    "..." +
+                    selectedPage?.author?.address.slice(-3)
+                }
+              />
+            </Stat.Root>
+            <Stat.Root>
+              <Stat.Date date={selectedPage?.createdAt} />
+            </Stat.Root>
+          </Flex>
+          <Divider mb="24px" />
+          <QuillEditor value={selectedPage?.content ?? ""} readOnly />
+        </Stack>
       </ContentContainer>
     </Box>
   );

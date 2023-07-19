@@ -43,7 +43,7 @@ function Proposal({ data }: any) {
 
   return (
     <ListRow.Root key={data.id} href={`/voting-proposals/${data.id}`}>
-      <Box display={{ base: "none", md: "flex" }}>
+      <Box display={{ base: "none", md: "none" }}>
         <ListRow.MutedText id={1} type="vote" />
       </Box>
       <ListRow.Title label={data.title} />
