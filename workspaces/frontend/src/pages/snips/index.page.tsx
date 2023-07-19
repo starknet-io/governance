@@ -20,7 +20,7 @@ export function Page() {
 
   return (
     <Box>
-      <BannerHome />
+      <BannerHome snipCount={sortedSnips?.length} />
 
       <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px" pb="200px">
         <PageTitle
