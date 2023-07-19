@@ -25,19 +25,8 @@ export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
             {description}
           </Text>
 
-          {/* //TodO: add link */}
-          {/* <Text
-            color="#1A1523"
-            lineHeight="26px"
-            variant="body"
-            fontSize="16px"
-            fontWeight="600"
-          >
-            {learnMoreLink && <a href={learnMoreLink}>Learn more</a>}
-          </Text> */}
-
           {learnMoreLink && (
-            <Link variant="body" href={learnMoreLink} isExternal>
+            <Link variant="body" href={learnMoreLink}>
               Learn more
             </Link>
           )}
