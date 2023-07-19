@@ -214,13 +214,16 @@ export function Page() {
             </Popover>
           </ButtonGroup>
 
-          {isAuthenticated && (
-            <Box display="flex" marginLeft="auto">
+          <Box display="flex" marginLeft="auto" gap="12px">
+            <Button size="sm" variant="outline">
+              Delegate to address
+            </Button>
+            {isAuthenticated && (
               <Button as="a" href="/delegates/create" size="sm" variant="solid">
                 Create delegate profile
               </Button>
-            </Box>
-          )}
+            )}
+          </Box>
         </AppBar>
         <SimpleGrid
           position="relative"
