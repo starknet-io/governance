@@ -22,7 +22,7 @@ export function Page() {
     <Box>
       <BannerHome />
 
-      <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px">
+      <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px" pb="200px">
         <PageTitle
           learnMoreLink="/"
           title="Core SNIPs"
