@@ -87,7 +87,11 @@ export function Page() {
                   <Stat.Status status={snip.data?.status} />
                 </Stat.Root>
                 <Stat.Root>
-                  <Stat.Text label={`By cillian`} />
+                  <Stat.Text
+                    label={`By ${
+                      snip.data?.author?.ensName || snip.data?.author?.address
+                    }`}
+                  />
                 </Stat.Root>
                 <Stat.Root>
                   <Stat.Date date={snip?.data?.createdAt} />
