@@ -281,7 +281,7 @@ export const TrashWarningIcon = ({ color, ...rest }: UiIconProps) => (
   </Icon>
 );
 export const VoteIcon = ({ color, ...rest }: UiIconProps) => (
-  <Icon viewBox="0 0 20 20" {...rest}>
+  <Icon viewBox="0 0 128 129" {...rest}>
     <g id="Frame 41">
       <path
         id="Union"
