@@ -29,6 +29,7 @@ import {
   TrashWarningIcon,
   VoteIcon,
   WarningIcon,
+  ExternalLinkIcon,
 } from "./UiIcons";
 import {
   HiOutlineCodeBracketSquare,
@@ -92,4 +93,5 @@ export {
   TrashWarningIcon,
   VoteIcon,
   WarningIcon,
+  ExternalLinkIcon,
 };

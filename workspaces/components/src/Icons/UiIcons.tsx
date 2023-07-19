@@ -127,6 +127,19 @@ export const ArrowLeftIcon = ({ color, ...rest }: UiIconProps) => (
     </g>
   </Icon>
 );
+export const ExternalLinkIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 18 18" {...rest}>
+    <g id="wrapper">
+      <path
+        id="Union"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M7.5049 4.50014C7.09069 4.49722 6.75255 4.83063 6.74963 5.24483C6.74671 5.65904 7.08012 5.99718 7.49432 6.0001L10.9149 6.02422L4.75678 12.1823C4.46389 12.4752 4.46389 12.9501 4.75678 13.243C5.04967 13.5358 5.52455 13.5358 5.81744 13.243L11.975 7.08537L11.9996 10.5055C12.0026 10.9197 12.3408 11.2531 12.755 11.2501C13.1692 11.2471 13.5026 10.9089 13.4996 10.4947L13.4621 5.28148C13.4591 4.87144 13.1274 4.53978 12.7174 4.53689L7.5049 4.50014Z"
+        fill={color ? color : "#6F6E77"}
+      />
+    </g>
+  </Icon>
+);
 
 export const CommentIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 20 21" {...rest}>

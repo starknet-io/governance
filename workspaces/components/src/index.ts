@@ -87,6 +87,7 @@ export {
   TrashWarningIcon,
   VoteIcon,
   WarningIcon,
+  ExternalLinkIcon,
 } from "./Icons/UiIcons";
 
 export { MarkdownEditor } from "./Editor";
