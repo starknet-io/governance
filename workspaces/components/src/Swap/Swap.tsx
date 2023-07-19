@@ -50,7 +50,8 @@ const UserSummary = ({
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
             size="xs"
-            ethAddress={shortAddress(ethAddress)}
+            ensName={ethAddress}
+            address={shortAddress(address)}
             avatarString={address}
           ></ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>
