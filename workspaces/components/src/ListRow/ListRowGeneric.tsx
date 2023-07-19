@@ -1,8 +1,5 @@
 import { Badge, Box, Flex, Icon, Tooltip } from "@chakra-ui/react";
-import {
-  HiHandThumbUp,
-  HiOutlineChatBubbleLeftEllipsis,
-} from "react-icons/hi2";
+import { HiHandThumbUp } from "react-icons/hi2";
 import { Text } from "../Text";
 
 type Props = {
