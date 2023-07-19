@@ -8,7 +8,6 @@ import {
   FormLabel,
   FormModal,
   Heading,
-  HiTrash,
   IconButton,
   Input,
   ListRow,
@@ -16,6 +15,8 @@ import {
   Stack,
   Text,
   useDisclosure,
+  PencilIcon,
+  TrashIcon,
 } from "@yukilabs/governance-components";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
@@ -25,8 +26,9 @@ import {
 } from "@yukilabs/governance-backend/src/db/schema/users";
 import { trpc } from "src/utils/trpc";
 import { useRef, useState } from "react";
-import { HiPencil } from "@yukilabs/governance-components/src/Icons";
+
 import { DocumentProps } from "src/renderer/types";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 const userRoleValues = userRoleEnum.enumValues;
 
@@ -129,14 +131,13 @@ export function Page() {
   };
 
   return (
-    <ContentContainer>
+    <ContentContainer maxWidth="800" center>
       <Box
         display="flex"
         flexDirection={{ base: "column", md: "column" }}
         height="100%"
         justifyContent="center"
         flex="1"
-        mx="auto"
       >
         <FormModal
           isOpen={isEditOpen}
@@ -172,7 +173,7 @@ export function Page() {
           entityName="User Role"
         />
         <Box>
-          <Heading variant="h3" mb="24px">
+          <Heading variant="h3" mb="24px" fontSize="28px">
             Roles
           </Heading>
           <form onSubmit={onSubmitAdd}>
@@ -181,7 +182,7 @@ export function Page() {
                 <FormLabel>Ethereum wallet address</FormLabel>
                 <Input
                   variant="primary"
-                  placeholder="Address"
+                  placeholder="Add address..."
                   {...addRegister("address", {
                     required: true,
                   })}
@@ -193,6 +194,7 @@ export function Page() {
                 <FormLabel>Role</FormLabel>
                 <Select
                   size="sm"
+                  placeholder="Select"
                   focusBorderColor={"red"}
                   rounded="md"
                   {...addRegister("role", { required: true })}
@@ -214,8 +216,8 @@ export function Page() {
           </form>
         </Box>
 
-        <Box>
-          <Heading variant="h3" mb="24px">
+        <Box mt="24px">
+          <Heading variant="h3" mb="24px" fontSize="28px">
             Users
           </Heading>
           <ListRow.Container>
@@ -223,7 +225,7 @@ export function Page() {
               <ListRow.Root key={data.id}>
                 <Box flex="1">
                   <Text variant="cardBody" noOfLines={1}>
-                    {data.address}
+                    {truncateAddress(data.address)}
                   </Text>
                 </Box>
                 <Box flex="1">
@@ -234,13 +236,13 @@ export function Page() {
                 <Box flex="1" justifyContent="flex-end" display="flex">
                   <IconButton
                     aria-label="Edit user role"
-                    icon={<HiPencil />}
+                    icon={<PencilIcon />}
                     variant="ghost"
                     onClick={() => handleEditOpen(data)}
                   />
                   <IconButton
                     aria-label="Delete user role"
-                    icon={<HiTrash />}
+                    icon={<TrashIcon />}
                     variant="ghost"
                     onClick={() => handleDeleteOpen(data)}
                   />
