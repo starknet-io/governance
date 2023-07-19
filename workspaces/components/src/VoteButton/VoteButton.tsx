@@ -1,9 +1,10 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
 import { MdStopCircle, MdThumbDownAlt, MdThumbUpAlt } from "react-icons/md";
+import { VoteAbstainIcon, VoteAgainstIcon, VoteForIcon } from "src/Icons";
 
 type Props = {
   label: string;
-  type: (keyof typeof currentVariation) | undefined;
+  type: keyof typeof currentVariation | undefined;
   active?: boolean;
   onClick?: () => void;
 };
@@ -23,17 +24,16 @@ export const VoteButton = ({
     <Box
       onClick={onClick}
       as="button"
-      minHeight="64px"
+      minHeight="72px"
       lineHeight="1.2"
       border="1px"
       px="8px"
       width="100%"
       borderRadius="6px"
       fontSize="13px"
-      fontWeight="500"
       bg="#FFFFFF"
-      borderColor="rgba(0, 0, 0, 0.04)"
-      boxShadow=" 0px 1px 2px rgba(0, 0, 0, 0.04)"
+      borderColor="rgba(35, 25, 45, 0.10)"
+      boxShadow="  0px 1px 1px 0px rgba(0, 0, 0, 0.05)"
       color={active ? currentVariation[type] : "#6C6C75"}
       _hover={{ bg: active ? "white" : "#fafafa" }}
       _active={{
@@ -52,13 +52,13 @@ export const VoteButton = ({
         alignItems="center"
       >
         {type === "For" && (
-          <Icon as={MdThumbUpAlt} boxSize="16px" aria-label="For" />
+          <Icon as={VoteForIcon} boxSize="24px" aria-label="For" />
         )}
         {type === "Against" && (
-          <Icon as={MdThumbDownAlt} boxSize="16px" aria-label="For" />
+          <Icon as={VoteAgainstIcon} boxSize="24px" aria-label="Against" />
         )}
         {type === "Abstain" && (
-          <Icon as={MdStopCircle} boxSize="16px" aria-label="For" />
+          <Icon as={VoteAbstainIcon} boxSize="25px" aria-label="Abstain" />
         )}
 
         <Box>{label}</Box>
