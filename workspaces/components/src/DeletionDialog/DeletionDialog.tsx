@@ -60,7 +60,7 @@ export function DeletionDialog({
                 toast({
                   position: "top-right",
                   title: `${entityName} deleted`,
-                  description: "We've deleted the user role from user - ",
+                  description: `${entityName} is now deleted`,
                   status: "success",
                   duration: 9000,
                   isClosable: true,
