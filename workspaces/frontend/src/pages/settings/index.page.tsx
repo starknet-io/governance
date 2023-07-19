@@ -1,13 +1,8 @@
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Box,
   Button,
   ContentContainer,
+  DeletionDialog,
   Flex,
   FormControl,
   FormLabel,
@@ -169,37 +164,13 @@ export function Page() {
             {editErrors.role && <span>This field is required.</span>}
           </FormControl>
         </FormModal>
-        <AlertDialog
-          leastDestructiveRef={cancelRef}
+        <DeletionDialog
           isOpen={isDeleteOpen}
           onClose={onCloseDelete}
-        >
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Delete User Role
-              </AlertDialogHeader>
-
-              <AlertDialogBody>
-                Are you sure you want to delete this user role?
-              </AlertDialogBody>
-
-              <AlertDialogFooter>
-                <Button ref={cancelRef} variant="ghost" onClick={onCloseDelete}>
-                  Cancel
-                </Button>
-                <Button
-                  variant="outline"
-                  color="#D83E2C"
-                  onClick={handleDeleteRole}
-                  ml={3}
-                >
-                  Delete
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
+          onDelete={handleDeleteRole}
+          cancelRef={cancelRef}
+          entityName="User Role"
+        />
         <Box>
           <Heading variant="h3" mb="24px">
             Roles

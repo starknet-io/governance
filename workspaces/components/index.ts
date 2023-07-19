@@ -77,6 +77,7 @@ export {
   ArrowLeftIcon,
   ReorderableList,
   FormModal,
+  DeletionDialog
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -143,6 +144,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  AlertDialogCloseButton
 } from "@chakra-ui/react";
 
 export {
@@ -192,4 +194,5 @@ export {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  AlertDialogCloseButton
 };

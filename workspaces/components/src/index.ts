@@ -87,3 +87,4 @@ export { MembersList } from "./MembersList";
 export { QuillEditor } from "./Editor/QuillEditor";
 export { ReorderableList } from "./ReorderableList";
 export { FormModal } from "./FormModal";
+export { DeletionDialog } from "./DeletionDialog"
