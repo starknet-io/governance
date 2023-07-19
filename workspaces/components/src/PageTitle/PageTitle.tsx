@@ -1,6 +1,5 @@
 import { Box, Divider, Link } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
-import { ExternalLinkIcon } from "src/Icons";
 import { Text } from "src/Text";
 
 type Props = {
