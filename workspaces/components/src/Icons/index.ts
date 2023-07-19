@@ -30,6 +30,9 @@ import {
   VoteIcon,
   WarningIcon,
   ExternalLinkIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
 } from "./UiIcons";
 import {
   HiOutlineCodeBracketSquare,
@@ -94,4 +97,7 @@ export {
   VoteIcon,
   WarningIcon,
   ExternalLinkIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
 };

@@ -88,6 +88,9 @@ export {
   VoteIcon,
   WarningIcon,
   ExternalLinkIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
 } from "./Icons/UiIcons";
 
 export { MarkdownEditor } from "./Editor";

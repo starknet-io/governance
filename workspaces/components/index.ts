@@ -92,6 +92,9 @@ export {
   WarningIcon,
   BannerHome,
   ExternalLinkIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
