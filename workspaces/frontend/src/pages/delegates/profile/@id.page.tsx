@@ -131,8 +131,10 @@ export function Page() {
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
-            address={user?.address}
-            avatarString={user?.address}
+            imgUrl={user?.ensAvatar}
+            ensName={user?.ensName}
+            address={user?.ensName || user?.address}
+            avatarString={user?.ensAvatar || user?.address}
           >
             <ProfileSummaryCard.MoreActions>
               <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>

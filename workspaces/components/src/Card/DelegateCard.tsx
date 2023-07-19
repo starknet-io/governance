@@ -19,11 +19,13 @@ type Props = {
   delegateType: any;
   delegateStatement: string;
   avatarUrl?: string | null;
+  ensName?: string | null;
   address?: string | null;
 };
 
 export const DelegateCard = (props: Props) => {
-  const { id, address, delegateType, delegateStatement } = props;
+  const { id, address, delegateType, delegateStatement, ensName, avatarUrl } =
+    props;
   const displayText = (htmlString: string) => {
     return stripHtml(htmlString);
   };
@@ -33,8 +35,10 @@ export const DelegateCard = (props: Props) => {
       <CardHeader>
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
+            imgUrl={avatarUrl}
             size="sm"
             address={address}
+            ensName={ensName}
             subtitle="7.5m Votes"
             avatarString={address}
           ></ProfileSummaryCard.Profile>
