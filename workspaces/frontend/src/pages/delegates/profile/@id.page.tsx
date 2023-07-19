@@ -159,8 +159,8 @@ export function Page() {
               label="Proposals voted on"
               value={`${data?.votes?.length}`}
             />
-            <SummaryItems.Item label="Delegated votes" value="-" />
-            <SummaryItems.Item label="Total comments" value="-" />
+            <SummaryItems.Item label="Delegated votes" value="0" />
+            <SummaryItems.Item label="Total comments" value="0" />
             <SummaryItems.Item
               label="For/against/abstain"
               value={`${stats[1]}/${stats[2]}/${stats[3]}`}
@@ -179,9 +179,18 @@ export function Page() {
         </Box>
         <Divider mt="32px" mb="32px" />
         <SummaryItems.Root direction="row">
-          <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
-          <SummaryItems.Socials label="discourse" value={delegate?.discourse} />
-          <SummaryItems.Socials label="discord" value={delegate?.discord} />
+          {delegate?.twitter && (
+            <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
+          )}
+          {delegate?.discourse && (
+            <SummaryItems.Socials
+              label="discourse"
+              value={delegate?.discourse}
+            />
+          )}
+          {delegate?.discord && (
+            <SummaryItems.Socials label="discord" value={delegate?.discord} />
+          )}
         </SummaryItems.Root>
         <Divider mt="32px" mb="32px" />
         <SummaryItems.Root>
