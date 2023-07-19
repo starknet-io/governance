@@ -1,5 +1,4 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
-import { MdStopCircle, MdThumbDownAlt, MdThumbUpAlt } from "react-icons/md";
 import { VoteAbstainIcon, VoteAgainstIcon, VoteForIcon } from "src/Icons";
 
 type Props = {
