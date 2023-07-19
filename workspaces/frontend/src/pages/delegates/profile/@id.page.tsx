@@ -15,6 +15,7 @@ import {
   Stack,
   SummaryItems,
   MenuItem,
+  Status,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -152,6 +153,11 @@ export function Page() {
             <></>
           )}
         </ProfileSummaryCard.Root>
+        <Box mt="24px">
+          {/* //ToDo: logic for showing you can't vote to your own account if your voting power is delegated to current delegate */}
+          <Status label="Your voting power of 100 STRK is currently assigned to this delegate." />
+          <Status label="You can’t delegate votes to your own account." />
+        </Box>
 
         <Box mt="32px">
           <SummaryItems.Root>
