@@ -10,8 +10,9 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  QuillEditor,
   ReorderableList,
+  useMarkdownEditor,
+  MarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -25,7 +26,9 @@ export function Page() {
     watch,
     formState: { errors, isValid },
   } = useForm<RouterInput["pages"]["savePage"]>();
-  const [editorValue, setEditorValue] = useState<string>("");
+  // const [editorValue, setEditorValue] = useState<string>("");
+  const { editorValue, handleEditorChange } =
+    useMarkdownEditor("Initial value");
   const title = watch("title", "");
   const saveBatchPages = trpc.pages.saveBatch.useMutation();
   const pagesResponse = trpc.pages.getAll.useQuery();
@@ -103,8 +106,8 @@ export function Page() {
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Body</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setEditorValue(e)}
+                <MarkdownEditor
+                  onChange={handleEditorChange}
                   value={editorValue}
                 />
                 {errors.content && <span>This field is required.</span>}

@@ -26,9 +26,7 @@ export function Page() {
     register,
     formState: { errors, isValid },
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
-  const [statementValue, setStatementValue] = useState<string>(
-    EditorTemplate.council
-  );
+  const [statementValue, setStatementValue] = useState<string>(`d`);
   const [descriptionValue, setDescriptionValue] = useState<string>("");
   const [members, setMembers] = useState<MemberType[]>([]);
   const createCouncil = trpc.councils.saveCouncil.useMutation();

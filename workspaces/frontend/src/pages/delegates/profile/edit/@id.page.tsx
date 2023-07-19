@@ -20,6 +20,7 @@ import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
+import { serialize, deserialize } from "remarks-slate";
 
 const delegateTypeValues = delegateTypeEnum.enumValues;
 
@@ -59,6 +60,10 @@ export function Page() {
       };
 
       setEditorValue(delegateData.delegateStatement ?? "");
+      setValue(
+        "delegateStatement",
+        delegateData.delegateStatement?.map((v) => serialize(v)).join("")
+      );
       setValue("delegateType", delegateData.delegateType);
       setValue("starknetWalletAddress", delegateData.starknetWalletAddress);
       setValue("twitter", delegateData.twitter);

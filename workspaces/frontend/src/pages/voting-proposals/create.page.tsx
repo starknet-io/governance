@@ -14,6 +14,7 @@ import {
   DatePicker,
   ContentContainer,
   EditorTemplate,
+  MarkdownEditor,
 } from "@yukilabs/governance-components";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
@@ -126,11 +127,7 @@ export function Page() {
                   control={control}
                   name="body"
                   render={({ field: { onChange, onBlur, value, ref } }) => (
-                    <QuillEditor
-                      maxLength={10000}
-                      onChange={onChange}
-                      value={value}
-                    />
+                    <MarkdownEditor onChange={onChange} value={value} />
                   )}
                 />
               </FormControl>
