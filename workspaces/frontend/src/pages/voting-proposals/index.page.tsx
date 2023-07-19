@@ -47,6 +47,9 @@ function Proposal({ data }: any) {
         <ListRow.MutedText id={1} type="vote" />
       </Box>
       <ListRow.Title label={data.title} />
+      <Box display={{ base: "none", md: "flex" }}>
+        <ListRow.CategoryText category={"category"} />
+      </Box>
       <ListRow.VoteResults
         choices={
           data.choices?.map((choice: any) => choice || "")?.filter(Boolean) ||
@@ -83,7 +86,7 @@ export function Page() {
   console.log(JSON.stringify(data?.proposals, null, 2));
 
   return (
-    <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px">
+    <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px" pb="200px">
       <PageTitle
         learnMoreLink="/learn"
         title="Voting Proposals"
