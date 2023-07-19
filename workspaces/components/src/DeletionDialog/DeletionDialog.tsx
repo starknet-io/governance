@@ -9,6 +9,7 @@ import {
   Button,
   Icon,
 } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import { TrashWarningIcon } from "@yukilabs/governance-components/src/Icons";
 import { useRef } from "react";
 
@@ -28,7 +29,7 @@ export function DeletionDialog({
   entityName = "Entity",
 }: DeletionDialogProps) {
   cancelRef = useRef<HTMLElement>(null);
-
+  const toast = useToast();
   return (
     <AlertDialog
       leastDestructiveRef={cancelRef}
@@ -52,7 +53,21 @@ export function DeletionDialog({
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button variant="solid" onClick={onDelete} width={"100%"}>
+            <Button
+              variant="solid"
+              onClick={() => {
+                onDelete();
+                toast({
+                  position: "top-right",
+                  title: `${entityName} deleted`,
+                  description: "We've deleted the user role from user - ",
+                  status: "success",
+                  duration: 9000,
+                  isClosable: true,
+                });
+              }}
+              width={"100%"}
+            >
               Delete {entityName}
             </Button>
           </AlertDialogFooter>
