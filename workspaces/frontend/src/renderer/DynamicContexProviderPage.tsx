@@ -29,6 +29,7 @@ import {
   Button,
   GiHamburgerMenu,
   ArrowLeftIcon,
+  SettingsIcon,
 } from "@yukilabs/governance-components";
 import { Suspense, useEffect, useState } from "react";
 import { PageContext } from "./types";
@@ -293,6 +294,12 @@ function PageLayout(props: Props) {
               active={pageContext.urlOriginal}
               icon={<LearnIcon />}
               label="Learn"
+            />
+            <NavItem
+              href="/settings"
+              active={pageContext.urlOriginal}
+              icon={<SettingsIcon />}
+              label="Settings"
             />
             <NavItem
               active={pageContext.urlOriginal}

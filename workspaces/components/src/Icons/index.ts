@@ -32,6 +32,7 @@ import {
   HiAdjustmentsHorizontal,
   HiEllipsisHorizontal,
   HiTrash,
+  HiPencil
 } from "react-icons/hi2";
 import { MdOutlineHowToVote, MdOutlineAssignment } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -68,4 +69,5 @@ export {
   SupportIcon,
   GiHamburgerMenu,
   ArrowLeftIcon,
+  HiPencil
 };

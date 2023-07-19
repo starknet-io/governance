@@ -75,7 +75,8 @@ export {
   SupportIcon,
   GiHamburgerMenu,
   ArrowLeftIcon,
-  ReorderableList
+  ReorderableList,
+  FormModal,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
