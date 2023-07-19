@@ -9,7 +9,7 @@ import {
   Button,
   Icon,
 } from "@chakra-ui/react";
-import { HiTrash } from "@yukilabs/governance-components/src/Icons";
+import { TrashWarningIcon } from "@yukilabs/governance-components/src/Icons";
 import { useRef } from "react";
 
 interface DeletionDialogProps {
@@ -48,7 +48,7 @@ export function DeletionDialog({
           </AlertDialogHeader>
 
           <AlertDialogBody display={"flex"} justifyContent={"center"}>
-            <Icon as={HiTrash} color={"red"} boxSize={100} />
+            <Icon as={TrashWarningIcon} boxSize={104} />
           </AlertDialogBody>
 
           <AlertDialogFooter>
