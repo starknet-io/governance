@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { serialize } from "remark-slate";
+import { deserialize, serialize } from "remark-slate";
 import { fromMarkdown } from "mdast-util-from-markdown";
 
 // import { unified } from "unified";
@@ -20,6 +20,7 @@ export function DescendantToMarkdown(value: Descendant[]) {
   return value.map((v) => serialize(v)).join("");
 }
 export async function MarkdownToDescendant(value: string) {
+  return deserialize(fromMarkdown(value).data);
   // const file = await unified()
   //   .use(remarkParse)
   //   // .use(remarkRehype)
