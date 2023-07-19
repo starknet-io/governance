@@ -73,7 +73,7 @@ export function Page() {
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
             address="0x2EF324324234234234234234231234"
-            ethAddress={council?.name ?? "Council"}
+            ensName={council?.name ?? "Council"}
           >
             {user ? (
               <ProfileSummaryCard.MoreActions>
