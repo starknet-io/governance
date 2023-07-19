@@ -225,7 +225,7 @@ export function Page() {
               <ListRow.Root key={data.id}>
                 <Box flex="1">
                   <Text variant="cardBody" noOfLines={1}>
-                    {truncateAddress(data.address)}
+                    {data.ensName || truncateAddress(data.address)}
                   </Text>
                 </Box>
                 <Box flex="1">

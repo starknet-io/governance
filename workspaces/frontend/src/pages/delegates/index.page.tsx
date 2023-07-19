@@ -234,8 +234,10 @@ export function Page() {
           {filteredDelegates && filteredDelegates.length > 0 ? (
             filteredDelegates.map((data) => (
               <DelegateCard
+                ensName={data.author?.ensName}
                 key={data.starknetWalletAddress}
                 address={data?.author?.address}
+                avatarUrl={data.author?.ensAvatar}
                 {...data}
               />
             ))
