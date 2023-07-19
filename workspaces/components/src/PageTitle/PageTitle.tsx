@@ -1,4 +1,4 @@
-import { Box, Divider } from "@chakra-ui/react";
+import { Box, Divider, Link } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 import { Text } from "src/Text";
 
@@ -26,7 +26,7 @@ export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
           </Text>
 
           {/* //TodO: add link */}
-          <Text
+          {/* <Text
             color="#1A1523"
             lineHeight="26px"
             variant="body"
@@ -34,7 +34,13 @@ export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
             fontWeight="600"
           >
             {learnMoreLink && <a href={learnMoreLink}>Learn more</a>}
-          </Text>
+          </Text> */}
+
+          {learnMoreLink && (
+            <Link variant="body" href={learnMoreLink} isExternal>
+              Learn more
+            </Link>
+          )}
         </Box>
       )}
       <Divider marginTop="32px" />

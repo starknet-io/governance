@@ -91,6 +91,11 @@ export {
   VoteIcon,
   WarningIcon,
   BannerHome,
+  ExternalLinkIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
+  Status,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -158,6 +163,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogCloseButton,
+  Link,
 } from "@chakra-ui/react";
 
 export {
@@ -208,4 +214,5 @@ export {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogCloseButton,
+  Link,
 };

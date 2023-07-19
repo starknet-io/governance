@@ -51,6 +51,9 @@ export function Page() {
             <ListRow.Root key={data.id} href={`/${data.type}s/${data.id}`}>
               <ListRow.MutedText id={data.id} type={data.type} />
               <ListRow.Title label={data.title} />
+              <Box display={{ base: "none", md: "flex" }}>
+                <ListRow.CategoryText category={"category"} />
+              </Box>
               {/* <ListRow.Date /> */}
               <Box display={{ base: "none", md: "flex" }}>
                 <ListRow.Comments count={data.comments?.length ?? null} />

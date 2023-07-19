@@ -1,8 +1,5 @@
 import { Badge, Box, Flex, Icon, Tooltip } from "@chakra-ui/react";
-import {
-  HiHandThumbUp,
-  HiOutlineChatBubbleLeftEllipsis,
-} from "react-icons/hi2";
+import { HiHandThumbUp } from "react-icons/hi2";
 import { Text } from "../Text";
 
 type Props = {
@@ -105,6 +102,20 @@ const MutedText = ({ type, id }: MutedTextProps) => {
   );
 };
 
+type CategoryProps = {
+  category: string;
+};
+
+const CategoryText = ({ category }: CategoryProps) => {
+  return (
+    <Box textTransform={"capitalize"}>
+      <Text variant="breadcrumbs" color="#6B7280">
+        {category}
+      </Text>
+    </Box>
+  );
+};
+
 type VoteProps = {
   type: "snip" | "vote" | null;
   id: number;
@@ -196,7 +207,7 @@ const Comments = ({ count, width }: CommentsProps) => {
       gap="4px"
       alignItems="center"
     >
-      <Icon as={HiOutlineChatBubbleLeftEllipsis} />{" "}
+      <Icon as={CommentIcon} />
       <Text variant="breadcrumbs" color="#6B7280">
         {count}
       </Text>
@@ -206,6 +217,7 @@ const Comments = ({ count, width }: CommentsProps) => {
 
 import moment from "moment";
 import { stripHtml } from "src/utils/helpers";
+import { CommentIcon } from "src/Icons";
 
 function dateDiff(now: moment.Moment, futureDate: moment.Moment) {
   const diff = moment.duration(futureDate.diff(now));
@@ -368,4 +380,5 @@ export {
   DateRange,
   VoteResults,
   Post,
+  CategoryText,
 };
