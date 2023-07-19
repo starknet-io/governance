@@ -45,7 +45,7 @@ export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
 
-  const { data } = useQuery(
+  const { data, refetch } = useQuery(
     gql(`query Proposal($proposal: String) {
       proposal(id: $proposal) {
       id
@@ -136,6 +136,7 @@ export function Page() {
       )) as any;
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
+      refetch()
       console.log(receipt);
     } catch (error) {
       // Handle error
