@@ -27,7 +27,8 @@ import {
   VoteModal,
   VoteReview,
   VoteStat,
-  MarkdownRenderer,
+  // MarkdownRenderer,
+  QuillEditor,
   Iframely,
   Status,
 } from "@yukilabs/governance-components";
@@ -308,7 +309,8 @@ export function Page() {
               <></>
             )}
             <Divider />
-            <MarkdownRenderer content={data?.proposal?.body || ""} />
+            {/* <MarkdownRenderer content={data?.proposal?.body || ""} /> */}
+            <QuillEditor value={data?.proposal?.body || ""} readOnly />
 
             <Divider my="32px" />
             <Heading color="#33333E" variant="h3">
