@@ -55,10 +55,11 @@ export function Page() {
                 <ListRow.CategoryText category={"category"} />
               </Box>
               {/* <ListRow.Date /> */}
+
+              <ListRow.Status status={data.status} />
               <Box display={{ base: "none", md: "flex" }}>
                 <ListRow.Comments count={data.comments?.length ?? null} />
               </Box>
-              <ListRow.Status status={data.status} />
             </ListRow.Root>
           ))}
         </ListRow.Container>
