@@ -244,7 +244,11 @@ export function Page() {
             ))
           ) : (
             <Box position="absolute" inset="0">
-              <EmptyState type="delegates" title="No delegates" />
+              <EmptyState
+                type="delegates"
+                title="No delegates yet"
+                minHeight="300px"
+              />
             </Box>
           )}
         </SimpleGrid>
