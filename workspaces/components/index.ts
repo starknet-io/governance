@@ -96,6 +96,7 @@ export {
   VoteAgainstIcon,
   VoteForIcon,
   Status,
+  EmptyState,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
