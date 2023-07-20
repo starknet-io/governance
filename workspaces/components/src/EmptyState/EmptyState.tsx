@@ -1,10 +1,11 @@
 import { Box, Icon } from "@chakra-ui/react";
-import { NoPostsIcon, VoteIcon } from "src/Icons";
+import { DelegatesIcon, NoPostsIcon, VoteIcon } from "src/Icons";
 import { Text } from "src/Text";
 
 type Props = {
-  title: string;
-  type: "posts" | "votes" | null;
+  title?: string;
+  type: "posts" | "votes" | "delegates" | "snips" | "proposals" | null;
+  minHeight?: "string";
 };
 
 export const EmptyState = ({ title = "No posts", type = "posts" }: Props) => {
@@ -17,11 +18,19 @@ export const EmptyState = ({ title = "No posts", type = "posts" }: Props) => {
       justifyContent={"center"}
       alignItems={"center"}
       flexDirection="column"
+      flex="1"
     >
       {type === "posts" && (
         <Icon as={NoPostsIcon} boxSize={104} color="#86848D" />
       )}
       {type === "votes" && <Icon as={VoteIcon} boxSize={104} color="#86848D" />}
+      {type === "delegates" && (
+        <Icon as={DelegatesIcon} boxSize={104} color="#86848D" />
+      )}
+      {type === "proposals" && (
+        <Icon as={VoteIcon} boxSize={104} color="#86848D" />
+      )}
+      {type === "snips" && <Icon as={VoteIcon} boxSize={104} color="#86848D" />}
 
       <Text color="#86848D" fontFamily="Poppins" fontSize="16px">
         {title}
