@@ -1,17 +1,19 @@
 import { Box, Icon } from "@chakra-ui/react";
-import { NoDelegatesIcon, NoPostsIcon, VoteIcon } from "src/Icons";
+import { NoDelegatesIcon, NoPostsIcon, NoSnipsIcon, VoteIcon } from "src/Icons";
 import { Text } from "src/Text";
 
 type Props = {
   title?: string;
   type: "posts" | "votes" | "delegates" | "snips" | "proposals" | null;
   minHeight?: string;
+  action?: React.ReactNode;
 };
 
 export const EmptyState = ({
   minHeight = "100px",
   title = "No posts",
   type = "posts",
+  action,
 }: Props) => {
   return (
     <Box
@@ -24,6 +26,7 @@ export const EmptyState = ({
       flexDirection="column"
       flex="1"
       minHeight={minHeight}
+      gap="24px"
     >
       {type === "posts" && (
         <Icon as={NoPostsIcon} boxSize={104} color="#86848D" />
@@ -35,11 +38,14 @@ export const EmptyState = ({
       {type === "proposals" && (
         <Icon as={VoteIcon} boxSize={104} color="#86848D" />
       )}
-      {type === "snips" && <Icon as={VoteIcon} boxSize={104} color="#86848D" />}
+      {type === "snips" && (
+        <Icon as={NoSnipsIcon} boxSize={104} color="#86848D" />
+      )}
 
       <Text color="#86848D" fontFamily="Poppins" fontSize="16px">
         {title}
       </Text>
+      {action}
     </Box>
   );
 };
