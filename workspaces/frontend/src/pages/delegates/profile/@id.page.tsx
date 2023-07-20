@@ -16,6 +16,7 @@ import {
   SummaryItems,
   MenuItem,
   Status,
+  EmptyState,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -225,10 +226,11 @@ export function Page() {
           {/* <MarkdownRenderer content={delegate?.delegateStatement || ""} /> */}
           <QuillEditor value={delegate?.delegateStatement} readOnly />
           <Box mt="24px">
-            <Heading color="#33333E" variant="h3">
+            <Heading mb="24px" color="#33333E" variant="h3">
               Past Votes
             </Heading>
-            <ListRow.Container>
+            {/* // ToDo: add past votes */}
+            {/* <ListRow.Container>
               <ListRow.Root>
                 <ListRow.PastVotes />
                 <ListRow.Comments count={3} />
@@ -237,13 +239,15 @@ export function Page() {
                 <ListRow.PastVotes />
                 <ListRow.Comments count={3} />
               </ListRow.Root>
-            </ListRow.Container>
+            </ListRow.Container> */}
+            <EmptyState type="votes" title="No past votes" />
           </Box>
           <Box mt="24px">
-            <Heading color="#33333E" variant="h3">
-              Comments
+            <Heading mb="24px" color="#33333E" variant="h3">
+              Post comments
             </Heading>
-            <ListRow.Container>
+            {/* // ToDo: add post comments */}
+            {/* <ListRow.Container>
               <ListRow.Root>
                 <ListRow.CommentSummary />
                 <ListRow.Comments count={3} />
@@ -252,7 +256,8 @@ export function Page() {
                 <ListRow.CommentSummary />
                 <ListRow.Comments count={3} />
               </ListRow.Root>
-            </ListRow.Container>
+            </ListRow.Container> */}
+            <EmptyState type="posts" title="No post comments" />
           </Box>
         </Stack>
       </ContentContainer>
