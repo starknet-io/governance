@@ -10,6 +10,7 @@ import {
   ButtonGroup,
   ListRow,
   SearchInput,
+  EmptyState,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 
@@ -115,11 +116,36 @@ export function Page() {
           </Button>
         </Box>
       </AppBar>
-      <ListRow.Container>
-        {data?.proposals?.map((data) => (
+      <Box position={"relative"}>
+        <ListRow.Container>
+          {/* {data?.proposals?.map((data) => (
           <Proposal key={data?.id} data={data} />
-        ))}
-      </ListRow.Container>
+        ))} */}
+
+          {data?.proposals && data?.proposals.length > 0 ? (
+            data?.proposals.map((data) => (
+              <Proposal key={data?.id} data={data} />
+            ))
+          ) : (
+            <Box position="absolute" inset="0">
+              <EmptyState
+                type="votes"
+                title="No voting proposals"
+                minHeight="300px"
+                action={
+                  <Button
+                    variant="solid"
+                    as="a"
+                    href="/voting-proposals/create"
+                  >
+                    Create first voting proposal
+                  </Button>
+                }
+              />
+            </Box>
+          )}
+        </ListRow.Container>
+      </Box>
     </Box>
   );
 }
