@@ -15,6 +15,7 @@ import {
   MembersList,
   Button,
   MenuItem,
+  EmptyState,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -149,44 +150,41 @@ export function Page() {
               Posts
             </Heading>
             <ListRow.Container>
-              {council?.posts?.map((post) => {
-                return (
-                  <Box
-                    key={post.id}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <ListRow.Root href={`/councils/posts/${post.id}`}>
-                      <Box width={"100%"}>
-                        <ListRow.Post post={post} />
-                      </Box>
-                    </ListRow.Root>
-                    <div style={{ marginLeft: "auto" }}>
-                      <ListRow.Comments count={post.comments.length} />
-                    </div>
-                  </Box>
-                );
-              })}
+              {council?.posts && council.posts.length > 0 ? (
+                council.posts.map((post) => {
+                  return (
+                    <Box
+                      key={post.id}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <ListRow.Root href={`/councils/posts/${post.id}`}>
+                        <Box width={"100%"}>
+                          <ListRow.Post post={post} />
+                        </Box>
+                      </ListRow.Root>
+                      <div style={{ marginLeft: "auto" }}>
+                        <ListRow.Comments count={post.comments.length} />
+                      </div>
+                    </Box>
+                  );
+                })
+              ) : (
+                <EmptyState type="posts" title="No posts yet" />
+              )}
             </ListRow.Container>
           </Box>
-          {/* <Box mt="24px">
+          <Box mt="24px">
             <Heading color="#33333E" variant="h3">
               Past Votes
             </Heading>
             <ListRow.Container>
-              <ListRow.Root>
-                <ListRow.PastVotes />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-              <ListRow.Root>
-                <ListRow.PastVotes />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
+              <EmptyState type="votes" title="No past votes" />
             </ListRow.Container>
-          </Box> */}
+          </Box>
         </Stack>
       </ContentContainer>
     </Box>
