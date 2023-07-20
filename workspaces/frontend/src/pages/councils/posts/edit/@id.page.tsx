@@ -11,13 +11,8 @@ import {
   Flex,
   ContentContainer,
   QuillEditor,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   useDisclosure,
+  DeletionDialog,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -26,7 +21,11 @@ import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
 
 export function Page() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
   const cancelRef = useRef(null);
   const {
     handleSubmit,
@@ -80,37 +79,14 @@ export function Page() {
   return (
     <>
       <ContentContainer>
-        <AlertDialog
-          leastDestructiveRef={cancelRef}
-          isOpen={isOpen}
-          onClose={onClose}
-        >
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Delete Post
-              </AlertDialogHeader>
+        <DeletionDialog
+          isOpen={isDeleteOpen}
+          onClose={onCloseDelete}
+          onDelete={handleDeletePost}
+          cancelRef={cancelRef}
+          entityName="Post"
+        />
 
-              <AlertDialogBody>
-                Are you sure you want to delete this post?
-              </AlertDialogBody>
-
-              <AlertDialogFooter>
-                <Button ref={cancelRef} variant="ghost" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  variant="outline"
-                  color="#D83E2C"
-                  onClick={handleDeletePost}
-                  ml={3}
-                >
-                  Delete
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
         <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
             Edit post
@@ -143,7 +119,7 @@ export function Page() {
                   variant={"outline"}
                   mr="auto"
                   color="#D83E2C"
-                  onClick={onOpen}
+                  onClick={onOpenDelete}
                 >
                   Delete
                 </Button>

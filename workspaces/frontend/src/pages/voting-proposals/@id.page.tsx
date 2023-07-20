@@ -29,6 +29,7 @@ import {
   VoteStat,
   MarkdownRenderer,
   Iframely,
+  Status,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -45,7 +46,7 @@ export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
 
-  const { data } = useQuery(
+  const { data, refetch } = useQuery(
     gql(`query Proposal($proposal: String) {
       proposal(id: $proposal) {
       id
@@ -107,10 +108,10 @@ export function Page() {
         walletClient.transport,
         walletClient?.chain != null
           ? {
-            chainId: walletClient.chain.id,
-            name: walletClient.chain.name,
-            ensAddress: walletClient.chain.contracts?.ensRegistry?.address,
-          }
+              chainId: walletClient.chain.id,
+              name: walletClient.chain.name,
+              ensAddress: walletClient.chain.contracts?.ensRegistry?.address,
+            }
           : undefined
       );
       console.log(data);
@@ -136,6 +137,7 @@ export function Page() {
       )) as any;
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
+      refetch();
       console.log(receipt);
     } catch (error) {
       // Handle error
@@ -183,10 +185,7 @@ export function Page() {
       height="100%"
     >
       <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <VoteReview
-          choice={currentChoice}
-          voteCount={vp?.vp?.vp as number}
-        />
+        <VoteReview choice={currentChoice} voteCount={vp?.vp?.vp as number} />
         <FormControl id="comment">
           <FormLabel color={"#292932"}>Reason for vote (optional)</FormLabel>
           <Textarea
@@ -342,6 +341,8 @@ export function Page() {
             <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
               Cast your vote
             </Heading>
+            <Status label="You voted FOR using 100 STRK" />
+            <Status label="Your voting power of 100 STRK is currently assigned to delegate 0x123...456" />
             <ButtonGroup
               mb="40px"
               spacing="8px"

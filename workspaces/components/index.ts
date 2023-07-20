@@ -75,7 +75,27 @@ export {
   SupportIcon,
   GiHamburgerMenu,
   ArrowLeftIcon,
-  ReorderableList
+  ReorderableList,
+  FormModal,
+  DeletionDialog,
+  HiOutlinePencil,
+  HiOutlineTrash,
+  CommentIcon,
+  NoDelegatesIcon,
+  NoPostsIcon,
+  NoSnipsIcon,
+  PencilIcon,
+  TrashIcon,
+  SuccessIcon,
+  TrashWarningIcon,
+  VoteIcon,
+  WarningIcon,
+  BannerHome,
+  ExternalLinkIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
+  Status,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -142,6 +162,8 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  AlertDialogCloseButton,
+  Link,
 } from "@chakra-ui/react";
 
 export {
@@ -191,4 +213,6 @@ export {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  AlertDialogCloseButton,
+  Link,
 };

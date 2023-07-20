@@ -1,4 +1,4 @@
-import { router, publicProcedure } from '../utils/trpc';
+import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
@@ -73,5 +73,40 @@ export const usersRouter = router({
     )
     .mutation(async (opts) => {
       await db.delete(users).where(eq(users.id, opts.input.id)).execute();
+    }),
+
+  addRoles: protectedProcedure
+    .input(
+      z.object({
+        address: z.string(),
+        role: z.any()
+      })
+    )
+    .mutation(async (opts) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.address, opts.input.address)
+      });
+      console.log(opts.input)
+      if (user) {
+        const updatedUser = await db
+          .update(users)
+          .set({
+            role: opts.input.role,
+          })
+          .where(eq(users.address, opts.input.address))
+          .returning();
+        return updatedUser[0];
+      } else {
+        const createdUser = await db
+          .insert(users)
+          .values({
+            address: opts.input.address,
+            role: opts.input.role,
+            createdAt: new Date(),
+          })
+          .returning();
+        return createdUser[0]
+      }
+
     }),
 });

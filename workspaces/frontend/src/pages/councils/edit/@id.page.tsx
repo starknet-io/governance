@@ -13,13 +13,8 @@ import {
   QuillEditor,
   EditorTemplate,
   MembersList,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   useDisclosure,
+  DeletionDialog,
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
@@ -30,7 +25,11 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 
 export function Page() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
   const cancelRef = useRef(null);
   const {
     handleSubmit,
@@ -117,37 +116,13 @@ export function Page() {
   return (
     <>
       <ContentContainer>
-        <AlertDialog
-          leastDestructiveRef={cancelRef}
-          isOpen={isOpen}
-          onClose={onClose}
-        >
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Delete Council
-              </AlertDialogHeader>
-
-              <AlertDialogBody>
-                Are you sure you want to delete this council?
-              </AlertDialogBody>
-
-              <AlertDialogFooter>
-                <Button ref={cancelRef} variant="ghost" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  variant="outline"
-                  color="#D83E2C"
-                  onClick={handleDeleteCouncil}
-                  ml={3}
-                >
-                  Delete
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
+        <DeletionDialog
+          isOpen={isDeleteOpen}
+          onClose={onCloseDelete}
+          onDelete={handleDeleteCouncil}
+          cancelRef={cancelRef}
+          entityName="Council"
+        />
         <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
             Edit council
@@ -212,7 +187,7 @@ export function Page() {
                   size="sm"
                   variant={"outline"}
                   mr="auto"
-                  onClick={onOpen}
+                  onClick={onOpenDelete}
                 >
                   Delete
                 </Button>

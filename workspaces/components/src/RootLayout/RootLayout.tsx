@@ -65,7 +65,7 @@ const Root = ({ children }: LayoutProps) => {
   return (
     <Box
       display="flex"
-      bg="#FAFAFA"
+      bg="#F9F8F9"
       flexDirection={{ base: "column", md: "row", lg: "row" }}
     >
       {children}

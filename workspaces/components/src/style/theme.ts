@@ -11,6 +11,7 @@ import { ProgressTheme as Progress } from "../Progress/ProgressStyles";
 import { modalTheme as Modal } from "../VoteModal/ModalStyles";
 import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
 import { menuTheme } from "src/Menu/MenuStyles";
+import { linkTheme } from "src/Link/LinkStyles";
 
 const config = {
   initialColorMode: "light",
@@ -24,6 +25,7 @@ const theme = extendTheme({
     Text,
     Tag,
     Card,
+    Link: linkTheme,
     Textarea,
     Menu: menuTheme,
     Modal,
