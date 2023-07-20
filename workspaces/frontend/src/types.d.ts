@@ -1,9 +1,9 @@
-declare interface LocaleParams {
-  readonly locale: string;
+interface ImportMetaEnv {
+  VITE_APP_DYNAMIC_ID: string
+  VITE_APP_TRPC_URL: string
+  VITE_APP_IFRAMELY_ID: string
+  VITE_APP_SNAPSHOT_URL: string
+  VITE_APP_SNAPSHOT_SPACE: string
+  VITE_APP_SNAPSHOT_CHAIN_ID: "1" | "5"
+  VITE_APP_GOOGLE_TAG_ID: string
 }
-
-declare interface LocaleProps {
-  readonly params: LocaleParams;
-}
-
-declare let YOUTUBE_API_KEY: string;

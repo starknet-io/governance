@@ -79,7 +79,7 @@ export function Page() {
       variables: {
         proposal: pageContext.routeParams!.id,
       },
-    }
+    },
   );
   const { data: vp } = useQuery(
     gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
@@ -92,33 +92,25 @@ export function Page() {
     {
       variables: {
         proposal: pageContext.routeParams!.id,
-        space: "robwalsh.eth",
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         voter: walletClient?.account.address as any,
       },
-    }
+    },
   );
 
   async function handleVote(choice: number, reason?: string) {
     try {
       if (walletClient == null) return;
 
-      // const client = new snapshot.Client712('https://testnet.snapshot.org');
-      const client = new snapshot.Client712("https://hub.snapshot.org");
-
-      const web3 = new providers.Web3Provider(
-        walletClient.transport,
-        walletClient?.chain != null
-          ? {
-              chainId: walletClient.chain.id,
-              name: walletClient.chain.name,
-              ensAddress: walletClient.chain.contracts?.ensRegistry?.address,
-            }
-          : undefined
+      const client = new snapshot.Client712(
+        import.meta.env.VITE_APP_SNAPSHOT_URL,
       );
+
       console.log(data);
+
       const params: Vote = {
         // from?: string;
-        space: "robwalsh.eth",
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         // timestamp?: number;
         proposal: pageContext.routeParams!.id,
         type: "basic",
@@ -131,10 +123,12 @@ export function Page() {
       setIsOpen(false);
       setisConfirmOpen(true);
 
+      const web3 = new providers.Web3Provider(walletClient.transport);
+
       const receipt = (await client.vote(
         web3,
         walletClient.account.address,
-        params
+        params,
       )) as any;
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
@@ -377,7 +371,7 @@ export function Page() {
               {data?.proposal?.choices.map((choice, index) => {
                 const totalVotes = data?.proposal?.scores?.reduce(
                   (a, b) => a! + b!,
-                  0
+                  0,
                 );
                 const voteCount = data?.proposal?.scores![index];
                 const userVote = false;
