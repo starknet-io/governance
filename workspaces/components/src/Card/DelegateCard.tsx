@@ -19,23 +19,37 @@ type Props = {
   delegateType: any;
   delegateStatement: string;
   avatarUrl?: string | null;
+  ensName?: string | null;
   address?: string | null;
+  delegatedVotes?: string;
 };
 
 export const DelegateCard = (props: Props) => {
-  const { id, address, delegateType, delegateStatement } = props;
+  const {
+    id,
+    delegatedVotes = "0",
+    address,
+    delegateType,
+    delegateStatement,
+    ensName,
+    avatarUrl,
+  } = props;
   const displayText = (htmlString: string) => {
     return stripHtml(htmlString);
   };
+
+  const delegatedVotesFormatted = `${delegatedVotes} Votes`;
 
   return (
     <Card as="a" href={`/delegates/profile/${id}`} variant="outline">
       <CardHeader>
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
+            imgUrl={avatarUrl}
             size="sm"
             address={address}
-            subtitle="7.5m Votes"
+            ensName={ensName}
+            subtitle={delegatedVotesFormatted.toUpperCase()}
             avatarString={address}
           ></ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>

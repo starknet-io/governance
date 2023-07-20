@@ -1,4 +1,4 @@
-import { Box, Divider } from "@chakra-ui/react";
+import { Box, Divider, Link } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 import { Text } from "src/Text";
 
@@ -11,20 +11,25 @@ type Props = {
 export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
   return (
     <Box marginBottom="24px">
-      <Heading as="h2" variant="h3" mb="12px">
+      <Heading as="h2" variant="h3" mb="12px" color="#1A1523">
         {title}
       </Heading>
       {description && (
-        <Box maxWidth="650px">
+        <Box maxWidth="800px">
           <Text
-            color="#6C6C75"
+            color="#57565D"
             lineHeight="26px"
             variant="body"
             fontSize="16px"
           >
-            {description}{" "}
-            {learnMoreLink && <a href={learnMoreLink}>Learn more</a>}
+            {description}
           </Text>
+
+          {learnMoreLink && (
+            <Link variant="body" href={learnMoreLink}>
+              Learn more
+            </Link>
+          )}
         </Box>
       )}
       <Divider marginTop="32px" />

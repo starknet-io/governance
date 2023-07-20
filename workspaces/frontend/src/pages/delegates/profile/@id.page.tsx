@@ -15,6 +15,7 @@ import {
   Stack,
   SummaryItems,
   MenuItem,
+  Status,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -131,8 +132,10 @@ export function Page() {
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
-            address={user?.address}
-            avatarString={user?.address}
+            imgUrl={user?.ensAvatar}
+            ensName={user?.ensName}
+            address={user?.ensName || user?.address}
+            avatarString={user?.ensAvatar || user?.address}
           >
             <ProfileSummaryCard.MoreActions>
               <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
@@ -152,6 +155,11 @@ export function Page() {
             <></>
           )}
         </ProfileSummaryCard.Root>
+        <Box mt="24px">
+          {/* //ToDo: logic for showing you can't vote to your own account if your voting power is delegated to current delegate */}
+          <Status label="Your voting power of 100 STRK is currently assigned to this delegate." />
+          <Status label="You can’t delegate votes to your own account." />
+        </Box>
 
         <Box mt="32px">
           <SummaryItems.Root>
@@ -159,8 +167,8 @@ export function Page() {
               label="Proposals voted on"
               value={`${data?.votes?.length}`}
             />
-            <SummaryItems.Item label="Delegated votes" value="-" />
-            <SummaryItems.Item label="Total comments" value="-" />
+            <SummaryItems.Item label="Delegated votes" value="0" />
+            <SummaryItems.Item label="Total comments" value="0" />
             <SummaryItems.Item
               label="For/against/abstain"
               value={`${stats[1]}/${stats[2]}/${stats[3]}`}
@@ -179,9 +187,18 @@ export function Page() {
         </Box>
         <Divider mt="32px" mb="32px" />
         <SummaryItems.Root direction="row">
-          <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
-          <SummaryItems.Socials label="discourse" value={delegate?.discourse} />
-          <SummaryItems.Socials label="discord" value={delegate?.discord} />
+          {delegate?.twitter && (
+            <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
+          )}
+          {delegate?.discourse && (
+            <SummaryItems.Socials
+              label="discourse"
+              value={delegate?.discourse}
+            />
+          )}
+          {delegate?.discord && (
+            <SummaryItems.Socials label="discord" value={delegate?.discord} />
+          )}
         </SummaryItems.Root>
         <Divider mt="32px" mb="32px" />
         <SummaryItems.Root>

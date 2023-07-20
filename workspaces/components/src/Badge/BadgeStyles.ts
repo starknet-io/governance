@@ -6,35 +6,35 @@ const last_call = defineStyle({
   borderColor: "rgba(217, 12, 49, 0.1)",
 });
 const active = defineStyle({
-  background: "#20AC70",
-  color: "#fff",
+  background: "#90EAC4",
+  color: "#16412F",
 });
 const Draft = defineStyle({
   background: "#3F8CFF",
   color: "#fff",
 });
 const pending = defineStyle({
-  background: "#F2F2F3",
-  color: "#6C6C75",
+  background: "#DCDBDD",
+  color: "#1A1523",
 });
 const review = defineStyle({
   background: "#F2F2F3",
   color: "#fff",
 });
 const closed = defineStyle({
-  background: "#7136ED",
-  color: "#fff",
+  background: "#E799FF",
+  color: "#3F0053",
 });
 
 export const badgeTheme = defineStyleConfig({
   baseStyle: {
-    paddingLeft: "8px",
-    paddingRight: "8px",
+    paddingLeft: "16px",
+    paddingRight: "16px",
     paddingTop: "4px",
     paddingBottom: "4px",
-    borderRadius: "4px",
+    borderRadius: "999px",
     height: "auto",
-    color: "#fff",
+    color: "#3F0053",
     fontSize: "11px",
     fontWeight: "500",
     textTransform: "uppercase",

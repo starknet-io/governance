@@ -73,7 +73,7 @@ export function Page() {
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
             address="0x2EF324324234234234234234231234"
-            ethAddress={council?.name ?? "Council"}
+            ensName={council?.name ?? "Council"}
           >
             {user ? (
               <ProfileSummaryCard.MoreActions>
@@ -102,10 +102,10 @@ export function Page() {
         </Box>
         <Divider my="24px" />
         <SummaryItems.Root>
-          <SummaryItems.Item label="Proposals voted on" value="6" />
-          <SummaryItems.Item label="Delegated votes" value="7,000,000" />
+          <SummaryItems.Item label="Proposals voted on" value="0" />
+          <SummaryItems.Item label="Delegated votes" value="0" />
 
-          <SummaryItems.Item label="For/against/abstain" value="2/0/4" />
+          <SummaryItems.Item label="For/against/abstain" value="0/0/0" />
         </SummaryItems.Root>
       </Box>
 

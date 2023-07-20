@@ -3,8 +3,9 @@ import { pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { delegates } from './delegates';
 import { usersToCouncils } from './usersToCouncils';
 import { posts } from './posts';
+import { pages } from './pages';
 
-export const userRoleEnum = pgEnum('role', ['user', 'admin']);
+export const userRoleEnum = pgEnum('role', ['user', 'admin', 'moderator']);
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -34,6 +35,7 @@ export const userDelegate = relations(users, ({ one, many }) => ({
   }),
   councils: many(usersToCouncils),
   posts: many(posts),
+  pages: many(pages)
 }));
 
 
