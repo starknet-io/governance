@@ -89,7 +89,7 @@ export function Page() {
   const { data } = useQuery(GET_DELEGATE_STATS, {
     variables: {
       where: {
-        space: "robwalsh.eth",
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         voter: user?.address,
       },
     },

@@ -27,7 +27,7 @@ function makeApolloClient() {
   const apolloClient = new ApolloClient({
     ssrMode: true,
     link: createHttpLink({
-      uri: 'https://hub.snapshot.org/graphql',
+      uri: `${import.meta.env.VITE_APP_SNAPSHOT_URL}/graphql`,
       fetch
     }),
     cache: new InMemoryCache()
@@ -47,21 +47,19 @@ export async function render(pageContext: PageContextServer) {
 
   // See https://www.apollographql.com/docs/react/performance/server-side-rendering/
   const page = (
-    <PageShell pageContext={pageContext} apolloClient={apolloClient!}>
+    <PageShell pageContext={pageContext} apolloClient={apolloClient}>
       <Page {...pageProps} />
     </PageShell>
   );
 
   const pageHtml = await getDataFromTree(page)
-  const apolloIntialState = apolloClient!.extract()
+  const apolloIntialState = apolloClient.extract()
 
 
   // Streaming is optional and we can use renderToString() instead
   // const stream = await renderToStream(page, {
   //   userAgent: pageContext.userAgent,
   // });
-
-  const GOOGLE_TAG_ID = "G-WY42TERK5P";
 
   const documentHtml = escapeInject`<!DOCTYPE html>
   <html>
@@ -95,13 +93,13 @@ export async function render(pageContext: PageContextServer) {
       <meta property="twitter:image" content="${documentProps?.image ?? ""}">
 
       <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}"></script>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(import.meta.env.VITE_APP_GOOGLE_TAG_ID)}"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', '${GOOGLE_TAG_ID}');
+        gtag('config', ${JSON.stringify(import.meta.env.VITE_APP_GOOGLE_TAG_ID)});
       </script>
       <script>
         window.global = window;
