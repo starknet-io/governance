@@ -18,6 +18,7 @@ import {
   FilterPopoverIcon,
   Select,
   Text,
+  EmptyState,
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
@@ -242,16 +243,8 @@ export function Page() {
               />
             ))
           ) : (
-            <Box
-              position="absolute"
-              inset="0"
-              display="flex"
-              width="100%"
-              height="300px"
-              alignItems="center"
-              justifyContent="center"
-            >
-              No results
+            <Box position="absolute" inset="0">
+              <EmptyState type="delegates" title="No delegates" />
             </Box>
           )}
         </SimpleGrid>
