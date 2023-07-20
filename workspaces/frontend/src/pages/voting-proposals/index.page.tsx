@@ -68,10 +68,10 @@ function Proposal({ data }: any) {
           state={data.state}
         />
       </Box>
+      <ListRow.Status status={data.state} />
       <Box display={{ base: "none", md: "flex" }}>
         <ListRow.Comments count={count} />
       </Box>
-      <ListRow.Status status={data.state} />
     </ListRow.Root>
   );
 }
