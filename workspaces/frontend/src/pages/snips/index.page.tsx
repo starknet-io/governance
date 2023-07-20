@@ -9,6 +9,7 @@ import {
   ListRow,
   SearchInput,
   BannerHome,
+  EmptyState,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 
@@ -46,23 +47,56 @@ export function Page() {
             </Button>
           </Box>
         </AppBar>
-        <ListRow.Container>
-          {sortedSnips?.map((data) => (
+        <Box position="relative">
+          <ListRow.Container>
+            {/* {sortedSnips?.map((data) => (
             <ListRow.Root key={data.id} href={`/${data.type}s/${data.id}`}>
               <ListRow.MutedText id={data.id} type={data.type} />
               <ListRow.Title label={data.title} />
               <Box display={{ base: "none", md: "flex" }}>
                 <ListRow.CategoryText category={"category"} />
               </Box>
-              {/* <ListRow.Date /> */}
+
 
               <ListRow.Status status={data.status} />
               <Box display={{ base: "none", md: "flex" }}>
                 <ListRow.Comments count={data.comments?.length ?? null} />
               </Box>
             </ListRow.Root>
-          ))}
-        </ListRow.Container>
+          ))} */}
+
+            {sortedSnips && sortedSnips.length > 0 ? (
+              sortedSnips.map((data) => (
+                <ListRow.Root key={data.id} href={`/${data.type}s/${data.id}`}>
+                  <ListRow.MutedText id={data.id} type={data.type} />
+                  <ListRow.Title label={data.title} />
+                  <Box display={{ base: "none", md: "flex" }}>
+                    <ListRow.CategoryText category={"category"} />
+                  </Box>
+                  {/* <ListRow.Date /> */}
+
+                  <ListRow.Status status={data.status} />
+                  <Box display={{ base: "none", md: "flex" }}>
+                    <ListRow.Comments count={data.comments?.length ?? null} />
+                  </Box>
+                </ListRow.Root>
+              ))
+            ) : (
+              <Box position="absolute" inset="0">
+                <EmptyState
+                  type="snips"
+                  title="No snips"
+                  minHeight="300px"
+                  action={
+                    <Button variant="solid" as="a" href="/snips/create">
+                      Create first SNIP
+                    </Button>
+                  }
+                />
+              </Box>
+            )}
+          </ListRow.Container>
+        </Box>
       </Box>
     </Box>
   );
