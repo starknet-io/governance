@@ -99,6 +99,7 @@ export function Page() {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         voter: walletClient?.account.address as any,
       },
+      skip: walletClient?.account.address == null
     },
   );
   const vote = useQuery(
