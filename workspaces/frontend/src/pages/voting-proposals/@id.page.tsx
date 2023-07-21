@@ -31,6 +31,7 @@ import {
   QuillEditor,
   Iframely,
   Status,
+  VoteComment,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -42,6 +43,9 @@ import { providers } from "ethers";
 import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { trpc } from "src/utils/trpc";
+import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
+import { useBalanceData } from "src/utils/hooks";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -95,8 +99,76 @@ export function Page() {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         voter: walletClient?.account.address as any,
       },
+      skip: walletClient?.account.address == null
     },
   );
+  const vote = useQuery(
+    gql(`
+      query Vote($where: VoteWhere) {
+        votes(where: $where) {
+          choice
+          voter
+          reason
+          metadata
+          created
+          ipfs
+          vp
+          vp_by_strategy
+          vp_state
+        }
+      }
+    `),
+    {
+      variables: {
+        "where": {
+          "voter": walletClient?.account.address as any,
+          "proposal": pageContext.routeParams!.id
+        }
+      },
+      skip: walletClient?.account.address == null
+    },
+  );
+
+  const votes = useQuery(
+    gql(`
+      query VotingProposalsVotes($where: VoteWhere) {
+        votes(where: $where) {
+          choice
+          voter
+          reason
+          metadata
+          created
+          ipfs
+          vp
+          vp_by_strategy
+          vp_state
+        }
+      }
+    `),
+    {
+      variables: {
+        "where": {
+          "proposal": pageContext.routeParams!.id
+        }
+      },
+    },
+  );
+
+  const address = walletClient?.account.address as `0x${string}` | undefined
+
+  const delegation = useDelegateRegistryDelegation({
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    args: [
+      address!,
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ],
+    watch: true,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+    enabled: address != null
+  })
+
+  const userBalance = useBalanceData(address);
+
 
   async function handleVote(choice: number, reason?: string) {
     try {
@@ -133,6 +205,8 @@ export function Page() {
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
       refetch();
+      vote.refetch()
+      votes.refetch()
       console.log(receipt);
     } catch (error) {
       // Handle error
@@ -337,8 +411,17 @@ export function Page() {
             <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
               Cast your vote
             </Heading>
-            <Status label="You voted FOR using 100 STRK" />
-            <Status label="Your voting power of 100 STRK is currently assigned to delegate 0x123...456" />
+
+            {delegation.isFetched && userBalance.isFetched &&
+              delegation.data && delegation.data != "0x0000000000000000000000000000000000000000" &&
+              <Status label={`Your voting power of ${userBalance.balance} ${userBalance.symbol} is currently assigned to delegate ${truncateAddress(delegation.data)}`} />
+            }
+
+            {vote.data && vote.data.votes?.[0] &&
+
+              <Status label={`You voted ${vote.data.votes[0].choice} using ${vote.data.votes[0].vp} votes`} />
+            }
+
             <ButtonGroup
               mb="40px"
               spacing="8px"
@@ -397,14 +480,20 @@ export function Page() {
             </Box>
             <Divider mb="40px" />
             <Box mb="40px">
-              {/* <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
+              <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
                 Votes
               </Heading>
-              r
-              <VoteComment /> */}
-              {/* <VoteComment voted="Against" />
-              <VoteComment voted="Abstain" />
-              <VoteComment /> */}
+
+              {votes.data?.votes?.map((vote, index) => (
+                <VoteComment
+                  key={index}
+                  address={vote?.voter as string}
+                  voted={vote?.choice}
+                  comment={vote?.reason as string}
+                  voteCount={vote?.vp as number}
+                />
+              ))}
+
             </Box>
           </>
         ) : (
