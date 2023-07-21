@@ -39,7 +39,7 @@ export const VoteComment = ({
         </Box>
         <Box>
           <Text variant="breadcrumbs" color="#6C6C75">
-            {voteCount}B votes
+            {voteCount} votes
           </Text>
         </Box>
       </Flex>

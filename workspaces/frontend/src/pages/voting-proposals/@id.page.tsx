@@ -418,8 +418,7 @@ export function Page() {
             }
 
             {vote.data && vote.data.votes?.[0] &&
-
-              <Status label={`You voted ${vote.data.votes[0].choice} using ${vote.data.votes[0].vp} votes`} />
+              <Status label={`You voted ${vote.data.votes[0].choice === 1 ? "For" : vote.data.votes[0].choice === 2 ? "Against" : "Abstain"} using ${vote.data.votes[0].vp} votes`} />
             }
 
             <ButtonGroup
@@ -488,7 +487,9 @@ export function Page() {
                 <VoteComment
                   key={index}
                   address={vote?.voter as string}
-                  voted={vote?.choice}
+                  voted={
+                    vote?.choice === 1 ? "For" : vote?.choice === 2 ? "Against" : "Abstain"
+                  }
                   comment={vote?.reason as string}
                   voteCount={vote?.vp as number}
                 />
