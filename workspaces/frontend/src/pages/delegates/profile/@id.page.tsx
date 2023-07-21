@@ -22,7 +22,7 @@ import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { useAccount, useBalance, useEnsName } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
+import { useDelegateRegistryDelegation, useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
 import { useQuery } from "@apollo/client";
 import { gql } from "src/gql";
 
@@ -36,20 +36,21 @@ query Votes($where: VoteWhere) {
 const useBalanceData = (address: `0x${string}` | undefined) => {
   const { data: balance } = useBalance({
     address,
-    chainId: 5,
-    token: "0x65aFADD39029741B3b8f0756952C74678c9cEC93", //USDC Goerli test token address
-    // token: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", //USDC Mainnet test token address
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+    token: import.meta.env.VITE_APP_DELEGATION_TOKEN,
+    enabled: address != null
   });
 
   const { data: ensName } = useEnsName({
     address,
+    enabled: address != null
   });
 
   return {
     address,
     balance: balance?.formatted ?? "0",
     ethAddress: ensName ?? address,
-    symbol: balance?.symbol ?? "USDC",
+    symbol: balance?.symbol ?? import.meta.env.VITE_APP_DELEGATION_SYMBOL,
   };
 };
 
@@ -72,26 +73,38 @@ export function Page() {
   const { address, isConnected } = useAccount();
 
   const { isLoading, write } = useDelegateRegistrySetDelegate({
-    address: "0x469788fE6E9E9681C6ebF3bF78e7Fd26Fc015446",
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID)
   });
 
+  const delegation = useDelegateRegistryDelegation({
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    args: [
+      address!,
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ],
+    watch: true,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+    enabled: address != null
+  })
+
+  const delegateId = pageContext.routeParams!.id
+
   const delegateResponse = trpc.delegates.getDelegateById.useQuery({
-    id: pageContext.routeParams!.id,
+    id: delegateId,
   });
 
   const delegate = delegateResponse.data;
-
-  const user = delegate?.author;
+  const delegateAddress = delegate?.author?.address as `0x${string}`
 
   const senderData = useBalanceData(address);
-
-  const receiverData = useBalanceData(user?.address as `0x${string}`);
+  const receiverData = useBalanceData(delegateAddress);
 
   const { data } = useQuery(GET_DELEGATE_STATS, {
     variables: {
       where: {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: user?.address,
+        voter: delegate?.author?.address,
       },
     },
   });
@@ -113,7 +126,7 @@ export function Page() {
           write?.({
             args: [
               "0x0000000000000000000000000000000000000000000000000000000000000000",
-              user?.address as any,
+              delegate?.author?.address as any,
             ],
           });
           setIsOpen(false);
@@ -133,10 +146,10 @@ export function Page() {
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
-            imgUrl={user?.ensAvatar}
-            ensName={user?.ensName}
-            address={user?.ensName || user?.address}
-            avatarString={user?.ensAvatar || user?.address}
+            imgUrl={delegate?.author?.ensAvatar}
+            ensName={delegate?.author?.ensName}
+            address={delegate?.author?.ensName || delegate?.author?.address}
+            avatarString={delegate?.author?.ensAvatar || delegate?.author?.address}
           >
             <ProfileSummaryCard.MoreActions>
               <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
@@ -157,9 +170,14 @@ export function Page() {
           )}
         </ProfileSummaryCard.Root>
         <Box mt="24px">
-          {/* //ToDo: logic for showing you can't vote to your own account if your voting power is delegated to current delegate */}
-          <Status label="Your voting power of 100 STRK is currently assigned to this delegate." />
-          <Status label="You can’t delegate votes to your own account." />
+          {delegation.isFetched &&
+            delegation.data === delegateAddress &&
+            <Status label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`} />
+          }
+
+          {delegateResponse.isFetched && address === delegateAddress &&
+            <Status label="You can’t delegate votes to your own account." />
+          }
         </Box>
 
         <Box mt="32px">
