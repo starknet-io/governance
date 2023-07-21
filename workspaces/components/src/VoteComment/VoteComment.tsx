@@ -3,11 +3,11 @@ import { Text } from "src/Text";
 import { truncateAddress } from "src/utils";
 
 type Props = {
-  address?: string;
+  address: string;
   ethAddress?: string;
-  voteCount?: number;
+  voteCount: number;
   comment?: string;
-  voted?: "For" | "Against" | "Abstain";
+  voted: "For" | "Against" | "Abstain";
 };
 
 const variant = {
@@ -17,11 +17,11 @@ const variant = {
 };
 
 export const VoteComment = ({
-  address = "0x1234567890234223234234234234234 ",
-  ethAddress = "sylve.eth",
-  voted = "For",
-  voteCount = 10.5,
-  comment = "The Builder/’s council is excited about the new features but expects higher quality of documentation for future releases. For this reason the council has voted against",
+  address,
+  ethAddress,
+  voted,
+  voteCount,
+  comment,
 }: Props) => {
   return (
     <Flex flexDirection="column" gap="6px" mb="32px">

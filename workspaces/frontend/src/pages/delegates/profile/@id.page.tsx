@@ -20,11 +20,12 @@ import {
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
-import { useAccount, useBalance, useEnsName } from "wagmi";
+import { useAccount } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { useDelegateRegistryDelegation, useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
 import { useQuery } from "@apollo/client";
 import { gql } from "src/gql";
+import { useBalanceData } from "src/utils/hooks";
 
 const GET_DELEGATE_STATS = gql(`
 query Votes($where: VoteWhere) {
@@ -33,26 +34,6 @@ query Votes($where: VoteWhere) {
     choice
   }}`);
 
-const useBalanceData = (address: `0x${string}` | undefined) => {
-  const { data: balance } = useBalance({
-    address,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
-    token: import.meta.env.VITE_APP_DELEGATION_TOKEN,
-    enabled: address != null
-  });
-
-  const { data: ensName } = useEnsName({
-    address,
-    enabled: address != null
-  });
-
-  return {
-    address,
-    balance: balance?.formatted ?? "0",
-    ethAddress: ensName ?? address,
-    symbol: balance?.symbol ?? import.meta.env.VITE_APP_DELEGATION_SYMBOL,
-  };
-};
 
 function getChoiceStats(data: any[]) {
   const stats: { [key: string]: number } = { 1: 0, 2: 0, 3: 0 };
