@@ -96,7 +96,7 @@ const MutedText = ({ type, id }: MutedTextProps) => {
   return (
     <Box textTransform={"uppercase"} minWidth="60px">
       <Text variant="breadcrumbs" color="#6B7280">
-        {type === "snip" ? "SNIP" : "Vote"} {id}
+        {type === "snip" ? "SNIP" : "Vote"} {id.toString().padStart(3, '0')}
       </Text>
     </Box>
   );
