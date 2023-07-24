@@ -4,6 +4,9 @@ import {
   UserProfile,
   Wallet,
   WalletConnector,
+  DynamicNav,
+  DynamicUserProfile,
+  useDynamicContext,
 } from "@dynamic-labs/sdk-react";
 import {
   Logo,
@@ -30,11 +33,14 @@ import {
   GiHamburgerMenu,
   ArrowLeftIcon,
   SettingsIcon,
+  UserProfileMenu,
 } from "@yukilabs/governance-components";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { PageContext } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
+import React from "react";
+import { useOutsideClick } from "@chakra-ui/react";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -44,6 +50,12 @@ const cssOverrides = `
     border-radius: 4px;
   }
 
+  .evm-network-control__container span {
+    display: none
+  }
+  .account-control__container img {
+    display: none
+  }
 `;
 
 interface Props {
@@ -59,6 +71,104 @@ interface AuthSuccessParams {
   user: UserProfile;
   walletConnector: WalletConnector | undefined;
 }
+
+const AuthorizationView = () => <DynamicWidget />;
+
+const AuthorizedUserView = () => {
+  const navRef = useRef<HTMLDivElement | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
+
+  const { handleLogOut } = useDynamicContext();
+  const { user } = useDynamicContext();
+  const address = user?.verifiedCredentials[0]?.address;
+  trpc.users.getUser.useQuery({ address: address ?? "" }, {
+    onSuccess: (data) => {
+      setUserData(data);
+    }
+  });
+
+  const editUserProfile = trpc.users.editUserProfile.useMutation();
+
+  useEffect(() => {
+    function handleClick(event: any) {
+      const clickedElement = event.target;
+      const originalClickedElement = event.originalTarget || event.target;
+
+      if (
+        clickedElement.classList.contains("dynamic-shadow-dom") &&
+        (
+          (
+            originalClickedElement.classList.contains("account-control__container") &&
+            originalClickedElement.nodeName === "BUTTON"
+          )  
+            || 
+          (
+            originalClickedElement.classList.contains("typography") &&
+            originalClickedElement.nodeName === "P"
+          )
+        )
+      ) {
+        handleAddressClick(event);
+      }
+    }
+
+    if (navRef.current) {
+      navRef.current.addEventListener("click", handleClick);
+
+      return () => {
+        navRef.current?.removeEventListener("click", handleClick);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userData) {
+      console.log("userData", userData)
+    }
+  }
+  , [userData]);
+
+  const handleAddressClick = (event: any) => {
+    event.preventDefault();
+    setIsMenuOpen(!isMenuOpen);
+
+  };
+
+  useOutsideClick({
+    ref: navRef,
+    handler: () => {
+      setIsMenuOpen(false);
+    },
+  });
+
+  const handleDisconnect = () => {
+    handleLogOut()
+    setIsMenuOpen(false);
+  };
+
+  const handleSave = (username: string, starknetWalletAddress: string) => {
+    editUserProfile.mutateAsync({
+      id: userData.id,
+      username,
+      starknetWalletAddress,
+    },{
+      onSuccess: (data) => {
+        setUserData(data);
+      }
+    });
+    setIsMenuOpen(false);
+  };
+
+  return (
+    <>
+      <div ref={navRef}>
+        <DynamicNav />
+        {isMenuOpen ? <UserProfileMenu onDisconnect={handleDisconnect} user={userData} onSave={handleSave} /> : <></>}
+      </div>
+    </>
+  );
+};
 
 const DynamicContextProviderPage = (props: Props) => {
   const { pageContext, children } = props;
@@ -158,8 +268,15 @@ const BackButton = ({
 function PageLayout(props: Props) {
   const { children, pageContext } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   const councilResp = trpc.councils.getAll.useQuery();
+
+  const { user } = useDynamicContext();
+  const isAuthorized = !!user;
+  const dynamicCustomWidget = isAuthorized ? (
+    <AuthorizedUserView />
+  ) : (
+    <AuthorizationView />
+  );
 
   return (
     <>
@@ -341,7 +458,7 @@ function PageLayout(props: Props) {
             />
 
             <Box display="flex" marginLeft="auto">
-              <DynamicWidget />
+              {dynamicCustomWidget}
             </Box>
           </Header>
           <Layout.Content>{children}</Layout.Content>

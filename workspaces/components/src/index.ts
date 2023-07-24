@@ -55,6 +55,7 @@ export {
   GiHamburgerMenu,
   HiOutlinePencil,
   HiOutlineTrash,
+  HiXMark
 } from "./Icons";
 export {
   BoldIcon,
@@ -107,3 +108,4 @@ export { FormModal } from "./FormModal";
 export { DeletionDialog } from "./DeletionDialog";
 export { Status } from "./Status";
 export { EmptyState } from "./EmptyState";
+export { UserProfileMenu } from "./UserProfileMenu";

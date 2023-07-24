@@ -1,0 +1,25 @@
+.user-profile-menu {
+  width: 350px;
+  height: 400px;
+  border-radius: 16px;
+  background-color: #fff;
+  position: absolute;
+  right: 40px;
+  top: 65px;
+  z-index: 1;
+  border: 1px solid rgba(35, 25, 45, 0.10);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 500;
+}
+.edit-user-profile-menu {
+  width: 484px;
+  height: 328px;
+  border-radius: 16px;
+  background-color: #fff;
+  position: absolute;
+  right: 40px;
+  top: 65px;
+  border: 1px solid rgba(35, 25, 45, 0.10);
+  z-index: 1;
+}
