@@ -80,7 +80,7 @@ function Proposal({ data }: any) {
 export function Page() {
   const { data } = useQuery(GET_PROPOSALS, {
     variables: {
-      space: "robwalsh.eth",
+      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
     },
   });
 
