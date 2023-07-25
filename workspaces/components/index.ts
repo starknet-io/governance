@@ -97,6 +97,7 @@ export {
   VoteForIcon,
   Status,
   EmptyState,
+  UserProfileMenu
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";

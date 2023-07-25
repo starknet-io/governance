@@ -43,7 +43,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(value);
   };
 
   return (

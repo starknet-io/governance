@@ -20,6 +20,7 @@ export const users = pgTable('users', {
   name: text('name'),
   twitter: text('twitter'),
   miniBio: text('miniBio'),
+  username: text('username'),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),
