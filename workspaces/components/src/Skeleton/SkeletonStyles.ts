@@ -5,8 +5,8 @@ const $endColor = cssVar('skeleton-end-color')
 
 const red = defineStyle({
   _light: {
-    [$startColor.variable]: 'colors.red.100', //changing startColor to red.100
-    [$endColor.variable]: 'colors.red.400', // changing endColor to red.400
+    [$startColor.variable]: '#ccc', //changing startColor to red.100
+    [$endColor.variable]: '#eee', // changing endColor to red.400
     opacity:0.2
   },
 
