@@ -130,7 +130,7 @@ export function Page() {
                 title="Something went wrong"
                 minHeight="300px"
                 action={
-                  <Button variant="solid" >
+                  <Button variant="solid" onClick={()=> refetch}>
                     Retry
                   </Button>
                 }
