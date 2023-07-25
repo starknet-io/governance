@@ -1,5 +1,16 @@
-import { Box, Flex, FormControl, FormLabel, Input, Spacer, StackDivider, Text, VStack } from "@chakra-ui/react";
-import "./user-profile.css"
+import {
+  Box,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  Link,
+  Spacer,
+  StackDivider,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import "./user-profile.css";
 import { Button } from "src/Button";
 import { Indenticon } from "../Indenticon";
 import { useState } from "react";
@@ -12,21 +23,28 @@ interface IUser extends User {
   delegationStatement: Delegate;
 }
 
-
 interface UserProfileMenuProps {
   onDisconnect: () => void;
   user: IUser;
   onSave: (address: string, starknetWalletAddress: string) => void;
+  vp: number;
+  userBalance: any;
+  delegatedTo: any;
 }
 
 export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
   onDisconnect,
   user,
   onSave,
+  vp,
+  userBalance,
+  delegatedTo,
 }) => {
   const [editUserProfile, setEditUserProfile] = useState(false);
   const [username, setUsername] = useState<any>(user?.username);
-  const [starknetAddress, setStarknetAddress] = useState<any>(user?.delegationStatement?.starknetWalletAddress);
+  const [starknetAddress, setStarknetAddress] = useState<any>(
+    user?.delegationStatement?.starknetWalletAddress,
+  );
 
   const handleSave = () => {
     onSave(username, starknetAddress);
@@ -50,13 +68,22 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               onClick={handleCancel}
               cursor="pointer"
             >
-              <HiXMark size={20} />
+              <HiXMark className="x-mark" size={20} />
             </Box>
-            <Flex lineHeight="32px" fontSize="21px" fontWeight="700" justifyContent="center">Edit User Profile Info</Flex>
+            <Flex
+              lineHeight="32px"
+              fontSize="21px"
+              fontWeight="700"
+              justifyContent="center"
+            >
+              Edit User Profile Info
+            </Flex>
             <Box mt={6}>
               <form style={{ width: "100%" }}>
                 <FormControl id="member-name" paddingBottom={2}>
-                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">Username</FormLabel>
+                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
+                    Username
+                  </FormLabel>
                   <Input
                     placeholder="Username"
                     name="name"
@@ -65,7 +92,9 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                   />
                 </FormControl>
                 <FormControl id="address" paddingBottom={2}>
-                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">Ethereum address</FormLabel>
+                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
+                    Starknet address
+                  </FormLabel>
                   <Input
                     placeholder="0x..."
                     name="address"
@@ -74,9 +103,10 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                   />
                 </FormControl>
                 <Box width="100%" mt={6}>
-                  <Button width="100%" variant="solid" onClick={handleSave}>Save</Button>
+                  <Button width="100%" variant="solid" onClick={handleSave}>
+                    Save
+                  </Button>
                 </Box>
-                  
               </form>
             </Box>
           </Flex>
@@ -84,18 +114,20 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
       ) : (
         <Box className="user-profile-menu" p={6}>
           <VStack
-            divider={<StackDivider borderColor='gray.200' />}
+            divider={<StackDivider borderColor="gray.200" />}
             spacing={3}
-            align='stretch'
+            align="stretch"
           >
             <Flex direction="row" mb={4}>
-              <Box><Indenticon size={40} address={'asdasdascascascasc'} /></Box>
+              <Box>
+                <Indenticon size={40} address={"asdasdascascascasc"} />
+              </Box>
               <Box pl={4}>
                 <Text color="#2A2A32" fontWeight="bold" fontSize="14px">
-                  { user?.username ?? truncateAddress(user?.address || '') }
+                  {user?.username ?? truncateAddress(user?.address || "")}
                 </Text>
                 <Text color="#6C6C75" fontSize="12px">
-                  { truncateAddress(user?.address || '') }
+                  {truncateAddress(user?.address || "")}
                 </Text>
               </Box>
             </Flex>
@@ -105,7 +137,11 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               </Box>
               <Spacer />
               <Box>
-                <Text color="#2A2A32">{ truncateAddress(user?.delegationStatement?.starknetWalletAddress || '') }</Text>
+                <Text color="#2A2A32">
+                  {truncateAddress(
+                    user?.delegationStatement?.starknetWalletAddress || "",
+                  )}
+                </Text>
               </Box>
             </Flex>
             <Flex direction="column">
@@ -115,7 +151,9 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                 </Box>
                 <Spacer />
                 <Box>
-                  <Text color="#2A2A32">100,000 STRK</Text>
+                  <Text color="#2A2A32">
+                    {userBalance?.balance} {userBalance?.symbol}
+                  </Text>
                 </Box>
               </Flex>
               <Flex>
@@ -124,7 +162,17 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                 </Box>
                 <Spacer />
                 <Box>
-                  <Text color="#2A2A32">-</Text>
+                  <Text color="#2A2A32">
+                    {delegatedTo ? (
+                      <Link
+                        href={`delegates/profile/${delegatedTo?.delegationStatement?.id}`}
+                      >
+                        {truncateAddress(delegatedTo?.address || "")}
+                      </Link>
+                    ) : (
+                      "-"
+                    )}
+                  </Text>
                 </Box>
               </Flex>
             </Flex>
@@ -134,13 +182,21 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               </Box>
               <Spacer />
               <Box>
-                <Text color="#2A2A32">0</Text>
+                <Text color="#2A2A32">{vp}</Text>
               </Box>
             </Flex>
             <Flex direction="column" mt={4}>
-              <Button border={"1px solid"} variant="ghost" onClick={() => setEditUserProfile(true)}>Edit user profile</Button>
+              <Button
+                border={"1px solid"}
+                variant="ghost"
+                onClick={() => setEditUserProfile(true)}
+              >
+                Edit user profile
+              </Button>
               <Box height={2} />
-              <Button variant="solid" onClick={onDisconnect}>Disconnect</Button>
+              <Button variant="solid" onClick={onDisconnect}>
+                Disconnect
+              </Button>
             </Flex>
           </VStack>
         </Box>

@@ -93,5 +93,21 @@ export const delegateRouter = router({
       return updatedDelegate[0];
     }),
 
+  getDelegateByAddress: publicProcedure
+    .input(
+      z.object({
+        address: z.string()
+      })
+    )
+    .query(async (opts) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.address, opts.input.address),
+        with: {
+          delegationStatement: true
+        }
+      })
+      return user
+    }),
+
 
 });

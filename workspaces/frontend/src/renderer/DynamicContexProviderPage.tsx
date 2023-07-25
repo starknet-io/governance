@@ -5,7 +5,6 @@ import {
   Wallet,
   WalletConnector,
   DynamicNav,
-  DynamicUserProfile,
   useDynamicContext,
 } from "@dynamic-labs/sdk-react";
 import {
@@ -41,6 +40,10 @@ import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import React from "react";
 import { useOutsideClick } from "@chakra-ui/react";
+import { gql } from "src/gql";
+import { useQuery } from "@apollo/client";
+import { useBalanceData } from "src/utils/hooks";
+import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -82,10 +85,46 @@ const AuthorizedUserView = () => {
   const { handleLogOut } = useDynamicContext();
   const { user } = useDynamicContext();
   const address = user?.verifiedCredentials[0]?.address;
-  trpc.users.getUser.useQuery({ address: address ?? "" }, {
-    onSuccess: (data) => {
-      setUserData(data);
-    }
+  trpc.users.getUser.useQuery(
+    { address: address ?? "" },
+    {
+      onSuccess: (data) => {
+        setUserData(data);
+      },
+    },
+  );
+
+  const { data: vp } = useQuery(
+    gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
+      vp(voter: $voter, space: $space, proposal: $proposal) {
+        vp
+        vp_by_strategy
+        vp_state
+      }
+    }`),
+    {
+      variables: {
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        voter: address as string,
+      },
+    },
+  );
+
+  const userBalance = useBalanceData(address as `0x${string}`);
+
+  const delegation = useDelegateRegistryDelegation({
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    args: [
+      address! as `0x${string}`,
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ],
+    watch: true,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+    enabled: address != null,
+  });
+
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
+    address: delegation?.data as string,
   });
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
@@ -97,17 +136,12 @@ const AuthorizedUserView = () => {
 
       if (
         clickedElement.classList.contains("dynamic-shadow-dom") &&
-        (
-          (
-            originalClickedElement.classList.contains("account-control__container") &&
-            originalClickedElement.nodeName === "BUTTON"
-          )  
-            || 
-          (
-            originalClickedElement.classList.contains("typography") &&
-            originalClickedElement.nodeName === "P"
-          )
-        )
+        ((originalClickedElement.classList.contains(
+          "account-control__container",
+        ) &&
+          originalClickedElement.nodeName === "BUTTON") ||
+          (originalClickedElement.classList.contains("typography") &&
+            originalClickedElement.nodeName === "P"))
       ) {
         handleAddressClick(event);
       }
@@ -122,17 +156,9 @@ const AuthorizedUserView = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (userData) {
-      console.log("userData", userData)
-    }
-  }
-  , [userData]);
-
   const handleAddressClick = (event: any) => {
     event.preventDefault();
     setIsMenuOpen(!isMenuOpen);
-
   };
 
   useOutsideClick({
@@ -143,20 +169,23 @@ const AuthorizedUserView = () => {
   });
 
   const handleDisconnect = () => {
-    handleLogOut()
+    handleLogOut();
     setIsMenuOpen(false);
   };
 
   const handleSave = (username: string, starknetWalletAddress: string) => {
-    editUserProfile.mutateAsync({
-      id: userData.id,
-      username,
-      starknetWalletAddress,
-    },{
-      onSuccess: (data) => {
-        setUserData(data);
-      }
-    });
+    editUserProfile.mutateAsync(
+      {
+        id: userData.id,
+        username,
+        starknetWalletAddress,
+      },
+      {
+        onSuccess: (data) => {
+          setUserData(data);
+        },
+      },
+    );
     setIsMenuOpen(false);
   };
 
@@ -164,7 +193,18 @@ const AuthorizedUserView = () => {
     <>
       <div ref={navRef}>
         <DynamicNav />
-        {isMenuOpen ? <UserProfileMenu onDisconnect={handleDisconnect} user={userData} onSave={handleSave} /> : <></>}
+        {isMenuOpen ? (
+          <UserProfileMenu
+            delegatedTo={delegatedTo.data}
+            onDisconnect={handleDisconnect}
+            user={userData}
+            onSave={handleSave}
+            vp={vp?.vp?.vp ?? 0}
+            userBalance={userBalance}
+          />
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );
