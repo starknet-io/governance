@@ -123,17 +123,20 @@ const AuthorizedUserView = () => {
     enabled: address != null,
   });
 
-  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegation?.data as string,
-  });
+  const delegatedTo =
+    delegation?.data !== "0x0000000000000000000000000000000000000000"
+      ? trpc.delegates.getDelegateByAddress.useQuery({
+          address: delegation?.data as string,
+        })
+      : null;
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
 
   useEffect(() => {
     function handleClick(event: any) {
       const clickedElement = event.target;
-      const originalClickedElement = event.originalTarget || event.target;
-
+      const originalClickedElement =
+        event.originalTarget || event.composedPath()[0] || event.target;
       if (
         clickedElement.classList.contains("dynamic-shadow-dom") &&
         ((originalClickedElement.classList.contains(
@@ -198,7 +201,7 @@ const AuthorizedUserView = () => {
         <DynamicNav />
         {isMenuOpen ? (
           <UserProfileMenu
-            delegatedTo={delegatedTo.data}
+            delegatedTo={delegatedTo?.data ? delegatedTo?.data : null}
             onDisconnect={handleDisconnect}
             user={userData}
             onSave={handleSave}
