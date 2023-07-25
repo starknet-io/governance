@@ -118,7 +118,7 @@ const AuthorizedUserView = () => {
       address! as `0x${string}`,
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     ],
-    watch: true,
+    watch: false,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
