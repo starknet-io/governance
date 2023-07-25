@@ -135,7 +135,7 @@ export const usersRouter = router({
       })
     )
     .mutation(async (opts) => {
-      const updatedUser = await db
+      await db
         .update(users)
         .set({
           username: opts.input.username,
