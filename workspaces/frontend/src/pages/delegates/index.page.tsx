@@ -233,16 +233,35 @@ export function Page() {
               </FilterPopoverContent>
             </Popover>
           </ButtonGroup>
-
-          <Box display="flex" marginLeft="auto" gap="12px">
-            <Button size="sm" variant="outline">
+                {/* // Todo authentication Logic doesn't seem to be working  */}
+                  <Box display="flex" marginLeft="auto" gap="12px">
+                     {isAuthenticated ? (
+                      <>
+                        <Button size="sm" variant="outline">
               Delegate to address
             </Button>
-            {isAuthenticated && (
+
               <Button as="a" href="/delegates/create" size="sm" variant="solid">
                 Create delegate profile
-              </Button>
-            )}
+              </Button></>
+                    ) :
+            //                <>
+            //             <Button size="sm" variant="outline" onClick={()=> alert( "you must be logged in") } >
+            //   Delegate to address
+            // </Button>
+
+            //             <Button onClick={()=> alert( "you must be logged in") } size="sm" variant="solid">
+            //     Create delegate profile
+            //   </Button></>
+                             <>
+                        <Button size="sm" variant="outline">
+              Delegate to address
+            </Button>
+
+              <Button as="a" href="/delegates/create" size="sm" variant="solid">
+                Create delegate profile
+              </Button></>
+            }
           </Box>
             </AppBar>
             <SimpleGrid
@@ -282,9 +301,9 @@ const DelegatesSkeleton = () => {
   return (
     <Box >
       <Box  display={"flex"} gap="12px" bg="#fff" padding="12px" mb="24px" >
-        <Skeleton height="24px"  width="100%"  />
-        <Skeleton height="24px"  width="100%"  />
-        <Skeleton height="24px" width="100%" />
+        <Skeleton height="24px"  width="40%"  />
+        <Skeleton height="24px"  width="40%"  />
+        <Skeleton height="24px" width="40%" />
         <Skeleton height="24px"  width="100%"   />
       </Box>
 
