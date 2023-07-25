@@ -403,8 +403,11 @@ export function Page() {
         display="flex"
         flexDirection="column"
         flexBasis={{ base: "100%", md: "391px" }}
-        height="100%"
+        height="100vh"
         pb="100px"
+            top="0"
+          position={{ base: "unset", lg: "sticky" }}
+
       >
         {data?.proposal?.state === "active" ? (
           <>
