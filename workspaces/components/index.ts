@@ -167,7 +167,9 @@ import {
   AlertDialogCloseButton,
   Link,
   Skeleton,
-  HStack
+  HStack,
+  SkeletonCircle,
+  SkeletonText
 } from "@chakra-ui/react";
 
 export {
@@ -220,5 +222,7 @@ export {
   AlertDialogOverlay,
   AlertDialogCloseButton,
   Link,
-  Skeleton
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText
 };
