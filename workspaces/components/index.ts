@@ -166,6 +166,7 @@ import {
   AlertDialogOverlay,
   AlertDialogCloseButton,
   Link,
+  Skeleton
 } from "@chakra-ui/react";
 
 export {
@@ -217,4 +218,5 @@ export {
   AlertDialogOverlay,
   AlertDialogCloseButton,
   Link,
+  Skeleton
 };
