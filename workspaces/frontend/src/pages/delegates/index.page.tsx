@@ -135,7 +135,8 @@ export function Page() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const delegates = trpc.delegates.getAll.useQuery();
-  const authCheck = trpc.auth.checkAuth.useQuery(undefined, {
+  // ToDo autentication needs to happen without a refresh
+   trpc.auth.checkAuth.useQuery(undefined, {
     onError: () => {
       setIsAuthenticated(false);
     },
@@ -177,6 +178,7 @@ export function Page() {
           </Box>
         ) : (
           <>
+
             <AppBar>
               <Box mr="8px">
                 <SearchInput
@@ -184,23 +186,8 @@ export function Page() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </Box>
-    <ButtonGroup display={{ base: "none", md: "flex" }}>
- {/* Sort by: most voting power, activity, most votes, most comments, by category  */}
-
-            <Select
-              size="sm"
-              aria-label="Sort by"
-              placeholder="Sort by"
-              focusBorderColor={"red"}
-              rounded="md"
-            >
-              {sortByOptions.options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-            {/* Filter: already voted, >1million voting power, agree with delegate agreement, category   */}
+                  <ButtonGroup display={{ base: "none", md: "flex" }}>
+                            {/* Filter: already voted, >1million voting power, agree with delegate agreement, category   */}
 
             <Popover placement="bottom-start">
               <FilterPopoverIcon
@@ -232,6 +219,22 @@ export function Page() {
                 />
               </FilterPopoverContent>
             </Popover>
+ {/* Sort by: most voting power, activity, most votes, most comments, by category  */}
+
+            <Select
+              size="sm"
+              aria-label="Sort by"
+              placeholder="Sort by"
+              focusBorderColor={"red"}
+              rounded="md"
+            >
+              {sortByOptions.options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
+
           </ButtonGroup>
                 {/* // Todo authentication Logic doesn't seem to be working  */}
                   <Box display="flex" marginLeft="auto" gap="12px">
@@ -245,22 +248,22 @@ export function Page() {
                 Create delegate profile
               </Button></>
                     ) :
-            //                <>
-            //             <Button size="sm" variant="outline" onClick={()=> alert( "you must be logged in") } >
-            //   Delegate to address
-            // </Button>
-
-            //             <Button onClick={()=> alert( "you must be logged in") } size="sm" variant="solid">
-            //     Create delegate profile
-            //   </Button></>
-                             <>
-                        <Button size="sm" variant="outline">
+                           <>
+                        <Button size="sm" variant="outline" onClick={()=> alert( "you must be logged in") } >
               Delegate to address
             </Button>
 
-              <Button as="a" href="/delegates/create" size="sm" variant="solid">
+                        <Button onClick={()=> alert( "you must be logged in") } size="sm" variant="solid">
                 Create delegate profile
               </Button></>
+            //                  <>
+            //             <Button size="sm" variant="outline">
+            //   Delegate to address
+            // </Button>
+
+            //   <Button as="a" href="/delegates/create" size="sm" variant="solid">
+            //     Create delegate profile
+            //   </Button></>
             }
           </Box>
             </AppBar>
