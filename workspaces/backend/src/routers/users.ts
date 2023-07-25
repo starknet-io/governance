@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
+import { delegates } from '../db/schema/delegates';
 
 export const usersRouter = router({
   getAll: publicProcedure.query(() => db.query.users.findMany(
@@ -86,7 +87,6 @@ export const usersRouter = router({
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address)
       });
-      console.log(opts.input)
       if (user) {
         const updatedUser = await db
           .update(users)
@@ -108,5 +108,58 @@ export const usersRouter = router({
         return createdUser[0]
       }
 
+    }),
+
+  getUser: publicProcedure
+    .input(
+      z.object({
+        address: z.string(),
+      })
+    )
+    .query(async (opts) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.address, opts.input.address),
+        with: {
+          delegationStatement: true
+        }
+      });
+      return user;
+    }),
+
+  editUserProfile: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        username: z.string().optional(),
+        starknetWalletAddress: z.string().optional(),
+      })
+    )
+    .mutation(async (opts) => {
+      await db
+        .update(users)
+        .set({
+          username: opts.input.username,
+        })
+        .where(eq(users.id, opts.input.id))
+        .returning();
+      const delegationStatement = await db.query.delegates.findFirst({
+        where: eq(delegates.userId, opts.input.id)
+      });
+      if (delegationStatement) {
+        await db
+          .update(delegates)
+          .set({
+            starknetWalletAddress: opts.input.starknetWalletAddress,
+          })
+          .where(eq(delegates.id, delegationStatement.id))
+          .returning();
+
+      }
+      return await db.query.users.findFirst({
+        where: eq(users.id, opts.input.id),
+        with: {
+          delegationStatement: true
+        }
+      });
     }),
 });
