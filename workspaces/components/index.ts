@@ -166,13 +166,15 @@ import {
   AlertDialogOverlay,
   AlertDialogCloseButton,
   Link,
-  Skeleton
+  Skeleton,
+  HStack
 } from "@chakra-ui/react";
 
 export {
   Flex,
   ButtonGroup,
   Stack,
+  HStack,
   Box,
   SimpleGrid,
   Container,
