@@ -67,7 +67,11 @@ export function Page() {
         type="snips"
         title="Something went wrong"
         minHeight="300px"
-
+                    action={
+                      <Button variant="solid" onClick={()=> snips.refetch()}>
+                        Retry
+                      </Button>
+                    }
       />
     </Box>
   )
