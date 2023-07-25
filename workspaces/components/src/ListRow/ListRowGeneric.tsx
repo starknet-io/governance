@@ -12,7 +12,7 @@ const Container = ({ children }: Props) => {
       mt="24px"
       display="flex"
       flexDirection="column"
-      borderTop="1px solid #ECEDEE"
+
     >
       {children}
     </Box>
