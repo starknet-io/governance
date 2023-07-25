@@ -154,6 +154,9 @@ const AuthorizedUserView = () => {
         navRef.current?.removeEventListener("click", handleClick);
       };
     }
+    return () => {
+      // intentionally empty cleanup function
+    };
   }, []);
 
   const handleAddressClick = (event: any) => {
