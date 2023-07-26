@@ -359,6 +359,10 @@ function PageLayout(props: Props) {
         clearTimeout(timer);
       };
     }
+    // An empty cleanup function when no timeout was set.
+    return () => {
+      /* no cleanup to run */
+    };
   }, [helpMessage, setHelpMessage]);
 
   return (
