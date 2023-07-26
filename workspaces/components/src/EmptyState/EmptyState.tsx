@@ -1,5 +1,5 @@
-import { Box, Icon, Image } from "@chakra-ui/react";
-import { NoDelegatesIcon, NoPostsIcon, NoSnipsIcon, VoteIcon } from "src/Icons";
+import { Box, Image } from "@chakra-ui/react";
+// import { NoDelegatesIcon, NoPostsIcon, NoSnipsIcon, VoteIcon } from "src/Icons";
 import { Text } from "src/Text";
 import img from "./assets/img.png";
 type Props = {
