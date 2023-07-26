@@ -1,4 +1,4 @@
-import { Box,  Link } from "@chakra-ui/react";
+import { Box, Link } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 import { Text } from "src/Text";
 
@@ -32,7 +32,6 @@ export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
           )}
         </Box>
       )}
-
     </Box>
   );
 };

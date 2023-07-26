@@ -1,6 +1,3 @@
-
-
-
 import { DocumentProps } from "src/renderer/types";
 import {
   Box,
@@ -13,15 +10,28 @@ import {
   BannerHome,
   EmptyState,
   Skeleton,
-
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
+import { useHelpMessage } from "src/hooks/HelpMessage";
+import { useState } from "react";
 
 export function Page() {
+  const [, setHelpMessage] = useHelpMessage();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
   const snips = trpc.snips.getAll.useQuery();
   const sortedSnips = snips.data?.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
+
+  trpc.auth.checkAuth.useQuery(undefined, {
+    onError: () => {
+      setIsAuthenticated(false);
+    },
+    onSuccess: () => {
+      setIsAuthenticated(true);
+    },
+  });
 
   return (
     <Box>
@@ -47,35 +57,41 @@ export function Page() {
               </Button>
             </ButtonGroup>
             <Box display="flex" marginLeft="auto">
-              <Button as="a" href="snips/create" size="sm" variant="solid">
-                Create SNIP
-              </Button>
+              {isAuthenticated ? (
+                <Button as="a" href="snips/create" size="sm" variant="solid">
+                  Create SNIP
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setHelpMessage("connectWalletMessage")}
+                  size="sm"
+                  variant="solid"
+                >
+                  Create SNIP
+                </Button>
+              )}
             </Box>
           </AppBar>
         )}
-
 
         <Box position="relative">
           <ListRow.Container>
             {snips.isLoading ? (
               <SnipsSkeleton />
-            ) :
-
-              snips.isError ? (
-    <Box position="absolute" inset="0" top="-25px" bg="#F9F8F9">
-      <EmptyState
-        type="snips"
-        title="Something went wrong"
-        minHeight="300px"
-                    action={
-                      <Button variant="solid" onClick={()=> snips.refetch()}>
-                        Retry
-                      </Button>
-                    }
-      />
-    </Box>
-  )
-              : sortedSnips && sortedSnips.length > 0 ? (
+            ) : snips.isError ? (
+              <Box position="absolute" inset="0" top="-25px" bg="#F9F8F9">
+                <EmptyState
+                  type="snips"
+                  title="Something went wrong"
+                  minHeight="300px"
+                  action={
+                    <Button variant="solid" onClick={() => snips.refetch()}>
+                      Retry
+                    </Button>
+                  }
+                />
+              </Box>
+            ) : sortedSnips && sortedSnips.length > 0 ? (
               sortedSnips.map((data) => (
                 <ListRow.Root key={data.id} href={`/${data.type}s/${data.id}`}>
                   <ListRow.MutedText id={data.id} type={data.type} />
@@ -116,41 +132,30 @@ export const documentProps = {
   title: "Core Snips",
 } satisfies DocumentProps;
 
-
-
 const SnipsSkeleton = () => {
   return (
-          <Box display="flex" flexDirection={"column"} gap="12px">
-                   <Box display="flex" flexDirection={"row"} gap="12px">
-
-                <Skeleton height='68px' width="100%" />
-
-
-                </Box>
-    <Box display="flex" flexDirection={"row"} gap="12px">
-
-                <Skeleton height='68px' width="500%" />
-                <Skeleton height='68px'width="100%"  />
-                <Skeleton height='68px' width="100%"  />
-                <Skeleton height='68px'width="100%"  />
-
-                </Box>
-                   <Box display="flex" flexDirection={"row"} gap="12px">
-
-                <Skeleton height='68px' width="500%" />
-                <Skeleton height='68px'width="100%"  />
-                <Skeleton height='68px' width="100%"  />
-                <Skeleton height='68px'width="100%"  />
-
-                </Box>
-                   <Box display="flex" flexDirection={"row"} gap="12px">
-
-                <Skeleton height='68px' width="500%" />
-                <Skeleton height='68px'width="100%"  />
-                <Skeleton height='68px' width="100%"  />
-                <Skeleton height='68px'width="100%"  />
-
-              </Box>
-        </Box>
-  )
-}
+    <Box display="flex" flexDirection={"column"} gap="12px">
+      <Box display="flex" flexDirection={"row"} gap="12px">
+        <Skeleton height="68px" width="100%" />
+      </Box>
+      <Box display="flex" flexDirection={"row"} gap="12px">
+        <Skeleton height="68px" width="500%" />
+        <Skeleton height="68px" width="100%" />
+        <Skeleton height="68px" width="100%" />
+        <Skeleton height="68px" width="100%" />
+      </Box>
+      <Box display="flex" flexDirection={"row"} gap="12px">
+        <Skeleton height="68px" width="500%" />
+        <Skeleton height="68px" width="100%" />
+        <Skeleton height="68px" width="100%" />
+        <Skeleton height="68px" width="100%" />
+      </Box>
+      <Box display="flex" flexDirection={"row"} gap="12px">
+        <Skeleton height="68px" width="500%" />
+        <Skeleton height="68px" width="100%" />
+        <Skeleton height="68px" width="100%" />
+        <Skeleton height="68px" width="100%" />
+      </Box>
+    </Box>
+  );
+};

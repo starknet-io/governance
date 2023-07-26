@@ -18,7 +18,6 @@ export {
   MdOutlineAssignment,
   Heading,
   Text,
-  Connect,
   Logo,
   AppBar,
   Badge,
@@ -97,7 +96,7 @@ export {
   VoteForIcon,
   Status,
   EmptyState,
-  UserProfileMenu
+  UserProfileMenu,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -169,7 +168,8 @@ import {
   Skeleton,
   HStack,
   SkeletonCircle,
-  SkeletonText
+  SkeletonText,
+  Spinner,
 } from "@chakra-ui/react";
 
 export {
@@ -224,5 +224,6 @@ export {
   Link,
   Skeleton,
   SkeletonCircle,
-  SkeletonText
+  SkeletonText,
+  Spinner,
 };

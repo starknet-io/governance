@@ -26,6 +26,7 @@ import {
 
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
+import { useHelpMessage } from "src/hooks/HelpMessage";
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
 }
@@ -131,12 +132,14 @@ const sortByOptions = {
   ],
 };
 export function Page() {
+  const [, setHelpMessage] = useHelpMessage();
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const delegates = trpc.delegates.getAll.useQuery();
   // ToDo autentication needs to happen without a refresh
-   trpc.auth.checkAuth.useQuery(undefined, {
+  trpc.auth.checkAuth.useQuery(undefined, {
     onError: () => {
       setIsAuthenticated(false);
     },
@@ -145,8 +148,8 @@ export function Page() {
     },
   });
 
-  const filteredDelegates = delegates?.data?.filter((data) =>
-    data?.author?.address?.includes(searchQuery)
+  const filteredDelegates = delegates?.data?.filter(
+    (data) => data?.author?.address?.includes(searchQuery),
   );
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
@@ -178,7 +181,6 @@ export function Page() {
           </Box>
         ) : (
           <>
-
             <AppBar>
               <Box mr="8px">
                 <SearchInput
@@ -186,86 +188,102 @@ export function Page() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </Box>
-                  <ButtonGroup display={{ base: "none", md: "flex" }}>
-                            {/* Filter: already voted, >1million voting power, agree with delegate agreement, category   */}
+              <ButtonGroup display={{ base: "none", md: "flex" }}>
+                {/* Filter: already voted, >1million voting power, agree with delegate agreement, category   */}
 
-            <Popover placement="bottom-start">
-              <FilterPopoverIcon
-                label="Filter by"
-                icon={HiAdjustmentsHorizontal}
-              />
-              <FilterPopoverContent
-                isCancelDisabled={!state.canCancel}
-                onClickApply={state.onSubmit}
-                onClickCancel={state.onReset}
-              >
-                <Text mt="4" mb="2" fontWeight="bold">
-                  Filters
-                </Text>
-                <CheckboxFilter
-                  hideLabel
-                  value={state.value}
-                  onChange={(v) => state.onChange(v)}
-                  options={delegateFilters.options}
-                />
-                <Text mt="4" mb="2" fontWeight="bold">
-                  Interests
-                </Text>
-                <CheckboxFilter
-                  hideLabel
-                  value={state.value}
-                  onChange={(v) => state.onChange(v)}
-                  options={delegateInterests.options}
-                />
-              </FilterPopoverContent>
-            </Popover>
- {/* Sort by: most voting power, activity, most votes, most comments, by category  */}
+                <Popover placement="bottom-start">
+                  <FilterPopoverIcon
+                    label="Filter by"
+                    icon={HiAdjustmentsHorizontal}
+                  />
+                  <FilterPopoverContent
+                    isCancelDisabled={!state.canCancel}
+                    onClickApply={state.onSubmit}
+                    onClickCancel={state.onReset}
+                  >
+                    <Text mt="4" mb="2" fontWeight="bold">
+                      Filters
+                    </Text>
+                    <CheckboxFilter
+                      hideLabel
+                      value={state.value}
+                      onChange={(v) => state.onChange(v)}
+                      options={delegateFilters.options}
+                    />
+                    <Text mt="4" mb="2" fontWeight="bold">
+                      Interests
+                    </Text>
+                    <CheckboxFilter
+                      hideLabel
+                      value={state.value}
+                      onChange={(v) => state.onChange(v)}
+                      options={delegateInterests.options}
+                    />
+                  </FilterPopoverContent>
+                </Popover>
+                {/* Sort by: most voting power, activity, most votes, most comments, by category  */}
 
-            <Select
-              size="sm"
-              aria-label="Sort by"
-              placeholder="Sort by"
-              focusBorderColor={"red"}
-              rounded="md"
-            >
-              {sortByOptions.options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
+                <Select
+                  size="sm"
+                  aria-label="Sort by"
+                  placeholder="Sort by"
+                  focusBorderColor={"red"}
+                  rounded="md"
+                >
+                  {sortByOptions.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              </ButtonGroup>
+              {/* // Todo authentication Logic doesn't seem to be working  */}
+              <Box display="flex" marginLeft="auto" gap="12px">
+                {
+                  isAuthenticated ? (
+                    <>
+                      <Button size="sm" variant="outline">
+                        Delegate to address
+                      </Button>
 
-          </ButtonGroup>
-                {/* // Todo authentication Logic doesn't seem to be working  */}
-                  <Box display="flex" marginLeft="auto" gap="12px">
-                     {isAuthenticated ? (
-                      <>
-                        <Button size="sm" variant="outline">
-              Delegate to address
-            </Button>
+                      <Button
+                        as="a"
+                        href="/delegates/create"
+                        size="sm"
+                        variant="solid"
+                      >
+                        Create delegate profile
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setHelpMessage("connectWalletMessage")}
+                      >
+                        Delegate to addressss
+                      </Button>
 
-              <Button as="a" href="/delegates/create" size="sm" variant="solid">
-                Create delegate profile
-              </Button></>
-                    ) :
-                           <>
-                        <Button size="sm" variant="outline" onClick={()=> alert( "you must be logged in") } >
-              Delegate to address
-            </Button>
+                      <Button
+                        onClick={() => setHelpMessage("connectWalletMessage")}
+                        size="sm"
+                        variant="solid"
+                      >
+                        Create delegate profileeee
+                      </Button>
+                    </>
+                  )
+                  //                  <>
+                  //             <Button size="sm" variant="outline">
+                  //   Delegate to address
+                  // </Button>
 
-                        <Button onClick={()=> alert( "you must be logged in") } size="sm" variant="solid">
-                Create delegate profile
-              </Button></>
-            //                  <>
-            //             <Button size="sm" variant="outline">
-            //   Delegate to address
-            // </Button>
-
-            //   <Button as="a" href="/delegates/create" size="sm" variant="solid">
-            //     Create delegate profile
-            //   </Button></>
-            }
-          </Box>
+                  //   <Button as="a" href="/delegates/create" size="sm" variant="solid">
+                  //     Create delegate profile
+                  //   </Button></>
+                }
+              </Box>
             </AppBar>
             <SimpleGrid
               position="relative"
@@ -302,45 +320,48 @@ export function Page() {
 
 const DelegatesSkeleton = () => {
   return (
-    <Box >
-      <Box  display={"flex"} gap="12px" bg="#fff" padding="12px" mb="24px" >
-        <Skeleton height="24px"  width="40%"  />
-        <Skeleton height="24px"  width="40%"  />
+    <Box>
+      <Box display={"flex"} gap="12px" bg="#fff" padding="12px" mb="24px">
         <Skeleton height="24px" width="40%" />
-        <Skeleton height="24px"  width="100%"   />
+        <Skeleton height="24px" width="40%" />
+        <Skeleton height="24px" width="40%" />
+        <Skeleton height="24px" width="100%" />
       </Box>
 
       <SimpleGrid
-              position="relative"
-              width="100%"
-              spacing={4}
-              templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
-    >
-      <Box padding='6' bg='#fff' borderRadius="8px">
-  <SkeletonCircle size='10' />
-  <SkeletonText mt='4' noOfLines={6} spacing='4' skeletonHeight='2' />
-</Box>     <Box padding='6' bg='#fff' borderRadius="8px">
-  <SkeletonCircle size='10' />
-  <SkeletonText mt='4' noOfLines={6} spacing='4' skeletonHeight='2' />
-</Box>    <Box padding='6' bg='#fff' borderRadius="8px">
-  <SkeletonCircle size='10' />
-  <SkeletonText mt='4' noOfLines={6} spacing='4' skeletonHeight='2' />
-</Box>    <Box padding='6' bg='#fff' borderRadius="8px">
-  <SkeletonCircle size='10' />
-  <SkeletonText mt='4' noOfLines={6} spacing='4' skeletonHeight='2' />
+        position="relative"
+        width="100%"
+        spacing={4}
+        templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
+      >
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>{" "}
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>{" "}
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>{" "}
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
         </Box>
-            <Box padding='6' bg='#fff' borderRadius="8px">
-  <SkeletonCircle size='10' />
-  <SkeletonText mt='4' noOfLines={6} spacing='4' skeletonHeight='2' />
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
         </Box>
-            <Box padding='6' bg='#fff' borderRadius="8px">
-  <SkeletonCircle size='10' />
-  <SkeletonText mt='4' noOfLines={6} spacing='4' skeletonHeight='2' />
-</Box>
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>
       </SimpleGrid>
-        </Box>
-  )
-}
+    </Box>
+  );
+};
 
 // export function Page() {
 //   const [isAuthenticated, setIsAuthenticated] = useState(false);

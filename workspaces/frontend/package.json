@@ -52,6 +52,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.0",
     "react-streaming": "^0.3.14",
+    "react-use": "^17.4.0",
     "superjson": "^1.12.3",
     "viem": "^1.0.7",
     "vite": "^4.3.9",

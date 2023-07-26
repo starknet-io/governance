@@ -47,7 +47,7 @@ const theme = extendTheme({
     Input,
     Progress,
     styles,
-    Skeleton : skeletonTheme
+    Skeleton: skeletonTheme,
   },
 });
 
