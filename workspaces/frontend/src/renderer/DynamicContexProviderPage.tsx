@@ -7,6 +7,7 @@ import {
   DynamicNav,
   useDynamicContext,
 } from "@dynamic-labs/sdk-react";
+
 import {
   Logo,
   NavGroup,
@@ -33,6 +34,9 @@ import {
   ArrowLeftIcon,
   SettingsIcon,
   UserProfileMenu,
+  Spinner,
+  InfoModal,
+  Text,
 } from "@yukilabs/governance-components";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { PageContext } from "./types";
@@ -44,6 +48,7 @@ import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { useBalanceData } from "src/utils/hooks";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
+import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -237,26 +242,45 @@ const DynamicContextProviderPage = (props: Props) => {
   }, [authArgs]);
 
   return (
-    <DynamicContextProvider
-      settings={{
-        environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
-        eventsCallbacks: {
-          onAuthSuccess: (params: AuthSuccessParams) => setAuthArgs(params),
-          onLogout: () => logoutMutation.mutate(),
-        },
-        cssOverrides,
-      }}
-    >
-      <DynamicWagmiConnector>
-        <Suspense fallback={<p>Loading...</p>}>
-          {(pageContext.hasLayout ?? true) === true ? (
-            <PageLayout pageContext={pageContext}>{children}</PageLayout>
-          ) : (
-            children
-          )}
-        </Suspense>
-      </DynamicWagmiConnector>
-    </DynamicContextProvider>
+    <HelpMessageProvider>
+      <DynamicContextProvider
+        settings={{
+          environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
+          eventsCallbacks: {
+            onAuthSuccess: (params: AuthSuccessParams) => setAuthArgs(params),
+            onLogout: () => logoutMutation.mutate(),
+          },
+          cssOverrides,
+        }}
+      >
+        <DynamicWagmiConnector>
+          <Suspense
+            fallback={
+              <Box
+                display="flex"
+                height="100vh"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="#fff"
+                  color="#ccc"
+                  size="xl"
+                />
+              </Box>
+            }
+          >
+            {(pageContext.hasLayout ?? true) === true ? (
+              <PageLayout pageContext={pageContext}>{children}</PageLayout>
+            ) : (
+              children
+            )}
+          </Suspense>
+        </DynamicWagmiConnector>
+      </DynamicContextProvider>
+    </HelpMessageProvider>
   );
 };
 
@@ -312,6 +336,7 @@ const BackButton = ({
 };
 
 function PageLayout(props: Props) {
+  const [helpMessage, setHelpMessage] = useHelpMessage();
   const { children, pageContext } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const councilResp = trpc.councils.getAll.useQuery();
@@ -324,8 +349,31 @@ function PageLayout(props: Props) {
     <AuthorizationView />
   );
 
+  useEffect(() => {
+    let timer: string | number | NodeJS.Timeout | undefined;
+    if (helpMessage === "connectWalletMessage") {
+      timer = setTimeout(() => {
+        setHelpMessage(null);
+      }, 3000);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [helpMessage, setHelpMessage]);
+
   return (
     <>
+      <InfoModal
+        title="connect your wallet"
+        isOpen={helpMessage === "connectWalletMessage"}
+        onClose={() => setHelpMessage(null)}
+      >
+        <Text>To action you need to connect your wallet</Text>
+        <Button variant="solid" onClick={() => console.log("connect wallet")}>
+          Connect your wallet
+        </Button>
+      </InfoModal>
+
       <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
