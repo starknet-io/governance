@@ -4,7 +4,6 @@ export { Text } from "./Text";
 export { Header } from "./Header";
 export { Badge } from "./Badge";
 export { Button } from "./Button";
-export { Connect } from "./Connect";
 export { Logo } from "./Logo";
 export { PageTitle } from "./PageTitle";
 export { ThemeProvider } from "./ThemeProvider";
