@@ -75,8 +75,42 @@ export function Page() {
     id: delegateId,
   });
 
+  const delegateCommentsResponse = trpc.delegates.getDelegateComments.useQuery({
+    delegateId,
+  });
+
+  console.log(delegateCommentsResponse.data)
+
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`
+
+  const votes = useQuery(
+    gql(`
+      query DelegateVotes($where: VoteWhere) {
+        votes(where: $where) {
+          choice
+          voter
+          reason
+          metadata
+          created
+          ipfs
+          vp
+          vp_by_strategy
+          vp_state
+        }
+      }
+    `),
+    {
+      variables: {
+        "where": {
+          "voter": delegateAddress as any,
+        }
+      },
+      skip: delegateAddress == null
+    },
+  );
+
+  console.log(votes.data)
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);

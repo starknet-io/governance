@@ -6,6 +6,7 @@ import { getUserByJWT } from "../utils/helpers";
 import { eq } from "drizzle-orm";
 import { users } from "../db/schema/users";
 import { createInsertSchema } from "drizzle-zod";
+import { comments } from "../db/schema/comments";
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -79,8 +80,21 @@ export const delegateRouter = router({
         }
       })
 
-    }
-    ),
+    }),
+
+  getDelegateComments: publicProcedure.
+    input(z.object({ delegateId: z.string() }))
+    .query(async (opts) => {
+      return await db
+        .select({
+          ...comments._.columns,
+          author: users._.columns,
+        })
+        .from(comments)
+        .where(eq(comments.userId, users.id))
+        .innerJoin(users, eq(delegates.userId, users.id))
+        .innerJoin(delegates, eq(delegates.userId, opts.input.delegateId))
+    }),
 
   editDelegate: protectedProcedure
     .input(delegateInsertSchema.required({ id: true }))
