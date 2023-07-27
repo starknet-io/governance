@@ -79,7 +79,7 @@ export function Page() {
     delegateId,
   });
 
-  console.log(delegateCommentsResponse.data)
+  console.log('delegateCommentsResponse.data', delegateCommentsResponse.data)
 
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`
@@ -110,7 +110,7 @@ export function Page() {
     },
   );
 
-  console.log(votes.data)
+  console.log('votes.data', votes.data)
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);

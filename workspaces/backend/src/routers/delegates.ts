@@ -3,10 +3,11 @@ import { db } from "../db/db";
 import { delegates } from "../db/schema/delegates";
 import { protectedProcedure, publicProcedure, router } from "../utils/trpc";
 import { getUserByJWT } from "../utils/helpers";
-import { eq } from "drizzle-orm";
+import { eq, and, isNotNull } from "drizzle-orm";
 import { users } from "../db/schema/users";
 import { createInsertSchema } from "drizzle-zod";
 import { comments } from "../db/schema/comments";
+import { PgText } from "drizzle-orm/pg-core";
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -86,14 +87,12 @@ export const delegateRouter = router({
     input(z.object({ delegateId: z.string() }))
     .query(async (opts) => {
       return await db
-        .select({
-          ...comments._.columns,
-          author: users._.columns,
-        })
+        // @ts-expect-error TODO fix types issue here
+        .select({...comments, author: users})
         .from(comments)
-        .where(eq(comments.userId, users.id))
-        .innerJoin(users, eq(delegates.userId, users.id))
-        .innerJoin(delegates, eq(delegates.userId, opts.input.delegateId))
+        .rightJoin(users, eq(users.id, comments.userId))
+        .rightJoin(delegates, eq(delegates.userId, comments.userId))
+        .where(and(isNotNull(comments.proposalId), eq(delegates.id, opts.input.delegateId)))
     }),
 
   editDelegate: protectedProcedure
