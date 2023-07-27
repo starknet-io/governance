@@ -42,7 +42,7 @@ export function onPageTransitionEnd() {
 }
 function makeApolloClient(apolloIntialState: any) {
   return new ApolloClient({
-    uri: 'https://hub.snapshot.org/graphql',
+    uri: `${import.meta.env.VITE_APP_SNAPSHOT_URL}/graphql`,
     cache: new InMemoryCache().restore(apolloIntialState)
   })
 }

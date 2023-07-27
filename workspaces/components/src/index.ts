@@ -4,7 +4,6 @@ export { Text } from "./Text";
 export { Header } from "./Header";
 export { Badge } from "./Badge";
 export { Button } from "./Button";
-export { Connect } from "./Connect";
 export { Logo } from "./Logo";
 export { PageTitle } from "./PageTitle";
 export { ThemeProvider } from "./ThemeProvider";
@@ -55,6 +54,7 @@ export {
   GiHamburgerMenu,
   HiOutlinePencil,
   HiOutlineTrash,
+  HiXMark
 } from "./Icons";
 export {
   BoldIcon,
@@ -106,3 +106,5 @@ export { ReorderableList } from "./ReorderableList";
 export { FormModal } from "./FormModal";
 export { DeletionDialog } from "./DeletionDialog";
 export { Status } from "./Status";
+export { EmptyState } from "./EmptyState";
+export { UserProfileMenu } from "./UserProfileMenu";

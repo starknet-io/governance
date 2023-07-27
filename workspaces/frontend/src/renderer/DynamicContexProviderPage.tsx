@@ -4,7 +4,10 @@ import {
   UserProfile,
   Wallet,
   WalletConnector,
+  DynamicNav,
+  useDynamicContext,
 } from "@dynamic-labs/sdk-react";
+
 import {
   Logo,
   NavGroup,
@@ -30,11 +33,22 @@ import {
   GiHamburgerMenu,
   ArrowLeftIcon,
   SettingsIcon,
+  UserProfileMenu,
+  Spinner,
+  InfoModal,
+  Text,
 } from "@yukilabs/governance-components";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { PageContext } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
+import React from "react";
+import { useOutsideClick } from "@chakra-ui/react";
+import { gql } from "src/gql";
+import { useQuery } from "@apollo/client";
+import { useBalanceData } from "src/utils/hooks";
+import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
+import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -44,6 +58,12 @@ const cssOverrides = `
     border-radius: 4px;
   }
 
+  .evm-network-control__container span {
+    display: none
+  }
+  .account-control__container img {
+    display: none
+  }
 `;
 
 interface Props {
@@ -59,6 +79,147 @@ interface AuthSuccessParams {
   user: UserProfile;
   walletConnector: WalletConnector | undefined;
 }
+
+const AuthorizationView = () => <DynamicWidget />;
+
+const AuthorizedUserView = () => {
+  const navRef = useRef<HTMLDivElement | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
+
+  const { handleLogOut } = useDynamicContext();
+  const { user } = useDynamicContext();
+  const address = user?.verifiedCredentials[0]?.address;
+  trpc.users.getUser.useQuery(
+    { address: address ?? "" },
+    {
+      onSuccess: (data) => {
+        setUserData(data);
+      },
+    },
+  );
+
+  const { data: vp } = useQuery(
+    gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
+      vp(voter: $voter, space: $space, proposal: $proposal) {
+        vp
+        vp_by_strategy
+        vp_state
+      }
+    }`),
+    {
+      variables: {
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        voter: address as string,
+      },
+    },
+  );
+
+  const userBalance = useBalanceData(address as `0x${string}`);
+
+  const delegation = useDelegateRegistryDelegation({
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    args: [
+      address! as `0x${string}`,
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ],
+    watch: false,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+    enabled: address != null,
+  });
+
+  const delegatedTo =
+    delegation?.data !== "0x0000000000000000000000000000000000000000"
+      ? trpc.delegates.getDelegateByAddress.useQuery({
+          address: delegation?.data as string,
+        })
+      : null;
+
+  const editUserProfile = trpc.users.editUserProfile.useMutation();
+
+  useEffect(() => {
+    function handleClick(event: any) {
+      const clickedElement = event.target;
+      const originalClickedElement =
+        event.originalTarget || event.composedPath()[0] || event.target;
+      if (
+        clickedElement.classList.contains("dynamic-shadow-dom") &&
+        ((originalClickedElement.classList.contains(
+          "account-control__container",
+        ) &&
+          originalClickedElement.nodeName === "BUTTON") ||
+          (originalClickedElement.classList.contains("typography") &&
+            originalClickedElement.nodeName === "P"))
+      ) {
+        handleAddressClick(event);
+      }
+    }
+
+    if (navRef.current) {
+      navRef.current.addEventListener("click", handleClick);
+
+      return () => {
+        navRef.current?.removeEventListener("click", handleClick);
+      };
+    }
+    return () => {
+      // intentionally empty cleanup function
+    };
+  }, []);
+
+  const handleAddressClick = (event: any) => {
+    event.preventDefault();
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  useOutsideClick({
+    ref: navRef,
+    handler: () => {
+      setIsMenuOpen(false);
+    },
+  });
+
+  const handleDisconnect = () => {
+    handleLogOut();
+    setIsMenuOpen(false);
+  };
+
+  const handleSave = (username: string, starknetWalletAddress: string) => {
+    editUserProfile.mutateAsync(
+      {
+        id: userData.id,
+        username,
+        starknetWalletAddress,
+      },
+      {
+        onSuccess: (data) => {
+          setUserData(data);
+        },
+      },
+    );
+    setIsMenuOpen(false);
+  };
+
+  return (
+    <>
+      <div ref={navRef}>
+        <DynamicNav />
+        {isMenuOpen ? (
+          <UserProfileMenu
+            delegatedTo={delegatedTo?.data ? delegatedTo?.data : null}
+            onDisconnect={handleDisconnect}
+            user={userData}
+            onSave={handleSave}
+            vp={vp?.vp?.vp ?? 0}
+            userBalance={userBalance}
+          />
+        ) : (
+          <></>
+        )}
+      </div>
+    </>
+  );
+};
 
 const DynamicContextProviderPage = (props: Props) => {
   const { pageContext, children } = props;
@@ -81,26 +242,45 @@ const DynamicContextProviderPage = (props: Props) => {
   }, [authArgs]);
 
   return (
-    <DynamicContextProvider
-      settings={{
-        environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
-        eventsCallbacks: {
-          onAuthSuccess: (params: AuthSuccessParams) => setAuthArgs(params),
-          onLogout: () => logoutMutation.mutate(),
-        },
-        cssOverrides,
-      }}
-    >
-      <DynamicWagmiConnector>
-        <Suspense fallback={<p>Loading...</p>}>
-          {(pageContext.hasLayout ?? true) === true ? (
-            <PageLayout pageContext={pageContext}>{children}</PageLayout>
-          ) : (
-            children
-          )}
-        </Suspense>
-      </DynamicWagmiConnector>
-    </DynamicContextProvider>
+    <HelpMessageProvider>
+      <DynamicContextProvider
+        settings={{
+          environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
+          eventsCallbacks: {
+            onAuthSuccess: (params: AuthSuccessParams) => setAuthArgs(params),
+            onLogout: () => logoutMutation.mutate(),
+          },
+          cssOverrides,
+        }}
+      >
+        <DynamicWagmiConnector>
+          <Suspense
+            fallback={
+              <Box
+                display="flex"
+                height="100vh"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="#fff"
+                  color="#ccc"
+                  size="xl"
+                />
+              </Box>
+            }
+          >
+            {(pageContext.hasLayout ?? true) === true ? (
+              <PageLayout pageContext={pageContext}>{children}</PageLayout>
+            ) : (
+              children
+            )}
+          </Suspense>
+        </DynamicWagmiConnector>
+      </DynamicContextProvider>
+    </HelpMessageProvider>
   );
 };
 
@@ -156,13 +336,48 @@ const BackButton = ({
 };
 
 function PageLayout(props: Props) {
+  const [helpMessage, setHelpMessage] = useHelpMessage();
   const { children, pageContext } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   const councilResp = trpc.councils.getAll.useQuery();
+
+  const { user } = useDynamicContext();
+  const isAuthorized = !!user;
+  const dynamicCustomWidget = isAuthorized ? (
+    <AuthorizedUserView />
+  ) : (
+    <AuthorizationView />
+  );
+
+  useEffect(() => {
+    let timer: string | number | NodeJS.Timeout | undefined;
+    if (helpMessage === "connectWalletMessage") {
+      timer = setTimeout(() => {
+        setHelpMessage(null);
+      }, 3000);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+    // An empty cleanup function when no timeout was set.
+    return () => {
+      /* no cleanup to run */
+    };
+  }, [helpMessage, setHelpMessage]);
 
   return (
     <>
+      <InfoModal
+        title="connect your wallet"
+        isOpen={helpMessage === "connectWalletMessage"}
+        onClose={() => setHelpMessage(null)}
+      >
+        <Text>To action you need to connect your wallet</Text>
+        <Button variant="solid" onClick={() => console.log("connect wallet")}>
+          Connect your wallet
+        </Button>
+      </InfoModal>
+
       <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
@@ -341,7 +556,7 @@ function PageLayout(props: Props) {
             />
 
             <Box display="flex" marginLeft="auto">
-              <DynamicWidget />
+              {dynamicCustomWidget}
             </Box>
           </Header>
           <Layout.Content>{children}</Layout.Content>

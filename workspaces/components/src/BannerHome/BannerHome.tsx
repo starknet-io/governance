@@ -58,20 +58,14 @@ export const BannerHome = ({
                 variant="h2"
                 fontWeight="500"
                 fontSize="34px"
-                fontFamily="Inter"
               >
                 {title}
               </Heading>
             </Box>
             <Box>
-              <Heading
-                variant="h3"
-                fontWeight="500"
-                fontSize="15px"
-                fontFamily="Inter"
-              >
+              <Text fontWeight="500" fontSize="15px">
                 {tagline}
-              </Heading>
+              </Text>
             </Box>
           </Box>
         </Box>

@@ -12,6 +12,7 @@ import { modalTheme as Modal } from "../VoteModal/ModalStyles";
 import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
 import { menuTheme } from "src/Menu/MenuStyles";
 import { linkTheme } from "src/Link/LinkStyles";
+import { skeletonTheme } from "src/Skeleton/SkeletonStyles";
 
 const config = {
   initialColorMode: "light",
@@ -46,6 +47,7 @@ const theme = extendTheme({
     Input,
     Progress,
     styles,
+    Skeleton: skeletonTheme,
   },
 });
 

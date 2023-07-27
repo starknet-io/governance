@@ -8,7 +8,7 @@ import {
   DelegateModal,
   Divider,
   Heading,
-  ListRow,
+  // ListRow,
   // MarkdownRenderer,
   QuillEditor,
   ProfileSummaryCard,
@@ -16,14 +16,16 @@ import {
   SummaryItems,
   MenuItem,
   Status,
+  EmptyState,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
-import { useAccount, useBalance, useEnsName } from "wagmi";
+import { useAccount } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
+import { useDelegateRegistryDelegation, useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
 import { useQuery } from "@apollo/client";
 import { gql } from "src/gql";
+import { useBalanceData } from "src/utils/hooks";
 
 const GET_DELEGATE_STATS = gql(`
 query Votes($where: VoteWhere) {
@@ -32,25 +34,6 @@ query Votes($where: VoteWhere) {
     choice
   }}`);
 
-const useBalanceData = (address: `0x${string}` | undefined) => {
-  const { data: balance } = useBalance({
-    address,
-    chainId: 5,
-    token: "0x65aFADD39029741B3b8f0756952C74678c9cEC93", //USDC Goerli test token address
-    // token: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", //USDC Mainnet test token address
-  });
-
-  const { data: ensName } = useEnsName({
-    address,
-  });
-
-  return {
-    address,
-    balance: balance?.formatted ?? "0",
-    ethAddress: ensName ?? address,
-    symbol: balance?.symbol ?? "USDC",
-  };
-};
 
 function getChoiceStats(data: any[]) {
   const stats: { [key: string]: number } = { 1: 0, 2: 0, 3: 0 };
@@ -71,26 +54,38 @@ export function Page() {
   const { address, isConnected } = useAccount();
 
   const { isLoading, write } = useDelegateRegistrySetDelegate({
-    address: "0x469788fE6E9E9681C6ebF3bF78e7Fd26Fc015446",
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID)
   });
 
+  const delegation = useDelegateRegistryDelegation({
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    args: [
+      address!,
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ],
+    watch: true,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+    enabled: address != null
+  })
+
+  const delegateId = pageContext.routeParams!.id
+
   const delegateResponse = trpc.delegates.getDelegateById.useQuery({
-    id: pageContext.routeParams!.id,
+    id: delegateId,
   });
 
   const delegate = delegateResponse.data;
-
-  const user = delegate?.author;
+  const delegateAddress = delegate?.author?.address as `0x${string}`
 
   const senderData = useBalanceData(address);
-
-  const receiverData = useBalanceData(user?.address as `0x${string}`);
+  const receiverData = useBalanceData(delegateAddress);
 
   const { data } = useQuery(GET_DELEGATE_STATS, {
     variables: {
       where: {
-        space: "robwalsh.eth",
-        voter: user?.address,
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        voter: delegate?.author?.address,
       },
     },
   });
@@ -112,7 +107,7 @@ export function Page() {
           write?.({
             args: [
               "0x0000000000000000000000000000000000000000000000000000000000000000",
-              user?.address as any,
+              delegate?.author?.address as any,
             ],
           });
           setIsOpen(false);
@@ -132,10 +127,10 @@ export function Page() {
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
-            imgUrl={user?.ensAvatar}
-            ensName={user?.ensName}
-            address={user?.ensName || user?.address}
-            avatarString={user?.ensAvatar || user?.address}
+            imgUrl={delegate?.author?.ensAvatar}
+            ensName={delegate?.author?.ensName}
+            address={delegate?.author?.ensName || delegate?.author?.address}
+            avatarString={delegate?.author?.ensAvatar || delegate?.author?.address}
           >
             <ProfileSummaryCard.MoreActions>
               <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
@@ -156,9 +151,14 @@ export function Page() {
           )}
         </ProfileSummaryCard.Root>
         <Box mt="24px">
-          {/* //ToDo: logic for showing you can't vote to your own account if your voting power is delegated to current delegate */}
-          <Status label="Your voting power of 100 STRK is currently assigned to this delegate." />
-          <Status label="You can’t delegate votes to your own account." />
+          {delegation.isFetched &&
+            delegation.data === delegateAddress &&
+            <Status label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`} />
+          }
+
+          {delegateResponse.isFetched && address === delegateAddress &&
+            <Status label="You can’t delegate votes to your own account." />
+          }
         </Box>
 
         <Box mt="32px">
@@ -225,10 +225,11 @@ export function Page() {
           {/* <MarkdownRenderer content={delegate?.delegateStatement || ""} /> */}
           <QuillEditor value={delegate?.delegateStatement} readOnly />
           <Box mt="24px">
-            <Heading color="#33333E" variant="h3">
+            <Heading mb="24px" color="#33333E" variant="h3">
               Past Votes
             </Heading>
-            <ListRow.Container>
+            {/* // ToDo: add past votes */}
+            {/* <ListRow.Container>
               <ListRow.Root>
                 <ListRow.PastVotes />
                 <ListRow.Comments count={3} />
@@ -237,13 +238,15 @@ export function Page() {
                 <ListRow.PastVotes />
                 <ListRow.Comments count={3} />
               </ListRow.Root>
-            </ListRow.Container>
+            </ListRow.Container> */}
+            <EmptyState type="votes" title="No past votes" />
           </Box>
           <Box mt="24px">
-            <Heading color="#33333E" variant="h3">
-              Comments
+            <Heading mb="24px" color="#33333E" variant="h3">
+              Post comments
             </Heading>
-            <ListRow.Container>
+            {/* // ToDo: add post comments */}
+            {/* <ListRow.Container>
               <ListRow.Root>
                 <ListRow.CommentSummary />
                 <ListRow.Comments count={3} />
@@ -252,7 +255,8 @@ export function Page() {
                 <ListRow.CommentSummary />
                 <ListRow.Comments count={3} />
               </ListRow.Root>
-            </ListRow.Container>
+            </ListRow.Container> */}
+            <EmptyState type="posts" title="No post comments" />
           </Box>
         </Stack>
       </ContentContainer>

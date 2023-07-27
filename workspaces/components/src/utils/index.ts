@@ -3,7 +3,7 @@ export function truncateAddress(
   frontLength = 6,
   backLength = 4
 ): string {
-  if (str.length <= frontLength + backLength) {
+  if (str?.length <= frontLength + backLength) {
     // If the string is short enough, no need to truncate
     return str;
   }

@@ -20,7 +20,6 @@ export const snipsRouter = router({
         comments: true,
       }
     })
-    console.log("data", data)
     return data
   }),
 

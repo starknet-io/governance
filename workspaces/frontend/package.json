@@ -15,8 +15,6 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.15",
-    "@cloudflare/kv-asset-handler": "^0.3.0",
-    "@cloudflare/workers-types": "^4.20230518.0",
     "@dynamic-labs/sdk-react": "0.16.17-viem.0",
     "@dynamic-labs/wagmi-connector": "0.16.17-viem.0",
     "@graphql-codegen/cli": "^4.0.1",
@@ -49,11 +47,12 @@
     "itty-router": "^4.0.11",
     "node-fetch": "^3.3.1",
     "node-stdlib-browser": "^1.2.0",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.0",
     "react-streaming": "^0.3.14",
+    "react-use": "^17.4.0",
     "superjson": "^1.12.3",
     "viem": "^1.0.7",
     "vite": "^4.3.9",
@@ -61,13 +60,11 @@
     "vite-plugin-node-stdlib-browser": "^0.2.1",
     "vite-plugin-ssr": "^0.4.131",
     "vite-tsconfig-paths": "^4.2.0",
-    "wagmi": "^1.2.0",
-    "wrangler": "^3.1.0"
+    "wagmi": "^1.2.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "4.0.1",
     "@graphql-codegen/client-preset": "4.0.1",
-    "@graphql-codegen/introspection": "4.0.0",
-    "@miniflare/tre": "^3.0.0-next.13"
+    "@graphql-codegen/introspection": "4.0.0"
   }
 }

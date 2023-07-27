@@ -10,10 +10,6 @@ export function PageContextProvider({
   pageContext: PageContext;
   children: React.ReactNode;
 }) {
-  if (!import.meta.env.SSR) {
-    pageContext.event = null;
-  }
-
   return <Context.Provider value={pageContext}>{children}</Context.Provider>;
 }
 
