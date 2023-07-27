@@ -27,8 +27,11 @@ import {
   VoteModal,
   VoteReview,
   VoteStat,
-  MarkdownRenderer,
+  // MarkdownRenderer,
+  QuillEditor,
   Iframely,
+  Status,
+  VoteComment,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -40,12 +43,15 @@ import { providers } from "ethers";
 import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { trpc } from "src/utils/trpc";
+import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
+import { useBalanceData } from "src/utils/hooks";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
 
-  const { data } = useQuery(
+  const { data, refetch } = useQuery(
     gql(`query Proposal($proposal: String) {
       proposal(id: $proposal) {
       id
@@ -77,7 +83,7 @@ export function Page() {
       variables: {
         proposal: pageContext.routeParams!.id,
       },
-    }
+    },
   );
   const { data: vp } = useQuery(
     gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
@@ -90,33 +96,93 @@ export function Page() {
     {
       variables: {
         proposal: pageContext.routeParams!.id,
-        space: "robwalsh.eth",
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         voter: walletClient?.account.address as any,
       },
-    }
+      skip: walletClient?.account.address == null
+    },
   );
+  const vote = useQuery(
+    gql(`
+      query Vote($where: VoteWhere) {
+        votes(where: $where) {
+          choice
+          voter
+          reason
+          metadata
+          created
+          ipfs
+          vp
+          vp_by_strategy
+          vp_state
+        }
+      }
+    `),
+    {
+      variables: {
+        "where": {
+          "voter": walletClient?.account.address as any,
+          "proposal": pageContext.routeParams!.id
+        }
+      },
+      skip: walletClient?.account.address == null
+    },
+  );
+
+  const votes = useQuery(
+    gql(`
+      query VotingProposalsVotes($where: VoteWhere) {
+        votes(where: $where) {
+          choice
+          voter
+          reason
+          metadata
+          created
+          ipfs
+          vp
+          vp_by_strategy
+          vp_state
+        }
+      }
+    `),
+    {
+      variables: {
+        "where": {
+          "proposal": pageContext.routeParams!.id
+        }
+      },
+    },
+  );
+
+  const address = walletClient?.account.address as `0x${string}` | undefined
+
+  const delegation = useDelegateRegistryDelegation({
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    args: [
+      address!,
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ],
+    watch: true,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+    enabled: address != null
+  })
+
+  const userBalance = useBalanceData(address);
+
 
   async function handleVote(choice: number, reason?: string) {
     try {
       if (walletClient == null) return;
 
-      // const client = new snapshot.Client712('https://testnet.snapshot.org');
-      const client = new snapshot.Client712("https://hub.snapshot.org");
-
-      const web3 = new providers.Web3Provider(
-        walletClient.transport,
-        walletClient?.chain != null
-          ? {
-            chainId: walletClient.chain.id,
-            name: walletClient.chain.name,
-            ensAddress: walletClient.chain.contracts?.ensRegistry?.address,
-          }
-          : undefined
+      const client = new snapshot.Client712(
+        import.meta.env.VITE_APP_SNAPSHOT_URL,
       );
+
       console.log(data);
+
       const params: Vote = {
         // from?: string;
-        space: "robwalsh.eth",
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         // timestamp?: number;
         proposal: pageContext.routeParams!.id,
         type: "basic",
@@ -129,13 +195,18 @@ export function Page() {
       setIsOpen(false);
       setisConfirmOpen(true);
 
+      const web3 = new providers.Web3Provider(walletClient.transport);
+
       const receipt = (await client.vote(
         web3,
         walletClient.account.address,
-        params
+        params,
       )) as any;
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
+      refetch();
+      vote.refetch()
+      votes.refetch()
       console.log(receipt);
     } catch (error) {
       // Handle error
@@ -183,10 +254,7 @@ export function Page() {
       height="100%"
     >
       <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <VoteReview
-          choice={currentChoice}
-          voteCount={vp?.vp?.vp as number}
-        />
+        <VoteReview choice={currentChoice} voteCount={vp?.vp?.vp as number} />
         <FormControl id="comment">
           <FormLabel color={"#292932"}>Reason for vote (optional)</FormLabel>
           <Textarea
@@ -309,7 +377,8 @@ export function Page() {
               <></>
             )}
             <Divider />
-            <MarkdownRenderer content={data?.proposal?.body || ""} />
+            {/* <MarkdownRenderer content={data?.proposal?.body || ""} /> */}
+            <QuillEditor value={data?.proposal?.body || ""} readOnly />
 
             <Divider my="32px" />
             <Heading color="#33333E" variant="h3">
@@ -334,14 +403,27 @@ export function Page() {
         display="flex"
         flexDirection="column"
         flexBasis={{ base: "100%", md: "391px" }}
-        height="100%"
+        height="100vh"
         pb="100px"
+            top="0"
+          position={{ base: "unset", lg: "sticky" }}
+
       >
         {data?.proposal?.state === "active" ? (
           <>
             <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
               Cast your vote
             </Heading>
+
+            {delegation.isFetched && userBalance.isFetched &&
+              delegation.data && delegation.data != "0x0000000000000000000000000000000000000000" &&
+              <Status label={`Your voting power of ${userBalance.balance} ${userBalance.symbol} is currently assigned to delegate ${truncateAddress(delegation.data)}`} />
+            }
+
+            {vote.data && vote.data.votes?.[0] &&
+              <Status label={`You voted ${vote.data.votes[0].choice === 1 ? "For" : vote.data.votes[0].choice === 2 ? "Against" : "Abstain"} using ${vote.data.votes[0].vp} votes`} />
+            }
+
             <ButtonGroup
               mb="40px"
               spacing="8px"
@@ -374,7 +456,7 @@ export function Page() {
               {data?.proposal?.choices.map((choice, index) => {
                 const totalVotes = data?.proposal?.scores?.reduce(
                   (a, b) => a! + b!,
-                  0
+                  0,
                 );
                 const voteCount = data?.proposal?.scores![index];
                 const userVote = false;
@@ -400,14 +482,22 @@ export function Page() {
             </Box>
             <Divider mb="40px" />
             <Box mb="40px">
-              {/* <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
+              <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
                 Votes
               </Heading>
-              r
-              <VoteComment /> */}
-              {/* <VoteComment voted="Against" />
-              <VoteComment voted="Abstain" />
-              <VoteComment /> */}
+
+              {votes.data?.votes?.map((vote, index) => (
+                <VoteComment
+                  key={index}
+                  address={vote?.voter as string}
+                  voted={
+                    vote?.choice === 1 ? "For" : vote?.choice === 2 ? "Against" : "Abstain"
+                  }
+                  comment={vote?.reason as string}
+                  voteCount={vote?.vp as number}
+                />
+              ))}
+
             </Box>
           </>
         ) : (

@@ -29,11 +29,11 @@ export type PageContextCustom = {
   };
   documentProps?: DocumentProps;
   locale: string;
-  event: null | WorkerGlobalScopeEventMap["fetch"];
   userAgent: string;
   redirectTo?: string;
   apolloClient?: ApolloClient<any>;
-  apolloIntialState: any
+  apolloIntialState: any,
+  routeParams: any
 };
 
 export type PageContextServer = PageContextBuiltIn<Page> & PageContextCustom;

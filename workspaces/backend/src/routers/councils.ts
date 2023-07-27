@@ -1,7 +1,7 @@
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { councils } from '../db/schema/councils';
 import { db } from '../db/db';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import slugify from 'slugify';
@@ -175,9 +175,15 @@ export const councilsRouter = router({
       return await db.query.councils.findFirst({
         where: eq(councils.slug, opts.input.slug),
         with: {
+          posts: {
+            with: {
+              comments: true,
+            },
+            orderBy: [desc(councils.createdAt)]
+          },
           members: {
             with: {
-              user: true
+              user: true,
             }
           }
         }
@@ -193,6 +199,15 @@ export const councilsRouter = router({
       });
       if (!user) return;
       await db.delete(usersToCouncils).where(and(eq(usersToCouncils.userId, user.id), eq(usersToCouncils.councilId, opts.input.councilId))).execute();
+    }),
+
+  getCouncilSlug: publicProcedure
+    .input(z.object({ councilId: z.number() }))
+    .query(async (opts) => {
+      const data = await db.query.councils.findFirst({
+        where: eq(councils.id, opts.input.councilId),
+      })
+      return data?.slug;
     }),
 
 });

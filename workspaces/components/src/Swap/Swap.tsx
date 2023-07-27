@@ -27,7 +27,7 @@ type UserSummaryProps = {
 };
 const UserSummary = ({
   address = "0x23423423423423423423423432",
-  ethAddress = "robwalsh.eth",
+  ethAddress,
   balance = "100,000",
   text = "From",
   symbol = "STRK",
@@ -50,7 +50,8 @@ const UserSummary = ({
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
             size="xs"
-            ethAddress={shortAddress(ethAddress)}
+            ensName={ethAddress}
+            address={shortAddress(address)}
             avatarString={address}
           ></ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>

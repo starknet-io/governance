@@ -10,6 +10,9 @@ import { textareaTheme as Textarea } from "../Textarea/TextareaStyles";
 import { ProgressTheme as Progress } from "../Progress/ProgressStyles";
 import { modalTheme as Modal } from "../VoteModal/ModalStyles";
 import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
+import { menuTheme } from "src/Menu/MenuStyles";
+import { linkTheme } from "src/Link/LinkStyles";
+import { skeletonTheme } from "src/Skeleton/SkeletonStyles";
 
 const config = {
   initialColorMode: "light",
@@ -23,7 +26,9 @@ const theme = extendTheme({
     Text,
     Tag,
     Card,
+    Link: linkTheme,
     Textarea,
+    Menu: menuTheme,
     Modal,
     Spinner,
     Checkbox: {
@@ -42,6 +47,7 @@ const theme = extendTheme({
     Input,
     Progress,
     styles,
+    Skeleton: skeletonTheme,
   },
 });
 

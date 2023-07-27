@@ -1,5 +1,5 @@
 import { DocumentProps } from "src/renderer/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -13,7 +13,10 @@ import {
   QuillEditor,
   EditorTemplate,
   MembersList,
+  useDisclosure,
+  DeletionDialog,
 } from "@yukilabs/governance-components";
+
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
@@ -22,6 +25,12 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 
 export function Page() {
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
+  const cancelRef = useRef(null);
   const {
     handleSubmit,
     register,
@@ -85,22 +94,35 @@ export function Page() {
 
   const removeUserFromCouncil = (address: string) => {
     if (!council?.id) return;
-    removeUserFromCouncilData.mutate(
-      {
-        councilId: council?.id,
-        userAddress: address,
-      },
-      {
-        onSuccess: () => {
-          councilResp.refetch();
-        },
-      }
-    );
+    removeUserFromCouncilData.mutate({
+      councilId: council?.id,
+      userAddress: address,
+    });
+  };
+  const deleteCouncil = trpc.councils.deleteCouncil.useMutation();
+  // Delete function
+  const handleDeleteCouncil = async () => {
+    if (!council?.id) return;
+
+    try {
+      await deleteCouncil.mutateAsync({ id: council.id });
+      navigate("/snips");
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
   };
 
   return (
     <>
       <ContentContainer>
+        <DeletionDialog
+          isOpen={isDeleteOpen}
+          onClose={onCloseDelete}
+          onDelete={handleDeleteCouncil}
+          cancelRef={cancelRef}
+          entityName="Council"
+        />
         <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
             Edit council
@@ -159,14 +181,31 @@ export function Page() {
                 />
               </FormControl>
 
-              <Flex justifyContent="flex-end">
+              <Flex justifyContent="flex-end" gap="16px">
+                <Button
+                  color="#D83E2C"
+                  size="sm"
+                  variant={"outline"}
+                  mr="auto"
+                  onClick={onOpenDelete}
+                >
+                  Delete
+                </Button>
+                <Button
+                  as="a"
+                  size="sm"
+                  variant={"ghost"}
+                  href={`/councils/${pageContext.routeParams!.id}`}
+                >
+                  Cancel
+                </Button>
                 <Button
                   type="submit"
                   size="sm"
                   variant={"solid"}
                   disabled={!isValid}
                 >
-                  Edit
+                  Save
                 </Button>
               </Flex>
             </Stack>

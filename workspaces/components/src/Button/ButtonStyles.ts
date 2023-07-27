@@ -4,8 +4,8 @@ const outline = defineStyle({
   borderRadius: "4px",
   fontWeight: "medium",
   fontSize: "13px",
-  paddingLeft: "40px",
-  paddingRight: "40px",
+  paddingLeft: "16px",
+  paddingRight: "16px",
   color: "#33333E",
   borderColor: "#E4E5E7",
   bg: "transparent",
@@ -13,7 +13,7 @@ const outline = defineStyle({
   lineHeight: "24px",
   height: "auto",
   padding: "4px 10px",
-  boxShadow: " 0px 2px 2px rgba(0, 0, 0, 0.04)",
+  boxShadow: " none",
   _hover: {
     bg: "transparent",
     color: "btn-outline-hover-fg",
@@ -176,6 +176,30 @@ const sizes = {
   }),
 };
 
+const fullGhostBtn = defineStyle({
+  w: "100%",
+  bg: "transparent",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#1A152317",
+  color: "#6F6E77",
+  fontWeight: "500",
+  borderRadius: "4px",
+  boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.07)",
+  _focus: {
+    boxShadow: "none",
+    borderColor: "selected.main",
+    borderWidth: "1px",
+    borderStyle: "solid",
+  },
+  _hover: {
+    background: "gray.100",
+  },
+  _active: {
+    background: "gray.200",
+  },
+});
+
 export const buttonTheme = defineStyleConfig({
   sizes,
   variants: {
@@ -183,5 +207,6 @@ export const buttonTheme = defineStyleConfig({
     solid,
     switcher,
     toolbar,
+    fullGhostBtn,
   },
 });

@@ -1,4 +1,11 @@
-import { Avatar, Box, Stack } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Menu,
+  MenuButton,
+  MenuList,
+  Stack,
+} from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 import { IconButton } from "src/IconButton";
 import { Indenticon } from "../Indenticon";
@@ -21,22 +28,22 @@ const Root = ({ children }: RootProps) => {
 type ProfileProps = {
   imgUrl?: string | null;
   address?: string | null | undefined;
-  ethAddress?: string | null;
   subtitle?: string | null;
   children?: React.ReactNode;
   size?: "xs" | "sm" | "lg";
   avatarString?: string | null;
+  ensName?: string | null;
 };
 const Profile = ({
   imgUrl,
   address,
-  ethAddress,
   subtitle,
   children,
   avatarString,
   size = "lg",
+  ensName,
 }: ProfileProps) => {
-  const formattedAddress = address && truncateAddress(address);
+  const formattedAddress = ensName || (address && truncateAddress(address));
 
   return (
     <Box
@@ -64,9 +71,9 @@ const Profile = ({
           fontSize={size === "lg" ? "20px" : "16px"}
           color="#33333E"
         >
-          {ethAddress ? ethAddress : formattedAddress}
+          {formattedAddress}
         </Heading>
-        <Text variant="breadcrumbs" fontSize="12px" color="#6C6C75">
+        <Text variant="breadcrumbs" fontSize="12px" color="#57565D">
           {address && subtitle === null ? formattedAddress : subtitle}
         </Text>
       </Stack>
@@ -75,16 +82,23 @@ const Profile = ({
   );
 };
 type MoreActionsProps = {
-  onClick: () => void;
+  children: React.ReactNode;
 };
-const MoreActions = ({ onClick }: MoreActionsProps) => {
+const MoreActions = ({ children }: MoreActionsProps) => {
   return (
-    <IconButton
-      variant="simple"
-      onClick={onClick}
-      aria-label="Search database"
-      icon={<HiEllipsisHorizontal size="24px" />}
-    />
+    <Box style={{ position: "relative" }}>
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          icon={<HiEllipsisHorizontal size="32px" />}
+          variant="icon"
+        />
+
+        <Box top="0px" position="relative">
+          <MenuList>{children}</MenuList>
+        </Box>
+      </Menu>
+    </Box>
   );
 };
 type PrimaryButtonProps = {

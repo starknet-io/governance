@@ -13,11 +13,16 @@ import {
   // MarkdownRenderer,
   QuillEditor,
   MembersList,
+  Button,
+  MenuItem,
+  EmptyState,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { useEffect, useState } from "react";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
+import { navigate } from "vite-plugin-ssr/client/router";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -27,6 +32,7 @@ export function Page() {
   });
 
   const { data: council } = councilResp;
+  const { user } = useDynamicContext();
 
   useEffect(() => {
     if (council) {
@@ -42,6 +48,11 @@ export function Page() {
     }
   }, [council]);
 
+  const handleClick = (): void => {
+    if (!council?.id) return;
+    navigate(`/councils/posts/create?councilId=${council?.id.toString()}`);
+  };
+
   return (
     <Box
       display="flex"
@@ -56,16 +67,25 @@ export function Page() {
         display="flex"
         flexDirection="column"
         flexBasis={{ base: "100%", md: "391px" }}
-        height="100%"
+        position={{ base: "unset", lg: "sticky" }}
+        height="calc(100vh - 80px)"
+        top="0"
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
             address="0x2EF324324234234234234234231234"
-            ethAddress={council?.name ?? "Council"}
+            ensName={council?.name ?? "Council"}
           >
-            <ProfileSummaryCard.MoreActions
-              onClick={() => console.log("red")}
-            />
+            {user ? (
+              <ProfileSummaryCard.MoreActions>
+                <MenuItem as="a" href={`/councils/edit/${council?.slug}`}>
+                  Edit
+                </MenuItem>
+                {/* <MenuItem>Delete</MenuItem> */}
+              </ProfileSummaryCard.MoreActions>
+            ) : (
+              <></>
+            )}
           </ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>
 
@@ -73,18 +93,31 @@ export function Page() {
         <Box>
           {/* <MarkdownRenderer content={council?.description || ""} /> */}
           <QuillEditor value={council?.description ?? ""} readOnly />
+          {user ? (
+            <Button mt="24px" variant="fullGhostBtn" onClick={handleClick}>
+              Add new post
+            </Button>
+          ) : (
+            <></>
+          )}
         </Box>
         <Divider my="24px" />
         <SummaryItems.Root>
-          <SummaryItems.Item label="Proposals voted on" value="6" />
-          <SummaryItems.Item label="Delegated votes" value="7,000,000" />
+          <SummaryItems.Item label="Proposals voted on" value="0" />
+          <SummaryItems.Item label="Delegated votes" value="0" />
 
-          <SummaryItems.Item label="For/against/abstain" value="2/0/4" />
+          <SummaryItems.Item label="For/against/abstain" value="0/0/0" />
         </SummaryItems.Root>
       </Box>
 
-      <ContentContainer maxWidth="800px">
-        <Stack spacing="24px" direction={{ base: "column" }} color="#545464">
+      <ContentContainer center maxWidth="800px">
+        <Stack
+          width="100%"
+          spacing="24px"
+          direction={{ base: "column" }}
+          color="#545464"
+          paddingBottom="200px"
+        >
           <Collapse startingHeight={100}>
             <Stack
               spacing="24px"
@@ -117,14 +150,31 @@ export function Page() {
               Posts
             </Heading>
             <ListRow.Container>
-              <ListRow.Root>
-                <ListRow.CommentSummary />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-              <ListRow.Root>
-                <ListRow.CommentSummary />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
+              {council?.posts && council.posts.length > 0 ? (
+                council.posts.map((post) => {
+                  return (
+                    <Box
+                      key={post.id}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <ListRow.Root href={`/councils/posts/${post.id}`}>
+                        <Box width={"100%"}>
+                          <ListRow.Post post={post} />
+                        </Box>
+                      </ListRow.Root>
+                      <div style={{ marginLeft: "auto" }}>
+                        <ListRow.Comments count={post.comments.length} />
+                      </div>
+                    </Box>
+                  );
+                })
+              ) : (
+                <EmptyState type="posts" title="No posts yet" />
+              )}
             </ListRow.Container>
           </Box>
           <Box mt="24px">
@@ -132,14 +182,7 @@ export function Page() {
               Past Votes
             </Heading>
             <ListRow.Container>
-              <ListRow.Root>
-                <ListRow.PastVotes />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-              <ListRow.Root>
-                <ListRow.PastVotes />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
+              <EmptyState type="votes" title="No past votes" />
             </ListRow.Container>
           </Box>
         </Stack>

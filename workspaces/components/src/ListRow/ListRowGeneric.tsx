@@ -1,8 +1,5 @@
 import { Badge, Box, Flex, Icon, Tooltip } from "@chakra-ui/react";
-import {
-  HiHandThumbUp,
-  HiOutlineChatBubbleLeftEllipsis,
-} from "react-icons/hi2";
+import { HiHandThumbUp } from "react-icons/hi2";
 import { Text } from "../Text";
 
 type Props = {
@@ -15,7 +12,7 @@ const Container = ({ children }: Props) => {
       mt="24px"
       display="flex"
       flexDirection="column"
-      borderTop="1px solid #ECEDEE"
+
     >
       {children}
     </Box>
@@ -42,6 +39,7 @@ const Root = ({ children, href }: RootProps) => {
         textDecoration: "none",
         backgroundColor: "#F9FAFB",
       }}
+      width={"100%"}
     >
       {children}
     </Box>
@@ -98,7 +96,21 @@ const MutedText = ({ type, id }: MutedTextProps) => {
   return (
     <Box textTransform={"uppercase"} minWidth="60px">
       <Text variant="breadcrumbs" color="#6B7280">
-        {type === "snip" ? "SNIP" : "Vote"} {id}
+        {type === "snip" ? "SNIP" : "Vote"} {id.toString().padStart(3, '0')}
+      </Text>
+    </Box>
+  );
+};
+
+type CategoryProps = {
+  category: string;
+};
+
+const CategoryText = ({ category }: CategoryProps) => {
+  return (
+    <Box textTransform={"capitalize"}>
+      <Text variant="breadcrumbs" color="#6B7280">
+        {category}
       </Text>
     </Box>
   );
@@ -195,7 +207,7 @@ const Comments = ({ count, width }: CommentsProps) => {
       gap="4px"
       alignItems="center"
     >
-      <Icon as={HiOutlineChatBubbleLeftEllipsis} />{" "}
+      <Icon as={CommentIcon} />
       <Text variant="breadcrumbs" color="#6B7280">
         {count}
       </Text>
@@ -204,6 +216,8 @@ const Comments = ({ count, width }: CommentsProps) => {
 };
 
 import moment from "moment";
+import { stripHtml } from "src/utils/helpers";
+import { CommentIcon } from "src/Icons";
 
 function dateDiff(now: moment.Moment, futureDate: moment.Moment) {
   const diff = moment.duration(futureDate.diff(now));
@@ -325,6 +339,33 @@ const VoteResults: React.FC<VoteResultsProps> = ({ choices, scores }) => {
     </Box>
   );
 };
+
+const Post = ({ post }: any) => {
+  return (
+    <Flex flexDirection="column" flex={1} gap="6px" width={"100%"}>
+      <Text
+        variant="breadcrumbs"
+        fontSize="12px"
+        noOfLines={1}
+        fontWeight="500"
+        color="#292932"
+        width={"100%"}
+      >
+        {post.title}
+      </Text>
+      <Text
+        color="#6C6C75"
+        variant="breadcrumbs"
+        noOfLines={1}
+        fontWeight="500"
+        width={"100%"}
+      >
+        {stripHtml(post.content ?? "")}
+      </Text>
+    </Flex>
+  );
+};
+
 export {
   Root,
   Status,
@@ -338,4 +379,6 @@ export {
   Container,
   DateRange,
   VoteResults,
+  Post,
+  CategoryText,
 };

@@ -17,6 +17,7 @@ import {
 } from "@yukilabs/governance-components";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
+import { fetchBlockNumber } from "@wagmi/core";
 import { providers } from "ethers";
 import { Proposal } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { navigate } from "vite-plugin-ssr/client/router";
@@ -57,34 +58,28 @@ export function Page() {
     try {
       if (walletClient == null) return;
 
-      // const client = new snapshot.Client712('https://testnet.snapshot.org');
-      const client = new snapshot.Client712("https://hub.snapshot.org");
+      const client = new snapshot.Client712(import.meta.env.VITE_APP_SNAPSHOT_URL);
 
-      const web3 = new providers.Web3Provider(
-        walletClient.transport,
-        walletClient?.chain != null
-          ? {
-              chainId: walletClient.chain.id,
-              name: walletClient.chain.name,
-              ensAddress: walletClient.chain.contracts?.ensRegistry?.address,
-            }
-          : undefined
-      );
+      const block = await fetchBlockNumber({
+        chainId: parseInt(import.meta.env.VITE_APP_SNAPSHOT_CHAIN_ID)
+      });
 
-      const block = await snapshot.utils.getBlockNumber(web3);
+      console.log(block)
 
       const params: Proposal = {
-        space: "robwalsh.eth",
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         type: "basic",
         title: data.title,
         body: data.body,
         choices: ["For", "Against", "Abstain"],
         start: Math.floor(data.start!.getTime() / 1000),
         end: Math.floor(data.end!.getTime() / 1000),
-        snapshot: block,
+        snapshot: Number(block),
         plugins: JSON.stringify({}),
         discussion: data.discussion,
       };
+
+      const web3 = new providers.Web3Provider(walletClient.transport)
 
       const receipt = (await client.proposal(
         web3,
@@ -305,8 +300,7 @@ export const documentProps = {
 //     try {
 //       if (walletClient == null) return;
 
-//       // const client = new snapshot.Client712('https://testnet.snapshot.org');
-//       const client = new snapshot.Client712("https://hub.snapshot.org");
+//       const client = new snapshot.Client712(import.meta.env.VITE_APP_SNAPSHOT_URL);
 
 //       const web3 = new providers.Web3Provider(
 //         walletClient.transport,
@@ -322,7 +316,7 @@ export const documentProps = {
 //       const block = await snapshot.utils.getBlockNumber(web3);
 
 //       const params: Proposal = {
-//         space: "robwalsh.eth",
+//         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
 //         type: "basic",
 //         title: data.title,
 //         body: editorValue,

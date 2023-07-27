@@ -5,8 +5,10 @@ import { protectedProcedure, publicProcedure, router } from "../utils/trpc";
 import { getUserByJWT } from "../utils/helpers";
 import { eq } from "drizzle-orm";
 import { users } from "../db/schema/users";
+import { createInsertSchema } from "drizzle-zod";
 
-//todo: join delegate and user
+const delegateInsertSchema = createInsertSchema(delegates);
+
 export const delegateRouter = router({
   getAll: publicProcedure.query(async () => await db.query.delegates.findMany({
     with: {
@@ -65,12 +67,47 @@ export const delegateRouter = router({
       })
     )
     .query(async (opts) => {
-      return await db
-        .select()
-        .from(delegates)
-        .where(eq(delegates.id, opts.input.id))
-        .leftJoin(users, eq(delegates.userId, users.id))
+      // return await db
+      //   .select()
+      //   .from(delegates)
+      //   .where(eq(delegates.id, opts.input.id))
+      //   .leftJoin(users, eq(delegates.userId, users.id))
+      return await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+        with: {
+          author: true
+        }
+      })
+
     }
     ),
+
+  editDelegate: protectedProcedure
+    .input(delegateInsertSchema.required({ id: true }))
+    .mutation(async (opts) => {
+      const updatedDelegate = await db.update(delegates)
+        .set(opts.input)
+        .where(eq(delegates.id, opts.input.id))
+        .returning();
+
+      return updatedDelegate[0];
+    }),
+
+  getDelegateByAddress: publicProcedure
+    .input(
+      z.object({
+        address: z.string()
+      })
+    )
+    .query(async (opts) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.address, opts.input.address),
+        with: {
+          delegationStatement: true
+        }
+      })
+      return user
+    }),
+
 
 });

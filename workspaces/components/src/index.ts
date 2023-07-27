@@ -4,7 +4,6 @@ export { Text } from "./Text";
 export { Header } from "./Header";
 export { Badge } from "./Badge";
 export { Button } from "./Button";
-export { Connect } from "./Connect";
 export { Logo } from "./Logo";
 export { PageTitle } from "./PageTitle";
 export { ThemeProvider } from "./ThemeProvider";
@@ -30,6 +29,7 @@ export { LinkCard } from "./LinkCard";
 export { CheckboxFilter } from "./Filter/CheckboxFilter";
 export { useMarkdownEditor } from "./Editor/useMarkdownEditor";
 export { CopyToClipboard } from "./CopyToClipboard";
+export { BannerHome } from "./BannerHome";
 export {
   FilterPopoverButton,
   FilterPopoverContent,
@@ -52,6 +52,9 @@ export {
   HiEllipsisHorizontal,
   HiTrash,
   GiHamburgerMenu,
+  HiOutlinePencil,
+  HiOutlineTrash,
+  HiXMark
 } from "./Icons";
 export {
   BoldIcon,
@@ -73,6 +76,21 @@ export {
   SecurityIcon,
   SettingsIcon,
   SupportIcon,
+  ArrowLeftIcon,
+  CommentIcon,
+  NoDelegatesIcon,
+  NoPostsIcon,
+  NoSnipsIcon,
+  PencilIcon,
+  TrashIcon,
+  SuccessIcon,
+  TrashWarningIcon,
+  VoteIcon,
+  WarningIcon,
+  ExternalLinkIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
 } from "./Icons/UiIcons";
 
 export { MarkdownEditor } from "./Editor";
@@ -84,3 +102,9 @@ export { Iframely } from "./Iframely";
 
 export { MembersList } from "./MembersList";
 export { QuillEditor } from "./Editor/QuillEditor";
+export { ReorderableList } from "./ReorderableList";
+export { FormModal } from "./FormModal";
+export { DeletionDialog } from "./DeletionDialog";
+export { Status } from "./Status";
+export { EmptyState } from "./EmptyState";
+export { UserProfileMenu } from "./UserProfileMenu";

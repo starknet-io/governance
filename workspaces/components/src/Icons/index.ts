@@ -18,6 +18,21 @@ import {
   SecurityIcon,
   SettingsIcon,
   SupportIcon,
+  ArrowLeftIcon,
+  CommentIcon,
+  NoDelegatesIcon,
+  NoPostsIcon,
+  NoSnipsIcon,
+  PencilIcon,
+  TrashIcon,
+  SuccessIcon,
+  TrashWarningIcon,
+  VoteIcon,
+  WarningIcon,
+  ExternalLinkIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
 } from "./UiIcons";
 import {
   HiOutlineCodeBracketSquare,
@@ -31,6 +46,9 @@ import {
   HiAdjustmentsHorizontal,
   HiEllipsisHorizontal,
   HiTrash,
+  HiOutlinePencil,
+  HiOutlineTrash,
+  HiXMark
 } from "react-icons/hi2";
 import { MdOutlineHowToVote, MdOutlineAssignment } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -66,4 +84,22 @@ export {
   SettingsIcon,
   SupportIcon,
   GiHamburgerMenu,
+  ArrowLeftIcon,
+  HiOutlinePencil,
+  HiOutlineTrash,
+  CommentIcon,
+  NoDelegatesIcon,
+  NoPostsIcon,
+  NoSnipsIcon,
+  PencilIcon,
+  TrashIcon,
+  SuccessIcon,
+  TrashWarningIcon,
+  VoteIcon,
+  WarningIcon,
+  ExternalLinkIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
+  HiXMark
 };

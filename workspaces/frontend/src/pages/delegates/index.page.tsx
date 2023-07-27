@@ -18,10 +18,15 @@ import {
   FilterPopoverIcon,
   Select,
   Text,
+  EmptyState,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
+import { useHelpMessage } from "src/hooks/HelpMessage";
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
 }
@@ -126,12 +131,14 @@ const sortByOptions = {
     { label: "Most comments", value: "most_comments" },
   ],
 };
-
 export function Page() {
+  const [, setHelpMessage] = useHelpMessage();
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const delegates = trpc.delegates.getAll.useQuery();
+  // ToDo autentication needs to happen without a refresh
   trpc.auth.checkAuth.useQuery(undefined, {
     onError: () => {
       setIsAuthenticated(false);
@@ -141,8 +148,8 @@ export function Page() {
     },
   });
 
-  const filteredDelegates = delegates?.data?.filter((data) =>
-    data?.author?.address?.includes(searchQuery)
+  const filteredDelegates = delegates?.data?.filter(
+    (data) => data?.author?.address?.includes(searchQuery),
   );
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
@@ -151,109 +158,339 @@ export function Page() {
 
   return (
     <ContentContainer>
-      <Box width="100%" maxWidth="1100px">
+      <Box width="100%">
         <PageTitle
           learnMoreLink="/learn"
           title="Delegates"
           description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol."
         />
-        <AppBar>
-          <Box mr="8px">
-            <SearchInput
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+        {delegates.isLoading ? (
+          <DelegatesSkeleton />
+        ) : delegates.isError ? (
+          <Box position="absolute" inset="0" top="-25px" bg="#F9F8F9">
+            <EmptyState
+              type="delegates"
+              title="Something went wrong"
+              minHeight="300px"
+              action={
+                <Button variant="solid" onClick={() => delegates.refetch()}>
+                  Retry
+                </Button>
+              }
             />
           </Box>
-          <ButtonGroup display={{ base: "none", md: "flex" }}>
-            {/* Sort by: most voting power, activity, most votes, most comments, by category  */}
-
-            <Select
-              size="sm"
-              aria-label="Sort by"
-              placeholder="Sort by"
-              focusBorderColor={"red"}
-              rounded="md"
-            >
-              {sortByOptions.options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-            {/* Filter: already voted, >1million voting power, agree with delegate agreement, category   */}
-
-            <Popover placement="bottom-start">
-              <FilterPopoverIcon
-                label="Filter by"
-                icon={HiAdjustmentsHorizontal}
-              />
-              <FilterPopoverContent
-                isCancelDisabled={!state.canCancel}
-                onClickApply={state.onSubmit}
-                onClickCancel={state.onReset}
-              >
-                <Text mt="4" mb="2" fontWeight="bold">
-                  Filters
-                </Text>
-                <CheckboxFilter
-                  hideLabel
-                  value={state.value}
-                  onChange={(v) => state.onChange(v)}
-                  options={delegateFilters.options}
+        ) : (
+          <>
+            <AppBar>
+              <Box mr="8px">
+                <SearchInput
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <Text mt="4" mb="2" fontWeight="bold">
-                  Interests
-                </Text>
-                <CheckboxFilter
-                  hideLabel
-                  value={state.value}
-                  onChange={(v) => state.onChange(v)}
-                  options={delegateInterests.options}
-                />
-              </FilterPopoverContent>
-            </Popover>
-          </ButtonGroup>
+              </Box>
+              <ButtonGroup display={{ base: "none", md: "flex" }}>
+                {/* Filter: already voted, >1million voting power, agree with delegate agreement, category   */}
 
-          {isAuthenticated && (
-            <Box display="flex" marginLeft="auto">
-              <Button as="a" href="/delegates/create" size="sm" variant="solid">
-                Create delegate profile
-              </Button>
-            </Box>
-          )}
-        </AppBar>
-        <SimpleGrid
-          position="relative"
-          width="100%"
-          spacing={4}
-          templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
-        >
-          {filteredDelegates && filteredDelegates.length > 0 ? (
-            filteredDelegates.map((data) => (
-              <DelegateCard
-                key={data.starknetWalletAddress}
-                address={data?.author?.address}
-                {...data}
-              />
-            ))
-          ) : (
-            <Box
-              position="absolute"
-              inset="0"
-              display="flex"
+                <Popover placement="bottom-start">
+                  <FilterPopoverIcon
+                    label="Filter by"
+                    icon={HiAdjustmentsHorizontal}
+                  />
+                  <FilterPopoverContent
+                    isCancelDisabled={!state.canCancel}
+                    onClickApply={state.onSubmit}
+                    onClickCancel={state.onReset}
+                  >
+                    <Text mt="4" mb="2" fontWeight="bold">
+                      Filters
+                    </Text>
+                    <CheckboxFilter
+                      hideLabel
+                      value={state.value}
+                      onChange={(v) => state.onChange(v)}
+                      options={delegateFilters.options}
+                    />
+                    <Text mt="4" mb="2" fontWeight="bold">
+                      Interests
+                    </Text>
+                    <CheckboxFilter
+                      hideLabel
+                      value={state.value}
+                      onChange={(v) => state.onChange(v)}
+                      options={delegateInterests.options}
+                    />
+                  </FilterPopoverContent>
+                </Popover>
+                {/* Sort by: most voting power, activity, most votes, most comments, by category  */}
+
+                <Select
+                  size="sm"
+                  aria-label="Sort by"
+                  placeholder="Sort by"
+                  focusBorderColor={"red"}
+                  rounded="md"
+                >
+                  {sortByOptions.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              </ButtonGroup>
+              {/* // Todo authentication Logic doesn't seem to be working  */}
+              <Box display="flex" marginLeft="auto" gap="12px">
+                {
+                  isAuthenticated ? (
+                    <>
+                      <Button size="sm" variant="outline">
+                        Delegate to address
+                      </Button>
+
+                      <Button
+                        as="a"
+                        href="/delegates/create"
+                        size="sm"
+                        variant="solid"
+                      >
+                        Create delegate profile
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setHelpMessage("connectWalletMessage")}
+                      >
+                        Delegate to addressss
+                      </Button>
+
+                      <Button
+                        onClick={() => setHelpMessage("connectWalletMessage")}
+                        size="sm"
+                        variant="solid"
+                      >
+                        Create delegate profileeee
+                      </Button>
+                    </>
+                  )
+                  //                  <>
+                  //             <Button size="sm" variant="outline">
+                  //   Delegate to address
+                  // </Button>
+
+                  //   <Button as="a" href="/delegates/create" size="sm" variant="solid">
+                  //     Create delegate profile
+                  //   </Button></>
+                }
+              </Box>
+            </AppBar>
+            <SimpleGrid
+              position="relative"
               width="100%"
-              height="300px"
-              alignItems="center"
-              justifyContent="center"
+              spacing={4}
+              templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
             >
-              No results
-            </Box>
-          )}
-        </SimpleGrid>
+              {filteredDelegates && filteredDelegates.length > 0 ? (
+                filteredDelegates.map((data) => (
+                  <DelegateCard
+                    ensName={data.author?.ensName}
+                    key={data.starknetWalletAddress}
+                    address={data?.author?.address}
+                    avatarUrl={data.author?.ensAvatar}
+                    {...data}
+                  />
+                ))
+              ) : (
+                <Box position="absolute" inset="0">
+                  <EmptyState
+                    type="delegates"
+                    title="No delegates yet"
+                    minHeight="300px"
+                  />
+                </Box>
+              )}
+            </SimpleGrid>
+          </>
+        )}
       </Box>
     </ContentContainer>
   );
 }
+
+const DelegatesSkeleton = () => {
+  return (
+    <Box>
+      <Box display={"flex"} gap="12px" bg="#fff" padding="12px" mb="24px">
+        <Skeleton height="24px" width="40%" />
+        <Skeleton height="24px" width="40%" />
+        <Skeleton height="24px" width="40%" />
+        <Skeleton height="24px" width="100%" />
+      </Box>
+
+      <SimpleGrid
+        position="relative"
+        width="100%"
+        spacing={4}
+        templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
+      >
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>{" "}
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>{" "}
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>{" "}
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>
+        <Box padding="6" bg="#fff" borderRadius="8px">
+          <SkeletonCircle size="10" />
+          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+        </Box>
+      </SimpleGrid>
+    </Box>
+  );
+};
+
+// export function Page() {
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+//   const [searchQuery, setSearchQuery] = useState("");
+
+//   const delegates = trpc.delegates.getAll.useQuery();
+//   trpc.auth.checkAuth.useQuery(undefined, {
+//     onError: () => {
+//       setIsAuthenticated(false);
+//     },
+//     onSuccess: () => {
+//       setIsAuthenticated(true);
+//     },
+//   });
+
+//   const filteredDelegates = delegates?.data?.filter((data) =>
+//     data?.author?.address?.includes(searchQuery)
+//   );
+//   const state = useFilterState({
+//     defaultValue: delegateFilters.defaultValue,
+//     onSubmit: console.log,
+//   });
+
+//   return (
+//     <ContentContainer>
+//       <Box width="100%">
+//         <PageTitle
+//           learnMoreLink="/learn"
+//           title="Delegates"
+//           description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol."
+//         />
+//         <AppBar>
+//           <Box mr="8px">
+//             <SearchInput
+//               value={searchQuery}
+//               onChange={(e) => setSearchQuery(e.target.value)}
+//             />
+//           </Box>
+//           <ButtonGroup display={{ base: "none", md: "flex" }}>
+//             {/* Sort by: most voting power, activity, most votes, most comments, by category  */}
+
+//             <Select
+//               size="sm"
+//               aria-label="Sort by"
+//               placeholder="Sort by"
+//               focusBorderColor={"red"}
+//               rounded="md"
+//             >
+//               {sortByOptions.options.map((option) => (
+//                 <option key={option.value} value={option.value}>
+//                   {option.label}
+//                 </option>
+//               ))}
+//             </Select>
+//             {/* Filter: already voted, >1million voting power, agree with delegate agreement, category   */}
+
+//             <Popover placement="bottom-start">
+//               <FilterPopoverIcon
+//                 label="Filter by"
+//                 icon={HiAdjustmentsHorizontal}
+//               />
+//               <FilterPopoverContent
+//                 isCancelDisabled={!state.canCancel}
+//                 onClickApply={state.onSubmit}
+//                 onClickCancel={state.onReset}
+//               >
+//                 <Text mt="4" mb="2" fontWeight="bold">
+//                   Filters
+//                 </Text>
+//                 <CheckboxFilter
+//                   hideLabel
+//                   value={state.value}
+//                   onChange={(v) => state.onChange(v)}
+//                   options={delegateFilters.options}
+//                 />
+//                 <Text mt="4" mb="2" fontWeight="bold">
+//                   Interests
+//                 </Text>
+//                 <CheckboxFilter
+//                   hideLabel
+//                   value={state.value}
+//                   onChange={(v) => state.onChange(v)}
+//                   options={delegateInterests.options}
+//                 />
+//               </FilterPopoverContent>
+//             </Popover>
+//           </ButtonGroup>
+
+//           <Box display="flex" marginLeft="auto" gap="12px">
+//             <Button size="sm" variant="outline">
+//               Delegate to address
+//             </Button>
+//             {isAuthenticated && (
+//               <Button as="a" href="/delegates/create" size="sm" variant="solid">
+//                 Create delegate profile
+//               </Button>
+//             )}
+//           </Box>
+//         </AppBar>
+//         <SimpleGrid
+//           position="relative"
+//           width="100%"
+//           spacing={4}
+//           templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
+//         >
+//           {filteredDelegates && filteredDelegates.length > 0 ? (
+//             filteredDelegates.map((data) => (
+//               <DelegateCard
+//                 ensName={data.author?.ensName}
+//                 key={data.starknetWalletAddress}
+//                 address={data?.author?.address}
+//                 avatarUrl={data.author?.ensAvatar}
+//                 {...data}
+//               />
+//             ))
+//           ) : (
+//             <Box position="absolute" inset="0">
+//               <EmptyState
+//                 type="delegates"
+//                 title="No delegates yet"
+//                 minHeight="300px"
+//               />
+//             </Box>
+//           )}
+//         </SimpleGrid>
+//       </Box>
+//     </ContentContainer>
+//   );
+// }
 
 export const documentProps = {
   title: "Delegates",

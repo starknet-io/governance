@@ -35,7 +35,7 @@ export const delegates = pgTable('delegates', {
   discourse: text('discourse'),
   agreeTerms: boolean('agreeTerms'),
   understandRole: boolean('understandRole'),
-  userId: uuid('userId').references(() => users.id),
+  userId: uuid('userId').references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),

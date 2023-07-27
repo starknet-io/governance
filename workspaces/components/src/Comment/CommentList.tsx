@@ -2,7 +2,7 @@ import React from "react";
 import { Comment } from "@yukilabs/governance-backend/src/db/schema/comments";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { QuillEditor } from "src/Editor";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
 
@@ -28,8 +28,6 @@ function daysAgo(date: Date): string {
 }
 
 export const CommentList: React.FC<CommentListProps> = ({ commentsList }) => {
-  console.log("commentsList: ", commentsList);
-
   return (
     <Flex flexDirection="column" gap="32px">
       {commentsList.map((comment, index) => {
@@ -37,12 +35,17 @@ export const CommentList: React.FC<CommentListProps> = ({ commentsList }) => {
         return (
           <Box display="flex" height={"auto"} key={index} gap="16px">
             <Box minWidth="40px">
-              <Indenticon size={40} address={author?.address || ""} />
+              {author?.ensAvatar ? (
+                <Avatar size={"sm"} src={author?.ensAvatar} />
+              ) : (
+                <Indenticon size={40} address={author?.address || ""} />
+              )}
             </Box>
             <Box>
               <Flex>
                 <Text fontWeight="bold" fontSize="14px">
-                  {truncateAddress(author ? author.address : "")}
+                  {author?.ensName ||
+                    truncateAddress(author ? author.address : "")}
                 </Text>
                 <Text
                   fontSize="12px"

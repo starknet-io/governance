@@ -18,6 +18,9 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Textarea,
+  FormLabel,
+  FormControl,
 } from "@chakra-ui/react";
 import { HiTrash } from "react-icons/hi2";
 import "./members-list.css";
@@ -52,7 +55,9 @@ export const MembersList: React.FC<MembersListProps> = ({
     miniBio: "",
   });
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
     setMember({ ...member, [event.target.name]: event.target.value });
   };
 
@@ -80,32 +85,44 @@ export const MembersList: React.FC<MembersListProps> = ({
 
           <ModalCloseButton />
           <ModalBody>
-            <VStack spacing={4}>
-              <Input
-                placeholder="Address"
-                name="address"
-                value={member.address ?? ""}
-                onChange={handleInputChange}
-              />
-              <Input
-                placeholder="Name"
-                name="name"
-                value={member.name ?? ""}
-                onChange={handleInputChange}
-              />
-              <Input
-                placeholder="Twitter handle"
-                name="twitterHandle"
-                value={member.twitterHandle ?? ""}
-                onChange={handleInputChange}
-              />
-              <Input
-                placeholder="Mini Bio"
-                name="miniBio"
-                value={member.miniBio ?? ""}
-                onChange={handleInputChange}
-              />
-            </VStack>
+            <form>
+              <FormControl id="member-name" paddingBottom={2}>
+                <FormLabel>Member name</FormLabel>
+                <Input
+                  placeholder="Name"
+                  name="name"
+                  value={member.name ?? ""}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="address" paddingBottom={2}>
+                <FormLabel>Ethereum address</FormLabel>
+                <Input
+                  placeholder="0x..."
+                  name="address"
+                  value={member.address ?? ""}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="member-twitter-handle" paddingBottom={2}>
+                <FormLabel>Twitter handle</FormLabel>
+                <Input
+                  placeholder="@name"
+                  name="twitterHandle"
+                  value={member.twitterHandle ?? ""}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="member-mini-bio" paddingBottom={2}>
+                <FormLabel>Mini Bio</FormLabel>
+                <Textarea
+                  placeholder="Background, company, expertise etc"
+                  name="miniBio"
+                  value={member.miniBio ?? ""}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+            </form>
           </ModalBody>
 
           <ModalFooter>

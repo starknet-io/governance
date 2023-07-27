@@ -5,15 +5,15 @@ import { BsCaretRightFill } from "react-icons/bs";
 interface NavItemProps {
   href?: string;
   label: string;
-  subtle?: boolean;
   active?: string;
   icon?: ReactElement;
   endElement?: ReactElement;
   children?: ReactNode;
+  activePage?: boolean;
 }
 
 export const NavItem = (props: NavItemProps) => {
-  const { active, subtle, icon, children, label, endElement, href } = props;
+  const { active, icon, children, label, endElement, href, activePage } = props;
   const isActive = active === href;
   return (
     <Flex
@@ -30,25 +30,21 @@ export const NavItem = (props: NavItemProps) => {
       userSelect="none"
       rounded="md"
       transition="all 0.2s"
-      bg={isActive ? "#EEEEF1" : ""}
+      bg={isActive ? "#EEEEF1" : activePage ? "#EEEEF1" : ""}
       _hover={{ bg: "#EEEEF1" }}
       _active={{ bg: "#EEEEF1" }}
     >
       {icon && (
-        <Box
-          position="relative"
-          mt="-4px"
-          fontSize="24px"
-          color={active ? "currentcolor" : "#6C6C75"}
-        >
+        <Box position="relative" mt="-4px" fontSize="24px">
           {icon}
         </Box>
       )}
       <Box
         flex="1"
-        fontWeight="inherit"
+        fontWeight="500"
         fontSize="14px"
-        color={subtle ? "#6C6C75" : undefined}
+        letterSpacing="0.07px"
+        color={"#57565D"}
       >
         {label}
       </Box>

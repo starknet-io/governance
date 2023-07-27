@@ -75,14 +75,12 @@ export const DelegateModal = ({
                 <Swap.UserSummary
                   address={senderData.address}
                   balance={senderData.balance}
-                  ethAddress={senderData.ethAddress}
                   symbol={senderData.symbol}
                 />
                 <Swap.Arrow />
                 <Swap.UserSummary
                   address={receiverData.address}
                   balance={receiverData.balance}
-                  ethAddress={receiverData.ethAddress}
                   symbol={receiverData.symbol}
                   text={"To"}
                 />

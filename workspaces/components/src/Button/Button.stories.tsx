@@ -6,7 +6,7 @@ import {
   HiPlay,
   HiOutlineMoon,
   HiOutlineSun,
-  HiGlobeAlt
+  HiGlobeAlt,
 } from "react-icons/hi2";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { HiOutlineGlobeAlt } from "react-icons/hi2";
@@ -22,18 +22,18 @@ export const Solid = () => (
     <HStack p={12}>
       <>
         <Button variant="solid">Solid button</Button>
-        <Button leftIcon={
-            <ChakraIcon
-              as={HiPlay}
-              boxSize="24px"
-            />
-          } variant="solid">With icon</Button>
-        <Button leftIcon={
-            <ChakraIcon
-              as={HiGlobeAlt}
-              boxSize="24px"
-            />
-          } variant="solid">With icon and counter (3)</Button>
+        <Button
+          leftIcon={<ChakraIcon as={HiPlay} boxSize="24px" />}
+          variant="solid"
+        >
+          With icon
+        </Button>
+        <Button
+          leftIcon={<ChakraIcon as={HiGlobeAlt} boxSize="24px" />}
+          variant="solid"
+        >
+          With icon and counter (3)
+        </Button>
       </>
     </HStack>
   </ThemeProvider>
@@ -44,18 +44,18 @@ export const Outline = () => (
     <HStack p={12}>
       <>
         <Button variant="outline">Outline button</Button>
-        <Button leftIcon={
-            <ChakraIcon
-              as={HiPlay}
-              boxSize="24px"
-            />
-          } variant="outline">With icon</Button>
-        <Button leftIcon={
-            <ChakraIcon
-              as={HiGlobeAlt}
-              boxSize="24px"
-            />
-          } variant="outline">With icon and counter (3)</Button>
+        <Button
+          leftIcon={<ChakraIcon as={HiPlay} boxSize="24px" />}
+          variant="outline"
+        >
+          With icon
+        </Button>
+        <Button
+          leftIcon={<ChakraIcon as={HiGlobeAlt} boxSize="24px" />}
+          variant="outline"
+        >
+          With icon and counter (3)
+        </Button>
       </>
     </HStack>
   </ThemeProvider>
@@ -86,12 +86,12 @@ export const Ghost = () => (
     <HStack p={12}>
       <>
         <Button variant="ghost">Ghost button</Button>
-        <Button rightIcon={
-            <ChakraIcon
-              as={ChevronDownIcon}
-              boxSize="24px"
-            />
-          } variant="ghost">With icon</Button>
+        <Button
+          rightIcon={<ChakraIcon as={ChevronDownIcon} boxSize="24px" />}
+          variant="ghost"
+        >
+          With icon
+        </Button>
       </>
     </HStack>
   </ThemeProvider>
@@ -136,12 +136,8 @@ export const Filter = () => (
   <ThemeProvider>
     <HStack p={12}>
       <>
-        <Button variant="filter">
-          Filter button
-        </Button>
-        <Button variant="filterActive">
-          Filter active button
-        </Button>
+        <Button variant="filter">Filter button</Button>
+        <Button variant="filterActive">Filter active button</Button>
       </>
     </HStack>
   </ThemeProvider>
@@ -151,9 +147,7 @@ export const Category = () => (
   <ThemeProvider>
     <HStack p={12}>
       <>
-        <Button variant="category">
-          Category button
-        </Button>
+        <Button variant="category">Category button</Button>
       </>
     </HStack>
   </ThemeProvider>
@@ -171,6 +165,16 @@ export const Icon = () => (
         >
           AR
         </Button>
+      </>
+    </HStack>
+  </ThemeProvider>
+);
+
+export const FullGhostBtn = () => (
+  <ThemeProvider>
+    <HStack p={12}>
+      <>
+        <Button variant="fullGhostBtn">Full Width Ghost Button</Button>
       </>
     </HStack>
   </ThemeProvider>

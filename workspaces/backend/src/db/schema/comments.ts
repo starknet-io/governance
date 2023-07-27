@@ -16,10 +16,10 @@ export const comments = pgTable('comments', {
   id: serial('id').primaryKey(),
   content: text('content'),
 
-  userId: uuid('user_id').references(() => users.id),
-  postId: integer('post_id').references(() => posts.id),
-  pageId: integer('page_id').references(() => pages.id),
-  snipId: integer('snip_id').references(() => snips.id),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  postId: integer('post_id').references(() => posts.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  pageId: integer('page_id').references(() => pages.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  snipId: integer('snip_id').references(() => snips.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   proposalId: text('proposal_id'),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()

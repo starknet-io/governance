@@ -13,7 +13,6 @@ import {
   CommentList,
   IconButton,
   HiEllipsisHorizontal,
-  // MarkdownRenderer,
   QuillEditor,
   Iframely,
 } from "@yukilabs/governance-components";
@@ -48,7 +47,7 @@ export function Page() {
     }
     console.log(value);
   };
-  console.log(snip.data?.discussionURL);
+  console.log(typeof snip.data?.discussionURL);
 
   return (
     <>
@@ -88,7 +87,11 @@ export function Page() {
                   <Stat.Status status={snip.data?.status} />
                 </Stat.Root>
                 <Stat.Root>
-                  <Stat.Text label={`By cillian`} />
+                  <Stat.Text
+                    label={`By ${
+                      snip.data?.author?.ensName || snip.data?.author?.address
+                    }`}
+                  />
                 </Stat.Root>
                 <Stat.Root>
                   <Stat.Date date={snip?.data?.createdAt} />
@@ -103,10 +106,10 @@ export function Page() {
               </Flex>
               <Divider />
 
-              {snip?.data?.discussionURL !== "" ? (
+              {snip?.data?.discussionURL ? (
                 <Iframely
                   id={import.meta.env.VITE_APP_IFRAMELY_ID}
-                  url={`${snip?.data?.discussionURL}`}
+                  url={snip?.data?.discussionURL || ""}
                 />
               ) : (
                 <></>
@@ -117,11 +120,11 @@ export function Page() {
                 Overview
               </Heading>
 
-              {/* <MarkdownRenderer content={snip.data?.description || ""} /> */}
               <QuillEditor
                 value={snip.data?.description || undefined}
                 readOnly
               />
+
               <Divider my="32px" />
               <Heading id="#discussion" color="#33333E" variant="h3">
                 Discussion

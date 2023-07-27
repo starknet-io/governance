@@ -1,10 +1,13 @@
-import { InferModel } from 'drizzle-orm';
-import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { InferModel, relations } from 'drizzle-orm';
+import { integer, pgTable, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { users } from './users';
 
 export const pages = pgTable('pages', {
   id: serial('id').primaryKey(),
   title: text('title'),
   content: text('content'),
+  orderNumber: integer('orderNumber'),
+  userId: uuid('userId').references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
@@ -13,6 +16,13 @@ export const pages = pgTable('pages', {
     .notNull()
     .defaultNow(),
 });
+
+export const pagesRelations = relations(pages, ({ one }) => ({
+  author: one(users, {
+    fields: [pages.userId],
+    references: [users.id],
+  }),
+}));
 
 export type Page = InferModel<typeof pages>;
 export type NewPage = InferModel<typeof pages, 'insert'>;
