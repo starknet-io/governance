@@ -11,6 +11,7 @@ import * as delegates from './schema/delegates'
 import * as pages from './schema/pages'
 import * as posts from './schema/posts'
 import * as snips from './schema/snips'
+import * as snipVersions from './schema/snipVersions'
 import * as users from './schema/users'
 import * as votes from './schema/votes'
 import * as usersToCouncils from './schema/usersToCouncils'
@@ -29,6 +30,7 @@ const db = drizzle(pool, {
     ...pages,
     ...posts,
     ...snips,
+    ...snipVersions,
     ...users,
     ...votes,
     ...usersToCouncils
