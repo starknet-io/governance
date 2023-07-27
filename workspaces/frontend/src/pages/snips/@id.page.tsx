@@ -100,7 +100,7 @@ export function Page() {
                 <Stat.Root>
                   <Stat.Link
                     href="#discussion"
-                    label={`${snip.data?.comments.length} comments`}
+                    label={`${snip?.data?.comments?.length} comments`}
                   />
                 </Stat.Root>
               </Flex>

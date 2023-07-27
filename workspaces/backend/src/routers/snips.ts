@@ -3,8 +3,8 @@ import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
 import { desc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { getUserByJWT } from "../utils/helpers";
-import { comments } from '../db/schema/comments';
+import { getUserByJWT } from '../utils/helpers';
+import { snipVersions } from '../db/schema/snipVersions';
 
 const snipInsertSchema = createInsertSchema(snips);
 
@@ -14,13 +14,12 @@ const snipInsertSchema = createInsertSchema(snips);
 
 export const snipsRouter = router({
   getAll: publicProcedure.query(async () => {
-    const data = await db.query.snips.findMany({
+    return await db.query.snips.findMany({
       with: {
         author: true,
-        comments: true,
-      }
-    })
-    return data
+        latestVersion: true,
+      },
+    });
   }),
 
   getSNIP: publicProcedure
@@ -30,40 +29,78 @@ export const snipsRouter = router({
         where: eq(snips.id, opts.input.id),
         with: {
           author: true,
-          comments: {
-            with: {
-              author: true
-            },
-            orderBy: [desc(comments.createdAt)]
-          }
+          latestVersion: true, // This will fetch the latest version details
         },
-      })
+      });
+
+      if (data && data.latestVersion) {
+        // Overwriting snip's title and description with the latest version's ones
+        data.title = data.latestVersion.title;
+        data.description = data.latestVersion.description;
+      }
+      console.log(data)
       return data;
     }),
 
   createSNIP: protectedProcedure
     .input(snipInsertSchema.omit({ id: true, type: true, status: true }))
     .mutation(async (opts) => {
-      const insertedSnip = await db
+      const userId = (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id;
+      if (!userId) {
+        throw new Error('User not found');
+      }
+
+      // First, create a new snip without latestVersionId
+      const newSnip = await db
         .insert(snips)
         .values({
-          ...opts.input,
+          userId: userId,
           type: 'snip',
-          status: 'Draft',
-          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id,
         })
         .returning();
 
+      const valuesToInsert = {
+        ...opts.input,
+        snipId: newSnip[0].id, // linking new version to correct snip
+        version: 1,
+        createdAt: new Date(),
+      };
 
-      return insertedSnip[0];
+      // Then, create a new snip version with snipId
+      const insertedSnipVersion = await db
+        .insert(snipVersions)
+        .values(valuesToInsert)
+        .returning();
+
+      // Finally, update the newly created snip with latestVersionId
+      const updatedSnip = await db
+        .update(snips)
+        .set({ latestVersionId: insertedSnipVersion[0].id })
+        .where(eq(snips.id, newSnip[0].id)) // update only the correct snip
+        .execute();
+
+      return newSnip[0];
     }),
 
   editProposal: publicProcedure
     .input(snipInsertSchema.required({ id: true }))
     .mutation(async (opts) => {
+      // First, create a new snip version
+      const insertedSnipVersion = await db
+        .insert(snipVersions)
+        .values({
+          ...opts.input,
+          snipId: opts.input.id, // ensure that the snip id is passed correctly
+          createdAt: new Date(), // Use the current time
+        })
+        .returning();
+
+      // Then, update the snip's latest version with the id of the newly created snip version
       const updatedSnip = await db
         .update(snips)
-        .set(opts.input)
+        .set({
+          latestVersionId: insertedSnipVersion[0].id,
+        })
         .where(eq(snips.id, opts.input.id))
         .returning();
 
@@ -73,9 +110,6 @@ export const snipsRouter = router({
   deleteProposal: publicProcedure
     .input(snipInsertSchema.required({ id: true }).pick({ id: true }))
     .mutation(async (opts) => {
-      await db
-        .delete(snips)
-        .where(eq(snips.id, opts.input.id))
-        .execute();
+      await db.delete(snips).where(eq(snips.id, opts.input.id)).execute();
     }),
 });

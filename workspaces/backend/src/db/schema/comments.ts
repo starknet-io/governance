@@ -9,17 +9,16 @@ import {
 import { InferModel, relations } from 'drizzle-orm';
 import { users } from './users';
 import { posts } from './posts';
-import { snips } from './snips';
 import { pages } from './pages';
+import {snipVersions} from "./snipVersions";
 
 export const comments = pgTable('comments', {
   id: serial('id').primaryKey(),
   content: text('content'),
-
   userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   postId: integer('post_id').references(() => posts.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   pageId: integer('page_id').references(() => pages.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-  snipId: integer('snip_id').references(() => snips.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  snipVersionId: integer('snipVersionId').references(() => snipVersions.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   proposalId: text('proposal_id'),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
@@ -34,9 +33,9 @@ export const commentsRelations = relations(comments, ({ one }) => ({
     fields: [comments.userId],
     references: [users.id],
   }),
-  snips: one(snips, {
-    fields: [comments.snipId],
-    references: [snips.id],
+  snipVersion: one(snipVersions, {
+    fields: [comments.snipVersionId],
+    references: [snipVersions.id],
   }),
   posts: one(posts, {
     fields: [comments.postId],
