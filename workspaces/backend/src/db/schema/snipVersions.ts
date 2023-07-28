@@ -1,5 +1,5 @@
 import {pgTable, text, timestamp, serial, integer} from 'drizzle-orm/pg-core';
-import { snips } from './snips';
+import {proposalStatus, snips} from './snips';
 import {InferModel, relations} from "drizzle-orm";
 import {comments} from "./comments";
 
@@ -12,6 +12,7 @@ export const snipVersions = pgTable('snip_versions', {
   title: text('title'),
   discussionURL: text('discussionURL'),
   version: text('version'),
+  status: proposalStatus('status'),
   description: text('description'),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()

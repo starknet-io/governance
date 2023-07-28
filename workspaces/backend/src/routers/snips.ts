@@ -14,12 +14,18 @@ const snipInsertSchema = createInsertSchema(snips);
 
 export const snipsRouter = router({
   getAll: publicProcedure.query(async () => {
-    return await db.query.snips.findMany({
+    const data = await db.query.snips.findMany({
       with: {
         author: true,
         latestVersion: true,
       },
     });
+    return data.map((snip) => ({
+      ...snip,
+      title: snip?.latestVersion?.title || snip.title,
+      description: snip?.latestVersion?.description || snip.description,
+      status: snip?.latestVersion?.status || snip.status,
+    }));
   }),
 
   getSNIP: publicProcedure
@@ -37,13 +43,15 @@ export const snipsRouter = router({
         // Overwriting snip's title and description with the latest version's ones
         data.title = data.latestVersion.title;
         data.description = data.latestVersion.description;
+        data.status = data.latestVersion.status;
+        data.discussionURL = data.latestVersion.discussionURL;
       }
-      console.log(data)
+      console.log(data);
       return data;
     }),
 
   createSNIP: protectedProcedure
-    .input(snipInsertSchema.omit({ id: true, type: true, status: true }))
+    .input(snipInsertSchema.omit({ id: true, type: true }))
     .mutation(async (opts) => {
       const userId = (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id;
       if (!userId) {
@@ -66,6 +74,8 @@ export const snipsRouter = router({
         createdAt: new Date(),
       };
 
+      console.log(valuesToInsert)
+
       // Then, create a new snip version with snipId
       const insertedSnipVersion = await db
         .insert(snipVersions)
@@ -73,7 +83,7 @@ export const snipsRouter = router({
         .returning();
 
       // Finally, update the newly created snip with latestVersionId
-      const updatedSnip = await db
+      await db
         .update(snips)
         .set({ latestVersionId: insertedSnipVersion[0].id })
         .where(eq(snips.id, newSnip[0].id)) // update only the correct snip

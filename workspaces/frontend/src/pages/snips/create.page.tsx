@@ -85,11 +85,15 @@ export function Page() {
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Status</FormLabel>
-                <Select placeholder="Select option">
-                  <option value="option1">Draft</option>
-                  <option value="option2">Review</option>
-                  <option value="option3">Last call</option>
+                <Select
+                  placeholder="Select option"
+                  {...register("status", { required: true })}
+                >
+                  <option value="Draft">Draft</option>
+                  <option value="Review">Review</option>
+                  <option value="Last Call">Last call</option>
                 </Select>
+                {errors.status && <span>This field is required.</span>}
               </FormControl>
 
               <Flex justifyContent="flex-end">
