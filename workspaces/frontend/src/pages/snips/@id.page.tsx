@@ -46,7 +46,7 @@ export function Page() {
     try {
       await saveComment.mutateAsync({
         content: value,
-        snipId,
+        snipVersionId: snip?.data?.latestVersionId,
       });
     } catch (error) {
       // Handle error
@@ -147,9 +147,14 @@ export function Page() {
               ) : (
                 <Box>Show logged out state for comment input</Box>
               )}
-              <CommentList commentsList={snip.data?.comments || []} />
-              <DividerWithText text="v1 comments" />
-              <DividerWithText text="v2 comments" />
+              {snip.data?.versions && Object.keys(snip.data.versions).map((snipVersion) => {
+                return (
+                  <>
+                    <DividerWithText text={`v${snip?.data?.versions?.[snipVersion]?.version} comments`} />
+                    <CommentList commentsList={snip?.data?.versions?.[snipVersion]?.comments || []} />
+                  </>
+                )
+              })}
             </Stack>
           </Box>
         </ContentContainer>

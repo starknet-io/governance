@@ -36,6 +36,11 @@ export const snipsRouter = router({
         with: {
           author: true,
           latestVersion: true, // This will fetch the latest version details
+          versions: {
+            with: {
+              comments: true, // This will fetch the comments for each version
+            },
+          },
         },
       });
 
@@ -46,6 +51,16 @@ export const snipsRouter = router({
         data.status = data.latestVersion.status;
         data.discussionURL = data.latestVersion.discussionURL;
       }
+
+      if (data && data.versions) {
+        // Change versions from array to an object with version as key
+        const versionsObj = data.versions.reduce((obj, version) => {
+          obj[version.version] = version;
+          return obj;
+        }, {});
+        data.versions = versionsObj;
+      }
+
       return data;
     }),
 
@@ -112,7 +127,7 @@ export const snipsRouter = router({
         throw new Error('Latest SNIP version not found');
       }
 
-      const { id, ...values } = opts.input
+      const { id, ...values } = opts.input;
 
       const valuesToInsert = {
         ...values,
@@ -121,15 +136,11 @@ export const snipsRouter = router({
         createdAt: new Date(), // Use the current time
       };
 
-      console.log(valuesToInsert)
-
       // First, create a new snip version
       const insertedSnipVersion = await db
         .insert(snipVersions)
         .values(valuesToInsert)
         .returning();
-
-      console.log('INSERTED VERSION', insertedSnipVersion);
 
       // Then, update the snip's latest version with the id of the newly created snip version
       const updatedSnip = await db

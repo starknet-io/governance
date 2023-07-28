@@ -6,7 +6,7 @@ interface DividerTypes {
 
 export const DividerWithText = ({ text }: DividerTypes) => {
   return (
-    <Box position="relative" padding="10">
+    <Box position="relative" padding="4">
       <Divider color="#DCDBDD" />
       <AbsoluteCenter
         px="4"

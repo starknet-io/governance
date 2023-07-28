@@ -3,8 +3,9 @@ import { comments } from '../db/schema/comments';
 import { db } from '../db/db';
 import { eq, desc } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { getUserByJWT } from "../utils/helpers";
-import { z } from "zod";
+import { getUserByJWT } from '../utils/helpers';
+import { z } from 'zod';
+import {snipVersions} from "../db/schema/snipVersions";
 
 const commentInsertSchema = createInsertSchema(comments);
 
@@ -15,8 +16,8 @@ const commentInsertSchema = createInsertSchema(comments);
 export const commentsRouter = router({
   getAll: publicProcedure.query(() => db.select().from(comments)),
 
-  getProposalComments: publicProcedure.
-    input(z.object({ proposalId: z.string() }))
+  getProposalComments: publicProcedure
+    .input(z.object({ proposalId: z.string() }))
     .query(async (opts) => {
       const data = await db.query.comments.findMany({
         where: eq(comments.proposalId, opts.input.proposalId),
@@ -24,19 +25,29 @@ export const commentsRouter = router({
         with: {
           author: true,
         },
-      })
+      });
       return data;
     }),
-
 
   saveComment: protectedProcedure
     .input(commentInsertSchema.omit({ id: true }))
     .mutation(async (opts) => {
+      // Check if snipVersionId exists
+      if (opts.input.snipVersionId) {
+        const snipVersion = await db.query.snipVersions.findFirst({
+          where: eq(snipVersions.id, opts.input.snipVersionId),
+        });
+
+        if (!snipVersion) {
+          throw new Error('SNIP version not found');
+        }
+      }
+
       const insertedComment = await db
         .insert(comments)
         .values({
           ...opts.input,
-          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id
+          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id,
         })
         .returning();
 
