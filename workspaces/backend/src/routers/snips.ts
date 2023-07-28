@@ -46,7 +46,6 @@ export const snipsRouter = router({
         data.status = data.latestVersion.status;
         data.discussionURL = data.latestVersion.discussionURL;
       }
-      console.log(data);
       return data;
     }),
 
@@ -74,7 +73,7 @@ export const snipsRouter = router({
         createdAt: new Date(),
       };
 
-      console.log(valuesToInsert)
+      console.log(valuesToInsert);
 
       // Then, create a new snip version with snipId
       const insertedSnipVersion = await db
@@ -92,18 +91,45 @@ export const snipsRouter = router({
       return newSnip[0];
     }),
 
-  editProposal: publicProcedure
+  editSNIP: publicProcedure
     .input(snipInsertSchema.required({ id: true }))
     .mutation(async (opts) => {
+      // Fetching the existing snip first
+      const snip = await db.query.snips.findFirst({
+        where: eq(snips.id, opts.input.id),
+      });
+
+      if (!snip) {
+        throw new Error('SNIP not found');
+      }
+
+      // Fetching the latest version for the fetched snip
+      const latestSnipVersion = await db.query.snipVersions.findFirst({
+        where: eq(snipVersions.id, snip.latestVersionId),
+      });
+
+      if (!latestSnipVersion) {
+        throw new Error('Latest SNIP version not found');
+      }
+
+      const { id, ...values } = opts.input
+
+      const valuesToInsert = {
+        ...values,
+        snipId: id, // ensure that the snip id is passed correctly
+        version: (+latestSnipVersion.version + 1).toString(), // Increment the version
+        createdAt: new Date(), // Use the current time
+      };
+
+      console.log(valuesToInsert)
+
       // First, create a new snip version
       const insertedSnipVersion = await db
         .insert(snipVersions)
-        .values({
-          ...opts.input,
-          snipId: opts.input.id, // ensure that the snip id is passed correctly
-          createdAt: new Date(), // Use the current time
-        })
+        .values(valuesToInsert)
         .returning();
+
+      console.log('INSERTED VERSION', insertedSnipVersion);
 
       // Then, update the snip's latest version with the id of the newly created snip version
       const updatedSnip = await db

@@ -9,12 +9,17 @@ import {
   Stat,
   Divider,
   FormControl,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  DividerWithText,
   CommentInput,
   CommentList,
   IconButton,
   HiEllipsisHorizontal,
   QuillEditor,
-  Iframely,
+  Iframely, ProfileSummaryCard,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -25,8 +30,10 @@ export function Page() {
 
   const { user } = useDynamicContext();
 
+  const snipId = parseInt(pageContext.routeParams!.id)
+
   const snip = trpc.snips.getSNIP.useQuery({
-    id: parseInt(pageContext.routeParams!.id),
+    id: snipId,
   });
 
   const saveComment = trpc.comments.saveComment.useMutation({
@@ -39,7 +46,7 @@ export function Page() {
     try {
       await saveComment.mutateAsync({
         content: value,
-        snipId: parseInt(pageContext.routeParams!.id),
+        snipId,
       });
     } catch (error) {
       // Handle error
@@ -75,12 +82,16 @@ export function Page() {
                     {snip.data?.title}
                   </Heading>
                 </Box>
-                <IconButton
-                  variant="simple"
-                  onClick={() => console.log("clicked")}
-                  aria-label="Search database"
-                  icon={<HiEllipsisHorizontal size="24px" />}
-                />
+                <Box>
+                  <ProfileSummaryCard.MoreActions>
+                    <MenuItem as="a" href={`/snips/edit/${snipId}`}>
+                      Edit
+                    </MenuItem>
+                    <MenuItem as="a" onClick={() => alert("Delete")}>
+                      Delete
+                    </MenuItem>
+                  </ProfileSummaryCard.MoreActions>
+                </Box>
               </Box>
               <Flex gap="16px" paddingTop="0" alignItems="center">
                 <Stat.Root>
@@ -137,6 +148,8 @@ export function Page() {
                 <Box>Show logged out state for comment input</Box>
               )}
               <CommentList commentsList={snip.data?.comments || []} />
+              <DividerWithText text="v1 comments" />
+              <DividerWithText text="v2 comments" />
             </Stack>
           </Box>
         </ContentContainer>

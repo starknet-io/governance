@@ -15,6 +15,7 @@ export { DelegateCard } from "./Card";
 export { Tag } from "./Tag";
 export { ContentContainer } from "./ContentContainer";
 export { IconButton } from "./IconButton";
+export { DividerWithText } from "./DividerWithText";
 export { Collapse } from "./Collapse";
 export { VoteButton } from "./VoteButton";
 export { VoteStat } from "./VoteStat";

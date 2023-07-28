@@ -26,6 +26,7 @@ export {
   DelegateCard,
   Tag,
   PageTitle,
+  DividerWithText,
   ContentContainer,
   VoteStat,
   IconButton,
