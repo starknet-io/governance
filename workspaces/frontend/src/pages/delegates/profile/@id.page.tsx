@@ -8,8 +8,6 @@ import {
   DelegateModal,
   Divider,
   Heading,
-  // ListRow,
-  // MarkdownRenderer,
   QuillEditor,
   ProfileSummaryCard,
   Stack,
@@ -22,31 +20,40 @@ import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { useDelegateRegistryDelegation, useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
+import {
+  useDelegateRegistryDelegation,
+  useDelegateRegistrySetDelegate,
+} from "src/wagmi/DelegateRegistry";
 import { useQuery } from "@apollo/client";
 import { gql } from "src/gql";
 import { useBalanceData } from "src/utils/hooks";
+import { stringToHex } from "viem";
 
-const GET_DELEGATE_STATS = gql(`
-query Votes($where: VoteWhere) {
-  votes(where: $where)  {
-    id,
-    choice
-  }}`);
-
-
-function getChoiceStats(data: any[]) {
-  const stats: { [key: string]: number } = { 1: 0, 2: 0, 3: 0 };
-  data?.forEach((vote) => {
-    if (vote.choice in stats) {
-      stats[vote.choice] += 1;
-    } else {
-      stats[vote.choice] = 1;
+const DELEGATE_PROFILE_PAGE_QUERY = gql(`
+  query DelegateProfilePageQuery(
+    $voter: String!
+    $space: String!
+    $proposal: String
+    $where: VoteWhere
+  ) {
+    votes(where: $where) {
+      choice
+      voter
+      reason
+      metadata
+      created
+      ipfs
+      vp
+      vp_by_strategy
+      vp_state
     }
-  });
-
-  return stats;
-}
+    vp(voter: $voter, space: $space, proposal: $proposal) {
+      vp
+      vp_by_strategy
+      vp_state
+    }
+  }
+`);
 
 export function Page() {
   const pageContext = usePageContext();
@@ -55,21 +62,18 @@ export function Page() {
 
   const { isLoading, write } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID)
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
   });
 
   const delegation = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    args: [
-      address!,
-      "0x0000000000000000000000000000000000000000000000000000000000000000",
-    ],
+    args: [address!, stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE)],
     watch: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
-    enabled: address != null
-  })
+    enabled: address != null,
+  });
 
-  const delegateId = pageContext.routeParams!.id
+  const delegateId = pageContext.routeParams!.id;
 
   const delegateResponse = trpc.delegates.getDelegateById.useQuery({
     id: delegateId,
@@ -79,51 +83,36 @@ export function Page() {
     delegateId,
   });
 
-  console.log('delegateCommentsResponse.data', delegateCommentsResponse.data)
+  console.log("delegateCommentsResponse.data", delegateCommentsResponse.data);
 
   const delegate = delegateResponse.data;
-  const delegateAddress = delegate?.author?.address as `0x${string}`
+  const delegateAddress = delegate?.author?.address as `0x${string}`;
 
-  const votes = useQuery(
-    gql(`
-      query DelegateVotes($where: VoteWhere) {
-        votes(where: $where) {
-          choice
-          voter
-          reason
-          metadata
-          created
-          ipfs
-          vp
-          vp_by_strategy
-          vp_state
-        }
-      }
-    `),
-    {
-      variables: {
-        "where": {
-          "voter": delegateAddress as any,
-        }
+  const gqlResponse = useQuery(DELEGATE_PROFILE_PAGE_QUERY, {
+    variables: {
+      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+      voter: delegateAddress,
+      where: {
+        voter: delegateAddress,
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
       },
-      skip: delegateAddress == null
     },
-  );
+    skip: delegateAddress == null,
+  });
 
-  console.log('votes.data', votes.data)
+  console.log("gqlResponse.data", gqlResponse.data);
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
 
-  const { data } = useQuery(GET_DELEGATE_STATS, {
-    variables: {
-      where: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: delegate?.author?.address,
-      },
+  const stats = gqlResponse.data?.votes?.reduce(
+    (acc: { [key: string]: number }, vote) => {
+      acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
+      return acc;
     },
-  });
-  const stats = getChoiceStats(data?.votes as any[]);
+    {},
+  );
+
   return (
     <Box
       display="flex"
@@ -140,7 +129,7 @@ export function Page() {
         delegateTokens={() => {
           write?.({
             args: [
-              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE),
               delegate?.author?.address as any,
             ],
           });
@@ -164,7 +153,9 @@ export function Page() {
             imgUrl={delegate?.author?.ensAvatar}
             ensName={delegate?.author?.ensName}
             address={delegate?.author?.ensName || delegate?.author?.address}
-            avatarString={delegate?.author?.ensAvatar || delegate?.author?.address}
+            avatarString={
+              delegate?.author?.ensAvatar || delegate?.author?.address
+            }
           >
             <ProfileSummaryCard.MoreActions>
               <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
@@ -185,31 +176,42 @@ export function Page() {
           )}
         </ProfileSummaryCard.Root>
         <Box mt="24px">
-          {delegation.isFetched &&
-            delegation.data === delegateAddress &&
-            <Status label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`} />
-          }
+          {delegation.isFetched && delegation.data === delegateAddress && (
+            <Status
+              label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
+            />
+          )}
 
-          {delegateResponse.isFetched && address === delegateAddress &&
+          {delegateResponse.isFetched && address === delegateAddress && (
             <Status label="You can’t delegate votes to your own account." />
-          }
+          )}
         </Box>
 
         <Box mt="32px">
           <SummaryItems.Root>
             <SummaryItems.Item
               label="Proposals voted on"
-              value={`${data?.votes?.length}`}
+              value={gqlResponse.data?.votes?.length.toString() ?? ""}
             />
-            <SummaryItems.Item label="Delegated votes" value={votes.data?.votes?.length.toString()} />
-            <SummaryItems.Item label="Total comments" value={delegateCommentsResponse.data?.length.toString()} />
+            <SummaryItems.Item
+              label="Delegated votes"
+              value={gqlResponse.data?.vp?.vp?.toString()}
+            />
+            <SummaryItems.Item
+              label="Total comments"
+              value={delegateCommentsResponse.data?.length.toString()}
+            />
             <SummaryItems.Item
               label="For/against/abstain"
-              value={`${stats[1]}/${stats[2]}/${stats[3]}`}
+              value={
+                stats && `${stats[1] ?? 0}/${stats[2] ?? 0}/${stats[3] ?? 0}`
+              }
             />
             <SummaryItems.Item
               label="Delegation agreement"
-              value={delegate?.agreeTerms ? "Yes" : "No"}
+              value={
+                delegate != null ? (delegate?.agreeTerms ? "Yes" : "No") : null
+              }
             />
             <SummaryItems.Item
               isCopiable

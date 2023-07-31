@@ -49,6 +49,7 @@ import { useQuery } from "@apollo/client";
 import { useBalanceData } from "src/utils/hooks";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
+import { stringToHex } from "viem";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -121,7 +122,7 @@ const AuthorizedUserView = () => {
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
       address! as `0x${string}`,
-      "0x0000000000000000000000000000000000000000000000000000000000000000",
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE),
     ],
     watch: false,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),

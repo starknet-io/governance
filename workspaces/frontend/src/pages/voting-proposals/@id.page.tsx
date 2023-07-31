@@ -46,6 +46,7 @@ import { trpc } from "src/utils/trpc";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { useBalanceData } from "src/utils/hooks";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { stringToHex } from "viem";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -160,7 +161,7 @@ export function Page() {
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
       address!,
-      "0x0000000000000000000000000000000000000000000000000000000000000000",
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE),
     ],
     watch: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
