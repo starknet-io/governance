@@ -22,14 +22,19 @@ import {
   Skeleton,
   SkeletonCircle,
   SkeletonText,
+  DelegateModal,
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { useHelpMessage } from "src/hooks/HelpMessage";
-{
-  /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
-}
+import { stringToHex } from "viem";
+import { useAccount } from "wagmi";
+import { useBalanceData } from "src/utils/hooks";
+import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
+
+// Filter: already voted, >1million voting power, agree with delegate agreement, category
+
 export const delegateFilters = {
   defaultValue: ["already_voted"],
   options: [
@@ -115,9 +120,8 @@ export const delegateInterests = {
     },
   ],
 };
-{
-  /* Sort by: most voting power, activity, most votes, most comments, by category  */
-}
+
+// Sort by: most voting power, activity, most votes, most comments, by category
 const sortByOptions = {
   defaultValue: "sort_by",
   options: [
@@ -131,6 +135,7 @@ const sortByOptions = {
     { label: "Most comments", value: "most_comments" },
   ],
 };
+
 export function Page() {
   const [, setHelpMessage] = useHelpMessage();
 
@@ -155,9 +160,50 @@ export function Page() {
     defaultValue: delegateFilters.defaultValue,
     onSubmit: console.log,
   });
+  const { address, isConnected } = useAccount();
+  const senderData = useBalanceData(address);
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { isLoading, write } = useDelegateRegistrySetDelegate({
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+  });
+
+
+  const delegateResponse = trpc.delegates.getDelegateById.useQuery({
+    id: delegateId,
+  });
+
+  const delegateCommentsResponse = trpc.delegates.getDelegateComments.useQuery({
+    delegateId,
+  });
+
+  console.log("delegateCommentsResponse.data", delegateCommentsResponse.data);
+
+  const delegate = delegateResponse.data;
+
+  const delegateAddress = delegate?.author?.address as `0x${string}`;
+
+  const receiverData = useBalanceData(delegateAddress);
 
   return (
     <ContentContainer>
+      <DelegateModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        isConnected
+        senderData={senderData}
+        receiverData={receiverData}
+        delegateTokens={() => {
+          write?.({
+            args: [
+              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE),
+              delegate?.author?.address as any,
+            ],
+          });
+          setIsOpen(false);
+        }}
+      />
       <Box width="100%">
         <PageTitle
           learnMoreLink="/learn"
@@ -242,7 +288,11 @@ export function Page() {
                 {
                   isAuthenticated ? (
                     <>
-                      <Button size="sm" variant="outline">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setHelpMessage("connectWalletMessage")}
+                      >
                         Delegate to address
                       </Button>
 
