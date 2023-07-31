@@ -75,8 +75,42 @@ export function Page() {
     id: delegateId,
   });
 
+  const delegateCommentsResponse = trpc.delegates.getDelegateComments.useQuery({
+    delegateId,
+  });
+
+  console.log('delegateCommentsResponse.data', delegateCommentsResponse.data)
+
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`
+
+  const votes = useQuery(
+    gql(`
+      query DelegateVotes($where: VoteWhere) {
+        votes(where: $where) {
+          choice
+          voter
+          reason
+          metadata
+          created
+          ipfs
+          vp
+          vp_by_strategy
+          vp_state
+        }
+      }
+    `),
+    {
+      variables: {
+        "where": {
+          "voter": delegateAddress as any,
+        }
+      },
+      skip: delegateAddress == null
+    },
+  );
+
+  console.log('votes.data', votes.data)
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
@@ -167,8 +201,8 @@ export function Page() {
               label="Proposals voted on"
               value={`${data?.votes?.length}`}
             />
-            <SummaryItems.Item label="Delegated votes" value="0" />
-            <SummaryItems.Item label="Total comments" value="0" />
+            <SummaryItems.Item label="Delegated votes" value={votes.data?.votes?.length.toString()} />
+            <SummaryItems.Item label="Total comments" value={delegateCommentsResponse.data?.length.toString()} />
             <SummaryItems.Item
               label="For/against/abstain"
               value={`${stats[1]}/${stats[2]}/${stats[3]}`}
