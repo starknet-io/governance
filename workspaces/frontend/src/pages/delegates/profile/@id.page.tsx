@@ -201,8 +201,8 @@ export function Page() {
               label="Proposals voted on"
               value={`${data?.votes?.length}`}
             />
-            <SummaryItems.Item label="Delegated votes" value="0" />
-            <SummaryItems.Item label="Total comments" value="0" />
+            <SummaryItems.Item label="Delegated votes" value={votes.data?.votes?.length.toString()} />
+            <SummaryItems.Item label="Total comments" value={delegateCommentsResponse.data?.length.toString()} />
             <SummaryItems.Item
               label="For/against/abstain"
               value={`${stats[1]}/${stats[2]}/${stats[3]}`}
