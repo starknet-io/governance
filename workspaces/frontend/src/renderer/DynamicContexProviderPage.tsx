@@ -4,7 +4,6 @@ import {
   UserProfile,
   Wallet,
   WalletConnector,
-  DynamicNav,
   useDynamicContext,
 } from "@dynamic-labs/sdk-react";
 import {
@@ -32,18 +31,13 @@ import {
   GiHamburgerMenu,
   ArrowLeftIcon,
   SettingsIcon,
-  UserProfileMenu,
 } from "@yukilabs/governance-components";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { PageContext } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import React from "react";
-import { useOutsideClick } from "@chakra-ui/react";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
-import { useBalanceData } from "src/utils/hooks";
-import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
+import { Spinner } from "@chakra-ui/react";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -75,148 +69,22 @@ interface AuthSuccessParams {
   walletConnector: WalletConnector | undefined;
 }
 
-const AuthorizationView = () => <DynamicWidget />;
-
-const AuthorizedUserView = () => {
-  const navRef = useRef<HTMLDivElement | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userData, setUserData] = useState<any>(null);
-
-  const { handleLogOut } = useDynamicContext();
-  const { user } = useDynamicContext();
-  const address = user?.verifiedCredentials[0]?.address;
-  trpc.users.getUser.useQuery(
-    { address: address ?? "" },
-    {
-      onSuccess: (data) => {
-        setUserData(data);
-      },
-    },
-  );
-
-  const { data: vp } = useQuery(
-    gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
-      vp(voter: $voter, space: $space, proposal: $proposal) {
-        vp
-        vp_by_strategy
-        vp_state
-      }
-    }`),
-    {
-      variables: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: address as string,
-      },
-    },
-  );
-
-  const userBalance = useBalanceData(address as `0x${string}`);
-
-  const delegation = useDelegateRegistryDelegation({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    args: [
-      address! as `0x${string}`,
-      "0x0000000000000000000000000000000000000000000000000000000000000000",
-    ],
-    watch: false,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
-    enabled: address != null,
-  });
-
-  const delegatedTo =
-    delegation?.data !== "0x0000000000000000000000000000000000000000"
-      ? trpc.delegates.getDelegateByAddress.useQuery({
-          address: delegation?.data as string,
-        })
-      : null;
-
-  const editUserProfile = trpc.users.editUserProfile.useMutation();
-
-  useEffect(() => {
-    function handleClick(event: any) {
-      const clickedElement = event.target;
-      const originalClickedElement =
-        event.originalTarget || event.composedPath()[0] || event.target;
-      if (
-        clickedElement.classList.contains("dynamic-shadow-dom") &&
-        ((originalClickedElement.classList.contains(
-          "account-control__container",
-        ) &&
-          originalClickedElement.nodeName === "BUTTON") ||
-          (originalClickedElement.classList.contains("typography") &&
-            originalClickedElement.nodeName === "P"))
-      ) {
-        handleAddressClick(event);
-      }
-    }
-
-    if (navRef.current) {
-      navRef.current.addEventListener("click", handleClick);
-
-      return () => {
-        navRef.current?.removeEventListener("click", handleClick);
-      };
-    }
-    return () => {
-      // intentionally empty cleanup function
-    };
-  }, []);
-
-  const handleAddressClick = (event: any) => {
-    event.preventDefault();
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  useOutsideClick({
-    ref: navRef,
-    handler: () => {
-      setIsMenuOpen(false);
-    },
-  });
-
-  const handleDisconnect = () => {
-    handleLogOut();
-    setIsMenuOpen(false);
-  };
-
-  const handleSave = (username: string, starknetWalletAddress: string) => {
-    editUserProfile.mutateAsync(
-      {
-        id: userData.id,
-        username,
-        starknetWalletAddress,
-      },
-      {
-        onSuccess: (data) => {
-          setUserData(data);
-        },
-      },
-    );
-    setIsMenuOpen(false);
-  };
+const DynamicWagmiConnectorPage = (props: Props) => {
+  const { pageContext, children } = props;
 
   return (
-    <>
-      <div ref={navRef}>
-        <DynamicNav />
-        {isMenuOpen ? (
-          <UserProfileMenu
-            delegatedTo={delegatedTo?.data ? delegatedTo?.data : null}
-            onDisconnect={handleDisconnect}
-            user={userData}
-            onSave={handleSave}
-            vp={vp?.vp?.vp ?? 0}
-            userBalance={userBalance}
-          />
+    <DynamicWagmiConnector>
+      <Suspense fallback={<p>Loading...</p>}>
+        {(pageContext.hasLayout ?? true) === true ? (
+          <PageLayout pageContext={pageContext}>{children}</PageLayout>
         ) : (
-          <></>
+          children
         )}
-      </div>
-    </>
+      </Suspense>
+    </DynamicWagmiConnector>
   );
 };
-
-const DynamicContextProviderPage = (props: Props) => {
+export function DynamicContextProviderPage(props: Props) {
   const { pageContext, children } = props;
   const [authArgs, setAuthArgs] = useState<AuthSuccessParams | null>(null);
   const authMutation = trpc.auth.authUser.useMutation();
@@ -247,18 +115,12 @@ const DynamicContextProviderPage = (props: Props) => {
         cssOverrides,
       }}
     >
-      <DynamicWagmiConnector>
-        <Suspense fallback={<p>Loading...</p>}>
-          {(pageContext.hasLayout ?? true) === true ? (
-            <PageLayout pageContext={pageContext}>{children}</PageLayout>
-          ) : (
-            children
-          )}
-        </Suspense>
-      </DynamicWagmiConnector>
+      <DynamicWagmiConnectorPage pageContext={pageContext}>
+        {children}
+      </DynamicWagmiConnectorPage>
     </DynamicContextProvider>
   );
-};
+}
 
 interface BackButtonProps {
   urlStart: string;
@@ -311,19 +173,37 @@ const BackButton = ({
   return null;
 };
 
+const LazyDataComponent = lazy(() => import("./AuthorizedUserView"));
+
+const DynamicCustomWidget = () => {
+  const { user } = useDynamicContext();
+  const isAuthorized = !!user;
+
+  return isAuthorized ? (
+    <Suspense fallback={<Spinner size="sm" />}>
+      <LazyDataComponent />
+    </Suspense>
+  ) : (
+    <DynamicWidget />
+  );
+};
+
 function PageLayout(props: Props) {
   const { children, pageContext } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const councilResp = trpc.councils.getAll.useQuery();
+  const [renderDone, setRenderDone] = useState(false);
 
-  const { user } = useDynamicContext();
-  const isAuthorized = !!user;
-  const dynamicCustomWidget = isAuthorized ? (
-    <AuthorizedUserView />
-  ) : (
-    <AuthorizationView />
-  );
-
+  useEffect(() => {
+    if (renderDone) {
+      setRenderDone(false);
+      setTimeout(() => {
+        setRenderDone(true);
+      });
+    } else {
+      setRenderDone(true);
+    }
+  }, [props]);
   return (
     <>
       <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
@@ -504,7 +384,7 @@ function PageLayout(props: Props) {
             />
 
             <Box display="flex" marginLeft="auto">
-              {dynamicCustomWidget}
+              {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
             </Box>
           </Header>
           <Layout.Content>{children}</Layout.Content>
@@ -513,5 +393,3 @@ function PageLayout(props: Props) {
     </>
   );
 }
-
-export default DynamicContextProviderPage;
