@@ -7,7 +7,6 @@ import { eq, and, isNotNull } from "drizzle-orm";
 import { users } from "../db/schema/users";
 import { createInsertSchema } from "drizzle-zod";
 import { comments } from "../db/schema/comments";
-import { PgText } from "drizzle-orm/pg-core";
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
