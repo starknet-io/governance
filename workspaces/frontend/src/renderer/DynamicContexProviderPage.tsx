@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   DynamicContextProvider,
   DynamicWidget,
@@ -87,16 +88,16 @@ const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userData, setUserData] = useState<any>(null);
-
   const { handleLogOut } = useDynamicContext();
   const { user } = useDynamicContext();
   const address = user?.verifiedCredentials[0]?.address;
   trpc.users.getUser.useQuery(
-    { address: address ?? "" },
+    { address: address! },
     {
       onSuccess: (data) => {
         setUserData(data);
       },
+      enabled: address != null
     },
   );
 
@@ -111,8 +112,9 @@ const AuthorizedUserView = () => {
     {
       variables: {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: address as string,
+        voter: address!,
       },
+      skip: address == null
     },
   );
 
