@@ -12,9 +12,6 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "react-hooks/exhaustive-deps": ["warn", {
-      "additionalHooks": "getDelegateByAddress"
-    }],
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/interface-name-prefix": "off",
