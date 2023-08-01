@@ -91,13 +91,14 @@ const AuthorizedUserView = () => {
   const { handleLogOut } = useDynamicContext();
   const { user } = useDynamicContext();
   const address = user?.verifiedCredentials[0]?.address;
+
   trpc.users.getUser.useQuery(
     { address: address! },
     {
       onSuccess: (data) => {
         setUserData(data);
       },
-      enabled: address != null
+      enabled: address != null,
     },
   );
 
@@ -114,7 +115,7 @@ const AuthorizedUserView = () => {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         voter: address!,
       },
-      skip: address == null
+      skip: address == null,
     },
   );
 
@@ -131,16 +132,23 @@ const AuthorizedUserView = () => {
     enabled: address != null,
   });
 
-  const delegatedTo =
-    delegation?.data !== "0x0000000000000000000000000000000000000000"
-      ? trpc.delegates.getDelegateByAddress.useQuery({
-          address: delegation?.data as string,
-        })
-      : null;
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery(
+    {
+      address: delegation?.data as string,
+    },
+    {
+      enabled: delegation?.data != null,
+    },
+  );
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
 
   useEffect(() => {
+    const handleAddressClick = (event: any) => {
+      event.preventDefault();
+      setIsMenuOpen(!isMenuOpen);
+    };
+
     function handleClick(event: any) {
       const clickedElement = event.target;
       const originalClickedElement =
@@ -160,20 +168,16 @@ const AuthorizedUserView = () => {
 
     if (navRef.current) {
       navRef.current.addEventListener("click", handleClick);
+      const el = navRef.current;
 
       return () => {
-        navRef.current?.removeEventListener("click", handleClick);
+        el?.removeEventListener("click", handleClick);
       };
     }
     return () => {
       // intentionally empty cleanup function
     };
-  }, []);
-
-  const handleAddressClick = (event: any) => {
-    event.preventDefault();
-    setIsMenuOpen(!isMenuOpen);
-  };
+  }, [isMenuOpen]);
 
   useOutsideClick({
     ref: navRef,
@@ -230,19 +234,15 @@ const DynamicContextProviderPage = (props: Props) => {
   const authMutation = trpc.auth.authUser.useMutation();
   const logoutMutation = trpc.auth.logout.useMutation();
 
-  const authUser = async (args: AuthSuccessParams) => {
-    authMutation.mutate({
-      authToken: args.authToken,
-      ensName: args.user.ens?.name,
-      ensAvatar: args.user.ens?.avatar,
-    });
-  };
-
   useEffect(() => {
     if (authArgs) {
-      authUser(authArgs);
+      authMutation.mutate({
+        authToken: authArgs.authToken,
+        ensName: authArgs.user.ens?.name,
+        ensAvatar: authArgs.user.ens?.avatar,
+      });
     }
-  }, [authArgs]);
+  }, [authArgs, authMutation]);
 
   return (
     <HelpMessageProvider>

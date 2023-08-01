@@ -160,25 +160,26 @@ export function Page() {
     defaultValue: delegateFilters.defaultValue,
     onSubmit: console.log,
   });
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const senderData = useBalanceData(address);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { isLoading, write } = useDelegateRegistrySetDelegate({
+
+  const { write } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
   });
 
+  const delegateId: string | null = null;
 
-  const delegateResponse = trpc.delegates.getDelegateById.useQuery({
-    id: delegateId,
-  });
-
-  const delegateCommentsResponse = trpc.delegates.getDelegateComments.useQuery({
-    delegateId,
-  });
-
-  console.log("delegateCommentsResponse.data", delegateCommentsResponse.data);
+  const delegateResponse = trpc.delegates.getDelegateById.useQuery(
+    {
+      id: delegateId!,
+    },
+    {
+      enabled: delegateId != null,
+    },
+  );
 
   const delegate = delegateResponse.data;
 

@@ -9428,6 +9428,7 @@ __metadata:
     concurrently: ^8.2.0
     eslint: ^8.43.0
     eslint-plugin-react: ^7.32.2
+    eslint-plugin-react-hooks: ^4.6.0
     prettier: ^3.0.0
     typescript: ^5.1.3
   languageName: unknown
@@ -13188,6 +13189,15 @@ __metadata:
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
   checksum: 7671ac3cc7165cd894cc2fc4c67ddf075f01502c25bbdc649559e7dfd6a525126debe756c83e11887972ffbe57d0d10d3bb17c7269594823654f55be3a3ca5ef
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-react-hooks@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "eslint-plugin-react-hooks@npm:4.6.0"
+  peerDependencies:
+    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
+  checksum: 23001801f14c1d16bf0a837ca7970d9dd94e7b560384b41db378b49b6e32dc43d6e2790de1bd737a652a86f81a08d6a91f402525061b47719328f586a57e86c3
   languageName: node
   linkType: hard
 

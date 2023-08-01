@@ -1,4 +1,4 @@
-{ 
+{
   "parser": "@typescript-eslint/parser",
   "env": {
     "browser": true,
@@ -8,10 +8,15 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
+    "react-hooks/exhaustive-deps": ["warn", {
+      "additionalHooks": "getDelegateByAddress"
+    }],
     "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",

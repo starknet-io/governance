@@ -20,7 +20,7 @@ export function PageShell(props: Props) {
       pageContext.documentProps ?? pageContext.exports.documentProps;
 
     document.title = documentProps?.title ?? document.title;
-  }, [pageContext.pageProps]);
+  }, [pageContext.documentProps, pageContext.exports.documentProps, pageContext.pageProps]);
 
   return (
     <React.StrictMode>
