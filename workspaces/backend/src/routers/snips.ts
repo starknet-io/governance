@@ -1,12 +1,13 @@
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
-import { desc, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { getUserByJWT } from '../utils/helpers';
 import { snipVersions } from '../db/schema/snipVersions';
 
 const snipInsertSchema = createInsertSchema(snips);
+const snipVersionInsertSchema = createInsertSchema(snipVersions);
 
 // list(page, perPage, sortBy, filters)
 // create voting proposal
@@ -53,12 +54,15 @@ export const snipsRouter = router({
       }
 
       if (data && data.versions) {
+        let totalComments = 0;
         // Change versions from array to an object with version as key
         const versionsObj = data.versions.reduce((obj, version) => {
           obj[version.version] = version;
+          totalComments += version?.comments?.length || 0;
           return obj;
         }, {});
         data.versions = versionsObj;
+        data.totalComments = totalComments;
       }
 
       return data;
@@ -153,10 +157,58 @@ export const snipsRouter = router({
 
       return updatedSnip[0];
     }),
-
-  deleteProposal: publicProcedure
+  deleteSNIP: publicProcedure
     .input(snipInsertSchema.required({ id: true }).pick({ id: true }))
     .mutation(async (opts) => {
+      // Delete all versions associated with the Snip
+      await db
+        .delete(snipVersions)
+        .where(eq(snipVersions.snipId, opts.input.id))
+        .execute();
+
+      // Then delete the Snip itself
       await db.delete(snips).where(eq(snips.id, opts.input.id)).execute();
+    }),
+
+  getSnipVersion: publicProcedure
+    .input(snipVersionInsertSchema.required({ id: true }).pick({ id: true }))
+    .query(async (opts) => {
+      const versionData = await db.query.snipVersions.findFirst({
+        where: eq(snipVersions.id, opts.input.id),
+      });
+
+      if (!versionData) {
+        throw new Error('SNIP version not found');
+      }
+
+      // Fetch the snip with all its versions and comments using the snipId from the versionData
+      const snipData = await db.query.snips.findFirst({
+        where: eq(snips.id, versionData.snipId),
+        with: {
+          versions: {
+            with: {
+              comments: true, // This will fetch the comments for each version
+            },
+          },
+        },
+      });
+
+      if (snipData && snipData.versions) {
+        // Change versions from array to an object with version as key
+        let totalComments = 0;
+
+        const versionsObj = snipData.versions.reduce((obj, version) => {
+          obj[version.version] = version;
+          totalComments += version?.comments?.length || 0;
+          return obj;
+        }, {});
+        snipData.versions = versionsObj;
+        snipData.totalComments = totalComments;
+        snipData.description = versionData.description;
+        snipData.title = versionData.title;
+        snipData.discussionURL = versionData.discussionURL;
+      }
+
+      return snipData;
     }),
 });

@@ -8,69 +8,25 @@ import {
   Flex,
   Stat,
   Divider,
-  FormControl,
-  MenuItem,
+  Alert,
+  AlertTitle,
+  AlertIcon,
   DividerWithText,
-  CommentInput,
   CommentList,
   QuillEditor,
   Iframely,
-  ProfileSummaryCard,
 } from "@yukilabs/governance-components";
-import { navigate } from "vite-plugin-ssr/client/router";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 export function Page() {
   const pageContext = usePageContext();
 
-  const { user } = useDynamicContext();
-
   const snipId = parseInt(pageContext.routeParams!.id);
 
-  const snip = trpc.snips.getSNIP.useQuery({
+  const snip = trpc.snips.getSnipVersion.useQuery({
     id: snipId,
   });
-
-  const saveComment = trpc.comments.saveComment.useMutation({
-    onSuccess: () => {
-      snip.refetch();
-    },
-  });
-
-  const handleCommentSend = async (value: string) => {
-    try {
-      await saveComment.mutateAsync({
-        content: value,
-        snipVersionId: snip?.data?.latestVersionId,
-      });
-    } catch (error) {
-      // Handle error
-      console.log(error);
-    }
-    console.log(value);
-  };
-  console.log(typeof snip.data?.discussionURL);
-
-  const deleteSNIP = trpc.snips.deleteSNIP.useMutation();
-
-  const onDelete = async () => {
-    try {
-      await deleteSNIP.mutateAsync({ id: snipId });
-      navigate(`/snips/`);
-    } catch (error) {
-      // Handle error
-      console.log(error);
-    }
-  };
-
-
-  const snipVersions = snip.data?.versions
-    ? Object.keys(snip.data?.versions).map((snipVersion) => ({
-        ...snip.data?.versions[snipVersion],
-      }))
-    : [];
 
   return (
     <>
@@ -87,6 +43,12 @@ export function Page() {
               direction={{ base: "column" }}
               color="#545464"
             >
+              <Alert status="error" bg="#4A4A4F">
+                <AlertIcon color="#fff" />
+                <AlertTitle color="#fff" fontSize={14} fontWeight={500}>
+                  You are viewing old version of this SNIP
+                </AlertTitle>
+              </Alert>
               <Box display="flex" alignItems="center">
                 <Box flex="1">
                   <Heading
@@ -97,25 +59,6 @@ export function Page() {
                   >
                     {snip.data?.title}
                   </Heading>
-                </Box>
-                <Box>
-                  <ProfileSummaryCard.MoreActions>
-                    <MenuItem as="a" href={`/snips/edit/${snipId}`}>
-                      Edit
-                    </MenuItem>
-                    <MenuItem as="a" onClick={onDelete}>
-                      Delete
-                    </MenuItem>
-                    {snipVersions.map((snipVersion) => (
-                      <MenuItem
-                        key={snipVersion.version}
-                        as="a"
-                        href={`/snips/version/${snipVersion?.id}`}
-                      >
-                        version {snipVersion.version}
-                      </MenuItem>
-                    ))}
-                  </ProfileSummaryCard.MoreActions>
                 </Box>
               </Box>
               <Flex gap="16px" paddingTop="0" alignItems="center">
@@ -165,13 +108,6 @@ export function Page() {
               <Heading id="#discussion" color="#33333E" variant="h3">
                 Discussion
               </Heading>
-              {user ? (
-                <FormControl id="delegate-statement">
-                  <CommentInput onSend={handleCommentSend} />
-                </FormControl>
-              ) : (
-                <Box>Show logged out state for comment input</Box>
-              )}
               {snip.data?.versions &&
                 Object.keys(snip.data.versions).map((snipVersion) => {
                   return (
