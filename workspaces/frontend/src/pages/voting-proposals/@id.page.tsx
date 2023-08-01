@@ -161,7 +161,7 @@ export function Page() {
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
       address!,
-      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE),
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
     watch: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
