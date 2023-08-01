@@ -130,7 +130,7 @@ export function Page() {
           write?.({
             args: [
               stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
-              delegate?.author?.address as any,
+              delegateAddress,
             ],
           });
           setIsOpen(false);
@@ -152,9 +152,9 @@ export function Page() {
           <ProfileSummaryCard.Profile
             imgUrl={delegate?.author?.ensAvatar}
             ensName={delegate?.author?.ensName}
-            address={delegate?.author?.ensName || delegate?.author?.address}
+            address={delegate?.author?.ensName || delegateAddress}
             avatarString={
-              delegate?.author?.ensAvatar || delegate?.author?.address
+              delegate?.author?.ensAvatar || delegateAddress
             }
           >
             <ProfileSummaryCard.MoreActions>

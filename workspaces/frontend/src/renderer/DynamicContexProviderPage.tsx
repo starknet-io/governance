@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   DynamicContextProvider,
   DynamicWidget,
@@ -87,16 +88,17 @@ const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userData, setUserData] = useState<any>(null);
-
   const { handleLogOut } = useDynamicContext();
   const { user } = useDynamicContext();
   const address = user?.verifiedCredentials[0]?.address;
+
   trpc.users.getUser.useQuery(
-    { address: address ?? "" },
+    { address: address! },
     {
       onSuccess: (data) => {
         setUserData(data);
       },
+      enabled: address != null,
     },
   );
 
@@ -111,8 +113,9 @@ const AuthorizedUserView = () => {
     {
       variables: {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: address as string,
+        voter: address!,
       },
+      skip: address == null,
     },
   );
 
@@ -122,23 +125,30 @@ const AuthorizedUserView = () => {
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
       address! as `0x${string}`,
-      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE),
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
     watch: false,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
 
-  const delegatedTo =
-    delegation?.data !== "0x0000000000000000000000000000000000000000"
-      ? trpc.delegates.getDelegateByAddress.useQuery({
-          address: delegation?.data as string,
-        })
-      : null;
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery(
+    {
+      address: delegation?.data as string,
+    },
+    {
+      enabled: delegation?.data != null,
+    },
+  );
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
 
   useEffect(() => {
+    const handleAddressClick = (event: any) => {
+      event.preventDefault();
+      setIsMenuOpen(!isMenuOpen);
+    };
+
     function handleClick(event: any) {
       const clickedElement = event.target;
       const originalClickedElement =
@@ -158,20 +168,16 @@ const AuthorizedUserView = () => {
 
     if (navRef.current) {
       navRef.current.addEventListener("click", handleClick);
+      const el = navRef.current;
 
       return () => {
-        navRef.current?.removeEventListener("click", handleClick);
+        el?.removeEventListener("click", handleClick);
       };
     }
     return () => {
       // intentionally empty cleanup function
     };
-  }, []);
-
-  const handleAddressClick = (event: any) => {
-    event.preventDefault();
-    setIsMenuOpen(!isMenuOpen);
-  };
+  }, [isMenuOpen]);
 
   useOutsideClick({
     ref: navRef,
@@ -228,19 +234,15 @@ const DynamicContextProviderPage = (props: Props) => {
   const authMutation = trpc.auth.authUser.useMutation();
   const logoutMutation = trpc.auth.logout.useMutation();
 
-  const authUser = async (args: AuthSuccessParams) => {
-    authMutation.mutate({
-      authToken: args.authToken,
-      ensName: args.user.ens?.name,
-      ensAvatar: args.user.ens?.avatar,
-    });
-  };
-
   useEffect(() => {
     if (authArgs) {
-      authUser(authArgs);
+      authMutation.mutate({
+        authToken: authArgs.authToken,
+        ensName: authArgs.user.ens?.name,
+        ensAvatar: authArgs.user.ens?.avatar,
+      });
     }
-  }, [authArgs]);
+  }, [authArgs, authMutation]);
 
   return (
     <HelpMessageProvider>
