@@ -93,13 +93,13 @@ export async function render(pageContext: PageContextServer) {
       <meta property="twitter:image" content="${documentProps?.image ?? ""}">
 
       <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(import.meta.env.VITE_APP_GOOGLE_TAG_ID)}"></script>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=${dangerouslySkipEscape(encodeURIComponent(import.meta.env.VITE_APP_GOOGLE_TAG_ID))}"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', ${JSON.stringify(import.meta.env.VITE_APP_GOOGLE_TAG_ID)});
+        gtag('config', ${dangerouslySkipEscape(JSON.stringify(import.meta.env.VITE_APP_GOOGLE_TAG_ID))});
       </script>
       <script>
         window.global = window;
