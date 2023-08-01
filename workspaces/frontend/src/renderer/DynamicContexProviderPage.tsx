@@ -125,7 +125,7 @@ const AuthorizedUserView = () => {
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
       address! as `0x${string}`,
-      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE),
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
     watch: false,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),

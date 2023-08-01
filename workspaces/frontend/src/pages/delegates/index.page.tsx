@@ -198,7 +198,7 @@ export function Page() {
         delegateTokens={() => {
           write?.({
             args: [
-              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE),
+              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
               delegate?.author?.address as any,
             ],
           });
