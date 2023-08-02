@@ -3,9 +3,10 @@ import { db } from "../db/db";
 import { delegates } from "../db/schema/delegates";
 import { protectedProcedure, publicProcedure, router } from "../utils/trpc";
 import { getUserByJWT } from "../utils/helpers";
-import { eq } from "drizzle-orm";
+import { eq, and, isNotNull } from "drizzle-orm";
 import { users } from "../db/schema/users";
 import { createInsertSchema } from "drizzle-zod";
+import { comments } from "../db/schema/comments";
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -79,8 +80,19 @@ export const delegateRouter = router({
         }
       })
 
-    }
-    ),
+    }),
+
+  getDelegateComments: publicProcedure.
+    input(z.object({ delegateId: z.string() }))
+    .query(async (opts) => {
+      return await db
+        // @ts-expect-error TODO fix types issue here
+        .select({ ...comments, author: users })
+        .from(comments)
+        .rightJoin(users, eq(users.id, comments.userId))
+        .rightJoin(delegates, eq(delegates.userId, comments.userId))
+        .where(and(isNotNull(comments.proposalId), eq(delegates.id, opts.input.delegateId)))
+    }),
 
   editDelegate: protectedProcedure
     .input(delegateInsertSchema.required({ id: true }))
@@ -106,7 +118,8 @@ export const delegateRouter = router({
           delegationStatement: true
         }
       })
-      return user
+      if (user) return user;
+      return null;
     }),
 
 

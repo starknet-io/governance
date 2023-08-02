@@ -18,7 +18,6 @@ export {
   MdOutlineAssignment,
   Heading,
   Text,
-  Connect,
   Logo,
   AppBar,
   Badge,
@@ -97,7 +96,7 @@ export {
   VoteForIcon,
   Status,
   EmptyState,
-  UserProfileMenu
+  UserProfileMenu,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -166,12 +165,18 @@ import {
   AlertDialogOverlay,
   AlertDialogCloseButton,
   Link,
+  Skeleton,
+  HStack,
+  SkeletonCircle,
+  SkeletonText,
+  Spinner,
 } from "@chakra-ui/react";
 
 export {
   Flex,
   ButtonGroup,
   Stack,
+  HStack,
   Box,
   SimpleGrid,
   Container,
@@ -217,4 +222,8 @@ export {
   AlertDialogOverlay,
   AlertDialogCloseButton,
   Link,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
+  Spinner,
 };

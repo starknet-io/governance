@@ -44,6 +44,7 @@ const AuthorizedUserView = () => {
   const userBalance = useBalanceData(
     user?.verifiedCredentials[0]?.address as `0x${string}`,
   );
+
   const { data: delegationData } = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
@@ -59,12 +60,9 @@ const AuthorizedUserView = () => {
     },
   });
 
-  const delegatedTo =
-    delegationData !== "0x0000000000000000000000000000000000000000"
-      ? trpc.delegates.getDelegateByAddress.useQuery({
-          address: delegationData as string,
-        })
-      : null;
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
+    address: delegationData ? delegationData : "",
+  });
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
 
