@@ -9,10 +9,6 @@ import { snipVersions } from '../db/schema/snipVersions';
 const snipInsertSchema = createInsertSchema(snips);
 const snipVersionInsertSchema = createInsertSchema(snipVersions);
 
-// list(page, perPage, sortBy, filters)
-// create voting proposal
-// create snip proposal
-
 export const snipsRouter = router({
   getAll: publicProcedure.query(async () => {
     const data = await db.query.snips.findMany({

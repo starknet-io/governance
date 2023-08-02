@@ -1,0 +1,1 @@
+ALTER TABLE "snip_versions" ADD COLUMN "status" "status";
