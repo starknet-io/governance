@@ -9,12 +9,14 @@ import {
   Divider,
   Heading,
   QuillEditor,
+  ListRow,
   ProfileSummaryCard,
   Stack,
   SummaryItems,
   MenuItem,
   Status,
   EmptyState,
+  Link,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -37,11 +39,17 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
     $where: VoteWhere
   ) {
     votes(where: $where) {
+      id
       choice
       voter
       reason
       metadata
       created
+      proposal {
+        id
+        title
+        body
+      }
       ipfs
       vp
       vp_by_strategy
@@ -67,7 +75,10 @@ export function Page() {
 
   const delegation = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    args: [address!, stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 })],
+    args: [
+      address!,
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
+    ],
     watch: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
@@ -83,8 +94,6 @@ export function Page() {
     delegateId,
   });
 
-  console.log("delegateCommentsResponse.data", delegateCommentsResponse.data);
-
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`;
 
@@ -99,8 +108,6 @@ export function Page() {
     },
     skip: delegateAddress == null,
   });
-
-  console.log("gqlResponse.data", gqlResponse.data);
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
@@ -129,7 +136,9 @@ export function Page() {
         delegateTokens={() => {
           write?.({
             args: [
-              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
+              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                size: 32,
+              }),
               delegateAddress,
             ],
           });
@@ -153,9 +162,7 @@ export function Page() {
             imgUrl={delegate?.author?.ensAvatar}
             ensName={delegate?.author?.ensName}
             address={delegate?.author?.ensName || delegateAddress}
-            avatarString={
-              delegate?.author?.ensAvatar || delegateAddress
-            }
+            avatarString={delegate?.author?.ensAvatar || delegateAddress}
           >
             <ProfileSummaryCard.MoreActions>
               <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
@@ -264,35 +271,42 @@ export function Page() {
             <Heading mb="24px" color="#33333E" variant="h3">
               Past Votes
             </Heading>
-            {/* // ToDo: add past votes */}
-            {/* <ListRow.Container>
-              <ListRow.Root>
-                <ListRow.PastVotes />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-              <ListRow.Root>
-                <ListRow.PastVotes />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-            </ListRow.Container> */}
-            <EmptyState type="votes" title="No past votes" />
+            {gqlResponse.data?.votes?.length ? (
+              <ListRow.Container>
+                {gqlResponse.data?.votes.map((vote) => (
+                  <Link href={`/voting-proposals/${vote!.proposal!.id}`} key={vote!.id}>
+                    <ListRow.Root>
+                      <ListRow.PastVotes title={vote?.proposal?.title} voteCount={vote!.vp} body={vote?.proposal?.body} />
+                      <ListRow.Comments count={3} />
+                    </ListRow.Root>
+                  </Link>
+                ))}
+              </ListRow.Container>
+            ) : (
+              <EmptyState type="votes" title="No past votes" />
+            )}
           </Box>
-          <Box mt="24px">
+          <Box mt="24px" mb={10}>
             <Heading mb="24px" color="#33333E" variant="h3">
               Post comments
             </Heading>
-            {/* // ToDo: add post comments */}
-            {/* <ListRow.Container>
-              <ListRow.Root>
-                <ListRow.CommentSummary />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-              <ListRow.Root>
-                <ListRow.CommentSummary />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-            </ListRow.Container> */}
-            <EmptyState type="posts" title="No post comments" />
+            <ListRow.Container>
+              {(delegateCommentsResponse?.data || []).map((comment) => {
+                return (
+                  <ListRow.Root key={comment!.id}>
+                    <ListRow.CommentSummary
+                      comment={comment?.content as string}
+                      postTitle="Title"
+                    />
+                    <ListRow.Comments count={3} />
+                  </ListRow.Root>
+                );
+              })}
+            </ListRow.Container>
+
+            {!delegateCommentsResponse?.data?.length ? (
+              <EmptyState type="posts" title="No post comments" />
+            ) : null}
           </Box>
         </Stack>
       </ContentContainer>

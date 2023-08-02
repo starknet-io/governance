@@ -131,11 +131,13 @@ const Vote = ({ type, id }: VoteProps) => {
 
 type PastVotesProps = {
   title?: string | null;
-  voteCount?: number;
+  body?: string | null;
+  voteCount?: number | null;
   votePreference?: "for" | "against" | "abstain";
 };
 
-const PastVotes = ({ title, voteCount, votePreference }: PastVotesProps) => {
+const PastVotes = ({ title = "Support for scoped storage variables", voteCount = 7, votePreference, body = "" }: PastVotesProps) => {
+  const strippedBody = stripHtml(body ?? "")
   return (
     <Flex flexDirection="column" flex={1} gap="6px">
       <Text
@@ -145,7 +147,7 @@ const PastVotes = ({ title, voteCount, votePreference }: PastVotesProps) => {
         fontWeight="500"
         color="#292932"
       >
-        Support for scoped storage variables
+        {title}
       </Text>
       <Text variant="breadcrumbs" noOfLines={1} fontWeight="500">
         Voted
@@ -157,7 +159,9 @@ const PastVotes = ({ title, voteCount, votePreference }: PastVotesProps) => {
           as={HiHandThumbUp}
           color="#20AC70"
         />{" "}
-        with 7M votes
+        with {voteCount} votes
+        {" "}
+        {strippedBody}
       </Text>
     </Flex>
   );
@@ -166,9 +170,11 @@ const PastVotes = ({ title, voteCount, votePreference }: PastVotesProps) => {
 type CommentSummaryProps = {
   type?: string;
   id?: number;
+  postTitle: string;
+  comment: string;
 };
 
-const CommentSummary = ({ type, id }: CommentSummaryProps) => {
+const CommentSummary = ({ type, id, postTitle, comment }: CommentSummaryProps) => {
   return (
     <Flex flexDirection="column" flex={1} gap="6px">
       <Text
@@ -178,7 +184,7 @@ const CommentSummary = ({ type, id }: CommentSummaryProps) => {
         fontWeight="500"
         color="#292932"
       >
-        Support for scoped storage variables
+        {postTitle}
       </Text>
       <Text
         color="#6C6C75"
@@ -186,8 +192,7 @@ const CommentSummary = ({ type, id }: CommentSummaryProps) => {
         noOfLines={1}
         fontWeight="500"
       >
-        “Our goal is to grow the Starknet ecosystem and make sure that
-        developers from web2 can...”
+        “{stripHtml(comment ?? "")}”
       </Text>
     </Flex>
   );
