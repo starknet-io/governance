@@ -113,12 +113,12 @@ const AuthorizedUserView = () => {
     setIsMenuOpen(false);
   };
 
-  const handleSave = (username: string, starknetWalletAddress: string) => {
+  const handleSave = (username: string, starknetAddress: string) => {
     editUserProfile.mutateAsync(
       {
         id: userData.id,
         username,
-        starknetWalletAddress,
+        starknetAddress,
       },
       {
         onSuccess: (data) => {

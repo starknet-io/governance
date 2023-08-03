@@ -1,4 +1,4 @@
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import {
   Button,
   Heading,
@@ -17,14 +17,14 @@ import {
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { DocumentProps } from "src/renderer/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const delegateTypeValues = delegateTypeEnum.enumValues;
 
 type FormValues = {
   delegateStatement: string;
   delegateType: string[];
-  starknetWalletAddress: string;
+  starknetAddress: string;
   twitter: string;
   discord: string;
   discourse: string;
@@ -37,18 +37,26 @@ export function Page() {
     handleSubmit,
     register,
     control,
+    setValue,
     formState: { errors, isValid },
   } = useForm<FormValues>();
   const [editorValue, setEditorValue] = useState<string>(
-    EditorTemplate.delegate
+    EditorTemplate.delegate,
   );
   const createDelegate = trpc.delegates.saveDelegate.useMutation();
+  const { data: user } = trpc.users.me.useQuery();
+
+  useEffect(() => {
+    if (user?.starknetAddress) {
+      setValue("starknetAddress", user.starknetAddress);
+    }
+  }, [user]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       data.delegateStatement = editorValue;
       await createDelegate
-        .mutateAsync(data)
+        .mutateAsync(data as FormValues)
         .then((res) => {
           window.location.href = `/delegates/profile/${res.id}`;
         })
@@ -105,13 +113,11 @@ export function Page() {
                 <Input
                   variant="primary"
                   placeholder="0x..."
-                  {...register("starknetWalletAddress", {
+                  {...register("starknetAddress", {
                     required: true,
                   })}
                 />
-                {errors.starknetWalletAddress && (
-                  <span>This field is required.</span>
-                )}
+                {errors.starknetAddress && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="twitter">
                 <FormLabel>Twitter</FormLabel>

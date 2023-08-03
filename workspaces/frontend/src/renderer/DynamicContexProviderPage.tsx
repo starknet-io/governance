@@ -36,12 +36,16 @@ import {
   Spinner,
   InfoModal,
   Text,
+  FormModal,
+  FormControl,
+  FormLabel,
+  Input,
 } from "@yukilabs/governance-components";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { PageContext } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
-import React from "react";
+import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 
 // need to move this override to a better place
@@ -76,26 +80,103 @@ interface AuthSuccessParams {
 
 export function DynamicContextProviderPage(props: Props) {
   const { pageContext, children } = props;
-
+  const [authUser, setAuthUser] = useState<AuthSuccessParams | null>(null);
   const authMutation = trpc.auth.authUser.useMutation();
   const logoutMutation = trpc.auth.logout.useMutation();
+  const hasCalledAuthenticateUser = useRef(false); // To guard against continuous calls
+  const [modalOpen, setModalOpen] = useState(false);
+  const editUserProfile = trpc.users.editUserProfileByAddress.useMutation();
 
-  const authenticateUser = (params: AuthSuccessParams) => {
-    authMutation.mutate({
-      authToken: params.authToken,
-      ensName: params.user.ens?.name,
-      ensAvatar: params.user.ens?.avatar,
-    });
+  const authenticateUser = useCallback(
+    async (params: AuthSuccessParams) => {
+      if (params?.user?.newUser) {
+        setModalOpen(true);
+      }
+      await authMutation.mutateAsync({
+        authToken: params.authToken,
+        ensName: params.user.ens?.name,
+        ensAvatar: params.user.ens?.avatar,
+      });
+    },
+    [authMutation],
+  );
+
+  useEffect(() => {
+    if (authUser && !hasCalledAuthenticateUser.current) {
+      authenticateUser(authUser);
+      hasCalledAuthenticateUser.current = true; // Mark as called
+    } else if (!authUser) {
+      hasCalledAuthenticateUser.current = false; // Reset for next time
+    }
+  }, [authUser, authenticateUser]);
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
+  const [username, setUsername] = useState("");
+  const [starknetAddress, setStarknetAddress] = useState("");
+
+  const isFormValid = !!(username && starknetAddress);
+
+  const onSubmit = () => {
+    editUserProfile.mutateAsync(
+      {
+        address: authUser?.user?.verifiedCredentials[0]?.address ?? "",
+        username,
+        starknetAddress,
+      },
+      {
+        onSuccess: () => {
+          setModalOpen(false);
+        },
+      },
+    );
   };
 
   return (
     <HelpMessageProvider>
+      <FormModal
+        isOpen={modalOpen}
+        onClose={handleModalClose}
+        title="Add User Info"
+        onSubmit={onSubmit}
+        isValid={isFormValid}
+        cancelButtonText="Skip"
+      >
+        <FormControl id="member-name" paddingBottom={2}>
+          <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
+            Username
+          </FormLabel>
+          <Input
+            placeholder="Username"
+            name="name"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </FormControl>
+        <FormControl id="address" paddingBottom={2}>
+          <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
+            Starknet address
+          </FormLabel>
+          <Input
+            placeholder="0x..."
+            name="address"
+            value={starknetAddress}
+            onChange={(e) => setStarknetAddress(e.target.value)}
+          />
+        </FormControl>
+      </FormModal>
       <DynamicContextProvider
         settings={{
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
-            onAuthSuccess: (params: AuthSuccessParams) =>
-              authenticateUser(params),
+            onAuthSuccess: (params: AuthSuccessParams) => {
+              // Guard against setting the state if authUser data hasn't changed
+              if (JSON.stringify(authUser) !== JSON.stringify(params)) {
+                setAuthUser(params);
+              }
+            },
             onLogout: () => logoutMutation.mutate(),
           },
           cssOverrides,
@@ -206,15 +287,8 @@ function PageLayout(props: Props) {
   const [renderDone, setRenderDone] = useState(false);
 
   useEffect(() => {
-    if (renderDone) {
-      setRenderDone(false);
-      setTimeout(() => {
-        setRenderDone(true);
-      });
-    } else {
-      setRenderDone(true);
-    }
-  }, [renderDone]);
+    setRenderDone(true);
+  }, []);
 
   useEffect(() => {
     let timer: string | number | NodeJS.Timeout | undefined;

@@ -39,33 +39,22 @@ export function Page() {
   const [editorValue, setEditorValue] = useState<string>("");
   const editDelegate = trpc.delegates.editDelegate.useMutation();
   const pageContext = usePageContext();
-  const delegateResp = trpc.delegates.getDelegateById.useQuery({
+  const { data: delegate } = trpc.delegates.getDelegateById.useQuery({
     id: pageContext.routeParams!.id,
   });
 
-  const { data: delegate } = delegateResp;
-
   useEffect(() => {
     if (delegate) {
-      const delegateData = delegate as {
-        delegateStatement?: string;
-        delegateType: string;
-        starknetWalletAddress: string;
-        twitter: string;
-        discord: string;
-        discourse: string;
-        agreeTerms: boolean;
-        understandRole: boolean;
-      };
+      const delegateData = delegate;
 
       setEditorValue(delegateData.delegateStatement ?? "");
-      setValue("delegateType", delegateData.delegateType);
-      setValue("starknetWalletAddress", delegateData.starknetWalletAddress);
+      setValue("delegateType", delegateData.delegateType as string[]);
       setValue("twitter", delegateData.twitter);
       setValue("discord", delegateData.discord);
       setValue("discourse", delegateData.discourse);
       setValue("agreeTerms", delegateData.agreeTerms);
       setValue("understandRole", delegateData.understandRole);
+      setValue("starknetAddress", delegateData.author?.starknetAddress ?? "");
     }
   }, [delegate]);
 
@@ -127,13 +116,11 @@ export function Page() {
                 <Input
                   variant="primary"
                   placeholder="0x..."
-                  {...register("starknetWalletAddress", {
+                  {...register("starknetAddress", {
                     required: true,
                   })}
                 />
-                {errors.starknetWalletAddress && (
-                  <span>This field is required.</span>
-                )}
+                {errors.starknetAddress && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="twitter">
                 <FormLabel>Twitter</FormLabel>
