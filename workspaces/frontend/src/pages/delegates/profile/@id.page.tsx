@@ -31,6 +31,27 @@ import { gql } from "src/gql";
 import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
 
+const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
+  query DelegateProposals($space: String!) {
+    proposals(first: 20, skip: 0, where: {space_in: [$space]}, orderBy: "created", orderDirection: desc) {
+      id
+      title
+      choices
+      start
+      end
+      snapshot
+      state
+      scores
+      scores_total
+      author
+      space {
+        id
+        name
+      }
+    }
+  }
+`);
+
 const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   query DelegateProfilePageQuery(
     $voter: String!
@@ -109,6 +130,21 @@ export function Page() {
     skip: delegateAddress == null,
   });
 
+  const gqlResponseProposalsByUser = useQuery(
+    GET_PROPOSALS_FOR_DELEGATE_QUERY,
+    {
+      variables: {
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        where: {
+          space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        },
+      },
+      skip: delegateAddress == null,
+    },
+  );
+
+  const proposals = gqlResponseProposalsByUser?.data?.proposals || [];
+
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
 
@@ -119,6 +155,20 @@ export function Page() {
     },
     {},
   );
+
+  const comments = (delegateCommentsResponse?.data || []).map((comment) => {
+    const foundProposal = proposals.find(
+      (proposal) => proposal?.id === comment.proposalId,
+    );
+    return {
+      id: comment.id,
+      content: comment.content,
+      title: foundProposal?.title,
+      proposalId: comment.proposalId,
+      snipId: comment.snipId,
+      snipTitle: comment.snipTitle,
+    };
+  });
 
   return (
     <Box
@@ -274,9 +324,17 @@ export function Page() {
             {gqlResponse.data?.votes?.length ? (
               <ListRow.Container>
                 {gqlResponse.data?.votes.map((vote) => (
-                  <Link href={`/voting-proposals/${vote!.proposal!.id}`} key={vote!.id}>
+                  <Link
+                    href={`/voting-proposals/${vote!.proposal!.id}`}
+                    key={vote!.id}
+                    _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
+                  >
                     <ListRow.Root>
-                      <ListRow.PastVotes title={vote?.proposal?.title} voteCount={vote!.vp} body={vote?.proposal?.body} />
+                      <ListRow.PastVotes
+                        title={vote?.proposal?.title}
+                        voteCount={vote!.vp}
+                        body={vote?.proposal?.body}
+                      />
                       <ListRow.Comments count={3} />
                     </ListRow.Root>
                   </Link>
@@ -288,18 +346,32 @@ export function Page() {
           </Box>
           <Box mt="24px" mb={10}>
             <Heading mb="24px" color="#33333E" variant="h3">
-              Post comments
+              Comments
             </Heading>
             <ListRow.Container>
-              {(delegateCommentsResponse?.data || []).map((comment) => {
+              {comments.map((comment) => {
                 return (
-                  <ListRow.Root key={comment!.id}>
-                    <ListRow.CommentSummary
-                      comment={comment?.content as string}
-                      postTitle="Title"
-                    />
-                    <ListRow.Comments count={3} />
-                  </ListRow.Root>
+                  <Link
+                    key={comment!.id as string}
+                    href={
+                      comment?.proposalId
+                        ? `/voting-proposals/${comment!.proposalId}`
+                        : `/snips/${comment!.snipId}`
+                    }
+                    _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
+                  >
+                    <ListRow.Root>
+                      <ListRow.CommentSummary
+                        comment={(comment?.content as string) || ""}
+                        postTitle={
+                          (comment?.title as string) ||
+                          (comment?.snipTitle as string) ||
+                          ""
+                        }
+                      />
+                      <ListRow.Comments count={3} />
+                    </ListRow.Root>
+                  </Link>
                 );
               })}
             </ListRow.Container>

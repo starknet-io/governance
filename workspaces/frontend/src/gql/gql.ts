@@ -13,6 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\n  query DelegateProposals($space: String!) {\n    proposals(first: 20, skip: 0, where: {space_in: [$space]}, orderBy: \"created\", orderDirection: desc) {\n      id\n      title\n      choices\n      start\n      end\n      snapshot\n      state\n      scores\n      scores_total\n      author\n      space {\n        id\n        name\n      }\n    }\n  }\n": types.DelegateProposalsDocument,
     "\n  query DelegateProfilePageQuery(\n    $voter: String!\n    $space: String!\n    $proposal: String\n    $where: VoteWhere\n  ) {\n    votes(where: $where) {\n      id\n      choice\n      voter\n      reason\n      metadata\n      created\n      proposal {\n        id\n        title\n        body\n      }\n      ipfs\n      vp\n      vp_by_strategy\n      vp_state\n    }\n    vp(voter: $voter, space: $space, proposal: $proposal) {\n      vp\n      vp_by_strategy\n      vp_state\n    }\n  }\n": types.DelegateProfilePageQueryDocument,
     "query Proposal($proposal: String) {\n      proposal(id: $proposal) {\n      id\n      author\n      title\n      body\n      choices\n      votes\n      scores\n      start\n      end\n      state\n      discussion\n      ipfs\n      type\n      scores_by_strategy\n      scores_state\n      scores_total\n      scores_updated\n      snapshot\n        strategies {\n          network\n          params\n        }\n      }\n\n    }": types.ProposalDocument,
     "query Vp($voter: String!, $space: String!, $proposal: String) {\n      vp(voter: $voter, space: $space, proposal: $proposal) {\n        vp\n        vp_by_strategy\n        vp_state\n      }\n    }": types.VpDocument,
@@ -35,6 +36,10 @@ const documents = {
  */
 export function gql(source: string): unknown;
 
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query DelegateProposals($space: String!) {\n    proposals(first: 20, skip: 0, where: {space_in: [$space]}, orderBy: \"created\", orderDirection: desc) {\n      id\n      title\n      choices\n      start\n      end\n      snapshot\n      state\n      scores\n      scores_total\n      author\n      space {\n        id\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  query DelegateProposals($space: String!) {\n    proposals(first: 20, skip: 0, where: {space_in: [$space]}, orderBy: \"created\", orderDirection: desc) {\n      id\n      title\n      choices\n      start\n      end\n      snapshot\n      state\n      scores\n      scores_total\n      author\n      space {\n        id\n        name\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
