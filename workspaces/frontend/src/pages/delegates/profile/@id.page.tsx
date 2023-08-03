@@ -220,7 +220,7 @@ export function Page() {
               isCopiable
               isTruncated
               label="Starknet address"
-              value={delegate?.starknetWalletAddress}
+              value={delegate?.author?.starknetAddress ?? ""}
             />
           </SummaryItems.Root>
         </Box>

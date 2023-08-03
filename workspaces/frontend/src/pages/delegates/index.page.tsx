@@ -295,7 +295,7 @@ export function Page() {
                 filteredDelegates.map((data) => (
                   <DelegateCard
                     ensName={data.author?.ensName}
-                    key={data.starknetWalletAddress}
+                    key={data.author?.starknetAddress}
                     address={data?.author?.address}
                     avatarUrl={data.author?.ensAvatar}
                     {...data}
