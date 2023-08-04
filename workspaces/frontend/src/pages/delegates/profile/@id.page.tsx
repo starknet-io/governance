@@ -335,7 +335,6 @@ export function Page() {
                         voteCount={vote!.vp}
                         body={vote?.proposal?.body}
                       />
-                      <ListRow.Comments count={3} />
                     </ListRow.Root>
                   </Link>
                 ))}
@@ -369,7 +368,6 @@ export function Page() {
                           ""
                         }
                       />
-                      <ListRow.Comments count={3} />
                     </ListRow.Root>
                   </Link>
                 );
