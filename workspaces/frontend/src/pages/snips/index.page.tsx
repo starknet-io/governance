@@ -14,24 +14,17 @@ import {
 import { trpc } from "src/utils/trpc";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { useState } from "react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 export function Page() {
   const [, setHelpMessage] = useHelpMessage();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const snips = trpc.snips.getAll.useQuery();
   const sortedSnips = snips.data?.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
-  trpc.auth.checkAuth.useQuery(undefined, {
-    onError: () => {
-      setIsAuthenticated(false);
-    },
-    onSuccess: () => {
-      setIsAuthenticated(true);
-    },
-  });
+  const { user } = useDynamicContext();
 
   return (
     <Box>
@@ -57,7 +50,7 @@ export function Page() {
               </Button>
             </ButtonGroup>
             <Box display="flex" marginLeft="auto">
-              {isAuthenticated ? (
+              {user ? (
                 <Button as="a" href="snips/create" size="sm" variant="solid">
                   Create SNIP
                 </Button>

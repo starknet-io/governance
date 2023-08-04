@@ -27,6 +27,7 @@ import {
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
 }
@@ -134,19 +135,11 @@ const sortByOptions = {
 export function Page() {
   const [, setHelpMessage] = useHelpMessage();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const delegates = trpc.delegates.getAll.useQuery();
-  // ToDo autentication needs to happen without a refresh
-  trpc.auth.checkAuth.useQuery(undefined, {
-    onError: () => {
-      setIsAuthenticated(false);
-    },
-    onSuccess: () => {
-      setIsAuthenticated(true);
-    },
-  });
+
+  const { user } = useDynamicContext();
 
   const filteredDelegates = delegates?.data?.filter(
     (data) => data?.author?.address?.includes(searchQuery),
@@ -240,7 +233,7 @@ export function Page() {
               {/* // Todo authentication Logic doesn't seem to be working  */}
               <Box display="flex" marginLeft="auto" gap="12px">
                 {
-                  isAuthenticated ? (
+                  user ? (
                     <>
                       <Button size="sm" variant="outline">
                         Delegate to address
