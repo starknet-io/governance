@@ -25,6 +25,7 @@ type Props = {
     balance: string | undefined;
     ethAddress: string | undefined | null;
     symbol: string;
+    vp?: number | undefined | null;
   };
   onClose: () => void;
   delegateTokens: () => void;
@@ -38,6 +39,11 @@ export const DelegateModal = ({
   onClose,
   delegateTokens,
 }: Props) => {
+  const getTotalVotingPower = () => {
+    return receiverData.vp
+      ? (parseInt(receiverData.balance || "0") + receiverData.vp).toString()
+      : receiverData.balance;
+  };
   return (
     <Modal
       motionPreset="slideInBottom"
@@ -80,7 +86,7 @@ export const DelegateModal = ({
                 <Swap.Arrow />
                 <Swap.UserSummary
                   address={receiverData.address}
-                  balance={receiverData.balance}
+                  balance={getTotalVotingPower()}
                   symbol={receiverData.symbol}
                   text={"To"}
                 />

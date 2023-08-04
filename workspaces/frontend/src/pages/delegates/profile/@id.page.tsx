@@ -125,7 +125,10 @@ export function Page() {
         onClose={() => setIsOpen(false)}
         isConnected
         senderData={senderData}
-        receiverData={receiverData}
+        receiverData={{
+          ...receiverData,
+          vp: gqlResponse?.data?.vp?.vp
+        }}
         delegateTokens={() => {
           write?.({
             args: [
