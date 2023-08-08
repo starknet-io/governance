@@ -30,7 +30,7 @@ export const AgreementModal = ({ isOpen = false, onClose, content }: Props) => {
         borderRadius="xl"
         mx={{ base: "2.5", lg: "16" }}
         minHeight="272px"
-        maxHeight="60%"
+        maxHeight={{ base: "100%", md: "80%", lg: "60%" }}
         overflowY="scroll" // Add this line to enable vertical scrolling
       >
         <ModalHeader textAlign="center"> Delegation Agreement</ModalHeader>

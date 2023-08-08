@@ -74,7 +74,6 @@ export function Page() {
       setValue("twitter", delegateData.twitter);
       setValue("discord", delegateData.discord);
       setValue("discourse", delegateData.discourse);
-      setValue("agreeTerms", delegateData.agreeTerms);
       setValue(
         "confirmDelegateAgreement",
         delegateData.confirmDelegateAgreement,
