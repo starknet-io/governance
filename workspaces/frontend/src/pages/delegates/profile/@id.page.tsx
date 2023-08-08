@@ -67,8 +67,11 @@ export function Page() {
 
   const delegation = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    args: [address!, stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 })],
-    watch: true,
+    args: [
+      address!,
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
+    ],
+    watch: false,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
@@ -129,7 +132,9 @@ export function Page() {
         delegateTokens={() => {
           write?.({
             args: [
-              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
+              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                size: 32,
+              }),
               delegateAddress,
             ],
           });
@@ -153,9 +158,7 @@ export function Page() {
             imgUrl={delegate?.author?.ensAvatar}
             ensName={delegate?.author?.ensName}
             address={delegate?.author?.ensName || delegateAddress}
-            avatarString={
-              delegate?.author?.ensAvatar || delegateAddress
-            }
+            avatarString={delegate?.author?.ensAvatar || delegateAddress}
           >
             <ProfileSummaryCard.MoreActions>
               <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
@@ -217,7 +220,7 @@ export function Page() {
               isCopiable
               isTruncated
               label="Starknet address"
-              value={delegate?.starknetWalletAddress}
+              value={delegate?.author?.starknetAddress ?? ""}
             />
           </SummaryItems.Root>
         </Box>

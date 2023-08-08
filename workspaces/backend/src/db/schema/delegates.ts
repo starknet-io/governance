@@ -29,7 +29,6 @@ export const delegates = pgTable('delegates', {
   id: uuid('id').primaryKey().defaultRandom(),
   delegateStatement: text('delegateStatement').notNull(),
   delegateType: json('type').default('[]'),
-  starknetWalletAddress: text('starknetWalletAddress'),
   twitter: text('twitter'),
   discord: text('discord'),
   discourse: text('discourse'),

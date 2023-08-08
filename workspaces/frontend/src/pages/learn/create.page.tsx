@@ -10,7 +10,6 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  QuillEditor,
   ReorderableList,
   useMarkdownEditor,
   MarkdownEditor,

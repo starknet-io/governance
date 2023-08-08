@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { PageContextProvider } from "./PageContextProvider";
 import type { PageContext } from "./types";
 import { TrpcProvider } from "./TrpcProvider";
-import DynamicContextProviderPage from "./DynamicContexProviderPage";
+import { DynamicContextProviderPage } from "./DynamicContexProviderPage";
 import { ApolloProvider, ApolloClient } from "@apollo/client";
 import { ThemeProvider } from "@yukilabs/governance-components";
 

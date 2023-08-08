@@ -49,22 +49,14 @@ export function Page() {
     useMarkdownEditor("");
 
   const processData = async () => {
-    const delegateData = delegate as {
-      delegateStatement?: string;
-      delegateType: string;
-      starknetWalletAddress: string;
-      twitter: string;
-      discord: string;
-      discourse: string;
-      agreeTerms: boolean;
-      understandRole: boolean;
-    };
+    const delegateData = delegate;
+    if (!delegateData) return;
 
     editor.insertNodes(
       await convertMarkdownToSlate(delegateData.delegateStatement || ""),
     );
-    setValue("delegateType", delegateData.delegateType);
-    setValue("starknetWalletAddress", delegateData.starknetWalletAddress);
+    setValue("delegateType", delegateData.delegateType as string[]);
+    setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
     setValue("twitter", delegateData.twitter);
     setValue("discord", delegateData.discord);
     setValue("discourse", delegateData.discourse);
@@ -135,13 +127,11 @@ export function Page() {
                 <Input
                   variant="primary"
                   placeholder="0x..."
-                  {...register("starknetWalletAddress", {
+                  {...register("starknetAddress", {
                     required: true,
                   })}
                 />
-                {errors.starknetWalletAddress && (
-                  <span>This field is required.</span>
-                )}
+                {errors.starknetAddress && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="twitter">
                 <FormLabel>Twitter</FormLabel>

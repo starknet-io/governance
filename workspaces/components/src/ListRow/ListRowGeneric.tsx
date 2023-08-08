@@ -1,6 +1,9 @@
 import { Badge, Box, Flex, Icon, Tooltip } from "@chakra-ui/react";
 import { HiHandThumbUp } from "react-icons/hi2";
 import { Text } from "../Text";
+import moment from "moment";
+import { CommentIcon } from "src/Icons";
+import { MarkdownRenderer } from "src/MarkdownRenderer";
 
 type Props = {
   children?: React.ReactNode;
@@ -209,11 +212,6 @@ const Comments = ({ count, width }: CommentsProps) => {
     </Box>
   );
 };
-
-import moment from "moment";
-import { stripHtml } from "src/utils/helpers";
-import { CommentIcon } from "src/Icons";
-import { MarkdownRenderer } from "src/MarkdownRenderer";
 
 function dateDiff(now: moment.Moment, futureDate: moment.Moment) {
   const diff = moment.duration(futureDate.diff(now));
