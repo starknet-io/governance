@@ -48,7 +48,15 @@ export const delegateRouter = router({
         throw new Error('You already have a delegate statement');
       }
 
-      console.log(opts.input);
+      // Validate that either customDelegateAgreementContent is provided or confirmDelegateAgreement is set
+      if (
+        !opts.input.customDelegateAgreementContent &&
+        !opts.input.confirmDelegateAgreement
+      ) {
+        throw new Error(
+          'Either customDelegateAgreementContent or confirmDelegateAgreement must be present',
+        );
+      }
 
       // Determine the agreement value
       const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
@@ -85,7 +93,7 @@ export const delegateRouter = router({
 
       return insertedDelegateRecord;
     }),
-
+  // For some reason, when there is both author: true and customAgreement: true, we get an error
   getDelegateById: publicProcedure
     .input(
       z.object({
@@ -93,15 +101,30 @@ export const delegateRouter = router({
       }),
     )
     .query(async (opts) => {
-      const delegate = await db.query.delegates.findFirst({
+      const delegateWithAuthor = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+        with: {
+          author: true,
+        },
+      });
+
+      const delegateWithCustomAgreement = await db.query.delegates.findFirst({
         where: eq(delegates.id, opts.input.id),
         with: {
           customAgreement: true,
         },
       });
-      if (!delegate) {
+
+      if (!delegateWithAuthor || !delegateWithCustomAgreement) {
         throw new Error('Delegate not found');
       }
+
+      // Merge the results
+      const delegate = {
+        ...delegateWithAuthor,
+        customAgreement: delegateWithCustomAgreement.customAgreement,
+      };
+
       return delegate;
     }),
 

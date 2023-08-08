@@ -9,7 +9,6 @@ import {
   Divider,
   Flex,
   Heading,
-  Text,
   QuillEditor,
   ProfileSummaryCard,
   Stack,

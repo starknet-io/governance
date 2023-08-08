@@ -37,6 +37,9 @@ export function Page() {
   >;
 
   const [editorValue, setEditorValue] = useState<string>("");
+  const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
+    useState(false);
+  const [customAgreementValue, setCustomAgreementValue] = useState<string>("");
   const editDelegate = trpc.delegates.editDelegate.useMutation();
   const pageContext = usePageContext();
   const delegateResp = trpc.delegates.getDelegateById.useQuery({
@@ -48,6 +51,7 @@ export function Page() {
   useEffect(() => {
     if (delegate) {
       const delegateData = delegate as {
+        confirmDelegateAgreement: boolean;
         delegateStatement?: string;
         delegateType: string;
         starknetWalletAddress: string;
@@ -56,15 +60,22 @@ export function Page() {
         discourse: string;
         agreeTerms: boolean;
         understandRole: boolean;
+        customAgreement: any;
       };
 
       setEditorValue(delegateData.delegateStatement ?? "");
+      setCustomAgreementValue(delegateData?.customAgreement?.content ?? "");
+      setShowCustomAgreementEditor(!!delegateData?.customAgreement);
       setValue("delegateType", delegateData.delegateType);
       setValue("starknetWalletAddress", delegateData.starknetWalletAddress);
       setValue("twitter", delegateData.twitter);
       setValue("discord", delegateData.discord);
       setValue("discourse", delegateData.discourse);
       setValue("agreeTerms", delegateData.agreeTerms);
+      setValue(
+        "confirmDelegateAgreement",
+        delegateData.confirmDelegateAgreement,
+      );
       setValue("understandRole", delegateData.understandRole);
     }
   }, [delegate]);
@@ -162,23 +173,45 @@ export function Page() {
                 />
                 {errors.discourse && <span>This field is required.</span>}
               </FormControl>
-              <FormControl id="agreeTerms">
+              <FormControl id="confirmDelegateAgreement">
                 <Controller
                   control={control}
-                  name="agreeTerms"
+                  name="confirmDelegateAgreement"
                   defaultValue={false}
                   rules={{ required: true }}
                   render={({ field }) => (
                     <Checkbox
-                      isChecked={field.value ?? false}
+                      isChecked={field.value}
                       onChange={(e) => field.onChange(e.target.checked)}
                     >
-                      Agree with delegate terms
+                      I agree with the Starknet foundation suggested delegate
+                      agreement View.
                     </Checkbox>
                   )}
                 />
-                {errors.agreeTerms && <span>This field is required.</span>}
+                {errors.confirmDelegateAgreement && (
+                  <span>This field is required.</span>
+                )}
               </FormControl>
+              <FormControl id="customDelegateAgreement">
+                <Checkbox
+                  isChecked={customAgreementValue}
+                  onChange={(e) =>
+                    setShowCustomAgreementEditor(e.target.checked)
+                  }
+                >
+                  I want to provide a custom delegate agreement.
+                </Checkbox>
+              </FormControl>
+              {showCustomAgreementEditor && (
+                <FormControl id="custom-agreement-editor">
+                  <FormLabel>Custom Delegate Agreement</FormLabel>
+                  <QuillEditor
+                    onChange={(e) => setCustomAgreementValue(e)}
+                    value={customAgreementValue}
+                  />
+                </FormControl>
+              )}
               <FormControl id="understandRole">
                 <Controller
                   control={control}
@@ -187,7 +220,7 @@ export function Page() {
                   rules={{ required: true }}
                   render={({ field }) => (
                     <Checkbox
-                      isChecked={field.value ?? false}
+                      isChecked={field.value}
                       onChange={(e) => field.onChange(e.target.checked)}
                     >
                       I understand the role of StarkNet delegates, we encourage
