@@ -38,6 +38,7 @@ export function Page() {
     handleSubmit,
     register,
     control,
+    setValue,
     formState: { errors, isValid },
   } = useForm<FormValues>();
   const [editorValue, setEditorValue] = useState<string>(
@@ -46,6 +47,10 @@ export function Page() {
   const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
     useState(false);
   const [customAgreementValue, setCustomAgreementValue] = useState<string>("");
+  const [agreementType, setAgreementType] = useState<
+    "standard" | "custom" | null
+  >(null);
+
   const createDelegate = trpc.delegates.saveDelegate.useMutation();
 
   const onSubmit = handleSubmit(async (data) => {
@@ -148,35 +153,44 @@ export function Page() {
                 {errors.discourse && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="confirmDelegateAgreement">
-                <Controller
-                  control={control}
-                  name="confirmDelegateAgreement"
-                  defaultValue={false}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Checkbox
-                      isChecked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    >
-                      I agree with the Starknet foundation suggested delegate
-                      agreement View.
-                    </Checkbox>
-                  )}
-                />
+                <Checkbox
+                  isChecked={agreementType === "standard"}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setAgreementType("standard");
+                      setShowCustomAgreementEditor(false);
+                      setValue("confirmDelegateAgreement", true);
+                    } else {
+                      setAgreementType(null);
+                      setValue("confirmDelegateAgreement", false);
+                    }
+                  }}
+                >
+                  I agree with the Starknet foundation suggested delegate
+                  agreement View.
+                </Checkbox>
                 {errors.confirmDelegateAgreement && (
                   <span>This field is required.</span>
                 )}
               </FormControl>
               <FormControl id="customDelegateAgreement">
                 <Checkbox
-                  onChange={(e) =>
-                    setShowCustomAgreementEditor(e.target.checked)
-                  }
+                  isChecked={agreementType === "custom"}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setAgreementType("custom");
+                      setShowCustomAgreementEditor(true);
+                      setValue("confirmDelegateAgreement", false);
+                    } else {
+                      setAgreementType(null);
+                      setShowCustomAgreementEditor(false);
+                    }
+                  }}
                 >
                   I want to provide a custom delegate agreement.
                 </Checkbox>
               </FormControl>
-              {showCustomAgreementEditor && (
+              {agreementType === "custom" && (
                 <FormControl id="custom-agreement-editor">
                   <FormLabel>Custom Delegate Agreement</FormLabel>
                   <QuillEditor

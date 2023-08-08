@@ -5,11 +5,9 @@ import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
 import { getUserByJWT } from '../utils/helpers';
 import { eq, and, isNotNull } from 'drizzle-orm';
 import { users } from '../db/schema/users';
-import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
 
-const delegateInsertSchema = createInsertSchema(delegates);
 
 export const delegateRouter = router({
   getAll: publicProcedure.query(
@@ -32,6 +30,7 @@ export const delegateRouter = router({
         discourse: z.string(),
         understandRole: z.boolean(),
         customDelegateAgreementContent: z.optional(z.string()), // Optionally add custom agreement content
+        confirmDelegateAgreement: z.optional(z.boolean()),
       }),
     )
     .mutation(async (opts) => {
@@ -46,16 +45,6 @@ export const delegateRouter = router({
 
       if (user?.delegationStatement) {
         throw new Error('You already have a delegate statement');
-      }
-
-      // Validate that either customDelegateAgreementContent is provided or confirmDelegateAgreement is set
-      if (
-        !opts.input.customDelegateAgreementContent &&
-        !opts.input.confirmDelegateAgreement
-      ) {
-        throw new Error(
-          'Either customDelegateAgreementContent or confirmDelegateAgreement must be present',
-        );
       }
 
       // Determine the agreement value
@@ -146,15 +135,81 @@ export const delegateRouter = router({
     }),
 
   editDelegate: protectedProcedure
-    .input(delegateInsertSchema.required({ id: true }))
+    .input(
+      z.object({
+        id: z.string(),
+        delegateStatement: z.string(),
+        delegateType: z.any(),
+        starknetWalletAddress: z.string(),
+        twitter: z.string(),
+        discord: z.string(),
+        discourse: z.string(),
+        understandRole: z.boolean(),
+        customDelegateAgreementContent: z.optional(z.string()), // Optionally add or update custom agreement content
+        confirmDelegateAgreement: z.optional(z.boolean()),
+      }),
+    )
     .mutation(async (opts) => {
+      // Determine the agreement value
+      const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
+        ? null
+        : opts.input.confirmDelegateAgreement; // Use true or appropriate value for standard agreement
+
       const updatedDelegate = await db
         .update(delegates)
-        .set(opts.input)
+        .set({
+          delegateStatement: opts.input.delegateStatement,
+          delegateType: opts.input.delegateType,
+          starknetWalletAddress: opts.input.starknetWalletAddress,
+          twitter: opts.input.twitter,
+          discord: opts.input.discord,
+          discourse: opts.input.discourse,
+          understandRole: opts.input.understandRole,
+          confirmDelegateAgreement, // Use the determined value
+        })
         .where(eq(delegates.id, opts.input.id))
         .returning();
 
-      return updatedDelegate[0];
+      const updatedDelegateRecord = updatedDelegate[0];
+
+      // Handle customDelegateAgreementContent if provided
+      if (opts.input.customDelegateAgreementContent) {
+        const existingCustomAgreement =
+          await db.query.customDelegateAgreement.findFirst({
+            where: eq(
+              customDelegateAgreement.delegateId,
+              updatedDelegateRecord.id,
+            ),
+          });
+
+        if (existingCustomAgreement) {
+          // Update existing custom agreement
+          await db
+            .update(customDelegateAgreement)
+            .set({
+              content: opts.input.customDelegateAgreementContent,
+              updatedAt: new Date(),
+            })
+            .where(eq(customDelegateAgreement.id, existingCustomAgreement.id));
+        } else {
+          // Insert new custom agreement
+          await db.insert(customDelegateAgreement).values({
+            delegateId: updatedDelegateRecord.id,
+            content: opts.input.customDelegateAgreementContent,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+        }
+      } else if (confirmDelegateAgreement) {
+        // If the standard agreement is selected, remove any existing custom agreement
+        await db
+          .delete(customDelegateAgreement)
+          .where(
+            eq(customDelegateAgreement.delegateId, updatedDelegateRecord.id),
+          );
+      }
+
+      return updatedDelegateRecord;
     }),
 
   getDelegateByAddress: publicProcedure

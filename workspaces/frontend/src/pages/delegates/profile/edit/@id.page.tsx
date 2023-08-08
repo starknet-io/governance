@@ -40,6 +40,9 @@ export function Page() {
   const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
     useState(false);
   const [customAgreementValue, setCustomAgreementValue] = useState<string>("");
+  const [agreementType, setAgreementType] = useState<
+    "standard" | "custom" | null
+  >(null);
   const editDelegate = trpc.delegates.editDelegate.useMutation();
   const pageContext = usePageContext();
   const delegateResp = trpc.delegates.getDelegateById.useQuery({
@@ -78,12 +81,22 @@ export function Page() {
       );
       setValue("understandRole", delegateData.understandRole);
     }
+    if (delegate?.confirmDelegateAgreement) {
+      setAgreementType("standard");
+    } else if (delegate?.customAgreement) {
+      setAgreementType("custom");
+    } else {
+      setAgreementType(null);
+    }
   }, [delegate]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       data.delegateStatement = editorValue;
       data.id = pageContext.routeParams!.id;
+      if (showCustomAgreementEditor) {
+        data.customDelegateAgreementContent = customAgreementValue;
+      }
       await editDelegate.mutateAsync(data).then(() => {
         navigate(`/delegates/profile/${pageContext.routeParams!.id}`);
       });
@@ -174,36 +187,44 @@ export function Page() {
                 {errors.discourse && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="confirmDelegateAgreement">
-                <Controller
-                  control={control}
-                  name="confirmDelegateAgreement"
-                  defaultValue={false}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Checkbox
-                      isChecked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    >
-                      I agree with the Starknet foundation suggested delegate
-                      agreement View.
-                    </Checkbox>
-                  )}
-                />
+                <Checkbox
+                  isChecked={agreementType === "standard"}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setAgreementType("standard");
+                      setShowCustomAgreementEditor(false);
+                      setValue("confirmDelegateAgreement", true);
+                    } else {
+                      setAgreementType(null);
+                      setValue("confirmDelegateAgreement", false);
+                    }
+                  }}
+                >
+                  I agree with the Starknet foundation suggested delegate
+                  agreement View.
+                </Checkbox>
                 {errors.confirmDelegateAgreement && (
                   <span>This field is required.</span>
                 )}
               </FormControl>
               <FormControl id="customDelegateAgreement">
                 <Checkbox
-                  isChecked={customAgreementValue}
-                  onChange={(e) =>
-                    setShowCustomAgreementEditor(e.target.checked)
-                  }
+                  isChecked={agreementType === "custom"}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setAgreementType("custom");
+                      setShowCustomAgreementEditor(true);
+                      setValue("confirmDelegateAgreement", false);
+                    } else {
+                      setAgreementType(null);
+                      setShowCustomAgreementEditor(false);
+                    }
+                  }}
                 >
                   I want to provide a custom delegate agreement.
                 </Checkbox>
               </FormControl>
-              {showCustomAgreementEditor && (
+              {agreementType === "custom" && (
                 <FormControl id="custom-agreement-editor">
                   <FormLabel>Custom Delegate Agreement</FormLabel>
                   <QuillEditor
@@ -212,27 +233,6 @@ export function Page() {
                   />
                 </FormControl>
               )}
-              <FormControl id="understandRole">
-                <Controller
-                  control={control}
-                  name="understandRole"
-                  defaultValue={false}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Checkbox
-                      isChecked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    >
-                      I understand the role of StarkNet delegates, we encourage
-                      all to read the Delegate Expectations 328; Starknet
-                      Governance announcements Part 1 98, Part 2 44, and Part 3
-                      34; The Foundation Post 60; as well as the Delegate
-                      Onboarding announcement 539 before proceeding.
-                    </Checkbox>
-                  )}
-                />
-                {errors.understandRole && <span>This field is required.</span>}
-              </FormControl>
 
               <Flex justifyContent="flex-end" gap="16px">
                 <Button

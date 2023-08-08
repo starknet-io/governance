@@ -89,8 +89,6 @@ export function Page() {
     delegateId,
   });
 
-  console.log("delegateCommentsResponse.data", delegateCommentsResponse.data);
-
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`;
 
@@ -106,8 +104,6 @@ export function Page() {
     skip: delegateAddress == null,
   });
 
-  console.log("gqlResponse.data", gqlResponse.data);
-
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
 
@@ -119,13 +115,15 @@ export function Page() {
     {},
   );
 
-  console.log(delegate);
-
   const renderAgreementValue = () => {
-    if (!delegate?.confirmDelegateAgreement && !delegate?.customAgreement) {
-      return "None";
-    }
-    if (delegate?.customAgreement) {
+    if (delegate?.confirmDelegateAgreement) {
+      return (
+        <Flex color="#292932" fontWeight="medium" gap={1}>
+          <div>Yes</div>-
+          <button onClick={() => setShowAgreement(true)}>View</button>
+        </Flex>
+      );
+    } else if (delegate?.customAgreement) {
       return (
         <Flex color="#292932" fontWeight="medium" gap={1}>
           <div>Custom</div>-
@@ -133,7 +131,7 @@ export function Page() {
         </Flex>
       );
     } else {
-      return "Yes";
+      return "None"
     }
   };
 
