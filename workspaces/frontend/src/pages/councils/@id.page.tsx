@@ -10,8 +10,7 @@ import {
   ListRow,
   ProfileSummaryCard,
   Collapse,
-  // MarkdownRenderer,
-  QuillEditor,
+  MarkdownRenderer,
   MembersList,
   Button,
   MenuItem,
@@ -91,8 +90,7 @@ export function Page() {
 
         <Divider my="24px" />
         <Box>
-          {/* <MarkdownRenderer content={council?.description || ""} /> */}
-          <QuillEditor value={council?.description ?? ""} readOnly />
+          <MarkdownRenderer content={council?.description || ""} />
           {user ? (
             <Button mt="24px" variant="fullGhostBtn" onClick={handleClick}>
               Add new post
@@ -128,8 +126,7 @@ export function Page() {
                 The role of the {council?.name ?? "Council"}
               </Heading>
 
-              {/* <MarkdownRenderer content={council?.statement || ""} /> */}
-              <QuillEditor value={council?.statement ?? ""} readOnly />
+              <MarkdownRenderer content={council?.statement || ""} />
               {members.length > 0 ? (
                 <Box mb="24px">
                   <Heading color="#33333E" variant="h5">

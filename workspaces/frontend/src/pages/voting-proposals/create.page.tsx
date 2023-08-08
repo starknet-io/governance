@@ -10,10 +10,11 @@ import {
   Stack,
   Select,
   InputGroup,
-  QuillEditor,
   DatePicker,
   ContentContainer,
   EditorTemplate,
+  useMarkdownEditor,
+  MarkdownEditor,
 } from "@yukilabs/governance-components";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
@@ -27,7 +28,7 @@ interface FieldValues {
   // type: ProposalType;
   // choices: string[];
   title: string;
-  body: string;
+  body: any[];
   discussion: string;
   start: Date | null;
   end: Date | null;
@@ -35,6 +36,7 @@ interface FieldValues {
 
 export function Page() {
   const { data: walletClient } = useWalletClient();
+  const { convertSlateToMarkdown } = useMarkdownEditor("");
 
   const {
     handleSubmit,
@@ -45,7 +47,7 @@ export function Page() {
     async defaultValues() {
       return {
         title: "",
-        body: EditorTemplate.proposal,
+        body: EditorTemplate.proposalMarkDown,
         discussion: "",
         start: new Date(),
         end: new Date(new Date().getTime() + 3 * 60 * 60 * 24 * 1000),
@@ -54,23 +56,24 @@ export function Page() {
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
     try {
       if (walletClient == null) return;
 
-      const client = new snapshot.Client712(import.meta.env.VITE_APP_SNAPSHOT_URL);
+      const client = new snapshot.Client712(
+        import.meta.env.VITE_APP_SNAPSHOT_URL,
+      );
 
       const block = await fetchBlockNumber({
-        chainId: parseInt(import.meta.env.VITE_APP_SNAPSHOT_CHAIN_ID)
+        chainId: parseInt(import.meta.env.VITE_APP_SNAPSHOT_CHAIN_ID),
       });
 
-      console.log(block)
+      console.log(block);
 
       const params: Proposal = {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         type: "basic",
         title: data.title,
-        body: data.body,
+        body: convertSlateToMarkdown(data.body),
         choices: ["For", "Against", "Abstain"],
         start: Math.floor(data.start!.getTime() / 1000),
         end: Math.floor(data.end!.getTime() / 1000),
@@ -79,12 +82,12 @@ export function Page() {
         discussion: data.discussion,
       };
 
-      const web3 = new providers.Web3Provider(walletClient.transport)
+      const web3 = new providers.Web3Provider(walletClient.transport);
 
       const receipt = (await client.proposal(
         web3,
         walletClient.account.address,
-        params
+        params,
       )) as any;
 
       console.log(receipt);
@@ -120,9 +123,8 @@ export function Page() {
                 <Controller
                   control={control}
                   name="body"
-                  render={({ field: { onChange, onBlur, value, ref } }) => (
-                    <QuillEditor
-                      maxLength={10000}
+                  render={({ field: { onChange, value } }) => (
+                    <MarkdownEditor
                       onChange={onChange}
                       value={value}
                     />

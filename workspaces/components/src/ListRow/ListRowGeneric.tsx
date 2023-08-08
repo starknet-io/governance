@@ -8,12 +8,7 @@ type Props = {
 
 const Container = ({ children }: Props) => {
   return (
-    <Box
-      mt="24px"
-      display="flex"
-      flexDirection="column"
-
-    >
+    <Box mt="24px" display="flex" flexDirection="column">
       {children}
     </Box>
   );
@@ -96,7 +91,7 @@ const MutedText = ({ type, id }: MutedTextProps) => {
   return (
     <Box textTransform={"uppercase"} minWidth="60px">
       <Text variant="breadcrumbs" color="#6B7280">
-        {type === "snip" ? "SNIP" : "Vote"} {id.toString().padStart(3, '0')}
+        {type === "snip" ? "SNIP" : "Vote"} {id.toString().padStart(3, "0")}
       </Text>
     </Box>
   );
@@ -218,6 +213,7 @@ const Comments = ({ count, width }: CommentsProps) => {
 import moment from "moment";
 import { stripHtml } from "src/utils/helpers";
 import { CommentIcon } from "src/Icons";
+import { MarkdownRenderer } from "src/MarkdownRenderer";
 
 function dateDiff(now: moment.Moment, futureDate: moment.Moment) {
   const diff = moment.duration(futureDate.diff(now));
@@ -360,7 +356,7 @@ const Post = ({ post }: any) => {
         fontWeight="500"
         width={"100%"}
       >
-        {stripHtml(post.content ?? "")}
+        <MarkdownRenderer content={post.content ?? ""} />
       </Text>
     </Flex>
   );
