@@ -13,7 +13,6 @@ import {
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useHelpMessage } from "src/hooks/HelpMessage";
-import { useState } from "react";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 export function Page() {
