@@ -70,6 +70,7 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
         id
         title
         body
+        choices
       }
       ipfs
       vp
@@ -129,6 +130,19 @@ export function Page() {
     },
     skip: delegateAddress == null,
   });
+
+  const gqlResponseProposalsByUser = useQuery(
+    GET_PROPOSALS_FOR_DELEGATE_QUERY,
+    {
+      variables: {
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        where: {
+          space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        },
+      },
+      skip: delegateAddress == null,
+    },
+  );
 
   const proposals = gqlResponseProposalsByUser?.data?.proposals || [];
 
@@ -318,6 +332,11 @@ export function Page() {
                     <ListRow.Root>
                       <ListRow.PastVotes
                         title={vote?.proposal?.title}
+                        votePreference={
+                          vote!.proposal!.choices?.[
+                            vote!.choice - 1
+                          ]?.toLowerCase() as "for" | "against" | "abstain"
+                        }
                         voteCount={vote!.vp}
                         body={vote?.proposal?.body}
                       />
@@ -361,7 +380,7 @@ export function Page() {
             </ListRow.Container>
 
             {!delegateCommentsResponse?.data?.length ? (
-              <EmptyState type="posts" title="No post comments" />
+              <EmptyState type="posts" title="No past comments" />
             ) : null}
           </Box>
         </Stack>

@@ -1,5 +1,5 @@
 import { Badge, Box, Flex, Icon, Tooltip } from "@chakra-ui/react";
-import { HiHandThumbUp } from "react-icons/hi2";
+import { HiHandThumbUp, HiHandThumbDown, HiHandRaised } from "react-icons/hi2";
 import { Text } from "../Text";
 import moment from "moment";
 import { CommentIcon } from "src/Icons";
@@ -134,8 +134,24 @@ type PastVotesProps = {
   votePreference?: "for" | "against" | "abstain";
 };
 
-const PastVotes = ({ title = "Support for scoped storage variables", voteCount = 7, votePreference, body = "" }: PastVotesProps) => {
-  const strippedBody = stripHtml(body ?? "")
+const PastVotes = ({
+  title = "Support for scoped storage variables",
+  voteCount = 7,
+  votePreference,
+  body = "",
+}: PastVotesProps) => {
+  const renderIconBasedOnVotePreference = () => {
+    switch (votePreference) {
+      case "for":
+        return HiHandThumbUp
+      case "against":
+        return HiHandThumbDown
+      case "abstain":
+        return HiHandRaised
+      default:
+        return HiHandThumbUp
+    }
+  }
   return (
     <Flex flexDirection="column" flex={1} gap="6px">
       <Text
@@ -154,12 +170,10 @@ const PastVotes = ({ title = "Support for scoped storage variables", voteCount =
           position="relative"
           top="3px"
           mx="4px"
-          as={HiHandThumbUp}
+          as={renderIconBasedOnVotePreference()}
           color="#20AC70"
         />{" "}
-        with {voteCount} votes
-        {" "}
-        {strippedBody}
+        with {voteCount} votes <MarkdownRenderer content={body ?? ""} />
       </Text>
     </Flex>
   );
@@ -172,7 +186,12 @@ type CommentSummaryProps = {
   comment: string;
 };
 
-const CommentSummary = ({ type, id, postTitle, comment }: CommentSummaryProps) => {
+const CommentSummary = ({
+  type,
+  id,
+  postTitle,
+  comment,
+}: CommentSummaryProps) => {
   return (
     <Flex flexDirection="column" flex={1} gap="6px">
       <Text
@@ -190,7 +209,7 @@ const CommentSummary = ({ type, id, postTitle, comment }: CommentSummaryProps) =
         noOfLines={1}
         fontWeight="500"
       >
-        “{stripHtml(comment ?? "")}”
+        <MarkdownRenderer content={comment ?? ""} />
       </Text>
     </Flex>
   );
