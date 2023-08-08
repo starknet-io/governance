@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { QuillEditor } from "src/Editor";
+import { MarkdownEditor, useMarkdownEditor } from "src/Editor";
 import "./comment.css";
 import { Button } from "src/Button";
 import { Box } from "@chakra-ui/react";
@@ -8,19 +7,17 @@ interface CommentInputProps {
   onSend: (value: string) => void;
 }
 export const CommentInput = ({ onSend }: CommentInputProps) => {
-  const [editorValue, setEditorValue] = useState<string>("");
+  const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
   const handleSend = () => {
     onSend(editorValue);
-    setEditorValue(""); // clear the editor after sending
   };
 
   return (
     <Box mb="16px" position="relative">
-      <QuillEditor
-        onChange={(e) => setEditorValue(e)}
+      <MarkdownEditor
+        onChange={(e) => handleEditorChange(e)}
         value={editorValue}
-        maxLength={10000}
       />
       <Button
         className="submit-button"

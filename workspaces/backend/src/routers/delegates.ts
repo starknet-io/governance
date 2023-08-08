@@ -12,13 +12,11 @@ import {snips} from "../db/schema/snips";
 const delegateInsertSchema = createInsertSchema(delegates);
 
 export const delegateRouter = router({
-  getAll: publicProcedure.query(
-    async () =>
-      await db.query.delegates.findMany({
-        with: {
-          author: true,
-        },
-      }),
+  getAll: publicProcedure.query(async () => await db.query.delegates.findMany({
+    with: {
+      author: true
+    }
+  })
   ),
 
   saveDelegate: protectedProcedure
@@ -26,13 +24,13 @@ export const delegateRouter = router({
       z.object({
         delegateStatement: z.string(),
         delegateType: z.any(),
-        starknetWalletAddress: z.string(),
         twitter: z.string(),
         discord: z.string(),
         discourse: z.string(),
         agreeTerms: z.boolean(),
         understandRole: z.boolean(),
-      }),
+        starknetAddress: z.string(),
+      })
     )
     .mutation(async (opts) => {
       const userAddress = (await getUserByJWT(opts.ctx.req.cookies.JWT))
@@ -46,12 +44,11 @@ export const delegateRouter = router({
       if (user?.delegationStatement) {
         throw new Error('You already have a delegate statement');
       }
-      const insertedDelegate = await db
+      const insertedDelegate: any = await db
         .insert(delegates)
         .values({
           delegateStatement: opts.input.delegateStatement,
           delegateType: opts.input.delegateType,
-          starknetWalletAddress: opts.input.starknetWalletAddress,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
           discourse: opts.input.discourse,
@@ -61,8 +58,16 @@ export const delegateRouter = router({
           createdAt: new Date(),
         })
         .returning();
+      if (insertedDelegate[0].userId) {
+        await db.update(users)
+          .set({
+            starknetAddress: opts.input.starknetAddress,
+          })
+          .where(eq(users.id, insertedDelegate[0].userId))
+      }
       return insertedDelegate[0];
-    }),
+    }
+    ),
 
   getDelegateById: publicProcedure
     .input(
@@ -108,14 +113,30 @@ export const delegateRouter = router({
     }),
 
   editDelegate: protectedProcedure
-    .input(delegateInsertSchema.required({ id: true }))
+    .input(delegateInsertSchema.required({ id: true }).extend({ starknetAddress: z.string() || z.null() }))
     .mutation(async (opts) => {
-      const updatedDelegate = await db
-        .update(delegates)
-        .set(opts.input)
+      const saveData = {
+        delegateStatement: opts.input.delegateStatement,
+        delegateType: opts.input.delegateType,
+        twitter: opts.input.twitter,
+        discord: opts.input.discord,
+        discourse: opts.input.discourse,
+        agreeTerms: opts.input.agreeTerms,
+        understandRole: opts.input.understandRole,
+        updatedAt: new Date(),
+      }
+      const updatedDelegate = await db.update(delegates)
+        .set(saveData)
         .where(eq(delegates.id, opts.input.id))
         .returning();
 
+      if (updatedDelegate[0].userId) {
+        await db.update(users)
+          .set({
+            starknetAddress: opts.input.starknetAddress,
+          })
+          .where(eq(users.id, updatedDelegate[0].userId))
+      }
       return updatedDelegate[0];
     }),
 
@@ -129,9 +150,10 @@ export const delegateRouter = router({
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address),
         with: {
-          delegationStatement: true,
-        },
-      });
-      return user;
+          delegationStatement: true
+        }
+      })
+      if (user) return user;
+      return null;
     }),
 });

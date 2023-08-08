@@ -1,5 +1,5 @@
 import { DocumentProps } from "src/renderer/types";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Box,
   Button,
@@ -10,9 +10,10 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  QuillEditor,
   useDisclosure,
   DeletionDialog,
+  useMarkdownEditor,
+  MarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -33,7 +34,6 @@ export function Page() {
     setValue,
     formState: { errors, isValid },
   } = useForm<RouterInput["posts"]["editPost"]>();
-  const [editorValue, setEditorValue] = useState<string>("");
   const editPost = trpc.posts.editPost.useMutation();
   const pageContext = usePageContext();
   const postResp = trpc.posts.getPostById.useQuery({
@@ -43,6 +43,8 @@ export function Page() {
   const { data: post } = postResp;
 
   const deletePost = trpc.posts.deletePost.useMutation();
+
+  const { editorValue, handleEditorChange, editor, convertMarkdownToSlate } = useMarkdownEditor('');
 
   const handleDeletePost = async () => {
     if (!post?.id) return;
@@ -57,11 +59,13 @@ export function Page() {
   };
 
   useEffect(() => {
-    if (post) {
-      setValue("title", post.title ?? "");
-      setEditorValue(post.content ?? "");
-    }
+    if (post && window !== undefined) processData();
   }, [post]);
+
+  const processData = async () => {
+    setValue("title", post?.title ?? "");
+    editor.insertNodes(await convertMarkdownToSlate(post?.content || ''));
+  }
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -106,9 +110,10 @@ export function Page() {
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Content</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setEditorValue(e)}
+                <MarkdownEditor 
+                  onChange={handleEditorChange}
                   value={editorValue}
+                  customEditor={editor}
                 />
                 {errors.content && <span>This field is required.</span>}
               </FormControl>

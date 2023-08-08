@@ -1,10 +1,10 @@
 import React from "react";
 import { Comment } from "@yukilabs/governance-backend/src/db/schema/comments";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
-import { QuillEditor } from "src/Editor";
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
+import { MarkdownRenderer } from "src/MarkdownRenderer";
 
 type CommentWithAuthor = Comment & {
   author: User | null;
@@ -57,7 +57,7 @@ export const CommentList: React.FC<CommentListProps> = ({ commentsList }) => {
                   {daysAgo(createdAt)}
                 </Text>
               </Flex>
-              <QuillEditor value={content || ""} readOnly={true} />
+              <MarkdownRenderer content={content || ""} />
             </Box>
           </Box>
         );

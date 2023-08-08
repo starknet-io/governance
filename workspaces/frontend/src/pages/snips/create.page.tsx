@@ -1,5 +1,4 @@
 import { DocumentProps } from "src/renderer/types";
-import { useState } from "react";
 import {
   Box,
   Button,
@@ -11,8 +10,8 @@ import {
   Select,
   Flex,
   ContentContainer,
-  QuillEditor,
-  EditorTemplate,
+  MarkdownEditor,
+  useMarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -25,8 +24,9 @@ export function Page() {
     register,
     formState: { errors, isValid },
   } = useForm<RouterInput["snips"]["createSNIP"]>();
-  const [editorValue, setEditorValue] = useState<string>(EditorTemplate.snip);
   const createSNIP = trpc.snips.createSNIP.useMutation();
+
+  const { editorValue, handleEditorChange } = useMarkdownEditor('');
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -61,8 +61,8 @@ export function Page() {
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Proposal Body</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setEditorValue(e)}
+                <MarkdownEditor 
+                  onChange={handleEditorChange}
                   value={editorValue}
                 />
                 {errors.description && <span>This field is required.</span>}
