@@ -1,7 +1,6 @@
 import React from "react";
 import { Comment } from "@yukilabs/governance-backend/src/db/schema/comments";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
-import { QuillEditor } from "src/Editor";
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
