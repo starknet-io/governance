@@ -7,7 +7,9 @@ import {
   ContentContainer,
   DelegateModal,
   Divider,
+  Flex,
   Heading,
+  Text,
   QuillEditor,
   ProfileSummaryCard,
   Stack,
@@ -15,6 +17,7 @@ import {
   MenuItem,
   Status,
   EmptyState,
+  AgreementModal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -58,6 +61,7 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
 export function Page() {
   const pageContext = usePageContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
 
   const { isLoading, write } = useDelegateRegistrySetDelegate({
@@ -67,7 +71,10 @@ export function Page() {
 
   const delegation = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    args: [address!, stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 })],
+    args: [
+      address!,
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
+    ],
     watch: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
@@ -113,6 +120,24 @@ export function Page() {
     {},
   );
 
+  console.log(delegate);
+
+  const renderAgreementValue = () => {
+    if (!delegate?.confirmDelegateAgreement && !delegate?.customAgreement) {
+      return "None";
+    }
+    if (delegate?.customAgreement) {
+      return (
+        <Flex color="#292932" fontWeight="medium" gap={1}>
+          <div>Custom</div>-
+          <button onClick={() => setShowAgreement(true)}>View</button>
+        </Flex>
+      );
+    } else {
+      return "Yes";
+    }
+  };
+
   return (
     <Box
       display="flex"
@@ -129,7 +154,9 @@ export function Page() {
         delegateTokens={() => {
           write?.({
             args: [
-              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
+              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                size: 32,
+              }),
               delegateAddress,
             ],
           });
@@ -137,6 +164,17 @@ export function Page() {
         }}
       />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
+      <AgreementModal
+        isOpen={showAgreement}
+        onClose={() => setShowAgreement(false)}
+        content={
+          delegate?.customAgreement ? (
+            delegate!.customAgreement!.content
+          ) : (
+            <div>Contract Goes Here</div>
+          )
+        }
+      />
       <Box
         pt="40px"
         px="32px"
@@ -153,9 +191,7 @@ export function Page() {
             imgUrl={delegate?.author?.ensAvatar}
             ensName={delegate?.author?.ensName}
             address={delegate?.author?.ensName || delegateAddress}
-            avatarString={
-              delegate?.author?.ensAvatar || delegateAddress
-            }
+            avatarString={delegate?.author?.ensAvatar || delegateAddress}
           >
             <ProfileSummaryCard.MoreActions>
               <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
@@ -209,9 +245,7 @@ export function Page() {
             />
             <SummaryItems.Item
               label="Delegation agreement"
-              value={
-                delegate != null ? (delegate?.agreeTerms ? "Yes" : "No") : null
-              }
+              value={renderAgreementValue()}
             />
             <SummaryItems.Item
               isCopiable

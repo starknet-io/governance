@@ -35,6 +35,7 @@ export {
   VoteComment,
   VoteModal,
   DelegateModal,
+  AgreementModal,
   DatePicker,
   ConfirmModal,
   LinkCard,

@@ -32,7 +32,7 @@ const Root = ({ children, direction = "column" }: RootProps) => {
 
 type ItemProps = {
   label: string;
-  value?: string | null;
+  value?: string | null | React.ReactNode;
   children?: React.ReactNode;
   isTruncated?: boolean;
   isCopiable?: boolean;
@@ -40,29 +40,35 @@ type ItemProps = {
 
 const Item = (props: ItemProps) => {
   const { label, value, children, isTruncated, isCopiable } = props;
+
+  const renderValue = () => {
+    if (typeof value === 'string') {
+      return isCopiable ? (
+        <CopyToClipboard text={value}>
+          <Text color="#292932" fontWeight="medium" title={value}>
+            {isTruncated ? truncateAddress(value) : value}
+          </Text>
+        </CopyToClipboard>
+      ) : (
+        <Text color="#292932" fontWeight="medium" title={value}>
+          {isTruncated ? truncateAddress(value) : value}
+        </Text>
+      );
+    } else {
+      return value; // If value is React.ReactNode, render it directly
+    }
+  };
+
   return (
     <Flex justify="space-between" fontSize="sm">
       <Text fontWeight="medium" color="#6C6C75">
         {label}
       </Text>
-      {value ? (
-        isCopiable ? (
-          <CopyToClipboard text={value}>
-            <Text color="#292932" fontWeight="medium" title={value}>
-              {isTruncated ? truncateAddress(value) : value}
-            </Text>
-          </CopyToClipboard>
-        ) : (
-          <Text color="#292932" fontWeight="medium" title={value}>
-            {isTruncated ? truncateAddress(value) : value}
-          </Text>
-        )
-      ) : (
-        children
-      )}
+      {value ? renderValue() : children}
     </Flex>
   );
 };
+
 
 type TitleProps = {
   label?: string | null;

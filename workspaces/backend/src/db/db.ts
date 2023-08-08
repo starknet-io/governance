@@ -1,19 +1,19 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 
 import dotenv from 'dotenv';
 
-
-import * as comments from './schema/comments'
-import * as councils from './schema/councils'
-import * as delegates from './schema/delegates'
-import * as pages from './schema/pages'
-import * as posts from './schema/posts'
-import * as snips from './schema/snips'
-import * as users from './schema/users'
-import * as votes from './schema/votes'
-import * as usersToCouncils from './schema/usersToCouncils'
+import * as comments from './schema/comments';
+import * as councils from './schema/councils';
+import * as delegates from './schema/delegates';
+import * as pages from './schema/pages';
+import * as posts from './schema/posts';
+import * as snips from './schema/snips';
+import * as users from './schema/users';
+import * as votes from './schema/votes';
+import * as usersToCouncils from './schema/usersToCouncils';
+import * as customDelegateAgreement from './schema/customDelegateAgreement';
 
 dotenv.config();
 
@@ -31,10 +31,11 @@ const db = drizzle(pool, {
     ...snips,
     ...users,
     ...votes,
-    ...usersToCouncils
-  }
+    ...usersToCouncils,
+    ...customDelegateAgreement,
+  },
 });
 
 migrate(db, { migrationsFolder: './migrations' });
 
-export { db, pool }
+export { db, pool };
