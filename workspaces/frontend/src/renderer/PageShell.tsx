@@ -23,7 +23,7 @@ export function PageShell(props: Props) {
   }, [pageContext.documentProps, pageContext.exports.documentProps, pageContext.pageProps]);
 
   return (
-    <React.StrictMode>
+    // <React.StrictMode>
       <PageContextProvider pageContext={pageContext}>
         <ThemeProvider>
           <ApolloProvider client={props.apolloClient}>
@@ -35,6 +35,6 @@ export function PageShell(props: Props) {
           </ApolloProvider>
         </ThemeProvider>
       </PageContextProvider>
-    </React.StrictMode>
+    // </React.StrictMode>
   );
 }

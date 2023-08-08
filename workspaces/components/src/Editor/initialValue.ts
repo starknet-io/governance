@@ -1,6 +1,6 @@
 import { Descendant } from "slate";
 
-interface ParagraphElement {
+export interface ParagraphElement {
   type: "paragraph";
   children: Descendant[];
 }

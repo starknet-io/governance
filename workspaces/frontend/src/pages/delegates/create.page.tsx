@@ -10,9 +10,9 @@ import {
   ContentContainer,
   Flex,
   Box,
-  QuillEditor,
-  EditorTemplate,
   Multiselect,
+  useMarkdownEditor,
+  MarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -40,9 +40,8 @@ export function Page() {
     setValue,
     formState: { errors, isValid },
   } = useForm<FormValues>();
-  const [editorValue, setEditorValue] = useState<string>(
-    EditorTemplate.delegate,
-  );
+  const { editorValue, handleEditorChange } = useMarkdownEditor("");
+
   const createDelegate = trpc.delegates.saveDelegate.useMutation();
   const { data: user } = trpc.users.me.useQuery();
 
@@ -81,8 +80,8 @@ export function Page() {
             <Stack spacing="24px" direction={{ base: "column" }}>
               <FormControl id="delegate-statement">
                 <FormLabel>Delegate pitch</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setEditorValue(e)}
+                <MarkdownEditor
+                  onChange={handleEditorChange}
                   value={editorValue}
                 />
                 {errors.delegateStatement && (

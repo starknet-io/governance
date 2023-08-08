@@ -23,15 +23,13 @@ import {
   Text,
   Textarea,
   VoteButton,
-  // VoteComment,
   VoteModal,
   VoteReview,
   VoteStat,
-  // MarkdownRenderer,
-  QuillEditor,
   Iframely,
   Status,
   VoteComment,
+  MarkdownRenderer,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -100,7 +98,7 @@ export function Page() {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         voter: walletClient?.account.address as any,
       },
-      skip: walletClient?.account.address == null
+      skip: walletClient?.account.address == null,
     },
   );
   const vote = useQuery(
@@ -121,12 +119,12 @@ export function Page() {
     `),
     {
       variables: {
-        "where": {
-          "voter": walletClient?.account.address as any,
-          "proposal": pageContext.routeParams!.id
-        }
+        where: {
+          voter: walletClient?.account.address as any,
+          proposal: pageContext.routeParams!.id,
+        },
       },
-      skip: walletClient?.account.address == null
+      skip: walletClient?.account.address == null,
     },
   );
 
@@ -148,14 +146,14 @@ export function Page() {
     `),
     {
       variables: {
-        "where": {
-          "proposal": pageContext.routeParams!.id
-        }
+        where: {
+          proposal: pageContext.routeParams!.id,
+        },
       },
     },
   );
 
-  const address = walletClient?.account.address as `0x${string}` | undefined
+  const address = walletClient?.account.address as `0x${string}` | undefined;
 
   const delegation = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
@@ -165,11 +163,10 @@ export function Page() {
     ],
     watch: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
-    enabled: address != null
-  })
+    enabled: address != null,
+  });
 
   const userBalance = useBalanceData(address);
-
 
   async function handleVote(choice: number, reason?: string) {
     try {
@@ -206,8 +203,8 @@ export function Page() {
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
       refetch();
-      vote.refetch()
-      votes.refetch()
+      vote.refetch();
+      votes.refetch();
       console.log(receipt);
     } catch (error) {
       // Handle error
@@ -377,9 +374,7 @@ export function Page() {
             ) : (
               <></>
             )}
-            <Divider />
-            {/* <MarkdownRenderer content={data?.proposal?.body || ""} /> */}
-            <QuillEditor value={data?.proposal?.body || ""} readOnly />
+            <MarkdownRenderer content={data?.proposal?.body || ""} />
 
             <Divider my="32px" />
             <Heading color="#33333E" variant="h3">
@@ -406,9 +401,8 @@ export function Page() {
         flexBasis={{ base: "100%", md: "391px" }}
         height="100vh"
         pb="100px"
-            top="0"
-          position={{ base: "unset", lg: "sticky" }}
-
+        top="0"
+        position={{ base: "unset", lg: "sticky" }}
       >
         {data?.proposal?.state === "active" ? (
           <>
@@ -416,14 +410,31 @@ export function Page() {
               Cast your vote
             </Heading>
 
-            {delegation.isFetched && userBalance.isFetched &&
-              delegation.data && delegation.data != "0x0000000000000000000000000000000000000000" &&
-              <Status label={`Your voting power of ${userBalance.balance} ${userBalance.symbol} is currently assigned to delegate ${truncateAddress(delegation.data)}`} />
-            }
+            {delegation.isFetched &&
+              userBalance.isFetched &&
+              delegation.data &&
+              delegation.data !=
+                "0x0000000000000000000000000000000000000000" && (
+                <Status
+                  label={`Your voting power of ${userBalance.balance} ${
+                    userBalance.symbol
+                  } is currently assigned to delegate ${truncateAddress(
+                    delegation.data,
+                  )}`}
+                />
+              )}
 
-            {vote.data && vote.data.votes?.[0] &&
-              <Status label={`You voted ${vote.data.votes[0].choice === 1 ? "For" : vote.data.votes[0].choice === 2 ? "Against" : "Abstain"} using ${vote.data.votes[0].vp} votes`} />
-            }
+            {vote.data && vote.data.votes?.[0] && (
+              <Status
+                label={`You voted ${
+                  vote.data.votes[0].choice === 1
+                    ? "For"
+                    : vote.data.votes[0].choice === 2
+                    ? "Against"
+                    : "Abstain"
+                } using ${vote.data.votes[0].vp} votes`}
+              />
+            )}
 
             <ButtonGroup
               mb="40px"
@@ -492,13 +503,16 @@ export function Page() {
                   key={index}
                   address={vote?.voter as string}
                   voted={
-                    vote?.choice === 1 ? "For" : vote?.choice === 2 ? "Against" : "Abstain"
+                    vote?.choice === 1
+                      ? "For"
+                      : vote?.choice === 2
+                      ? "Against"
+                      : "Abstain"
                   }
                   comment={vote?.reason as string}
                   voteCount={vote?.vp as number}
                 />
               ))}
-
             </Box>
           </>
         ) : (

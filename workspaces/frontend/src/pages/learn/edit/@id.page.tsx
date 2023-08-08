@@ -8,9 +8,10 @@ import {
   Input,
   Stack,
   ContentContainer,
-  QuillEditor,
   ReorderableList,
   Button,
+  MarkdownEditor,
+  useMarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -28,28 +29,35 @@ export function Page() {
     formState: { errors, isValid },
   } = useForm<RouterInput["pages"]["editPage"]>();
   const pageContext = usePageContext();
-  const pagesResponse = trpc.pages.getAll.useQuery();
   const saveBatchPages = trpc.pages.saveBatch.useMutation();
-  const [editorValue, setEditorValue] = useState<string>("");
-  const pages = pagesResponse.data ?? [];
+
+  const { data, isSuccess } = trpc.pages.getAll.useQuery();
+
   const [reorderItems, setReorderItems] = useState<PageWithUserInterface[]>([]);
   const title = watch("title");
 
+  const { editor, editorValue, handleEditorChange, setMarkdownValue } =
+    useMarkdownEditor("");
+
+  async function processData() {
+    const page = data?.find(
+      (page: any) => page.id === Number(pageContext.routeParams!.id),
+    );
+    setValue("title", page?.title);
+    await setMarkdownValue(page?.content ?? "");
+    setReorderItems(data ?? []);
+  }
+
   useEffect(() => {
-    if (pages) {
-      const page = pages.find(
-        (page) => page.id === Number(pageContext.routeParams!.id)
-      );
-      setValue("title", page?.title);
-      setEditorValue(page?.content ?? "");
-      setReorderItems(pages);
+    if (isSuccess && data.length) {
+      processData();
     }
-  }, [pages]);
+  }, [isSuccess]);
 
   useEffect(() => {
     setReorderItems((prevItems) => {
       const itemIndex = prevItems.findIndex(
-        (item) => item.id === Number(pageContext.routeParams!.id)
+        (item) => item.id === Number(pageContext.routeParams!.id),
       );
       if (itemIndex !== -1) {
         const updatedItems = [...prevItems];
@@ -103,9 +111,10 @@ export function Page() {
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Body</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setEditorValue(e)}
+                <MarkdownEditor
+                  customEditor={editor}
                   value={editorValue}
+                  onChange={handleEditorChange}
                 />
                 {errors.content && <span>This field is required.</span>}
               </FormControl>

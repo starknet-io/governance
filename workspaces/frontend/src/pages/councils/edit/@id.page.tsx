@@ -10,11 +10,11 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  QuillEditor,
-  EditorTemplate,
   MembersList,
   useDisclosure,
   DeletionDialog,
+  MarkdownEditor,
+  useMarkdownEditor,
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
@@ -37,43 +37,50 @@ export function Page() {
     setValue,
     formState: { errors, isValid },
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
-  const [statementValue, setStatementValue] = useState<string>(
-    EditorTemplate.council
-  );
-  const [descriptionValue, setDescriptionValue] = useState<string>("");
+
   const [members, setMembers] = useState<MemberType[]>([]);
   const editCouncil = trpc.councils.editCouncil.useMutation();
   const pageContext = usePageContext();
-  const councilResp = trpc.councils.getCouncilBySlug.useQuery({
+  const { data: council, isSuccess } = trpc.councils.getCouncilBySlug.useQuery({
     slug: pageContext.routeParams!.id,
   });
   const removeUserFromCouncilData =
     trpc.councils.deleteUserFromCouncil.useMutation();
 
-  const { data: council } = councilResp;
+  const { editorValue, handleEditorChange, editor, setMarkdownValue } =
+    useMarkdownEditor("");
+  const {
+    editor: shortDescEditor,
+    editorValue: shortDescValue,
+    handleEditorChange: handleShortDescValue,
+    setMarkdownValue: shortDescSetMarkdownValue,
+  } = useMarkdownEditor("");
 
   useEffect(() => {
-    if (council) {
-      setValue("name", council.name);
-      setValue("address", council.address);
-      setDescriptionValue(council.description ?? "");
-      setStatementValue(council.statement ?? "");
-      const tempMembers = council.members?.map((member) => {
-        return {
-          address: member.user.address,
-          name: member.user.name,
-          twitterHandle: member.user.twitter,
-          miniBio: member.user.miniBio,
-        };
-      });
-      setMembers(tempMembers ?? []);
-    }
-  }, [council]);
+    if (council && isSuccess) processData();
+  }, [isSuccess]);
+
+  async function processData() {
+    setValue("name", council?.name);
+    setValue("address", council?.address);
+    await shortDescSetMarkdownValue(council?.description ?? "");
+    await setMarkdownValue(council?.statement ?? "");
+
+    const tempMembers = council?.members?.map((member: any) => {
+      return {
+        address: member.user.address,
+        name: member.user.name,
+        twitterHandle: member.user.twitter,
+        miniBio: member.user.miniBio,
+      };
+    });
+    setMembers(tempMembers ?? []);
+  }
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      data.statement = statementValue;
-      data.description = descriptionValue;
+      data.statement = editorValue;
+      data.description = shortDescValue;
       data.slug = "";
       data.members = members;
       if (!council?.id) {
@@ -144,21 +151,22 @@ export function Page() {
 
               <FormControl id="description">
                 <FormLabel>Short description</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setDescriptionValue(e)}
-                  value={descriptionValue}
-                  maxLength={250}
-                  noToolbar
+                <MarkdownEditor
+                  customEditor={shortDescEditor}
+                  onChange={handleShortDescValue}
+                  value={shortDescValue}
+                  minHeight="120"
+                  hideTabBar
                 />
                 {errors.description && <span>This field is required.</span>}
               </FormControl>
 
               <FormControl id="statement">
                 <FormLabel>Council statement</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setStatementValue(e)}
-                  value={statementValue}
-                  maxLength={10000}
+                <MarkdownEditor
+                  onChange={handleEditorChange}
+                  value={editorValue}
+                  customEditor={editor}
                 />
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>

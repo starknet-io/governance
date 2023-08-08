@@ -1,5 +1,5 @@
 import { DocumentProps } from "src/renderer/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   Box,
   Button,
@@ -10,9 +10,10 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  QuillEditor,
   Checkbox,
   Multiselect,
+  useMarkdownEditor,
+  MarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { Controller, useForm, FieldErrors } from "react-hook-form";
@@ -36,27 +37,36 @@ export function Page() {
     RouterInput["delegates"]["editDelegate"]
   >;
 
-  const [editorValue, setEditorValue] = useState<string>("");
   const editDelegate = trpc.delegates.editDelegate.useMutation();
   const pageContext = usePageContext();
-  const { data: delegate } = trpc.delegates.getDelegateById.useQuery({
-    id: pageContext.routeParams!.id,
-  });
+  const { data: delegate, isSuccess } = trpc.delegates.getDelegateById.useQuery(
+    {
+      id: pageContext.routeParams!.id,
+    },
+  );
+
+  const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
+    useMarkdownEditor("");
+
+  const processData = async () => {
+    const delegateData = delegate;
+    if (!delegateData) return;
+
+    editor.insertNodes(
+      await convertMarkdownToSlate(delegateData.delegateStatement || ""),
+    );
+    setValue("delegateType", delegateData.delegateType as string[]);
+    setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
+    setValue("twitter", delegateData.twitter);
+    setValue("discord", delegateData.discord);
+    setValue("discourse", delegateData.discourse);
+    setValue("agreeTerms", delegateData.agreeTerms);
+    setValue("understandRole", delegateData.understandRole);
+  };
 
   useEffect(() => {
-    if (delegate) {
-      const delegateData = delegate;
-
-      setEditorValue(delegateData.delegateStatement ?? "");
-      setValue("delegateType", delegateData.delegateType as string[]);
-      setValue("twitter", delegateData.twitter);
-      setValue("discord", delegateData.discord);
-      setValue("discourse", delegateData.discourse);
-      setValue("agreeTerms", delegateData.agreeTerms);
-      setValue("understandRole", delegateData.understandRole);
-      setValue("starknetAddress", delegateData.author?.starknetAddress ?? "");
-    }
-  }, [delegate]);
+    if (delegate && isSuccess) processData();
+  }, [isSuccess]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -82,9 +92,10 @@ export function Page() {
             <Stack spacing="32px" direction={{ base: "column" }}>
               <FormControl id="delegate-statement">
                 <FormLabel>Delegate pitch</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setEditorValue(e)}
+                <MarkdownEditor
+                  onChange={handleEditorChange}
                   value={editorValue}
+                  customEditor={editor}
                 />
                 {errors.delegateStatement && (
                   <span>This field is required.</span>
