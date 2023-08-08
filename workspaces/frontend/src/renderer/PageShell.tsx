@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { PageContextProvider } from "./PageContextProvider";
 import type { PageContext } from "./types";
 import { TrpcProvider } from "./TrpcProvider";
-import DynamicContextProviderPage from "./DynamicContexProviderPage";
+import { DynamicContextProviderPage } from "./DynamicContexProviderPage";
 import { ApolloProvider, ApolloClient } from "@apollo/client";
 import { ThemeProvider } from "@yukilabs/governance-components";
 
@@ -23,7 +23,7 @@ export function PageShell(props: Props) {
   }, [pageContext.documentProps, pageContext.exports.documentProps, pageContext.pageProps]);
 
   return (
-    <React.StrictMode>
+    // <React.StrictMode>
       <PageContextProvider pageContext={pageContext}>
         <ThemeProvider>
           <ApolloProvider client={props.apolloClient}>
@@ -35,6 +35,6 @@ export function PageShell(props: Props) {
           </ApolloProvider>
         </ThemeProvider>
       </PageContextProvider>
-    </React.StrictMode>
+    // </React.StrictMode>
   );
 }

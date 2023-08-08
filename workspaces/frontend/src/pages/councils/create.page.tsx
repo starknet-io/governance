@@ -10,9 +10,10 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  QuillEditor,
   EditorTemplate,
   MembersList,
+  MarkdownEditor,
+  useMarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -26,17 +27,20 @@ export function Page() {
     register,
     formState: { errors, isValid },
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
-  const [statementValue, setStatementValue] = useState<string>(
-    EditorTemplate.council
-  );
-  const [descriptionValue, setDescriptionValue] = useState<string>("");
+
   const [members, setMembers] = useState<MemberType[]>([]);
   const createCouncil = trpc.councils.saveCouncil.useMutation();
 
+  const { editorValue, handleEditorChange, editor } = useMarkdownEditor("", EditorTemplate.proposalMarkDown);
+  const {
+    editorValue: shortDescValue,
+    handleEditorChange: handleShortDescValue,
+  } = useMarkdownEditor("");
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      data.statement = statementValue;
-      data.description = descriptionValue;
+      data.statement = editorValue;
+      data.description = shortDescValue;
       data.slug = "";
       data.members = members;
       await createCouncil.mutateAsync(data, {
@@ -73,22 +77,21 @@ export function Page() {
 
               <FormControl id="description">
                 <FormLabel>Short description</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setDescriptionValue(e)}
-                  value={descriptionValue}
-                  maxLength={250}
-                  noToolbar
-                  placeholder="Briefly describe the councils purpose."
+                <MarkdownEditor
+                  onChange={handleShortDescValue}
+                  value={shortDescValue}
+                  minHeight="100"
+                  hideTabBar
                 />
                 {errors.description && <span>This field is required.</span>}
               </FormControl>
 
               <FormControl id="statement">
                 <FormLabel>Council statement</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setStatementValue(e)}
-                  value={statementValue}
-                  maxLength={10000}
+                <MarkdownEditor
+                  value={editorValue}
+                  onChange={handleEditorChange}
+                  customEditor={editor}
                 />
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>

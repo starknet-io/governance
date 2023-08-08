@@ -10,7 +10,8 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  QuillEditor,
+  MarkdownEditor,
+  useMarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -23,12 +24,14 @@ export function Page() {
     register,
     formState: { errors, isValid },
   } = useForm<RouterInput["posts"]["savePost"]>();
-  const [editorValue, setEditorValue] = useState<string>("");
+
   const [councilId, setCouncilId] = useState<string>("");
   const createPost = trpc.posts.savePost.useMutation();
   const councilSlug =
     trpc.councils.getCouncilSlug.useQuery({ councilId: Number(councilId) })
       .data ?? "";
+
+  const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -72,8 +75,8 @@ export function Page() {
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Content</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setEditorValue(e)}
+                <MarkdownEditor
+                  onChange={handleEditorChange}
                   value={editorValue}
                 />
                 {errors.content && <span>This field is required.</span>}

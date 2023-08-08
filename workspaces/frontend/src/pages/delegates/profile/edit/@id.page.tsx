@@ -10,9 +10,10 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  QuillEditor,
   Checkbox,
   Multiselect,
+  useMarkdownEditor,
+  MarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { Controller, useForm, FieldErrors } from "react-hook-form";
@@ -36,50 +37,47 @@ export function Page() {
     RouterInput["delegates"]["editDelegate"]
   >;
 
-  const [editorValue, setEditorValue] = useState<string>("");
   const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
     useState(false);
-  const [customAgreementValue, setCustomAgreementValue] = useState<string>("");
   const [agreementType, setAgreementType] = useState<
     "standard" | "custom" | null
   >(null);
   const editDelegate = trpc.delegates.editDelegate.useMutation();
   const pageContext = usePageContext();
-  const delegateResp = trpc.delegates.getDelegateById.useQuery({
-    id: pageContext.routeParams!.id,
-  });
+  const { data: delegate, isSuccess } = trpc.delegates.getDelegateById.useQuery(
+    {
+      id: pageContext.routeParams!.id,
+    },
+  );
 
-  const { data: delegate } = delegateResp;
+  const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
+    useMarkdownEditor("");
 
-  useEffect(() => {
-    if (delegate) {
-      const delegateData = delegate as {
-        confirmDelegateAgreement: boolean;
-        delegateStatement?: string;
-        delegateType: string;
-        starknetWalletAddress: string;
-        twitter: string;
-        discord: string;
-        discourse: string;
-        agreeTerms: boolean;
-        understandRole: boolean;
-        customAgreement: any;
-      };
+  const {
+    editorValue: editorCustomAgreementValue,
+    handleEditorChange: handleCustomAgreement,
+    editor: editorCustomAgreement,
+  } = useMarkdownEditor("");
 
-      setEditorValue(delegateData.delegateStatement ?? "");
-      setCustomAgreementValue(delegateData?.customAgreement?.content ?? "");
-      setShowCustomAgreementEditor(!!delegateData?.customAgreement);
-      setValue("delegateType", delegateData.delegateType);
-      setValue("starknetWalletAddress", delegateData.starknetWalletAddress);
-      setValue("twitter", delegateData.twitter);
-      setValue("discord", delegateData.discord);
-      setValue("discourse", delegateData.discourse);
-      setValue(
-        "confirmDelegateAgreement",
-        delegateData.confirmDelegateAgreement,
-      );
-      setValue("understandRole", delegateData.understandRole);
-    }
+  const processData = async () => {
+    const delegateData = delegate;
+    if (!delegateData) return;
+
+    editor.insertNodes(
+      await convertMarkdownToSlate(delegateData.delegateStatement || ""),
+    );
+    editorCustomAgreement.insertNodes(
+      await convertMarkdownToSlate(
+        delegateData?.customAgreement?.content || "",
+      ),
+    );
+    setValue("delegateType", delegateData.delegateType as string[]);
+    setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
+    setValue("twitter", delegateData.twitter);
+    setValue("discord", delegateData.discord);
+    setValue("discourse", delegateData.discourse);
+    setValue("understandRole", delegateData.understandRole);
+    setValue("confirmDelegateAgreement", delegateData.confirmDelegateAgreement);
     if (delegate?.confirmDelegateAgreement) {
       setAgreementType("standard");
     } else if (delegate?.customAgreement) {
@@ -87,14 +85,18 @@ export function Page() {
     } else {
       setAgreementType(null);
     }
-  }, [delegate]);
+  };
+
+  useEffect(() => {
+    if (delegate && isSuccess) processData();
+  }, [isSuccess]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       data.delegateStatement = editorValue;
       data.id = pageContext.routeParams!.id;
       if (showCustomAgreementEditor) {
-        data.customDelegateAgreementContent = customAgreementValue;
+        data.customDelegateAgreementContent = editorCustomAgreementValue;
       }
       await editDelegate.mutateAsync(data).then(() => {
         navigate(`/delegates/profile/${pageContext.routeParams!.id}`);
@@ -116,9 +118,10 @@ export function Page() {
             <Stack spacing="32px" direction={{ base: "column" }}>
               <FormControl id="delegate-statement">
                 <FormLabel>Delegate pitch</FormLabel>
-                <QuillEditor
-                  onChange={(e) => setEditorValue(e)}
+                <MarkdownEditor
+                  onChange={handleEditorChange}
                   value={editorValue}
+                  customEditor={editor}
                 />
                 {errors.delegateStatement && (
                   <span>This field is required.</span>
@@ -150,13 +153,11 @@ export function Page() {
                 <Input
                   variant="primary"
                   placeholder="0x..."
-                  {...register("starknetWalletAddress", {
+                  {...register("starknetAddress", {
                     required: true,
                   })}
                 />
-                {errors.starknetWalletAddress && (
-                  <span>This field is required.</span>
-                )}
+                {errors.starknetAddress && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="twitter">
                 <FormLabel>Twitter</FormLabel>
@@ -226,13 +227,13 @@ export function Page() {
               {agreementType === "custom" && (
                 <FormControl id="custom-agreement-editor">
                   <FormLabel>Custom Delegate Agreement</FormLabel>
-                  <QuillEditor
-                    onChange={(e) => setCustomAgreementValue(e)}
-                    value={customAgreementValue}
+                  <MarkdownEditor
+                    onChange={handleCustomAgreement} // Change here
+                    value={editorCustomAgreementValue} // Change here
+                    customEditor={editorCustomAgreement} // Change here
                   />
                 </FormControl>
               )}
-
               <Flex justifyContent="flex-end" gap="16px">
                 <Button
                   color="#D83E2C"

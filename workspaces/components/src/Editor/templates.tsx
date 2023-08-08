@@ -1,3 +1,5 @@
+import { ParagraphElement } from "./initialValue";
+
 const snip = `
 <p>#Preamble</p>
 <p>#Abstract</p>
@@ -34,4 +36,61 @@ const council = `
 <p>#Council members</p>
 `;
 
-export { snip, proposal, delegate, council };
+/* Markdown */
+
+// const proposalMarkDown = `
+// #Preamble
+// #Abstract
+// #Motivation (optional
+// #Specification
+// #Rationale
+// #Backwards compatibility
+// #Test cases
+// #Reference implementation
+// #Security considerations
+// `;
+
+const proposalMarkDown: ParagraphElement[] = [
+  {
+    type: "paragraph",
+    children: [{ text: "#Preamble" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Abstract" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Motivation (optional)" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Specification" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Rationale" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Preamble" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Backwards compatibility" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Test cases" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Reference implementation" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "#Security considerations" }],
+  },
+];
+
+export { snip, proposal, delegate, council, proposalMarkDown };

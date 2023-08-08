@@ -9,7 +9,7 @@ import {
   Divider,
   Flex,
   Heading,
-  QuillEditor,
+  MarkdownRenderer,
   ProfileSummaryCard,
   Stack,
   SummaryItems,
@@ -116,7 +116,7 @@ export function Page() {
       address!,
       stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
-    watch: true,
+    watch: false,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
@@ -176,6 +176,8 @@ export function Page() {
       return "None";
     }
   };
+
+  console.log(delegate)
 
   return (
     <Box
@@ -288,7 +290,7 @@ export function Page() {
               isCopiable
               isTruncated
               label="Starknet address"
-              value={delegate?.starknetWalletAddress}
+              value={delegate?.author?.starknetAddress ?? ""}
             />
           </SummaryItems.Root>
         </Box>
@@ -329,8 +331,7 @@ export function Page() {
           <Heading color="#33333E" variant="h3">
             Delegate pitch
           </Heading>
-          {/* <MarkdownRenderer content={delegate?.delegateStatement || ""} /> */}
-          <QuillEditor value={delegate?.delegateStatement} readOnly />
+          <MarkdownRenderer content={delegate?.delegateStatement || ""} />
           <Box mt="24px">
             <Heading mb="24px" color="#33333E" variant="h3">
               Past Votes
