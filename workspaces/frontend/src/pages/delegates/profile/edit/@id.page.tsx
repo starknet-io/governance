@@ -56,6 +56,7 @@ export function Page() {
   const {
     editorValue: editorCustomAgreementValue,
     handleEditorChange: handleCustomAgreement,
+    convertMarkdownToSlate: editorCustomAgreementConvertMarkdownToSlate,
     editor: editorCustomAgreement,
   } = useMarkdownEditor("");
 
@@ -67,17 +68,20 @@ export function Page() {
       await convertMarkdownToSlate(delegateData.delegateStatement || ""),
     );
     editorCustomAgreement.insertNodes(
-      await convertMarkdownToSlate(
+      await editorCustomAgreementConvertMarkdownToSlate(
         delegateData?.customAgreement?.content || "",
       ),
     );
     setValue("delegateType", delegateData.delegateType as string[]);
     setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
-    setValue("twitter", delegateData.twitter);
-    setValue("discord", delegateData.discord);
-    setValue("discourse", delegateData.discourse);
-    setValue("understandRole", delegateData.understandRole);
-    setValue("confirmDelegateAgreement", delegateData.confirmDelegateAgreement);
+    setValue("twitter", delegateData.twitter as string);
+    setValue("discord", delegateData.discord as string);
+    setValue("discourse", delegateData.discourse as string);
+    setValue("understandRole", delegateData.understandRole as boolean);
+    setValue(
+      "confirmDelegateAgreement",
+      delegateData.confirmDelegateAgreement as boolean,
+    );
     if (delegate?.confirmDelegateAgreement) {
       setAgreementType("standard");
     } else if (delegate?.customAgreement) {
@@ -95,7 +99,7 @@ export function Page() {
     try {
       data.delegateStatement = editorValue;
       data.id = pageContext.routeParams!.id;
-      if (showCustomAgreementEditor) {
+      if (showCustomAgreementEditor || agreementType === "custom") {
         data.customDelegateAgreementContent = editorCustomAgreementValue;
       }
       await editDelegate.mutateAsync(data).then(() => {
@@ -224,16 +228,21 @@ export function Page() {
                   I want to provide a custom delegate agreement.
                 </Checkbox>
               </FormControl>
-              {agreementType === "custom" && (
+              {/* For some reason, markdown editor as breaking if I make it conditional render, so using display block/hidden */}
+              <div
+                style={{
+                  display: agreementType === "custom" ? "block" : "none",
+                }}
+              >
                 <FormControl id="custom-agreement-editor">
                   <FormLabel>Custom Delegate Agreement</FormLabel>
                   <MarkdownEditor
-                    onChange={handleCustomAgreement} // Change here
-                    value={editorCustomAgreementValue} // Change here
-                    customEditor={editorCustomAgreement} // Change here
+                    onChange={handleCustomAgreement}
+                    value={editorCustomAgreementValue}
+                    customEditor={delegate?.customAgreement ? editorCustomAgreement : undefined}
                   />
                 </FormControl>
-              )}
+              </div>
               <Flex justifyContent="flex-end" gap="16px">
                 <Button
                   color="#D83E2C"

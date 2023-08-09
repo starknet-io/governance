@@ -7,7 +7,7 @@ import { eq, and, isNotNull } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { comments } from '../db/schema/comments';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
-import {createInsertSchema} from "drizzle-zod";
+import { createInsertSchema } from 'drizzle-zod';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -33,7 +33,7 @@ export const delegateRouter = router({
         starknetAddress: z.string(),
         customDelegateAgreementContent: z.optional(z.string()), // Optionally add custom agreement content
         confirmDelegateAgreement: z.optional(z.boolean()),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const userAddress = (await getUserByJWT(opts.ctx.req.cookies.JWT))
@@ -44,7 +44,6 @@ export const delegateRouter = router({
           delegationStatement: true,
         },
       });
-      console.log(user)
       if (user?.delegationStatement) {
         throw new Error('You already have a delegate statement');
       }
@@ -71,11 +70,12 @@ export const delegateRouter = router({
 
       const insertedDelegateRecord = insertedDelegate[0];
       if (insertedDelegate[0].userId) {
-        await db.update(users)
+        await db
+          .update(users)
           .set({
             starknetAddress: opts.input.starknetAddress,
           })
-          .where(eq(users.id, insertedDelegate[0].userId))
+          .where(eq(users.id, insertedDelegate[0].userId));
       }
       // If customDelegateAgreementContent is provided, insert into customDelegateAgreement table
       if (opts.input.customDelegateAgreementContent) {
@@ -129,7 +129,7 @@ export const delegateRouter = router({
     .query(async (opts) => {
       return await db
         // @ts-expect-error TODO fix types issue here
-        .select({...comments, author: users})
+        .select({ ...comments, author: users })
         .from(comments)
         .rightJoin(users, eq(users.id, comments.userId))
         .rightJoin(delegates, eq(delegates.userId, comments.userId))
@@ -142,19 +142,10 @@ export const delegateRouter = router({
     }),
 
   editDelegate: protectedProcedure
-    .input(delegateInsertSchema.required({ id: true }).extend({ starknetAddress: z.string() || z.null() }))
     .input(
-      z.object({
-        id: z.string(),
-        delegateStatement: z.string(),
-        delegateType: z.any(),
-        starknetWalletAddress: z.string(),
-        twitter: z.string(),
-        discord: z.string(),
-        discourse: z.string(),
-        understandRole: z.boolean(),
-        customDelegateAgreementContent: z.optional(z.string()), // Optionally add or update custom agreement content
-        confirmDelegateAgreement: z.optional(z.boolean()),
+      delegateInsertSchema.required({ id: true }).extend({
+        starknetAddress: z.string() || z.null(),
+        customDelegateAgreementContent: z.optional(z.string()),
       }),
     )
     .mutation(async (opts) => {
@@ -162,7 +153,6 @@ export const delegateRouter = router({
       const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
         ? null
         : opts.input.confirmDelegateAgreement; // Use true or appropriate value for standard agreement
-
       const updatedDelegate = await db
         .update(delegates)
         .set({
@@ -176,11 +166,11 @@ export const delegateRouter = router({
         })
         .where(eq(delegates.id, opts.input.id))
         .returning();
-
       const updatedDelegateRecord = updatedDelegate[0];
 
       // Handle customDelegateAgreementContent if provided
       if (opts.input.customDelegateAgreementContent) {
+        console.log('has custom agreement')
         const existingCustomAgreement =
           await db.query.customDelegateAgreement.findFirst({
             where: eq(
@@ -188,7 +178,6 @@ export const delegateRouter = router({
               updatedDelegateRecord.id,
             ),
           });
-
         if (existingCustomAgreement) {
           // Update existing custom agreement
           await db
@@ -216,11 +205,12 @@ export const delegateRouter = router({
           );
       }
       if (updatedDelegate[0].userId) {
-        await db.update(users)
+        await db
+          .update(users)
           .set({
             starknetAddress: opts.input.starknetAddress,
           })
-          .where(eq(users.id, updatedDelegate[0].userId))
+          .where(eq(users.id, updatedDelegate[0].userId));
       }
 
       return updatedDelegateRecord;
@@ -229,16 +219,16 @@ export const delegateRouter = router({
   getDelegateByAddress: publicProcedure
     .input(
       z.object({
-        address: z.string()
-      })
+        address: z.string(),
+      }),
     )
     .query(async (opts) => {
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address),
         with: {
-          delegationStatement: true
-        }
-      })
+          delegationStatement: true,
+        },
+      });
       if (user) return user;
       return null;
     }),
