@@ -15,6 +15,7 @@ import {
   MenuItem,
   Status,
   EmptyState,
+  StatusModal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -58,9 +59,12 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
 export function Page() {
   const pageContext = usePageContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
+  const [statusTitle, setStatusTitle] = useState<string>("");
+  const [statusDescription, setStatusDescription] = useState<string>("");
   const { address, isConnected } = useAccount();
 
-  const { isLoading, write } = useDelegateRegistrySetDelegate({
+  const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
   });
@@ -130,18 +134,37 @@ export function Page() {
         senderData={senderData}
         receiverData={receiverData}
         delegateTokens={() => {
-          write?.({
+          writeAsync?.({
             args: [
               stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
                 size: 32,
               }),
               delegateAddress,
             ],
-          });
+          })
+            .then(() => {
+              setIsStatusModalOpen(true);
+              setStatusTitle("Tokens delegated successfully");
+              setStatusDescription("");
+            })
+            .catch((err) => {
+
+              setIsStatusModalOpen(true);
+              setStatusTitle("Tokens delegation failed");
+              setStatusDescription(err.shortMessage);
+            });
           setIsOpen(false);
         }}
       />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
+      <StatusModal
+        isOpen={isStatusModalOpen}
+        isSuccess={!statusDescription.length}
+        isFail={!!statusDescription.length}
+        onClose={() => {setIsStatusModalOpen(false)}}
+        title={statusTitle}
+        description={statusDescription}
+      />
       <Box
         pt="40px"
         px="32px"
