@@ -56,6 +56,9 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   }
 `);
 
+// Extract this to some constants file
+const MINIMUM_TOKENS_FOR_DELEGATION = 1;
+
 export function Page() {
   const pageContext = usePageContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -134,26 +137,37 @@ export function Page() {
         senderData={senderData}
         receiverData={receiverData}
         delegateTokens={() => {
-          writeAsync?.({
-            args: [
-              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                size: 32,
-              }),
-              delegateAddress,
-            ],
-          })
-            .then(() => {
-              setIsStatusModalOpen(true);
-              setStatusTitle("Tokens delegated successfully");
-              setStatusDescription("");
+          if (
+            parseFloat(senderData?.balance) <
+            MINIMUM_TOKENS_FOR_DELEGATION
+          ) {
+            setIsStatusModalOpen(true);
+            setStatusTitle("No voting power");
+            setStatusDescription(
+              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
+            );
+            setIsOpen(false);
+          } else {
+            writeAsync?.({
+              args: [
+                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                  size: 32,
+                }),
+                delegateAddress,
+              ],
             })
-            .catch((err) => {
-
-              setIsStatusModalOpen(true);
-              setStatusTitle("Tokens delegation failed");
-              setStatusDescription(err.shortMessage);
-            });
-          setIsOpen(false);
+              .then(() => {
+                setIsStatusModalOpen(true);
+                setStatusTitle("Tokens delegated successfully");
+                setStatusDescription("");
+              })
+              .catch((err) => {
+                setIsStatusModalOpen(true);
+                setStatusTitle("Tokens delegation failed");
+                setStatusDescription(err.shortMessage);
+              });
+            setIsOpen(false);
+          }
         }}
       />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
@@ -161,7 +175,9 @@ export function Page() {
         isOpen={isStatusModalOpen}
         isSuccess={!statusDescription.length}
         isFail={!!statusDescription.length}
-        onClose={() => {setIsStatusModalOpen(false)}}
+        onClose={() => {
+          setIsStatusModalOpen(false);
+        }}
         title={statusTitle}
         description={statusDescription}
       />
