@@ -93,8 +93,6 @@ export function Page() {
     delegateId,
   });
 
-  console.log("delegateCommentsResponse.data", delegateCommentsResponse.data);
-
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`;
 
@@ -109,8 +107,6 @@ export function Page() {
     },
     skip: delegateAddress == null,
   });
-
-  console.log("gqlResponse.data", gqlResponse.data);
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
