@@ -11,18 +11,29 @@ import {
 import { users } from './users';
 
 export const delegateTypeEnum = pgEnum('delegateType', [
-  'Cairo Dev',
-  'DAOs',
-  'Governance',
-  'Identity',
-  'Infrastructure Starknet Dev',
-  'Legal',
-  'NFT',
-  'Professional Delegates',
-  'Security',
-  'Starknet Community',
-  'Web3 Community',
-  'Web3 Developer',
+  // 'Cairo Dev',
+  // 'DAOs',
+  // 'Governance',
+  // 'Identity',
+  // 'Infrastructure Starknet Dev',
+  // 'Legal',
+  // 'NFT',
+  // 'Professional Delegates',
+  // 'Security',
+  // 'Starknet Community',
+  // 'Web3 Community',
+  // 'Web3 Developer',
+  'cairo_dev',
+  'daos',
+  'governance',
+  'identity',
+  'infrastructure',
+  'legal',
+  'professional_delegate',
+  'security',
+  'starknet_community',
+  'web3_community',
+  'web3_developer',
 ]);
 
 export const delegates = pgTable('delegates', {
@@ -35,7 +46,10 @@ export const delegates = pgTable('delegates', {
   discourse: text('discourse'),
   agreeTerms: boolean('agreeTerms'),
   understandRole: boolean('understandRole'),
-  userId: uuid('userId').references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  userId: uuid('userId').references(() => users.id, {
+    onDelete: 'cascade',
+    onUpdate: 'cascade',
+  }),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),

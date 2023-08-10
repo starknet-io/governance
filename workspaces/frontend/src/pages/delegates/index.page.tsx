@@ -24,14 +24,31 @@ import {
   SkeletonText,
 } from "@yukilabs/governance-components";
 
+import { useDebouncedCallback } from "use-debounce";
+
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
 }
+
+export const delegateNames = {
+  cairo_dev: "Cairo Dev",
+  daos: "DAOs",
+  governance: "Governance",
+  identity: "Identity",
+  infrastructure: "Infrastructure",
+  legal: "Legal",
+  professional_delegate: "Professional delegate",
+  security: "Security",
+  starknet_community: "Starknet community",
+  web3_community: "Web3 community",
+  web3_developer: "Web3 developer",
+};
+
 export const delegateFilters = {
-  defaultValue: ["already_voted"],
+  defaultValue: [],
   options: [
     {
       label: "Delegate agreement",
@@ -56,7 +73,7 @@ export const delegateFilters = {
   ],
 };
 export const delegateInterests = {
-  defaultValue: ["cairo_dev"],
+  defaultValue: [],
   options: [
     {
       label: "Cairo Dev",
@@ -131,13 +148,31 @@ const sortByOptions = {
     { label: "Most comments", value: "most_comments" },
   ],
 };
+
 export function Page() {
   const [, setHelpMessage] = useHelpMessage();
+  // const {  } = useDebounce
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("");
 
-  const delegates = trpc.delegates.getAll.useQuery();
+  const state = useFilterState({
+    defaultValue: delegateFilters.defaultValue,
+    onSubmit: (filters) => {
+      setFiltersState({ ...filtersState, filters });
+    },
+  });
+
+  const [filtersState, setFiltersState] = useState({
+    filters: [],
+    searchQuery,
+    sortBy,
+  });
+
+  const delegates =
+    trpc.delegates.getDelegateByFiltersAndSort.useQuery(filtersState);
+
   // ToDo autentication needs to happen without a refresh
   trpc.auth.checkAuth.useQuery(undefined, {
     onError: () => {
@@ -148,13 +183,20 @@ export function Page() {
     },
   });
 
-  const filteredDelegates = delegates?.data?.filter(
-    (data) => data?.author?.address?.includes(searchQuery),
+  const debounce = useDebouncedCallback(
+    (searchQuery: string) => setFiltersState({ ...filtersState, searchQuery }),
+    500,
   );
-  const state = useFilterState({
-    defaultValue: delegateFilters.defaultValue,
-    onSubmit: console.log,
-  });
+
+  const handleSearchInput = (input: string) => {
+    setSearchQuery(input);
+    debounce(input);
+  };
+
+  const handleResetFilters = () => {
+    state.onReset();
+    setFiltersState({ ...filtersState, filters: [] });
+  };
 
   return (
     <ContentContainer>
@@ -185,7 +227,7 @@ export function Page() {
               <Box mr="8px">
                 <SearchInput
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearchInput(e.target.value)}
                 />
               </Box>
               <ButtonGroup display={{ base: "none", md: "flex" }}>
@@ -199,7 +241,7 @@ export function Page() {
                   <FilterPopoverContent
                     isCancelDisabled={!state.canCancel}
                     onClickApply={state.onSubmit}
-                    onClickCancel={state.onReset}
+                    onClickCancel={handleResetFilters}
                   >
                     <Text mt="4" mb="2" fontWeight="bold">
                       Filters
@@ -229,9 +271,11 @@ export function Page() {
                   placeholder="Sort by"
                   focusBorderColor={"red"}
                   rounded="md"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
                 >
                   {sortByOptions.options.map((option) => (
-                    <option key={option.value} value={option.value}>
+                    <option key={option.value} value={option.label}>
                       {option.label}
                     </option>
                   ))}
@@ -291,8 +335,8 @@ export function Page() {
               spacing={4}
               templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
             >
-              {filteredDelegates && filteredDelegates.length > 0 ? (
-                filteredDelegates.map((data) => (
+              {delegates.data && delegates.data.length > 0 ? (
+                delegates.data.map((data) => (
                   <DelegateCard
                     ensName={data.author?.ensName}
                     key={data.starknetWalletAddress}

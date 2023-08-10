@@ -54,6 +54,7 @@
     "react-streaming": "^0.3.14",
     "react-use": "^17.4.0",
     "superjson": "^1.13.1",
+    "use-debounce": "^9.0.4",
     "viem": "^1.5.0",
     "vite": "^4.3.9",
     "vite-node": "0.31.1",

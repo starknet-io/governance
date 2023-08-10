@@ -18,6 +18,7 @@ import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { DocumentProps } from "src/renderer/types";
 import { useState } from "react";
+import { delegateNames } from "./index.page";
 
 const delegateTypeValues = delegateTypeEnum.enumValues;
 
@@ -91,7 +92,7 @@ export function Page() {
                     <Multiselect
                       options={delegateTypeValues.map((option) => ({
                         value: option,
-                        label: option,
+                        label: delegateNames?.[option] ?? option,
                       }))}
                       value={field.value as any}
                       onChange={(values) => field.onChange(values)}
