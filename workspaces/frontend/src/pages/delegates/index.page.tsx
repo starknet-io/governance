@@ -207,8 +207,6 @@ export function Page() {
     setFiltersState({ ...filtersState, filters: [] });
   };
 
-  console.log(delegates)
-
   return (
     <ContentContainer>
       <Box width="100%">
