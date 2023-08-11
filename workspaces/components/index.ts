@@ -95,6 +95,7 @@ export {
   VoteAgainstIcon,
   VoteForIcon,
   Status,
+  StatusModal,
   EmptyState,
   UserProfileMenu,
 } from "./src";

@@ -31,6 +31,7 @@ type Props = {
     balance: string | undefined;
     ethAddress: string | undefined | null;
     symbol: string;
+    vp?: number | undefined | null;
   };
   onClose: () => void;
   delegateTokens: () => void;
@@ -49,6 +50,15 @@ export const DelegateModal = ({
   isValidCustomAddress,
 }: Props) => {
   const [customAddress, setCustomAddress] = useState("");
+  const getTotalVotingPower = () => {
+    if (receiverData) {
+      return receiverData.vp
+        ? (parseInt(receiverData.balance || "0") + (receiverData?.vp || 0)).toString()
+        : receiverData.balance;
+    } else {
+      return "0";
+    }
+  };
   return (
     <Modal
       motionPreset="slideInBottom"
@@ -92,7 +102,7 @@ export const DelegateModal = ({
                     <Swap.Arrow />
                     <Swap.UserSummary
                       address={receiverData.address}
-                      balance={receiverData.balance}
+                      balance={getTotalVotingPower()}
                       symbol={receiverData.symbol}
                       text={"To"}
                     />
