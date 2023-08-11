@@ -1,5 +1,5 @@
 import { Badge, Box, Flex, Icon, Tooltip } from "@chakra-ui/react";
-import { HiHandThumbUp } from "react-icons/hi2";
+import { HiHandThumbUp, HiHandThumbDown, HiHandRaised } from "react-icons/hi2";
 import { Text } from "../Text";
 import moment from "moment";
 import { CommentIcon } from "src/Icons";
@@ -129,11 +129,29 @@ const Vote = ({ type, id }: VoteProps) => {
 
 type PastVotesProps = {
   title?: string | null;
-  voteCount?: number;
+  body?: string | null;
+  voteCount?: number | null;
   votePreference?: "for" | "against" | "abstain";
 };
 
-const PastVotes = ({ title, voteCount, votePreference }: PastVotesProps) => {
+const PastVotes = ({
+  title = "Support for scoped storage variables",
+  voteCount = 7,
+  votePreference,
+  body = "",
+}: PastVotesProps) => {
+  const renderIconBasedOnVotePreference = () => {
+    switch (votePreference) {
+      case "for":
+        return HiHandThumbUp
+      case "against":
+        return HiHandThumbDown
+      case "abstain":
+        return HiHandRaised
+      default:
+        return HiHandThumbUp
+    }
+  }
   return (
     <Flex flexDirection="column" flex={1} gap="6px">
       <Text
@@ -143,7 +161,7 @@ const PastVotes = ({ title, voteCount, votePreference }: PastVotesProps) => {
         fontWeight="500"
         color="#292932"
       >
-        Support for scoped storage variables
+        {title}
       </Text>
       <Text variant="breadcrumbs" noOfLines={1} fontWeight="500">
         Voted
@@ -152,10 +170,10 @@ const PastVotes = ({ title, voteCount, votePreference }: PastVotesProps) => {
           position="relative"
           top="3px"
           mx="4px"
-          as={HiHandThumbUp}
+          as={renderIconBasedOnVotePreference()}
           color="#20AC70"
         />{" "}
-        with 7M votes
+        with {voteCount} votes <MarkdownRenderer content={body ?? ""} />
       </Text>
     </Flex>
   );
@@ -164,9 +182,16 @@ const PastVotes = ({ title, voteCount, votePreference }: PastVotesProps) => {
 type CommentSummaryProps = {
   type?: string;
   id?: number;
+  postTitle: string;
+  comment: string;
 };
 
-const CommentSummary = ({ type, id }: CommentSummaryProps) => {
+const CommentSummary = ({
+  type,
+  id,
+  postTitle,
+  comment,
+}: CommentSummaryProps) => {
   return (
     <Flex flexDirection="column" flex={1} gap="6px">
       <Text
@@ -176,7 +201,7 @@ const CommentSummary = ({ type, id }: CommentSummaryProps) => {
         fontWeight="500"
         color="#292932"
       >
-        Support for scoped storage variables
+        {postTitle}
       </Text>
       <Text
         color="#6C6C75"
@@ -184,8 +209,7 @@ const CommentSummary = ({ type, id }: CommentSummaryProps) => {
         noOfLines={1}
         fontWeight="500"
       >
-        “Our goal is to grow the Starknet ecosystem and make sure that
-        developers from web2 can...”
+        <MarkdownRenderer content={comment ?? ""} />
       </Text>
     </Flex>
   );
