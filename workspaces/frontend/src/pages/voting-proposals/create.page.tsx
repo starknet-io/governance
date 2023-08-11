@@ -18,6 +18,7 @@ import {
 } from "@yukilabs/governance-components";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
+import { trpc } from "src/utils/trpc";
 import { fetchBlockNumber } from "@wagmi/core";
 import { providers } from "ethers";
 import { Proposal } from "@snapshot-labs/snapshot.js/dist/sign/types";
@@ -27,6 +28,7 @@ import { useForm, Controller } from "react-hook-form";
 interface FieldValues {
   // type: ProposalType;
   // choices: string[];
+  category: string;
   title: string;
   body: any[];
   discussion: string;
@@ -34,9 +36,13 @@ interface FieldValues {
   end: Date | null;
 }
 
+const categories = ["category1", "category2", "category3"];
+
 export function Page() {
   const { data: walletClient } = useWalletClient();
   const { convertSlateToMarkdown } = useMarkdownEditor("");
+
+  const createProposal = trpc.proposals.createProposal.useMutation();
 
   const {
     handleSubmit,
@@ -47,6 +53,7 @@ export function Page() {
     async defaultValues() {
       return {
         title: "",
+        category: "",
         body: EditorTemplate.proposalMarkDown,
         discussion: "",
         start: new Date(),
@@ -69,12 +76,13 @@ export function Page() {
 
       console.log(block);
 
-      const params: Proposal = {
+      const params: Proposal & { categories: Array<string> } = {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         type: "basic",
         title: data.title,
         body: convertSlateToMarkdown(data.body),
         choices: ["For", "Against", "Abstain"],
+        categories,
         start: Math.floor(data.start!.getTime() / 1000),
         end: Math.floor(data.end!.getTime() / 1000),
         snapshot: Number(block),
@@ -91,6 +99,25 @@ export function Page() {
       )) as any;
 
       console.log(receipt);
+
+      const proposalData = {
+        category: data.category as "category1" | "category2" | "category3",
+        proposalId: receipt.id,
+      };
+
+      try {
+        await createProposal
+          .mutateAsync(proposalData)
+          .then((res) => {
+            window.location.href = `/delegates/profile/${res.id}`;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (error) {
+        // Handle error
+        console.log(error);
+      }
 
       navigate(`/voting-proposals/${receipt.id}`);
     } catch (error) {
@@ -124,10 +151,7 @@ export function Page() {
                   control={control}
                   name="body"
                   render={({ field: { onChange, value } }) => (
-                    <MarkdownEditor
-                      onChange={onChange}
-                      value={value}
-                    />
+                    <MarkdownEditor onChange={onChange} value={value} />
                   )}
                 />
               </FormControl>
@@ -153,6 +177,22 @@ export function Page() {
                 >
                   <option value="option1">Basic</option>
                 </Select>
+              </FormControl>
+              <FormControl id="category">
+                <FormLabel>Category</FormLabel>
+                <Controller
+                  control={control}
+                  name="category"
+                  render={({ field }) => (
+                    <Select {...field}>
+                      {categories.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </Select>
+                  )}
+                />
               </FormControl>
               {/* // disabled for basic voting */}
               <FormControl id="Choices">
