@@ -106,5 +106,6 @@ export { ReorderableList } from "./ReorderableList";
 export { FormModal } from "./FormModal";
 export { DeletionDialog } from "./DeletionDialog";
 export { Status } from "./Status";
+export { StatusModal } from "./StatusModal";
 export { EmptyState } from "./EmptyState";
 export { UserProfileMenu } from "./UserProfileMenu";
