@@ -9,6 +9,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { users } from './users';
+import {customDelegateAgreement} from "./customDelegateAgreement";
 
 export const delegateTypeEnum = pgEnum('delegateType', [
   // 'Cairo Dev',
@@ -40,10 +41,10 @@ export const delegates = pgTable('delegates', {
   id: uuid('id').primaryKey().defaultRandom(),
   delegateStatement: text('delegateStatement').notNull(),
   delegateType: json('type').default('[]'),
-  starknetWalletAddress: text('starknetWalletAddress'),
   twitter: text('twitter'),
   discord: text('discord'),
   discourse: text('discourse'),
+  confirmDelegateAgreement: boolean('confirmDelegateAgreement'),
   agreeTerms: boolean('agreeTerms'),
   understandRole: boolean('understandRole'),
   userId: uuid('userId').references(() => users.id, {
@@ -62,6 +63,10 @@ export const delegateRelations = relations(delegates, ({ one }) => ({
   author: one(users, {
     fields: [delegates.userId],
     references: [users.id],
+  }),
+  customAgreement: one(customDelegateAgreement, {
+    fields: [delegates.id],
+    references: [customDelegateAgreement.delegateId],
   }),
 }));
 

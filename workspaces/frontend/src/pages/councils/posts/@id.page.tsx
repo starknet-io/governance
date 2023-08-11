@@ -5,7 +5,6 @@ import {
   FormControl,
   Stack,
   ContentContainer,
-  QuillEditor,
   CommentInput,
   CommentList,
   Flex,
@@ -13,6 +12,7 @@ import {
   Divider,
   ProfileSummaryCard,
   MenuItem,
+  MarkdownRenderer
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -99,8 +99,7 @@ export function Page() {
               </Flex>
               <Divider />
 
-              {/* <MarkdownRenderer content={snip.data?.description || ""} /> */}
-              <QuillEditor value={post?.content || undefined} readOnly />
+              <MarkdownRenderer content={post?.content || ""} />
               <Divider my="32px" />
               <Heading id="#discussion" color="#33333E" variant="h3">
                 Discussion

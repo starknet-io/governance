@@ -7,14 +7,19 @@ import {
   ContentContainer,
   DelegateModal,
   Divider,
+  Flex,
   Heading,
-  QuillEditor,
+  ListRow,
+  MarkdownRenderer,
   ProfileSummaryCard,
   Stack,
   SummaryItems,
   MenuItem,
   Status,
   EmptyState,
+  AgreementModal,
+  Link,
+  StatusModal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -29,6 +34,69 @@ import { gql } from "src/gql";
 import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
 
+const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
+  query DelegateProposals($space: String!) {
+    proposals(first: 20, skip: 0, where: {space_in: [$space]}, orderBy: "created", orderDirection: desc) {
+      id
+      title
+      choices
+      start
+      end
+      snapshot
+      state
+      scores
+      scores_total
+      author
+      space {
+        id
+        name
+      }
+    }
+  }
+`);
+
+// This is just for now
+const mockAgreement = `
+    <h1>Agreement Understanding</h1>
+    <p>
+      This agreement pertains to the role and responsibilities within StarkNet.
+      Please review the following documents to ensure a complete understanding
+      of the expectations and guidelines.
+    </p>
+
+    <h2>StarkNet Delegates</h2>
+    <p>
+      <a href="url_to_delegate_expectations_328">Delegate Expectations 328</a>
+    </p>
+
+    <h2>Starknet Governance Announcements</h2>
+    <p>
+      <a href="url_to_part_1_98">Part 1 98</a>
+      <br />
+      <a href="url_to_part_2_44">Part 2 44</a>
+      <br />
+      <a href="url_to_part_3_34">Part 3 34</a>
+    </p>
+
+    <h2>The Foundation Post</h2>
+    <p>
+      <a href="url_to_foundation_post_60">Foundation Post 60</a>
+    </p>
+
+    <h2>Delegate Onboarding</h2>
+    <p>
+      <a href="url_to_onboarding_announcement_539">
+        Delegate Onboarding Announcement 539
+      </a>
+    </p>
+
+    <p>
+      By proceeding further, you acknowledge that you understand the role of
+      StarkNet delegates and have read all the required documents mentioned
+      above.
+    </p>
+  `;
+
 const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   query DelegateProfilePageQuery(
     $voter: String!
@@ -37,11 +105,18 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
     $where: VoteWhere
   ) {
     votes(where: $where) {
+      id
       choice
       voter
       reason
       metadata
       created
+      proposal {
+        id
+        title
+        body
+        choices
+      }
       ipfs
       vp
       vp_by_strategy
@@ -55,20 +130,30 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   }
 `);
 
+// Extract this to some constants file
+const MINIMUM_TOKENS_FOR_DELEGATION = 1;
+
 export function Page() {
   const pageContext = usePageContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
+  const [statusTitle, setStatusTitle] = useState<string>("");
+  const [statusDescription, setStatusDescription] = useState<string>("");
+  const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
 
-  const { isLoading, write } = useDelegateRegistrySetDelegate({
+  const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
   });
 
   const delegation = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    args: [address!, stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 })],
-    watch: true,
+    args: [
+      address!,
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
+    ],
+    watch: false,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
@@ -82,8 +167,6 @@ export function Page() {
   const delegateCommentsResponse = trpc.delegates.getDelegateComments.useQuery({
     delegateId,
   });
-
-  console.log("delegateCommentsResponse.data", delegateCommentsResponse.data);
 
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`;
@@ -100,7 +183,20 @@ export function Page() {
     skip: delegateAddress == null,
   });
 
-  console.log("gqlResponse.data", gqlResponse.data);
+  const gqlResponseProposalsByUser = useQuery(
+    GET_PROPOSALS_FOR_DELEGATE_QUERY,
+    {
+      variables: {
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        where: {
+          space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        },
+      },
+      skip: delegateAddress == null,
+    },
+  );
+
+  const proposals = gqlResponseProposalsByUser?.data?.proposals || [];
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
@@ -112,6 +208,42 @@ export function Page() {
     },
     {},
   );
+
+  const renderAgreementValue = () => {
+    if (delegate?.confirmDelegateAgreement) {
+      return (
+        <Flex color="#292932" fontWeight="medium" gap={1}>
+          <div>Yes</div>-
+          <button onClick={() => setShowAgreement(true)}>View</button>
+        </Flex>
+      );
+    } else if (delegate?.customAgreement) {
+      return (
+        <Flex color="#292932" fontWeight="medium" gap={1}>
+          <div>Custom</div>-
+          <button onClick={() => setShowAgreement(true)}>View</button>
+        </Flex>
+      );
+    } else {
+      return "None";
+    }
+  };
+
+  console.log(delegate)
+
+  const comments = (delegateCommentsResponse?.data || []).map((comment) => {
+    const foundProposal = proposals.find(
+      (proposal) => proposal?.id === comment.proposalId,
+    );
+    return {
+      id: comment.id,
+      content: comment.content,
+      title: foundProposal?.title,
+      proposalId: comment.proposalId,
+      snipId: comment.snipId,
+      snipTitle: comment.snipTitle,
+    };
+  });
 
   return (
     <Box
@@ -125,18 +257,64 @@ export function Page() {
         onClose={() => setIsOpen(false)}
         isConnected
         senderData={senderData}
-        receiverData={receiverData}
+        receiverData={{
+          ...receiverData,
+          vp: gqlResponse?.data?.vp?.vp
+        }}
         delegateTokens={() => {
-          write?.({
-            args: [
-              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
-              delegateAddress,
-            ],
-          });
-          setIsOpen(false);
+          if (
+            parseFloat(senderData?.balance) <
+            MINIMUM_TOKENS_FOR_DELEGATION
+          ) {
+            setIsStatusModalOpen(true);
+            setStatusTitle("No voting power");
+            setStatusDescription(
+              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
+            );
+            setIsOpen(false);
+          } else {
+            writeAsync?.({
+              args: [
+                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                  size: 32,
+                }),
+                delegateAddress,
+              ],
+            })
+              .then(() => {
+                setIsStatusModalOpen(true);
+                setStatusTitle("Tokens delegated successfully");
+                setStatusDescription("");
+              })
+              .catch((err) => {
+                setIsStatusModalOpen(true);
+                setStatusTitle("Tokens delegation failed");
+                setStatusDescription(err.shortMessage);
+              });
+            setIsOpen(false);
+          }
         }}
       />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
+      <AgreementModal
+        isOpen={showAgreement}
+        onClose={() => setShowAgreement(false)}
+        content={
+          delegate?.customAgreement
+            ? delegate!.customAgreement!.content
+            : mockAgreement
+        }
+      />
+      <StatusModal
+        isOpen={isStatusModalOpen}
+        isSuccess={!statusDescription.length}
+        isFail={!!statusDescription.length}
+        onClose={() => {
+          setIsStatusModalOpen(false);
+        }}
+        title={statusTitle}
+        description={statusDescription}
+      />
       <Box
         pt="40px"
         px="32px"
@@ -153,9 +331,7 @@ export function Page() {
             imgUrl={delegate?.author?.ensAvatar}
             ensName={delegate?.author?.ensName}
             address={delegate?.author?.ensName || delegateAddress}
-            avatarString={
-              delegate?.author?.ensAvatar || delegateAddress
-            }
+            avatarString={delegate?.author?.ensAvatar || delegateAddress}
           >
             <ProfileSummaryCard.MoreActions>
               <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
@@ -209,15 +385,13 @@ export function Page() {
             />
             <SummaryItems.Item
               label="Delegation agreement"
-              value={
-                delegate != null ? (delegate?.agreeTerms ? "Yes" : "No") : null
-              }
+              value={renderAgreementValue()}
             />
             <SummaryItems.Item
               isCopiable
               isTruncated
               label="Starknet address"
-              value={delegate?.starknetWalletAddress}
+              value={delegate?.author?.starknetAddress ?? ""}
             />
           </SummaryItems.Root>
         </Box>
@@ -258,41 +432,72 @@ export function Page() {
           <Heading color="#33333E" variant="h3">
             Delegate pitch
           </Heading>
-          {/* <MarkdownRenderer content={delegate?.delegateStatement || ""} /> */}
-          <QuillEditor value={delegate?.delegateStatement} readOnly />
+          <MarkdownRenderer content={delegate?.delegateStatement || ""} />
           <Box mt="24px">
             <Heading mb="24px" color="#33333E" variant="h3">
               Past Votes
             </Heading>
-            {/* // ToDo: add past votes */}
-            {/* <ListRow.Container>
-              <ListRow.Root>
-                <ListRow.PastVotes />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-              <ListRow.Root>
-                <ListRow.PastVotes />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-            </ListRow.Container> */}
-            <EmptyState type="votes" title="No past votes" />
+            {gqlResponse.data?.votes?.length ? (
+              <ListRow.Container>
+                {gqlResponse.data?.votes.map((vote) => (
+                  <Link
+                    href={`/voting-proposals/${vote!.proposal!.id}`}
+                    key={vote!.id}
+                    _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
+                  >
+                    <ListRow.Root>
+                      <ListRow.PastVotes
+                        title={vote?.proposal?.title}
+                        votePreference={
+                          vote!.proposal!.choices?.[
+                            vote!.choice - 1
+                          ]?.toLowerCase() as "for" | "against" | "abstain"
+                        }
+                        voteCount={vote!.vp}
+                        body={vote?.proposal?.body}
+                      />
+                    </ListRow.Root>
+                  </Link>
+                ))}
+              </ListRow.Container>
+            ) : (
+              <EmptyState type="votes" title="No past votes" />
+            )}
           </Box>
-          <Box mt="24px">
+          <Box mt="24px" mb={10}>
             <Heading mb="24px" color="#33333E" variant="h3">
-              Post comments
+              Comments
             </Heading>
-            {/* // ToDo: add post comments */}
-            {/* <ListRow.Container>
-              <ListRow.Root>
-                <ListRow.CommentSummary />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-              <ListRow.Root>
-                <ListRow.CommentSummary />
-                <ListRow.Comments count={3} />
-              </ListRow.Root>
-            </ListRow.Container> */}
-            <EmptyState type="posts" title="No post comments" />
+            <ListRow.Container>
+              {comments.map((comment) => {
+                return (
+                  <Link
+                    key={comment!.id as string}
+                    href={
+                      comment?.proposalId
+                        ? `/voting-proposals/${comment!.proposalId}`
+                        : `/snips/${comment!.snipId}`
+                    }
+                    _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
+                  >
+                    <ListRow.Root>
+                      <ListRow.CommentSummary
+                        comment={(comment?.content as string) || ""}
+                        postTitle={
+                          (comment?.title as string) ||
+                          (comment?.snipTitle as string) ||
+                          ""
+                        }
+                      />
+                    </ListRow.Root>
+                  </Link>
+                );
+              })}
+            </ListRow.Container>
+
+            {!delegateCommentsResponse?.data?.length ? (
+              <EmptyState type="posts" title="No past comments" />
+            ) : null}
           </Box>
         </Stack>
       </ContentContainer>

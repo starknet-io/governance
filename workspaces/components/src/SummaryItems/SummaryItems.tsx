@@ -1,4 +1,4 @@
-import { Box, Flex, Icon } from "@chakra-ui/react";
+import { Box, Flex, Icon, Link } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 import { BsDiscord, BsGithub, BsTelegram, BsTwitter } from "react-icons/bs";
 
@@ -32,7 +32,7 @@ const Root = ({ children, direction = "column" }: RootProps) => {
 
 type ItemProps = {
   label: string;
-  value?: string | null;
+  value?: string | null | React.ReactNode;
   children?: React.ReactNode;
   isTruncated?: boolean;
   isCopiable?: boolean;
@@ -40,29 +40,35 @@ type ItemProps = {
 
 const Item = (props: ItemProps) => {
   const { label, value, children, isTruncated, isCopiable } = props;
+
+  const renderValue = () => {
+    if (typeof value === 'string') {
+      return isCopiable ? (
+        <CopyToClipboard text={value}>
+          <Text color="#292932" fontWeight="medium" title={value}>
+            {isTruncated ? truncateAddress(value) : value}
+          </Text>
+        </CopyToClipboard>
+      ) : (
+        <Text color="#292932" fontWeight="medium" title={value}>
+          {isTruncated ? truncateAddress(value) : value}
+        </Text>
+      );
+    } else {
+      return value; // If value is React.ReactNode, render it directly
+    }
+  };
+
   return (
     <Flex justify="space-between" fontSize="sm">
       <Text fontWeight="medium" color="#6C6C75">
         {label}
       </Text>
-      {value ? (
-        isCopiable ? (
-          <CopyToClipboard text={value}>
-            <Text color="#292932" fontWeight="medium" title={value}>
-              {isTruncated ? truncateAddress(value) : value}
-            </Text>
-          </CopyToClipboard>
-        ) : (
-          <Text color="#292932" fontWeight="medium" title={value}>
-            {isTruncated ? truncateAddress(value) : value}
-          </Text>
-        )
-      ) : (
-        children
-      )}
+      {value ? renderValue() : children}
     </Flex>
   );
 };
+
 
 type TitleProps = {
   label?: string | null;
@@ -93,8 +99,17 @@ type SocialsProps = {
   children?: React.ReactNode;
 };
 
+const platformBaseUrl = {
+  twitter: "https://twitter.com/",
+  github: "https://github.com/",
+  discourse: "https://discourse.org/", // Replace with correct discourse URL
+  discord: "https://discord.com/", // Replace with correct discord URL
+  telegram: "https://t.me/",
+};
+
 const Socials = (props: SocialsProps) => {
   const { label = "twitter", value, children } = props;
+  const link = value ? `${platformBaseUrl[label]}${value}` : "";
 
   return (
     <Flex gap="8px" w={{ base: "48%" }} alignItems="center">
@@ -117,9 +132,9 @@ const Socials = (props: SocialsProps) => {
         color="gray.600"
       />
       {value ? (
-        <Text fontSize="sm" fontWeight="medium">
+        <Link href={link} isExternal fontSize="sm" fontWeight="medium">
           {value}
-        </Text>
+        </Link>
       ) : (
         children
       )}

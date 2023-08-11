@@ -11,8 +11,8 @@ import {
   NavItem,
   ProfileSummaryCard,
   MenuItem,
-  QuillEditor,
   Divider,
+  MarkdownRenderer,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
@@ -138,7 +138,7 @@ export function Page() {
             </Stat.Root>
           </Flex>
           <Divider mb="24px" />
-          <QuillEditor value={selectedPage?.content ?? ""} readOnly />
+          <MarkdownRenderer content={selectedPage?.content ?? ""}/>
         </Stack>
       </ContentContainer>
     </Box>

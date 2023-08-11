@@ -10,9 +10,8 @@ import {
 import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { Button } from "../Button";
-// import { truncateAddress } from "../utils";
 import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
-import { stripHtml } from "src/utils/helpers";
+import { MarkdownRenderer } from "src/MarkdownRenderer";
 
 type Props = {
   id: string;
@@ -48,10 +47,6 @@ export const DelegateCard = (props: Props) => {
     ensName,
     avatarUrl,
   } = props;
-  const displayText = (htmlString: string) => {
-    return stripHtml(htmlString);
-  };
-
   const delegatedVotesFormatted = `${delegatedVotes} Votes`;
 
   return (
@@ -114,7 +109,7 @@ export const DelegateCard = (props: Props) => {
           )}
         </Box>
         <Text fontSize="13px" noOfLines={3} color="#6B6B80">
-          {displayText(delegateStatement)}
+          <MarkdownRenderer content={delegateStatement || ""} />
         </Text>
       </CardBody>
       <CardFooter>

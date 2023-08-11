@@ -5,7 +5,6 @@ import {
   UserProfile,
   Wallet,
   WalletConnector,
-  DynamicNav,
   useDynamicContext,
 } from "@dynamic-labs/sdk-react";
 
@@ -34,23 +33,20 @@ import {
   GiHamburgerMenu,
   ArrowLeftIcon,
   SettingsIcon,
-  UserProfileMenu,
   Spinner,
   InfoModal,
   Text,
+  FormModal,
+  FormControl,
+  FormLabel,
+  Input,
 } from "@yukilabs/governance-components";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { PageContext } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
-import React from "react";
-import { useOutsideClick } from "@chakra-ui/react";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
-import { useBalanceData } from "src/utils/hooks";
-import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
+import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
-import { stringToHex } from "viem";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -82,175 +78,105 @@ interface AuthSuccessParams {
   walletConnector: WalletConnector | undefined;
 }
 
-const AuthorizationView = () => <DynamicWidget />;
+export function DynamicContextProviderPage(props: Props) {
+  const { pageContext, children } = props;
+  const [authUser, setAuthUser] = useState<AuthSuccessParams | null>(null);
+  const authMutation = trpc.auth.authUser.useMutation();
+  const logoutMutation = trpc.auth.logout.useMutation();
+  const hasCalledAuthenticateUser = useRef(false); // To guard against continuous calls
+  const [modalOpen, setModalOpen] = useState(false);
+  const editUserProfile = trpc.users.editUserProfileByAddress.useMutation();
 
-const AuthorizedUserView = () => {
-  const navRef = useRef<HTMLDivElement | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userData, setUserData] = useState<any>(null);
-  const { handleLogOut } = useDynamicContext();
-  const { user } = useDynamicContext();
-  const address = user?.verifiedCredentials[0]?.address;
-
-  trpc.users.getUser.useQuery(
-    { address: address! },
-    {
-      onSuccess: (data) => {
-        setUserData(data);
-      },
-      enabled: address != null,
-    },
-  );
-
-  const { data: vp } = useQuery(
-    gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
-      vp(voter: $voter, space: $space, proposal: $proposal) {
-        vp
-        vp_by_strategy
-        vp_state
+  const authenticateUser = useCallback(
+    async (params: AuthSuccessParams) => {
+      if (params?.user?.newUser) {
+        setModalOpen(true);
       }
-    }`),
-    {
-      variables: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: address!,
-      },
-      skip: address == null,
+      await authMutation.mutateAsync({
+        authToken: params.authToken,
+        ensName: params.user.ens?.name,
+        ensAvatar: params.user.ens?.avatar,
+      });
     },
+    [authMutation],
   );
-
-  const userBalance = useBalanceData(address as `0x${string}`);
-
-  const delegation = useDelegateRegistryDelegation({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    args: [
-      address! as `0x${string}`,
-      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
-    ],
-    watch: false,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
-    enabled: address != null,
-  });
-
-  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery(
-    {
-      address: delegation?.data as string,
-    },
-    {
-      enabled: delegation?.data != null,
-    },
-  );
-
-  const editUserProfile = trpc.users.editUserProfile.useMutation();
 
   useEffect(() => {
-    const handleAddressClick = (event: any) => {
-      event.preventDefault();
-      setIsMenuOpen(!isMenuOpen);
-    };
-
-    function handleClick(event: any) {
-      const clickedElement = event.target;
-      const originalClickedElement =
-        event.originalTarget || event.composedPath()[0] || event.target;
-      if (
-        clickedElement.classList.contains("dynamic-shadow-dom") &&
-        ((originalClickedElement.classList.contains(
-          "account-control__container",
-        ) &&
-          originalClickedElement.nodeName === "BUTTON") ||
-          (originalClickedElement.classList.contains("typography") &&
-            originalClickedElement.nodeName === "P"))
-      ) {
-        handleAddressClick(event);
-      }
+    if (authUser && !hasCalledAuthenticateUser.current) {
+      authenticateUser(authUser);
+      hasCalledAuthenticateUser.current = true; // Mark as called
+    } else if (!authUser) {
+      hasCalledAuthenticateUser.current = false; // Reset for next time
     }
+  }, [authUser, authenticateUser]);
 
-    if (navRef.current) {
-      navRef.current.addEventListener("click", handleClick);
-      const el = navRef.current;
-
-      return () => {
-        el?.removeEventListener("click", handleClick);
-      };
-    }
-    return () => {
-      // intentionally empty cleanup function
-    };
-  }, [isMenuOpen]);
-
-  useOutsideClick({
-    ref: navRef,
-    handler: () => {
-      setIsMenuOpen(false);
-    },
-  });
-
-  const handleDisconnect = () => {
-    handleLogOut();
-    setIsMenuOpen(false);
+  const handleModalClose = () => {
+    setModalOpen(false);
   };
 
-  const handleSave = (username: string, starknetWalletAddress: string) => {
+  const [username, setUsername] = useState("");
+  const [starknetAddress, setStarknetAddress] = useState("");
+
+  const isFormValid = !!(username && starknetAddress);
+
+  const onSubmit = () => {
     editUserProfile.mutateAsync(
       {
-        id: userData.id,
+        address: authUser?.user?.verifiedCredentials[0]?.address ?? "",
         username,
-        starknetWalletAddress,
+        starknetAddress,
       },
       {
-        onSuccess: (data) => {
-          setUserData(data);
+        onSuccess: () => {
+          setModalOpen(false);
         },
       },
     );
-    setIsMenuOpen(false);
   };
 
   return (
-    <>
-      <div ref={navRef}>
-        <DynamicNav />
-        {isMenuOpen ? (
-          <UserProfileMenu
-            delegatedTo={delegatedTo?.data ? delegatedTo?.data : null}
-            onDisconnect={handleDisconnect}
-            user={userData}
-            onSave={handleSave}
-            vp={vp?.vp?.vp ?? 0}
-            userBalance={userBalance}
-          />
-        ) : (
-          <></>
-        )}
-      </div>
-    </>
-  );
-};
-
-const DynamicContextProviderPage = (props: Props) => {
-  const { pageContext, children } = props;
-  const [authArgs, setAuthArgs] = useState<AuthSuccessParams | null>(null);
-  const authMutation = trpc.auth.authUser.useMutation();
-  const logoutMutation = trpc.auth.logout.useMutation();
-
-  useEffect(() => {
-    if (authArgs) {
-      authMutation.mutate({
-        authToken: authArgs.authToken,
-        ensName: authArgs.user.ens?.name,
-        ensAvatar: authArgs.user.ens?.avatar,
-      });
-    }
-  }, [authArgs, authMutation]);
-
-  return (
     <HelpMessageProvider>
+      <FormModal
+        isOpen={modalOpen}
+        onClose={handleModalClose}
+        title="Add User Info"
+        onSubmit={onSubmit}
+        isValid={isFormValid}
+        cancelButtonText="Skip"
+      >
+        <FormControl id="member-name" paddingBottom={2}>
+          <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
+            Username
+          </FormLabel>
+          <Input
+            placeholder="Username"
+            name="name"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </FormControl>
+        <FormControl id="address" paddingBottom={2}>
+          <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
+            Starknet address
+          </FormLabel>
+          <Input
+            placeholder="0x..."
+            name="address"
+            value={starknetAddress}
+            onChange={(e) => setStarknetAddress(e.target.value)}
+          />
+        </FormControl>
+      </FormModal>
       <DynamicContextProvider
         settings={{
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
-            onAuthSuccess: (params: AuthSuccessParams) => setAuthArgs(params),
+            onAuthSuccess: (params: AuthSuccessParams) => {
+              // Guard against setting the state if authUser data hasn't changed
+              if (JSON.stringify(authUser) !== JSON.stringify(params)) {
+                setAuthUser(params);
+              }
+            },
             onLogout: () => logoutMutation.mutate(),
           },
           cssOverrides,
@@ -285,7 +211,7 @@ const DynamicContextProviderPage = (props: Props) => {
       </DynamicContextProvider>
     </HelpMessageProvider>
   );
-};
+}
 
 interface BackButtonProps {
   urlStart: string;
@@ -338,19 +264,31 @@ const BackButton = ({
   return null;
 };
 
+const LazyDataComponent = lazy(() => import("./AuthorizedUserView"));
+
+const DynamicCustomWidget = () => {
+  const { user } = useDynamicContext();
+  const isAuthorized = !!user;
+
+  return isAuthorized ? (
+    <Suspense fallback={<Spinner size="sm" />}>
+      <LazyDataComponent />
+    </Suspense>
+  ) : (
+    <DynamicWidget />
+  );
+};
+
 function PageLayout(props: Props) {
   const [helpMessage, setHelpMessage] = useHelpMessage();
   const { children, pageContext } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const councilResp = trpc.councils.getAll.useQuery();
+  const [renderDone, setRenderDone] = useState(false);
 
-  const { user } = useDynamicContext();
-  const isAuthorized = !!user;
-  const dynamicCustomWidget = isAuthorized ? (
-    <AuthorizedUserView />
-  ) : (
-    <AuthorizationView />
-  );
+  useEffect(() => {
+    setRenderDone(true);
+  }, []);
 
   useEffect(() => {
     let timer: string | number | NodeJS.Timeout | undefined;
@@ -559,7 +497,7 @@ function PageLayout(props: Props) {
             />
 
             <Box display="flex" marginLeft="auto">
-              {dynamicCustomWidget}
+              {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
             </Box>
           </Header>
           <Layout.Content>{children}</Layout.Content>
@@ -568,5 +506,3 @@ function PageLayout(props: Props) {
     </>
   );
 }
-
-export default DynamicContextProviderPage;

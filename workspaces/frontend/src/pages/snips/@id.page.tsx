@@ -13,8 +13,8 @@ import {
   CommentList,
   IconButton,
   HiEllipsisHorizontal,
-  QuillEditor,
   Iframely,
+  MarkdownRenderer,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -36,6 +36,7 @@ export function Page() {
   });
 
   const handleCommentSend = async (value: string) => {
+    console.log('HERE', value);
     try {
       await saveComment.mutateAsync({
         content: value,
@@ -120,10 +121,7 @@ export function Page() {
                 Overview
               </Heading>
 
-              <QuillEditor
-                value={snip.data?.description || undefined}
-                readOnly
-              />
+              <MarkdownRenderer content={snip?.data?.description || ""} />
 
               <Divider my="32px" />
               <Heading id="#discussion" color="#33333E" variant="h3">

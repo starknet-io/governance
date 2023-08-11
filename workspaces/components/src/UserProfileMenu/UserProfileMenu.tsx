@@ -26,7 +26,7 @@ interface IUser extends User {
 interface UserProfileMenuProps {
   onDisconnect: () => void;
   user: IUser;
-  onSave: (address: string, starknetWalletAddress: string) => void;
+  onSave: (address: string, starknetAddress: string) => void;
   vp: number;
   userBalance: any;
   delegatedTo: any;
@@ -43,7 +43,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
   const [editUserProfile, setEditUserProfile] = useState(false);
   const [username, setUsername] = useState<any>(user?.username);
   const [starknetAddress, setStarknetAddress] = useState<any>(
-    user?.delegationStatement?.starknetWalletAddress,
+    user?.starknetAddress,
   );
 
   const handleSave = () => {
@@ -138,9 +138,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               <Spacer />
               <Box>
                 <Text color="#2A2A32">
-                  {truncateAddress(
-                    user?.delegationStatement?.starknetWalletAddress || "",
-                  )}
+                  {truncateAddress(user?.starknetAddress || "")}
                 </Text>
               </Box>
             </Flex>

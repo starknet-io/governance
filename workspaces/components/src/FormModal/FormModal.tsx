@@ -17,6 +17,8 @@ interface FormModalProps {
   onSubmit: () => void;
   children: ReactNode;
   isValid?: boolean;
+  submitButtonText?: string;
+  cancelButtonText?: string;
 }
 
 export const FormModal: FC<FormModalProps> = ({
@@ -26,6 +28,8 @@ export const FormModal: FC<FormModalProps> = ({
   onSubmit,
   children,
   isValid = true,
+  submitButtonText = "Save",
+  cancelButtonText = "Cancel",
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -43,7 +47,7 @@ export const FormModal: FC<FormModalProps> = ({
 
           <ModalFooter>
             <Button variant="ghost" onClick={onClose}>
-              Cancel
+              {cancelButtonText}
             </Button>
             <Button
               type="submit"
@@ -52,7 +56,7 @@ export const FormModal: FC<FormModalProps> = ({
               ml={3}
               disabled={!isValid}
             >
-              Save
+              {submitButtonText}
             </Button>
           </ModalFooter>
         </form>
