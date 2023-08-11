@@ -1,4 +1,4 @@
-import { Box, Flex, Icon } from "@chakra-ui/react";
+import { Box, Flex, Icon, Link } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 import { BsDiscord, BsGithub, BsTelegram, BsTwitter } from "react-icons/bs";
 
@@ -99,8 +99,17 @@ type SocialsProps = {
   children?: React.ReactNode;
 };
 
+const platformBaseUrl = {
+  twitter: "https://twitter.com/",
+  github: "https://github.com/",
+  discourse: "https://discourse.org/", // Replace with correct discourse URL
+  discord: "https://discord.com/", // Replace with correct discord URL
+  telegram: "https://t.me/",
+};
+
 const Socials = (props: SocialsProps) => {
   const { label = "twitter", value, children } = props;
+  const link = value ? `${platformBaseUrl[label]}${value}` : "";
 
   return (
     <Flex gap="8px" w={{ base: "48%" }} alignItems="center">
@@ -123,9 +132,9 @@ const Socials = (props: SocialsProps) => {
         color="gray.600"
       />
       {value ? (
-        <Text fontSize="sm" fontWeight="medium">
+        <Link href={link} isExternal fontSize="sm" fontWeight="medium">
           {value}
-        </Text>
+        </Link>
       ) : (
         children
       )}

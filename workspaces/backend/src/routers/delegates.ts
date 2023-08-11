@@ -3,10 +3,11 @@ import { db } from '../db/db';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
 import { getUserByJWT } from '../utils/helpers';
-import { eq, and, isNotNull } from 'drizzle-orm';
+import {eq, and, isNotNull, or} from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { comments } from '../db/schema/comments';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
+import {snips} from "../db/schema/snips";
 import { createInsertSchema } from 'drizzle-zod';
 
 const delegateInsertSchema = createInsertSchema(delegates);
@@ -129,13 +130,19 @@ export const delegateRouter = router({
     .query(async (opts) => {
       return await db
         // @ts-expect-error TODO fix types issue here
-        .select({ ...comments, author: users })
+        .select({
+          ...comments,
+          author: users,
+          snipTitle: snips.title,
+          proposalId: comments.proposalId,
+        })
         .from(comments)
         .rightJoin(users, eq(users.id, comments.userId))
+        .leftJoin(snips, eq(snips.id, comments.snipId)) // Join with snips to fetch the title
         .rightJoin(delegates, eq(delegates.userId, comments.userId))
         .where(
           and(
-            isNotNull(comments.proposalId),
+            or(isNotNull(comments.proposalId), isNotNull(comments.snipId)),
             eq(delegates.id, opts.input.delegateId),
           ),
         );
