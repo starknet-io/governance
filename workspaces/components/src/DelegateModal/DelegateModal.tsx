@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Modal,
   ModalBody,
@@ -5,11 +6,16 @@ import {
   ModalContent,
   ModalOverlay,
   Stack,
+  FormControl,
+  Box,
+  FormLabel,
+  Input,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { Button } from "src/Button";
 import { Heading } from "src/Heading";
-
 import * as Swap from "../Swap/Swap";
+import { Text } from "../Text";
 
 type Props = {
   isOpen: boolean;
@@ -20,7 +26,7 @@ type Props = {
     ethAddress: string | undefined;
     symbol: string;
   };
-  receiverData: {
+  receiverData?: {
     address: string | undefined | null;
     balance: string | undefined;
     ethAddress: string | undefined | null;
@@ -29,6 +35,8 @@ type Props = {
   };
   onClose: () => void;
   delegateTokens: () => void;
+  onContinue?: (address: string) => void;
+  isValidCustomAddress?: boolean;
 };
 
 export const DelegateModal = ({
@@ -38,11 +46,18 @@ export const DelegateModal = ({
   receiverData,
   onClose,
   delegateTokens,
+  onContinue,
+  isValidCustomAddress,
 }: Props) => {
+  const [customAddress, setCustomAddress] = useState("");
   const getTotalVotingPower = () => {
-    return receiverData.vp
-      ? (parseInt(receiverData.balance || "0") + receiverData.vp).toString()
-      : receiverData.balance;
+    if (receiverData) {
+      return receiverData.vp
+        ? (parseInt(receiverData.balance || "0") + (receiverData?.vp || 0)).toString()
+        : receiverData.balance;
+    } else {
+      return "0";
+    }
   };
   return (
     <Modal
@@ -75,7 +90,6 @@ export const DelegateModal = ({
             <Heading fontSize="21px" fontWeight="semibold" variant="h3">
               Delegate votes
             </Heading>
-
             <Stack spacing="32px">
               <Swap.Root>
                 <Swap.UserSummary
@@ -83,23 +97,74 @@ export const DelegateModal = ({
                   balance={senderData.balance}
                   symbol={senderData.symbol}
                 />
-                <Swap.Arrow />
-                <Swap.UserSummary
-                  address={receiverData.address}
-                  balance={getTotalVotingPower()}
-                  symbol={receiverData.symbol}
-                  text={"To"}
-                />
+                {receiverData ? (
+                  <>
+                    <Swap.Arrow />
+                    <Swap.UserSummary
+                      address={receiverData.address}
+                      balance={getTotalVotingPower()}
+                      symbol={receiverData.symbol}
+                      text={"To"}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Swap.Arrow />
+                    <Box
+                      fontSize="14px"
+                      bg="#FAFAFA"
+                      p="16px"
+                      border="1px solid #E4E5E7"
+                      borderRadius="8px"
+                      color="#6C6C75"
+                      display="flex"
+                      justifyContent="space-between"
+                    >
+                      <FormControl isInvalid={isValidCustomAddress === false}>
+                        <FormLabel>
+                          <Text color="#6C6C75" as="span">
+                            Receiver
+                          </Text>
+                        </FormLabel>
+                        <Input
+                          placeholder="0x..."
+                          value={customAddress}
+                          onChange={(e) => setCustomAddress(e.target.value)}
+                        />
+                        {isValidCustomAddress === false && (
+                          <FormErrorMessage>
+                            Not a valid ethereum address
+                          </FormErrorMessage>
+                        )}
+                      </FormControl>
+                    </Box>
+                  </>
+                )}
               </Swap.Root>
-
-              {isConnected && (
+              {receiverData ? (
+                isConnected && (
+                  <Button
+                    type="submit"
+                    variant="solid"
+                    size="lg"
+                    onClick={delegateTokens}
+                  >
+                    Delegate your votes
+                  </Button>
+                )
+              ) : (
                 <Button
-                  type="submit"
                   variant="solid"
+                  type="submit"
+                  disabled={!customAddress}
+                  onClick={() => {
+                    if (onContinue) {
+                      onContinue(customAddress);
+                    }
+                  }}
                   size="lg"
-                  onClick={delegateTokens}
                 >
-                  Delegate your votes
+                  Continue
                 </Button>
               )}
             </Stack>
