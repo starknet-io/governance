@@ -167,6 +167,8 @@ export function Page() {
     onSubmit: console.log,
   });
 
+  console.log(delegates)
+
   return (
     <ContentContainer>
       <Box width="100%">

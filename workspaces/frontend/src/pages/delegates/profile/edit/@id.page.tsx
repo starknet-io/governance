@@ -1,5 +1,5 @@
 import { DocumentProps } from "src/renderer/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -37,6 +37,11 @@ export function Page() {
     RouterInput["delegates"]["editDelegate"]
   >;
 
+  const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
+    useState(false);
+  const [agreementType, setAgreementType] = useState<
+    "standard" | "custom" | null
+  >(null);
   const editDelegate = trpc.delegates.editDelegate.useMutation();
   const pageContext = usePageContext();
   const { data: delegate, isSuccess } = trpc.delegates.getDelegateById.useQuery(
@@ -48,6 +53,13 @@ export function Page() {
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
     useMarkdownEditor("");
 
+  const {
+    editorValue: editorCustomAgreementValue,
+    handleEditorChange: handleCustomAgreement,
+    convertMarkdownToSlate: editorCustomAgreementConvertMarkdownToSlate,
+    editor: editorCustomAgreement,
+  } = useMarkdownEditor("");
+
   const processData = async () => {
     const delegateData = delegate;
     if (!delegateData) return;
@@ -55,13 +67,28 @@ export function Page() {
     editor.insertNodes(
       await convertMarkdownToSlate(delegateData.delegateStatement || ""),
     );
+    editorCustomAgreement.insertNodes(
+      await editorCustomAgreementConvertMarkdownToSlate(
+        delegateData?.customAgreement?.content || "",
+      ),
+    );
     setValue("delegateType", delegateData.delegateType as string[]);
     setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
-    setValue("twitter", delegateData.twitter);
-    setValue("discord", delegateData.discord);
-    setValue("discourse", delegateData.discourse);
-    setValue("agreeTerms", delegateData.agreeTerms);
-    setValue("understandRole", delegateData.understandRole);
+    setValue("twitter", delegateData.twitter as string);
+    setValue("discord", delegateData.discord as string);
+    setValue("discourse", delegateData.discourse as string);
+    setValue("understandRole", delegateData.understandRole as boolean);
+    setValue(
+      "confirmDelegateAgreement",
+      delegateData.confirmDelegateAgreement as boolean,
+    );
+    if (delegate?.confirmDelegateAgreement) {
+      setAgreementType("standard");
+    } else if (delegate?.customAgreement) {
+      setAgreementType("custom");
+    } else {
+      setAgreementType(null);
+    }
   };
 
   useEffect(() => {
@@ -72,6 +99,9 @@ export function Page() {
     try {
       data.delegateStatement = editorValue;
       data.id = pageContext.routeParams!.id;
+      if (showCustomAgreementEditor || agreementType === "custom") {
+        data.customDelegateAgreementContent = editorCustomAgreementValue;
+      }
       await editDelegate.mutateAsync(data).then(() => {
         navigate(`/delegates/profile/${pageContext.routeParams!.id}`);
       });
@@ -160,45 +190,59 @@ export function Page() {
                 />
                 {errors.discourse && <span>This field is required.</span>}
               </FormControl>
-              <FormControl id="agreeTerms">
-                <Controller
-                  control={control}
-                  name="agreeTerms"
-                  defaultValue={false}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Checkbox
-                      isChecked={field.value ?? false}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    >
-                      Agree with delegate terms
-                    </Checkbox>
-                  )}
-                />
-                {errors.agreeTerms && <span>This field is required.</span>}
+              <FormControl id="confirmDelegateAgreement">
+                <Checkbox
+                  isChecked={agreementType === "standard"}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setAgreementType("standard");
+                      setShowCustomAgreementEditor(false);
+                      setValue("confirmDelegateAgreement", true);
+                    } else {
+                      setAgreementType(null);
+                      setValue("confirmDelegateAgreement", false);
+                    }
+                  }}
+                >
+                  I agree with the Starknet foundation suggested delegate
+                  agreement View.
+                </Checkbox>
+                {errors.confirmDelegateAgreement && (
+                  <span>This field is required.</span>
+                )}
               </FormControl>
-              <FormControl id="understandRole">
-                <Controller
-                  control={control}
-                  name="understandRole"
-                  defaultValue={false}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Checkbox
-                      isChecked={field.value ?? false}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    >
-                      I understand the role of StarkNet delegates, we encourage
-                      all to read the Delegate Expectations 328; Starknet
-                      Governance announcements Part 1 98, Part 2 44, and Part 3
-                      34; The Foundation Post 60; as well as the Delegate
-                      Onboarding announcement 539 before proceeding.
-                    </Checkbox>
-                  )}
-                />
-                {errors.understandRole && <span>This field is required.</span>}
+              <FormControl id="customDelegateAgreement">
+                <Checkbox
+                  isChecked={agreementType === "custom"}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setAgreementType("custom");
+                      setShowCustomAgreementEditor(true);
+                      setValue("confirmDelegateAgreement", false);
+                    } else {
+                      setAgreementType(null);
+                      setShowCustomAgreementEditor(false);
+                    }
+                  }}
+                >
+                  I want to provide a custom delegate agreement.
+                </Checkbox>
               </FormControl>
-
+              {/* For some reason, markdown editor as breaking if I make it conditional render, so using display block/hidden */}
+              <div
+                style={{
+                  display: agreementType === "custom" ? "block" : "none",
+                }}
+              >
+                <FormControl id="custom-agreement-editor">
+                  <FormLabel>Custom Delegate Agreement</FormLabel>
+                  <MarkdownEditor
+                    onChange={handleCustomAgreement}
+                    value={editorCustomAgreementValue}
+                    customEditor={delegate?.customAgreement ? editorCustomAgreement : undefined}
+                  />
+                </FormControl>
+              </div>
               <Flex justifyContent="flex-end" gap="16px">
                 <Button
                   color="#D83E2C"

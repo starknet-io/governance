@@ -23,6 +23,7 @@ export { InfoModal } from "./InfoModal";
 export { PlaceholderImage } from "./PlaceholderImage";
 export { VoteReview } from "./VoteReview";
 export { DelegateModal } from "./DelegateModal";
+export { AgreementModal } from "./AgreementModal";
 export { DatePicker } from "./DatePicker";
 export { ConfirmModal } from "./ConfirmModal";
 export { LinkCard } from "./LinkCard";

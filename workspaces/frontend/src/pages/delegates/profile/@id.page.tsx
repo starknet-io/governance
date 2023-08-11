@@ -7,6 +7,7 @@ import {
   ContentContainer,
   DelegateModal,
   Divider,
+  Flex,
   Heading,
   ListRow,
   MarkdownRenderer,
@@ -16,6 +17,7 @@ import {
   MenuItem,
   Status,
   EmptyState,
+  AgreementModal,
   Link,
   StatusModal,
 } from "@yukilabs/governance-components";
@@ -52,6 +54,48 @@ const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
     }
   }
 `);
+
+// This is just for now
+const mockAgreement = `
+    <h1>Agreement Understanding</h1>
+    <p>
+      This agreement pertains to the role and responsibilities within StarkNet.
+      Please review the following documents to ensure a complete understanding
+      of the expectations and guidelines.
+    </p>
+
+    <h2>StarkNet Delegates</h2>
+    <p>
+      <a href="url_to_delegate_expectations_328">Delegate Expectations 328</a>
+    </p>
+
+    <h2>Starknet Governance Announcements</h2>
+    <p>
+      <a href="url_to_part_1_98">Part 1 98</a>
+      <br />
+      <a href="url_to_part_2_44">Part 2 44</a>
+      <br />
+      <a href="url_to_part_3_34">Part 3 34</a>
+    </p>
+
+    <h2>The Foundation Post</h2>
+    <p>
+      <a href="url_to_foundation_post_60">Foundation Post 60</a>
+    </p>
+
+    <h2>Delegate Onboarding</h2>
+    <p>
+      <a href="url_to_onboarding_announcement_539">
+        Delegate Onboarding Announcement 539
+      </a>
+    </p>
+
+    <p>
+      By proceeding further, you acknowledge that you understand the role of
+      StarkNet delegates and have read all the required documents mentioned
+      above.
+    </p>
+  `;
 
 const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   query DelegateProfilePageQuery(
@@ -95,6 +139,7 @@ export function Page() {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
+  const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
 
   const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
@@ -164,6 +209,28 @@ export function Page() {
     {},
   );
 
+  const renderAgreementValue = () => {
+    if (delegate?.confirmDelegateAgreement) {
+      return (
+        <Flex color="#292932" fontWeight="medium" gap={1}>
+          <div>Yes</div>-
+          <button onClick={() => setShowAgreement(true)}>View</button>
+        </Flex>
+      );
+    } else if (delegate?.customAgreement) {
+      return (
+        <Flex color="#292932" fontWeight="medium" gap={1}>
+          <div>Custom</div>-
+          <button onClick={() => setShowAgreement(true)}>View</button>
+        </Flex>
+      );
+    } else {
+      return "None";
+    }
+  };
+
+  console.log(delegate)
+
   const comments = (delegateCommentsResponse?.data || []).map((comment) => {
     const foundProposal = proposals.find(
       (proposal) => proposal?.id === comment.proposalId,
@@ -229,6 +296,15 @@ export function Page() {
         }}
       />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
+      <AgreementModal
+        isOpen={showAgreement}
+        onClose={() => setShowAgreement(false)}
+        content={
+          delegate?.customAgreement
+            ? delegate!.customAgreement!.content
+            : mockAgreement
+        }
+      />
       <StatusModal
         isOpen={isStatusModalOpen}
         isSuccess={!statusDescription.length}
@@ -309,9 +385,7 @@ export function Page() {
             />
             <SummaryItems.Item
               label="Delegation agreement"
-              value={
-                delegate != null ? (delegate?.agreeTerms ? "Yes" : "No") : null
-              }
+              value={renderAgreementValue()}
             />
             <SummaryItems.Item
               isCopiable
