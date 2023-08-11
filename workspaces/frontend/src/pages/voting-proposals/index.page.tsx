@@ -78,8 +78,6 @@ export function Page() {
     sortBy,
   });
 
-  console.log({ data });
-
   const debounce = useDebouncedCallback((query) => setSearchQuery(query), 500);
 
   const handleInputChange = (searchInput: string) => {
