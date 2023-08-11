@@ -9559,6 +9559,7 @@ __metadata:
     express: ^4.18.2
     fsevents: ^2.3.2
     graphql: ^16.7.1
+    graphql-request: ^6.1.0
     itty-cors: ^0.3.6
     itty-router: ^4.0.14
     node-fetch: ^3.3.2
@@ -15045,7 +15046,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-request@npm:^6.0.0":
+"graphql-request@npm:^6.0.0, graphql-request@npm:^6.1.0":
   version: 6.1.0
   resolution: "graphql-request@npm:6.1.0"
   dependencies:
