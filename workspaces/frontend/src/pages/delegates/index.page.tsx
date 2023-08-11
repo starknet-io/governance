@@ -151,7 +151,6 @@ const sortByOptions = {
 
 export function Page() {
   const [, setHelpMessage] = useHelpMessage();
-  // const {  } = useDebounce
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
