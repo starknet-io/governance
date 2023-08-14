@@ -3,11 +3,11 @@ import { db } from '../db/db';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
 import { getUserByJWT } from '../utils/helpers';
-import {eq, and, isNotNull, or} from 'drizzle-orm';
+import { eq, and, isNotNull, or } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { comments } from '../db/schema/comments';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
-import {snips} from "../db/schema/snips";
+import { snips } from '../db/schema/snips';
 import { createInsertSchema } from 'drizzle-zod';
 
 const delegateInsertSchema = createInsertSchema(delegates);
@@ -177,7 +177,7 @@ export const delegateRouter = router({
 
       // Handle customDelegateAgreementContent if provided
       if (opts.input.customDelegateAgreementContent) {
-        console.log('has custom agreement')
+        console.log('has custom agreement');
         const existingCustomAgreement =
           await db.query.customDelegateAgreement.findFirst({
             where: eq(
@@ -238,5 +238,26 @@ export const delegateRouter = router({
       });
       if (user) return user;
       return null;
+    }),
+
+  deleteDelegate: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const delegate = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+      });
+
+      if (!delegate) {
+        throw new Error('Delegate not found');
+      }
+
+      await db
+        .delete(customDelegateAgreement)
+        .where(eq(customDelegateAgreement.delegateId, opts.input.id));
+      await db.delete(delegates).where(eq(delegates.id, opts.input.id));
     }),
 });
