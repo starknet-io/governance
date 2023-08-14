@@ -35,6 +35,7 @@ export {
   VoteComment,
   VoteModal,
   DelegateModal,
+  AgreementModal,
   DatePicker,
   ConfirmModal,
   LinkCard,
@@ -95,6 +96,7 @@ export {
   VoteAgainstIcon,
   VoteForIcon,
   Status,
+  StatusModal,
   EmptyState,
   UserProfileMenu,
 } from "./src";

@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 
 import dotenv from 'dotenv';
 
@@ -15,6 +15,8 @@ import * as users from './schema/users'
 import * as votes from './schema/votes'
 import * as proposals from './schema/proposals'
 import * as usersToCouncils from './schema/usersToCouncils'
+import * as customDelegateAgreement from './schema/customDelegateAgreement';
+
 
 dotenv.config();
 
@@ -34,9 +36,10 @@ const db = drizzle(pool, {
     ...votes,
     ...usersToCouncils,
     ...proposals,
-  }
+    ...customDelegateAgreement,
+  },
 });
 
 migrate(db, { migrationsFolder: './migrations' });
 
-export { db, pool }
+export { db, pool };
