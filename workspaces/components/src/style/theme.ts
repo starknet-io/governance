@@ -13,6 +13,7 @@ import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
 import { menuTheme } from "src/Menu/MenuStyles";
 import { linkTheme } from "src/Link/LinkStyles";
 import { skeletonTheme } from "src/Skeleton/SkeletonStyles";
+import { colors, spacing, radii } from "./tokens";
 
 const config = {
   initialColorMode: "light",
@@ -20,6 +21,17 @@ const config = {
 
 const theme = extendTheme({
   config,
+  colors: {
+    ...colors,
+  },
+
+  space: {
+    ...spacing,
+  },
+  radii: {
+    ...radii,
+  },
+
   components: {
     Button,
     Badge,
