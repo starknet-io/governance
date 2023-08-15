@@ -1,6 +1,6 @@
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { z } from 'zod';
-import { users } from '../db/schema/users';
+import { User, users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
 import { getUserByJWT } from '../utils/helpers';
@@ -182,5 +182,23 @@ export const usersRouter = router({
         .where(eq(users.address, opts.input.address))
 
       return
+    }),
+
+  getUsersByRole: protectedProcedure
+    .input(
+      z.object({
+        role: z.enum(['admin', 'user', 'moderator'])
+      }))
+    .query(async (opts) => {
+      const usersByRole = await db.query.users.findMany({
+        where: eq(users.role, opts.input.role),
+        columns: {
+          address: true,
+        }
+      })
+
+      const addresses = usersByRole.map(user => user.address);
+
+      return addresses;
     }),
 });

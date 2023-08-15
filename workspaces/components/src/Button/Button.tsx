@@ -42,11 +42,12 @@ export const Button = forwardRef<HTMLButtonElement, props>(
         ref={ref}
         href={href}
         {...rest}
+        isDisabled={rest.disabled}
       >
         {children}
       </ChakraButton>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

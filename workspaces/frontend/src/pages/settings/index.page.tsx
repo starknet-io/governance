@@ -25,19 +25,81 @@ import {
   userRoleEnum,
 } from "@yukilabs/governance-backend/src/db/schema/users";
 import { trpc } from "src/utils/trpc";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DocumentProps } from "src/renderer/types";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
+import { Web3Provider } from "@ethersproject/providers";
+import snapshot from "@snapshot-labs/snapshot.js";
+import { useQuery } from "@apollo/client";
+import { gql } from "src/gql";
+import { isValidEthereumAddress } from "src/utils/helpers";
+
 const userRoleValues = userRoleEnum.enumValues;
+
+const GET_SPACE_QUERY = gql(`
+  query GetSpaceQuery(
+    $space: String!
+  ) {
+    space(id: $space) {
+      name
+      about
+      network
+      symbol
+      website
+      private
+      admins
+      moderators
+      members
+      categories
+      plugins
+      children {
+        name
+      }
+      voting {
+        hideAbstain
+      }
+      strategies {
+        name
+        network
+        params
+      }
+      validation {
+        name
+        params
+      }
+      voteValidation {
+        name
+        params
+      }
+      filters {
+        minScore
+        onlyMembers
+      }
+      treasuries {
+        name
+        address
+        network
+      }
+    }
+  }
+`);
+
+type FormValues = {
+  address: string;
+  role: string;
+};
 
 export function Page() {
   const {
-    handleSubmit: handleAddSubmit,
     register: addRegister,
-    formState: { errors: addErrors, isValid: isAddValid },
-  } = useForm<RouterInput["users"]["addRoles"]>();
+    handleSubmit: handleAddSubmit,
+    watch,
+    formState: { errors: addErrors },
+  } = useForm<FormValues>();
+
+  const watchedAddress = watch("address", "");
 
   const {
     handleSubmit: handleEditSubmit,
@@ -57,14 +119,40 @@ export function Page() {
   } = useDisclosure();
   const selectRef = useRef<HTMLSelectElement>(null);
 
+  const { data: space } = useQuery(GET_SPACE_QUERY, {
+    variables: {
+      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+    },
+  });
+
   const addRoles = trpc.users.addRoles.useMutation();
   const users = trpc.users.getAll.useQuery();
+  const admins = trpc.users.getUsersByRole.useQuery({
+    role: "admin",
+  });
+  const moderators = trpc.users.getUsersByRole.useQuery({
+    role: "moderator",
+  });
+  const members = trpc.users.getUsersByRole.useQuery({
+    role: "user",
+  });
+
+  const [isAddressValid, setIsAddressValid] = useState(false);
+
+  useEffect(() => {
+    if (watchedAddress) {
+      setIsAddressValid(isValidEthereumAddress(watchedAddress));
+    } else {
+      setIsAddressValid(false);
+    }
+  }, [watchedAddress]);
 
   const onSubmitAdd = handleAddSubmit(async (data) => {
     try {
       await addRoles.mutateAsync(data, {
         onSuccess: () => {
           users.refetch();
+          updateSpace();
         },
       });
     } catch (error) {
@@ -83,6 +171,7 @@ export function Page() {
         onSuccess: () => {
           users.refetch();
           onEditClose();
+          updateSpace();
         },
       });
     } catch (error) {
@@ -90,6 +179,97 @@ export function Page() {
       console.log(error);
     }
   });
+
+  const updateSpace = async () => {
+    try {
+      const web3 = new Web3Provider(window.ethereum);
+      const [account] = await web3.listAccounts();
+      const client = new snapshot.Client712(
+        import.meta.env.VITE_APP_SNAPSHOT_URL,
+      );
+      let membersRefreshed: any = [];
+      await members.refetch().then((res) => {
+        membersRefreshed = res.data;
+      });
+
+      let adminsRefreshed: any = [];
+      await admins.refetch().then((res) => {
+        adminsRefreshed = res.data;
+      });
+
+      let moderatorsRefreshed: any = [];
+      await moderators.refetch().then((res) => {
+        moderatorsRefreshed = res.data;
+      });
+
+      let settings = space?.space || {};
+      settings = {
+        ...settings,
+        admins: updateArrayWithDiff(settings.admins || [], adminsRefreshed),
+        moderators: updateArrayWithDiff(
+          settings.moderators || [],
+          moderatorsRefreshed,
+        ),
+        members: updateArrayWithDiff(
+          settings.members || [],
+          membersRefreshed ?? [],
+        ),
+      };
+      const cleanedSettings = removeTypename(settings);
+      await client.space(web3, account, {
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        settings: JSON.stringify(cleanedSettings),
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+  };
+
+  function updateArrayWithDiff(
+    array1: (string | null)[],
+    array2: string[],
+  ): string[] {
+    const resultSet = new Set<string>();
+    const lowercaseSet = new Set<string>();
+
+    // Process array1
+    for (const item of array1) {
+      if (item !== null) {
+        const lowercaseItem = item.toLowerCase();
+        if (!lowercaseSet.has(lowercaseItem)) {
+          resultSet.add(item);
+          lowercaseSet.add(lowercaseItem);
+        }
+      }
+    }
+
+    // Process array2
+    for (const item of array2) {
+      const lowercaseItem = item.toLowerCase();
+      if (!lowercaseSet.has(lowercaseItem)) {
+        resultSet.add(item);
+        lowercaseSet.add(lowercaseItem);
+      }
+    }
+
+    return [...resultSet];
+  }
+
+  function removeTypename<T>(obj: T): T {
+    if (Array.isArray(obj)) {
+      return obj.map((item) => removeTypename(item)) as any;
+    } else if (obj !== null && typeof obj === "object") {
+      const newObj: Record<string, unknown> = {};
+      for (const key in obj) {
+        if (key !== "__typename") {
+          newObj[key] = removeTypename((obj as Record<string, unknown>)[key]);
+        }
+      }
+      return newObj as T;
+    }
+    return obj as T;
+  }
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -181,13 +361,20 @@ export function Page() {
               <FormControl id="address">
                 <FormLabel>Ethereum wallet address</FormLabel>
                 <Input
+                  style={
+                    isAddressValid || watchedAddress === ""
+                      ? {}
+                      : { borderColor: "red" }
+                  }
                   variant="primary"
                   placeholder="Add address..."
                   {...addRegister("address", {
                     required: true,
                   })}
                 />
-                {addErrors.address && <span>This field is required.</span>}
+                {!isAddressValid && watchedAddress !== "" && (
+                  <span>Invalid Ethereum address.</span>
+                )}
               </FormControl>
 
               <FormControl id="role">
@@ -208,7 +395,11 @@ export function Page() {
                 {addErrors.role && <span>This field is required.</span>}
               </FormControl>
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant={"solid"} disabled={!isAddValid}>
+                <Button
+                  type="submit"
+                  variant={"solid"}
+                  disabled={!isAddressValid}
+                >
                   Add
                 </Button>
               </Flex>

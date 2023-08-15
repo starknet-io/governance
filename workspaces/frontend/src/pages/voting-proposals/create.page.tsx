@@ -124,10 +124,7 @@ export function Page() {
                   control={control}
                   name="body"
                   render={({ field: { onChange, value } }) => (
-                    <MarkdownEditor
-                      onChange={onChange}
-                      value={value}
-                    />
+                    <MarkdownEditor onChange={onChange} value={value} />
                   )}
                 />
               </FormControl>
