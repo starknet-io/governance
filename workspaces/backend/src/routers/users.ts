@@ -1,6 +1,6 @@
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { z } from 'zod';
-import { User, users } from '../db/schema/users';
+import { users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
 import { getUserByJWT } from '../utils/helpers';
