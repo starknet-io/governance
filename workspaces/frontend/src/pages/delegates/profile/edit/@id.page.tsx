@@ -239,33 +239,36 @@ export function Page() {
                   <MarkdownEditor
                     onChange={handleCustomAgreement}
                     value={editorCustomAgreementValue}
-                    customEditor={delegate?.customAgreement ? editorCustomAgreement : undefined}
+                    customEditor={
+                      delegate?.customAgreement
+                        ? editorCustomAgreement
+                        : undefined
+                    }
                   />
                 </FormControl>
               </div>
               <Flex justifyContent="flex-end" gap="16px">
                 <Button
-                  color="#D83E2C"
                   type="submit"
-                  size="sm"
-                  variant={"outline"}
+                  size="condensed"
+                  variant="danger"
                   mr="auto"
                 >
                   Delete
                 </Button>
                 <Button
                   as="a"
-                  size="sm"
-                  variant={"ghost"}
+                  size="condensed"
+                  variant="ghost"
                   href={`/delegates/profile/${pageContext.routeParams!.id}`}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  size="sm"
-                  variant={"solid"}
-                  disabled={!isValid}
+                  size="condensed"
+                  variant="primary"
+                  isDisabled={!isValid}
                 >
                   Save
                 </Button>

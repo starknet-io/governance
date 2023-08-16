@@ -218,7 +218,7 @@ export function Page() {
                 <Button
                   type="submit"
                   size="condensed"
-                  variant={"primary"}
+                  variant="primary"
                   isDisabled={!isValid}
                 >
                   Create voting proposal

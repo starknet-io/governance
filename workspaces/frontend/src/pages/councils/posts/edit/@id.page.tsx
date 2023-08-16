@@ -44,7 +44,8 @@ export function Page() {
 
   const deletePost = trpc.posts.deletePost.useMutation();
 
-  const { editorValue, handleEditorChange, editor, convertMarkdownToSlate } = useMarkdownEditor('');
+  const { editorValue, handleEditorChange, editor, convertMarkdownToSlate } =
+    useMarkdownEditor("");
 
   const handleDeletePost = async () => {
     if (!post?.id) return;
@@ -64,8 +65,8 @@ export function Page() {
 
   const processData = async () => {
     setValue("title", post?.title ?? "");
-    editor.insertNodes(await convertMarkdownToSlate(post?.content || ''));
-  }
+    editor.insertNodes(await convertMarkdownToSlate(post?.content || ""));
+  };
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -110,7 +111,7 @@ export function Page() {
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Content</FormLabel>
-                <MarkdownEditor 
+                <MarkdownEditor
                   onChange={handleEditorChange}
                   value={editorValue}
                   customEditor={editor}
@@ -120,27 +121,26 @@ export function Page() {
 
               <Flex justifyContent="flex-end" gap="16px">
                 <Button
-                  size="sm"
-                  variant={"outline"}
+                  size="condensed"
+                  variant="danger"
                   mr="auto"
-                  color="#D83E2C"
                   onClick={onOpenDelete}
                 >
                   Delete
                 </Button>
                 <Button
                   as="a"
-                  size="sm"
-                  variant={"ghost"}
+                  size="condensed"
+                  variant="ghost"
                   href={`/councils/posts/${pageContext.routeParams!.id}`}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  size="sm"
-                  variant={"solid"}
-                  disabled={!isValid}
+                  size="condensed"
+                  variant="primary"
+                  isDisabled={!isValid}
                 >
                   Save
                 </Button>

@@ -158,7 +158,7 @@ export const DelegateModal = ({
                 <Button
                   variant="primary"
                   type="submit"
-                  disabled={!customAddress}
+                  isDisabled={!customAddress}
                   onClick={() => {
                     if (onContinue) {
                       onContinue(customAddress);

@@ -125,9 +125,9 @@ export function Page() {
             <ReorderableList items={reorderItems} setItems={setItems} />
             <Button
               type="submit"
-              size="sm"
-              variant={"solid"}
-              disabled={!isValid}
+              size="condensed"
+              variant="primary"
+              isDisabled={!isValid}
             >
               Save
             </Button>

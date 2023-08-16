@@ -15,6 +15,7 @@ import {
   Button,
   MenuItem,
   EmptyState,
+  Flex,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -92,9 +93,16 @@ export function Page() {
         <Box>
           <MarkdownRenderer content={council?.description || ""} />
           {user ? (
-            <Button mt="24px" variant="fullGhostBtn" onClick={handleClick}>
-              Add new post
-            </Button>
+            <Flex>
+              <Button
+                width="100%"
+                mt="24px"
+                variant="secondary"
+                onClick={handleClick}
+              >
+                Add new post
+              </Button>
+            </Flex>
           ) : (
             <></>
           )}

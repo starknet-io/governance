@@ -120,9 +120,9 @@ export function Page() {
           <ReorderableList items={reorderItems} setItems={setItems} />
           <Flex justifyContent="flex-end">
             <Button
-              size="sm"
-              variant={"solid"}
-              disabled={!isValid}
+              size="condensed"
+              variant="primary"
+              isDisabled={!isValid}
               onClick={saveChanges}
             >
               Save Changes

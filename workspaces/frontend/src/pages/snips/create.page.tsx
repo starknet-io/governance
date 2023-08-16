@@ -26,7 +26,7 @@ export function Page() {
   } = useForm<RouterInput["snips"]["createSNIP"]>();
   const createSNIP = trpc.snips.createSNIP.useMutation();
 
-  const { editorValue, handleEditorChange } = useMarkdownEditor('');
+  const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -61,7 +61,7 @@ export function Page() {
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Proposal Body</FormLabel>
-                <MarkdownEditor 
+                <MarkdownEditor
                   onChange={handleEditorChange}
                   value={editorValue}
                 />
@@ -95,9 +95,9 @@ export function Page() {
               <Flex justifyContent="flex-end">
                 <Button
                   type="submit"
-                  size="sm"
-                  variant={"solid"}
-                  disabled={!isValid}
+                  size="condensed"
+                  variant="primary"
+                  isDisabled={!isValid}
                 >
                   Create SNIP
                 </Button>
@@ -241,7 +241,7 @@ export const documentProps = {
 //                 <Button
 //                   type="submit"
 //                   size="sm"
-//                   variant={"solid"}
+//                   variant="solid"
 //                   disabled={!isValid}
 //                 >
 //                   Create SNIP

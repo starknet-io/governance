@@ -31,7 +31,10 @@ export function Page() {
   const [members, setMembers] = useState<MemberType[]>([]);
   const createCouncil = trpc.councils.saveCouncil.useMutation();
 
-  const { editorValue, handleEditorChange, editor } = useMarkdownEditor("", EditorTemplate.proposalMarkDown);
+  const { editorValue, handleEditorChange, editor } = useMarkdownEditor(
+    "",
+    EditorTemplate.proposalMarkDown,
+  );
   const {
     editorValue: shortDescValue,
     handleEditorChange: handleShortDescValue,
@@ -109,7 +112,7 @@ export function Page() {
               </FormControl>
 
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant={"solid"} disabled={!isValid}>
+                <Button type="submit" variant="primary" isDisabled={!isValid}>
                   Create council
                 </Button>
               </Flex>
