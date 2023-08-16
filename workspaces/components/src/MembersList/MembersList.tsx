@@ -56,7 +56,7 @@ export const MembersList: React.FC<MembersListProps> = ({
   });
 
   const handleInputChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
     setMember({ ...member, [event.target.name]: event.target.value });
   };
@@ -126,7 +126,9 @@ export const MembersList: React.FC<MembersListProps> = ({
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={handleAddMember}>Add Member</Button>
+            <Button variant="primary" onClick={handleAddMember}>
+              Add Member
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -181,12 +183,7 @@ export const MembersList: React.FC<MembersListProps> = ({
       </Box>
       {readonly ? null : (
         <Flex justifyContent="flex-end" marginTop={"10px"}>
-          <Button
-            onClick={onOpen}
-            variant="ghost"
-            border="1px solid #E4E5E7"
-            color="#6C6C75"
-          >
+          <Button onClick={onOpen} variant="outline">
             Add Member
           </Button>
         </Flex>

@@ -191,9 +191,8 @@ export function Page() {
 
               <Flex justifyContent="flex-end" gap="16px">
                 <Button
-                  color="#D83E2C"
-                  size="sm"
-                  variant={"outline"}
+                  size="condensed"
+                  variant={"danger"}
                   mr="auto"
                   onClick={onOpenDelete}
                 >
@@ -201,7 +200,7 @@ export function Page() {
                 </Button>
                 <Button
                   as="a"
-                  size="sm"
+                  size="condensed"
                   variant={"ghost"}
                   href={`/councils/${pageContext.routeParams!.id}`}
                 >
@@ -209,8 +208,8 @@ export function Page() {
                 </Button>
                 <Button
                   type="submit"
-                  size="sm"
-                  variant={"solid"}
+                  size="condensed"
+                  variant={"primary"}
                   disabled={!isValid}
                 >
                   Save
