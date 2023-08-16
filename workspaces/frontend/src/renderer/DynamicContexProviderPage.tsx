@@ -15,7 +15,6 @@ import {
   Layout,
   Header,
   Box,
-  SnipsIcon,
   ProposalsIcon,
   DelegatesIcon,
   SecurityIcon,
@@ -314,7 +313,7 @@ function PageLayout(props: Props) {
         onClose={() => setHelpMessage(null)}
       >
         <Text>To action you need to connect your wallet</Text>
-        <Button variant="solid" onClick={() => console.log("connect wallet")}>
+        <Button variant="primary" onClick={() => console.log("connect wallet")}>
           Connect your wallet
         </Button>
       </InfoModal>
@@ -372,12 +371,6 @@ function PageLayout(props: Props) {
                 icon={<ProposalsIcon />}
                 label="Voting proposals"
               />
-              <NavItem
-                active={pageContext.urlOriginal}
-                href="/snips"
-                icon={<SnipsIcon />}
-                label="Core SNIPs"
-              />
             </NavGroup>
           </DrawerBody>
         </DrawerContent>
@@ -393,8 +386,7 @@ function PageLayout(props: Props) {
         >
           <Button
             leftIcon={<GiHamburgerMenu />}
-            variant="solid"
-            colorScheme="teal"
+            variant="primary"
             onClick={onOpen}
           >
             Menu
@@ -404,12 +396,6 @@ function PageLayout(props: Props) {
           <Logo />
           <Box mt="-20px">
             <NavGroup>
-              <NavItem
-                active={pageContext.urlOriginal}
-                href="/snips"
-                icon={<SnipsIcon />}
-                label="Core SNIPs"
-              />
               <NavItem
                 href="/voting-proposals"
                 //todo: fix how active state for menu works
@@ -426,14 +412,7 @@ function PageLayout(props: Props) {
               />
             </NavGroup>
           </Box>
-          <NavGroup
-            label="Councils"
-            action={
-              <Button as="a" href="/councils/create" variant="icon" size="md">
-                +
-              </Button>
-            }
-          >
+          <NavGroup label="Councils">
             {councilResp.data?.map((council) => (
               <NavItem
                 key={council.id}
