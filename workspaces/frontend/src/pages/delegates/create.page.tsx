@@ -17,7 +17,7 @@ import {
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { DocumentProps } from "src/renderer/types";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 const delegateTypeValues = delegateTypeEnum.enumValues;
 
@@ -46,7 +46,6 @@ export function Page() {
     editorValue: customAgreementEditorValue,
     handleEditorChange: handleCustomAgreementEditorChange,
   } = useMarkdownEditor("");
-
 
   const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
     useState(false);
@@ -229,7 +228,7 @@ export function Page() {
                 {errors.understandRole && <span>This field is required.</span>}
               </FormControl>
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant="solid" disabled={!isValid}>
+                <Button type="submit" variant="primary" disabled={!isValid}>
                   Submit delegate profile
                 </Button>
               </Flex>

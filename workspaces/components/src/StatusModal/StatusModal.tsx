@@ -78,7 +78,7 @@ export const StatusModal = ({
               {isSuccess && <MdTaskAlt size={48} color="#29AB87" />}
             </Flex>
             <Text>{description}</Text>
-            <Button type="button" variant="solid" size="lg" onClick={onClose}>
+            <Button type="button" variant="primary" size="lg" onClick={onClose}>
               Close
             </Button>
           </Stack>

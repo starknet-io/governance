@@ -107,7 +107,7 @@ type PrimaryButtonProps = {
 };
 const PrimaryButton = ({ onClick, label = "button" }: PrimaryButtonProps) => {
   return (
-    <Button onClick={onClick} variant="solid">
+    <Button onClick={onClick} variant="primary">
       {label}
     </Button>
   );

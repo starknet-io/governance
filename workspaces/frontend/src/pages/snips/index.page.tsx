@@ -50,14 +50,14 @@ export function Page() {
             </ButtonGroup>
             <Box display="flex" marginLeft="auto">
               {user ? (
-                <Button as="a" href="snips/create" size="sm" variant="solid">
+                <Button as="a" href="snips/create" size="sm" variant="primary">
                   Create SNIP
                 </Button>
               ) : (
                 <Button
                   onClick={() => setHelpMessage("connectWalletMessage")}
                   size="sm"
-                  variant="solid"
+                  variant="primary"
                 >
                   Create SNIP
                 </Button>
@@ -77,7 +77,7 @@ export function Page() {
                   title="Something went wrong"
                   minHeight="300px"
                   action={
-                    <Button variant="solid" onClick={() => snips.refetch()}>
+                    <Button variant="primary" onClick={() => snips.refetch()}>
                       Retry
                     </Button>
                   }
@@ -106,7 +106,7 @@ export function Page() {
                   title="No snips"
                   minHeight="300px"
                   action={
-                    <Button variant="solid" as="a" href="/snips/create">
+                    <Button variant="primary" as="a" href="/snips/create">
                       Create first SNIP
                     </Button>
                   }

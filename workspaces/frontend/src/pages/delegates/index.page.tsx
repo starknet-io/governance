@@ -167,7 +167,7 @@ export function Page() {
     onSubmit: console.log,
   });
 
-  console.log(delegates)
+  console.log(delegates);
 
   return (
     <ContentContainer>
@@ -186,7 +186,7 @@ export function Page() {
               title="Something went wrong"
               minHeight="300px"
               action={
-                <Button variant="solid" onClick={() => delegates.refetch()}>
+                <Button variant="primary" onClick={() => delegates.refetch()}>
                   Retry
                 </Button>
               }
@@ -301,8 +301,8 @@ export function Page() {
                       <Button
                         as="a"
                         href="/delegates/create"
-                        size="sm"
-                        variant="solid"
+                        size="condensed"
+                        variant="primary"
                       >
                         Create delegate profile
                       </Button>
@@ -310,7 +310,7 @@ export function Page() {
                   ) : (
                     <>
                       <Button
-                        size="sm"
+                        size="condensed"
                         variant="outline"
                         onClick={() => setHelpMessage("connectWalletMessage")}
                       >
@@ -319,10 +319,10 @@ export function Page() {
 
                       <Button
                         onClick={() => setHelpMessage("connectWalletMessage")}
-                        size="sm"
-                        variant="solid"
+                        size="condensed"
+                        variant="primary"
                       >
-                        Create delegate profileeee
+                        Create delegate profile
                       </Button>
                     </>
                   )
@@ -331,7 +331,7 @@ export function Page() {
                   //   Delegate to address
                   // </Button>
 
-                  //   <Button as="a" href="/delegates/create" size="sm" variant="solid">
+                  //   <Button as="a" href="/delegates/create" size="sm" variant="primary">
                   //     Create delegate profile
                   //   </Button></>
                 }
