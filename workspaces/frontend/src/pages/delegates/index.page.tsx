@@ -256,7 +256,7 @@ export function Page() {
                   user ? (
                     <>
                       <Button
-                        size="sm"
+                        size="condensed"
                         variant="outline"
                         onClick={() => setIsOpen(true)}
                       >

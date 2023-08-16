@@ -100,7 +100,11 @@ export const DelegateCard = (props: Props) => {
       <CardFooter>
         <Box width="100%" display="flex" flexDirection="column" gap="16px">
           <Box>
-            <Button variant="outline" onClick={() => console.log("clicked")}>
+            <Button
+              size="condensed"
+              variant="outline"
+              onClick={() => console.log("clicked")}
+            >
               Delegate
             </Button>
           </Box>
