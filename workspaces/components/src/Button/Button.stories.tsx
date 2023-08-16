@@ -1,16 +1,7 @@
-import { HStack, Icon as ChakraIcon } from "@chakra-ui/react";
+import { HStack } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
 import { Button } from "./Button";
 import { ThemeProvider } from "../ThemeProvider";
-import {
-  HiPlay,
-  HiOutlineMoon,
-  HiOutlineSun,
-  HiGlobeAlt,
-} from "react-icons/hi2";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { HiOutlineGlobeAlt } from "react-icons/hi2";
-// import { PopoverIcon } from "../../components/Layout/Navbar/PopoverIcon";
 
 export default {
   title: "starknet.io/Button",
