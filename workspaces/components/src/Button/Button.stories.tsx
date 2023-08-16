@@ -1,51 +1,82 @@
-import { VStack, HStack } from "@chakra-ui/react";
-import { Meta, Story } from "@storybook/react";
-import { Button, props as ButtonProps } from "./Button";
+import { HStack, Icon as ChakraIcon } from "@chakra-ui/react";
+import { Meta } from "@storybook/react";
+import { Button } from "./Button";
 import { ThemeProvider } from "../ThemeProvider";
+import {
+  HiPlay,
+  HiOutlineMoon,
+  HiOutlineSun,
+  HiGlobeAlt,
+} from "react-icons/hi2";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { HiOutlineGlobeAlt } from "react-icons/hi2";
+// import { PopoverIcon } from "../../components/Layout/Navbar/PopoverIcon";
 
 export default {
   title: "starknet.io/Button",
   component: Button,
-} as Meta;
+} as Meta<typeof Button>;
 
-const Template = (args: ButtonProps) => (
+export const Primary = () => (
   <ThemeProvider>
-    <VStack spacing={4}>
-      <HStack spacing={4}>
-        <Button {...args} />
-        <Button {...args} isDisabled={true} />
-        <Button {...args} size="condensed" />
-      </HStack>
-    </VStack>
+    <HStack p={12}>
+      <>
+        <Button variant="primary">Solid button</Button>
+        <Button size="condensed" variant="primary">
+          primary condensed
+        </Button>
+      </>
+    </HStack>
   </ThemeProvider>
 );
 
-export const Primary = Template.bind({});
-Primary.args = {
-  variant: "primary",
-  children: "Primary",
-};
+export const Secondary = () => (
+  <ThemeProvider>
+    <HStack p={12}>
+      <>
+        <Button variant="secondary">Secondary button</Button>
+        <Button size="condensed" variant="secondary">
+          Secondary condensed
+        </Button>
+      </>
+    </HStack>
+  </ThemeProvider>
+);
 
-export const Secondary = Template.bind({});
-Secondary.args = {
-  variant: "secondary",
-  children: "Secondary",
-};
+export const Outline = () => (
+  <ThemeProvider>
+    <HStack p={12}>
+      <>
+        <Button variant="outline">Outline button</Button>
+        <Button size="condensed" variant="outline">
+          Outline condensed
+        </Button>
+      </>
+    </HStack>
+  </ThemeProvider>
+);
 
-export const Outline = Template.bind({});
-Outline.args = {
-  variant: "outline",
-  children: "Outline",
-};
-
-export const Ghost = Template.bind({});
-Ghost.args = {
-  variant: "ghost",
-  children: "Ghost",
-};
-
-export const Danger = Template.bind({});
-Danger.args = {
-  variant: "danger",
-  children: "Danger",
-};
+export const Ghost = () => (
+  <ThemeProvider>
+    <HStack p={12}>
+      <>
+        <Button variant="ghost">Ghost button</Button>
+        <Button size="condensed" variant="ghost">
+          Ghost condensed
+        </Button>
+      </>
+    </HStack>
+  </ThemeProvider>
+);
+export const Danger = () => (
+  <ThemeProvider>
+    <HStack p={12}>
+      <>
+        <Button variant="danger">Danger button</Button>
+        <Button size="condensed" variant="danger">
+          Danger condensed
+        </Button>
+      </>
+    </HStack>
+  </ThemeProvider>
+);
