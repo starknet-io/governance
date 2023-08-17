@@ -10,7 +10,7 @@ import {
   Stack,
   Select,
   InputGroup,
-  DatePicker,
+  ChakraDatePicker,
   ContentContainer,
   EditorTemplate,
   useMarkdownEditor,
@@ -188,13 +188,12 @@ export function Page() {
                     <Controller
                       control={control}
                       name="start"
-                      render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <DatePicker
-                          onChange={(value) => onChange(value)}
-                          onBlur={onBlur}
-                          selected={value}
-                          required
-                          showPopperArrow={true}
+                      render={({ field: { onChange, value } }) => (
+                        <ChakraDatePicker
+                          single={true}
+                          range={false}
+                          date={value}
+                          onDateChange={onChange}
                         />
                       )}
                     />
@@ -203,21 +202,18 @@ export function Page() {
                     <Controller
                       control={control}
                       name="end"
-                      render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <DatePicker
-                          onChangeRaw={onChange}
-                          onChange={(value) => onChange(value)}
-                          onBlur={onBlur}
-                          selected={value}
-                          required
-                          showPopperArrow={true}
+                      render={({ field: { onChange, value } }) => (
+                        <ChakraDatePicker
+                          single={true}
+                          range={false}
+                          date={value}
+                          onDateChange={onChange}
                         />
                       )}
                     />
                   </Box>
                 </Stack>
-              </FormControl>
-              <Box display="flex" justifyContent="flex-end">
+              </FormControl>              <Box display="flex" justifyContent="flex-end">
                 <Button
                   type="submit"
                   size="sm"
