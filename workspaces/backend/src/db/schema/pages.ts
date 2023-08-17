@@ -8,7 +8,7 @@ export const pages = pgTable('pages', {
   content: text('content'),
   orderNumber: integer('orderNumber'),
   userId: uuid('userId').references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-
+  slug: text('slug').unique(),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),

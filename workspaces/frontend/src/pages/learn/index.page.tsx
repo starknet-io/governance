@@ -12,6 +12,7 @@ import {
   ProfileSummaryCard,
   MenuItem,
   Divider,
+  CopyToClipboard,
   MarkdownRenderer,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
@@ -19,6 +20,7 @@ import { useEffect, useState } from "react";
 import { Page as PageInterface } from "@yukilabs/governance-backend/src/db/schema/pages";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { usePageContext } from "src/renderer/PageContextProvider";
 
 export interface PageWithUserInterface extends PageInterface {
   author: User | null;
@@ -29,24 +31,54 @@ export function Page() {
     useState<PageWithUserInterface | null>(null);
   const pagesResp = trpc.pages.getAll.useQuery();
   const pages = pagesResp.data ?? [];
-
+  const pageContext = usePageContext();
   const { user } = useDynamicContext();
 
   useEffect(() => {
-    if (pages.length > 0) {
+    setSelectedPage(getPageFromURL());
+
+    if (pages.length > 0 && !getPageFromURL()) {
       setSelectedPage(pages[0]);
     }
   }, [pages]);
 
-  const NavItemWrapper = ({ page }: { page: PageWithUserInterface }) => (
-    <div onClick={() => setSelectedPage(page)}>
-      <NavItem
-        label={page.title ?? ""}
-        activePage={selectedPage?.id === page.id}
-        active="learn"
-      />
-    </div>
-  );
+  useEffect(() => {
+    if (!pageContext.routeParams.slug && pages.length > 0) {
+      window.history.pushState(null, "", `/learn/${pages[0]?.slug}`);
+      if (pages.length > 0) {
+        setSelectedPage(pages[0]);
+      }
+    }
+  }, [pageContext.routeParams, pages]);
+
+  const getPageFromURL = () => {
+    const slug = window.location.pathname.split("/").pop();
+    if (slug) {
+      return pages.find((page) => page.slug === slug) || null;
+    }
+    return null;
+  };
+
+  const selectPage = (page: PageWithUserInterface) => {
+    setSelectedPage(page);
+    window.history.pushState(null, "", `/learn/${page.slug}`);
+  };
+
+  const NavItemWrapper = ({ page }: { page: PageWithUserInterface }) => {
+    const url = `${window.location.origin}/learn/${page.slug}`;
+    return (
+      <div style={{ display: "flex" }}>
+        <div style={{ width: "100%" }} onClick={() => selectPage(page)}>
+          <NavItem
+            label={page.title ?? ""}
+            activePage={selectedPage?.id === page.id}
+            active="learn"
+          />
+        </div>
+        <CopyToClipboard text={url} />
+      </div>
+    );
+  };
 
   return (
     <Box
@@ -78,7 +110,7 @@ export function Page() {
           ))}
         </Stack>
         {user ? (
-          <Button variant="outline" href="learn/create">
+          <Button variant="outline" href="/learn/create">
             Add new page
           </Button>
         ) : (
@@ -138,7 +170,7 @@ export function Page() {
             </Stat.Root>
           </Flex>
           <Divider mb="24px" />
-          <MarkdownRenderer content={selectedPage?.content ?? ""}/>
+          <MarkdownRenderer content={selectedPage?.content ?? ""} />
         </Stack>
       </ContentContainer>
     </Box>
