@@ -101,7 +101,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
   };
 
   const PopoverContentWrapper = usePortal ? Portal : React.Fragment;
-
+  console.log(showTimePicker)
   return (
     <Popover
       placement="bottom-start"
@@ -137,7 +137,10 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
         >
           <PopoverBody {...propsConfigs?.popoverCompProps?.popoverBodyProps}>
             {isTimePickerVisible ? (
-              <Timepicker onSelectTime={handleTimeSelected} />
+              <Timepicker
+                onSelectTime={handleTimeSelected}
+                startDate={selectedDate}
+              />
             ) : (
               <FocusLock>
                 <CalendarPanel

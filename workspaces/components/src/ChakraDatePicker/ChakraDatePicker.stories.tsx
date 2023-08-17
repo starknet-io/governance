@@ -44,3 +44,10 @@ SingleDateWithTime.args = {
   range: false,
   showTimePicker: true,
 };
+
+export const RangeDateWithTime = Template.bind({});
+RangeDateWithTime.args = {
+  single: false,
+  range: true,
+  showTimePicker: true,
+};

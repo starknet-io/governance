@@ -1,26 +1,29 @@
-import React, { useState } from 'react';
-import { Props as DayzedHookProps } from 'dayzed';
-import { Month_Names_Short, Weekday_Names_Short } from './utils/calanderUtils';
+import React, { useState } from "react";
+import { Props as DayzedHookProps } from "dayzed";
+import { Month_Names_Short, Weekday_Names_Short } from "./utils/calanderUtils";
 import {
   Flex,
   Input,
   Popover,
   PopoverBody,
   PopoverContent,
+  PopoverFooter,
   PopoverTrigger,
   Portal,
   useDisclosure,
-} from '@chakra-ui/react';
-import { CalendarPanel } from './components/calendarPanel';
+} from "@chakra-ui/react";
+import { CalendarPanel } from "./components/calendarPanel";
 import {
   CalendarConfigs,
   DatepickerConfigs,
   DatepickerProps,
   OnDateSelected,
   PropsConfigs,
-} from './utils/commonTypes';
-import { format } from 'date-fns';
-import FocusLock from 'react-focus-lock';
+} from "./utils/commonTypes";
+import { format } from "date-fns";
+import FocusLock from "react-focus-lock";
+import { Timepicker } from "../../Timepicker";
+import { Button } from "../../Button";
 
 interface RangeCalendarPanelProps {
   dayzedHookProps: DayzedHookProps;
@@ -91,10 +94,11 @@ export interface RangeDatepickerProps extends DatepickerProps {
   id?: string;
   name?: string;
   usePortal?: boolean;
+  showTimePicker?: boolean;
 }
 
 const DefaultConfigs: CalendarConfigs = {
-  dateFormat: 'MM/dd/yyyy',
+  dateFormat: "MM/dd/yyyy",
   monthNames: Month_Names_Short,
   dayNames: Weekday_Names_Short,
   firstDayOfWeek: 0,
@@ -108,14 +112,24 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
   usePortal,
   defaultIsOpen = false,
   closeOnSelect = true,
+  showTimePicker = false,
   ...props
 }) => {
   const { selectedDates, minDate, maxDate, onDateChange, disabled } = props;
+
+  console.log(showTimePicker)
 
   // chakra popover utils
   const [dateInView, setDateInView] = useState(selectedDates[0] || new Date());
   const [offset, setOffset] = useState(0);
   const { onOpen, onClose, isOpen } = useDisclosure({ defaultIsOpen });
+  const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
+  const handleTimeSelected = (time: string) => {
+    setSelectedTime(time);
+    setIsTimePickerVisible(false);
+  };
 
   const calendarConfigs: CalendarConfigs = {
     ...DefaultConfigs,
@@ -160,10 +174,10 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
   // eventually we want to allow user to freely type their own input and parse the input
   let intVal = selectedDates[0]
     ? `${format(selectedDates[0], calendarConfigs.dateFormat)}`
-    : '';
+    : "";
   intVal += selectedDates[1]
     ? ` - ${format(selectedDates[1], calendarConfigs.dateFormat)}`
-    : '';
+    : "";
 
   const PopoverContentWrapper = usePortal ? Portal : React.Fragment;
 
@@ -179,7 +193,7 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
       <PopoverTrigger>
         <Input
           onKeyPress={(e) => {
-            if (e.key === ' ' && !isOpen) {
+            if (e.key === " " && !isOpen) {
               e.preventDefault();
               onOpen();
             }
@@ -199,25 +213,45 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
           {...propsConfigs?.popoverCompProps?.popoverContentProps}
         >
           <PopoverBody {...propsConfigs.popoverCompProps?.popoverBodyProps}>
-            <FocusLock>
-              <RangeCalendarPanel
-                dayzedHookProps={{
-                  onDateSelected: handleOnDateSelected,
-                  selected: selectedDates,
-                  monthsToDisplay: 2,
-                  date: dateInView,
-                  minDate: minDate,
-                  maxDate: maxDate,
-                  offset: offset,
-                  onOffsetChanged: setOffset,
-                  firstDayOfWeek: calendarConfigs.firstDayOfWeek,
-                }}
-                configs={calendarConfigs}
-                propsConfigs={propsConfigs}
-                selected={selectedDates}
+            {isTimePickerVisible ? (
+              <Timepicker
+                onSelectTime={handleTimeSelected}
+                startDate={selectedDates[0]}
+                endDate={selectedDates[1]}
               />
-            </FocusLock>
+            ) : (
+              <FocusLock>
+                <RangeCalendarPanel
+                  dayzedHookProps={{
+                    onDateSelected: handleOnDateSelected,
+                    selected: selectedDates,
+                    monthsToDisplay: 2,
+                    date: dateInView,
+                    minDate: minDate,
+                    maxDate: maxDate,
+                    offset: offset,
+                    onOffsetChanged: setOffset,
+                    firstDayOfWeek: calendarConfigs.firstDayOfWeek,
+                  }}
+                  configs={calendarConfigs}
+                  propsConfigs={propsConfigs}
+                  selected={selectedDates}
+                />
+              </FocusLock>
+            )}
           </PopoverBody>
+          {showTimePicker && (
+            <PopoverFooter>
+              <Button
+                onClick={() => setIsTimePickerVisible(!isTimePickerVisible)}
+                variant="solid"
+                width="100%"
+                style={{ background: "black", color: "white" }}
+              >
+                {isTimePickerVisible ? "Apply" : "Choose Time"}
+              </Button>
+            </PopoverFooter>
+          )}
         </PopoverContent>
       </PopoverContentWrapper>
     </Popover>
