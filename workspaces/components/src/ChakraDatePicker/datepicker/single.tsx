@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Input,
   Popover,
   PopoverBody,
   PopoverContent,
+  PopoverFooter,
   PopoverTrigger,
   Portal,
   useDisclosure,
-} from '@chakra-ui/react';
-import { format } from 'date-fns';
-import FocusLock from 'react-focus-lock';
-import { Month_Names_Short, Weekday_Names_Short } from './utils/calanderUtils';
-import { CalendarPanel } from './components/calendarPanel';
+} from "@chakra-ui/react";
+import { Button } from "src/Button";
+import { format } from "date-fns";
+import FocusLock from "react-focus-lock";
+import { Month_Names_Short, Weekday_Names_Short } from "./utils/calanderUtils";
+import { CalendarPanel } from "./components/calendarPanel";
 import {
   CalendarConfigs,
   DatepickerConfigs,
   DatepickerProps,
   OnDateSelected,
-} from './utils/commonTypes';
+} from "./utils/commonTypes";
+import { Timepicker } from "../../Timepicker";
 
 export interface SingleDatepickerProps extends DatepickerProps {
   date?: Date;
@@ -33,10 +36,11 @@ export interface SingleDatepickerProps extends DatepickerProps {
   id?: string;
   name?: string;
   usePortal?: boolean;
+  showTimePicker?: boolean;
 }
 
 const DefaultConfigs: CalendarConfigs = {
-  dateFormat: 'yyyy-MM-dd',
+  dateFormat: "yyyy-MM-dd",
   monthNames: Month_Names_Short,
   dayNames: Weekday_Names_Short,
   firstDayOfWeek: 0,
@@ -49,6 +53,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
   disabledDates,
   defaultIsOpen = false,
   closeOnSelect = true,
+  showTimePicker = true,
   ...props
 }) => {
   const {
@@ -63,6 +68,14 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
 
   const [dateInView, setDateInView] = useState(selectedDate);
   const [offset, setOffset] = useState(0);
+
+  const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
+  const handleTimeSelected = (time: string) => {
+    setSelectedTime(time);
+    setIsTimePickerVisible(false);
+  };
 
   const { onOpen, onClose, isOpen } = useDisclosure({ defaultIsOpen });
 
@@ -101,7 +114,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
       <PopoverTrigger>
         <Input
           onKeyPress={(e) => {
-            if (e.key === ' ' && !isOpen) {
+            if (e.key === " " && !isOpen) {
               e.preventDefault();
               onOpen();
             }
@@ -111,7 +124,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
           isDisabled={disabled}
           name={name}
           value={
-            selectedDate ? format(selectedDate, calendarConfigs.dateFormat) : ''
+            selectedDate ? format(selectedDate, calendarConfigs.dateFormat) : ""
           }
           onChange={(e) => e.target.value}
           {...propsConfigs?.inputProps}
@@ -123,26 +136,42 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
           {...propsConfigs?.popoverCompProps?.popoverContentProps}
         >
           <PopoverBody {...propsConfigs?.popoverCompProps?.popoverBodyProps}>
-            <FocusLock>
-              <CalendarPanel
-                dayzedHookProps={{
-                  showOutsideDays: false,
-                  onDateSelected: handleOnDateSelected,
-                  selected: selectedDate,
-                  date: dateInView,
-                  minDate: minDate,
-                  maxDate: maxDate,
-                  offset: offset,
-                  onOffsetChanged: setOffset,
-                  firstDayOfWeek: calendarConfigs.firstDayOfWeek,
-                }}
-                isSingle={true}
-                configs={calendarConfigs}
-                propsConfigs={propsConfigs}
-                disabledDates={disabledDates}
-              />
-            </FocusLock>
+            {isTimePickerVisible ? (
+              <Timepicker onSelectTime={handleTimeSelected} />
+            ) : (
+              <FocusLock>
+                <CalendarPanel
+                  dayzedHookProps={{
+                    showOutsideDays: false,
+                    onDateSelected: handleOnDateSelected,
+                    selected: selectedDate,
+                    date: dateInView,
+                    minDate: minDate,
+                    maxDate: maxDate,
+                    offset: offset,
+                    onOffsetChanged: setOffset,
+                    firstDayOfWeek: calendarConfigs.firstDayOfWeek,
+                  }}
+                  isSingle={true}
+                  configs={calendarConfigs}
+                  propsConfigs={propsConfigs}
+                  disabledDates={disabledDates}
+                />
+              </FocusLock>
+            )}
           </PopoverBody>
+          {showTimePicker && (
+            <PopoverFooter>
+              <Button
+                onClick={() => setIsTimePickerVisible(!isTimePickerVisible)}
+                variant="solid"
+                width="100%"
+                style={{ background: "black", color: "white" }}
+              >
+                {isTimePickerVisible ? "Apply" : "Choose Time"}
+              </Button>
+            </PopoverFooter>
+          )}
         </PopoverContent>
       </PopoverContentWrapper>
     </Popover>

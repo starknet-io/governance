@@ -8,14 +8,14 @@ export default {
   title: "Components/ChakraDatePicker",
   component: ChakraDatePicker,
   argTypes: {
-    single: { control: 'boolean' },
-    range: { control: 'boolean' }
-  }
+    single: { control: "boolean" },
+    range: { control: "boolean" },
+  },
 } as Meta;
 
 type Props = {
-  single?: boolean
-  range?: boolean
+  single?: boolean;
+  range?: boolean;
 };
 
 const Template = (args: Props) => (
@@ -29,11 +29,18 @@ const Template = (args: Props) => (
 export const SingleDate = Template.bind({});
 SingleDate.args = {
   single: true,
-  range: false
+  range: false,
 };
 
 export const RangeDate = Template.bind({});
 RangeDate.args = {
   single: false,
-  range: true
+  range: true,
+};
+
+export const SingleDateWithTime = Template.bind({});
+SingleDateWithTime.args = {
+  single: true,
+  range: false,
+  showTimePicker: true,
 };
