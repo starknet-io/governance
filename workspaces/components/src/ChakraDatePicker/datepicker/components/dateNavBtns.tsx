@@ -25,7 +25,7 @@ export const DatepickerBackBtns: React.FC<DatepickerBackBtnsProps> = (
         {...DefaultBtnStyle}
         {...customBtnProps}
       >
-        {'<'}
+        {'←'}
       </Button>
     </Fragment>
   );
@@ -48,7 +48,7 @@ export const DatepickerForwardBtns: React.FC<DatepickerForwardBtnsProps> = (
         {...DefaultBtnStyle}
         {...customBtnProps}
       >
-        {'>'}
+        {'→'}
       </Button>
     </Fragment>
   );

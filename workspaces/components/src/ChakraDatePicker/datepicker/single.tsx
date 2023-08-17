@@ -126,7 +126,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
             <FocusLock>
               <CalendarPanel
                 dayzedHookProps={{
-                  showOutsideDays: true,
+                  showOutsideDays: false,
                   onDateSelected: handleOnDateSelected,
                   selected: selectedDate,
                   date: dateInView,
@@ -136,6 +136,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
                   onOffsetChanged: setOffset,
                   firstDayOfWeek: calendarConfigs.firstDayOfWeek,
                 }}
+                isSingle={true}
                 configs={calendarConfigs}
                 propsConfigs={propsConfigs}
                 disabledDates={disabledDates}

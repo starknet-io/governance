@@ -20,6 +20,8 @@ export interface CalendarPanelProps extends DatepickerProps {
   disabledDates?: Set<number>;
   onMouseEnterHighlight?: (date: Date) => void;
   isInRange?: (date: Date) => boolean | null;
+  isSingle?: boolean
+  selectedDate?: Date | Date[]
 }
 
 export const CalendarPanel: React.FC<CalendarPanelProps> = ({
@@ -29,6 +31,8 @@ export const CalendarPanel: React.FC<CalendarPanelProps> = ({
   disabledDates,
   onMouseEnterHighlight,
   isInRange,
+  isSingle,
+  selectedDate,
 }) => {
   const renderProps = useDayzed(dayzedHookProps);
   const { calendars, getBackProps, getForwardProps } = renderProps;
@@ -116,7 +120,7 @@ export const CalendarPanel: React.FC<CalendarPanelProps> = ({
                 />
               </HStack>
             </HStack>
-            <SimpleGrid columns={7} spacing={1} textAlign="center">
+            <SimpleGrid columns={7} spacingY={1} textAlign="center">
               {weekdayNames.map((day, dayIdx) => (
                 <Box
                   fontSize="sm"
@@ -134,6 +138,8 @@ export const CalendarPanel: React.FC<CalendarPanelProps> = ({
                   const { date } = dateObj;
                   return (
                     <DayOfMonth
+                      isSingle={isSingle}
+                      selectedDate={selectedDate}
                       key={key}
                       dateObj={dateObj}
                       propsConfigs={propsConfigs}

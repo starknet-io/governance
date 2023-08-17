@@ -70,6 +70,7 @@ export const RangeCalendarPanel: React.FC<RangeCalendarPanelProps> = ({
   return (
     <Flex onMouseLeave={onMouseLeave}>
       <CalendarPanel
+        selectedDate={selected}
         dayzedHookProps={dayzedHookProps}
         configs={configs}
         propsConfigs={propsConfigs}

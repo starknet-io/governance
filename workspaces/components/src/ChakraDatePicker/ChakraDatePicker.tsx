@@ -12,6 +12,7 @@ const propsConfig = {
   dateNavBtnProps: {
     borderWidth: "0",
     colorScheme: "slate",
+    padding: "2px",
     yearBtnProps: {
       display: "none"
     },
@@ -40,6 +41,9 @@ const propsConfig = {
     selectedBtnProps: {
       background: "#1A1523",
       color: "white",
+      _hover: {
+        background: "#1A1523",
+      }
     },
     todayBtnProps: {
       border: "1px solid #23192D1A",
@@ -71,6 +75,7 @@ const propsConfig = {
   },
   dateHeadingProps: {
     fontWeight: "bold",
+    fontSize: "20px",
   },
 }
 

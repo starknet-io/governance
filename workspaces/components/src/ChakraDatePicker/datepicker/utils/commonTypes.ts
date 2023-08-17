@@ -24,6 +24,10 @@ export interface DayOfMonthBtnStyleProps {
   isInRangeBtnProps?: ButtonProps;
   selectedBtnProps?: ButtonProps;
   todayBtnProps?: ButtonProps;
+  startDateProps?: ButtonProps;
+  halfBackgroundStyles?: ButtonProps;
+  halfBackgroundStylesEnd?: ButtonProps;
+  circleStyle?: ButtonProps;
 }
 
 export interface PopoverCompProps {
