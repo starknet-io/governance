@@ -21,7 +21,7 @@ type Props = {
 const Template:Story<Props> = (args: Props) => (
   <ChakraProvider>
     <Box p={4}>
-      <Timepicker {...args} />
+      <Timepicker {...args} onClose={() => console.log('closed!')}/>
     </Box>
   </ChakraProvider>
 );
