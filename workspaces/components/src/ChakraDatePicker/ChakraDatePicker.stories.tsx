@@ -4,21 +4,25 @@ import { Meta } from "@storybook/react";
 import { ChakraProvider, Box } from "@chakra-ui/react";
 import { ChakraDatePicker } from "./ChakraDatePicker"; // Adjust the path accordingly
 
+type Story<T = unknown> = ((args: T) => JSX.Element) & { args?: Partial<T> };
+
 export default {
   title: "Components/ChakraDatePicker",
   component: ChakraDatePicker,
   argTypes: {
     single: { control: "boolean" },
     range: { control: "boolean" },
+    showTimePicker: { control: "boolean" },
   },
 } as Meta;
 
 type Props = {
   single?: boolean;
   range?: boolean;
+  showTimePicker?: boolean;
 };
 
-const Template = (args: Props) => (
+const Template: Story<Props> = (args: Props) => (
   <ChakraProvider>
     <Box p={4}>
       <ChakraDatePicker {...args} />

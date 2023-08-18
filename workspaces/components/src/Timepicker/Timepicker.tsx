@@ -56,24 +56,24 @@ export const Timepicker: React.FC<{
     }
   };
 
-  const togglePeriod = () => {
+  const togglePeriod = (time: "start" | "end") => {
     setPeriod((prevPeriod) => ({
       ...prevPeriod,
-      [activeTime]: prevPeriod[activeTime] === "AM" ? "PM" : "AM",
+      [time]: prevPeriod[time] === "AM" ? "PM" : "AM",
     }));
   };
 
   const handleSelectTime = () => {
-    const startTime = `${hour.start}:${minute.start < 10 ? `0${minute.start}` : minute.start} ${
-      period.start
-    }`
-    const endTime = `${hour.end}:${minute.end < 10 ? `0${minute.end}` : minute.end} ${
-      period.end
-    }`
+    const startTime = `${hour.start}:${
+      minute.start < 10 ? `0${minute.start}` : minute.start
+    } ${period.start}`;
+    const endTime = `${hour.end}:${
+      minute.end < 10 ? `0${minute.end}` : minute.end
+    } ${period.end}`;
     if (startDate && endDate) {
-      onSelectTime([startTime, endTime])
+      onSelectTime([startTime, endTime]);
     } else {
-      onSelectTime([startTime])
+      onSelectTime([startTime]);
     }
   };
 
@@ -166,7 +166,11 @@ export const Timepicker: React.FC<{
                 >
                   {minute.start < 10 ? `0${minute.start}` : minute.start}
                 </Text>
-                <Button onClick={togglePeriod} size="sm" variant="outline">
+                <Button
+                  onClick={() => togglePeriod("start")}
+                  size="sm"
+                  variant="outline"
+                >
                   {period.start}
                 </Button>
               </Stack>
@@ -263,7 +267,11 @@ export const Timepicker: React.FC<{
                 >
                   {minute.end < 10 ? `0${minute.end}` : minute.end}
                 </Text>
-                <Button onClick={togglePeriod} size="sm" variant="outline">
+                <Button
+                  onClick={() => togglePeriod("end")}
+                  size="sm"
+                  variant="outline"
+                >
                   {period.end}
                 </Button>
               </Stack>
