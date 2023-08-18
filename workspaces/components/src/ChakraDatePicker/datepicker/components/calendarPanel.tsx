@@ -2,7 +2,6 @@ import {
   HStack,
   VStack,
   Heading,
-  Divider,
   SimpleGrid,
   Box,
   Stack,
@@ -51,6 +50,7 @@ export const CalendarPanel: React.FC<CalendarPanelProps> = ({
   // looking for a useRef() approach to replace it
   const getKeyOffset = useCallback((num: number) => {
     const e = document.activeElement;
+    // @ts-ignore
     let buttons = document.querySelectorAll("button");
     buttons.forEach((el, i) => {
       const newNodeKey = i + num;

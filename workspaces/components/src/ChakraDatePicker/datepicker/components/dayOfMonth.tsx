@@ -98,7 +98,7 @@ export const DayOfMonth: React.FC<DayOfMonthProps> = ({
         bottom: 0,
         left: "50%", // This ensures the grey background only covers the right half
         backgroundColor: "#23192D1A",
-        zIndex: 1, // This ensures the grey background is below the black circle
+        zIndex: 1,
       },
       halfBackgroundStylesEnd: {
         content: '""',
@@ -108,7 +108,7 @@ export const DayOfMonth: React.FC<DayOfMonthProps> = ({
         bottom: 0,
         left: 0,
         backgroundColor: "#23192D1A",
-        zIndex: 1, // This ensures the grey background is below the black circle
+        zIndex: 1,
       },
     }),
     [defaultBtnProps, isInRangeBtnProps, selectedBtnProps, todayBtnProps],
@@ -117,7 +117,7 @@ export const DayOfMonth: React.FC<DayOfMonthProps> = ({
     !isSingle &&
     selected &&
     selectedDate &&
-    selectedDate.length &&
+    Array.isArray(selectedDate) &&
     selectedDate[1] &&
     date.getTime() === selectedDate[1].getTime();
   const isStartDateOfRange = !isSingle && !isEndDateOfRange && selected;
@@ -139,12 +139,12 @@ export const DayOfMonth: React.FC<DayOfMonthProps> = ({
       {...(isStartDateOfRange && styleBtnProps.startDateProps)}
     >
       {isStartDateOfRange && (
-        <div style={styleBtnProps.halfBackgroundStyles}></div>
+        <div style={styleBtnProps.halfBackgroundStyles as any}></div>
       )}
       {isEndDateOfRange && (
-        <div style={styleBtnProps.halfBackgroundStylesEnd}></div>
+        <div style={styleBtnProps.halfBackgroundStylesEnd as any}></div>
       )}
-      {isStartDateOfRange && <div style={styleBtnProps.circleStyle}></div>}
+      {isStartDateOfRange && <div style={styleBtnProps.circleStyle as any}></div>}
       <span style={{ zIndex: "5" }}>{date.getDate()}</span>
     </Button>
   );
