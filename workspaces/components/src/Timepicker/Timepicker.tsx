@@ -112,6 +112,7 @@ export const Timepicker: React.FC<{
             >
               <IconButton
                 aria-label="minus"
+                padding={3}
                 icon={<AiOutlineMinus size="14px" />}
                 variant="outline"
                 onClick={() => {
@@ -179,6 +180,7 @@ export const Timepicker: React.FC<{
               </Stack>
               <IconButton
                 aria-label="plus"
+                padding={3}
                 icon={<AiOutlinePlus size="14px" />}
                 variant="outline"
                 onClick={() => {
@@ -213,8 +215,10 @@ export const Timepicker: React.FC<{
             >
               <IconButton
                 aria-label="minus"
+                size="md"
                 icon={<AiOutlineMinus size="14px" />}
                 variant="outline"
+                padding={3}
                 onClick={() => {
                   setActiveTime("end");
                   decrement();
@@ -280,6 +284,8 @@ export const Timepicker: React.FC<{
               </Stack>
               <IconButton
                 aria-label="plus"
+                size="md"
+                padding={3}
                 icon={<AiOutlinePlus size="14px" />}
                 variant="outline"
                 onClick={() => {

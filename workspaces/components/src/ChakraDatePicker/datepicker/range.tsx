@@ -133,8 +133,14 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
       const [startDate, endDate] = selectedDates;
 
       // Merge date and time
-      startDate.setHours(parseInt(startTime.split(":")[0]), parseInt(startTime.split(":")[1]));
-      endDate.setHours(parseInt(endTime.split(":")[0]), parseInt(endTime.split(":")[1]));
+      startDate.setHours(
+        parseInt(startTime.split(":")[0]),
+        parseInt(startTime.split(":")[1]),
+      );
+      endDate.setHours(
+        parseInt(endTime.split(":")[0]),
+        parseInt(endTime.split(":")[1]),
+      );
 
       onDateChange([startDate, endDate]);
     }
@@ -259,14 +265,24 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
             <PopoverFooter>
               <Button
                 onClick={() => {
-                  setIsTimePickerVisible(!isTimePickerVisible);
-                  if (isTimePickerVisible) {
-                    onClose();
+                  if (
+                    Array.isArray(selectedDates) &&
+                    selectedDates.length === 2 &&
+                    typeof selectedDates[0] === "object" &&
+                    typeof selectedDates[1] === "object"
+                  ) {
+                    setIsTimePickerVisible(!isTimePickerVisible);
+                    if (isTimePickerVisible) {
+                      onClose();
+                    }
                   }
                 }}
                 variant="solid"
-                disabled={!selectedDates || !selectedDates?.length > 1}
-                width="100%"
+                disabled={
+                  !selectedDates ||
+                  (Array.isArray(selectedDates) && selectedDates.length < 2)
+                }
+                float="right"
                 style={{ background: "black", color: "white" }}
               >
                 {isTimePickerVisible ? "Apply" : "Choose Time"}

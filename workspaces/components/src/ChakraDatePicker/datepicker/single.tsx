@@ -179,9 +179,13 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
           {showTimePicker && !isTimePickerVisible && (
             <PopoverFooter>
               <Button
-                onClick={() => setIsTimePickerVisible(!isTimePickerVisible)}
+                onClick={() => {
+                  if (typeof selectedDate === "object") {
+                    setIsTimePickerVisible(!isTimePickerVisible);
+                  }
+                }}
                 variant="solid"
-                width="100%"
+                float="right"
                 style={{ background: "black", color: "white" }}
               >
                 {isTimePickerVisible ? "Apply" : "Choose Time"}
