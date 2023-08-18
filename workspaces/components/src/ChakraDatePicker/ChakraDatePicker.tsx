@@ -5,7 +5,7 @@ type Props = {
   single?: boolean;
   range?: boolean;
   date?: Date | Date[] | null;
-  onDateChange: (d: Date | Date[]) => void;
+  onDateChange?: (d: Date | Date[]) => void;
   showTimePicker?: boolean;
 };
 
@@ -83,7 +83,7 @@ const propsConfig = {
 
 export const ChakraDatePicker = ({
   single = true,
-  range,
+  range = false,
   date,
   onDateChange,
   showTimePicker,
@@ -102,12 +102,16 @@ export const ChakraDatePicker = ({
 
   const handleSingleDateChange = (newDate: Date) => {
     setSelectedDate(newDate);
-    onDateChange(newDate);
+    if (onDateChange) {
+      onDateChange(newDate);
+    }
   };
 
   const handleRangeDateChange = (dates: Date[]) => {
     setSelectedDates(dates);
-    onDateChange(dates);
+    if (onDateChange) {
+      onDateChange(dates);
+    }
   };
 
   const today = new Date(); // Get the current date

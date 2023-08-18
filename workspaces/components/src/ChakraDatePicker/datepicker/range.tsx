@@ -168,7 +168,7 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
         }
         onDateChange(newDates);
 
-        if (closeOnSelect) onClose();
+        if (closeOnSelect || !showTimePicker) onClose();
         return;
       }
 
