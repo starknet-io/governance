@@ -30,8 +30,7 @@ interface FieldValues {
   title: string;
   body: any[];
   discussion: string;
-  start: Date | null;
-  end: Date | null;
+  votingPeriod: Date[];
 }
 
 export function Page() {
@@ -49,8 +48,7 @@ export function Page() {
         title: "",
         body: EditorTemplate.proposalMarkDown,
         discussion: "",
-        start: new Date(),
-        end: new Date(new Date().getTime() + 3 * 60 * 60 * 24 * 1000),
+        votingPeriod: [new Date(), new Date()] // This will hold both start and end dates
       };
     },
   });
@@ -69,14 +67,14 @@ export function Page() {
 
       console.log(block);
 
-      const params: Proposal = {
+      const params: Proposal & { votingPeriod?: Date[]} = {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         type: "basic",
         title: data.title,
         body: convertSlateToMarkdown(data.body),
         choices: ["For", "Against", "Abstain"],
-        start: Math.floor(data.start!.getTime() / 1000),
-        end: Math.floor(data.end!.getTime() / 1000),
+        start: Math.floor(data!.votingPeriod[0].getTime() / 1000),
+        end: Math.floor(data!.votingPeriod[1].getTime() / 1000),
         snapshot: Number(block),
         plugins: JSON.stringify({}),
         discussion: data.discussion,
@@ -124,10 +122,7 @@ export function Page() {
                   control={control}
                   name="body"
                   render={({ field: { onChange, value } }) => (
-                    <MarkdownEditor
-                      onChange={onChange}
-                      value={value}
-                    />
+                    <MarkdownEditor onChange={onChange} value={value} />
                   )}
                 />
               </FormControl>
@@ -142,7 +137,6 @@ export function Page() {
                   />
                 </InputGroup>
               </FormControl>
-
               {/* // disabled for basic voting */}
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Voting type</FormLabel>
@@ -187,25 +181,12 @@ export function Page() {
                   <Box width="100%">
                     <Controller
                       control={control}
-                      name="start"
+                      name="votingPeriod"
                       render={({ field: { onChange, value } }) => (
                         <ChakraDatePicker
-                          single={true}
-                          range={false}
-                          date={value}
-                          onDateChange={onChange}
-                        />
-                      )}
-                    />
-                  </Box>
-                  <Box width="100%">
-                    <Controller
-                      control={control}
-                      name="end"
-                      render={({ field: { onChange, value } }) => (
-                        <ChakraDatePicker
-                          single={true}
-                          range={false}
+                          single={false}
+                          showTimePicker={true}
+                          range={true}
                           date={value}
                           onDateChange={onChange}
                         />
@@ -213,7 +194,8 @@ export function Page() {
                     />
                   </Box>
                 </Stack>
-              </FormControl>              <Box display="flex" justifyContent="flex-end">
+              </FormControl>
+              <Box display="flex" justifyContent="flex-end">
                 <Button
                   type="submit"
                   size="sm"

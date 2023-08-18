@@ -117,18 +117,27 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
 }) => {
   const { selectedDates, minDate, maxDate, onDateChange, disabled } = props;
 
-  console.log(showTimePicker);
-
   // chakra popover utils
   const [dateInView, setDateInView] = useState(selectedDates[0] || new Date());
   const [offset, setOffset] = useState(0);
   const { onOpen, onClose, isOpen } = useDisclosure({ defaultIsOpen });
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
-  const [selectedTime, setSelectedTime] = useState<string | string[] | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | string[] | null>(
+    null,
+  );
 
   const handleTimeSelected = (time: string | string[]) => {
-    console.log(time)
     setSelectedTime(time);
+    if (Array.isArray(time)) {
+      const [startTime, endTime] = time;
+      const [startDate, endDate] = selectedDates;
+
+      // Merge date and time
+      startDate.setHours(parseInt(startTime.split(":")[0]), parseInt(startTime.split(":")[1]));
+      endDate.setHours(parseInt(endTime.split(":")[0]), parseInt(endTime.split(":")[1]));
+
+      onDateChange([startDate, endDate]);
+    }
     setIsTimePickerVisible(false);
     onClose();
   };
@@ -173,14 +182,16 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
     }
   };
 
-  // eventually we want to allow user to freely type their own input and parse the input
-  console.log(selectedTime)
   let intVal = selectedDates[0]
-    ? `${format(selectedDates[0], calendarConfigs.dateFormat)}${selectedTime && selectedTime[0] ? `- ${selectedTime[0]}` : ``}`
-    : "";
+    ? `${format(selectedDates[0], calendarConfigs.dateFormat)}${
+        selectedTime && selectedTime[0] ? `- ${selectedTime[0]}` : ``
+      }`
+    : "Start Date - ";
   intVal += selectedDates[1]
-    ? ` - ${format(selectedDates[1], calendarConfigs.dateFormat)}${selectedTime && selectedTime[1] ? `- ${selectedTime[1]}` : ``}`
-    : "";
+    ? ` - ${format(selectedDates[1], calendarConfigs.dateFormat)}${
+        selectedTime && selectedTime[1] ? `- ${selectedTime[1]}` : ``
+      }`
+    : "End Date";
 
   const PopoverContentWrapper = usePortal ? Portal : React.Fragment;
 

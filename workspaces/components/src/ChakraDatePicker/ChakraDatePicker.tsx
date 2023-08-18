@@ -1,11 +1,12 @@
 import { RangeDatepicker, SingleDatepicker } from "./datepicker";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   single?: boolean;
   range?: boolean;
-  date?: Date | null;
+  date?: Date | Date[] | null;
   onDateChange: (d: Date | Date[]) => void;
+  showTimePicker?: boolean;
 };
 
 const propsConfig = {
@@ -14,14 +15,14 @@ const propsConfig = {
     colorScheme: "slate",
     padding: "2px",
     yearBtnProps: {
-      display: "none"
+      display: "none",
     },
     nextYearBtnProps: {
-      display: "none"
+      display: "none",
     },
     prevYearBtnProps: {
-      display: "none"
-    }
+      display: "none",
+    },
   },
   dayOfMonthBtnProps: {
     defaultBtnProps: {
@@ -43,7 +44,7 @@ const propsConfig = {
       color: "white",
       _hover: {
         background: "#1A1523",
-      }
+      },
     },
     todayBtnProps: {
       border: "1px solid #23192D1A",
@@ -58,32 +59,39 @@ const propsConfig = {
       color: "#19191A",
       borderWidth: "0",
       gap: "10px",
-      boxShadow: "0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)",
+      boxShadow:
+        "0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)",
     },
     popoverBodyProps: {
       borderWidth: "0!important",
       border: "none!important",
-      '& > *': {
-        border: "none!important"
-      }
+      "& > *": {
+        border: "none!important",
+      },
     },
   },
   weekdayLabelProps: {
     fontWeight: "semibold",
     color: "#4A4A4F",
-    paddingBottom: "10px"
+    paddingBottom: "10px",
   },
   dateHeadingProps: {
     fontWeight: "bold",
     fontSize: "20px",
   },
-}
+};
 
-export const ChakraDatePicker = ({ single = true, range, date, onDateChange, showTimePicker }: Props) => {
+export const ChakraDatePicker = ({
+  single = true,
+  range,
+  date,
+  onDateChange,
+  showTimePicker,
+}: Props) => {
   const [selectedDate, setSelectedDate] = useState(date || new Date());
-  const [selectedDates, setSelectedDates] = useState<Date[]>([
-    new Date(),
-    new Date(),
+  const [selectedDates, setSelectedDates] = useState<Date[] | [null, null]>([
+    null,
+    null,
   ]);
 
   useEffect(() => {
@@ -110,7 +118,7 @@ export const ChakraDatePicker = ({ single = true, range, date, onDateChange, sho
       {single && (
         <SingleDatepicker
           name="date-input"
-          date={selectedDate}
+          date={selectedDate as Date}
           onDateChange={handleSingleDateChange}
           propsConfigs={propsConfig}
           showTimePicker={showTimePicker}
@@ -119,7 +127,7 @@ export const ChakraDatePicker = ({ single = true, range, date, onDateChange, sho
       )}
       {range && !single && (
         <RangeDatepicker
-          selectedDates={selectedDates}
+          selectedDates={selectedDates as Date[]}
           onDateChange={handleRangeDateChange}
           name="range-input"
           propsConfigs={propsConfig}
@@ -130,4 +138,3 @@ export const ChakraDatePicker = ({ single = true, range, date, onDateChange, sho
     </>
   );
 };
-
