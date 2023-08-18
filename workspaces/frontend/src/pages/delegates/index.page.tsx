@@ -57,7 +57,7 @@ export const delegateNames = {
 };
 
 export const delegateFilters = {
-  defaultValue: [],
+  defaultValue: [] as string[],
   options: [
     {
       label: "Delegate agreement",
@@ -82,7 +82,7 @@ export const delegateFilters = {
   ],
 };
 export const delegateInterests = {
-  defaultValue: [],
+  defaultValue: [] as string[],
   options: [
     {
       label: "Cairo Dev",
@@ -182,7 +182,7 @@ export function Page() {
   });
 
   const [filtersState, setFiltersState] = useState({
-    filters: [],
+    filters: [] as string[],
     searchQuery,
     sortBy,
   });
@@ -246,6 +246,7 @@ export function Page() {
                   <FilterPopoverIcon
                     label="Filter by"
                     icon={HiAdjustmentsHorizontal}
+                    badgeContent={filtersState.filters.length}
                   />
                   <FilterPopoverContent
                     isCancelDisabled={!state.canCancel}

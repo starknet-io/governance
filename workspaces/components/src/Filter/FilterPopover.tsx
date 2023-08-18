@@ -1,4 +1,5 @@
 import {
+  Box,
   HStack,
   Icon,
   PopoverBody,
@@ -21,6 +22,7 @@ type FilterPopoverButtonProps = {
   label: string;
   icon?: ElementType;
   selected?: boolean;
+  badgeContent?: string | number;
 };
 
 export const FilterPopoverButton = (props: FilterPopoverButtonProps) => {
@@ -53,7 +55,7 @@ export const FilterPopoverButton = (props: FilterPopoverButtonProps) => {
 };
 
 export const FilterPopoverIcon = (props: FilterPopoverButtonProps) => {
-  const { label, icon, selected } = props;
+  const { label, icon, selected, badgeContent } = props;
 
   return (
     <PopoverTrigger>
@@ -74,6 +76,23 @@ export const FilterPopoverIcon = (props: FilterPopoverButtonProps) => {
         _selected={{ bg: "blue.50", borderColor: "blue.500" }}
       >
         {icon && <Icon title={label} as={icon} boxSize="18px" color="gray" />}
+        {badgeContent && (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+              width: "20px",
+              height: "20px",
+              backgroundColor: "#DCDBDD",
+              borderRadius: "10px",
+            }}
+          >
+            <Text fontWeight="semibold" color="black" fontSize={10}>
+              {badgeContent}
+            </Text>
+          </Box>
+        )}
         {/* <Text fontWeight="medium">{label}</Text>
         <Icon as={HiChevronDown} fontSize="xl" color="gray.400" /> */}
       </HStack>
@@ -93,13 +112,13 @@ export const FilterPopoverContent = (props: FilterPopoverContentProps) => {
   return (
     <PopoverContent
       bg="#fff"
-      sx={{ width: '260px' }}
+      sx={{ width: "260px" }}
       _focus={{ shadow: "none", outline: 0 }}
       _focusVisible={{ shadow: "outline" }}
     >
       {header && <PopoverHeader srOnly>{header}</PopoverHeader>}
       <PopoverBody padding="6">{children}</PopoverBody>
-      <PopoverFooter sx={{ borderTop: 'none' }}>
+      <PopoverFooter sx={{ borderTop: "none" }}>
         <FilterActionButtons
           onClickCancel={() => {
             onClickCancel?.();

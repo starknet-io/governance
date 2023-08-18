@@ -5,7 +5,19 @@ import { gql, GraphQLClient } from 'graphql-request';
 import { comments } from '../db/schema/comments';
 import { z } from 'zod';
 
-//TODO: Fix types
+interface IProposal {
+  id: string;
+  title: string;
+  choices: string[];
+  start: number;
+  end: number;
+  snapshot: string;
+  state: string;
+  scores: number[];
+  scores_total: number;
+  author: string;
+  space: { id: string; name: string };
+}
 
 const endpoint = `https://hub.snapshot.org/graphql`;
 const space = 'robwalsh.eth';
@@ -79,19 +91,22 @@ const GET_PROPOSALS = gql`
   }
 `;
 
-const sortProposalsByIDsOrder = (proposals: any[], ids: string[]) => {
+const sortProposalsByIDsOrder = (
+  proposals: IProposal[],
+  ids: string[],
+): IProposal[] => {
   const itemMap = new Map();
   proposals.forEach((item) => itemMap.set(item.id, item));
   return ids.map((id) => itemMap.get(id)).filter((i) => !!i);
 };
 
 const populateProposalsWithComments = async (
-  proposals: any[],
+  proposals: IProposal[],
   limit: number,
   offset: number,
 ) => {
   return await Promise.all(
-    proposals.map(async (i: any) => {
+    proposals.map(async (i: IProposal) => {
       const commentList = await db.query.comments.findMany({
         where: eq(comments.proposalId, i.id),
         orderBy: [desc(comments.createdAt)],
@@ -126,7 +141,7 @@ export const proposalsRouter = router({
       const orderDirection = opts.input?.sortBy || 'desc';
       const searchQuery = opts.input?.searchQuery || undefined;
 
-      let proposals;
+      let proposals: IProposal[];
 
       if (opts.input?.sortBy === 'most_discussed') {
         const mostDiscussedItems = await db.execute(sql`
@@ -155,12 +170,13 @@ export const proposalsRouter = router({
             skip: offset,
             space,
           },
-        )) as any;
+        )) as { proposals: IProposal[] };
 
         proposals = sortProposalsByIDsOrder(
           queriedProposals,
           mostDiscussedProposals,
         );
+
       } else {
         const { proposals: queriedProposals } = (await graphQLClient.request(
           GET_PROPOSALS,
@@ -171,7 +187,7 @@ export const proposalsRouter = router({
             skip: offset,
             space,
           },
-        )) as any;
+        )) as { proposals: IProposal[] };
 
         proposals = queriedProposals;
       }
