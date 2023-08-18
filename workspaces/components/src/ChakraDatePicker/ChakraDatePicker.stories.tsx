@@ -34,6 +34,7 @@ export const SingleDate = Template.bind({});
 SingleDate.args = {
   single: true,
   range: false,
+  showTimePicker: false,
 };
 
 export const RangeDate = Template.bind({});
