@@ -72,12 +72,6 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  const handleTimeSelected = (time: string) => {
-    setSelectedTime(time);
-    setIsTimePickerVisible(false);
-    onClose();
-  };
-
   const { onOpen, onClose, isOpen } = useDisclosure({ defaultIsOpen });
 
   const calendarConfigs: CalendarConfigs = {
@@ -96,13 +90,26 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
     if (!selectable) return;
     if (date instanceof Date && !isNaN(date.getTime())) {
       onDateChange(date);
-      if (closeOnSelect) onClose();
+      if (closeOnSelect && !showTimePicker) onClose();
       return;
     }
   };
 
+  const handleTimeSelected = (time: string) => {
+    setSelectedTime(time);
+    if (selectedDate) {
+      // Merge date and time
+      selectedDate.setHours(
+        parseInt(time.split(":")[0]),
+        parseInt(time.split(":")[1]),
+      );
+      onDateChange(selectedDate);
+    }
+    setIsTimePickerVisible(false);
+    onClose();
+  };
+
   const PopoverContentWrapper = usePortal ? Portal : React.Fragment;
-  console.log(showTimePicker)
   return (
     <Popover
       placement="bottom-start"
@@ -125,7 +132,11 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
           isDisabled={disabled}
           name={name}
           value={
-            selectedDate ? format(selectedDate, calendarConfigs.dateFormat) : ""
+            selectedDate
+              ? `${format(selectedDate, calendarConfigs.dateFormat)}${
+                  selectedTime ? ` - ${selectedTime}` : ``
+                }`
+              : ""
           }
           onChange={(e) => e.target.value}
           {...propsConfigs?.inputProps}
@@ -139,7 +150,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
           <PopoverBody {...propsConfigs?.popoverCompProps?.popoverBodyProps}>
             {isTimePickerVisible ? (
               <Timepicker
-                onSelectTime={handleTimeSelected}
+                onSingleSelectTime={handleTimeSelected}
                 startDate={selectedDate}
                 onClose={onClose}
               />

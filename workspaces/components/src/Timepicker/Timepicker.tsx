@@ -13,11 +13,12 @@ import { Button } from "../Button";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 
 export const Timepicker: React.FC<{
-  onSelectTime: (a: string[]) => void;
+  onSelectTime?: (a: string[]) => void;
+  onSingleSelectTime?: (a: string) => void;
   startDate?: Date;
   endDate?: Date;
   onClose: any;
-}> = ({ onSelectTime, startDate, endDate }) => {
+}> = ({ onSelectTime, startDate, endDate, onSingleSelectTime }) => {
   const [hour, setHour] = useState({ start: 0, end: 0 });
   const [minute, setMinute] = useState({ start: 0, end: 0 });
   const [period, setPeriod] = useState({ start: "AM", end: "AM" });
@@ -70,10 +71,12 @@ export const Timepicker: React.FC<{
     const endTime = `${hour.end}:${
       minute.end < 10 ? `0${minute.end}` : minute.end
     } ${period.end}`;
-    if (startDate && endDate) {
+    if (startDate && endDate && onSelectTime) {
       onSelectTime([startTime, endTime]);
     } else {
-      onSelectTime([startTime]);
+      if (onSingleSelectTime) {
+        onSingleSelectTime(startTime);
+      }
     }
   };
 
@@ -285,18 +288,18 @@ export const Timepicker: React.FC<{
                 }}
               />
             </Stack>
-            <PopoverFooter marginTop={6}>
-              <Button
-                onClick={handleSelectTime}
-                variant="solid"
-                width="100%"
-                style={{ background: "black", color: "white" }}
-              >
-                {"Apply"}
-              </Button>
-            </PopoverFooter>
           </Box>
         )}
+        <PopoverFooter marginTop={6}>
+          <Button
+            onClick={handleSelectTime}
+            variant="solid"
+            width="100%"
+            style={{ background: "black", color: "white" }}
+          >
+            {"Apply"}
+          </Button>
+        </PopoverFooter>
       </PopoverBody>
     </Popover>
   );
