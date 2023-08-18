@@ -75,6 +75,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
   const handleTimeSelected = (time: string) => {
     setSelectedTime(time);
     setIsTimePickerVisible(false);
+    onClose();
   };
 
   const { onOpen, onClose, isOpen } = useDisclosure({ defaultIsOpen });
@@ -140,6 +141,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
               <Timepicker
                 onSelectTime={handleTimeSelected}
                 startDate={selectedDate}
+                onClose={onClose}
               />
             ) : (
               <FocusLock>
@@ -163,7 +165,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
               </FocusLock>
             )}
           </PopoverBody>
-          {showTimePicker && (
+          {showTimePicker && !isTimePickerVisible && (
             <PopoverFooter>
               <Button
                 onClick={() => setIsTimePickerVisible(!isTimePickerVisible)}

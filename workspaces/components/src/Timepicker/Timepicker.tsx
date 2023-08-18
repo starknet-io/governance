@@ -3,6 +3,7 @@ import {
   Box,
   Popover,
   PopoverBody,
+  PopoverFooter,
   PopoverHeader,
   Stack,
 } from "@chakra-ui/react";
@@ -12,9 +13,10 @@ import { Button } from "../Button";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 
 export const Timepicker: React.FC<{
-  onSelectTime: (startTime: string, endTime: string) => void;
+  onSelectTime: (a: string[]) => void;
   startDate?: Date;
   endDate?: Date;
+  onClose: any;
 }> = ({ onSelectTime, startDate, endDate }) => {
   const [hour, setHour] = useState({ start: 0, end: 0 });
   const [minute, setMinute] = useState({ start: 0, end: 0 });
@@ -62,14 +64,17 @@ export const Timepicker: React.FC<{
   };
 
   const handleSelectTime = () => {
-    onSelectTime(
-      `${hour.start}:${minute.start < 10 ? `0${minute.start}` : minute.start} ${
-        period.start
-      }`,
-      `${hour.end}:${minute.end < 10 ? `0${minute.end}` : minute.end} ${
-        period.end
-      }`,
-    );
+    const startTime = `${hour.start}:${minute.start < 10 ? `0${minute.start}` : minute.start} ${
+      period.start
+    }`
+    const endTime = `${hour.end}:${minute.end < 10 ? `0${minute.end}` : minute.end} ${
+      period.end
+    }`
+    if (startDate && endDate) {
+      onSelectTime([startTime, endTime])
+    } else {
+      onSelectTime([startTime])
+    }
   };
 
   return (
@@ -93,7 +98,7 @@ export const Timepicker: React.FC<{
                 Start Time
               </Text>
               <Text fontSize={12} fontWeight={500}>
-                27th July, 2023
+                {startDate.toDateString()}
               </Text>
             </Stack>
             <Stack
@@ -190,7 +195,7 @@ export const Timepicker: React.FC<{
                 End Time
               </Text>
               <Text fontSize={12} fontWeight={500}>
-                23st July, 2023
+                {endDate.toDateString()}
               </Text>
             </Stack>
             <Stack
@@ -272,6 +277,16 @@ export const Timepicker: React.FC<{
                 }}
               />
             </Stack>
+            <PopoverFooter marginTop={6}>
+              <Button
+                onClick={handleSelectTime}
+                variant="solid"
+                width="100%"
+                style={{ background: "black", color: "white" }}
+              >
+                {"Apply"}
+              </Button>
+            </PopoverFooter>
           </Box>
         )}
       </PopoverBody>

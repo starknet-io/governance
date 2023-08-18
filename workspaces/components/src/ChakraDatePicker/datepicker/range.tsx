@@ -111,24 +111,26 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
   name,
   usePortal,
   defaultIsOpen = false,
-  closeOnSelect = true,
+  closeOnSelect = false,
   showTimePicker = false,
   ...props
 }) => {
   const { selectedDates, minDate, maxDate, onDateChange, disabled } = props;
 
-  console.log(showTimePicker)
+  console.log(showTimePicker);
 
   // chakra popover utils
   const [dateInView, setDateInView] = useState(selectedDates[0] || new Date());
   const [offset, setOffset] = useState(0);
   const { onOpen, onClose, isOpen } = useDisclosure({ defaultIsOpen });
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | string[] | null>(null);
 
-  const handleTimeSelected = (time: string) => {
+  const handleTimeSelected = (time: string | string[]) => {
+    console.log(time)
     setSelectedTime(time);
     setIsTimePickerVisible(false);
+    onClose();
   };
 
   const calendarConfigs: CalendarConfigs = {
@@ -172,11 +174,12 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
   };
 
   // eventually we want to allow user to freely type their own input and parse the input
+  console.log(selectedTime)
   let intVal = selectedDates[0]
-    ? `${format(selectedDates[0], calendarConfigs.dateFormat)}`
+    ? `${format(selectedDates[0], calendarConfigs.dateFormat)}${selectedTime && selectedTime[0] ? `- ${selectedTime[0]}` : ``}`
     : "";
   intVal += selectedDates[1]
-    ? ` - ${format(selectedDates[1], calendarConfigs.dateFormat)}`
+    ? ` - ${format(selectedDates[1], calendarConfigs.dateFormat)}${selectedTime && selectedTime[1] ? `- ${selectedTime[1]}` : ``}`
     : "";
 
   const PopoverContentWrapper = usePortal ? Portal : React.Fragment;
@@ -218,6 +221,7 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
                 onSelectTime={handleTimeSelected}
                 startDate={selectedDates[0]}
                 endDate={selectedDates[1]}
+                onClose={onClose}
               />
             ) : (
               <FocusLock>
@@ -240,11 +244,17 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
               </FocusLock>
             )}
           </PopoverBody>
-          {showTimePicker && (
+          {showTimePicker && !isTimePickerVisible && (
             <PopoverFooter>
               <Button
-                onClick={() => setIsTimePickerVisible(!isTimePickerVisible)}
+                onClick={() => {
+                  setIsTimePickerVisible(!isTimePickerVisible);
+                  if (isTimePickerVisible) {
+                    onClose();
+                  }
+                }}
                 variant="solid"
+                disabled={!selectedDates || !selectedDates?.length > 1}
                 width="100%"
                 style={{ background: "black", color: "white" }}
               >

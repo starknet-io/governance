@@ -79,7 +79,7 @@ const propsConfig = {
   },
 }
 
-export const ChakraDatePicker = ({ single = true, range, date, onDateChange }: Props) => {
+export const ChakraDatePicker = ({ single = true, range, date, onDateChange, showTimePicker }: Props) => {
   const [selectedDate, setSelectedDate] = useState(date || new Date());
   const [selectedDates, setSelectedDates] = useState<Date[]>([
     new Date(),
@@ -113,6 +113,7 @@ export const ChakraDatePicker = ({ single = true, range, date, onDateChange }: P
           date={selectedDate}
           onDateChange={handleSingleDateChange}
           propsConfigs={propsConfig}
+          showTimePicker={showTimePicker}
           minDate={yesterday} // Disable selecting dates before today
         />
       )}
@@ -122,6 +123,7 @@ export const ChakraDatePicker = ({ single = true, range, date, onDateChange }: P
           onDateChange={handleRangeDateChange}
           name="range-input"
           propsConfigs={propsConfig}
+          showTimePicker={showTimePicker}
           minDate={yesterday} // Disable selecting dates before today
         />
       )}
