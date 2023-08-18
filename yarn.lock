@@ -9559,6 +9559,7 @@ __metadata:
     express: ^4.18.2
     fsevents: ^2.3.2
     graphql: ^16.7.1
+    graphql-request: ^6.1.0
     itty-cors: ^0.3.6
     itty-router: ^4.0.14
     node-fetch: ^3.3.2
@@ -9570,6 +9571,7 @@ __metadata:
     react-streaming: ^0.3.14
     react-use: ^17.4.0
     superjson: ^1.13.1
+    use-debounce: ^9.0.4
     viem: ^1.5.0
     vite: ^4.3.9
     vite-node: 0.31.1
@@ -15044,7 +15046,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-request@npm:^6.0.0":
+"graphql-request@npm:^6.0.0, graphql-request@npm:^6.1.0":
   version: 6.1.0
   resolution: "graphql-request@npm:6.1.0"
   dependencies:
@@ -23356,6 +23358,15 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 7913df383a5a6fcb399212eedefaac2e0c6f843555202d4e3010bac3848afe38ecaa3d0d6500ad1d936fbeffd637e6c517e68edb024af5e6beca7f27f3ce7b21
+  languageName: node
+  linkType: hard
+
+"use-debounce@npm:^9.0.4":
+  version: 9.0.4
+  resolution: "use-debounce@npm:9.0.4"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 37da4ecbe4e10a6230580cac03a8cae1788ea3e417dfdd92fcf654325458cf1b4567fd57bebf888edab62701a6abe47059a585008fd04228784f223f94d66ce4
   languageName: node
   linkType: hard
 

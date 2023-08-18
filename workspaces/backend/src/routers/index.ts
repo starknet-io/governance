@@ -9,6 +9,7 @@ import { postsRouter } from './posts';
 import { snipsRouter } from './snips';
 import { usersRouter } from './users';
 import { votesRouter } from './votes';
+import { proposalsRouter } from './proposals';
 
 export const appRouter = router({
   comments: commentsRouter,
@@ -19,7 +20,8 @@ export const appRouter = router({
   users: usersRouter,
   votes: votesRouter,
   auth: authRouter,
-  delegates: delegateRouter
+  delegates: delegateRouter,
+  proposals: proposalsRouter
 });
 
 export type AppRouter = typeof appRouter;
