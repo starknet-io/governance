@@ -1,47 +1,141 @@
-name: Build Frontend
+name: front deployment
 
 on:
   push:
+    tags:
+      - 'v*'
+    branches: ['dev']
+    paths:
+      - 'workspaces/frontend/**'
+  pull_request:
+    branches: [ 'dev' ]
+    paths:
+      - 'workspaces/frontend/**'
+  workflow_dispatch:
 
 jobs:
-  build-frontend:
-    name: Build Frontend
-    # environment:
-    #   name: Governance Frontend ${{ github.ref_name }}
-    #   url: https://governance-frontend-${{ env.GITHUB_REF_SLUG }}.yukilabs.workers.dev
-    runs-on: ubuntu-22.04
+  Build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          node-version: 18
-          cache: yarn
+          images: ghcr.io/${{ github.repository }}/frontend
+          flavor: latest=false
+          tags: |
+            type=ref,suffix=-{{sha}},event=branch
+            type=ref,suffix=-{{sha}},event=pr
+            type=ref,event=tag
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          path: |
-            .yarn/cache
-            .yarn/install-state.gz
-            .eslintcache
-            **/tsconfig.tsbuildinfo
-            **/.types/**
-            **/.types-*/**
-          key: build-cache-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            build-cache-
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: yarn
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          file: frontend.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  Deploy-review:
+    if: github.event_name == 'pull_request'
+    needs: Build
+    runs-on: sandbox
+    permissions:
+      contents: read
+      packages: write
+    env:
+      image: ${{ needs.Build.outputs.image }}
+      external_port: 1000
+      environment: review
+    defaults:
+      run:
+        working-directory: workspaces/frontend
+    environment:
+      name: review-front
+      url: https://front-review.yuki-sandbox.clivado.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Inject slug/short variables
-        uses: rlespinasse/github-slug-action@v4
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker-compose -p review up -d --wait
 
-      - name: Build project
-        run: yarn workspace @yukilabs/governance-frontend build
-        env:
-          VITE_SITE_URL: https://governance-frontend-${{ env.GITHUB_REF_SLUG }}.yukilabs.workers.dev
-          VITE_APP_DYNAMIC_ID: a99f1241-3620-4df1-9673-96b3a3684cdf
-          NODE_OPTIONS: --max-old-space-size=8192
+  Deploy-dev:
+    if:  github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+    needs: Build
+    runs-on: sandbox
+    permissions:
+      contents: read
+      packages: write
+    env:
+      image: ${{ needs.Build.outputs.image }}
+      external_port: 2000
+      environment: development
+    defaults:
+      run:
+        working-directory: workspaces/frontend
+    environment:
+      name: development-front
+      url: https://front-dev.yuki-sandbox.clivado.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker-compose -p development up -d --wait
+
+  Deploy-production:
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: [Build]
+    runs-on: sandbox
+    permissions:
+      contents: read
+      packages: write
+    env:
+      image: ${{ needs.Build.outputs.image }}
+      external_port: 3000
+      environment: production
+    defaults:
+      run:
+        working-directory: workspaces/frontend
+    environment:
+      name: production-front
+      url: https://front.yuki-sandbox.clivado.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker-compose -p production up -d --wait
