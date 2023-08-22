@@ -54,6 +54,7 @@ export const isBlockActive = (editor: Editor, format: string) => {
 export const toggleBlock = (editor: Editor, format: CustomParagraphTypes) => {
   const isActive = isBlockActive(editor, format);
   const isList = LIST_TYPES.includes(format);
+  const isImage = format === "image";
 
   Transforms.unwrapNodes(editor, {
     match: (n) =>
@@ -75,6 +76,9 @@ export const toggleBlock = (editor: Editor, format: CustomParagraphTypes) => {
   Transforms.setNodes<SlateElement>(editor, newProperties);
 
   if (!isActive && isList) {
+    const block = { type: format, children: [] };
+    Transforms.wrapNodes(editor, block);
+  } else if (!isActive && isImage) {
     const block = { type: format, children: [] };
     Transforms.wrapNodes(editor, block);
   }

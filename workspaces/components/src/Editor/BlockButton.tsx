@@ -8,8 +8,15 @@ type BlockButtonProps = {
   format: CustomParagraphTypes;
 };
 
+const ICONS: Partial<Record<CustomParagraphTypes, any>> = {
+  heading_two: Heading2Icon,
+  bulleted_list: BulletedListIcon,
+  numbered_list: NumberedListIcon,
+};
+
 const BlockButton = ({ format }: BlockButtonProps) => {
   const editor = useSlate();
+  const Icon = ICONS?.[format] ?? NumberedListIcon;
   return (
     <IconButton
       aria-label={format}
@@ -21,23 +28,7 @@ const BlockButton = ({ format }: BlockButtonProps) => {
         toggleBlock(editor, format);
       }}
       icon={
-        format === "heading_two" ? (
-          <Heading2Icon
-            color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        ) : format === "bulleted_list" ? (
-          <BulletedListIcon
-            color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        ) : format === "numbered_list" ? (
-          <NumberedListIcon
-            color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        ) : (
-          <NumberedListIcon
-            color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        )
+        <Icon color={isBlockActive(editor, format) ? "white" : "#6F6E77"} />
       }
     />
   );

@@ -10,6 +10,8 @@ import { createEditor } from "slate";
 import MarkButton from "./MarkButton";
 import BlockButton from "./BlockButton";
 import { useMarkdownEditor } from "./useMarkdownEditor";
+import ImageBlockButton from "./ImageBlockButton";
+import LinkBlockButton from "./LinkBlockButton";
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   minHeight = "200",
@@ -27,10 +29,12 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     mainEditor?.insertNodes(markdown);
   };
 
+  const mainEditor = customEditor || editor;
+
   return (
     <Box position="relative">
       <Slate
-        editor={customEditor || editor}
+        editor={mainEditor}
         initialValue={customEditor ? [] : initialValue}
         onChange={(value) => console.log({ value })}
       >
@@ -42,6 +46,8 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             <BlockButton format="heading_two" />
             <BlockButton format="bulleted_list" />
             <BlockButton format="numbered_list" />
+            <ImageBlockButton editor={mainEditor} />
+            <LinkBlockButton editor={mainEditor} />
           </Toolbar>
         )}
         <EditableComponent onPaste={handlePaste} minHeight={minHeight} />
