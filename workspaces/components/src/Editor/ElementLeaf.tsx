@@ -4,16 +4,17 @@ import {
   RenderLeafProps as SlateRenderLeafProps,
 } from "slate-react";
 
+export type CustomParagraphTypes =
+  | "paragraph"
+  | "block_quote"
+  | "bulleted_list"
+  | "heading_one"
+  | "heading_two"
+  | "list_item"
+  | "numbered_list";
+
 interface CustomParagraphElement extends BaseElement {
-  type:
-    | "paragraph"
-    | "block-quote"
-    | "bulleted-list"
-    | "heading-two"
-    | "heading-three"
-    | "list-item"
-    | "numbered-list";
-  align: "left" | "right" | "center" | "justify";
+  type: CustomParagraphTypes;
 }
 
 type MyElement = CustomParagraphElement | BaseElement;
@@ -24,66 +25,56 @@ type RenderElementProps = Omit<SlateRenderElementProps, "element"> & {
 
 type RenderLeafProps = Omit<SlateRenderLeafProps, "leaf"> & { leaf: any };
 
-function isCustomElement(
-  element: MyElement
-): element is CustomParagraphElement {
-  return "align" in element;
-}
-
 export const Element = ({
   attributes,
   children,
   element,
 }: RenderElementProps) => {
-  let style = {};
-  if (isCustomElement(element)) {
-    style = { textAlign: element.align };
-    switch (element.type) {
-      case "block-quote":
-        return (
-          <blockquote style={style} {...attributes}>
-            {children}
-          </blockquote>
-        );
-      case "bulleted-list":
-        return (
-          <ul style={style} {...attributes}>
-            {children}
-          </ul>
-        );
-      case "heading-two":
-        return (
-          <h2 style={style} {...attributes}>
-            {children}
-          </h2>
-        );
-      case "heading-three":
-        return (
-          <h3 style={style} {...attributes}>
-            {children}
-          </h3>
-        );
-      case "list-item":
-        return (
-          <li style={style} {...attributes}>
-            {children}
-          </li>
-        );
-      case "numbered-list":
-        return (
-          <ol style={style} {...attributes}>
-            {children}
-          </ol>
-        );
-      default:
-        return (
-          <p style={style} {...attributes}>
-            {children}
-          </p>
-        );
-    }
-  } else {
-    return <p {...attributes}>{children}</p>;
+  const style = {};
+  //@ts-expect-error error
+  switch (element.type as CustomParagraphTypes) {
+    case "block_quote":
+      return (
+        <blockquote style={style} {...attributes}>
+          {children}
+        </blockquote>
+      );
+    case "heading_one":
+      return (
+        <h1 style={{ fontSize: 34, ...style }} {...attributes}>
+          {children}
+        </h1>
+      );
+    case "heading_two":
+      return (
+        <h2 style={{ fontSize: 32, ...style }} {...attributes}>
+          {children}
+        </h2>
+      );
+    case "bulleted_list":
+      return (
+        <ul style={{ paddingLeft: 16, ...style }} {...attributes}>
+          {children}
+        </ul>
+      );
+    case "numbered_list":
+      return (
+        <ol style={{ paddingLeft: 16, ...style }} {...attributes}>
+          {children}
+        </ol>
+      );
+    case "list_item":
+      return (
+        <li style={style} {...attributes}>
+          {children}
+        </li>
+      );
+    default:
+      return (
+        <span style={style} {...attributes}>
+          {children}
+        </span>
+      );
   }
 };
 

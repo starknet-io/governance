@@ -2,9 +2,10 @@ import { useSlate } from "slate-react";
 import { IconButton } from "@chakra-ui/react";
 import { Heading2Icon, BulletedListIcon, NumberedListIcon } from "src/Icons";
 import { isBlockActive, toggleBlock } from "./hotkeys";
+import { CustomParagraphTypes } from "./ElementLeaf";
 
 type BlockButtonProps = {
-  format: string;
+  format: CustomParagraphTypes;
 };
 
 const BlockButton = ({ format }: BlockButtonProps) => {
@@ -20,15 +21,15 @@ const BlockButton = ({ format }: BlockButtonProps) => {
         toggleBlock(editor, format);
       }}
       icon={
-        format === "heading-two" ? (
+        format === "heading_two" ? (
           <Heading2Icon
             color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
           />
-        ) : format === "bulleted-list" ? (
+        ) : format === "bulleted_list" ? (
           <BulletedListIcon
             color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
           />
-        ) : format === "numbered-list" ? (
+        ) : format === "numbered_list" ? (
           <NumberedListIcon
             color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
           />

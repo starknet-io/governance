@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, ClipboardEvent } from "react";
 import { withReact, Slate } from "slate-react";
 import { withHistory } from "slate-history";
 import { Toolbar } from "./EditorComponents";
@@ -9,32 +9,42 @@ import { initialValue } from "./initialValue";
 import { createEditor } from "slate";
 import MarkButton from "./MarkButton";
 import BlockButton from "./BlockButton";
+import { useMarkdownEditor } from "./useMarkdownEditor";
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
-  onChange,
   minHeight = "200",
   customEditor,
   hideTabBar = false,
 }) => {
+  const { convertMarkdownToSlate } = useMarkdownEditor("");
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+
+  const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const data = e.clipboardData?.getData("Text") ?? "";
+    const mainEditor = customEditor ?? editor;
+    const markdown = await convertMarkdownToSlate(data);
+    mainEditor?.insertNodes(markdown);
+  };
+
   return (
     <Box position="relative">
       <Slate
         editor={customEditor || editor}
         initialValue={customEditor ? [] : initialValue}
-        onChange={onChange}
+        onChange={(value) => console.log({ value })}
       >
         {!hideTabBar && (
           <Toolbar>
             <MarkButton format="bold" />
             <MarkButton format="italic" />
-            <BlockButton format="heading-two" />
             <MarkButton format="underline" />
-            <BlockButton format="bulleted-list" />
-            <BlockButton format="numbered-list" />
+            <BlockButton format="heading_two" />
+            <BlockButton format="bulleted_list" />
+            <BlockButton format="numbered_list" />
           </Toolbar>
         )}
-        <EditableComponent minHeight={minHeight} />
+        <EditableComponent onPaste={handlePaste} minHeight={minHeight} />
       </Slate>
     </Box>
   );

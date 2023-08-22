@@ -1,20 +1,25 @@
 import { Editable } from "slate-react";
 import { useSlate } from "slate-react";
-import { useCallback } from "react";
+import { useCallback, ClipboardEvent } from "react";
 import { RenderElementProps, RenderLeafProps } from "slate-react";
 
-import { Element, Leaf } from "./ElementLeaf";
+import { 
+  Element, 
+  Leaf,
+} from "./ElementLeaf";
 import { toggleMark, HOTKEYS } from "./hotkeys";
 import isHotkey from "is-hotkey";
 
 interface EditableComponentProps {
   minHeight?: string;
   autoFocus?: boolean;
+  onPaste?: (event: ClipboardEvent<HTMLDivElement>) => void;
 }
 
 export const EditableComponent = ({
   minHeight,
   autoFocus = false,
+  onPaste
 }: EditableComponentProps) => {
   const renderElement = useCallback(
     (props: RenderElementProps) => <Element {...props} />,
@@ -34,6 +39,7 @@ export const EditableComponent = ({
       placeholder=""
       spellCheck
       autoFocus={autoFocus}
+      onPaste={onPaste}
       onKeyDown={(event) => {
         for (const hotkey in HOTKEYS) {
           if (isHotkey(hotkey, event as any)) {
