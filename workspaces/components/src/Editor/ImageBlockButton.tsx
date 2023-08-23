@@ -5,16 +5,16 @@ import { IconButton } from "@chakra-ui/react";
 import { Transforms } from "slate";
 
 const ImageBlockButton = ({ editor, format }: any) => {
-  const insertImageBlock = (url: string) => {
-    if (!url) return;
+  const insertImageBlock = (link: string) => {
+    if (!link) return;
 
     Transforms.insertNodes(
       editor,
       {
         //@ts-expect-error error
         type: "image",
-        alt: "image",
-        url,
+        caption: "image",
+        link,
         children: [{ text: "" }],
       },
       { select: true },

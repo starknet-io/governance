@@ -14,6 +14,7 @@ import ImageBlockButton from "./ImageBlockButton";
 import LinkBlockButton from "./LinkBlockButton";
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
+  onChange,
   minHeight = "200",
   customEditor,
   hideTabBar = false,
@@ -36,7 +37,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
       <Slate
         editor={mainEditor}
         initialValue={customEditor ? [] : initialValue}
-        onChange={(value) => console.log({ value })}
+        onChange={onChange}
       >
         {!hideTabBar && (
           <Toolbar>

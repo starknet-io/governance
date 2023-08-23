@@ -1,5 +1,5 @@
 const ImageBlock = ({ attributes, element, children }: any) => {
-  const { url, alt } = element;
+  const { link, caption } = element;
 
   return (
     <div
@@ -11,7 +11,7 @@ const ImageBlock = ({ attributes, element, children }: any) => {
       {...element.attr}
     >
       <div contentEditable={false}>
-        <img alt={alt} src={url} />
+        <img alt={caption} src={link} />
       </div>
       {children}
     </div>

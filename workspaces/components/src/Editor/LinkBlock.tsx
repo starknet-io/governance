@@ -1,6 +1,6 @@
 const LinkBlock = ({ attributes, element, children }: any) => {
   const handleOnClick = () => {
-    element.href && window.open(element.href, element.target);
+    element.link && window.open(element.link, element.target);
   };
 
   return (
@@ -9,7 +9,7 @@ const LinkBlock = ({ attributes, element, children }: any) => {
       style={{ display: "inline"}}
     >
       <a
-        href={element.href}
+        href={element.link}
         {...attributes}
         {...element.attr}
         target={element.target}

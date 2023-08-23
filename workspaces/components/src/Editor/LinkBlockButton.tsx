@@ -5,15 +5,15 @@ import { IconButton } from "@chakra-ui/react";
 import { Transforms } from "slate";
 
 const LinkBlockButton = ({ editor, format }: any) => {
-  const insertLinkBlock = (href: string, linkName: string) => {
-    if (!href) return;
+  const insertLinkBlock = (link: string, linkName: string) => {
+    if (!link) return;
 
     Transforms.insertNodes(
       editor,
       {
         //@ts-expect-error error
         type: "link",
-        href,
+        link,
         target: "_blank",
         children: [{ text: ` ${linkName}` }],
       },
