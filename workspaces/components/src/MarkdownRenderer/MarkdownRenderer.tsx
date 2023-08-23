@@ -11,7 +11,6 @@ interface MarkdownRendererProps {
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   content,
 }) => {
-  console.log({ content });
   return (
     <ReactMarkdown
       components={{
