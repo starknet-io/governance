@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  frontend:
+    image: '${image}'
+    restart: unless-stopped
+    ports:
+      - ${external_port}:3000
+    networks:
+      yuki:
+
+networks:
+  yuki:
+    external: true
+    name: 'yuki-${environment}'
