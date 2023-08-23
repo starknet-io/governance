@@ -10,8 +10,10 @@ type BlockButtonProps = {
 
 const ICONS: Partial<Record<CustomParagraphTypes, any>> = {
   heading_two: Heading2Icon,
-  bulleted_list: BulletedListIcon,
-  numbered_list: NumberedListIcon,
+  ul_list: BulletedListIcon,
+  ol_list: NumberedListIcon,
+  heading_one: () => <div>H1</div>,
+  block_quote: () => <div>{'>'}</div>,
 };
 
 const BlockButton = ({ format }: BlockButtonProps) => {

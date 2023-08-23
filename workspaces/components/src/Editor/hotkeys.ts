@@ -13,7 +13,7 @@ export const HOTKEYS: { [key: string]: string } = {
   "mod+`": "code",
 };
 
-const LIST_TYPES: CustomParagraphTypes[] = ["bulleted_list", "numbered_list"];
+const LIST_TYPES: CustomParagraphTypes[] = ["ul_list", "ol_list"];
 
 export const toggleMark = (editor: Editor, format: string) => {
   const isActive = isMarkActive(editor, format);

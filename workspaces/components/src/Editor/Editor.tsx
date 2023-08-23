@@ -44,9 +44,12 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             <MarkButton format="bold" />
             <MarkButton format="italic" />
             <MarkButton format="underline" />
+            <MarkButton format="line_through" />
+            <BlockButton format="heading_one" />
             <BlockButton format="heading_two" />
-            <BlockButton format="bulleted_list" />
-            <BlockButton format="numbered_list" />
+            <BlockButton format="block_quote" />
+            <BlockButton format="ul_list" />
+            <BlockButton format="ol_list" />
             <ImageBlockButton editor={mainEditor} />
             <LinkBlockButton editor={mainEditor} />
           </Toolbar>

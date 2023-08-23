@@ -6,14 +6,16 @@ import {
 import ImageBlock from "./ImageBlock";
 import LinkBlock from "./LinkBlock";
 
+/* For serializing to work correctly make sure to use the same types used by "remark-slate" package */
 export type CustomParagraphTypes =
   | "paragraph"
   | "block_quote"
-  | "bulleted_list"
   | "heading_one"
   | "heading_two"
   | "list_item"
-  | "numbered_list"
+  | "ul_list"
+  | "ol_list"
+  | "strike_through"
   | "image"
   | "link";
 
@@ -36,7 +38,15 @@ export const Element = (props: RenderElementProps) => {
   switch (element.type as CustomParagraphTypes) {
     case "block_quote":
       return (
-        <blockquote style={style} {...attributes}>
+        <blockquote
+          style={{
+            color: "grey",
+            ...style,
+            borderLeft: "3px solid grey",
+            paddingLeft: 8,
+          }}
+          {...attributes}
+        >
           {children}
         </blockquote>
       );
@@ -52,13 +62,13 @@ export const Element = (props: RenderElementProps) => {
           {children}
         </h2>
       );
-    case "bulleted_list":
+    case "ul_list":
       return (
         <ul style={{ paddingLeft: 16, ...style }} {...attributes}>
           {children}
         </ul>
       );
-    case "numbered_list":
+    case "ol_list":
       return (
         <ol style={{ paddingLeft: 16, ...style }} {...attributes}>
           {children}
@@ -98,6 +108,12 @@ export const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
 
   if (leaf.underline) {
     children = <u>{children}</u>;
+  }
+
+  if (leaf.line_through) {
+    children = (
+      <span style={{ textDecoration: "line-through" }}>{children}</span>
+    );
   }
 
   return <span {...attributes}>{children}</span>;
