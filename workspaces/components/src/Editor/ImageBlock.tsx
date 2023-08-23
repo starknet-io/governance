@@ -4,7 +4,6 @@ const ImageBlock = ({ attributes, element, children }: any) => {
   return (
     <div
       {...attributes}
-      className="embed"
       style={{
         display: "flex",
       }}
