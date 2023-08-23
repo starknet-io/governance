@@ -15,7 +15,7 @@ export type CustomParagraphTypes =
   | "list_item"
   | "ul_list"
   | "ol_list"
-  | "strike_through"
+  | "strikeThrough"
   | "image"
   | "link";
 
@@ -110,7 +110,7 @@ export const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
     children = <u>{children}</u>;
   }
 
-  if (leaf.line_through) {
+  if (leaf.strikeThrough) {
     children = (
       <span style={{ textDecoration: "line-through" }}>{children}</span>
     );

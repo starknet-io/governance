@@ -3,7 +3,7 @@ import { IconButton } from "@chakra-ui/react";
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "..";
 import { isMarkActive, toggleMark } from "./hotkeys";
 
-type MarkButtonTypes = "bold" | "italic" | "underline" | "line_through";
+type MarkButtonTypes = "bold" | "italic" | "underline" | "strikeThrough";
 
 type MarkButtonProps = {
   format: MarkButtonTypes;
@@ -13,7 +13,7 @@ const ICONS: Record<Partial<MarkButtonTypes>, any> = {
   bold: BoldIcon,
   italic: ItalicIcon,
   underline: UnderlineIcon,
-  line_through: () => <div style={{ textDecoration: 'line-through' }}>U</div>,
+  strikeThrough: () => <div style={{ textDecoration: 'line-through' }}>U</div>,
 };
 
 const MarkButton = ({ format }: MarkButtonProps) => {
