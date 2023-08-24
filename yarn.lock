@@ -9496,8 +9496,11 @@ __metadata:
     "@types/markdown-it": ^12.2.3
     "@types/react-datepicker": ^4.15.0
     "@yukilabs/governance-backend": "workspace:*"
+    chakra-dayzed-datepicker: ^0.2.9
     chakra-react-select: ^4.7.0
     color-hash: ^2.0.2
+    date-fns: ^2.30.0
+    dayzed: ^3.2.3
     framer-motion: ^10.15.0
     is-hotkey: ^0.2.0
     markdown-it: ^13.0.1
@@ -11013,6 +11016,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chakra-dayzed-datepicker@npm:^0.2.9":
+  version: 0.2.9
+  resolution: "chakra-dayzed-datepicker@npm:0.2.9"
+  dependencies:
+    react-focus-lock: ^2.9.2
+  peerDependencies:
+    react: ">=16"
+  checksum: da6bf783adb4814f7e00735e4e691af11e42393d0b71913b82204d46ecb46e47c1b5f3cd09beaa0a7c4f71869c1463e6c4b1db293925a68d6aa5238e39bb49b0
+  languageName: node
+  linkType: hard
+
 "chakra-react-select@npm:^4.7.0":
   version: 4.7.0
   resolution: "chakra-react-select@npm:4.7.0"
@@ -11951,12 +11965,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:^2.0.1, date-fns@npm:^2.30.0":
+"date-fns@npm:^2.0.0, date-fns@npm:^2.0.1, date-fns@npm:^2.30.0":
   version: 2.30.0
   resolution: "date-fns@npm:2.30.0"
   dependencies:
     "@babel/runtime": ^7.21.0
   checksum: f7be01523282e9bb06c0cd2693d34f245247a29098527d4420628966a2d9aad154bd0e90a6b1cf66d37adcb769cd108cf8a7bd49d76db0fb119af5cdd13644f4
+  languageName: node
+  linkType: hard
+
+"dayzed@npm:^3.2.3":
+  version: 3.2.3
+  resolution: "dayzed@npm:3.2.3"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    date-fns: ^2.0.0
+  peerDependencies:
+    prop-types: ^15
+    react: ^16.8 || ^17.0 || ^18.0
+  checksum: 9117aeeda8bdba55e105f257805af70b83ef11c2735beb17c8539582a3f802a2ddcc25c2fd55c95005b7bf1a157f7b73d6e844c76f9d043f46d48e8f18c45db0
   languageName: node
   linkType: hard
 

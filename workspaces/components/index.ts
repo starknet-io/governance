@@ -37,6 +37,7 @@ export {
   DelegateModal,
   AgreementModal,
   DatePicker,
+  ChakraDatePicker,
   ConfirmModal,
   LinkCard,
   CheckboxFilter,
