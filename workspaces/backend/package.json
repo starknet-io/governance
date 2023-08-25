@@ -7,9 +7,9 @@
     "test": "jest",
     "dev": "nodemon --exec ts-node --transpile-only src/index.ts",
     "build": "tsc",
-    "serve": "node dist/index.js",
+    "serve": "node dist/src/index.js",
     "migration:generate": "drizzle-kit generate:pg",
-    "migration:run": "drizzle-kit up:pg",
+    "migration:run": "drizzle-kit push:pg",
     "migration:revert": "drizzle-kit drop"
   },
   "devDependencies": {

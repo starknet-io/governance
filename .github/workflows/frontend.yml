@@ -64,6 +64,17 @@ jobs:
       image: ${{ needs.Build.outputs.image }}
       external_port: 1000
       environment: review
+      vite_app_dynamic_id: "a99f1241-3620-4df1-9673-96b3a3684cdf"
+      vite_app_trpc_url: "https://back-review.yuki-sandbox.clivado.com/trpc"
+      vite_app_iframely_id: "cd5533d79f906cb13440b5aee09e99af"
+      vite_app_snapshot_url: "https://hub.snapshot.org"
+      vite_app_SNAPSHOT_space: "robwalsh.eth"
+      vite_app_SNAPSHOT_chain_id: 1
+      vite_app_tag_id: "G-WY42TERK5P"
+      vite_app_delegation_registry: "0x469788fE6E9E9681C6ebF3bF78e7Fd26Fc015446"
+      vite_app_delegation_token: "0x65aFADD39029741B3b8f0756952C74678c9cEC93"
+      vite_app_delegation_symbol: "USDC"
+      vite_app_delegation_chain_id: 5
     defaults:
       run:
         working-directory: workspaces/frontend
@@ -80,6 +91,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker image prune -f -a
       - run: docker-compose -p review up -d --wait
 
   Deploy-dev:
@@ -109,6 +121,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker image prune -f -a
       - run: docker-compose -p development up -d --wait
 
   Deploy-production:
@@ -138,4 +151,5 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker image prune -f -a
       - run: docker-compose -p production up -d --wait

@@ -1,0 +1,10 @@
+.github
+.vscode
+node_modules
+.gitignore
+backend.Dockerfile
+frontend.Dockerfile
+README.md
+.git
+.idea
+.vscode

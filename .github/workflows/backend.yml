@@ -1,43 +1,104 @@
-name: Build Backend
+name: back deployment
 
 on:
   push:
+    tags:
+      - 'v*'
+    branches: ['dev']
+    paths:
+      - 'workspaces/backend/**'
+  pull_request:
+    branches: [ 'dev' ]
+    paths:
+      - 'workspaces/backend/**'
+  workflow_dispatch:
 
 jobs:
-  build-backend:
-    name: Build Backend
-    # environment:
-    #   name: Governance Frontend ${{ github.ref_name }}
-    #   url: https://governance-frontend-${{ env.GITHUB_REF_SLUG }}.yukilabs.workers.dev
-    runs-on: ubuntu-22.04
+  Build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          node-version: 18
-          cache: yarn
+          images: ghcr.io/${{ github.repository }}/backend
+          flavor: latest=false
+          tags: |
+            type=ref,suffix=-{{sha}},event=branch
+            type=ref,suffix=-{{sha}},event=pr
+            type=ref,event=tag
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          path: |
-            .yarn/cache
-            .yarn/install-state.gz
-            .eslintcache
-            **/tsconfig.tsbuildinfo
-            **/.types/**
-            **/.types-*/**
-          key: build-cache-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            build-cache-
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: yarn
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          file: backend.Dockerfile
+          cache-from: type=gha
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Inject slug/short variables
-        uses: rlespinasse/github-slug-action@v4
+  Deploy-review:
+    if: github.event_name == 'pull_request'
+    needs: Build
+    runs-on: sandbox
+    permissions:
+      contents: read
+      packages: write
+    env:
+      image: ${{ needs.Build.outputs.image }}
+      port: 8000
+      external_port: 1001
+      database_url: postgresql://postgres:governance@144.126.233.48:5432/governance
+      client_url: https://front-review.yuki-sandbox.clivado.com
+      dynamic_public_key: |
+        -----BEGIN PUBLIC KEY-----
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA3dNuD1XQP+7JDjrdNElu
+        aFyhc8HNMnOuAWTekoCmZEyrc4QVH4EUw3IXZsKvoJ8j5405jGQ9s9xSH7AyZ/q7
+        0hkW7BMRwDkPPNVctXNosrTTmHERgQEcSqiiEL0X5KIAgCj87AcBrrSZMwHXio+H
+        vKHaXfVu/tUllBKipYtnhwl/lXnMBbRQzwruajASdGodPyhuy67H44DEvXXalVeZ
+        2Pglm4ao6SoVgRlLHQtbrK+LLZnqV4s0nMuXIbL1/yE3SPaevqvTVwi3ajExVS+T
+        FydCkSkpvGn7EeQ8twJ8aQ3LkvQgf8chKD5hNLajkPFinDxexicMEArV9E6sRRSj
+        jATdTqyV6aXZo437Mc6fgAxBJ1oqtUedKuucO6XXenYgnj4RTp4v0sVsBHd/aJDU
+        heqEitHm25hcC5pV9pMbPLcqbdghhP2z4OU4TN3tbVP0bC9Zc0H7b3QZr/4/IwsP
+        p7RZcWe4ZBY/7UDaCAln7Vq9BANFntMIC8IsSQ15BWr5CRhcAItYt8A8DDyBv3hx
+        tde5uahi/HSdcr/K5sw4ZcN8tW+VVLSgUUUd9REGVVWQBWtTHhyexdq4iRs/1X4o
+        WfVrZv4VF59Pj7BLY3etIBKOvM9QwjTKX/3OtiGfv1tWe2rDuwVt1tSOFH7kDb8O
+        zEWTPjltmicWkpyQKcRaAx0CAwEAAQ==
+        -----END PUBLIC KEY-----
+      environment: review
+    defaults:
+      run:
+        working-directory: workspaces/backend
+    environment:
+      name: review-back
+      url: https://back-review.yuki-sandbox.clivado.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Build project
-        run: yarn workspace @yukilabs/governance-backend build
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker image prune -f -a
+      - run: docker-compose -p review-backend up -d --remove-orphans --wait
