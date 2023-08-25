@@ -7,7 +7,7 @@ import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
-import {snips} from "../db/schema/snips";
+import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
 
 const delegateInsertSchema = createInsertSchema(delegates);
@@ -177,7 +177,7 @@ export const delegateRouter = router({
 
       // Handle customDelegateAgreementContent if provided
       if (opts.input.customDelegateAgreementContent) {
-        console.log('has custom agreement')
+        console.log('has custom agreement');
         const existingCustomAgreement =
           await db.query.customDelegateAgreement.findFirst({
             where: eq(
@@ -283,5 +283,26 @@ export const delegateRouter = router({
         console.log(error);
         return [];
       }
+    }),
+
+  deleteDelegate: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const delegate = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+      });
+
+      if (!delegate) {
+        throw new Error('Delegate not found');
+      }
+
+      await db
+        .delete(customDelegateAgreement)
+        .where(eq(customDelegateAgreement.delegateId, opts.input.id));
+      await db.delete(delegates).where(eq(delegates.id, opts.input.id));
     }),
 });

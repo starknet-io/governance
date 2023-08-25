@@ -91,6 +91,8 @@ export function Page() {
     }
   };
 
+  const deleteDelegate = trpc.delegates.deleteDelegate.useMutation();
+
   useEffect(() => {
     if (delegate && isSuccess) processData();
   }, [isSuccess]);
@@ -110,6 +112,18 @@ export function Page() {
       console.log(error);
     }
   });
+
+  const onDelete = async () => {
+    if (!delegate?.id) return;
+
+    try {
+      await deleteDelegate.mutateAsync({ id: delegate.id });
+      navigate("/delegates");
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -239,15 +253,19 @@ export function Page() {
                   <MarkdownEditor
                     onChange={handleCustomAgreement}
                     value={editorCustomAgreementValue}
-                    customEditor={delegate?.customAgreement ? editorCustomAgreement : undefined}
+                    customEditor={
+                      delegate?.customAgreement
+                        ? editorCustomAgreement
+                        : undefined
+                    }
                   />
                 </FormControl>
               </div>
               <Flex justifyContent="flex-end" gap="16px">
                 <Button
                   color="#D83E2C"
-                  type="submit"
                   size="sm"
+                  onClick={onDelete}
                   variant={"outline"}
                   mr="auto"
                 >
