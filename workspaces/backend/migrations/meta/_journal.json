@@ -155,6 +155,13 @@
       "when": 1691498943288,
       "tag": "0021_futuristic_junta",
       "breakpoints": false
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1692130618718,
+      "tag": "0022_great_major_mapleleaf",
+      "breakpoints": false
     }
   ]
 }

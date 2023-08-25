@@ -4,6 +4,7 @@ import { db } from '../db/db';
 import { asc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { getUserByJWT } from '../utils/helpers';
+import slugify from 'slugify';
 
 const pageInsertSchema = createInsertSchema(pages);
 
@@ -24,7 +25,8 @@ export const pagesRouter = router({
         .insert(pages)
         .values({
           ...opts.input,
-          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id
+          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id,
+          slug: slugify(opts.input.title ?? '', { replacement: "_", lower: true },),
         })
         .returning();
 
@@ -36,7 +38,10 @@ export const pagesRouter = router({
     .mutation(async (opts) => {
       const updatedPage = await db
         .update(pages)
-        .set(opts.input)
+        .set({
+          ...opts.input,
+          slug: slugify(opts.input.title ?? '', { replacement: "_", lower: true },),
+        })
         .where(eq(pages.id, opts.input.id))
         .returning();
       return updatedPage[0];
@@ -69,7 +74,8 @@ export const pagesRouter = router({
           await db.update(pages)
             .set({
               ...page,
-              orderNumber: index + 1
+              orderNumber: index + 1,
+              slug: slugify(page.title ?? '', { replacement: "_", lower: true },),
             })
             .where(eq(pages.id, page.id))
             .execute();
@@ -79,7 +85,8 @@ export const pagesRouter = router({
               title: page.title,
               content: page.content,
               orderNumber: index + 1,
-              userId: userId
+              userId: userId,
+              slug: slugify(page.title ?? '', { replacement: "_", lower: true },),
             })
             .returning();
         }

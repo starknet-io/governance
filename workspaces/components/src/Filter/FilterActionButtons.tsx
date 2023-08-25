@@ -9,7 +9,7 @@ export type FilterActionButtonsProps = {
 export const FilterActionButtons = (props: FilterActionButtonsProps) => {
   const { onClickApply, onClickCancel, isCancelDisabled } = props;
   return (
-    <HStack spacing="2" justify="space-between">
+    <HStack spacing="2" justify="flex-end">
       <Button
         size="sm"
         variant="tertiary"

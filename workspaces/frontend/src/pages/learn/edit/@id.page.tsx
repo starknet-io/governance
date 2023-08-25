@@ -76,7 +76,7 @@ export function Page() {
     setReorderItems(values);
   };
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(async () => {
     try {
       saveBatchPages.mutateAsync(reorderItems, {
         onSuccess: () => {

@@ -23,6 +23,20 @@ type Props = {
   delegatedVotes?: string;
 };
 
+export const delegateNames: Record<string, string> = {
+  cairo_dev: "Cairo Dev",
+  daos: "DAOs",
+  governance: "Governance",
+  identity: "Identity",
+  infrastructure: "Infrastructure",
+  legal: "Legal",
+  professional_delegate: "Professional delegate",
+  security: "Security",
+  starknet_community: "Starknet community",
+  web3_community: "Web3 community",
+  web3_developer: "Web3 developer",
+};
+
 export const DelegateCard = (props: Props) => {
   const {
     id,
@@ -57,6 +71,7 @@ export const DelegateCard = (props: Props) => {
                 <>
                   <Tag variant="listCard" key={delegateType[0]}>
                     {delegateType[0]}
+                    {/* {delegateNames?.[delegateType[0]] ?? delegateType[0]} */}
                   </Tag>
                   {delegateType.length > 1 && (
                     <Tooltip
@@ -73,7 +88,7 @@ export const DelegateCard = (props: Props) => {
                 <>
                   {delegateType.slice(0, 2).map((item: string) => (
                     <Tag variant="listCard" key={item}>
-                      {item}
+                      {delegateNames?.[item] ?? item}
                     </Tag>
                   ))}
                   {delegateType.length > 2 && (
