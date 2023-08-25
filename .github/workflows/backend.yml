@@ -66,8 +66,8 @@ jobs:
       image: ${{ needs.Build.outputs.image }}
       port: 8000
       external_port: 1001
-      database_url: postgresql://postgres:governance@144.126.233.48:5432/governance
-      client_url: https://front-review.yuki-sandbox.clivado.com
+      database_url: ${{ secrets.DATABASE_URL }}
+      client_url: ${{ vars.VITE_APP_DYNAMIC_ID }}
       dynamic_public_key: |
         -----BEGIN PUBLIC KEY-----
         MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA3dNuD1XQP+7JDjrdNElu

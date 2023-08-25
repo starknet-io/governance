@@ -13,7 +13,7 @@ services:
       VITE_APP_SNAPSHOT_URL: ${vite_app_snapshot_url}
       VITE_APP_SNAPSHOT_SPACE: ${vite_app_SNAPSHOT_space}
       VITE_APP_SNAPSHOT_CHAIN_ID: ${vite_app_SNAPSHOT_chain_id}
-      VITE_APP_GOOGLE_TAG_ID: ${vite_app_tag_id}
+      VITE_APP_GOOGLE_TAG_ID: ${vite_app_google_tag_id}
       VITE_APP_DELEGATION_REGISTRY: ${vite_app_delegation_registry}
       VITE_APP_DELEGATION_TOKEN: ${vite_app_delegation_token}
       VITE_APP_DELEGATION_SYMBOL: ${vite_app_delegation_symbol}
@@ -25,5 +25,3 @@ networks:
   yuki:
     external: true
     name: 'yuki-${environment}'
-
-
