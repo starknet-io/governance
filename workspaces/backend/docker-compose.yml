@@ -10,7 +10,7 @@ services:
       PORT: ${port}
       DATABASE_URL: ${database_url}
       DYNAMIC_PUBLIC_KEY: ${dynamic_public_key}
-      CLIENT_ORIGIN: ${client_url}
+      CLIENT_ORIGIN: ${client_origin}
     networks:
       yuki:
 
