@@ -105,6 +105,17 @@ jobs:
       image: ${{ needs.Build.outputs.image }}
       external_port: 2000
       environment: development
+      vite_app_dynamic_id: ${{ vars.VITE_APP_DYNAMIC_ID }}
+      vite_app_trpc_url: ${{ vars.VITE_APP_TRPC_URL }}
+      vite_app_iframely_id: ${{ vars.VITE_APP_IFRAMELY_ID }}
+      vite_app_snapshot_url: ${{ vars.VITE_APP_SNAPSHOT_URL }}
+      vite_app_SNAPSHOT_space: ${{ vars.VITE_APP_SNAPSHOT_SPACE }}
+      vite_app_SNAPSHOT_chain_id: ${{ vars.VITE_APP_SNAPSHOT_CHAIN_ID }}
+      vite_app_google_tag_id: ${{ vars.VITE_APP_GOOGLE_TAG_ID }}
+      vite_app_delegation_registry: ${{ vars.VITE_APP_DELEGATION_REGISTRY }}
+      vite_app_delegation_token: ${{ vars.VITE_APP_DELEGATION_TOKEN }}
+      vite_app_delegation_symbol: ${{ vars.VITE_APP_DELEGATION_SYMBOL }}
+      vite_app_delegation_chain_id: ${{ vars.VITE_APP_DELEGATION_CHAIN_ID }}
     defaults:
       run:
         working-directory: workspaces/frontend
@@ -127,7 +138,7 @@ jobs:
   Deploy-production:
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: [Build]
-    runs-on: sandbox
+    runs-on: production
     permissions:
       contents: read
       packages: write
@@ -135,6 +146,17 @@ jobs:
       image: ${{ needs.Build.outputs.image }}
       external_port: 3000
       environment: production
+      vite_app_dynamic_id: ${{ vars.VITE_APP_DYNAMIC_ID }}
+      vite_app_trpc_url: ${{ vars.VITE_APP_TRPC_URL }}
+      vite_app_iframely_id: ${{ vars.VITE_APP_IFRAMELY_ID }}
+      vite_app_snapshot_url: ${{ vars.VITE_APP_SNAPSHOT_URL }}
+      vite_app_SNAPSHOT_space: ${{ vars.VITE_APP_SNAPSHOT_SPACE }}
+      vite_app_SNAPSHOT_chain_id: ${{ vars.VITE_APP_SNAPSHOT_CHAIN_ID }}
+      vite_app_google_tag_id: ${{ vars.VITE_APP_GOOGLE_TAG_ID }}
+      vite_app_delegation_registry: ${{ vars.VITE_APP_DELEGATION_REGISTRY }}
+      vite_app_delegation_token: ${{ vars.VITE_APP_DELEGATION_TOKEN }}
+      vite_app_delegation_symbol: ${{ vars.VITE_APP_DELEGATION_SYMBOL }}
+      vite_app_delegation_chain_id: ${{ vars.VITE_APP_DELEGATION_CHAIN_ID }}
     defaults:
       run:
         working-directory: workspaces/frontend
