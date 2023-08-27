@@ -78,6 +78,9 @@ jobs:
     defaults:
       run:
         working-directory: workspaces/frontend
+    environment:
+      name: development-review
+      url: https://front-review.yuki-sandbox.clivado.com
     steps:
       - name: Checkout
         uses: actions/checkout@v3
