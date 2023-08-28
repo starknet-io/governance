@@ -20,7 +20,6 @@ services:
       VITE_APP_DELEGATION_CHAIN_ID: ${vite_app_delegation_chain_id}
     networks:
       yuki:
-
 networks:
   yuki:
     external: true
