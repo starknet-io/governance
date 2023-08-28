@@ -141,7 +141,7 @@ jobs:
         working-directory: workspaces/backend
     environment:
       name: production-backend
-      url: https://back.yuki-sandbox.clivado.com
+      url: https://api.yuki-sandbox.clivado.com/
     steps:
       - name: Checkout
         uses: actions/checkout@v3
