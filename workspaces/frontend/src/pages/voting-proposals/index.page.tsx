@@ -102,22 +102,24 @@ export function Page() {
             />
           </Box>
           <ButtonGroup display={{ base: "none", md: "flex" }}>
-            <Button
-              as="a"
-              href="/delegates/create"
-              variant="outline"
-              size="condensed"
-            >
+            {/* Implement after next merge  */}
+            {/* <Button as="a" href="/delegates/create" variant="outline">
               Filter by
-            </Button>
-            <Button
-              as="a"
-              href="/delegates/create"
-              variant="outline"
-              size="condensed"
+            </Button> */}
+            <Select
+              size="sm"
+              aria-label="All"
+              placeholder="All"
+              rounded="md"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortingTypes)}
             >
-              Sort
-            </Button>
+              {SORTING_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
           </ButtonGroup>
           <Box display="flex" marginLeft="auto">
             <Button
