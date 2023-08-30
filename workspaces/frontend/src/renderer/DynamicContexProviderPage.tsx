@@ -393,7 +393,7 @@ function PageLayout(props: Props) {
           </Button>
         </Box>
         <Layout.LeftAside>
-          <Logo />
+          <Logo href="/voting-proposals" />
           <Box mt="-20px">
             <NavGroup>
               <NavItem
