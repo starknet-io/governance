@@ -13,6 +13,7 @@ services:
       CLIENT_ORIGIN: ${client_origin}
     networks:
       yuki:
+
 networks:
   yuki:
     external: true
