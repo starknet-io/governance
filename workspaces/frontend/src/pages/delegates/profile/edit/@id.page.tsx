@@ -91,6 +91,8 @@ export function Page() {
     }
   };
 
+  const deleteDelegate = trpc.delegates.deleteDelegate.useMutation();
+
   useEffect(() => {
     if (delegate && isSuccess) processData();
   }, [isSuccess]);
@@ -110,6 +112,18 @@ export function Page() {
       console.log(error);
     }
   });
+
+  const onDelete = async () => {
+    if (!delegate?.id) return;
+
+    try {
+      await deleteDelegate.mutateAsync({ id: delegate.id });
+      navigate("/delegates");
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -252,6 +266,7 @@ export function Page() {
                   type="submit"
                   size="condensed"
                   variant="danger"
+                  onClick={onDelete}
                   mr="auto"
                 >
                   Delete

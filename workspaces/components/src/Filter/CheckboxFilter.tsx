@@ -33,7 +33,7 @@ export const CheckboxFilter = (props: CheckboxFilterProps) => {
   } = props;
 
   return (
-    <Stack as="fieldset" spacing={spacing}>
+    <Stack as="fieldset" spacing={2}>
       {!hideLabel && (
         <FormLabel fontWeight="semibold" as="legend" mb="0">
           {label}
@@ -60,12 +60,6 @@ export const CheckboxFilter = (props: CheckboxFilterProps) => {
           <Checkbox key={option.value} value={option.value} colorScheme="blue">
             <Box fontSize="14px">
               <span>{option.label}</span>
-              {option.count != null && (
-                <Box as="span" color="gray.500" fontSize="sm">
-                  {" "}
-                  ({option.count})
-                </Box>
-              )}{" "}
             </Box>
           </Checkbox>
         ))}

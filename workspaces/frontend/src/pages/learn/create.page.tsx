@@ -43,6 +43,7 @@ export function Page() {
       updatedAt: new Date(),
       orderNumber: null,
       userId: "",
+      slug: "",
     },
   ]);
 

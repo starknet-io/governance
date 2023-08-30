@@ -1,0 +1,30 @@
+name: "Retention policy"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  frontend_cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'governance-app/frontend'
+          package-type: 'container'
+          min-versions-to-keep: 1
+
+  backend_cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'governance-app/backend'
+          package-type: 'container'
+          min-versions-to-keep: 1

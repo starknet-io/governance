@@ -26,6 +26,7 @@ export { DelegateModal } from "./DelegateModal";
 export { AgreementModal } from "./AgreementModal";
 export { DatePicker } from "./DatePicker";
 export { ConfirmModal } from "./ConfirmModal";
+export { ChakraDatePicker } from "./ChakraDatePicker"
 export { LinkCard } from "./LinkCard";
 export { CheckboxFilter } from "./Filter/CheckboxFilter";
 export { useMarkdownEditor } from "./Editor/useMarkdownEditor";

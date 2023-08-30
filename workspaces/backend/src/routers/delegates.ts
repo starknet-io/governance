@@ -1,14 +1,14 @@
 import { z } from 'zod';
-import { db } from '../db/db';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
 import { getUserByJWT } from '../utils/helpers';
-import {eq, and, isNotNull, or} from 'drizzle-orm';
+import { eq, and, isNotNull, sql, or } from 'drizzle-orm';
 import { users } from '../db/schema/users';
+import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
-import {snips} from "../db/schema/snips";
-import { createInsertSchema } from 'drizzle-zod';
+import { snips } from '../db/schema/snips';
+import { db } from '../db/db';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -177,7 +177,7 @@ export const delegateRouter = router({
 
       // Handle customDelegateAgreementContent if provided
       if (opts.input.customDelegateAgreementContent) {
-        console.log('has custom agreement')
+        console.log('has custom agreement');
         const existingCustomAgreement =
           await db.query.customDelegateAgreement.findFirst({
             where: eq(
@@ -236,7 +236,73 @@ export const delegateRouter = router({
           delegationStatement: true,
         },
       });
-      if (user) return user;
-      return null;
+      return user;
+    }),
+
+  getDelegateByFiltersAndSort: publicProcedure
+    .input(
+      z.object({
+        searchQuery: z.string().optional(),
+        filters: z.array(z.string()).optional(),
+      }),
+    )
+    .query(async (opts) => {
+      try {
+        //If no filters / search is applied
+        if (!opts.input?.filters?.length && !opts.input?.searchQuery) {
+          return await db.query.delegates.findMany({
+            with: {
+              author: true,
+            },
+          });
+        }
+
+        const filters = opts.input.filters!.map((i) => `'${i}'`).join(',');
+        const sqlQuery = `
+          EXISTS (
+            SELECT 1
+            FROM json_array_elements_text(type) AS elem
+            WHERE elem IN (${filters})
+          )
+        `;
+
+        const result = await db.query.delegates.findMany({
+          with: { author: true },
+          //With or without search based on filters
+          where: opts.input.filters?.length ? sql.raw(sqlQuery) : undefined,
+        });
+
+        const address = opts.input?.searchQuery;
+        if (opts.input?.searchQuery) {
+          //Simple solution for now till we replace it with query call
+          return result.filter((i) => i.author?.address === address);
+        }
+
+        return result;
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }),
+
+  deleteDelegate: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const delegate = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+      });
+
+      if (!delegate) {
+        throw new Error('Delegate not found');
+      }
+
+      await db
+        .delete(customDelegateAgreement)
+        .where(eq(customDelegateAgreement.delegateId, opts.input.id));
+      await db.delete(delegates).where(eq(delegates.id, opts.input.id));
     }),
 });

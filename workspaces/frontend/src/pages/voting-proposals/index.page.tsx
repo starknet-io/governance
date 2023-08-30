@@ -1,5 +1,3 @@
-import { useQuery } from "@apollo/client";
-import { gql } from "src/gql/gql";
 import { DocumentProps } from "src/renderer/types";
 
 import {
@@ -12,36 +10,23 @@ import {
   SearchInput,
   EmptyState,
   Skeleton,
+  Select,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
+import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
-const GET_PROPOSALS = gql(`
-query proposals($space: String!) {
-  proposals(first: 20, skip: 0, where: {space: $space}, orderBy: "created", orderDirection: desc) {
-    id
-    title
-    choices
-    start
-    end
-    snapshot
-    state
-    scores
-    scores_total
-    author
-    space {
-      id
-      name
-    }
-  }
-}
-  `);
+const SORTING_OPTIONS = [
+  { label: "Newest", value: "desc" },
+  { label: "Oldest", value: "asc" },
+  { label: "Most discussed", value: "most_discussed" },
+];
+
+type SortingTypes = "desc" | "asc" | "most_discussed" | "" | undefined;
 
 function Proposal({ data }: any) {
-  const comments = trpc.comments.getProposalComments.useQuery({
-    proposalId: data.id,
-  });
-
-  const count = comments.data ? comments.data.length : 0;
+  const comments = data.comments;
+  const count = comments ? comments.length : 0;
 
   return (
     <ListRow.Root key={data.id} href={`/voting-proposals/${data.id}`}>
@@ -79,11 +64,26 @@ function Proposal({ data }: any) {
 }
 
 export function Page() {
-  const { data, loading, error, refetch } = useQuery(GET_PROPOSALS, {
-    variables: {
-      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-    },
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortingTypes>("desc");
+
+  const {
+    data,
+    isLoading: loading,
+    isError: error,
+    refetch,
+  } = trpc.proposals.getProposals.useQuery({
+    searchQuery,
+    sortBy,
   });
+
+  const debounce = useDebouncedCallback((query) => setSearchQuery(query), 500);
+
+  const handleInputChange = (searchInput: string) => {
+    setSearchInput(searchInput);
+    debounce(searchInput);
+  };
 
   return (
     <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px" pb="200px">
@@ -92,10 +92,14 @@ export function Page() {
         title="Voting Proposals"
         description="Starknet voting proposals are official community votes on improvements to the core Starknet protocol. "
       />
-      {data?.proposals && data?.proposals.length > 0 && (
+      {data && data.length > 0 && (
         <AppBar>
           <Box mr="8px">
-            <SearchInput placeholder="Search proposals..." />
+            <SearchInput
+              value={searchInput}
+              onChange={(e) => handleInputChange(e.target.value)}
+              placeholder="Search proposals..."
+            />
           </Box>
           <ButtonGroup display={{ base: "none", md: "flex" }}>
             <Button
@@ -144,10 +148,8 @@ export function Page() {
                 }
               />
             </Box>
-          ) : data?.proposals && data?.proposals.length > 0 ? (
-            data?.proposals.map((data) => (
-              <Proposal key={data?.id} data={data} />
-            ))
+          ) : data.length > 0 ? (
+            data.map((item: any) => <Proposal key={item?.id} data={item} />)
           ) : (
             <Box position="absolute" inset="0">
               <EmptyState

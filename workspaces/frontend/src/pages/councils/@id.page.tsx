@@ -15,6 +15,7 @@ import {
   Button,
   MenuItem,
   EmptyState,
+  Link,
   Flex,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
@@ -23,6 +24,41 @@ import { useEffect, useState } from "react";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { gql } from "src/gql";
+import { useQuery } from "@apollo/client";
+
+const DELEGATE_PROFILE_PAGE_QUERY = gql(`
+  query DelegateProfilePageQuery(
+    $voter: String!
+    $space: String!
+    $proposal: String
+    $where: VoteWhere
+  ) {
+    votes(where: $where) {
+      id
+      choice
+      voter
+      reason
+      metadata
+      created
+      proposal {
+        id
+        title
+        body
+        choices
+      }
+      ipfs
+      vp
+      vp_by_strategy
+      vp_state
+    }
+    vp(voter: $voter, space: $space, proposal: $proposal) {
+      vp
+      vp_by_strategy
+      vp_state
+    }
+  }
+`);
 
 export function Page() {
   const pageContext = usePageContext();
@@ -52,6 +88,26 @@ export function Page() {
     if (!council?.id) return;
     navigate(`/councils/posts/create?councilId=${council?.id.toString()}`);
   };
+
+  const gqlResponse = useQuery(DELEGATE_PROFILE_PAGE_QUERY, {
+    variables: {
+      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+      voter: council?.address ?? "",
+      where: {
+        voter: council?.address,
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+      },
+    },
+    skip: council?.address == null,
+  });
+
+  const stats = gqlResponse.data?.votes?.reduce(
+    (acc: { [key: string]: number }, vote) => {
+      acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
+      return acc;
+    },
+    {},
+  );
 
   return (
     <Box
@@ -109,10 +165,22 @@ export function Page() {
         </Box>
         <Divider my="24px" />
         <SummaryItems.Root>
-          <SummaryItems.Item label="Proposals voted on" value="0" />
-          <SummaryItems.Item label="Delegated votes" value="0" />
+          <SummaryItems.Item
+            label="Proposals voted on"
+            value={gqlResponse.data?.votes?.length.toString() ?? "0"}
+          />
+          <SummaryItems.Item
+            label="Delegated votes"
+            value={gqlResponse.data?.vp?.vp?.toString() ?? "0"}
+          />
 
-          <SummaryItems.Item label="For/against/abstain" value="0/0/0" />
+          <SummaryItems.Item
+            label="For/against/abstain"
+            value={
+              (stats && `${stats[1] ?? 0}/${stats[2] ?? 0}/${stats[3] ?? 0}`) ||
+              "0/0/0"
+            }
+          />
         </SummaryItems.Root>
       </Box>
 
@@ -186,9 +254,32 @@ export function Page() {
             <Heading color="#33333E" variant="h3">
               Past Votes
             </Heading>
-            <ListRow.Container>
+            {gqlResponse.data?.votes?.length ? (
+              <ListRow.Container>
+                {gqlResponse.data?.votes.map((vote) => (
+                  <Link
+                    href={`/voting-proposals/${vote!.proposal!.id}`}
+                    key={vote!.id}
+                    _hover={{ textDecoration: "none" }}
+                  >
+                    <ListRow.Root>
+                      <ListRow.PastVotes
+                        title={vote?.proposal?.title}
+                        votePreference={
+                          vote!.proposal!.choices?.[
+                            vote!.choice - 1
+                          ]?.toLowerCase() as "for" | "against" | "abstain"
+                        }
+                        voteCount={vote!.vp}
+                        body={vote?.proposal?.body}
+                      />
+                    </ListRow.Root>
+                  </Link>
+                ))}
+              </ListRow.Container>
+            ) : (
               <EmptyState type="votes" title="No past votes" />
-            </ListRow.Container>
+            )}
           </Box>
         </Stack>
       </ContentContainer>

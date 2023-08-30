@@ -1,12 +1,10 @@
-FROM mcr.microsoft.com/devcontainers/typescript-node:16 as build
-RUN mkdir /build
-WORKDIR /build/
-ADD ./ ./
+FROM node:18.17.1-bullseye as build
+RUN apt-get update && apt-get upgrade -y
+
+WORKDIR /app
+COPY . .
 RUN yarn install
 RUN yarn workspace @yukilabs/governance-backend build
 
-FROM mcr.microsoft.com/devcontainers/typescript-node:16
-RUN mkdir /runtime
-COPY --from=build /build/ /runtime/
-WORKDIR /runtime/workspaces/backend
-ENTRYPOINT [ "node", "dist/src/index.js" ]
+WORKDIR /app/workspaces/backend
+ENTRYPOINT [ "yarn", "serve" ]

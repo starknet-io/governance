@@ -112,7 +112,7 @@ export function Page() {
                     <Multiselect
                       options={delegateTypeValues.map((option) => ({
                         value: option,
-                        label: option,
+                        label: delegateNames?.[option] ?? option,
                       }))}
                       value={field.value as any}
                       onChange={(values) => field.onChange(values)}
