@@ -3,6 +3,7 @@ export const buttonTheme = {
     fontWeight: "500",
     letterSpacing: "0.004rem",
     lineHeight: "1.25rem",
+
     fontSize: "sm",
     borderWidth: "1px",
     borderColor: "transparent",
@@ -14,11 +15,13 @@ export const buttonTheme = {
   },
   sizes: {
     standard: {
+      minWidth: "44px",
       px: "standard.lg",
       borderRadius: "standard.base",
       py: "standard.sm",
     },
     condensed: {
+      minWidth: "36px",
       px: "condensed.lg",
       borderRadius: "condensed.base",
       py: "condensed.sm",

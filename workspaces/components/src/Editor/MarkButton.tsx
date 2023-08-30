@@ -12,24 +12,28 @@ const MarkButton = ({ format }: MarkButtonProps) => {
   return (
     <IconButton
       aria-label={format}
-      variant="toolbar"
+      variant="ghost"
       isActive={isMarkActive(editor, format)}
-      size="tb"
+      size="condensed"
       icon={
         format === "bold" ? (
           <BoldIcon
+            boxSize="20px"
             color={isMarkActive(editor, format) ? "white" : "#6F6E77"}
           />
         ) : format === "italic" ? (
           <ItalicIcon
+            boxSize="20px"
             color={isMarkActive(editor, format) ? "white" : "#6F6E77"}
           />
         ) : format === "underline" ? (
           <UnderlineIcon
+            boxSize="20px"
             color={isMarkActive(editor, format) ? "white" : "#6F6E77"}
           />
         ) : (
           <UnderlineIcon
+            boxSize="20px"
             color={isMarkActive(editor, format) ? "white" : "#6F6E77"}
           />
         )

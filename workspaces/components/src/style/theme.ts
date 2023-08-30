@@ -31,6 +31,9 @@ const theme = extendTheme({
   radii: {
     ...radii,
   },
+  sizes: {
+    ...spacing,
+  },
 
   components: {
     Button,
