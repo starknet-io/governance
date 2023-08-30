@@ -75,7 +75,7 @@ jobs:
         working-directory: workspaces/backend
     environment:
       name: review-backend
-      url: https://back-review.yuki-sandbox.clivado.com
+      url: https://api-review.yuki-labs.dev
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -108,7 +108,7 @@ jobs:
         working-directory: workspaces/backend
     environment:
       name: development-backend
-      url: https://back-dev.yuki-sandbox.clivado.com
+      url: https://api-dev.yuki-labs.dev
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -141,7 +141,7 @@ jobs:
         working-directory: workspaces/backend
     environment:
       name: production-backend
-      url: https://api.yuki-sandbox.clivado.com/
+      url: https://api.yuki-labs.dev/
     steps:
       - name: Checkout
         uses: actions/checkout@v3
