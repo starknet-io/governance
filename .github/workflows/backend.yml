@@ -86,7 +86,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - run: docker 2>/dev/null rmi --force $(docker images ghcr.io/yuki-wtf/governance-app/backend -q --no-trunc | tail -n +5) # docker image prune -f -a
+      - run: docker rmi --force $(docker images ghcr.io/yuki-wtf/governance-app/backend -q --no-trunc | tail -n +5) 2>/dev/null # docker image prune -f -a
       - run: docker-compose -p review-backend up -d --remove-orphans --wait
   Deploy-dev:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
