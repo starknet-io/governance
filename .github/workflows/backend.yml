@@ -141,7 +141,7 @@ jobs:
         working-directory: workspaces/backend
     environment:
       name: production-backend
-      url: https://api.yuki-labs.dev/
+      url: https://api.yuki-labs.dev
     steps:
       - name: Checkout
         uses: actions/checkout@v3

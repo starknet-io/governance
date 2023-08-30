@@ -162,7 +162,7 @@ jobs:
         working-directory: workspaces/frontend
     environment:
       name: production-frontend
-      url: https://governance.yuki-labs.dev/
+      url: https://governance.yuki-labs.dev
     steps:
       - name: Checkout
         uses: actions/checkout@v3
