@@ -173,6 +173,8 @@ import {
   SkeletonCircle,
   SkeletonText,
   Spinner,
+  InputLeftElement,
+  InputRightElement,
 } from "@chakra-ui/react";
 
 export {
@@ -229,4 +231,6 @@ export {
   SkeletonCircle,
   SkeletonText,
   Spinner,
+  InputLeftElement,
+  InputRightElement,
 };

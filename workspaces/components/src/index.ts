@@ -32,6 +32,7 @@ export { CheckboxFilter } from "./Filter/CheckboxFilter";
 export { useMarkdownEditor } from "./Editor/useMarkdownEditor";
 export { CopyToClipboard } from "./CopyToClipboard";
 export { BannerHome } from "./BannerHome";
+export { GlobalSearch } from './GlobalSearch';
 export {
   FilterPopoverButton,
   FilterPopoverContent,

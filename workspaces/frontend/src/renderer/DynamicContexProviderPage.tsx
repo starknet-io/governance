@@ -39,7 +39,7 @@ import {
   FormModal,
   FormControl,
   FormLabel,
-  Input,
+  Input
 } from "@yukilabs/governance-components";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { PageContext } from "./types";
@@ -47,6 +47,7 @@ import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
+import { GlobalSearch } from "@yukilabs/governance-components/src";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -499,6 +500,7 @@ function PageLayout(props: Props) {
             <Box display="flex" marginLeft="auto">
               {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
             </Box>
+            <GlobalSearch />
           </Header>
           <Layout.Content>{children}</Layout.Content>
         </Layout.Main>
