@@ -16,7 +16,7 @@ import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 
 type Props = {
-  delegateType: any;
+  delegateType: string[] | null;
   delegateStatement: string;
   avatarUrl?: string | null;
   ensName?: string | null;

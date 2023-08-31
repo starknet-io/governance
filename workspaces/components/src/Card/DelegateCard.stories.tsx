@@ -13,13 +13,29 @@ export const DelegateCard = () => (
     <HStack p={12}>
       <>
         <GovernanceDelegateCard
-          id="ewerwer"
           delegateStatement="sadf  asdfasdf asdfasdf sadf asdfas df"
-          delegateType="wqqwe "
-          address="0x12123123123123123123123123123"
-          avatarUrl="232323"
+          delegateType={[
+            "Dao",
+            "Infrastructure",
+            "Web3 Developer",
+            "Security",
+            "Legal",
+          ]}
+          address="0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5"
+          avatarUrl="https://euc.li/robwalsh.eth"
           delegatedVotes="32e4234"
-          ensName="asdfasdf"
+          ensName="robwalsh.eth"
+          onDelegateClick={() => console.log("delegate click")}
+        />
+        <GovernanceDelegateCard
+          delegateStatement="sadf  asdfasdf asdfasdf sadf asdfas df"
+          delegateType={["Dao"]}
+          address="0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5"
+          avatarUrl="https://euc.li/robwalsh.eth"
+          delegatedVotes="32e4234"
+          ensName="robwalsh.eth"
+          onDelegateClick={() => console.log("delegate click")}
+          profileURL="https://starknet.io"
         />
       </>
     </HStack>
