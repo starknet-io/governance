@@ -4,10 +4,18 @@ import VotingProposalIcon from "../assets/voting_proposal_icon.svg";
 import LearnIcon from "../assets/learn_icon.svg";
 
 type SearchItemType = "voting_proposal" | "council" | "learn" | "delegate";
+type BuildItemsType = "item-list" | "grouped-items";
 
 interface ISearchItem {
   type: SearchItemType;
 }
+
+const GroupNames: Record<SearchItemType, string> = {
+  voting_proposal: "Voting proposal",
+  council: "Council",
+  learn: "Learn",
+  delegate: "Delegate",
+};
 
 const mockData: ISearchItem[] = [
   { type: "voting_proposal" },
@@ -26,7 +34,17 @@ const mockData: ISearchItem[] = [
   { type: "learn" },
 ];
 
-export function buildSearchItems(searchItems = mockData) {
+export function buildSearchItems(
+  searchItems = mockData,
+  type: BuildItemsType = "grouped-items",
+) {
+  if (type === "grouped-items") {
+    return buildGroupList(searchItems);
+  }
+  return buildList(searchItems);
+}
+
+function buildList(searchItems: ISearchItem[]) {
   return searchItems.map((searchItem) => {
     switch (searchItem.type) {
       case "voting_proposal": {
@@ -48,6 +66,34 @@ export function buildSearchItems(searchItems = mockData) {
       default:
         return null;
     }
+  });
+}
+
+function buildGroupList(searchItems: ISearchItem[]) {
+  const groupedItems: Partial<
+    Record<SearchItemType, { type: SearchItemType; items: ISearchItem[] }>
+  > = {};
+  searchItems.forEach((item) => {
+    if (item.type in groupedItems) {
+      groupedItems[item.type] = {
+        type: item.type,
+        items: [...groupedItems[item.type]!.items, item],
+      };
+    } else {
+      groupedItems[item.type] = { type: item.type, items: [item] };
+    }
+  });
+  const groups = Object.values(groupedItems);
+
+  return groups.map((group) => {
+    return (
+      <Box key={group.type}>
+        <Text fontSize="small" fontWeight="semibold" color="#86848D" mb="2">
+          {GroupNames?.[group.type] ?? ""}
+        </Text>
+        <Box>{buildList(group.items)}</Box>
+      </Box>
+    );
   });
 }
 
