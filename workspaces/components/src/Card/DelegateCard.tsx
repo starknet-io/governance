@@ -5,6 +5,8 @@ import {
   CardFooter,
   Box,
   Tooltip,
+  LinkBox,
+  LinkOverlay,
 } from "@chakra-ui/react";
 
 import { Text } from "../Text";
@@ -14,13 +16,14 @@ import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 
 type Props = {
-  id: string;
   delegateType: any;
   delegateStatement: string;
   avatarUrl?: string | null;
   ensName?: string | null;
   address?: string | null;
   delegatedVotes?: string;
+  onDelegateClick?: () => void;
+  profileURL?: string;
 };
 
 export const delegateNames: Record<string, string> = {
@@ -39,7 +42,8 @@ export const delegateNames: Record<string, string> = {
 
 export const DelegateCard = (props: Props) => {
   const {
-    id,
+    onDelegateClick,
+    profileURL,
     delegatedVotes = "0",
     address,
     delegateType,
@@ -50,18 +54,20 @@ export const DelegateCard = (props: Props) => {
   const delegatedVotesFormatted = `${delegatedVotes} Votes`;
 
   return (
-    <Card as="a" href={`/delegates/profile/${id}`} variant="outline">
+    <LinkBox as={Card} variant="outline">
       <CardHeader>
-        <ProfileSummaryCard.Root>
-          <ProfileSummaryCard.Profile
-            imgUrl={avatarUrl}
-            size="sm"
-            address={address}
-            ensName={ensName}
-            subtitle={delegatedVotesFormatted.toUpperCase()}
-            avatarString={address}
-          ></ProfileSummaryCard.Profile>
-        </ProfileSummaryCard.Root>
+        <LinkOverlay href={profileURL}>
+          <ProfileSummaryCard.Root>
+            <ProfileSummaryCard.Profile
+              imgUrl={avatarUrl}
+              size="sm"
+              address={address}
+              ensName={ensName}
+              subtitle={delegatedVotesFormatted.toUpperCase()}
+              avatarString={address}
+            ></ProfileSummaryCard.Profile>
+          </ProfileSummaryCard.Root>
+        </LinkOverlay>
       </CardHeader>
       <CardBody>
         <Box display="flex" flexDirection="row" gap="8px" mb="12px">
@@ -71,7 +77,6 @@ export const DelegateCard = (props: Props) => {
                 <>
                   <Tag variant="listCard" key={delegateType[0]}>
                     {delegateType[0]}
-                    {/* {delegateNames?.[delegateType[0]] ?? delegateType[0]} */}
                   </Tag>
                   {delegateType.length > 1 && (
                     <Tooltip
@@ -118,13 +123,13 @@ export const DelegateCard = (props: Props) => {
             <Button
               size="condensed"
               variant="outline"
-              onClick={() => console.log("clicked")}
+              onClick={onDelegateClick}
             >
               Delegate
             </Button>
           </Box>
         </Box>
       </CardFooter>
-    </Card>
+    </LinkBox>
   );
 };
