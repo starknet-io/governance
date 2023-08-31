@@ -40,6 +40,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  SupportModal,
 } from "@yukilabs/governance-components";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { PageContext } from "./types";
@@ -285,6 +286,7 @@ function PageLayout(props: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const councilResp = trpc.councils.getAll.useQuery();
   const [renderDone, setRenderDone] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setRenderDone(true);
@@ -308,6 +310,10 @@ function PageLayout(props: Props) {
 
   return (
     <>
+      <SupportModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
       <InfoModal
         title="connect your wallet"
         isOpen={helpMessage === "connectWalletMessage"}
@@ -461,6 +467,7 @@ function PageLayout(props: Props) {
               active={pageContext.urlOriginal}
               icon={<SupportIcon />}
               label="Support"
+              onClick={() => setIsModalOpen(!isModalOpen)}
             />
             <NavItem
               active={pageContext.urlOriginal}

@@ -10,10 +10,20 @@ interface NavItemProps {
   endElement?: ReactElement;
   children?: ReactNode;
   activePage?: boolean;
+  onClick?: () => void;
 }
 
 export const NavItem = (props: NavItemProps) => {
-  const { active, icon, children, label, endElement, href, activePage } = props;
+  const {
+    active,
+    icon,
+    children,
+    label,
+    endElement,
+    href,
+    activePage,
+    onClick,
+  } = props;
   const isActive = active === href;
   return (
     <Flex
@@ -33,6 +43,7 @@ export const NavItem = (props: NavItemProps) => {
       bg={isActive ? "#EEEEF1" : activePage ? "#EEEEF1" : ""}
       _hover={{ bg: "#EEEEF1" }}
       _active={{ bg: "#EEEEF1" }}
+      onClick={onClick}
     >
       {icon && (
         <Box position="relative" mt="-4px" fontSize="24px">
