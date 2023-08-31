@@ -7,6 +7,7 @@ type SearchItemType = "voting_proposal" | "council" | "learn" | "delegate";
 type BuildItemsType = "item-list" | "grouped-items";
 
 interface ISearchItem {
+  id: number;
   type: SearchItemType;
 }
 
@@ -18,20 +19,20 @@ const GroupNames: Record<SearchItemType, string> = {
 };
 
 const mockData: ISearchItem[] = [
-  { type: "voting_proposal" },
-  { type: "voting_proposal" },
-  { type: "voting_proposal" },
-  { type: "council" },
-  { type: "delegate" },
-  { type: "learn" },
-  { type: "learn" },
-  { type: "voting_proposal" },
-  { type: "voting_proposal" },
-  { type: "voting_proposal" },
-  { type: "council" },
-  { type: "delegate" },
-  { type: "learn" },
-  { type: "learn" },
+  { type: "voting_proposal", id: 1 },
+  { type: "voting_proposal", id: 2 },
+  { type: "voting_proposal", id: 3 },
+  { type: "council", id: 4 },
+  { type: "delegate", id: 5 },
+  { type: "learn", id: 6 },
+  { type: "learn", id: 7 },
+  { type: "voting_proposal", id: 8 },
+  { type: "voting_proposal", id: 9 },
+  { type: "voting_proposal", id: 10 },
+  { type: "council", id: 11 },
+  { type: "delegate", id: 12 },
+  { type: "learn", id: 13 },
+  { type: "learn", id: 14 },
 ];
 
 export function buildSearchItems(
@@ -48,19 +49,35 @@ function buildList(searchItems: ISearchItem[]) {
   return searchItems.map((searchItem) => {
     switch (searchItem.type) {
       case "voting_proposal": {
-        return <VotingProposalItem />;
+        return (
+          <HoverBox>
+            <VotingProposalItem />
+          </HoverBox>
+        );
       }
 
       case "council": {
-        return <CouncilItem />;
+        return (
+          <HoverBox>
+            <CouncilItem />
+          </HoverBox>
+        );
       }
 
       case "learn": {
-        return <LearnItem />;
+        return (
+          <HoverBox>
+            <LearnItem />
+          </HoverBox>
+        );
       }
 
       case "delegate": {
-        return <DelegateItem />;
+        return (
+          <HoverBox>
+            <DelegateItem />
+          </HoverBox>
+        );
       }
 
       default:
@@ -224,5 +241,17 @@ function LearnItem() {
         </Text>
       </Flex>
     </Flex>
+  );
+}
+
+function HoverBox({ children }: { children: any }) {
+  return (
+    <Box
+      _hover={{
+        backgroundColor: "#4826480F",
+      }}
+    >
+      {children}
+    </Box>
   );
 }

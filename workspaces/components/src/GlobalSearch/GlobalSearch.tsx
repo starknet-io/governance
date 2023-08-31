@@ -50,8 +50,6 @@ export function GlobalSearch() {
     };
   }, []);
 
-  console.log({ searchText, isSearchModalOpen });
-
   return (
     <Box onClick={handleSearchClick} ml="2">
       <InputGroup>
