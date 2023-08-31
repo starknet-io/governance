@@ -355,7 +355,7 @@ export function Page() {
                         variant="outline"
                         onClick={() => setHelpMessage("connectWalletMessage")}
                       >
-                        Delegate to addressss
+                        Delegate to address
                       </Button>
 
                       <Button
@@ -372,7 +372,7 @@ export function Page() {
                   //   Delegate to address
                   // </Button>
 
-                  //   <Button as="a" href="/delegates/create" size="sm" variant="primary">
+                  //   <Button as="a" href="/delegates/create" size="sm" variant="solid">
                   //     Create delegate profile
                   //   </Button></>
                 }
@@ -387,6 +387,8 @@ export function Page() {
               {delegates.data && delegates.data.length > 0 ? (
                 delegates.data.map((data) => (
                   <DelegateCard
+                    onDelegateClick={() => console.log("test")}
+                    profileURL={`/delegates/profile/${data.id}`}
                     ensName={data.author?.ensName}
                     key={data.author?.starknetAddress}
                     address={data?.author?.address}
@@ -410,8 +412,10 @@ export function Page() {
     </ContentContainer>
   );
 }
-
-const DelegatesSkeleton = () => {
+type DelegatesSkeletonProps = {
+  count?: number;
+};
+const DelegatesSkeleton = ({ count = 6 }: DelegatesSkeletonProps) => {
   return (
     <Box>
       <Box display={"flex"} gap="12px" bg="#fff" padding="12px" mb="24px">
@@ -427,30 +431,12 @@ const DelegatesSkeleton = () => {
         spacing={4}
         templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
       >
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>{" "}
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>{" "}
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>{" "}
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>
+        {Array.from({ length: count }).map((_, index) => (
+          <Box key={index} padding="6" bg="#fff" borderRadius="8px">
+            <SkeletonCircle size="10" />
+            <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+          </Box>
+        ))}
       </SimpleGrid>
     </Box>
   );
