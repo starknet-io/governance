@@ -4,7 +4,7 @@ import { Button } from "./Button";
 import { ThemeProvider } from "../ThemeProvider";
 
 export default {
-  title: "starknet.io/Button",
+  title: "governance-ui/Button",
   component: Button,
 } as Meta<typeof Button>;
 

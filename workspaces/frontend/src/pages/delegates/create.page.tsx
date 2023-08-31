@@ -17,7 +17,8 @@ import {
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { DocumentProps } from "src/renderer/types";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { delegateNames } from "./index.page";
 
 const delegateTypeValues = delegateTypeEnum.enumValues;
 
