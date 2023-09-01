@@ -10,6 +10,7 @@ services:
       PORT: ${port}
       DATABASE_URL: ${database_url}
       DYNAMIC_PUBLIC_KEY: ${dynamic_public_key}
+      DO_CERT: ${do_cert}
       CLIENT_ORIGIN: ${client_origin}
     networks:
       yuki:
@@ -18,3 +19,4 @@ networks:
   yuki:
     external: true
     name: 'yuki-${environment}'
+

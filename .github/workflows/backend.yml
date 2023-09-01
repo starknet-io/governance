@@ -69,6 +69,7 @@ jobs:
       database_url: ${{ secrets.DATABASE_URL }}
       client_origin: ${{ vars.CLIENT_ORIGIN }}
       dynamic_public_key: ${{ secrets.DYNAMIC_PUBLIC_KEY }}
+      do_cert: ${{ secrets.DO_CERT }}
       environment: review
     defaults:
       run:
@@ -102,6 +103,7 @@ jobs:
       database_url: ${{ secrets.DATABASE_URL }}
       client_origin: ${{ vars.CLIENT_ORIGIN }}
       dynamic_public_key: ${{ secrets.DYNAMIC_PUBLIC_KEY }}
+      do_cert: ${{ secrets.DO_CERT }}
       environment: development
     defaults:
       run:
@@ -135,6 +137,7 @@ jobs:
       database_url: ${{ secrets.DATABASE_URL }}
       client_origin: ${{ vars.CLIENT_ORIGIN }}
       dynamic_public_key: ${{ secrets.DYNAMIC_PUBLIC_KEY }}
+      do_cert: ${{ secrets.DO_CERT }}
       environment: production
     defaults:
       run:
