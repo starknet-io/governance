@@ -100,6 +100,7 @@ export {
   StatusModal,
   EmptyState,
   UserProfileMenu,
+  SupportModal
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";

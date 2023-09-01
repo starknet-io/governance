@@ -2,13 +2,23 @@ import { useSlate } from "slate-react";
 import { IconButton } from "@chakra-ui/react";
 import { Heading2Icon, BulletedListIcon, NumberedListIcon } from "src/Icons";
 import { isBlockActive, toggleBlock } from "./hotkeys";
+import { CustomParagraphTypes } from "./ElementLeaf";
 
 type BlockButtonProps = {
-  format: string;
+  format: CustomParagraphTypes;
+};
+
+const ICONS: Partial<Record<CustomParagraphTypes, any>> = {
+  heading_two: Heading2Icon,
+  ul_list: BulletedListIcon,
+  ol_list: NumberedListIcon,
+  heading_one: () => <div>H1</div>,
+  block_quote: () => <div>{'>'}</div>,
 };
 
 const BlockButton = ({ format }: BlockButtonProps) => {
   const editor = useSlate();
+  const Icon = ICONS?.[format] ?? NumberedListIcon;
   return (
     <IconButton
       aria-label={format}
@@ -20,23 +30,7 @@ const BlockButton = ({ format }: BlockButtonProps) => {
         toggleBlock(editor, format);
       }}
       icon={
-        format === "heading-two" ? (
-          <Heading2Icon
-            color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        ) : format === "bulleted-list" ? (
-          <BulletedListIcon
-            color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        ) : format === "numbered-list" ? (
-          <NumberedListIcon
-            color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        ) : (
-          <NumberedListIcon
-            color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        )
+        <Icon color={isBlockActive(editor, format) ? "white" : "#6F6E77"} />
       }
     />
   );

@@ -33,6 +33,9 @@ import {
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
+  StarknetCommunityIcon,
+  StarknetIcon,
+  DiscordIcon
 } from "./UiIcons";
 import {
   HiOutlineCodeBracketSquare,
@@ -48,7 +51,8 @@ import {
   HiTrash,
   HiOutlinePencil,
   HiOutlineTrash,
-  HiXMark
+  HiXMark,
+  HiOutlineArrowUpRight
 } from "react-icons/hi2";
 import { MdOutlineHowToVote, MdOutlineAssignment } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -101,5 +105,9 @@ export {
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
-  HiXMark
+  HiXMark,
+  StarknetCommunityIcon,
+  StarknetIcon,
+  DiscordIcon,
+  HiOutlineArrowUpRight
 };
