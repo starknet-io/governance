@@ -30,14 +30,12 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
-import { useHelpMessage } from "src/hooks/HelpMessage";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { useBalanceData } from "../../utils/hooks";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "../../wagmi/DelegateRegistry";
-
+import { usePageContext } from "src/renderer/PageContextProvider";
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
 }
@@ -159,7 +157,6 @@ const sortByOptions = {
 };
 
 export function Page() {
-  const [, setHelpMessage] = useHelpMessage();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
   const [inputAddress, setInputAddress] = useState("");
@@ -170,7 +167,6 @@ export function Page() {
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
   });
-
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
 
@@ -190,7 +186,7 @@ export function Page() {
   const delegates =
     trpc.delegates.getDelegateByFiltersAndSort.useQuery(filtersState);
 
-  const { user } = useDynamicContext();
+  const { user } = usePageContext();
 
   const debounce = useDebouncedCallback(
     (searchQuery: string) => setFiltersState({ ...filtersState, searchQuery }),
@@ -208,8 +204,64 @@ export function Page() {
   };
   console.log(JSON.stringify(delegates.data, null, 2));
 
+  function ActionButtons() {
+    if (!user) {
+      return null;
+    }
+
+    return (
+      <>
+        <Button
+          size="condensed"
+          variant="outline"
+          onClick={() => setIsOpen(true)}
+        >
+          Delegate to address
+        </Button>
+
+        {!user.delegationStatement && (
+          <Button
+            as="a"
+            href="/delegates/create"
+            size="condensed"
+            variant="primary"
+          >
+            Create delegate profile
+          </Button>
+        )}
+      </>
+    );
+  }
+
   return (
     <ContentContainer>
+      <DelegateModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        isConnected={isConnected}
+        isValidCustomAddress={isValidAddress}
+        receiverData={!inputAddress.length ? undefined : receiverData}
+        onContinue={(address) => {
+          const isValid = ethers.utils.isAddress(address);
+          setIsValidAddress(isValid);
+          if (isValid) {
+            setInputAddress(address);
+          }
+        }}
+        senderData={senderData}
+        delegateTokens={() => {
+          write?.({
+            args: [
+              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                size: 32,
+              }),
+              inputAddress as `0x${string}`,
+            ],
+          });
+          setIsOpen(false);
+        }}
+      />
+      <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
       <Box width="100%">
         <PageTitle
           learnMoreLink="/learn"
@@ -289,81 +341,8 @@ export function Page() {
                   ))}
                 </Select>
               </ButtonGroup>
-              {/* // Todo authentication Logic doesn't seem to be working  */}
               <Box display="flex" marginLeft="auto" gap="12px">
-                {user ? (
-                  <>
-                    <Button
-                      size="condensed"
-                      variant="outline"
-                      onClick={() => setIsOpen(true)}
-                    >
-                      Delegate to address
-                    </Button>
-                    <DelegateModal
-                      isOpen={isOpen}
-                      onClose={() => setIsOpen(false)}
-                      isConnected={isConnected}
-                      isValidCustomAddress={isValidAddress}
-                      receiverData={
-                        !inputAddress.length ? undefined : receiverData
-                      }
-                      onContinue={(address) => {
-                        const isValid = ethers.utils.isAddress(address);
-                        setIsValidAddress(isValid);
-                        if (isValid) {
-                          setInputAddress(address);
-                        }
-                      }}
-                      senderData={senderData}
-                      delegateTokens={() => {
-                        write?.({
-                          args: [
-                            stringToHex(
-                              import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-                              {
-                                size: 32,
-                              },
-                            ),
-                            inputAddress as `0x${string}`,
-                          ],
-                        });
-                        setIsOpen(false);
-                      }}
-                    />
-                    <ConfirmModal
-                      isOpen={isLoading}
-                      onClose={() => setIsOpen(false)}
-                    />
-
-                    <Button
-                      as="a"
-                      href="/delegates/create"
-                      size="condensed"
-                      variant="primary"
-                    >
-                      Create delegate profile
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      size="condensed"
-                      variant="outline"
-                      onClick={() => setHelpMessage("connectWalletMessage")}
-                    >
-                      Delegate to address
-                    </Button>
-
-                    <Button
-                      onClick={() => setHelpMessage("connectWalletMessage")}
-                      size="condensed"
-                      variant="primary"
-                    >
-                      Create delegate profile
-                    </Button>
-                  </>
-                )}
+                <ActionButtons />
               </Box>
             </AppBar>
             <SimpleGrid

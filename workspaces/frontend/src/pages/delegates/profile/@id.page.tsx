@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps, ROLES } from "src/renderer/types";
 
 import {
   Box,
@@ -33,6 +33,7 @@ import { useQuery } from "@apollo/client";
 import { gql } from "src/gql";
 import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
+import { hasPermission } from "src/utils/helpers";
 
 const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
   query DelegateProposals($space: String!) {
@@ -141,6 +142,7 @@ export function Page() {
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
+  const { user } = usePageContext();
 
   const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
@@ -229,8 +231,6 @@ export function Page() {
     }
   };
 
-  console.log(delegate)
-
   const comments = (delegateCommentsResponse?.data || []).map((comment) => {
     const foundProposal = proposals.find(
       (proposal) => proposal?.id === comment.proposalId,
@@ -244,6 +244,30 @@ export function Page() {
       snipTitle: comment.snipTitle,
     };
   });
+
+  function ActionButtons() {
+    if (!user) return null;
+
+    const canEdit =
+      (hasPermission(user.role, [ROLES.USER]) &&
+        user.delegationStatement.id === delegateId) ||
+      hasPermission(user.role, [ROLES.ADMIN, ROLES.MODERATOR]);
+
+    return (
+      <>
+        <ProfileSummaryCard.MoreActions>
+          {canEdit && (
+            <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
+              Edit
+            </MenuItem>
+          )}
+          <MenuItem as="a" href="/delegate/edit/">
+            Report
+          </MenuItem>
+        </ProfileSummaryCard.MoreActions>
+      </>
+    );
+  }
 
   return (
     <Box
@@ -259,13 +283,10 @@ export function Page() {
         senderData={senderData}
         receiverData={{
           ...receiverData,
-          vp: gqlResponse?.data?.vp?.vp
+          vp: gqlResponse?.data?.vp?.vp,
         }}
         delegateTokens={() => {
-          if (
-            parseFloat(senderData?.balance) <
-            MINIMUM_TOKENS_FOR_DELEGATION
-          ) {
+          if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
@@ -333,14 +354,7 @@ export function Page() {
             address={delegate?.author?.ensName || delegateAddress}
             avatarString={delegate?.author?.ensAvatar || delegateAddress}
           >
-            <ProfileSummaryCard.MoreActions>
-              <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
-                Edit
-              </MenuItem>
-              <MenuItem as="a" href={`/delegate/edit/`}>
-                Report
-              </MenuItem>
-            </ProfileSummaryCard.MoreActions>
+            <ActionButtons />
           </ProfileSummaryCard.Profile>
           {isConnected ? (
             <ProfileSummaryCard.PrimaryButton

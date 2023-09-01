@@ -91,6 +91,7 @@ export const authRouter = router({
   logout: publicProcedure
     .mutation(async (opts) => {
       opts.ctx.res.clearCookie('JWT');
+      opts.ctx.req.user = null;
       return
     }),
 
@@ -118,4 +119,18 @@ export const authRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
     }),
+
+
+  currentUser: publicProcedure
+    .query(async (opts) => {
+      try {
+        if (opts.ctx.user) {
+          return opts.ctx.user;
+        }
+        return null;
+      } catch (err) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+    }
+    ),
 });

@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps, ROLES } from "src/renderer/types";
 import {
   Box,
   Heading,
@@ -12,11 +12,11 @@ import {
   Divider,
   ProfileSummaryCard,
   MenuItem,
-  MarkdownRenderer
+  MarkdownRenderer,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { hasPermission } from "src/utils/helpers";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -25,7 +25,7 @@ export function Page() {
   });
 
   const { data: post } = postResp;
-  const { user } = useDynamicContext();
+  const { user } = usePageContext();
 
   const saveComment = trpc.comments.saveComment.useMutation({
     onSuccess: () => {
@@ -71,7 +71,7 @@ export function Page() {
                     {post?.title}
                   </Heading>
                 </Box>
-                {user ? (
+                {hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
                   <ProfileSummaryCard.MoreActions>
                     <MenuItem as="a" href={`/councils/posts/edit/${post?.id}`}>
                       Edit

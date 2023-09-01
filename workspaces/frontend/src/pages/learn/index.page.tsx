@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps, ROLES } from "src/renderer/types";
 
 import {
   Box,
@@ -19,8 +19,8 @@ import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { Page as PageInterface } from "@yukilabs/governance-backend/src/db/schema/pages";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { usePageContext } from "src/renderer/PageContextProvider";
+import { hasPermission } from "src/utils/helpers";
 
 export interface PageWithUserInterface extends PageInterface {
   author: User | null;
@@ -31,8 +31,8 @@ export function Page() {
     useState<PageWithUserInterface | null>(null);
   const pagesResp = trpc.pages.getAll.useQuery();
   const pages = pagesResp.data ?? [];
+  const { user: loggedUser } = usePageContext();
   const pageContext = usePageContext();
-  const { user } = useDynamicContext();
 
   useEffect(() => {
     setSelectedPage(getPageFromURL());
@@ -109,7 +109,7 @@ export function Page() {
             <NavItemWrapper key={page.id} page={page} />
           ))}
         </Stack>
-        {user ? (
+        {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
           <Button variant="outline" href="/learn/create">
             Add new page
           </Button>
@@ -140,7 +140,10 @@ export function Page() {
                 {selectedPage?.title ?? "Select a page"}
               </Heading>
 
-              {user ? (
+              {hasPermission(loggedUser?.role, [
+                ROLES.ADMIN,
+                ROLES.MODERATOR,
+              ]) ? (
                 <Box>
                   <ProfileSummaryCard.MoreActions>
                     <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>

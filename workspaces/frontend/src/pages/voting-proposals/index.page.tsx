@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps, ROLES } from "src/renderer/types";
 
 import {
   Box,
@@ -15,6 +15,46 @@ import {
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { usePageContext } from "src/renderer/PageContextProvider";
+import { hasPermission } from "src/utils/helpers";
+
+interface SkeletonRowProps {
+  numItems: number;
+  width: string;
+}
+
+const SkeletonRow = ({ numItems, width }: SkeletonRowProps) => (
+  <Box display="flex" flexDirection={"row"} gap="12px">
+    <Skeleton height="68px" width={width} />
+    {Array.from({ length: numItems }).map((_, index) => (
+      <Skeleton key={index} height="68px" width="100%" />
+    ))}
+  </Box>
+);
+
+interface VotingPropsSkeletonProps {
+  numRows?: number;
+  numSkeletonsPerRow?: number;
+  firstSkeletonWidth?: string;
+}
+
+const VotingPropsSkeleton = ({
+  numRows = 9,
+  numSkeletonsPerRow = 3,
+  firstSkeletonWidth = "500%",
+}: VotingPropsSkeletonProps) => {
+  return (
+    <Box display="flex" flexDirection={"column"} gap="12px">
+      {Array.from({ length: numRows }).map((_, rowIndex) => (
+        <SkeletonRow
+          key={rowIndex}
+          numItems={numSkeletonsPerRow}
+          width={firstSkeletonWidth}
+        />
+      ))}
+    </Box>
+  );
+};
 
 const SORTING_OPTIONS = [
   { label: "Newest", value: "desc" },
@@ -67,6 +107,7 @@ export function Page() {
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortingTypes>("desc");
+  const { user } = usePageContext();
 
   const {
     data,
@@ -84,6 +125,27 @@ export function Page() {
     setSearchInput(searchInput);
     debounce(searchInput);
   };
+
+  function ActionButtons() {
+    if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR])) {
+      return null;
+    }
+
+    return (
+      <>
+        <Box display="flex" marginLeft="auto">
+          <Button
+            as="a"
+            href="voting-proposals/create"
+            size="condensed"
+            variant="primary"
+          >
+            Create proposal
+          </Button>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px" pb="200px">
@@ -121,22 +183,17 @@ export function Page() {
               ))}
             </Select>
           </ButtonGroup>
-          <Box display="flex" marginLeft="auto">
-            <Button
-              as="a"
-              href="voting-proposals/create"
-              size="condensed"
-              variant="primary"
-            >
-              Create proposal
-            </Button>
-          </Box>
+          <ActionButtons />
         </AppBar>
       )}
       <Box position={"relative"}>
         <ListRow.Container>
           {loading ? (
-            <VotingPropsSkeleton />
+            <VotingPropsSkeleton
+              numRows={10}
+              numSkeletonsPerRow={4}
+              firstSkeletonWidth="600%"
+            />
           ) : error ? (
             <Box position="absolute" inset="0" top="-25px" bg="#F9F8F9">
               <EmptyState
@@ -179,55 +236,3 @@ export function Page() {
 export const documentProps = {
   title: "Proposals",
 } satisfies DocumentProps;
-
-const VotingPropsSkeleton = () => {
-  return (
-    <Box display="flex" flexDirection={"column"} gap="12px">
-      <Box display="flex" flexDirection={"row"} gap="12px">
-        <Skeleton height="68px" width="100%" />
-      </Box>
-      <Box display="flex" flexDirection={"row"} gap="12px">
-        <Skeleton height="68px" width="500%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-      </Box>
-      <Box display="flex" flexDirection={"row"} gap="12px">
-        <Skeleton height="68px" width="500%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-      </Box>
-      <Box display="flex" flexDirection={"row"} gap="12px">
-        <Skeleton height="68px" width="500%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-      </Box>
-      <Box display="flex" flexDirection={"row"} gap="12px">
-        <Skeleton height="68px" width="500%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-      </Box>
-      <Box display="flex" flexDirection={"row"} gap="12px">
-        <Skeleton height="68px" width="500%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-      </Box>
-      <Box display="flex" flexDirection={"row"} gap="12px">
-        <Skeleton height="68px" width="500%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-      </Box>
-      <Box display="flex" flexDirection={"row"} gap="12px">
-        <Skeleton height="68px" width="500%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-        <Skeleton height="68px" width="100%" />
-      </Box>
-    </Box>
-  );
-};

@@ -2,6 +2,7 @@ import ReactDOM from "react-dom/client";
 import { PageShell } from "./PageShell";
 import type { PageContextClient } from "./types";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { TrpcProvider } from "./TrpcProvider";
 
 export const clientRouting = true;
 export const hydrationCanBeAborted = true;
@@ -13,9 +14,11 @@ export async function render(pageContext: PageContextClient) {
   const apolloClient = makeApolloClient(pageContext.apolloIntialState);
 
   const page = (
-    <PageShell pageContext={pageContext} apolloClient={apolloClient}>
-      <Page {...pageProps} />
-    </PageShell>
+    <TrpcProvider>
+      <PageShell pageContext={pageContext} apolloClient={apolloClient}>
+        <Page {...pageProps} />
+      </PageShell>
+    </TrpcProvider>
   );
   const container = document.getElementById("page-view")!;
 

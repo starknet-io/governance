@@ -2,9 +2,10 @@ import { dangerouslySkipEscape, escapeInject } from "vite-plugin-ssr/server";
 import { PageContextServer } from "./types";
 import { PageShell } from "./PageShell";
 import { getDefaultPageContext } from "./helpers";
-import { getDataFromTree } from '@apollo/client/react/ssr'
-import  { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
-import fetch from 'cross-fetch';
+import { getDataFromTree } from "@apollo/client/react/ssr";
+import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
+import fetch from "cross-fetch";
+import { TrpcProvider } from "./TrpcProvider";
 
 // See https://vite-plugin-ssr.com/data-fetching
 export const passToClient = [
@@ -14,7 +15,7 @@ export const passToClient = [
   "documentProps",
   "locale",
   "data",
-  "apolloIntialState"
+  "apolloIntialState",
 ];
 
 export async function onBeforeRender(pageContext: PageContextServer) {
@@ -28,33 +29,34 @@ function makeApolloClient() {
     ssrMode: true,
     link: createHttpLink({
       uri: `${import.meta.env.VITE_APP_SNAPSHOT_URL}/graphql`,
-      fetch
+      fetch,
     }),
-    cache: new InMemoryCache()
-  })
-  return apolloClient
+    cache: new InMemoryCache(),
+  });
+  return apolloClient;
 }
 
 export async function render(pageContext: PageContextServer) {
   const { Page, pageProps, redirectTo } = pageContext;
 
-  if (redirectTo) return {}
+  if (redirectTo) return {};
 
   const documentProps =
     pageContext.documentProps ?? pageContext.exports.documentProps;
 
-  const apolloClient = makeApolloClient()
+  const apolloClient = makeApolloClient();
 
   // See https://www.apollographql.com/docs/react/performance/server-side-rendering/
   const page = (
-    <PageShell pageContext={pageContext} apolloClient={apolloClient}>
-      <Page {...pageProps} />
-    </PageShell>
+    <TrpcProvider>
+      <PageShell pageContext={pageContext} apolloClient={apolloClient}>
+        <Page {...pageProps} />
+      </PageShell>
+    </TrpcProvider>
   );
 
-  const pageHtml = await getDataFromTree(page)
-  const apolloIntialState = apolloClient.extract()
-
+  const pageHtml = await getDataFromTree(page);
+  const apolloIntialState = apolloClient.extract();
 
   // Streaming is optional and we can use renderToString() instead
   // const stream = await renderToStream(page, {
@@ -93,13 +95,17 @@ export async function render(pageContext: PageContextServer) {
       <meta property="twitter:image" content="${documentProps?.image ?? ""}">
 
       <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=${dangerouslySkipEscape(encodeURIComponent(import.meta.env.VITE_APP_GOOGLE_TAG_ID))}"></script>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=${dangerouslySkipEscape(
+        encodeURIComponent(import.meta.env.VITE_APP_GOOGLE_TAG_ID),
+      )}"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', ${dangerouslySkipEscape(JSON.stringify(import.meta.env.VITE_APP_GOOGLE_TAG_ID))});
+        gtag('config', ${dangerouslySkipEscape(
+          JSON.stringify(import.meta.env.VITE_APP_GOOGLE_TAG_ID),
+        )});
       </script>
       <script>
         window.global = window;
@@ -113,7 +119,7 @@ export async function render(pageContext: PageContextServer) {
   return {
     documentHtml,
     pageContext: {
-      apolloIntialState
-    }
-  }
+      apolloIntialState,
+    },
+  };
 }
