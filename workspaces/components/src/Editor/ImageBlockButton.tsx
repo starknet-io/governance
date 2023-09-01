@@ -1,10 +1,14 @@
 import { MouseEvent } from "react";
 import { isBlockActive } from "./hotkeys";
 import { ImageIcon } from "src/Icons";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, useToken } from "@chakra-ui/react";
 import { Transforms } from "slate";
 
 const ImageBlockButton = ({ editor, format }: any) => {
+  const [activeColor, inactiveColor] = useToken("colors", [
+    "content.default.selectedInverted",
+    "content.default.default",
+  ]);
   const insertImageBlock = (link: string) => {
     if (!link) return;
 
@@ -37,13 +41,14 @@ const ImageBlockButton = ({ editor, format }: any) => {
   return (
     <IconButton
       aria-label={format}
-      size="tb"
+      size="condensed"
       variant="toolbar"
       isActive={isBlockActive(editor, format)}
       onMouseDown={handleEmbedImage}
       icon={
         <ImageIcon
-          color={isBlockActive(editor, format) ? "white" : "#6F6E77"}
+          boxSize="18px"
+          color={isBlockActive(editor, format) ? activeColor : inactiveColor}
         />
       }
     />
