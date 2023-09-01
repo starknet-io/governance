@@ -16,7 +16,7 @@ export const CommentInput = ({ onSend }: CommentInputProps) => {
   return (
     <Box mb="16px" position="relative">
       <MarkdownEditor
-        onChange={(e) => handleEditorChange(e)}
+        onChange={handleEditorChange}
         value={editorValue}
       />
       <Button

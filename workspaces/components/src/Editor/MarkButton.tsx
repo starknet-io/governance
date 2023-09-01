@@ -3,37 +3,29 @@ import { IconButton } from "@chakra-ui/react";
 import { BoldIcon, ItalicIcon, UnderlineIcon } from "..";
 import { isMarkActive, toggleMark } from "./hotkeys";
 
+type MarkButtonTypes = "bold" | "italic" | "underline" | "strikeThrough";
+
 type MarkButtonProps = {
-  format: string;
+  format: MarkButtonTypes;
+};
+
+const ICONS: Record<Partial<MarkButtonTypes>, any> = {
+  bold: BoldIcon,
+  italic: ItalicIcon,
+  underline: UnderlineIcon,
+  strikeThrough: () => <div style={{ textDecoration: 'line-through' }}>U</div>,
 };
 
 const MarkButton = ({ format }: MarkButtonProps) => {
   const editor = useSlate();
+  const Icon = ICONS?.[format] ?? UnderlineIcon;
   return (
     <IconButton
       aria-label={format}
       variant="toolbar"
       isActive={isMarkActive(editor, format)}
       size="tb"
-      icon={
-        format === "bold" ? (
-          <BoldIcon
-            color={isMarkActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        ) : format === "italic" ? (
-          <ItalicIcon
-            color={isMarkActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        ) : format === "underline" ? (
-          <UnderlineIcon
-            color={isMarkActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        ) : (
-          <UnderlineIcon
-            color={isMarkActive(editor, format) ? "white" : "#6F6E77"}
-          />
-        )
-      }
+      icon={<Icon color={isMarkActive(editor, format) ? "white" : "#6F6E77"} />}
       onMouseDown={(event) => {
         event.preventDefault();
         toggleMark(editor, format);
