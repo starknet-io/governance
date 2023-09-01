@@ -12,30 +12,31 @@ import {
   ModalHeader,
   ModalFooter,
   Flex,
-  Center,
   Image,
 } from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { SearchIcon } from "src/Icons/UiIcons";
 import EmptyState from "./assets/img.svg";
-import { buildSearchItems } from "./utils/buildItems";
+import { ISearchItem, buildSearchItems } from "./utils/buildItems";
 
-// import algoliasearch from "algoliasearch/lite";
-// import { InstantSearch, SearchBox, Hits } from "react-instantsearch";
+interface Props {
+  searchResults: ISearchItem[];
+  onSearchItems: (searchText: string) => void;
+}
 
-// const searchClient = algoliasearch(
-//   "appId",
-//   "key",
-// );
-
-export function GlobalSearch() {
+export function GlobalSearch({ searchResults, onSearchItems }: Props) {
   const [searchText, setSearchText] = useState("");
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
+  const handleSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+    onSearchItems(e.target.value);
+  };
+
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "/") {
-      setIsSearchModalOpen(condition => !condition);
+      setIsSearchModalOpen((condition) => !condition);
     }
   };
 
@@ -87,6 +88,7 @@ export function GlobalSearch() {
       <Modal
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
+        autoFocus={false}
         size="3xl"
       >
         <ModalOverlay />
@@ -103,13 +105,15 @@ export function GlobalSearch() {
                 placeholder="Search"
                 autoFocus={false}
                 value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={handleSearchTextChange}
               />
             </InputGroup>
           </ModalHeader>
 
           {!!searchText.length && (
-            <ModalBody overflowY="scroll">{buildSearchItems()}</ModalBody>
+            <ModalBody overflowY="scroll">
+              {buildSearchItems(searchResults, "grouped-items")}
+            </ModalBody>
           )}
 
           {!searchText.length && (

@@ -1,14 +1,20 @@
-import { Box, Flex, Text, Image, Badge } from "@chakra-ui/react";
+import { Box, Flex, Text, Image } from "@chakra-ui/react";
 
 import VotingProposalIcon from "../assets/voting_proposal_icon.svg";
 import LearnIcon from "../assets/learn_icon.svg";
 
-export type SearchItemType = "voting_proposal" | "council" | "learn" | "delegate";
+export type SearchItemType =
+  | "voting_proposal"
+  | "council"
+  | "learn"
+  | "delegate";
 type BuildItemsType = "item-list" | "grouped-items";
 
-interface ISearchItem {
-  id: number;
+export interface ISearchItem {
+  name: number;
   type: SearchItemType;
+  objectID: string;
+  refID: string | number;
 }
 
 const GroupNames: Record<SearchItemType, string> = {
@@ -18,25 +24,15 @@ const GroupNames: Record<SearchItemType, string> = {
   delegate: "Delegate",
 };
 
-const mockData: ISearchItem[] = [
-  { type: "voting_proposal", id: 1 },
-  { type: "voting_proposal", id: 2 },
-  { type: "voting_proposal", id: 3 },
-  { type: "council", id: 4 },
-  { type: "delegate", id: 5 },
-  { type: "learn", id: 6 },
-  { type: "learn", id: 7 },
-  { type: "voting_proposal", id: 8 },
-  { type: "voting_proposal", id: 9 },
-  { type: "voting_proposal", id: 10 },
-  { type: "council", id: 11 },
-  { type: "delegate", id: 12 },
-  { type: "learn", id: 13 },
-  { type: "learn", id: 14 },
-];
+const HrefItems: Record<SearchItemType, string> = {
+  voting_proposal: "/voting-proposals",
+  council: "/councils",
+  learn: "/learn",
+  delegate: "/delegates",
+};
 
 export function buildSearchItems(
-  searchItems = mockData,
+  searchItems = [] as ISearchItem[],
   type: BuildItemsType = "item-list",
 ) {
   if (type === "grouped-items") {
@@ -50,32 +46,32 @@ function buildList(searchItems: ISearchItem[]) {
     switch (searchItem.type) {
       case "voting_proposal": {
         return (
-          <HoverBox>
-            <VotingProposalItem />
+          <HoverBox data={searchItem} key={searchItem.objectID}>
+            <VotingProposalItem data={searchItem} />
           </HoverBox>
         );
       }
 
       case "council": {
         return (
-          <HoverBox>
-            <CouncilItem />
+          <HoverBox data={searchItem} key={searchItem.objectID}>
+            <CouncilItem data={searchItem} />
           </HoverBox>
         );
       }
 
       case "learn": {
         return (
-          <HoverBox>
-            <LearnItem />
+          <HoverBox data={searchItem} key={searchItem.objectID}>
+            <LearnItem data={searchItem} />
           </HoverBox>
         );
       }
 
       case "delegate": {
         return (
-          <HoverBox>
-            <DelegateItem />
+          <HoverBox data={searchItem} key={searchItem.objectID}>
+            <DelegateItem data={searchItem} />
           </HoverBox>
         );
       }
@@ -114,7 +110,7 @@ function buildGroupList(searchItems: ISearchItem[]) {
   });
 }
 
-function VotingProposalItem() {
+function VotingProposalItem({ data }: { data: ISearchItem }) {
   return (
     <Flex mb="2">
       <Flex
@@ -136,7 +132,7 @@ function VotingProposalItem() {
       </Flex>
       <Flex flexDirection="column" justifyContent="center">
         <Text fontWeight="semibold" fontSize="sm">
-          Dynamic layouts: faster, cheaper proving
+          {data.name}
         </Text>
         <Flex>
           {/* <Badge
@@ -159,7 +155,7 @@ function VotingProposalItem() {
   );
 }
 
-function CouncilItem() {
+function CouncilItem({ data }: { data: ISearchItem }) {
   return (
     <Flex mb="2">
       <Flex
@@ -178,7 +174,7 @@ function CouncilItem() {
       </Flex>
       <Flex flexDirection="column" justifyContent="center">
         <Text fontWeight="semibold" fontSize="sm">
-          Builders Council
+          {data.name}
         </Text>
         <Text fontSize="smaller" fontWeight="medium" color="grey">
           Council
@@ -188,7 +184,7 @@ function CouncilItem() {
   );
 }
 
-function DelegateItem() {
+function DelegateItem({ data }: { data: ISearchItem }) {
   return (
     <Flex mb="2">
       <Flex
@@ -207,7 +203,7 @@ function DelegateItem() {
       </Flex>
       <Flex flexDirection="column" justifyContent="center">
         <Text fontWeight="semibold" fontSize="sm">
-          manor.eth
+          {data.name}
         </Text>
         <Text fontSize="smaller" fontWeight="medium" color="grey">
           Delegates
@@ -217,7 +213,7 @@ function DelegateItem() {
   );
 }
 
-function LearnItem() {
+function LearnItem({ data }: { data: ISearchItem }) {
   return (
     <Flex mb="2">
       <Flex
@@ -234,7 +230,7 @@ function LearnItem() {
       </Flex>
       <Flex flexDirection="column" justifyContent="center">
         <Text fontWeight="semibold" fontSize="sm">
-          Governance for dummies
+          {data.name}
         </Text>
         <Text fontSize="smaller" fontWeight="medium" color="grey">
           Learn
@@ -244,14 +240,17 @@ function LearnItem() {
   );
 }
 
-function HoverBox({ children }: { children: any }) {
+function HoverBox({ children, data }: { children: any; data: ISearchItem }) {
+  const href = `${HrefItems[data.type]}/${data.refID}`;
   return (
-    <Box
-      _hover={{
-        backgroundColor: "#4826480F",
-      }}
-    >
-      {children}
+    <Box as="a" href={href}>
+      <Box
+        _hover={{
+          backgroundColor: "#4826480F",
+        }}
+      >
+        {children}
+      </Box>
     </Box>
   );
 }
