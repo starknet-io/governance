@@ -75,9 +75,7 @@ export const DelegateCard = (props: Props) => {
             <>
               {delegateType[0].length > 20 ? (
                 <>
-                  <Tag variant="listCard" key={delegateType[0]}>
-                    {delegateType[0]}
-                  </Tag>
+                  <Tag key={delegateType[0]}>{delegateType[0]}</Tag>
                   {delegateType.length > 1 && (
                     <Tooltip
                       hasArrow
@@ -85,16 +83,14 @@ export const DelegateCard = (props: Props) => {
                       placement="top"
                       label={delegateType.slice(1).join(", ")}
                     >
-                      <Tag variant="listCard">+{delegateType.length - 1}</Tag>
+                      <Tag variant="amount">+{delegateType.length - 1}</Tag>
                     </Tooltip>
                   )}
                 </>
               ) : (
                 <>
                   {delegateType.slice(0, 2).map((item: string) => (
-                    <Tag variant="listCard" key={item}>
-                      {delegateNames?.[item] ?? item}
-                    </Tag>
+                    <Tag key={item}>{delegateNames?.[item] ?? item}</Tag>
                   ))}
                   {delegateType.length > 2 && (
                     <Tooltip
@@ -103,7 +99,7 @@ export const DelegateCard = (props: Props) => {
                       placement="top"
                       label={delegateType.slice(2).join(", ")}
                     >
-                      <Tag variant="listCard">+{delegateType.length - 2}</Tag>
+                      <Tag variant="amount">+{delegateType.length - 2}</Tag>
                     </Tooltip>
                   )}
                 </>
