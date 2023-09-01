@@ -80,7 +80,7 @@ export function Page() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       data.statement = editorValue;
-      data.description = shortDescValue;
+      data.description = "shortDescValue";
       data.slug = "";
       data.members = members;
       if (!council?.id) {

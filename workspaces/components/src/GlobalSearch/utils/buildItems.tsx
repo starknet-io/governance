@@ -3,7 +3,7 @@ import { Box, Flex, Text, Image, Badge } from "@chakra-ui/react";
 import VotingProposalIcon from "../assets/voting_proposal_icon.svg";
 import LearnIcon from "../assets/learn_icon.svg";
 
-type SearchItemType = "voting_proposal" | "council" | "learn" | "delegate";
+export type SearchItemType = "voting_proposal" | "council" | "learn" | "delegate";
 type BuildItemsType = "item-list" | "grouped-items";
 
 interface ISearchItem {
@@ -37,7 +37,7 @@ const mockData: ISearchItem[] = [
 
 export function buildSearchItems(
   searchItems = mockData,
-  type: BuildItemsType = "grouped-items",
+  type: BuildItemsType = "item-list",
 ) {
   if (type === "grouped-items") {
     return buildGroupList(searchItems);

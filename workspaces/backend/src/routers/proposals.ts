@@ -140,7 +140,6 @@ export const proposalsRouter = router({
 
       const orderDirection = opts.input?.sortBy || 'desc';
       const searchQuery = opts.input?.searchQuery || undefined;
-
       let proposals: IProposal[];
 
       if (opts.input?.sortBy === 'most_discussed') {
