@@ -1,6 +1,6 @@
 import {
-  Box,
-  Link,
+  Button,
+  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -17,7 +17,7 @@ import {
 } from "src/Icons";
 import { Text } from "../Text";
 import { Heading } from "src/Heading";
-import "./support-modal.css";
+import React from "react";
 
 type Props = {
   isOpen: boolean;
@@ -26,22 +26,28 @@ type Props = {
 
 export const SupportModal = ({ isOpen = false, onClose }: Props) => {
   return (
+    // TODO: New variant for modal, use tokens
     <Modal
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
+      size="md"
       isCentered
       variant="unstyled"
     >
       <ModalOverlay />
-      <ModalContent borderRadius="xl" minHeight="272px" overflowY="scroll">
+      <ModalContent
+        borderRadius="xl"
+        minHeight="300px"
+        overflowY="scroll"
+        padding="8px"
+      >
         <ModalHeader textAlign="center">
           <Heading fontSize="21px" fontWeight="semibold" variant="h3">
             Support
           </Heading>
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton top="16px" />
         <ModalBody
           py={{ base: "4", md: "4", lg: "4" }}
           pb={{ base: "4" }}
@@ -56,32 +62,59 @@ export const SupportModal = ({ isOpen = false, onClose }: Props) => {
               from the community!
             </Text>
           </Stack>
-          <Link
-            mt="4"
-            className="link-box"
-            href="https://community.starknet.io/"
-            target="_blank"
-          >
-            <StarknetCommunityIcon />
-            <Text marginLeft={"6px"}>Starknet community forum</Text>
-            <HiOutlineArrowUpRight style={{ marginLeft: "auto" }} />
-          </Link>
-          <Link
-            mt="4"
-            className="link-box"
-            href="https://www.starknet.io/"
-            target="_blank"
-          >
-            <StarknetIcon />
-            <Text marginLeft={"6px"}> Starknet.io </Text>
-            <HiOutlineArrowUpRight style={{ marginLeft: "auto" }} />
-          </Link>
-          <Box mt="4" className="link-box">
-            <DiscordIcon /> <Text marginLeft={"6px"}>Starknet Discord</Text>
-            <HiOutlineArrowUpRight style={{ marginLeft: "auto" }} />
-          </Box>
+          <Flex flexDirection="column" gap="12px" mt="24px">
+            <LinkBox
+              icon={<StarknetCommunityIcon boxSize="20px" />}
+              href="https://community.starknet.io/"
+              label="Starknet community forum"
+            />
+            <LinkBox
+              icon={<StarknetIcon boxSize="20px" />}
+              href="https://www.starknet.io/"
+              label="Starknet.io"
+            />
+            <LinkBox
+              icon={<DiscordIcon boxSize="20px" />}
+              href="https://discord.com/invite/qypnmzkhbc"
+              label="Starknet Discord"
+            />
+          </Flex>
         </ModalBody>
       </ModalContent>
     </Modal>
+  );
+};
+
+type LinkBoxProps = {
+  href: string;
+  icon?: React.ReactElement;
+  label: string;
+};
+const LinkBox = ({ href, icon, label }: LinkBoxProps) => {
+  return (
+    <Button
+      href={href}
+      as="a"
+      variant="outline"
+      target={"_blank"}
+      size="lg"
+      leftIcon={icon}
+      rightIcon={<HiOutlineArrowUpRight size="20px" color="#86848D" />}
+      width="100%"
+      justifyContent={"space-between"}
+      height="44px"
+      padding="12px 20px"
+    >
+      <Text
+        marginRight="auto"
+        fontSize={"14px"}
+        fontWeight="500"
+        lineHeight="20px"
+        letterSpacing="0.07px"
+        color="#4A4A4F"
+      >
+        {label}
+      </Text>
+    </Button>
   );
 };
