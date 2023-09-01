@@ -43,11 +43,13 @@ import {
   SupportModal,
 } from "@yukilabs/governance-components";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
-import { PageContext } from "./types";
+import { PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
+import { hasPermission } from "src/utils/helpers";
+import { usePageContext } from "./PageContextProvider";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -87,6 +89,7 @@ export function DynamicContextProviderPage(props: Props) {
   const hasCalledAuthenticateUser = useRef(false); // To guard against continuous calls
   const [modalOpen, setModalOpen] = useState(false);
   const editUserProfile = trpc.users.editUserProfileByAddress.useMutation();
+  const utils = trpc.useContext();
 
   const authenticateUser = useCallback(
     async (params: AuthSuccessParams) => {
@@ -98,6 +101,7 @@ export function DynamicContextProviderPage(props: Props) {
         ensName: params.user.ens?.name,
         ensAvatar: params.user.ens?.avatar,
       });
+      utils.auth.currentUser.invalidate();
     },
     [authMutation],
   );
@@ -133,6 +137,15 @@ export function DynamicContextProviderPage(props: Props) {
         },
       },
     );
+  };
+
+  const handleDynamicLogout = () => {
+    logoutMutation.mutateAsync(undefined, {
+      onSuccess: () => {
+        utils.auth.currentUser.invalidate();
+        setAuthUser(null);
+      },
+    });
   };
 
   return (
@@ -178,7 +191,7 @@ export function DynamicContextProviderPage(props: Props) {
                 setAuthUser(params);
               }
             },
-            onLogout: () => logoutMutation.mutate(),
+            onLogout: () => handleDynamicLogout(),
           },
           cssOverrides,
         }}
@@ -286,6 +299,7 @@ function PageLayout(props: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const councilResp = trpc.councils.getAll.useQuery();
   const [renderDone, setRenderDone] = useState(false);
+  const { user } = usePageContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -435,9 +449,13 @@ function PageLayout(props: Props) {
           <NavGroup
             label="Councils"
             action={
-              <Button as="a" href="/councils/create" variant="icon" size="md">
-                +
-              </Button>
+              hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+                <Button as="a" href="/councils/create" variant="icon" size="md">
+                  +
+                </Button>
+              ) : (
+                <></>
+              )
             }
           >
             {councilResp.data?.map((council) => (
@@ -457,12 +475,14 @@ function PageLayout(props: Props) {
               icon={<LearnIcon />}
               label="Learn"
             />
-            <NavItem
-              href="/settings"
-              active={pageContext.urlOriginal}
-              icon={<SettingsIcon />}
-              label="Settings"
-            />
+            {hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+              <NavItem
+                href="/settings"
+                active={pageContext.urlOriginal}
+                icon={<SettingsIcon />}
+                label="Settings"
+              />
+            ) : null}
             <NavItem
               active={pageContext.urlOriginal}
               icon={<SupportIcon />}

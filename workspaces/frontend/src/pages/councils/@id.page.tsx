@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps, ROLES } from "src/renderer/types";
 
 import {
   Box,
@@ -22,9 +22,9 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { useEffect, useState } from "react";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
+import { hasPermission } from "src/utils/helpers";
 
 const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   query DelegateProfilePageQuery(
@@ -67,7 +67,7 @@ export function Page() {
   });
 
   const { data: council } = councilResp;
-  const { user } = useDynamicContext();
+  const { user: loggedUser } = usePageContext();
 
   useEffect(() => {
     if (council) {
@@ -131,7 +131,7 @@ export function Page() {
             address="0x2EF324324234234234234234231234"
             ensName={council?.name ?? "Council"}
           >
-            {user ? (
+            {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
               <ProfileSummaryCard.MoreActions>
                 <MenuItem as="a" href={`/councils/edit/${council?.slug}`}>
                   Edit
@@ -147,7 +147,7 @@ export function Page() {
         <Divider my="24px" />
         <Box>
           <MarkdownRenderer content={council?.description || ""} />
-          {user ? (
+          {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
             <Button mt="24px" variant="fullGhostBtn" onClick={handleClick}>
               Add new post
             </Button>

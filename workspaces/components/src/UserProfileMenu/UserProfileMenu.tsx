@@ -20,7 +20,7 @@ import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
 
 interface IUser extends User {
-  delegationStatement: Delegate;
+  delegationStatement: Delegate | null;
 }
 
 interface UserProfileMenuProps {

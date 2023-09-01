@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps, ROLES } from "src/renderer/types";
 
 import {
   Box,
@@ -15,6 +15,8 @@ import {
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { usePageContext } from "src/renderer/PageContextProvider";
+import { hasPermission } from "src/utils/helpers";
 
 const SORTING_OPTIONS = [
   { label: "Newest", value: "desc" },
@@ -67,6 +69,7 @@ export function Page() {
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortingTypes>("desc");
+  const { user } = usePageContext();
 
   const {
     data,
@@ -84,6 +87,27 @@ export function Page() {
     setSearchInput(searchInput);
     debounce(searchInput);
   };
+
+  function ActionButtons() {
+    if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR])) {
+      return null;
+    }
+
+    return (
+      <>
+        <Box display="flex" marginLeft="auto">
+          <Button
+            as="a"
+            href="voting-proposals/create"
+            size="sm"
+            variant="solid"
+          >
+            Create proposal
+          </Button>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <Box px={{ base: "26.5px", md: "76.5px" }} pt="40px" pb="200px">
@@ -121,16 +145,7 @@ export function Page() {
               ))}
             </Select>
           </ButtonGroup>
-          <Box display="flex" marginLeft="auto">
-            <Button
-              as="a"
-              href="voting-proposals/create"
-              size="sm"
-              variant="solid"
-            >
-              Create proposal
-            </Button>
-          </Box>
+          <ActionButtons />
         </AppBar>
       )}
       <Box position={"relative"}>
