@@ -94,7 +94,7 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
         <ModalOverlay />
         <ModalContent height="672px" borderRadius="lg">
           <ModalHeader p="0" borderBottom="1px solid #23192D1A">
-            <Input placeholder="YPO" hidden/>
+            <Input placeholder="" hidden/>
             <InputGroup>
               <InputLeftElement height="60px">
                 <SearchIcon />
