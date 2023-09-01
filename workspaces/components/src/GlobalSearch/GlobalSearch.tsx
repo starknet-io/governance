@@ -94,6 +94,7 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
         <ModalOverlay />
         <ModalContent height="672px" borderRadius="lg">
           <ModalHeader p="0" borderBottom="1px solid #23192D1A">
+            <Input placeholder="YPO" hidden/>
             <InputGroup>
               <InputLeftElement height="60px">
                 <SearchIcon />
@@ -110,13 +111,13 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
             </InputGroup>
           </ModalHeader>
 
-          {!!searchText.length && (
+          {!!searchResults.length && (
             <ModalBody overflowY="scroll">
               {buildSearchItems(searchResults, "grouped-items")}
             </ModalBody>
           )}
 
-          {!searchText.length && (
+          {!searchResults.length && (
             <ModalBody
               display="flex"
               alignItems="center"

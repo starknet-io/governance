@@ -309,6 +309,8 @@ function PageLayout(props: Props) {
     };
   }, [helpMessage, setHelpMessage]);
 
+  console.log({ globalSearchResults });
+
   return (
     <>
       <InfoModal
