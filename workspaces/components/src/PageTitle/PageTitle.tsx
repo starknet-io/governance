@@ -1,6 +1,7 @@
-import { Box, Link } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 import { Text } from "src/Text";
+import { Link } from "src/Link";
 
 type Props = {
   title: string;
@@ -27,7 +28,7 @@ export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
           </Text>
 
           {learnMoreLink && (
-            <Link variant="secondary" href={learnMoreLink}>
+            <Link variant="secondary" size="medium" href={learnMoreLink}>
               Learn more
             </Link>
           )}

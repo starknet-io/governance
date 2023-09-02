@@ -4,6 +4,9 @@ const primary = defineStyle({
   color: "content.links.default",
   borderBottom: "1.5px solid",
   borderColor: "transparent",
+  svg: {
+    fill: "content.links.default",
+  },
   _hover: {
     textDecoration: "none",
     color: "content.links.default",
@@ -16,6 +19,9 @@ const secondary = defineStyle({
   color: "content.accent.default",
   borderBottom: "1.5px solid",
   borderColor: "transparent",
+  svg: {
+    fill: "content.accent.default",
+  },
   _hover: {
     textDecoration: "none",
     color: "content.accent.default",
