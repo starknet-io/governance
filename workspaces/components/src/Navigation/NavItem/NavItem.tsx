@@ -15,6 +15,7 @@ export const NavItem = ({
   icon,
   label,
   onClick,
+  active,
   variant = "navLink",
 }: Props) => {
   if (href) {
@@ -25,6 +26,7 @@ export const NavItem = ({
         href={href}
         size="navLink"
         variant={variant}
+        isActive={active}
       >
         {label}
       </Button>
