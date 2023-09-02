@@ -66,6 +66,7 @@ export {
   LinkIcon,
   QuillEditor,
   ProposalsIcon,
+  HomeIcon,
   SnipsIcon,
   BuildersIcon,
   DelegatesIcon,
@@ -100,7 +101,7 @@ export {
   StatusModal,
   EmptyState,
   UserProfileMenu,
-  SupportModal
+  SupportModal,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";

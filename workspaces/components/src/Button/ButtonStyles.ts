@@ -29,8 +29,21 @@ export const buttonTheme = {
       borderRadius: "condensed.base",
       py: "condensed.sm",
       minHeight: "36px",
+      maxWidth: "100%",
       svg: {
         boxSize: "20px",
+      },
+    },
+    navLink: {
+      minWidth: "auto",
+      px: "standard.sm",
+      borderRadius: "standard.md",
+      py: "standard.xs",
+      minHeight: "36px",
+      maxWidth: "100%",
+      justifyContent: "flex-start",
+      svg: {
+        boxSize: "24px",
       },
     },
   },
@@ -203,6 +216,89 @@ export const buttonTheme = {
         color: "content.onSurfaceInverted.default",
         svg: {
           fill: "content.onSurfaceInverted.default",
+        },
+      },
+      _disabled: {
+        bg: "surface.forms.disabled",
+        color: "content.default.disabled",
+        svg: {
+          fill: "content.default.disabled",
+        },
+
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
+    navLink: {
+      borderWidth: "1px",
+      borderColor: "transparent",
+      bg: "transparent",
+      color: "content.default.default",
+      svg: {
+        fill: "content.default.default",
+      },
+      boxShadow: " 0px 1px 1px 0px rgba(0, 0, 0, 0)",
+      _hover: {
+        bg: "surface.forms.hover",
+        color: "content.default.hover",
+        svg: {
+          fill: "content.default.hover",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.forms.selected",
+        color: "content.default.selected",
+        svg: {
+          fill: "content.default.selected",
+        },
+      },
+      _disabled: {
+        bg: "surface.forms.disabled",
+        color: "content.default.disabled",
+        svg: {
+          fill: "content.default.disabled",
+        },
+
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
+    feedback: {
+      borderColor: "border.link",
+      bg: "surface.forms.default",
+      color: "content.links.default",
+      svg: {
+        fill: "content.links.default",
+      },
+
+      _hover: {
+        //toDo no styles for feedback other than default
+        opacity: 0.8,
+        bg: "surface.forms.default",
+        color: "content.links.default",
+        svg: {
+          fill: "content.links.default",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.forms.default",
+        color: "content.links.default",
+        svg: {
+          fill: "content.links.default",
         },
       },
       _disabled: {
