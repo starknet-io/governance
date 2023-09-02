@@ -4,7 +4,7 @@ import { Tag } from "./Tag";
 import { ThemeProvider } from "../ThemeProvider";
 
 export default {
-  title: "governance-ui/Tags",
+  title: "governance-ui/Tag",
   component: Tag,
 } as Meta<typeof Tag>;
 
