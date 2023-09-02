@@ -40,6 +40,7 @@ import {
   FormLabel,
   Input,
   SupportModal,
+  HomeIcon,
 } from "@yukilabs/governance-components";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { PageContext, ROLES } from "./types";
@@ -305,6 +306,9 @@ function PageLayout(props: Props) {
     setRenderDone(true);
   }, []);
 
+  console.log(JSON.stringify(pageContext.urlOriginal, null, 2));
+  console.log(JSON.stringify(pageContext.urlPathname, null, 2));
+
   useEffect(() => {
     let timer: string | number | NodeJS.Timeout | undefined;
     if (helpMessage === "connectWalletMessage") {
@@ -347,18 +351,19 @@ function PageLayout(props: Props) {
           <DrawerBody px="12px" py="16px" pt="0">
             <NavGroup>
               <NavItem
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 icon={<FeedbackIcon />}
                 label="Feedback"
+                variant="feedback"
               />
               <NavItem
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 icon={<SupportIcon />}
                 label="Support"
               />
               <NavItem
                 href="/learn"
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 icon={<LearnIcon />}
                 label="Learn"
               />
@@ -367,7 +372,7 @@ function PageLayout(props: Props) {
               {councilResp.data?.map((council) => (
                 <NavItem
                   key={council.id}
-                  active={pageContext.urlOriginal}
+                  // active={pageContext.urlOriginal}
                   icon={<SecurityIcon />}
                   label={council.name ?? "Unknown"}
                   href={
@@ -379,7 +384,7 @@ function PageLayout(props: Props) {
             <NavGroup>
               <NavItem
                 icon={<DelegatesIcon />}
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 href="/delegates"
                 label="Delegates"
               />
@@ -387,7 +392,7 @@ function PageLayout(props: Props) {
               <NavItem
                 href="/voting-proposals"
                 //todo: fix how active state for menu works
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 icon={<ProposalsIcon />}
                 label="Voting proposals"
               />
@@ -416,20 +421,31 @@ function PageLayout(props: Props) {
           <Logo href="/voting-proposals" />
           <Box mt="-20px">
             <NavGroup>
-              <NavItem
-                href="/voting-proposals"
-                //todo: fix how active state for menu works
-                active={pageContext.urlOriginal}
-                icon={<ProposalsIcon />}
-                label="Voting proposals"
-              />
-
-              <NavItem
-                icon={<DelegatesIcon />}
-                active={pageContext.urlOriginal}
-                href="/delegates"
-                label="Delegates"
-              />
+              {[
+                {
+                  href: "/",
+                  label: "Home",
+                  icon: <HomeIcon />,
+                },
+                {
+                  href: "/voting-proposals",
+                  label: "Voting proposals",
+                  icon: <ProposalsIcon />,
+                },
+                {
+                  href: "/delegates",
+                  label: "Delegates",
+                  icon: <DelegatesIcon />,
+                },
+              ].map((item) => (
+                <NavItem
+                  active={item.href === pageContext.urlOriginal}
+                  icon={item.icon}
+                  label={item.label}
+                  key={item.href}
+                  href={item.href}
+                />
+              ))}
             </NavGroup>
           </Box>
           <NavGroup
@@ -452,36 +468,45 @@ function PageLayout(props: Props) {
             {councilResp.data?.map((council) => (
               <NavItem
                 key={council.id}
-                active={pageContext.urlOriginal}
                 icon={<SecurityIcon />}
                 label={council.name ?? "Unknown"}
                 href={council.slug ? `/councils/${council.slug}` : "/councils"}
+                active={council.slug === pageContext.urlOriginal}
               />
             ))}
           </NavGroup>
           <NavGroup alignEnd>
-            <NavItem
-              href="/learn"
-              active={pageContext.urlOriginal}
-              icon={<LearnIcon />}
-              label="Learn"
-            />
+            {[
+              {
+                href: "/learn",
+                label: "Learn",
+                icon: <LearnIcon />,
+              },
+            ].map((item) => (
+              <NavItem
+                active={item.href === pageContext.urlOriginal}
+                icon={item.icon}
+                label={item.label}
+                key={item.href}
+                href={item.href}
+              />
+            ))}
+
             {hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
               <NavItem
                 href="/settings"
-                active={pageContext.urlOriginal}
                 icon={<SettingsIcon />}
                 label="Settings"
               />
             ) : null}
             <NavItem
-              active={pageContext.urlOriginal}
               icon={<SupportIcon />}
               label="Support"
               onClick={() => setIsModalOpen(!isModalOpen)}
             />
+
             <NavItem
-              active={pageContext.urlOriginal}
+              href="https://www.starknet.io"
               icon={<FeedbackIcon />}
               label="Feedback"
             />
