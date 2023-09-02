@@ -1,7 +1,7 @@
 import { Box, Flex, Stack, Text } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
-interface NavGroupProps {
+export interface NavGroupProps {
   label?: string;
   children: ReactNode;
   alignEnd?: boolean;
