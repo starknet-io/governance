@@ -15,18 +15,19 @@ export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
         {title}
       </Heading>
       {description && (
-        <Box maxWidth="800px" pb="24px">
+        <Box maxWidth="900px" pb="24px">
           <Text
-            color="#57565D"
-            lineHeight="26px"
+            color="#4A4A4F"
+            lineHeight="24px"
             variant="body"
-            fontSize="16px"
+            fontWeight={"400"}
+            fontSize="15px"
           >
             {description}
           </Text>
 
           {learnMoreLink && (
-            <Link variant="body" href={learnMoreLink}>
+            <Link variant="secondary" href={learnMoreLink}>
               Learn more
             </Link>
           )}
