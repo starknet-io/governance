@@ -13,7 +13,7 @@ export const PageTitle = () => (
     <VStack p={12}>
       <>
         <GovernancePageTitle
-          title="Home"
+          title="Delegates"
           description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol."
           learnMoreLink="https://google.com"
         />

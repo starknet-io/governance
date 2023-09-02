@@ -12,7 +12,7 @@ type Props = {
 export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
   return (
     <Box mb="24px">
-      <Heading as="h2" variant="h3" mb="12px" color="#1A1523">
+      <Heading fontSize="28px" as="h2" variant="h3" mb="12px" color="#1A1523">
         {title}
       </Heading>
       {description && (
@@ -23,6 +23,7 @@ export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
             variant="body"
             fontWeight={"400"}
             fontSize="15px"
+            mb="4px"
           >
             {description}
           </Text>
