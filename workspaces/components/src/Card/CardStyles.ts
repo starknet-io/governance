@@ -4,25 +4,30 @@ import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(cardAnatomy.keys);
 
-const baseStyle = definePartsStyle({
-  // define the part you're going to style
-  container: {
-    borderRadius: "8px",
-    border: "1px solid rgba(35, 25, 45, 0.10)",
-    boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.04)",
-    _hover: {
-      boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.09)",
+const variants = {
+  delegate: definePartsStyle({
+    container: {
+      maxWidth: "377px",
+      minWidth: "316px",
+      borderColor: "border.forms",
+      borderWidth: "1px",
+      boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.04)",
+      bg: "surface.forms.default",
     },
-  },
-  header: {
-    paddingBottom: "12px",
-  },
-  body: {
-    paddingTop: "2px",
-  },
-  footer: {
-    paddingTop: "2px",
-  },
-});
+    header: {
+      paddingBottom: "standard.lg",
+    },
+    body: {
+      px: "standard.md",
+      py: "0px",
+    },
+    footer: {
+      paddingTop: "standard.lg",
+    },
+  }),
+};
 
-export const cardTheme = defineMultiStyleConfig({ baseStyle });
+// export variants in the component theme
+export const cardTheme = defineMultiStyleConfig({
+  variants,
+});

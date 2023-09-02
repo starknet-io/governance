@@ -13,7 +13,7 @@ export const DelegateCard = () => (
     <HStack p={12}>
       <>
         <GovernanceDelegateCard
-          delegateStatement="sadf  asdfasdf asdfasdf sadf asdfas df"
+          delegateStatement="I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years..."
           delegateType={[
             "Dao",
             "Infrastructure",
@@ -23,17 +23,17 @@ export const DelegateCard = () => (
           ]}
           address="0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5"
           avatarUrl="https://euc.li/robwalsh.eth"
-          delegatedVotes="32e4234"
+          delegatedVotes="0"
           ensName="robwalsh.eth"
           onDelegateClick={() => console.log("delegate click")}
         />
         <GovernanceDelegateCard
-          delegateStatement="sadf  asdfasdf asdfasdf sadf asdfas df"
+          delegateStatement="I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years..."
           delegateType={["Dao"]}
           address="0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5"
           avatarUrl="https://euc.li/robwalsh.eth"
-          delegatedVotes="32e4234"
-          ensName="robwalsh.eth"
+          delegatedVotes="0"
+          ensName="cillianhunter.eth"
           onDelegateClick={() => console.log("delegate click")}
           profileURL="https://starknet.io"
         />

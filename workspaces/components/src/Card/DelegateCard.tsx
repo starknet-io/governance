@@ -54,7 +54,7 @@ export const DelegateCard = (props: Props) => {
   const delegatedVotesFormatted = `${delegatedVotes} Votes`;
 
   return (
-    <LinkBox as={Card} variant="outline">
+    <LinkBox as={Card} variant="delegate">
       <CardHeader>
         <LinkOverlay href={profileURL}>
           <ProfileSummaryCard.Root>
@@ -75,7 +75,9 @@ export const DelegateCard = (props: Props) => {
             <>
               {delegateType[0].length > 20 ? (
                 <>
-                  <Tag key={delegateType[0]}>{delegateType[0]}</Tag>
+                  <Tag style={{ pointerEvents: "none" }} key={delegateType[0]}>
+                    {delegateType[0]}
+                  </Tag>
                   {delegateType.length > 1 && (
                     <Tooltip
                       hasArrow
@@ -90,7 +92,9 @@ export const DelegateCard = (props: Props) => {
               ) : (
                 <>
                   {delegateType.slice(0, 2).map((item: string) => (
-                    <Tag key={item}>{delegateNames?.[item] ?? item}</Tag>
+                    <Tag style={{ pointerEvents: "none" }} key={item}>
+                      {delegateNames?.[item] ?? item}
+                    </Tag>
                   ))}
                   {delegateType.length > 2 && (
                     <Tooltip
@@ -109,7 +113,7 @@ export const DelegateCard = (props: Props) => {
             <></>
           )}
         </Box>
-        <Text fontSize="13px" noOfLines={3} color="#6B6B80">
+        <Text fontSize="14px" noOfLines={3} color="#4A4A4F">
           <MarkdownRenderer content={delegateStatement || ""} />
         </Text>
       </CardBody>
