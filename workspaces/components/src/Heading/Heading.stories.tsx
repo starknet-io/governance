@@ -1,13 +1,9 @@
 import React from "react";
-import { VStack, HeadingProps, ChakraProvider } from "@chakra-ui/react";
+import { VStack, ChakraProvider } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
 import theme from "src/style/theme";
 import { ThemeProvider } from "../ThemeProvider";
 import { Heading } from "./Heading";
-
-type CustomHeadingProps = {
-  variant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-} & Omit<HeadingProps, "as" | "size">;
 
 export default {
   title: "governance-ui/Typography",
@@ -22,7 +18,7 @@ export default {
   ],
 } as Meta<typeof Heading>;
 
-export const Headings = (args: CustomHeadingProps) => (
+export const Headings = () => (
   <ThemeProvider>
     <VStack p={12} align="flex-start">
       <Heading variant="h2">H2 28/36</Heading>
