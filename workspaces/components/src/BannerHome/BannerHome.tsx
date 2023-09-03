@@ -41,7 +41,7 @@ export const BannerHome = ({
 
       <Box
         width="100%"
-        height="240px"
+        height="373px"
         position="relative"
         borderBottom="1px solid #DCDBDD"
         overflow="hidden"
