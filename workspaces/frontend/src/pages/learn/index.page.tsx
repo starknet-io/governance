@@ -65,17 +65,14 @@ export function Page() {
     window.history.pushState(null, "", `/learn/${page.slug}`);
   };
 
-  console.log("selected page id", selectedPage?.id);
-
   const NavItemWrapper = ({ page }: { page: PageWithUserInterface }) => {
-    console.log("page id", page?.id);
     return (
       <div style={{ display: "flex" }}>
         <div style={{ width: "100%" }} onClick={() => selectPage(page)}>
           <NavItem
             label={page.title ?? ""}
             // activePage={selectedPage?.id === page.id}
-            active={selectedPage?.id === page.id}
+            active={selectedPage?.id == page?.id}
           />
         </div>
       </div>
