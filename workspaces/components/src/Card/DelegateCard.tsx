@@ -9,7 +9,6 @@ import {
   LinkOverlay,
 } from "@chakra-ui/react";
 
-import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { Button } from "../Button";
 import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
@@ -113,9 +112,11 @@ export const DelegateCard = (props: Props) => {
             <></>
           )}
         </Box>
-        <Text fontSize="14px" noOfLines={3} color="#4A4A4F">
-          <MarkdownRenderer content={delegateStatement || ""} />
-        </Text>
+
+        <MarkdownRenderer
+          textProps={{ fontSize: "14px", noOfLines: 3, color: "#4A4A4F" }}
+          content={delegateStatement || ""}
+        />
       </CardBody>
       <CardFooter>
         <Box width="100%" display="flex" flexDirection="column" gap="16px">

@@ -2,14 +2,16 @@
 
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import { Heading, Text, Code } from "@chakra-ui/react";
+import { Heading, Text, Code, TextProps } from "@chakra-ui/react";
 
 interface MarkdownRendererProps {
   content: string;
+  textProps?: TextProps;
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   content,
+  textProps,
 }) => {
   return (
     <ReactMarkdown
@@ -20,7 +22,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h4: ({ ...props }) => <Heading variant="h4" as="h4" {...props} />,
         h5: ({ ...props }) => <Heading variant="h5" as="h5" {...props} />,
         h6: ({ ...props }) => <Heading variant="h6" as="h6" {...props} />,
-        p: ({ ...props }) => <Text {...props} />,
+        p: ({ ...props }) => <Text {...textProps} {...props} />,
         code: ({ ...props }) => <Code {...props} />,
         ol: ({ ...props }) => <ol style={{ paddingLeft: 16 }} {...props} />,
         ul: ({ ...props }) => <ul style={{ paddingLeft: 16 }} {...props} />,
