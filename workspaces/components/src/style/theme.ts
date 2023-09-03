@@ -15,6 +15,8 @@ import { menuTheme } from "src/Menu/MenuStyles";
 import { linkTheme } from "src/Link/LinkStyles";
 import { skeletonTheme } from "src/Skeleton/SkeletonStyles";
 import { colors, spacing, radii } from "./tokens";
+import { checkboxTheme } from "src/Checkbox/CheckboxStyles";
+import { radioTheme } from "src/Radio/RadioStyles";
 
 const config = {
   initialColorMode: "light",
@@ -47,15 +49,7 @@ const theme = extendTheme({
     Menu: menuTheme,
     Modal,
     Spinner,
-    Checkbox: {
-      baseStyle: {
-        control: {
-          _checked: {
-            color: "#3b3b3b",
-          },
-        },
-      },
-    },
+
     fonts: {
       heading: `'Poppins', sans-serif`,
       body: `'Inter Variable', sans-serif`,
@@ -65,6 +59,8 @@ const theme = extendTheme({
     styles,
     Skeleton: skeletonTheme,
     Heading,
+    Checkbox: checkboxTheme,
+    Radio: radioTheme,
   },
 });
 
