@@ -14,9 +14,10 @@ import {
   Divider,
   CopyToClipboard,
   MarkdownRenderer,
+  Skeleton,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Page as PageInterface } from "@yukilabs/governance-backend/src/db/schema/pages";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -30,7 +31,8 @@ export function Page() {
   const [selectedPage, setSelectedPage] =
     useState<PageWithUserInterface | null>(null);
   const pagesResp = trpc.pages.getAll.useQuery();
-  const pages = pagesResp.data ?? [];
+  const pages = useMemo(() => pagesResp.data ?? [], [pagesResp.data]);
+  const isLoading = pagesResp.isLoading;
   const { user: loggedUser } = usePageContext();
   const pageContext = usePageContext();
 
@@ -64,6 +66,8 @@ export function Page() {
     window.history.pushState(null, "", `/learn/${page.slug}`);
   };
 
+  console.log(selectedPage);
+
   const NavItemWrapper = ({ page }: { page: PageWithUserInterface }) => {
     const url = `${window.location.origin}/learn/${page.slug}`;
     return (
@@ -71,8 +75,8 @@ export function Page() {
         <div style={{ width: "100%" }} onClick={() => selectPage(page)}>
           <NavItem
             label={page.title ?? ""}
-            activePage={selectedPage?.id === page.id}
-            active="learn"
+            // activePage={selectedPage?.id === page.id}
+            active={selectedPage?.id === page.id}
           />
         </div>
         <CopyToClipboard text={url} />
@@ -118,63 +122,80 @@ export function Page() {
         )}
       </Box>
       <ContentContainer maxWidth="800px" center>
-        <Stack
-          width="100%"
-          spacing="24px"
-          direction={{ base: "column" }}
-          color="#545464"
-        >
-          <Box display="flex" alignItems="center" width="100%">
-            <Box
-              display="flex"
-              alignItems="center"
-              width="100%"
-              justifyContent="space-between"
-            >
-              <Heading
-                color="#33333E"
-                variant="h3"
-                maxWidth="90%"
-                lineHeight="1.4em"
+        {!isLoading ? (
+          <Stack
+            width="100%"
+            spacing="24px"
+            direction={{ base: "column" }}
+            color="#545464"
+          >
+            <Box display="flex" alignItems="center" width="100%">
+              <Box
+                display="flex"
+                alignItems="center"
+                width="100%"
+                justifyContent="space-between"
               >
-                {selectedPage?.title ?? "Select a page"}
-              </Heading>
+                <Heading
+                  color="#33333E"
+                  variant="h3"
+                  maxWidth="90%"
+                  lineHeight="1.4em"
+                >
+                  {selectedPage?.title ?? "Select a page"}
+                </Heading>
 
-              {hasPermission(loggedUser?.role, [
-                ROLES.ADMIN,
-                ROLES.MODERATOR,
-              ]) ? (
-                <Box>
-                  <ProfileSummaryCard.MoreActions>
-                    <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
-                      Edit
-                    </MenuItem>
-                    <MenuItem>Delete</MenuItem>
-                  </ProfileSummaryCard.MoreActions>
-                </Box>
-              ) : (
-                <></>
-              )}
+                {hasPermission(loggedUser?.role, [
+                  ROLES.ADMIN,
+                  ROLES.MODERATOR,
+                ]) ? (
+                  <Box>
+                    <ProfileSummaryCard.MoreActions>
+                      <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
+                        Edit
+                      </MenuItem>
+                      <MenuItem>Delete</MenuItem>
+                    </ProfileSummaryCard.MoreActions>
+                  </Box>
+                ) : (
+                  <></>
+                )}
+              </Box>
             </Box>
+            <Flex gap="16px" paddingTop="24px">
+              <Stat.Root>
+                <Stat.Text
+                  label={
+                    selectedPage?.author?.ensName ??
+                    selectedPage?.author?.address.slice(0, 3) +
+                      "..." +
+                      selectedPage?.author?.address.slice(-3)
+                  }
+                />
+              </Stat.Root>
+              <Stat.Root>
+                <Stat.Date date={selectedPage?.createdAt} />
+              </Stat.Root>
+            </Flex>
+            <Divider mb="24px" />
+            <MarkdownRenderer content={selectedPage?.content ?? ""} />
+          </Stack>
+        ) : (
+          <Box
+            display={"flex"}
+            flexDirection="column"
+            gap="12px"
+            mb="24px"
+            width="100%"
+            bg="transparent"
+          >
+            <Skeleton height="36px" width="100%" />
+            <Skeleton height="300px" width="100%" />
+            <Skeleton height="36px" width="100%" />
+            <Skeleton height="300px" width="100%" />
+            <Skeleton height="300px" width="100%" />
           </Box>
-          <Flex gap="16px" paddingTop="24px">
-            <Stat.Root>
-              <Stat.Text
-                label={
-                  selectedPage?.author?.ensName ??
-                  selectedPage?.author?.address.slice(0, 3) +
-                    "..." +
-                    selectedPage?.author?.address.slice(-3)
-                }
-              />
-            </Stat.Root>
-            <Stat.Root>
-              <Stat.Date date={selectedPage?.createdAt} />
-            </Stat.Root>
-          </Flex>
-          <Divider mb="24px" />
-          <MarkdownRenderer content={selectedPage?.content ?? ""} />
-        </Stack>
+        )}
       </ContentContainer>
     </Box>
   );
