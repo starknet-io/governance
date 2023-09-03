@@ -6,7 +6,7 @@ import { Code } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 import { Text, LocalTextProps } from "src/Text/Text";
 
-interface MarkdownRendererProps {
+export interface MarkdownRendererProps {
   content: string;
   textProps?: LocalTextProps;
 }
@@ -24,18 +24,16 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h4: ({ ...props }) => <Heading variant="h4" {...props} />,
         h5: ({ ...props }) => <Heading variant="h5" {...props} />,
         h6: ({ ...props }) => <Heading variant="h6" {...props} />,
-        p: ({ ...props }) => (
-          <Text variant="medium" {...textProps} {...props} />
-        ),
-        code: ({ ...props }) => <Code {...props} />,
+        p: ({ ...props }) => <Text variant="large" {...textProps} {...props} />,
+        code: ({ ...props }) => <Code maxWidth="100%" {...props} />,
         ol: ({ ...props }) => <ol style={{ paddingLeft: 16 }} {...props} />,
         ul: ({ ...props }) => <ul style={{ paddingLeft: 16 }} {...props} />,
         blockquote: ({ ...props }) => (
           <blockquote
             style={{
-              color: "grey",
-              borderLeft: "3px solid grey",
-              paddingLeft: 8,
+              color: "#DCDBDD",
+              borderLeft: "3px solid #DCDBDD",
+              paddingLeft: "12px",
             }}
             {...props}
           />
