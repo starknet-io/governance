@@ -57,7 +57,8 @@ export const BannerHome = ({
                 bgClip="text"
                 variant="h2"
                 fontWeight="500"
-                fontSize="34px"
+                fontSize="48px"
+                lineHeight={"1.5em"}
               >
                 {title}
               </Heading>
