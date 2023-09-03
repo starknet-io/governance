@@ -45,6 +45,10 @@ const living = defineStyle({
   background: "component.tag.living.surface",
   color: "component.tag.living.content",
 });
+const amount = defineStyle({
+  background: "#DCDBDD",
+  color: "#1A1523",
+});
 
 const condensed = defineStyle({
   px: "standard.xs",
@@ -57,6 +61,22 @@ const condensed = defineStyle({
   borderWidth: "0px",
   lineHeight: "7px",
   letterSpacing: "0.5px",
+});
+const round = defineStyle({
+  px: "standard.base",
+  py: "standard.base",
+  borderRadius: "standard.round",
+  height: "20px",
+  width: "20px",
+  fontSize: "10px",
+  fontWeight: "600",
+  textTransform: "uppercase",
+  borderWidth: "0px",
+  lineHeight: "20px",
+  letterSpacing: "0.5px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 });
 
 export const badgeTheme = defineStyleConfig({
@@ -72,7 +92,7 @@ export const badgeTheme = defineStyleConfig({
     lineHeight: "7px",
     letterSpacing: "0.5px",
   },
-  sizes: { condensed },
+  sizes: { condensed, round },
   variants: {
     last_call,
     active,
@@ -85,5 +105,6 @@ export const badgeTheme = defineStyleConfig({
     final,
     stagnant,
     living,
+    amount,
   },
 });
