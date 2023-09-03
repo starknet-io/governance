@@ -274,7 +274,7 @@ export function Page() {
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingVotes = !gqlResponse.loading;
   const isLoadingComments = !delegateCommentsResponse.isFetched;
-  const isLoadingSummary = !gqlResponse.loading || !delegateResponse.isFetched; // Or other loading conditions
+  const isLoadingSummary = !gqlResponse.loading || !delegateResponse.isLoading;
 
   return (
     <Box
