@@ -38,6 +38,7 @@ import {
   StarknetIcon,
   FiltersIcon,
   DiscordIcon,
+  SearchIcon,
 } from "./UiIcons";
 import {
   HiOutlineCodeBracketSquare,
@@ -114,4 +115,5 @@ export {
   StarknetIcon,
   DiscordIcon,
   HiOutlineArrowUpRight,
+  SearchIcon,
 };
