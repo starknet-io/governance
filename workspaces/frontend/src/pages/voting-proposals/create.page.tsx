@@ -48,7 +48,7 @@ export function Page() {
         title: "",
         body: EditorTemplate.proposalMarkDown,
         discussion: "",
-        votingPeriod: [new Date(), new Date()] // This will hold both start and end dates
+        votingPeriod: [new Date(), new Date()], // This will hold both start and end dates
       };
     },
   });
@@ -67,7 +67,7 @@ export function Page() {
 
       console.log(block);
 
-      const params: Proposal & { votingPeriod?: Date[]} = {
+      const params: Proposal & { votingPeriod?: Date[] } = {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         type: "basic",
         title: data.title,
@@ -110,7 +110,8 @@ export function Page() {
                 <FormLabel>Title</FormLabel>
                 <Input
                   variant="primary"
-                  placeholder="Briefly describe proposal"
+                  size="standard"
+                  placeholder="Briefly describe the proposal"
                   {...register("title", {
                     required: true,
                   })}
@@ -131,12 +132,15 @@ export function Page() {
 
                 <InputGroup maxW={{ md: "3xl" }}>
                   <Input
+                    placeholder="https://"
+                    size="standard"
                     variant="primary"
-                    defaultValue="https://community.starknet.io/1234567890"
+                    defaultValue=""
                     {...register("discussion", {})}
                   />
                 </InputGroup>
               </FormControl>
+
               {/* // disabled for basic voting */}
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Voting type</FormLabel>
