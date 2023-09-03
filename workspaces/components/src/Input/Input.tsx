@@ -1,3 +1,4 @@
+import React, { forwardRef } from "react";
 import {
   Input as ChakraInput,
   InputProps,
@@ -10,34 +11,37 @@ type Props = {
   icon?: React.ReactNode;
 } & InputProps;
 
-export const Input = ({
-  type,
-  size = "condensed",
-  icon,
-  placeholder,
-  ...rest
-}: Props) => {
-  if (icon) {
+export const Input = forwardRef(
+  (
+    { type, size = "condensed", icon, placeholder, ...rest }: Props,
+    ref: any,
+  ) => {
+    if (icon) {
+      return (
+        <InputGroup>
+          <InputLeftElement pointerEvents="none">{icon}</InputLeftElement>
+          <ChakraInput
+            ref={ref}
+            size={size}
+            type={type}
+            placeholder={placeholder}
+            variant="primary"
+            {...rest}
+          />
+        </InputGroup>
+      );
+    }
     return (
-      <InputGroup>
-        <InputLeftElement pointerEvents="none">{icon}</InputLeftElement>
-        <ChakraInput
-          size={size}
-          {...rest}
-          type={type}
-          placeholder={placeholder}
-          variant="primary"
-        />
-      </InputGroup>
+      <ChakraInput
+        ref={ref}
+        variant="primary"
+        size={size}
+        type={type}
+        placeholder={placeholder}
+        {...rest}
+      />
     );
-  }
-  return (
-    <ChakraInput
-      variant="primary"
-      size={size}
-      {...rest}
-      type={type}
-      placeholder={placeholder}
-    />
-  );
-};
+  },
+);
+
+Input.displayName = "Input";
