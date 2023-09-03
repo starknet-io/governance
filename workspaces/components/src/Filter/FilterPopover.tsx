@@ -1,5 +1,5 @@
+//TODO: refactor this component
 import {
-  Box,
   HStack,
   Icon,
   PopoverBody,
@@ -17,6 +17,9 @@ import {
   FilterActionButtons,
   FilterActionButtonsProps,
 } from "./FilterActionButtons";
+
+import { FiltersIcon } from "src/Icons";
+import { IconButtonWithBadge } from "src/IconButton/IconButton";
 
 type FilterPopoverButtonProps = {
   label: string;
@@ -55,47 +58,19 @@ export const FilterPopoverButton = (props: FilterPopoverButtonProps) => {
 };
 
 export const FilterPopoverIcon = (props: FilterPopoverButtonProps) => {
-  const { label, icon, selected, badgeContent } = props;
+  const { selected, badgeContent } = props;
 
   return (
     <PopoverTrigger>
-      <HStack
-        justify="space-between"
-        position="relative"
-        as="button"
-        fontSize="24px"
-        borderWidth="1px"
-        zIndex="11"
-        rounded="lg"
-        paddingStart="3"
-        paddingEnd="2"
-        paddingY="1.5"
-        spacing="1"
-        data-selected={selected || undefined}
-        _expanded={{ bg: mode("gray.100", "gray.700") }}
-        _selected={{ bg: "blue.50", borderColor: "blue.500" }}
-      >
-        {icon && <Icon title={label} as={icon} boxSize="18px" color="gray" />}
-        {badgeContent && (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            sx={{
-              width: "20px",
-              height: "20px",
-              backgroundColor: "#DCDBDD",
-              borderRadius: "10px",
-            }}
-          >
-            <Text fontWeight="semibold" color="black" fontSize={10}>
-              {badgeContent}
-            </Text>
-          </Box>
-        )}
-        {/* <Text fontWeight="medium">{label}</Text>
-        <Icon as={HiChevronDown} fontSize="xl" color="gray.400" /> */}
-      </HStack>
+      <IconButtonWithBadge
+        isActive={selected}
+        sx={{ position: "relative" }}
+        variant="outline"
+        size="withBadgeCondensed"
+        badgeContent={badgeContent}
+        aria-label="filter by"
+        icon={<FiltersIcon />}
+      />
     </PopoverTrigger>
   );
 };
