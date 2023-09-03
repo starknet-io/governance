@@ -66,6 +66,7 @@ export function Page() {
                 <FormLabel>Title</FormLabel>
                 <Input
                   variant="primary"
+                  size="standard"
                   placeholder="Post title"
                   {...register("title", {
                     required: true,
