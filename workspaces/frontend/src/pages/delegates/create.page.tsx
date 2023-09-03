@@ -13,6 +13,8 @@ import {
   Multiselect,
   useMarkdownEditor,
   MarkdownEditor,
+  Text,
+  Divider,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -125,6 +127,7 @@ export function Page() {
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Starknet wallet address</FormLabel>
                 <Input
+                  size="standard"
                   variant="primary"
                   placeholder="0x..."
                   {...register("starknetAddress", {
@@ -136,6 +139,7 @@ export function Page() {
               <FormControl id="twitter">
                 <FormLabel>Twitter</FormLabel>
                 <Input
+                  size="standard"
                   variant="primary"
                   placeholder="@yourhandle"
                   {...register("twitter")}
@@ -146,6 +150,7 @@ export function Page() {
                 <FormLabel>Discord</FormLabel>
                 <Input
                   variant="primary"
+                  size="standard"
                   placeholder="name#1234"
                   {...register("discord")}
                 />
@@ -155,11 +160,17 @@ export function Page() {
                 <FormLabel>Discourse</FormLabel>
                 <Input
                   variant="primary"
+                  size="standard"
                   placeholder="yourusername"
                   {...register("discourse")}
                 />
                 {errors.discourse && <span>This field is required.</span>}
               </FormControl>
+              <Divider />
+              <Box>
+                <Heading variant="h3">Delegate agreement</Heading>
+                <Text variant="medium">Briefly explain what this means.</Text>
+              </Box>
               <FormControl id="confirmDelegateAgreement">
                 <Checkbox
                   isChecked={agreementType === "standard"}
