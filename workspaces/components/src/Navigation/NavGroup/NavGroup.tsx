@@ -29,7 +29,7 @@ export const NavGroup = (props: NavGroupProps) => {
         >
           {label}
           {action && (
-            <Box position="absolute" right="-16px" top="-12px">
+            <Box as="span" position="absolute" right="-16px" top="-12px">
               {action}
             </Box>
           )}
