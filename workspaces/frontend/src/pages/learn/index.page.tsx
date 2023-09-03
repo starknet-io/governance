@@ -79,7 +79,6 @@ export function Page() {
             active={selectedPage?.id === page.id}
           />
         </div>
-        <CopyToClipboard text={url} />
       </div>
     );
   };
@@ -109,9 +108,27 @@ export function Page() {
           color="#545464"
           mb="24px"
         >
-          {pages.map((page: PageWithUserInterface) => (
-            <NavItemWrapper key={page.id} page={page} />
-          ))}
+          {isLoading ? (
+            <Box
+              display={"flex"}
+              flexDirection="column"
+              gap="8px"
+              mb="24px"
+              width="100%"
+              bg="transparent"
+            >
+              <Skeleton height="42px" width="100%" />
+              <Skeleton height="40px" width="100%" />
+              <Skeleton height="40px" width="100%" />
+              <Skeleton height="42px" width="100%" />
+              <Skeleton height="40px" width="100%" />
+              <Skeleton height="40px" width="100%" />
+            </Box>
+          ) : (
+            pages.map((page: PageWithUserInterface) => (
+              <NavItemWrapper key={page.id} page={page} />
+            ))
+          )}
         </Stack>
         {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
           <Button variant="outline" href="/learn/create">
