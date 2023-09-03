@@ -293,10 +293,13 @@ export function Page() {
                   onChange={(e) => handleSearchInput(e.target.value)}
                 />
               </Box> */}
-              <Flex flexDirection={"row"} gap="4px" alignItems={"center"}>
-                <Text variant="medium">Sort by</Text>
+              <Flex flexDirection="row" gap="4px" alignItems={"center"}>
+                <Box minWidth={"52px"}>
+                  <Text variant="mediumStrong">Sort by</Text>
+                </Box>
                 <Select
                   size="sm"
+                  height="36px"
                   aria-label="Sort by"
                   placeholder="Sort by"
                   focusBorderColor={"red"}
@@ -311,7 +314,7 @@ export function Page() {
                   ))}
                 </Select>
               </Flex>
-              <ButtonGroup display={{ base: "none", md: "flex" }}>
+              <ButtonGroup display={{ base: "none", md: "flex" }} ml="8px">
                 <Popover placement="bottom-start">
                   <FilterPopoverIcon
                     label="Filter by"

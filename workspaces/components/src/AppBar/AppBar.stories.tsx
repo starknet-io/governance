@@ -23,6 +23,7 @@ export const Default = () => (
         </Box>
         <Select
           size="sm"
+          height="36px"
           aria-label="Sort by"
           placeholder="Sort by"
           focusBorderColor={"red"}
