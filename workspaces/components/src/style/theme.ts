@@ -1,6 +1,7 @@
 import { extendTheme } from "@chakra-ui/react";
 import { styles } from "./global-styles";
 import { buttonTheme as Button } from "../Button/ButtonStyles";
+import { headingTheme as Heading } from "../Heading/HeadingStyles";
 import { badgeTheme as Badge } from "../Badge/BadgeStyles";
 import { textTheme as Text } from "../Text/TextStyles";
 import { tagTheme as Tag } from "../Tag/TagStyles";
@@ -63,6 +64,7 @@ const theme = extendTheme({
     Progress,
     styles,
     Skeleton: skeletonTheme,
+    Heading,
   },
 });
 
