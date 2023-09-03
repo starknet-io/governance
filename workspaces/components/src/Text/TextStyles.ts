@@ -8,7 +8,6 @@ export const textTheme = defineStyleConfig({
   variants: {
     cardBody: {
       fontSize: "15px",
-
       fontWeight: 400,
     },
     body: {
@@ -41,6 +40,38 @@ export const textTheme = defineStyleConfig({
       "&:hover": {
         textDecoration: "underline",
       },
+    },
+    small: {
+      fontSize: "0.75rem",
+      lineHeight: "1.25rem",
+    },
+    smallStrong: {
+      fontSize: "0.75rem",
+      lineHeight: "1.25rem",
+      fontWeight: "500",
+    },
+    medium: { fontSize: "0.875rem", lineHeight: "1.25rem" },
+    mediumStrong: {
+      fontSize: "0.875rem",
+      lineHeight: "1.25rem",
+      fontWeight: "500",
+    },
+    large: { fontSize: "0.938rem", lineHeight: "1.5rem" },
+    largeStrong: {
+      fontSize: "0.938rem",
+      lineHeight: "1.5rem",
+      fontWeight: "600",
+    },
+    captionSmall: { fontSize: "0.625rem", lineHeight: "1rem" },
+    captionSmallStrong: {
+      fontSize: "0.625rem",
+      lineHeight: "1rem",
+      fontWeight: "500",
+    },
+    captionSmallUppercase: {
+      fontSize: "0.625rem",
+      lineHeight: "1rem",
+      fontWeight: "600",
     },
   },
 });

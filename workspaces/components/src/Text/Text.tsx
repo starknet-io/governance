@@ -1,22 +1,25 @@
-import { Text as ChakraText, TextProps } from '@chakra-ui/react';
+import { Text as ChakraText, TextProps } from "@chakra-ui/react";
 
-type Props = {
+export type Props = {
   variant?:
-    | 'cardBody'
-    | 'body'
-    | 'breadcrumbs'
-    | 'footerLink'
-    | 'textLink';
+    | "cardBody"
+    | "body"
+    | "breadcrumbs"
+    | "footerLink"
+    | "small"
+    | "smallStrong"
+    | "medium"
+    | "mediumStrong"
+    | "large"
+    | "largeStrong"
+    | "captionSmall"
+    | "captionSmallStrong"
+    | "captionSmallUppercase";
 } & TextProps;
 
-export const Text = ({
-  variant,
-  fontWeight = 'normal',
-  children,
-  ...rest
-}: Props) => {
+export const Text = ({ variant, children, ...rest }: Props) => {
   return (
-    <ChakraText variant={variant} fontWeight={fontWeight} {...rest}>
+    <ChakraText variant={variant} {...rest}>
       {children}
     </ChakraText>
   );
