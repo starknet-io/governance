@@ -1,6 +1,9 @@
 import { HStack } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
-import { IconButton as GovernanceIconButton } from "./IconButton";
+import {
+  IconButton as GovernanceIconButton,
+  IconButtonWithBadge,
+} from "./IconButton";
 import { ThemeProvider } from "../ThemeProvider";
 
 import {
@@ -8,6 +11,7 @@ import {
   ItalicIcon,
   StrikeThroughIcon,
 } from "src/Icons/ToolbarIcons";
+import { FiltersIcon } from "src/Icons";
 
 export default {
   title: "governance-ui/Button/IconButton",
@@ -47,6 +51,13 @@ export const IconButton = () => (
         icon={<ItalicIcon />}
         aria-label="Icon button"
       />
+      <IconButtonWithBadge
+        badgeContent={1}
+        variant="outline"
+        size="withBadgeStandard"
+        icon={<FiltersIcon />}
+        aria-label="Icon button"
+      />
     </HStack>
     <HStack mt="32px">
       <GovernanceIconButton
@@ -77,6 +88,13 @@ export const IconButton = () => (
         variant="danger"
         size="condensed"
         icon={<ItalicIcon />}
+        aria-label="Icon button"
+      />
+      <IconButtonWithBadge
+        badgeContent={1}
+        variant="outline"
+        size="withBadgeCondensed"
+        icon={<FiltersIcon />}
         aria-label="Icon button"
       />
     </HStack>

@@ -28,6 +28,7 @@ export {
   ContentContainer,
   VoteStat,
   IconButton,
+  IconButtonWithBadge,
   MarkdownEditor,
   Collapse,
   Multiselect,
@@ -102,6 +103,7 @@ export {
   EmptyState,
   UserProfileMenu,
   SupportModal,
+  FiltersIcon,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";

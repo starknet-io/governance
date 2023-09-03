@@ -13,7 +13,7 @@ export { SearchInput } from "./SearchInput";
 export { DelegateCard } from "./Card";
 export { Tag } from "./Tag";
 export { ContentContainer } from "./ContentContainer";
-export { IconButton } from "./IconButton";
+export { IconButton, IconButtonWithBadge } from "./IconButton";
 export { Collapse } from "./Collapse";
 export { VoteButton } from "./VoteButton";
 export { VoteStat } from "./VoteStat";
@@ -67,8 +67,6 @@ export {
   BulletedListIcon,
   ImageIcon,
   LinkIcon,
-} from "./Icons/ToolbarIcons";
-export {
   ProposalsIcon,
   HomeIcon,
   SnipsIcon,
@@ -94,7 +92,8 @@ export {
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
-} from "./Icons/UiIcons";
+  FiltersIcon,
+} from "./Icons";
 
 export { MarkdownEditor } from "./Editor";
 
