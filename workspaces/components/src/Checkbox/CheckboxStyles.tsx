@@ -11,6 +11,7 @@ const baseStyle = definePartsStyle({
     lineHeight: "1.25rem",
     fontWeight: "500",
     color: "content.accent.default",
+    marginLeft: "standard.sm",
   },
   control: {
     boxSize: "24px",
