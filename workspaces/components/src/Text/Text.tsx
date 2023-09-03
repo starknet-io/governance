@@ -1,6 +1,6 @@
 import { Text as ChakraText, TextProps } from "@chakra-ui/react";
 
-export type Props = {
+export interface LocalTextProps extends TextProps {
   variant?:
     | "cardBody"
     | "body"
@@ -15,9 +15,9 @@ export type Props = {
     | "captionSmall"
     | "captionSmallStrong"
     | "captionSmallUppercase";
-} & TextProps;
+}
 
-export const Text = ({ variant, children, ...rest }: Props) => {
+export const Text = ({ variant, children, ...rest }: LocalTextProps) => {
   return (
     <ChakraText variant={variant} {...rest}>
       {children}

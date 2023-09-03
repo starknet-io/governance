@@ -2,11 +2,13 @@
 
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import { Heading, Text, Code, TextProps } from "@chakra-ui/react";
+import { Code } from "@chakra-ui/react";
+import { Heading } from "src/Heading";
+import { Text, LocalTextProps } from "src/Text/Text";
 
 interface MarkdownRendererProps {
   content: string;
-  textProps?: TextProps;
+  textProps?: LocalTextProps;
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
@@ -16,13 +18,15 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   return (
     <ReactMarkdown
       components={{
-        h1: ({ ...props }) => <Heading variant="h1" as="h1" {...props} />,
-        h2: ({ ...props }) => <Heading variant="h2" as="h2" {...props} />,
-        h3: ({ ...props }) => <Heading variant="h3" as="h3" {...props} />,
-        h4: ({ ...props }) => <Heading variant="h4" as="h4" {...props} />,
-        h5: ({ ...props }) => <Heading variant="h5" as="h5" {...props} />,
-        h6: ({ ...props }) => <Heading variant="h6" as="h6" {...props} />,
-        p: ({ ...props }) => <Text {...textProps} {...props} />,
+        h1: ({ ...props }) => <Heading variant="h1" {...props} />,
+        h2: ({ ...props }) => <Heading variant="h2" {...props} />,
+        h3: ({ ...props }) => <Heading variant="h3" {...props} />,
+        h4: ({ ...props }) => <Heading variant="h4" {...props} />,
+        h5: ({ ...props }) => <Heading variant="h5" {...props} />,
+        h6: ({ ...props }) => <Heading variant="h6" {...props} />,
+        p: ({ ...props }) => (
+          <Text variant="medium" {...textProps} {...props} />
+        ),
         code: ({ ...props }) => <Code {...props} />,
         ol: ({ ...props }) => <ol style={{ paddingLeft: 16 }} {...props} />,
         ul: ({ ...props }) => <ul style={{ paddingLeft: 16 }} {...props} />,
