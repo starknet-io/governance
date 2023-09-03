@@ -4,7 +4,6 @@ import {
   Box,
   AppBar,
   Button,
-  SearchInput,
   DelegateCard,
   SimpleGrid,
   PageTitle,
