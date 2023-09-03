@@ -18,15 +18,8 @@ export const Default = () => (
   <ThemeProvider>
     <AppBar>
       <Flex flexDirection={"row"} gap="4px" alignItems={"center"}>
-        <Box minWidth={"50px"}>
-          <Text
-            fontSize="14px"
-            fontWeight={"600"}
-            lineHeight="20px"
-            letterSpacing={"0.07px"}
-          >
-            Sort by
-          </Text>
+        <Box minWidth={"52px"}>
+          <Text variant="mediumStrong">Sort by</Text>
         </Box>
         <Select
           size="sm"

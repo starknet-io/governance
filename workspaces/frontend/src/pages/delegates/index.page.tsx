@@ -24,9 +24,10 @@ import {
   SkeletonText,
   DelegateModal,
   ConfirmModal,
+  Flex,
 } from "@yukilabs/governance-components";
 
-import { useDebouncedCallback } from "use-debounce";
+// import { useDebouncedCallback } from "use-debounce";
 
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -167,7 +168,7 @@ export function Page() {
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
   });
-  const [searchQuery, setSearchQuery] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
 
   const state = useFilterState({
@@ -179,7 +180,7 @@ export function Page() {
 
   const [filtersState, setFiltersState] = useState({
     filters: [] as string[],
-    searchQuery,
+    // searchQuery,
     sortBy,
   });
 
@@ -188,21 +189,21 @@ export function Page() {
 
   const { user } = usePageContext();
 
-  const debounce = useDebouncedCallback(
-    (searchQuery: string) => setFiltersState({ ...filtersState, searchQuery }),
-    500,
-  );
+  // const debounce = useDebouncedCallback(
+  //   (searchQuery: string) => setFiltersState({ ...filtersState, searchQuery }),
+  //   500,
+  // );
 
-  const handleSearchInput = (input: string) => {
-    setSearchQuery(input);
-    debounce(input);
-  };
+  // const handleSearchInput = (input: string) => {
+  //   setSearchQuery(input);
+  //   debounce(input);
+  // };
 
   const handleResetFilters = () => {
     state.onReset();
     setFiltersState({ ...filtersState, filters: [] });
   };
-  console.log(JSON.stringify(delegates.data, null, 2));
+  // console.log(JSON.stringify(delegates.data, null, 2));
 
   function ActionButtons() {
     if (!user) {
@@ -286,12 +287,30 @@ export function Page() {
         ) : (
           <>
             <AppBar>
-              <Box mr="8px">
+              {/* <Box mr="8px">
                 <SearchInput
                   value={searchQuery}
                   onChange={(e) => handleSearchInput(e.target.value)}
                 />
-              </Box>
+              </Box> */}
+              <Flex flexDirection={"row"} gap="4px" alignItems={"center"}>
+                <Text variant="medium">Sort by</Text>
+                <Select
+                  size="md"
+                  aria-label="Sort by"
+                  placeholder="Sort by"
+                  focusBorderColor={"red"}
+                  rounded="md"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  {sortByOptions.options.map((option) => (
+                    <option key={option.value} value={option.label}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              </Flex>
               <ButtonGroup display={{ base: "none", md: "flex" }}>
                 <Popover placement="bottom-start">
                   <FilterPopoverIcon
@@ -324,22 +343,6 @@ export function Page() {
                     />
                   </FilterPopoverContent>
                 </Popover>
-
-                <Select
-                  size="sm"
-                  aria-label="Sort by"
-                  placeholder="Sort by"
-                  focusBorderColor={"red"}
-                  rounded="md"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  {sortByOptions.options.map((option) => (
-                    <option key={option.value} value={option.label}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
               </ButtonGroup>
               <Box display="flex" marginLeft="auto" gap="12px">
                 <ActionButtons />
