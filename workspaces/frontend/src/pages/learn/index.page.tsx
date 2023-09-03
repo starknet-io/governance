@@ -12,7 +12,6 @@ import {
   ProfileSummaryCard,
   MenuItem,
   Divider,
-  CopyToClipboard,
   MarkdownRenderer,
   Skeleton,
 } from "@yukilabs/governance-components";
@@ -66,10 +65,10 @@ export function Page() {
     window.history.pushState(null, "", `/learn/${page.slug}`);
   };
 
-  console.log(selectedPage);
+  console.log("selected page id", selectedPage?.id);
 
   const NavItemWrapper = ({ page }: { page: PageWithUserInterface }) => {
-    const url = `${window.location.origin}/learn/${page.slug}`;
+    console.log("page id", page?.id);
     return (
       <div style={{ display: "flex" }}>
         <div style={{ width: "100%" }} onClick={() => selectPage(page)}>
