@@ -86,8 +86,8 @@ export function Page() {
   return (
     <>
       <ContentContainer>
-        <Box maxWidth="538px" pb="200px" mx="auto">
-          <Heading variant="h3" mb="24px">
+        <Box maxWidth="670px" pb="200px" mx="auto">
+          <Heading variant="h2" mb="24px">
             Create delegate profile
           </Heading>
 
@@ -207,12 +207,12 @@ export function Page() {
                   />
                 </FormControl>
               )}
-              <FormControl id="understandRole">
+              <FormControl id="understandRole" display="none">
                 <Controller
                   control={control}
                   name="understandRole"
                   defaultValue={false}
-                  rules={{ required: true }}
+                  rules={{ required: false }}
                   render={({ field }) => (
                     <Checkbox
                       isChecked={field.value}
