@@ -36,6 +36,7 @@ import {
   VoteForIcon,
   StarknetCommunityIcon,
   StarknetIcon,
+  FiltersIcon,
   DiscordIcon,
 } from "./UiIcons";
 import {
@@ -99,6 +100,7 @@ export {
   NoSnipsIcon,
   PencilIcon,
   TrashIcon,
+  FiltersIcon,
   SuccessIcon,
   TrashWarningIcon,
   VoteIcon,
