@@ -4,11 +4,11 @@ import { Link as GovernanceLink } from "./Link";
 import { ThemeProvider } from "../ThemeProvider";
 
 export default {
-  title: "governance-ui/Link",
+  title: "governance-ui",
   component: GovernanceLink,
 } as Meta<typeof GovernanceLink>;
 
-export const Review = () => (
+export const Link = () => (
   <ThemeProvider>
     <HStack>
       <VStack p={12} align="flex-start">
