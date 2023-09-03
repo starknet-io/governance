@@ -12,8 +12,8 @@ export const Radio = () => (
   <ThemeProvider>
     <RadioGroup defaultValue="1">
       <Stack spacing={5} direction="column">
-        <ChakraRadio value="1">Radio</ChakraRadio>
-        <ChakraRadio value="2">Radio</ChakraRadio>
+        <ChakraRadio value="1">Control button heading</ChakraRadio>
+        <ChakraRadio value="2">Control button heading</ChakraRadio>
       </Stack>
     </RadioGroup>
   </ThemeProvider>

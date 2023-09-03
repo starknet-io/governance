@@ -17,6 +17,7 @@ import { skeletonTheme } from "src/Skeleton/SkeletonStyles";
 import { colors, spacing, radii } from "./tokens";
 import { checkboxTheme } from "src/Checkbox/CheckboxStyles";
 import { radioTheme } from "src/Radio/RadioStyles";
+import { switchTheme } from "src/Switch/SwitchStyles";
 
 const config = {
   initialColorMode: "light",
@@ -61,6 +62,7 @@ const theme = extendTheme({
     Heading,
     Checkbox: checkboxTheme,
     Radio: radioTheme,
+    Switch: switchTheme,
   },
 });
 
