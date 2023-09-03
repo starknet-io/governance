@@ -27,7 +27,7 @@ import {
   Flex,
 } from "@yukilabs/governance-components";
 
-// import { useDebouncedCallback } from "use-debounce";
+import { useDebouncedCallback } from "use-debounce";
 
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -168,7 +168,7 @@ export function Page() {
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
   });
-  // const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
 
   const state = useFilterState({
@@ -180,7 +180,7 @@ export function Page() {
 
   const [filtersState, setFiltersState] = useState({
     filters: [] as string[],
-    // searchQuery,
+    searchQuery,
     sortBy,
   });
 
@@ -189,15 +189,15 @@ export function Page() {
 
   const { user } = usePageContext();
 
-  // const debounce = useDebouncedCallback(
-  //   (searchQuery: string) => setFiltersState({ ...filtersState, searchQuery }),
-  //   500,
-  // );
+  const debounce = useDebouncedCallback(
+    (searchQuery: string) => setFiltersState({ ...filtersState, searchQuery }),
+    500,
+  );
 
-  // const handleSearchInput = (input: string) => {
-  //   setSearchQuery(input);
-  //   debounce(input);
-  // };
+  const handleSearchInput = (input: string) => {
+    setSearchQuery(input);
+    debounce(input);
+  };
 
   const handleResetFilters = () => {
     state.onReset();
@@ -296,7 +296,7 @@ export function Page() {
               <Flex flexDirection={"row"} gap="4px" alignItems={"center"}>
                 <Text variant="medium">Sort by</Text>
                 <Select
-                  size="md"
+                  size="sm"
                   aria-label="Sort by"
                   placeholder="Sort by"
                   focusBorderColor={"red"}
