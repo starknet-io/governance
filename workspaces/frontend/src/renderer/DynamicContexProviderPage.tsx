@@ -509,6 +509,7 @@ function PageLayout(props: Props) {
               href="https://www.starknet.io"
               icon={<FeedbackIcon />}
               label="Feedback"
+              variant="feedback"
             />
           </NavGroup>
         </Layout.LeftAside>
