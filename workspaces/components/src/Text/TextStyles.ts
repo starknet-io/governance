@@ -1,3 +1,4 @@
+//toDo: remove older variations
 import { defineStyleConfig } from "@chakra-ui/react";
 
 export const textTheme = defineStyleConfig({
