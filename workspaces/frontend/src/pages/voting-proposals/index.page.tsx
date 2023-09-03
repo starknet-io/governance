@@ -156,13 +156,13 @@ export function Page() {
       />
       {data && data.length > 0 && (
         <AppBar>
-          <Box mr="8px">
+          {/* <Box mr="8px">
             <SearchInput
               value={searchInput}
               onChange={(e) => handleInputChange(e.target.value)}
               placeholder="Search proposals..."
             />
-          </Box>
+          </Box> */}
           <ButtonGroup display={{ base: "none", md: "flex" }}>
             {/* Implement after next merge  */}
             {/* <Button as="a" href="/delegates/create" variant="outline">
