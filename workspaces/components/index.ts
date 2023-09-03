@@ -20,6 +20,7 @@ export {
   Text,
   Logo,
   AppBar,
+  Input,
   Badge,
   SearchInput,
   DelegateCard,
@@ -104,6 +105,7 @@ export {
   UserProfileMenu,
   SupportModal,
   FiltersIcon,
+  SearchIcon,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
@@ -190,7 +192,6 @@ export {
   FormControl,
   FormHelperText,
   FormLabel,
-  Input,
   InputGroup,
   InputLeftAddon,
   StackDivider,

@@ -32,6 +32,8 @@ export { CheckboxFilter } from "./Filter/CheckboxFilter";
 export { useMarkdownEditor } from "./Editor/useMarkdownEditor";
 export { CopyToClipboard } from "./CopyToClipboard";
 export { BannerHome } from "./BannerHome";
+export { Input } from "./Input";
+
 export {
   FilterPopoverButton,
   FilterPopoverContent,
@@ -93,6 +95,7 @@ export {
   VoteAgainstIcon,
   VoteForIcon,
   FiltersIcon,
+  SearchIcon,
 } from "./Icons";
 
 export { MarkdownEditor } from "./Editor";
