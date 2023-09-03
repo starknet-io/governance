@@ -1,32 +1,18 @@
-import React from 'react';
-import {
-  HStack,
-  HeadingProps,
-  ChakraProvider,
-} from '@chakra-ui/react';
-import { Meta } from '@storybook/react';
-import theme from 'src/style/theme';
-import { ThemeProvider } from '../ThemeProvider';
-import { Heading } from './Heading';
+import React from "react";
+import { VStack, HeadingProps, ChakraProvider } from "@chakra-ui/react";
+import { Meta } from "@storybook/react";
+import theme from "src/style/theme";
+import { ThemeProvider } from "../ThemeProvider";
+import { Heading } from "./Heading";
 
 type CustomHeadingProps = {
-  variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-} & Omit<HeadingProps, 'as' | 'size'>;
+  variant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+} & Omit<HeadingProps, "as" | "size">;
 
 export default {
-  title: 'starknet.io/Heading',
+  title: "governance-ui/Typography",
   component: Heading,
-  argTypes: {
-    children: { control: 'text' },
-    variant: {
-      options: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-      control: { type: 'radio' },
-    },
-    className: {
-      control: { type: 'select' },
-      options: ['text-slate-600', 'text-hero-fg'],
-    },
-  },
+
   decorators: [
     (Story: React.ComponentType) => (
       <ChakraProvider theme={theme}>
@@ -36,79 +22,14 @@ export default {
   ],
 } as Meta<typeof Heading>;
 
-export const H1 = (args: CustomHeadingProps) => (
+export const Headings = (args: CustomHeadingProps) => (
   <ThemeProvider>
-    <HStack p={12}>
-      <Heading variant="h1" {...args}>
-        Heading 1
-      </Heading>
-    </HStack>
-    <HStack p={12}>
-      <></>
-      <Heading
-        variant="h1"
-        fontWeight="normal"
-        color="heading-navy-fg"
-        mt="-20px"
-        fontSize={{ base: '56px', md: '80px', xl: '92px' }}
-      >
-        Responsive heading
-      </Heading>
-    </HStack>
-  </ThemeProvider>
-);
-export const H2 = (args: CustomHeadingProps) => (
-  <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Heading variant="h2" {...args}>
-          Heading 2
-        </Heading>
-      </>
-    </HStack>
-  </ThemeProvider>
-);
-export const H3 = (args: CustomHeadingProps) => (
-  <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Heading variant="h3" {...args}>
-          Heading 3
-        </Heading>
-      </>
-    </HStack>
-  </ThemeProvider>
-);
-export const H4 = (args: CustomHeadingProps) => (
-  <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Heading variant="h4" {...args}>
-          Heading 4
-        </Heading>
-      </>
-    </HStack>
-  </ThemeProvider>
-);
-export const H5 = (args: CustomHeadingProps) => (
-  <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Heading variant="h5" {...args}>
-          Heading 5
-        </Heading>
-      </>
-    </HStack>
-  </ThemeProvider>
-);
-export const H6 = (args: CustomHeadingProps) => (
-  <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Heading variant="h6" {...args}>
-          Heading 6
-        </Heading>
-      </>
-    </HStack>
+    <VStack p={12} align="flex-start">
+      <Heading variant="h2">H2 28/36</Heading>
+      <Heading variant="h3">H3 21/32</Heading>
+      <Heading variant="h4">H4 16/24</Heading>
+      <Heading variant="h5">H5 16/20</Heading>
+      <Heading variant="h6">H6 14/20</Heading>
+    </VStack>
   </ThemeProvider>
 );
