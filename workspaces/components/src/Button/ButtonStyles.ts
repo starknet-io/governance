@@ -34,6 +34,30 @@ export const buttonTheme = {
         boxSize: "20px",
       },
     },
+    withBadgeCondensed: {
+      minWidth: "36px",
+      paddingLeft: "condensed.lg!important",
+      paddingRight: "40px!important",
+      borderRadius: "condensed.base",
+      py: "condensed.sm",
+      minHeight: "36px",
+      maxWidth: "100%",
+      svg: {
+        boxSize: "20px",
+      },
+    },
+    withBadgeStandard: {
+      minWidth: "44px",
+      paddingLeft: "condensed.lg!important",
+      paddingRight: "40px!important",
+      borderRadius: "condensed.base",
+      py: "condensed.sm",
+      minHeight: "44px",
+      maxWidth: "100%",
+      svg: {
+        boxSize: "20px",
+      },
+    },
     navLink: {
       minWidth: "auto",
       px: "standard.sm",
