@@ -25,6 +25,20 @@ type Props = {
   profileURL?: string;
 };
 
+function extractParagraph(markdownContent: string, charLimit = 300): string {
+  // Remove headings
+  const noHeadings = markdownContent.replace(/#+ .+\n/g, "").trim();
+
+  // Extract the first paragraph
+  const firstParagraphMatch = noHeadings.match(/(?:\n|^)([^#].+?)(?:\n|$)/);
+  if (firstParagraphMatch && firstParagraphMatch[1]) {
+    const firstParagraph = firstParagraphMatch[1];
+    // Trim to the desired length
+    return firstParagraph.substring(0, charLimit);
+  }
+  return "";
+}
+
 export const delegateNames: Record<string, string> = {
   cairo_dev: "Cairo Dev",
   daos: "DAOs",
@@ -51,7 +65,7 @@ export const DelegateCard = (props: Props) => {
     avatarUrl,
   } = props;
   const delegatedVotesFormatted = `${delegatedVotes} Votes`;
-
+  const formattedDelegateStatement = extractParagraph(delegateStatement);
   return (
     <LinkBox as={Card} variant="delegate">
       <CardHeader>
@@ -115,7 +129,7 @@ export const DelegateCard = (props: Props) => {
 
         <MarkdownRenderer
           textProps={{ fontSize: "14px", noOfLines: 3, color: "#4A4A4F" }}
-          content={delegateStatement || ""}
+          content={formattedDelegateStatement || ""}
         />
       </CardBody>
       <CardFooter>
