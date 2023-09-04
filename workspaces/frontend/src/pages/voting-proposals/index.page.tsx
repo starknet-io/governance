@@ -152,7 +152,7 @@ export function Page() {
       <PageTitle
         learnMoreLink="/learn"
         title="Voting Proposals"
-        description="Starknet voting proposals are official community votes on improvements to the core Starknet protocol. "
+        description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol. "
       />
       {data && data.length > 0 && (
         <AppBar>
