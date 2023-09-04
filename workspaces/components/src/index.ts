@@ -1,4 +1,3 @@
-export { AppBar } from "./AppBar";
 export { Heading } from "./Heading";
 export { Text } from "./Text";
 export { Header } from "./Header";

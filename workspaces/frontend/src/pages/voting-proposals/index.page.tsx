@@ -5,12 +5,11 @@ import {
   AppBar,
   Button,
   PageTitle,
-  ButtonGroup,
   ListRow,
-  SearchInput,
   EmptyState,
   Skeleton,
   Select,
+  Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -135,6 +134,7 @@ export function Page() {
       <>
         <Box display="flex" marginLeft="auto">
           <Button
+            width={{ base: "100%", md: "auto" }}
             as="a"
             href="voting-proposals/create"
             size="condensed"
@@ -155,15 +155,11 @@ export function Page() {
         description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol. "
       />
       {data && data.length > 0 && (
-        <AppBar>
-          {/* <Box mr="8px">
-            <SearchInput
-              value={searchInput}
-              onChange={(e) => handleInputChange(e.target.value)}
-              placeholder="Search proposals..."
-            />
-          </Box> */}
-          <ButtonGroup display={{ base: "none", md: "flex" }}>
+        <AppBar.Root>
+          <AppBar.Group mobileDirection="row">
+            <Box minWidth={"52px"}>
+              <Text variant="mediumStrong">Sort by</Text>
+            </Box>
             {/* Implement after next merge  */}
             {/* <Button as="a" href="/delegates/create" variant="outline">
               Filter by
@@ -182,9 +178,11 @@ export function Page() {
                 </option>
               ))}
             </Select>
-          </ButtonGroup>
-          <ActionButtons />
-        </AppBar>
+          </AppBar.Group>
+          <AppBar.Group alignEnd>
+            <ActionButtons />
+          </AppBar.Group>
+        </AppBar.Root>
       )}
       <Box position={"relative"}>
         <ListRow.Container>

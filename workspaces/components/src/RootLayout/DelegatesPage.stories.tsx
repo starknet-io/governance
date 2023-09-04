@@ -31,7 +31,7 @@ import { DelegateCard } from "src/Card/DelegateCard";
 import { Button } from "src/Button";
 import { FilterPopoverContent, FilterPopoverIcon } from "src/Filter";
 import { Text } from "src/Text";
-import { AppBar } from "src/AppBar";
+import { AppBar } from "../../";
 
 const delegatesData = [
   {
@@ -198,20 +198,14 @@ export const DelegatesPage = () => (
                 title="Delegates"
                 description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol."
               />
-              <AppBar>
-                <Flex flexDirection={"row"} gap="4px" alignItems={"center"}>
-                  <Box minWidth={"50px"}>
-                    <Text
-                      fontSize="14px"
-                      fontWeight={"600"}
-                      lineHeight="20px"
-                      letterSpacing={"0.07px"}
-                    >
-                      Sort by
-                    </Text>
+              <AppBar.Root>
+                <AppBar.Group mobileDirection="row">
+                  <Box minWidth={"52px"}>
+                    <Text variant="mediumStrong">Sort by</Text>
                   </Box>
                   <Select
                     size="sm"
+                    height="36px"
                     aria-label="Sort by"
                     placeholder="Sort by"
                     focusBorderColor={"red"}
@@ -222,8 +216,7 @@ export const DelegatesPage = () => (
                     <option value="option2">Option 2</option>
                     <option value="option3">Option 3</option>
                   </Select>
-                </Flex>
-                <ButtonGroup display={{ base: "none", md: "flex" }} ml="8px">
+
                   <Popover placement="bottom-start">
                     <FilterPopoverIcon
                       label="Filter by"
@@ -240,9 +233,11 @@ export const DelegatesPage = () => (
                       </Text>
                     </FilterPopoverContent>
                   </Popover>
-                </ButtonGroup>
-                <Box display="flex" marginLeft="auto" gap="12px">
+                </AppBar.Group>
+
+                <AppBar.Group alignEnd>
                   <Button
+                    width={{ base: "100%", md: "auto" }}
                     size="condensed"
                     variant="outline"
                     onClick={() => console.log("clicked")}
@@ -250,6 +245,7 @@ export const DelegatesPage = () => (
                     Delegate to address
                   </Button>
                   <Button
+                    width={{ base: "100%", md: "auto" }}
                     as="a"
                     href="/delegates/create"
                     size="condensed"
@@ -257,8 +253,8 @@ export const DelegatesPage = () => (
                   >
                     Create delegate profile
                   </Button>
-                </Box>
-              </AppBar>
+                </AppBar.Group>
+              </AppBar.Root>
               <SimpleGrid
                 position="relative"
                 width="100%"

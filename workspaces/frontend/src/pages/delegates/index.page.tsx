@@ -212,6 +212,7 @@ export function Page() {
     return (
       <>
         <Button
+          width={{ base: "100%", md: "auto" }}
           size="condensed"
           variant="outline"
           onClick={() => setIsOpen(true)}
@@ -221,6 +222,7 @@ export function Page() {
 
         {!user.delegationStatement && (
           <Button
+            width={{ base: "100%", md: "auto" }}
             as="a"
             href="/delegates/create"
             size="condensed"
@@ -285,14 +287,14 @@ export function Page() {
           </Box>
         ) : (
           <>
-            <AppBar>
+            <AppBar.Root>
               {/* <Box mr="8px">
                 <SearchInput
                   value={searchQuery}
                   onChange={(e) => handleSearchInput(e.target.value)}
                 />
               </Box> */}
-              <Flex flexDirection="row" gap="4px" alignItems={"center"}>
+              <AppBar.Group mobileDirection="row">
                 <Box minWidth={"52px"}>
                   <Text variant="mediumStrong">Sort by</Text>
                 </Box>
@@ -312,8 +314,6 @@ export function Page() {
                     </option>
                   ))}
                 </Select>
-              </Flex>
-              <ButtonGroup display={{ base: "none", md: "flex" }} ml="8px">
                 <Popover placement="bottom-start">
                   <FilterPopoverIcon
                     label="Filter by"
@@ -345,11 +345,12 @@ export function Page() {
                     />
                   </FilterPopoverContent>
                 </Popover>
-              </ButtonGroup>
-              <Box display="flex" marginLeft="auto" gap="12px">
+              </AppBar.Group>
+
+              <AppBar.Group alignEnd>
                 <ActionButtons />
-              </Box>
-            </AppBar>
+              </AppBar.Group>
+            </AppBar.Root>
             <SimpleGrid
               position="relative"
               width="100%"

@@ -1,6 +1,6 @@
 import { Box, ButtonGroup, Flex, Popover, Select } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
-import { AppBar } from "./AppBar";
+import * as AppBar from "./AppBar";
 import { ThemeProvider } from "../ThemeProvider";
 
 import { FilterPopoverContent, FilterPopoverIcon } from "src/Filter";
@@ -11,13 +11,13 @@ import { FiltersIcon } from "src/Icons";
 
 export default {
   title: "governance-ui/AppBar",
-  component: AppBar,
+  component: AppBar.Root,
 } as Meta<typeof AppBar>;
 
 export const Default = () => (
   <ThemeProvider>
-    <AppBar>
-      <Flex flexDirection={"row"} gap="4px" alignItems={"center"}>
+    <AppBar.Root>
+      <AppBar.Group mobileDirection="row">
         <Box minWidth={"52px"}>
           <Text variant="mediumStrong">Sort by</Text>
         </Box>
@@ -34,8 +34,7 @@ export const Default = () => (
           <option value="option2">Option 2</option>
           <option value="option3">Option 3</option>
         </Select>
-      </Flex>
-      <ButtonGroup display={{ base: "none", md: "flex" }} ml="8px">
+
         <Popover placement="bottom-start">
           <FilterPopoverIcon
             label="Filter by"
@@ -52,9 +51,11 @@ export const Default = () => (
             </Text>
           </FilterPopoverContent>
         </Popover>
-      </ButtonGroup>
-      <Box display="flex" marginLeft="auto" gap="12px">
+      </AppBar.Group>
+
+      <AppBar.Group alignEnd>
         <Button
+          width={{ base: "100%", md: "auto" }}
           size="condensed"
           variant="outline"
           onClick={() => console.log("clicked")}
@@ -62,6 +63,7 @@ export const Default = () => (
           Delegate to address
         </Button>
         <Button
+          width={{ base: "100%", md: "auto" }}
           as="a"
           href="/delegates/create"
           size="condensed"
@@ -69,7 +71,7 @@ export const Default = () => (
         >
           Create delegate profile
         </Button>
-      </Box>
-    </AppBar>
+      </AppBar.Group>
+    </AppBar.Root>
   </ThemeProvider>
 );
