@@ -403,7 +403,37 @@ export function Page() {
         </Box>
 
         <Box mt="32px">
-          {isLoadingSummary ? (
+          <SummaryItems.Root>
+            <SummaryItems.Item
+              label="Proposals voted on"
+              value={gqlResponse.data?.votes?.length.toString() ?? ""}
+            />
+            <SummaryItems.Item
+              label="Delegated votes"
+              value={gqlResponse.data?.vp?.vp?.toString()}
+            />
+            <SummaryItems.Item
+              label="Total comments"
+              value={delegateCommentsResponse.data?.length.toString()}
+            />
+            <SummaryItems.Item
+              label="For/against/abstain"
+              value={
+                stats && `${stats[1] ?? 0}/${stats[2] ?? 0}/${stats[3] ?? 0}`
+              }
+            />
+            <SummaryItems.Item
+              label="Delegation agreement"
+              value={renderAgreementValue()}
+            />
+            <SummaryItems.Item
+              isCopiable
+              isTruncated
+              label="Starknet address"
+              value={delegate?.author?.starknetAddress ?? ""}
+            />
+          </SummaryItems.Root>
+          {/* {isLoadingSummary ? (
             <Box
               display="flex"
               flexDirection="column"
@@ -451,7 +481,7 @@ export function Page() {
                 value={delegate?.author?.starknetAddress ?? ""}
               />
             </SummaryItems.Root>
-          )}
+          )} */}
         </Box>
         <Divider mt="32px" mb="32px" />
         <SummaryItems.Root direction="row">
