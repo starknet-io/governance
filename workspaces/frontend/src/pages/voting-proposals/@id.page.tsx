@@ -404,7 +404,8 @@ export function Page() {
         top="0"
         position={{ base: "unset", lg: "sticky" }}
       >
-        {data?.proposal?.state === "active" ? (
+        {data?.proposal?.state === "active" ||
+        data?.proposal?.state === "closed" ? (
           <>
             <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
               Cast your vote
