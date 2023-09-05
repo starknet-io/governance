@@ -8,6 +8,7 @@ import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
 import { councils } from '../db/schema/councils';
 import {usersToCouncils} from "../db/schema/usersToCouncils";
 import {posts} from "../db/schema/posts";
+import {migrate} from "drizzle-orm/node-postgres/migrator";
 
 const adminUsers = [
   '0x7cC03a29B9c9aBC73E797cD5D341cA58e3e9f744',
@@ -53,6 +54,8 @@ async function createCouncils() {
     },
   ];
 
+  console.log('Creating Councils')
+
   for (const councilData of councilsData) {
     const existingCouncil = await db.query.councils.findFirst({
       where: eq(councils.name, councilData.name),
@@ -61,6 +64,9 @@ async function createCouncils() {
     if (existingCouncil) {
       console.log(`Council ${councilData.name} already exists.`);
       continue; // Skip to the next council if this one already exists
+    } else {
+      console.log(`Creating Council ${councilData.name}.`)
+
     }
 
     const insertedCouncil = await db
@@ -94,6 +100,8 @@ async function createCouncils() {
       }
     }
 
+    console.log('Creating Posts')
+
     // Create dummy posts
     const dummyPosts = [
       {
@@ -120,17 +128,24 @@ async function createCouncils() {
         })
         .execute();
     }
+
+    console.log('Posts Created')
+
   }
 }
 
-async function migrateData() {
+async function seedData() {
   // First, create admin users if they don't exist
+  console.log('Creating Admins')
   await createAdminUsers();
+  console.log('Admins Created')
+
 
   // Second, create councils and add admin users if not exist
   await createCouncils();
 
   // Delegates seeding
+  console.log('Creating delegates')
   for (const entry of dataDump) {
     const interestsStatements = JSON.parse(entry.c4);
     const interests =
@@ -208,6 +223,20 @@ async function migrateData() {
         .execute();
     }
   }
+  console.log('Delegates created')
+
 }
 
-export default migrateData;
+async function runMigrations() {
+  try {
+    console.log("Starting migrations...");
+    await migrate(db, { migrationsFolder: './migrations' });
+    console.log("Migration completed. Starting data seeding...");
+    await seedData();
+    console.log("Data seeding completed.");
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+}
+
+export default runMigrations();

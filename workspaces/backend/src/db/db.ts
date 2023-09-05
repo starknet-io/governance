@@ -37,19 +37,6 @@ const db = drizzle(pool, {
   },
 });
 
-async function runMigrationsAndSeed() {
-  try {
-    await migrate(db, { migrationsFolder: './migrations' });
-    console.log("Migration completed.");
-
-    await migrateData();
-    console.log("Data migration completed.");
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
-}
-
-runMigrationsAndSeed();
-
+migrate(db, { migrationsFolder: './migrations' });
 
 export { db, pool };
