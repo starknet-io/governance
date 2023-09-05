@@ -268,7 +268,7 @@ export function Page() {
         </FormControl>
         <Button
           type="submit"
-          variant="solid"
+          variant="primary"
           size="lg"
           onClick={() => handleVote(currentChoice, comment)}
         >
@@ -298,7 +298,7 @@ export function Page() {
             value={data?.proposal?.snapshot}
           />
         </SummaryItems.Root>
-        <Button variant="solid" onClick={() => setIsInfoOpen(false)}>
+        <Button variant="primary" onClick={() => setIsInfoOpen(false)}>
           Close
         </Button>
       </InfoModal>
@@ -312,7 +312,7 @@ export function Page() {
         onClose={() => setisSuccessModalOpen(false)}
       >
         Success!!
-        <Button variant="solid" onClick={() => setisSuccessModalOpen(false)}>
+        <Button variant="primary" onClick={() => setisSuccessModalOpen(false)}>
           Close
         </Button>
       </InfoModal>
@@ -404,7 +404,8 @@ export function Page() {
         top="0"
         position={{ base: "unset", lg: "sticky" }}
       >
-        {data?.proposal?.state === "active" ? (
+        {data?.proposal?.state === "active" ||
+        data?.proposal?.state === "closed" ? (
           <>
             <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
               Cast your vote

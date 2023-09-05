@@ -31,7 +31,10 @@ export function Page() {
   const [members, setMembers] = useState<MemberType[]>([]);
   const createCouncil = trpc.councils.saveCouncil.useMutation();
 
-  const { editorValue, handleEditorChange, editor } = useMarkdownEditor("", EditorTemplate.proposalMarkDown);
+  const { editorValue, handleEditorChange, editor } = useMarkdownEditor(
+    "",
+    EditorTemplate.proposalMarkDown,
+  );
   const {
     editorValue: shortDescValue,
     handleEditorChange: handleShortDescValue,
@@ -67,6 +70,7 @@ export function Page() {
                 <FormLabel>Council name</FormLabel>
                 <Input
                   variant="primary"
+                  size="standard"
                   placeholder="Name"
                   {...register("name", {
                     required: true,
@@ -80,7 +84,7 @@ export function Page() {
                 <MarkdownEditor
                   onChange={handleShortDescValue}
                   value={shortDescValue}
-                  minHeight="100"
+                  minHeight="100px"
                   hideTabBar
                 />
                 {errors.description && <span>This field is required.</span>}
@@ -102,6 +106,7 @@ export function Page() {
               <FormControl id="council-name">
                 <FormLabel>Multisig address</FormLabel>
                 <Input
+                  size="standard"
                   variant="primary"
                   placeholder="0x..."
                   {...register("address")}
@@ -109,7 +114,7 @@ export function Page() {
               </FormControl>
 
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant={"solid"} disabled={!isValid}>
+                <Button type="submit" variant="primary" isDisabled={!isValid}>
                   Create council
                 </Button>
               </Flex>

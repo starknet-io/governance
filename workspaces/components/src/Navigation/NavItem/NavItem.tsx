@@ -1,66 +1,45 @@
-import { Box, Flex } from "@chakra-ui/react";
-import { ReactElement, ReactNode } from "react";
-import { BsCaretRightFill } from "react-icons/bs";
+import { Button } from "@chakra-ui/react";
+import React from "react";
 
-interface NavItemProps {
+type Props = {
+  active?: boolean;
+  icon?: React.ReactElement;
+  onClick?: () => void;
   href?: string;
   label: string;
-  active?: string;
-  icon?: ReactElement;
-  endElement?: ReactElement;
-  children?: ReactNode;
-  activePage?: boolean;
-  onClick?: () => void;
-}
+  variant?: "navLink" | "feedback";
+};
 
-export const NavItem = (props: NavItemProps) => {
-  const {
-    active,
-    icon,
-    children,
-    label,
-    endElement,
-    href,
-    activePage,
-    onClick,
-  } = props;
-  const isActive = active === href;
-  return (
-    <Flex
-      flexDirection="row"
-      alignItems="center"
-      as="a"
-      href={href}
-      w="full"
-      px="12px"
-      py="0"
-      gap="8px"
-      height="40px"
-      cursor="pointer"
-      userSelect="none"
-      rounded="md"
-      transition="all 0.2s"
-      bg={isActive ? "#EEEEF1" : activePage ? "#EEEEF1" : ""}
-      _hover={{ bg: "#EEEEF1" }}
-      _active={{ bg: "#EEEEF1" }}
-      onClick={onClick}
-    >
-      {icon && (
-        <Box position="relative" mt="-4px" fontSize="24px">
-          {icon}
-        </Box>
-      )}
-      <Box
-        flex="1"
-        fontWeight="500"
-        fontSize="14px"
-        letterSpacing="0.07px"
-        color={"#57565D"}
+export const NavItem = ({
+  href,
+  icon,
+  label,
+  onClick,
+  active,
+  variant = "navLink",
+}: Props) => {
+  if (href) {
+    return (
+      <Button
+        leftIcon={icon && icon}
+        as="a"
+        href={href}
+        size="navLink"
+        variant={variant}
+        isActive={active}
       >
         {label}
-      </Box>
-      {endElement && !children && <Box>{endElement}</Box>}
-      {children && <Box fontSize="xs" flexShrink={0} as={BsCaretRightFill} />}
-    </Flex>
+      </Button>
+    );
+  }
+  return (
+    <Button
+      size="navLink"
+      variant={variant}
+      leftIcon={icon && icon}
+      onClick={onClick}
+    >
+      {label}
+    </Button>
   );
 };

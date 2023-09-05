@@ -148,7 +148,7 @@ export function Page() {
         <Box>
           <MarkdownRenderer content={council?.description || ""} />
           {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-            <Button mt="24px" variant="fullGhostBtn" onClick={handleClick}>
+            <Button mt="24px" variant="outline" onClick={handleClick}>
               Add new post
             </Button>
           ) : (

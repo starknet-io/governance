@@ -1,8 +1,9 @@
 import { useSlate } from "slate-react";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, useToken } from "@chakra-ui/react";
 import { Heading2Icon, BulletedListIcon, NumberedListIcon } from "src/Icons";
 import { isBlockActive, toggleBlock } from "./hotkeys";
 import { CustomParagraphTypes } from "./ElementLeaf";
+import { StrikeThroughIcon } from "src/Icons/ToolbarIcons";
 
 type BlockButtonProps = {
   format: CustomParagraphTypes;
@@ -12,17 +13,21 @@ const ICONS: Partial<Record<CustomParagraphTypes, any>> = {
   heading_two: Heading2Icon,
   ul_list: BulletedListIcon,
   ol_list: NumberedListIcon,
-  heading_one: () => <div>H1</div>,
-  block_quote: () => <div>{'>'}</div>,
+  heading_one: Heading2Icon,
+  block_quote: StrikeThroughIcon,
 };
 
 const BlockButton = ({ format }: BlockButtonProps) => {
   const editor = useSlate();
   const Icon = ICONS?.[format] ?? NumberedListIcon;
+  const [activeColor, inactiveColor] = useToken("colors", [
+    "content.default.selectedInverted",
+    "content.default.default",
+  ]);
   return (
     <IconButton
       aria-label={format}
-      size="tb"
+      size="condensed"
       variant="toolbar"
       isActive={isBlockActive(editor, format)}
       onMouseDown={(event) => {
@@ -30,7 +35,10 @@ const BlockButton = ({ format }: BlockButtonProps) => {
         toggleBlock(editor, format);
       }}
       icon={
-        <Icon color={isBlockActive(editor, format) ? "white" : "#6F6E77"} />
+        <Icon
+          boxSize="20px"
+          color={isBlockActive(editor, format) ? activeColor : inactiveColor}
+        />
       }
     />
   );

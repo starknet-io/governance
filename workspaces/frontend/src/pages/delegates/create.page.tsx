@@ -13,6 +13,8 @@ import {
   Multiselect,
   useMarkdownEditor,
   MarkdownEditor,
+  Text,
+  Divider,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -47,7 +49,6 @@ export function Page() {
     editorValue: customAgreementEditorValue,
     handleEditorChange: handleCustomAgreementEditorChange,
   } = useMarkdownEditor("");
-
 
   const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
     useState(false);
@@ -87,8 +88,8 @@ export function Page() {
   return (
     <>
       <ContentContainer>
-        <Box maxWidth="538px" pb="200px" mx="auto">
-          <Heading variant="h3" mb="24px">
+        <Box maxWidth="670px" pb="200px" mx="auto">
+          <Heading variant="h2" mb="24px">
             Create delegate profile
           </Heading>
 
@@ -126,6 +127,7 @@ export function Page() {
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Starknet wallet address</FormLabel>
                 <Input
+                  size="standard"
                   variant="primary"
                   placeholder="0x..."
                   {...register("starknetAddress", {
@@ -137,6 +139,7 @@ export function Page() {
               <FormControl id="twitter">
                 <FormLabel>Twitter</FormLabel>
                 <Input
+                  size="standard"
                   variant="primary"
                   placeholder="@yourhandle"
                   {...register("twitter")}
@@ -147,6 +150,7 @@ export function Page() {
                 <FormLabel>Discord</FormLabel>
                 <Input
                   variant="primary"
+                  size="standard"
                   placeholder="name#1234"
                   {...register("discord")}
                 />
@@ -156,11 +160,17 @@ export function Page() {
                 <FormLabel>Discourse</FormLabel>
                 <Input
                   variant="primary"
+                  size="standard"
                   placeholder="yourusername"
                   {...register("discourse")}
                 />
                 {errors.discourse && <span>This field is required.</span>}
               </FormControl>
+              <Divider />
+              <Box>
+                <Heading variant="h3">Delegate agreement</Heading>
+                <Text variant="medium">Briefly explain what this means.</Text>
+              </Box>
               <FormControl id="confirmDelegateAgreement">
                 <Checkbox
                   isChecked={agreementType === "standard"}
@@ -208,12 +218,12 @@ export function Page() {
                   />
                 </FormControl>
               )}
-              <FormControl id="understandRole">
+              <FormControl id="understandRole" display="none">
                 <Controller
                   control={control}
                   name="understandRole"
                   defaultValue={false}
-                  rules={{ required: true }}
+                  rules={{ required: false }}
                   render={({ field }) => (
                     <Checkbox
                       isChecked={field.value}
@@ -230,7 +240,7 @@ export function Page() {
                 {errors.understandRole && <span>This field is required.</span>}
               </FormControl>
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant="solid" disabled={!isValid}>
+                <Button type="submit" variant="primary" disabled={!isValid}>
                   Submit delegate profile
                 </Button>
               </Flex>

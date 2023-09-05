@@ -4,35 +4,45 @@ import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(tagAnatomy.keys);
 
-const listCard = definePartsStyle({
+const review = definePartsStyle({
   container: {
-    px: "8px",
-    py: "4px",
-    background: "#FDFCFD",
-    border: "1px solid rgba(26, 21, 35, 0.09)",
-    color: "hsla(247, 4%, 45%, 1)",
+    px: "standard.xs",
+    py: "standard.base",
+    background: "surface.forms.default",
+    borderColor: "border.forms",
+    borderWidth: "1px",
+    color: "content.default.default",
     fontSize: "10px",
     fontWeight: "500",
-    borderRadius: "4px",
+    borderRadius: "condensed.base",
     position: "relative",
+    lineHeight: "16px",
+    letterSpacing: "0.2px",
   },
 });
-const primary = definePartsStyle({
+const amount = definePartsStyle({
   container: {
-    px: "8px",
-    py: "2px",
-    background: "#F4F4F6",
-    color: "#6B6B80",
+    px: "standard.xs",
+    py: "standard.base",
+    background: "#DCDBDD",
+    borderColor: "transparent",
+    borderWidth: "1px",
+    color: "#1A1523",
     fontSize: "10px",
-    borderRadius: "3px",
-    border: "1px solid rgba(114, 113, 122, 0.16)",
-    textTransform: "uppercase!important",
+    fontWeight: "500",
+    borderRadius: "condensed.round",
+    position: "relative",
+    lineHeight: "16px",
+    letterSpacing: "0.2px",
   },
 });
 
 export const tagTheme = defineMultiStyleConfig({
   variants: {
-    listCard,
-    primary,
+    review,
+    amount,
+  },
+  defaultProps: {
+    variant: "review",
   },
 });

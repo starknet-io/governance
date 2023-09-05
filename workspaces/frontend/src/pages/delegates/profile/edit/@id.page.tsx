@@ -263,27 +263,27 @@ export function Page() {
               </div>
               <Flex justifyContent="flex-end" gap="16px">
                 <Button
-                  color="#D83E2C"
-                  size="sm"
+                  type="submit"
+                  size="condensed"
+                  variant="danger"
                   onClick={onDelete}
-                  variant={"outline"}
                   mr="auto"
                 >
                   Delete
                 </Button>
                 <Button
                   as="a"
-                  size="sm"
-                  variant={"ghost"}
+                  size="condensed"
+                  variant="ghost"
                   href={`/delegates/profile/${pageContext.routeParams!.id}`}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  size="sm"
-                  variant={"solid"}
-                  disabled={!isValid}
+                  size="condensed"
+                  variant="primary"
+                  isDisabled={!isValid}
                 >
                   Save
                 </Button>

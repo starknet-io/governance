@@ -94,7 +94,7 @@ export function Page() {
       <ContentContainer>
         <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
-            Edit council
+            Edit Page
           </Heading>
           <form onSubmit={onSubmit}>
             <Stack spacing="32px" direction={{ base: "column" }} mb="40px">
@@ -125,9 +125,9 @@ export function Page() {
             <ReorderableList items={reorderItems} setItems={setItems} />
             <Button
               type="submit"
-              size="sm"
-              variant={"solid"}
-              disabled={!isValid}
+              size="condensed"
+              variant="primary"
+              isDisabled={!isValid}
             >
               Save
             </Button>

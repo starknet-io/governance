@@ -1,31 +1,70 @@
-import { inputAnatomy } from '@chakra-ui/anatomy';
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
+import { inputAnatomy } from "@chakra-ui/anatomy";
+import { createMultiStyleConfigHelpers, defineStyle } from "@chakra-ui/react";
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(inputAnatomy.keys);
 
 const primary = definePartsStyle({
   field: {
+    color: "content.accent.default",
     _placeholder: {
-      color: '#93939F',
+      color: "content.support.default",
     },
-    borderRadius: '5px',
-    background: '#FFFFFF',
-    fontSize: '14px',
-    border: '1px solid #E4E5E7',
+    background: "surface.forms.default",
+    border: "1px solid",
+    borderColor: "border.forms",
+    boxShadow: "0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
+    _hover: {
+      borderColor: "#C8C7CB",
 
-    boxShadow: '0px 1px 1px rgba(228, 229, 231, 0.5)',
-
-    // Let's also provide dark mode alternatives
+      _placeholder: {
+        color: "content.support.hover",
+      },
+    },
+    _focus: {
+      borderColor: "#86848D",
+    },
   },
-  addon: {
-    border: '1px solid',
-    borderColor: 'gray.200',
-    background: 'gray.200',
-    borderRadius: 'full',
-    color: 'gray.500',
+
+  element: {
+    _hover: {
+      svg: {
+        boxSize: "40px!important",
+      },
+    },
+    height: "100%",
+    svg: {
+      boxSize: "20px",
+    },
   },
 });
+
+const standard = defineStyle({
+  fontSize: "0.875rem",
+  lineHeight: "1.25rem",
+  fontWeight: "500",
+  p: "standard.sm",
+  height: "44px",
+  borderRadius: "standard.base",
+});
+const condensed = defineStyle({
+  fontSize: "0.875rem",
+  lineHeight: "1.25rem",
+  fontWeight: "500",
+  p: "condensed.sm",
+  h: "36px",
+  borderRadius: "condensed.base",
+});
+
+const sizes = {
+  standard: definePartsStyle({ field: standard, addon: standard }),
+  condensed: definePartsStyle({ field: condensed, addon: condensed }),
+};
 export const inputTheme = defineMultiStyleConfig({
   variants: { primary },
+  sizes,
+  defaultProps: {
+    variant: "primary",
+    size: "standard",
+  },
 });

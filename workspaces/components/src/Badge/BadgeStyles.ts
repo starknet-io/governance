@@ -1,52 +1,110 @@
 import { defineStyle, defineStyleConfig } from "@chakra-ui/react";
 
-const last_call = defineStyle({
-  background: "#FEE7EB",
-  color: "#D90C31",
-  borderColor: "rgba(217, 12, 49, 0.1)",
-});
 const active = defineStyle({
-  background: "#90EAC4",
-  color: "#16412F",
+  background: "component.tag.active.surface",
+  color: "component.tag.active.content",
 });
-const Draft = defineStyle({
-  background: "#3F8CFF",
-  color: "#fff",
+const closed = defineStyle({
+  background: "component.tag.closed.surface",
+  color: "component.tag.closed.content",
 });
 const pending = defineStyle({
+  background: "component.tag.pending.surface",
+  color: "component.tag.pending.content",
+});
+const draft = defineStyle({
+  background: "component.tag.draft.surface",
+  color: "component.tag.draft.content",
+});
+const withdrawn = defineStyle({
+  background: "component.tag.withdrawn.surface",
+  color: "component.tag.withdrawn.content",
+});
+const last_call = defineStyle({
+  background: "component.tag.lastCall.surface",
+  color: "component.tag.lastCall.content",
+});
+const review = defineStyle({
+  background: "component.tag.review.surface",
+  color: "component.tag.review.content",
+});
+
+const idea = defineStyle({
+  background: "component.tag.idea.surface",
+  color: "component.tag.idea.content",
+});
+const final = defineStyle({
+  background: "component.tag.final.surface",
+  color: "component.tag.final.content",
+});
+const stagnant = defineStyle({
+  background: "component.tag.stagnant.surface",
+  color: "component.tag.stagnant.content",
+});
+const living = defineStyle({
+  background: "component.tag.living.surface",
+  color: "component.tag.living.content",
+});
+const amount = defineStyle({
   background: "#DCDBDD",
   color: "#1A1523",
 });
-const review = defineStyle({
-  background: "#F2F2F3",
-  color: "#fff",
+
+const condensed = defineStyle({
+  px: "standard.xs",
+  py: "standard.base",
+  borderRadius: "standard.base",
+  height: "auto",
+  fontSize: "10px",
+  fontWeight: "600",
+  textTransform: "uppercase",
+  borderWidth: "0px",
+  lineHeight: "7px",
+  letterSpacing: "0.5px",
 });
-const closed = defineStyle({
-  background: "#E799FF",
-  color: "#3F0053",
+const round = defineStyle({
+  px: "standard.base",
+  py: "standard.base",
+  borderRadius: "standard.round",
+  height: "20px",
+  width: "20px",
+  fontSize: "10px",
+  fontWeight: "600",
+  textTransform: "uppercase",
+  borderWidth: "0px",
+  lineHeight: "20px",
+  letterSpacing: "0.5px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 });
 
 export const badgeTheme = defineStyleConfig({
   baseStyle: {
-    paddingLeft: "16px",
-    paddingRight: "16px",
-    paddingTop: "4px",
-    paddingBottom: "4px",
-    borderRadius: "999px",
+    px: "standard.md",
+    py: "8px",
+    borderRadius: "standard.round",
     height: "auto",
-    color: "#3F0053",
-    fontSize: "11px",
-    fontWeight: "500",
+    fontSize: "10px",
+    fontWeight: "600",
     textTransform: "uppercase",
     borderWidth: "0px",
-    borderStyle: "solid",
+    lineHeight: "7px",
+    letterSpacing: "0.5px",
   },
+  sizes: { condensed, round },
   variants: {
     last_call,
     active,
     pending,
     review,
-    Draft,
+    draft,
     closed,
+    withdrawn,
+    idea,
+    final,
+    stagnant,
+    living,
+    amount,
   },
 });

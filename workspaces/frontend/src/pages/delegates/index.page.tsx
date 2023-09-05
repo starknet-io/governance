@@ -4,7 +4,6 @@ import {
   Box,
   AppBar,
   Button,
-  SearchInput,
   DelegateCard,
   SimpleGrid,
   PageTitle,
@@ -24,6 +23,7 @@ import {
   SkeletonText,
   DelegateModal,
   ConfirmModal,
+  Flex,
 } from "@yukilabs/governance-components";
 
 import { useDebouncedCallback } from "use-debounce";
@@ -202,6 +202,7 @@ export function Page() {
     state.onReset();
     setFiltersState({ ...filtersState, filters: [] });
   };
+  // console.log(JSON.stringify(delegates.data, null, 2));
 
   function ActionButtons() {
     if (!user) {
@@ -210,12 +211,23 @@ export function Page() {
 
     return (
       <>
-        <Button size="sm" variant="outline" onClick={() => setIsOpen(true)}>
+        <Button
+          width={{ base: "100%", md: "auto" }}
+          size="condensed"
+          variant="outline"
+          onClick={() => setIsOpen(true)}
+        >
           Delegate to address
         </Button>
 
         {!user.delegationStatement && (
-          <Button as="a" href="/delegates/create" size="sm" variant="solid">
+          <Button
+            width={{ base: "100%", md: "auto" }}
+            as="a"
+            href="/delegates/create"
+            size="condensed"
+            variant="primary"
+          >
             Create delegate profile
           </Button>
         )}
@@ -267,7 +279,7 @@ export function Page() {
               title="Something went wrong"
               minHeight="300px"
               action={
-                <Button variant="solid" onClick={() => delegates.refetch()}>
+                <Button variant="primary" onClick={() => delegates.refetch()}>
                   Retry
                 </Button>
               }
@@ -275,16 +287,33 @@ export function Page() {
           </Box>
         ) : (
           <>
-            <AppBar>
-              <Box mr="8px">
+            <AppBar.Root>
+              {/* <Box mr="8px">
                 <SearchInput
                   value={searchQuery}
                   onChange={(e) => handleSearchInput(e.target.value)}
                 />
-              </Box>
-              <ButtonGroup display={{ base: "none", md: "flex" }}>
-                {/* Filter: already voted, >1million voting power, agree with delegate agreement, category   */}
-
+              </Box> */}
+              <AppBar.Group mobileDirection="row">
+                <Box minWidth={"52px"}>
+                  <Text variant="mediumStrong">Sort by</Text>
+                </Box>
+                <Select
+                  size="sm"
+                  height="36px"
+                  aria-label="Sort by"
+                  placeholder="Sort by"
+                  focusBorderColor={"red"}
+                  rounded="md"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  {sortByOptions.options.map((option) => (
+                    <option key={option.value} value={option.label}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
                 <Popover placement="bottom-start">
                   <FilterPopoverIcon
                     label="Filter by"
@@ -316,28 +345,12 @@ export function Page() {
                     />
                   </FilterPopoverContent>
                 </Popover>
-                {/* Sort by: most voting power, activity, most votes, most comments, by category  */}
+              </AppBar.Group>
 
-                <Select
-                  size="sm"
-                  aria-label="Sort by"
-                  placeholder="Sort by"
-                  focusBorderColor={"red"}
-                  rounded="md"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  {sortByOptions.options.map((option) => (
-                    <option key={option.value} value={option.label}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </ButtonGroup>
-              <Box display="flex" marginLeft="auto" gap="12px">
+              <AppBar.Group alignEnd>
                 <ActionButtons />
-              </Box>
-            </AppBar>
+              </AppBar.Group>
+            </AppBar.Root>
             <SimpleGrid
               position="relative"
               width="100%"
@@ -347,11 +360,15 @@ export function Page() {
               {delegates.data && delegates.data.length > 0 ? (
                 delegates.data.map((data) => (
                   <DelegateCard
+                    onDelegateClick={() => console.log("test")}
+                    profileURL={`/delegates/profile/${data.id}`}
                     ensName={data.author?.ensName}
                     key={data.author?.starknetAddress}
                     address={data?.author?.address}
                     avatarUrl={data.author?.ensAvatar}
-                    {...data}
+                    delegateStatement={data?.delegateStatement}
+                    delegatedVotes={"todo"}
+                    delegateType={data?.delegateType as string[]}
                   />
                 ))
               ) : (
@@ -370,8 +387,10 @@ export function Page() {
     </ContentContainer>
   );
 }
-
-const DelegatesSkeleton = () => {
+type DelegatesSkeletonProps = {
+  count?: number;
+};
+const DelegatesSkeleton = ({ count = 6 }: DelegatesSkeletonProps) => {
   return (
     <Box>
       <Box display={"flex"} gap="12px" bg="#fff" padding="12px" mb="24px">
@@ -387,30 +406,12 @@ const DelegatesSkeleton = () => {
         spacing={4}
         templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
       >
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>{" "}
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>{" "}
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>{" "}
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>
-        <Box padding="6" bg="#fff" borderRadius="8px">
-          <SkeletonCircle size="10" />
-          <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
-        </Box>
+        {Array.from({ length: count }).map((_, index) => (
+          <Box key={index} padding="6" bg="#fff" borderRadius="8px">
+            <SkeletonCircle size="10" />
+            <SkeletonText mt="4" noOfLines={6} spacing="4" skeletonHeight="2" />
+          </Box>
+        ))}
       </SimpleGrid>
     </Box>
   );

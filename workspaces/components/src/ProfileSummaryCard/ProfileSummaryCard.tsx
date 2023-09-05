@@ -69,11 +69,16 @@ const Profile = ({
         <Heading
           variant="h3"
           fontSize={size === "lg" ? "20px" : "16px"}
-          color="#33333E"
+          color="#1A1523"
         >
           {formattedAddress}
         </Heading>
-        <Text variant="breadcrumbs" fontSize="12px" color="#57565D">
+        <Text
+          variant="breadcrumbs"
+          fontSize="10px"
+          color="#4A4A4F"
+          fontWeight="600"
+        >
           {address && subtitle === null ? formattedAddress : subtitle}
         </Text>
       </Stack>
@@ -107,7 +112,7 @@ type PrimaryButtonProps = {
 };
 const PrimaryButton = ({ onClick, label = "button" }: PrimaryButtonProps) => {
   return (
-    <Button onClick={onClick} variant="solid">
+    <Button onClick={onClick} variant="primary">
       {label}
     </Button>
   );

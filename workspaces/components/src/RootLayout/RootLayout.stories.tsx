@@ -1,33 +1,22 @@
-import { Meta } from '@storybook/react';
-import * as Layout from './RootLayout';
-import { ThemeProvider } from '../ThemeProvider';
-import { NavGroup } from 'src/Navigation/NavGroup';
-import { NavItem } from 'src/Navigation/NavItem';
-
-import {
-  HiCodeBracketSquare,
-  HiOutlineLockClosed,
-} from 'react-icons/hi2';
-
-// import { PopoverIcon } from "../../components/Layout/Navbar/PopoverIcon";
+import { Meta } from "@storybook/react";
+import * as Layout from "./RootLayout";
+import { ThemeProvider } from "../ThemeProvider";
+import { Text } from "src/Text";
 
 export default {
-  title: 'starknet.io/Layout.Root',
+  title: "governance-ui/Layout",
   component: Layout.Root,
 } as Meta<typeof Layout.Root>;
 
-export const Solid = () => (
+export const RootLayout = () => (
   <ThemeProvider>
     <Layout.Root>
       <Layout.LeftAside>
-        <NavItem icon={<HiCodeBracketSquare />} label="Proposals" />
-        <NavItem icon={<HiOutlineLockClosed />} label="Delegates" />
-        <NavGroup label="Councils">
-          <NavItem icon={<HiCodeBracketSquare />} label="Builders" />
-          <NavItem icon={<HiOutlineLockClosed />} label="Security" />
-        </NavGroup>
+        <Text>LeftAside</Text>
       </Layout.LeftAside>
-      <Layout.Main />
+      <Layout.Main>
+        <Text>Main</Text>
+      </Layout.Main>
       {/* <Layout.RightAside /> */}
     </Layout.Root>
   </ThemeProvider>

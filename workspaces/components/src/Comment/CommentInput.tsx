@@ -21,7 +21,7 @@ export const CommentInput = ({ onSend }: CommentInputProps) => {
       />
       <Button
         className="submit-button"
-        variant="solid"
+        variant="primary"
         size="sm"
         type="submit"
         onClick={handleSend}
@@ -58,7 +58,7 @@ export const CommentInput = ({ onSend }: CommentInputProps) => {
 //       />
 //       <Button
 //         className="submit-button"
-//         variant="solid"
+//         variant="primary"
 //         size="sm"
 //         type="submit"
 //         onClick={handleClick}
@@ -147,7 +147,7 @@ export const CommentInput = ({ onSend }: CommentInputProps) => {
 //       />
 //       <Button
 //         className="submit-button"
-//         variant="solid"
+//         variant="primary"
 //         size="sm"
 //         type="submit"
 //         onClick={handleSend}

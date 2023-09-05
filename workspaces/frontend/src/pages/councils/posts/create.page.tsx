@@ -66,6 +66,7 @@ export function Page() {
                 <FormLabel>Title</FormLabel>
                 <Input
                   variant="primary"
+                  size="standard"
                   placeholder="Post title"
                   {...register("title", {
                     required: true,
@@ -85,9 +86,9 @@ export function Page() {
               <Flex justifyContent="flex-end">
                 <Button
                   type="submit"
-                  size="sm"
-                  variant={"solid"}
-                  disabled={!isValid}
+                  size="condensed"
+                  variant="primary"
+                  isDisabled={!isValid}
                 >
                   Create post
                 </Button>

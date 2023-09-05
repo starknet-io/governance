@@ -41,7 +41,7 @@ export const BannerHome = ({
 
       <Box
         width="100%"
-        height="240px"
+        height="373px"
         position="relative"
         borderBottom="1px solid #DCDBDD"
         overflow="hidden"
@@ -57,7 +57,8 @@ export const BannerHome = ({
                 bgClip="text"
                 variant="h2"
                 fontWeight="500"
-                fontSize="34px"
+                fontSize="48px"
+                lineHeight={"1.5em"}
               >
                 {title}
               </Heading>
