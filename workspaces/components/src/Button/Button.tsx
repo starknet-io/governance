@@ -2,22 +2,8 @@ import { ButtonProps, Button as ChakraButton } from "@chakra-ui/react";
 import { scrollIntoView } from "../utils/scrollIntoView";
 import React, { forwardRef } from "react";
 
-type props = {
-  variant:
-    | "solid"
-    | "outline"
-    | "outlineLight"
-    | "outlineRounded"
-    | "ghost"
-    | "primaryHero"
-    | "secondaryHero"
-    | "switch"
-    | "filter"
-    | "filterActive"
-    | "category"
-    | "switcher"
-    | "icon"
-    | "fullGhostBtn";
+export type props = {
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   children: React.ReactNode;
   toId?: string;
   href?: string;
@@ -46,7 +32,7 @@ export const Button = forwardRef<HTMLButtonElement, props>(
         {children}
       </ChakraButton>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

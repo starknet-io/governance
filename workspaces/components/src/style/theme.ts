@@ -1,6 +1,7 @@
 import { extendTheme } from "@chakra-ui/react";
 import { styles } from "./global-styles";
 import { buttonTheme as Button } from "../Button/ButtonStyles";
+import { headingTheme as Heading } from "../Heading/HeadingStyles";
 import { badgeTheme as Badge } from "../Badge/BadgeStyles";
 import { textTheme as Text } from "../Text/TextStyles";
 import { tagTheme as Tag } from "../Tag/TagStyles";
@@ -13,6 +14,10 @@ import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
 import { menuTheme } from "src/Menu/MenuStyles";
 import { linkTheme } from "src/Link/LinkStyles";
 import { skeletonTheme } from "src/Skeleton/SkeletonStyles";
+import { colors, spacing, radii } from "./tokens";
+import { checkboxTheme } from "src/Checkbox/CheckboxStyles";
+import { radioTheme } from "src/Radio/RadioStyles";
+import { switchTheme } from "src/Switch/SwitchStyles";
 
 const config = {
   initialColorMode: "light",
@@ -20,6 +25,20 @@ const config = {
 
 const theme = extendTheme({
   config,
+  colors: {
+    ...colors,
+  },
+
+  space: {
+    ...spacing,
+  },
+  radii: {
+    ...radii,
+  },
+  sizes: {
+    ...spacing,
+  },
+
   components: {
     Button,
     Badge,
@@ -31,15 +50,7 @@ const theme = extendTheme({
     Menu: menuTheme,
     Modal,
     Spinner,
-    Checkbox: {
-      baseStyle: {
-        control: {
-          _checked: {
-            color: "#3b3b3b",
-          },
-        },
-      },
-    },
+
     fonts: {
       heading: `'Poppins', sans-serif`,
       body: `'Inter Variable', sans-serif`,
@@ -48,6 +59,10 @@ const theme = extendTheme({
     Progress,
     styles,
     Skeleton: skeletonTheme,
+    Heading,
+    Checkbox: checkboxTheme,
+    Radio: radioTheme,
+    Switch: switchTheme,
   },
 });
 

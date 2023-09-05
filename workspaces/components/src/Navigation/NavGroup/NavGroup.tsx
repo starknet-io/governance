@@ -1,7 +1,7 @@
 import { Box, Flex, Stack, Text } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
-interface NavGroupProps {
+export interface NavGroupProps {
   label?: string;
   children: ReactNode;
   alignEnd?: boolean;
@@ -13,7 +13,7 @@ export const NavGroup = (props: NavGroupProps) => {
   return (
     <Flex
       flexDirection="column"
-      marginTop={alignEnd ? "auto" : "24px"}
+      marginTop={alignEnd ? "auto" : "20px"}
       padding="0"
     >
       {label && (
@@ -23,13 +23,13 @@ export const NavGroup = (props: NavGroupProps) => {
           fontWeight="600"
           textTransform="uppercase"
           letterSpacing="0.5px"
-          color="#57565D"
-          mb="3"
+          color="#86848D"
+          mb="4px"
           position="relative"
         >
           {label}
           {action && (
-            <Box position="absolute" right="-16px" top="-12px">
+            <Box as="span" position="absolute" right="-16px" top="-12px">
               {action}
             </Box>
           )}

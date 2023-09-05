@@ -19,7 +19,7 @@ export {
   Heading,
   Text,
   Logo,
-  AppBar,
+  Input,
   Badge,
   SearchInput,
   DelegateCard,
@@ -28,6 +28,7 @@ export {
   ContentContainer,
   VoteStat,
   IconButton,
+  IconButtonWithBadge,
   MarkdownEditor,
   Collapse,
   Multiselect,
@@ -66,6 +67,7 @@ export {
   LinkIcon,
   QuillEditor,
   ProposalsIcon,
+  HomeIcon,
   SnipsIcon,
   BuildersIcon,
   DelegatesIcon,
@@ -100,11 +102,15 @@ export {
   StatusModal,
   EmptyState,
   UserProfileMenu,
+  SupportModal,
+  FiltersIcon,
+  SearchIcon,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";
 import * as SummaryItems from "./src/SummaryItems/SummaryItems";
 import * as ListRow from "./src/ListRow/ListRowGeneric";
+import * as AppBar from "./src/AppBar/AppBar";
 import * as Stat from "./src/Stat/Stat";
 import * as ProfileSummaryCard from "./src/ProfileSummaryCard/ProfileSummaryCard";
 import * as EditorTemplate from "./src/Editor/templates";
@@ -113,6 +119,7 @@ export {
   Layout,
   SummaryItems,
   ListRow,
+  AppBar,
   Stat,
   ProfileSummaryCard,
   EditorTemplate,
@@ -128,7 +135,6 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
-  Input,
   InputGroup,
   InputLeftAddon,
   StackDivider,
@@ -188,7 +194,6 @@ export {
   FormControl,
   FormHelperText,
   FormLabel,
-  Input,
   InputGroup,
   InputLeftAddon,
   StackDivider,

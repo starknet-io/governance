@@ -20,7 +20,7 @@ import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
 
 interface IUser extends User {
-  delegationStatement: Delegate;
+  delegationStatement: Delegate | null;
 }
 
 interface UserProfileMenuProps {
@@ -103,7 +103,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                   />
                 </FormControl>
                 <Box width="100%" mt={6}>
-                  <Button width="100%" variant="solid" onClick={handleSave}>
+                  <Button width="100%" variant="primary" onClick={handleSave}>
                     Save
                   </Button>
                 </Box>
@@ -185,14 +185,13 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
             </Flex>
             <Flex direction="column" mt={4}>
               <Button
-                border={"1px solid"}
-                variant="ghost"
+                variant="outline"
                 onClick={() => setEditUserProfile(true)}
               >
                 Edit user profile
               </Button>
               <Box height={2} />
-              <Button variant="solid" onClick={onDisconnect}>
+              <Button variant="primary" onClick={onDisconnect}>
                 Disconnect
               </Button>
             </Flex>

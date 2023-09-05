@@ -7,7 +7,7 @@ import { ChakraDatePicker } from "./ChakraDatePicker"; // Adjust the path accord
 type Story<T = unknown> = ((args: T) => JSX.Element) & { args?: Partial<T> };
 
 export default {
-  title: "Components/ChakraDatePicker",
+  title: "Governance-ui/ChakraDatePicker",
   component: ChakraDatePicker,
   argTypes: {
     single: { control: "boolean" },

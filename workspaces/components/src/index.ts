@@ -1,4 +1,3 @@
-export { AppBar } from "./AppBar";
 export { Heading } from "./Heading";
 export { Text } from "./Text";
 export { Header } from "./Header";
@@ -13,7 +12,7 @@ export { SearchInput } from "./SearchInput";
 export { DelegateCard } from "./Card";
 export { Tag } from "./Tag";
 export { ContentContainer } from "./ContentContainer";
-export { IconButton } from "./IconButton";
+export { IconButton, IconButtonWithBadge } from "./IconButton";
 export { Collapse } from "./Collapse";
 export { VoteButton } from "./VoteButton";
 export { VoteStat } from "./VoteStat";
@@ -26,13 +25,15 @@ export { DelegateModal } from "./DelegateModal";
 export { AgreementModal } from "./AgreementModal";
 export { DatePicker } from "./DatePicker";
 export { ConfirmModal } from "./ConfirmModal";
-export { ChakraDatePicker } from "./ChakraDatePicker"
+export { ChakraDatePicker } from "./ChakraDatePicker";
 export { LinkCard } from "./LinkCard";
 export { CheckboxFilter } from "./Filter/CheckboxFilter";
 export { useMarkdownEditor } from "./Editor/useMarkdownEditor";
 export { CopyToClipboard } from "./CopyToClipboard";
 export { BannerHome } from "./BannerHome";
 export { GlobalSearch } from './GlobalSearch';
+export { Input } from "./Input";
+
 export {
   FilterPopoverButton,
   FilterPopoverContent,
@@ -57,7 +58,7 @@ export {
   GiHamburgerMenu,
   HiOutlinePencil,
   HiOutlineTrash,
-  HiXMark
+  HiXMark,
 } from "./Icons";
 export {
   BoldIcon,
@@ -68,9 +69,8 @@ export {
   BulletedListIcon,
   ImageIcon,
   LinkIcon,
-} from "./Icons/ToolbarIcons";
-export {
   ProposalsIcon,
+  HomeIcon,
   SnipsIcon,
   BuildersIcon,
   DelegatesIcon,
@@ -94,7 +94,9 @@ export {
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
-} from "./Icons/UiIcons";
+  FiltersIcon,
+  SearchIcon,
+} from "./Icons";
 
 export { MarkdownEditor } from "./Editor";
 
@@ -112,3 +114,4 @@ export { Status } from "./Status";
 export { StatusModal } from "./StatusModal";
 export { EmptyState } from "./EmptyState";
 export { UserProfileMenu } from "./UserProfileMenu";
+export { SupportModal } from "./SupportModal";

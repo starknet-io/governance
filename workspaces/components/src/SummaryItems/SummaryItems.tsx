@@ -42,7 +42,7 @@ const Item = (props: ItemProps) => {
   const { label, value, children, isTruncated, isCopiable } = props;
 
   const renderValue = () => {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       return isCopiable ? (
         <CopyToClipboard text={value}>
           <Text color="#292932" fontWeight="medium" title={value}>
@@ -68,7 +68,6 @@ const Item = (props: ItemProps) => {
     </Flex>
   );
 };
-
 
 type TitleProps = {
   label?: string | null;
@@ -165,7 +164,7 @@ const Tags = (props: TagsProps) => {
 
   return (
     <Box>
-      <Tag variant="listCard">{`${type}`}</Tag>
+      <Tag variant="review">{`${type}`}</Tag>
     </Box>
   );
 };

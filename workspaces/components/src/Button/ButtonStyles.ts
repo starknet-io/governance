@@ -1,212 +1,347 @@
-import { defineStyle, defineStyleConfig } from "@chakra-ui/react";
-
-const outline = defineStyle({
-  borderRadius: "4px",
-  fontWeight: "medium",
-  fontSize: "13px",
-  paddingLeft: "16px",
-  paddingRight: "16px",
-  color: "#33333E",
-  borderColor: "#E4E5E7",
-  bg: "transparent",
-  minWidth: "none",
-  lineHeight: "24px",
-  height: "auto",
-  padding: "4px 10px",
-  boxShadow: " none",
-  _hover: {
-    bg: "transparent",
-    color: "btn-outline-hover-fg",
-    borderColor: "#ccc",
-    _dark: {
-      color: "selected.100",
+export const buttonTheme = {
+  baseStyle: {
+    fontWeight: "500",
+    letterSpacing: "0.004rem",
+    lineHeight: "1.25rem",
+    fontSize: "sm",
+    borderWidth: "1px",
+    borderColor: "transparent",
+    _focusVisible: {
+      borderColor: "content.onSurfaceInverted.default",
+      borderWidth: "1px",
+      boxShadow: "0px 0px 0px 4px #4343D1",
     },
   },
-  _active: {
-    bg: "bg.200",
-    color: "grey.greyDusk",
-    borderColor: "grey.morning",
-    borderWidth: "1px",
-    // boxShadow: 'inset 0px 4px 0px rgba(0, 0, 0, 0.1)',
-    outlineWidth: 1,
-    _focus: {
-      bg: "bg.200",
-      color: "grey.greyDusk",
-      borderColor: "grey.morning",
-      borderWidth: "1px",
-      // boxShadow: 'inset 0px 4px 0px rgba(0, 0, 0, 0.1)',
-      outlineWidth: 1,
+  sizes: {
+    standard: {
+      minWidth: "44px",
+      px: "standard.lg",
+      borderRadius: "standard.base",
+      py: "standard.sm",
+      minHeight: "44px",
+      svg: {
+        boxSize: "20px",
+      },
     },
-    _dark: {
-      bg: "black",
-      color: "grey.greyDusk",
-      borderColor: "grey.greyDusk",
-      outlineWidth: 1,
-      _focus: {
-        bg: "black",
-        color: "grey.greyDusk",
-        borderColor: "grey.greyDusk",
-        outlineWidth: 1,
+    condensed: {
+      minWidth: "36px",
+      px: "condensed.lg",
+      borderRadius: "condensed.base",
+      py: "condensed.sm",
+      minHeight: "36px",
+      maxWidth: "100%",
+      svg: {
+        boxSize: "20px",
+      },
+    },
+    withBadgeCondensed: {
+      minWidth: "36px",
+      paddingLeft: "condensed.lg!important",
+      paddingRight: "40px!important",
+      borderRadius: "condensed.base",
+      py: "condensed.sm",
+      minHeight: "36px",
+      maxWidth: "100%",
+      svg: {
+        boxSize: "20px",
+      },
+    },
+    withBadgeStandard: {
+      minWidth: "44px",
+      paddingLeft: "condensed.lg!important",
+      paddingRight: "40px!important",
+      borderRadius: "condensed.base",
+      py: "condensed.sm",
+      minHeight: "44px",
+      maxWidth: "100%",
+      svg: {
+        boxSize: "20px",
+      },
+    },
+    navLink: {
+      minWidth: "auto",
+      px: "standard.sm",
+      borderRadius: "standard.md",
+      py: "standard.xs",
+      minHeight: "36px",
+      maxWidth: "100%",
+      justifyContent: "flex-start",
+      svg: {
+        boxSize: "24px",
       },
     },
   },
-  _focus: {
-    boxShadow: "none",
-    borderColor: "selected.main",
-    _dark: {
-      boxShadow: "none",
-      borderColor: "selected.100",
-      borderWidth: "1px",
-      borderStyle: "solid",
-    },
-  },
-});
-const solid = defineStyle({
-  bg: "#141417",
-  h: "36px",
-  borderRadius: "4px",
-  color: "#fff",
-  _hover: {
-    bg: "#444",
-  },
-  _active: {
-    outlineWidth: 1,
-  },
-  _disabled: {
-    bg: "#444",
-    color: "#fff",
-    opacity: 1,
-    pointerEvents: "none",
-    _hover: {
-      bg: "#444",
-      color: "#fff",
-      opacity: 1,
-    },
-  },
-
-  _focus: {
-    boxShadow: "none",
-    borderColor: "selected.main",
-    borderWidth: "1px",
-    borderStyle: "solid",
-  },
-});
-const switcher = defineStyle({
-  bg: "transparent",
-  h: "32px",
-  borderRadius: "6px",
-  color: "#6C6C75",
-  fontSize: "12px",
-  fontWeight: "500",
-  boxShadow: "0px 1px 1px rgba(0, 0, 0, 0)",
-
-  _hover: {
-    bg: "transparent",
-    color: "#292932",
-  },
-  _active: {
-    bg: "#FFFFFF",
-    border: "0.5px solid #EEEEF1",
-    boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.07)",
-    color: "#292932",
-    fontWeight: "500",
-  },
-  _disabled: {
-    bg: "#444",
-    color: "#fff",
-    opacity: 1,
-    pointerEvents: "none",
-    _hover: {
-      bg: "#444",
-      color: "#fff",
-      opacity: 1,
-    },
-  },
-
-  _focus: {
-    boxShadow: "none",
-    borderColor: "selected.main",
-    borderWidth: "1px",
-    borderStyle: "solid",
-  },
-});
-const toolbar = defineStyle({
-  bg: "white",
-  borderRadius: "4px",
-
-  _hover: {
-    bg: "hsla(253, 4%, 54%, 0.12)",
-  },
-  _active: {
-    outlineWidth: 1,
-    backgroundColor: "hsla(247, 4%, 45%, 1)",
-    color: "#fff",
-  },
-  _disabled: {
-    bg: "#444",
-    color: "#fff",
-    opacity: 1,
-    pointerEvents: "none",
-    _hover: {
-      bg: "#444",
-      color: "#fff",
-      opacity: 1,
-    },
-  },
-
-  _focus: {
-    boxShadow: "none",
-    borderColor: "selected.main",
-    borderWidth: "1px",
-    borderStyle: "solid",
-  },
-});
-
-const sizes = {
-  sm: defineStyle({
-    fontSize: "sm",
-    borderRadius: "4px",
-    px: "14px",
-    fontWeight: "500", // Change font size to sm (14px)
-  }),
-  tb: defineStyle({
-    fontSize: "20px",
-    width: "32px",
-    height: "32px",
-  }),
-};
-
-const fullGhostBtn = defineStyle({
-  w: "100%",
-  bg: "transparent",
-  borderWidth: "1px",
-  borderStyle: "solid",
-  borderColor: "#1A152317",
-  color: "#6F6E77",
-  fontWeight: "500",
-  borderRadius: "4px",
-  boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.07)",
-  _focus: {
-    boxShadow: "none",
-    borderColor: "selected.main",
-    borderWidth: "1px",
-    borderStyle: "solid",
-  },
-  _hover: {
-    background: "gray.100",
-  },
-  _active: {
-    background: "gray.200",
-  },
-});
-
-export const buttonTheme = defineStyleConfig({
-  sizes,
   variants: {
-    outline,
-    solid,
-    switcher,
-    toolbar,
-    fullGhostBtn,
+    primary: {
+      bg: "surface.accent.default",
+      color: "content.onSurfaceInverted.default",
+      svg: {
+        fill: "content.onSurfaceInverted.default",
+      },
+      _hover: {
+        bg: "surface.accent.hover",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.accent.selected",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+      },
+      _disabled: {
+        bg: "surface.accent.disabled",
+        color: "content.onSurfaceInverted.default",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
+    secondary: {
+      borderWidth: "1px",
+      borderColor: "border.forms",
+      bg: "surface.forms.default",
+      color: "content.default.default",
+      svg: {
+        fill: "content.default.default",
+      },
+      boxShadow: " 0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
+      _hover: {
+        bg: "surface.forms.hover",
+        svg: {
+          fill: "content.default.default",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.forms.default",
+        svg: {
+          fill: "content.default.default",
+        },
+      },
+      _disabled: {
+        bg: "surface.accent.disabled",
+        color: "content.onSurfaceInverted.default",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
+    outline: {
+      borderWidth: "1px",
+      borderColor: "border.forms!important",
+      bg: "surface.forms.default",
+      color: "content.default.default",
+      svg: {
+        fill: "content.default.default",
+      },
+      _hover: {
+        bg: "surface.forms.hover",
+        svg: {
+          fill: "content.default.default",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.forms.default",
+        svg: {
+          fill: "content.default.default",
+        },
+      },
+      _disabled: {
+        bg: "surface.accent.disabled",
+        color: "content.onSurfaceInverted.default",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
+    ghost: {
+      borderColor: "transparent",
+      color: "content.default.default",
+      svg: {
+        fill: "content.default.default",
+      },
+      bg: "transparent",
+      _hover: {
+        bg: "surface.forms.hover",
+        svg: {
+          fill: "content.default.default",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.forms.selectedInverted",
+        color: "content.default.selectedInverted",
+        svg: {
+          fill: "content.default.selectedInverted",
+        },
+      },
+      _disabled: {
+        bg: "surface.accent.disabled",
+        color: "content.onSurfaceInverted.default",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
+    danger: {
+      borderColor: "border.forms",
+      bg: "surface.forms.default",
+      color: "content.danger.default",
+      svg: {
+        fill: "content.danger.default",
+      },
+      boxShadow: " 0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
+      _hover: {
+        bg: "surface.danger.default",
+        color: "content.onSurfaceInverted.default",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.danger.default",
+        color: "content.onSurfaceInverted.default",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+      },
+      _disabled: {
+        bg: "surface.forms.disabled",
+        color: "content.default.disabled",
+        svg: {
+          fill: "content.default.disabled",
+        },
+
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
+    navLink: {
+      borderWidth: "1px",
+      borderColor: "transparent",
+      bg: "transparent",
+      color: "content.default.default",
+      svg: {
+        fill: "content.default.default",
+      },
+      boxShadow: " 0px 1px 1px 0px rgba(0, 0, 0, 0)",
+      _hover: {
+        bg: "surface.forms.hover",
+        color: "content.default.hover",
+        svg: {
+          fill: "content.default.hover",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.forms.selected",
+        color: "content.default.selected",
+        svg: {
+          fill: "content.default.selected",
+        },
+      },
+      _disabled: {
+        bg: "surface.forms.disabled",
+        color: "content.default.disabled",
+        svg: {
+          fill: "content.default.disabled",
+        },
+
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
+    feedback: {
+      borderColor: "border.link",
+      bg: "surface.forms.default",
+      color: "content.links.default",
+      svg: {
+        fill: "content.links.default",
+      },
+
+      _hover: {
+        //toDo no styles for feedback other than default
+        opacity: 0.8,
+        bg: "surface.forms.default",
+        color: "content.links.default",
+        svg: {
+          fill: "content.links.default",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.forms.default",
+        color: "content.links.default",
+        svg: {
+          fill: "content.links.default",
+        },
+      },
+      _disabled: {
+        bg: "surface.forms.disabled",
+        color: "content.default.disabled",
+        svg: {
+          fill: "content.default.disabled",
+        },
+
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
   },
-});
+  defaultProps: { size: "standard", variant: "primary" },
+};

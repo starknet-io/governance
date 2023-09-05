@@ -7,7 +7,7 @@ import { getUserByJWT } from '../utils/helpers';
 import { TRPCError } from '@trpc/server';
 
 export const usersRouter = router({
-  getAll: publicProcedure.query(() => db.query.users.findMany(
+  getAll: protectedProcedure.query(() => db.query.users.findMany(
     {
       with: {
         delegationStatement: true,

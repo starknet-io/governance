@@ -53,7 +53,9 @@ export const DelegateModal = ({
   const getTotalVotingPower = () => {
     if (receiverData) {
       return receiverData.vp
-        ? (parseInt(receiverData.balance || "0") + (receiverData?.vp || 0)).toString()
+        ? (
+            parseInt(receiverData.balance || "0") + (receiverData?.vp || 0)
+          ).toString()
         : receiverData.balance;
     } else {
       return "0";
@@ -145,7 +147,7 @@ export const DelegateModal = ({
                 isConnected && (
                   <Button
                     type="submit"
-                    variant="solid"
+                    variant="primary"
                     size="lg"
                     onClick={delegateTokens}
                   >
@@ -154,9 +156,9 @@ export const DelegateModal = ({
                 )
               ) : (
                 <Button
-                  variant="solid"
+                  variant="primary"
                   type="submit"
-                  disabled={!customAddress}
+                  isDisabled={!customAddress}
                   onClick={() => {
                     if (onContinue) {
                       onContinue(customAddress);

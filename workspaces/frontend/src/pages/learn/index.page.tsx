@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps, ROLES } from "src/renderer/types";
 
 import {
   Box,
@@ -12,15 +12,15 @@ import {
   ProfileSummaryCard,
   MenuItem,
   Divider,
-  CopyToClipboard,
   MarkdownRenderer,
+  Skeleton,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Page as PageInterface } from "@yukilabs/governance-backend/src/db/schema/pages";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { usePageContext } from "src/renderer/PageContextProvider";
+import { hasPermission } from "src/utils/helpers";
 
 export interface PageWithUserInterface extends PageInterface {
   author: User | null;
@@ -30,9 +30,10 @@ export function Page() {
   const [selectedPage, setSelectedPage] =
     useState<PageWithUserInterface | null>(null);
   const pagesResp = trpc.pages.getAll.useQuery();
-  const pages = pagesResp.data ?? [];
+  const pages = useMemo(() => pagesResp.data ?? [], [pagesResp.data]);
+  const isLoading = pagesResp.isLoading;
+  const { user: loggedUser } = usePageContext();
   const pageContext = usePageContext();
-  const { user } = useDynamicContext();
 
   useEffect(() => {
     setSelectedPage(getPageFromURL());
@@ -65,17 +66,15 @@ export function Page() {
   };
 
   const NavItemWrapper = ({ page }: { page: PageWithUserInterface }) => {
-    const url = `${window.location.origin}/learn/${page.slug}`;
     return (
       <div style={{ display: "flex" }}>
         <div style={{ width: "100%" }} onClick={() => selectPage(page)}>
           <NavItem
             label={page.title ?? ""}
-            activePage={selectedPage?.id === page.id}
-            active="learn"
+            // activePage={selectedPage?.id === page.id}
+            active={selectedPage?.id == page?.id}
           />
         </div>
-        <CopyToClipboard text={url} />
       </div>
     );
   };
@@ -105,11 +104,29 @@ export function Page() {
           color="#545464"
           mb="24px"
         >
-          {pages.map((page: PageWithUserInterface) => (
-            <NavItemWrapper key={page.id} page={page} />
-          ))}
+          {isLoading ? (
+            <Box
+              display={"flex"}
+              flexDirection="column"
+              gap="8px"
+              mb="24px"
+              width="100%"
+              bg="transparent"
+            >
+              <Skeleton height="42px" width="100%" />
+              <Skeleton height="40px" width="100%" />
+              <Skeleton height="40px" width="100%" />
+              <Skeleton height="42px" width="100%" />
+              <Skeleton height="40px" width="100%" />
+              <Skeleton height="40px" width="100%" />
+            </Box>
+          ) : (
+            pages.map((page: PageWithUserInterface) => (
+              <NavItemWrapper key={page.id} page={page} />
+            ))
+          )}
         </Stack>
-        {user ? (
+        {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
           <Button variant="outline" href="/learn/create">
             Add new page
           </Button>
@@ -118,60 +135,80 @@ export function Page() {
         )}
       </Box>
       <ContentContainer maxWidth="800px" center>
-        <Stack
-          width="100%"
-          spacing="24px"
-          direction={{ base: "column" }}
-          color="#545464"
-        >
-          <Box display="flex" alignItems="center" width="100%">
-            <Box
-              display="flex"
-              alignItems="center"
-              width="100%"
-              justifyContent="space-between"
-            >
-              <Heading
-                color="#33333E"
-                variant="h3"
-                maxWidth="90%"
-                lineHeight="1.4em"
+        {!isLoading ? (
+          <Stack
+            width="100%"
+            spacing="24px"
+            direction={{ base: "column" }}
+            color="#545464"
+          >
+            <Box display="flex" alignItems="center" width="100%">
+              <Box
+                display="flex"
+                alignItems="center"
+                width="100%"
+                justifyContent="space-between"
               >
-                {selectedPage?.title ?? "Select a page"}
-              </Heading>
+                <Heading
+                  color="#33333E"
+                  variant="h3"
+                  maxWidth="90%"
+                  lineHeight="1.4em"
+                >
+                  {selectedPage?.title ?? "Select a page"}
+                </Heading>
 
-              {user ? (
-                <Box>
-                  <ProfileSummaryCard.MoreActions>
-                    <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
-                      Edit
-                    </MenuItem>
-                    <MenuItem>Delete</MenuItem>
-                  </ProfileSummaryCard.MoreActions>
-                </Box>
-              ) : (
-                <></>
-              )}
+                {hasPermission(loggedUser?.role, [
+                  ROLES.ADMIN,
+                  ROLES.MODERATOR,
+                ]) ? (
+                  <Box>
+                    <ProfileSummaryCard.MoreActions>
+                      <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
+                        Edit
+                      </MenuItem>
+                      <MenuItem>Delete</MenuItem>
+                    </ProfileSummaryCard.MoreActions>
+                  </Box>
+                ) : (
+                  <></>
+                )}
+              </Box>
             </Box>
+            <Flex gap="16px" paddingTop="24px">
+              <Stat.Root>
+                <Stat.Text
+                  label={
+                    selectedPage?.author?.ensName ??
+                    selectedPage?.author?.address.slice(0, 3) +
+                      "..." +
+                      selectedPage?.author?.address.slice(-3)
+                  }
+                />
+              </Stat.Root>
+              <Stat.Root>
+                <Stat.Date date={selectedPage?.createdAt} />
+              </Stat.Root>
+            </Flex>
+            <Divider mb="24px" />
+            <MarkdownRenderer content={selectedPage?.content ?? ""} />
+          </Stack>
+        ) : (
+          <Box
+            display={"flex"}
+            flexDirection="column"
+            gap="12px"
+            mb="24px"
+            width="100%"
+            bg="transparent"
+          >
+            <Skeleton height="36px" width="100%" />
+            <Skeleton height="300px" width="100%" />
+            <Skeleton height="36px" width="100%" />
+            <Skeleton height="300px" width="100%" />
+            <Skeleton height="300px" width="100%" />
           </Box>
-          <Flex gap="16px" paddingTop="24px">
-            <Stat.Root>
-              <Stat.Text
-                label={
-                  selectedPage?.author?.ensName ??
-                  selectedPage?.author?.address.slice(0, 3) +
-                    "..." +
-                    selectedPage?.author?.address.slice(-3)
-                }
-              />
-            </Stat.Root>
-            <Stat.Root>
-              <Stat.Date date={selectedPage?.createdAt} />
-            </Stat.Root>
-          </Flex>
-          <Divider mb="24px" />
-          <MarkdownRenderer content={selectedPage?.content ?? ""} />
-        </Stack>
+        )}
       </ContentContainer>
     </Box>
   );

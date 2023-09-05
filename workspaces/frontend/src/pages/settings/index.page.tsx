@@ -208,7 +208,11 @@ export function Page() {
                 {addErrors.role && <span>This field is required.</span>}
               </FormControl>
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant={"solid"} disabled={!isAddValid}>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  isDisabled={!isAddValid}
+                >
                   Add
                 </Button>
               </Flex>

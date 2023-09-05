@@ -10,6 +10,7 @@ import {
 } from "./ToolbarIcons";
 import {
   ProposalsIcon,
+  HomeIcon,
   SnipsIcon,
   BuildersIcon,
   DelegatesIcon,
@@ -33,6 +34,11 @@ import {
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
+  StarknetCommunityIcon,
+  StarknetIcon,
+  FiltersIcon,
+  DiscordIcon,
+  SearchIcon,
 } from "./UiIcons";
 import {
   HiOutlineCodeBracketSquare,
@@ -48,7 +54,8 @@ import {
   HiTrash,
   HiOutlinePencil,
   HiOutlineTrash,
-  HiXMark
+  HiXMark,
+  HiOutlineArrowUpRight,
 } from "react-icons/hi2";
 import { MdOutlineHowToVote, MdOutlineAssignment } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -75,6 +82,7 @@ export {
   LinkIcon,
   HiTrash,
   ProposalsIcon,
+  HomeIcon,
   SnipsIcon,
   BuildersIcon,
   DelegatesIcon,
@@ -93,6 +101,7 @@ export {
   NoSnipsIcon,
   PencilIcon,
   TrashIcon,
+  FiltersIcon,
   SuccessIcon,
   TrashWarningIcon,
   VoteIcon,
@@ -101,5 +110,10 @@ export {
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
-  HiXMark
+  HiXMark,
+  StarknetCommunityIcon,
+  StarknetIcon,
+  DiscordIcon,
+  HiOutlineArrowUpRight,
+  SearchIcon,
 };

@@ -15,7 +15,6 @@ import {
   Layout,
   Header,
   Box,
-  SnipsIcon,
   ProposalsIcon,
   DelegatesIcon,
   SecurityIcon,
@@ -40,15 +39,19 @@ import {
   FormControl,
   FormLabel,
   Input,
+  SupportModal,
+  HomeIcon,
 } from "@yukilabs/governance-components";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
-import { PageContext } from "./types";
+import { PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 import { GlobalSearch } from "@yukilabs/governance-components/src";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
+import { hasPermission } from "src/utils/helpers";
+import { usePageContext } from "./PageContextProvider";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -88,6 +91,7 @@ export function DynamicContextProviderPage(props: Props) {
   const hasCalledAuthenticateUser = useRef(false); // To guard against continuous calls
   const [modalOpen, setModalOpen] = useState(false);
   const editUserProfile = trpc.users.editUserProfileByAddress.useMutation();
+  const utils = trpc.useContext();
 
   const authenticateUser = useCallback(
     async (params: AuthSuccessParams) => {
@@ -99,6 +103,7 @@ export function DynamicContextProviderPage(props: Props) {
         ensName: params.user.ens?.name,
         ensAvatar: params.user.ens?.avatar,
       });
+      utils.auth.currentUser.invalidate();
     },
     [authMutation],
   );
@@ -134,6 +139,15 @@ export function DynamicContextProviderPage(props: Props) {
         },
       },
     );
+  };
+
+  const handleDynamicLogout = () => {
+    logoutMutation.mutateAsync(undefined, {
+      onSuccess: () => {
+        utils.auth.currentUser.invalidate();
+        setAuthUser(null);
+      },
+    });
   };
 
   return (
@@ -179,7 +193,7 @@ export function DynamicContextProviderPage(props: Props) {
                 setAuthUser(params);
               }
             },
-            onLogout: () => logoutMutation.mutate(),
+            onLogout: () => handleDynamicLogout(),
           },
           cssOverrides,
         }}
@@ -288,10 +302,15 @@ function PageLayout(props: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const councilResp = trpc.councils.getAll.useQuery();
   const [renderDone, setRenderDone] = useState(false);
+  const { user } = usePageContext();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setRenderDone(true);
   }, []);
+
+  console.log(JSON.stringify(pageContext.urlOriginal, null, 2));
+  console.log(JSON.stringify(pageContext.urlPathname, null, 2));
 
   useEffect(() => {
     let timer: string | number | NodeJS.Timeout | undefined;
@@ -313,13 +332,17 @@ function PageLayout(props: Props) {
 
   return (
     <>
+      <SupportModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
       <InfoModal
         title="connect your wallet"
         isOpen={helpMessage === "connectWalletMessage"}
         onClose={() => setHelpMessage(null)}
       >
         <Text>To action you need to connect your wallet</Text>
-        <Button variant="solid" onClick={() => console.log("connect wallet")}>
+        <Button variant="primary" onClick={() => console.log("connect wallet")}>
           Connect your wallet
         </Button>
       </InfoModal>
@@ -333,18 +356,19 @@ function PageLayout(props: Props) {
           <DrawerBody px="12px" py="16px" pt="0">
             <NavGroup>
               <NavItem
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 icon={<FeedbackIcon />}
                 label="Feedback"
+                variant="feedback"
               />
               <NavItem
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 icon={<SupportIcon />}
                 label="Support"
               />
               <NavItem
                 href="/learn"
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 icon={<LearnIcon />}
                 label="Learn"
               />
@@ -353,7 +377,7 @@ function PageLayout(props: Props) {
               {councilResp.data?.map((council) => (
                 <NavItem
                   key={council.id}
-                  active={pageContext.urlOriginal}
+                  // active={pageContext.urlOriginal}
                   icon={<SecurityIcon />}
                   label={council.name ?? "Unknown"}
                   href={
@@ -365,7 +389,7 @@ function PageLayout(props: Props) {
             <NavGroup>
               <NavItem
                 icon={<DelegatesIcon />}
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 href="/delegates"
                 label="Delegates"
               />
@@ -373,15 +397,9 @@ function PageLayout(props: Props) {
               <NavItem
                 href="/voting-proposals"
                 //todo: fix how active state for menu works
-                active={pageContext.urlOriginal}
+                // active={pageContext.urlOriginal}
                 icon={<ProposalsIcon />}
                 label="Voting proposals"
-              />
-              <NavItem
-                active={pageContext.urlOriginal}
-                href="/snips"
-                icon={<SnipsIcon />}
-                label="Core SNIPs"
               />
             </NavGroup>
           </DrawerBody>
@@ -398,79 +416,105 @@ function PageLayout(props: Props) {
         >
           <Button
             leftIcon={<GiHamburgerMenu />}
-            variant="solid"
-            colorScheme="teal"
+            variant="primary"
             onClick={onOpen}
           >
             Menu
           </Button>
         </Box>
         <Layout.LeftAside>
-          <Logo />
+          <Logo href="/voting-proposals" />
           <Box mt="-20px">
             <NavGroup>
-              <NavItem
-                active={pageContext.urlOriginal}
-                href="/snips"
-                icon={<SnipsIcon />}
-                label="Core SNIPs"
-              />
-              <NavItem
-                href="/voting-proposals"
-                //todo: fix how active state for menu works
-                active={pageContext.urlOriginal}
-                icon={<ProposalsIcon />}
-                label="Voting proposals"
-              />
-
-              <NavItem
-                icon={<DelegatesIcon />}
-                active={pageContext.urlOriginal}
-                href="/delegates"
-                label="Delegates"
-              />
+              {[
+                {
+                  href: "/",
+                  label: "Home",
+                  icon: <HomeIcon />,
+                },
+                {
+                  href: "/voting-proposals",
+                  label: "Voting proposals",
+                  icon: <ProposalsIcon />,
+                },
+                {
+                  href: "/delegates",
+                  label: "Delegates",
+                  icon: <DelegatesIcon />,
+                },
+              ].map((item) => (
+                <NavItem
+                  active={item.href === pageContext.urlOriginal}
+                  icon={item.icon}
+                  label={item.label}
+                  key={item.href}
+                  href={item.href}
+                />
+              ))}
             </NavGroup>
           </Box>
           <NavGroup
             label="Councils"
             action={
-              <Button as="a" href="/councils/create" variant="icon" size="md">
-                +
-              </Button>
+              hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+                <Button
+                  as="a"
+                  href="/councils/create"
+                  variant="ghost"
+                  size="md"
+                >
+                  +
+                </Button>
+              ) : (
+                <></>
+              )
             }
           >
             {councilResp.data?.map((council) => (
               <NavItem
                 key={council.id}
-                active={pageContext.urlOriginal}
                 icon={<SecurityIcon />}
                 label={council.name ?? "Unknown"}
                 href={council.slug ? `/councils/${council.slug}` : "/councils"}
+                active={council.slug === pageContext.urlOriginal}
               />
             ))}
           </NavGroup>
           <NavGroup alignEnd>
+            {[
+              {
+                href: "/learn",
+                label: "Learn",
+                icon: <LearnIcon />,
+              },
+            ].map((item) => (
+              <NavItem
+                active={item.href === pageContext.urlOriginal}
+                icon={item.icon}
+                label={item.label}
+                key={item.href}
+                href={item.href}
+              />
+            ))}
+
+            {hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+              <NavItem
+                href="/settings"
+                icon={<SettingsIcon />}
+                label="Settings"
+              />
+            ) : null}
             <NavItem
-              href="/learn"
-              active={pageContext.urlOriginal}
-              icon={<LearnIcon />}
-              label="Learn"
-            />
-            <NavItem
-              href="/settings"
-              active={pageContext.urlOriginal}
-              icon={<SettingsIcon />}
-              label="Settings"
-            />
-            <NavItem
-              active={pageContext.urlOriginal}
               icon={<SupportIcon />}
               label="Support"
+              onClick={() => setIsModalOpen(!isModalOpen)}
             />
+
             <NavItem
-              active={pageContext.urlOriginal}
+              href="https://www.starknet.io"
               icon={<FeedbackIcon />}
               label="Feedback"
+              variant="feedback"
             />
           </NavGroup>
         </Layout.LeftAside>

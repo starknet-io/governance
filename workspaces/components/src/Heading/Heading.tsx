@@ -1,12 +1,8 @@
-'use client';
-import {
-  Heading as ChakraHeading,
-  HeadingProps,
-} from '@chakra-ui/react';
-import { headingTheme } from './HeadingStyles';
+import { Heading as ChakraHeading, HeadingProps } from "@chakra-ui/react";
+import { headingTheme } from "./HeadingStyles";
 
 type CustomHeadingProps = {
-  variant: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  variant: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 } & HeadingProps;
 
 export const Heading: React.FC<CustomHeadingProps> = ({
@@ -15,7 +11,7 @@ export const Heading: React.FC<CustomHeadingProps> = ({
   ...props
 }) => {
   const { ...rest } = props;
-  const Tag = variant || 'h2';
+  const Tag = variant || "h2";
   return (
     <ChakraHeading
       {...headingTheme[Tag as keyof typeof headingTheme]}

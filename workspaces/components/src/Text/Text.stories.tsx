@@ -1,24 +1,15 @@
-import React from 'react';
-import { HStack, TextProps } from '@chakra-ui/react';
-import { Meta } from '@storybook/react';
-import theme from 'src/style/theme';
-import { ThemeProvider } from '../ThemeProvider';
-import { Text } from './Text';
-import { ChakraProvider } from '@chakra-ui/react';
+import React from "react";
+import { VStack } from "@chakra-ui/react";
+import { Meta } from "@storybook/react";
+import theme from "src/style/theme";
+import { ThemeProvider } from "../ThemeProvider";
+import { Text as GovernanceText } from "./Text";
+import { ChakraProvider } from "@chakra-ui/react";
 
-type Props = {
-  variant?: 'cardBody' | 'body' | 'breadcrumbs';
-} & TextProps;
 export default {
-  title: 'starknet.io/Text',
-  component: Text,
-  argTypes: {
-    children: { control: 'text' },
-    variant: {
-      options: ['cardBody', 'body', 'breadcrumbs'],
-      control: { type: 'radio' },
-    },
-  },
+  title: "governance-ui/Typography",
+  component: GovernanceText,
+
   decorators: [
     (Story: React.ComponentType) => (
       <ChakraProvider theme={theme}>
@@ -28,88 +19,26 @@ export default {
   ],
 } as Meta<typeof Text>;
 
-export const Body = (args: Props) => (
+export const Text = () => (
   <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Text variant="body" {...args}>
-          body text
-        </Text>
-        <Text variant="body" fontWeight="bold" {...args}>
-          Bold body text
-        </Text>
-        <Text variant="body" fontWeight="semibold" {...args}>
-          Bold body text
-        </Text>
-      </>
-    </HStack>
-  </ThemeProvider>
-);
-export const CardBody = (args: Props) => (
-  <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Text variant="cardBody" {...args}>
-          cardBody text
-        </Text>
-        <Text variant="cardBody" fontWeight="bold" {...args}>
-          Bold cardBody text
-        </Text>
-        <Text variant="cardBody" fontWeight="semibold" {...args}>
-          Bold cardBody text
-        </Text>
-      </>
-    </HStack>
-  </ThemeProvider>
-);
-export const Breadcrumbs = (args: Props) => (
-  <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Text variant="breadcrumbs" {...args}>
-          breadcrumbs text
-        </Text>
-        <Text variant="breadcrumbs" fontWeight="bold" {...args}>
-          Bold breadcrumbs
-        </Text>
-        <Text variant="breadcrumbs" fontWeight="semibold" {...args}>
-          Bold breadcrumbs
-        </Text>
-      </>
-    </HStack>
-  </ThemeProvider>
-);
-export const Footer = (args: Props) => (
-  <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Text variant="footerLink" {...args}>
-          Footer link
-        </Text>
-        <Text variant="footerLink" fontWeight="bold" {...args}>
-          Bold footer link
-        </Text>
-        <Text variant="footerLink" fontWeight="semibold" {...args}>
-          Bold footer link
-        </Text>
-      </>
-    </HStack>
-  </ThemeProvider>
-);
-export const TextLink = (args: Props) => (
-  <ThemeProvider>
-    <HStack p={12}>
-      <>
-        <Text variant="textLink" {...args}>
-          Text link
-        </Text>
-        <Text variant="textLink" fontWeight="bold" {...args}>
-          Bold text link
-        </Text>
-        <Text variant="textLink" fontWeight="semibold" {...args}>
-          Bold text link
-        </Text>
-      </>
-    </HStack>
+    <VStack p={12} align="flex-start">
+      <GovernanceText variant="small">small 12/20</GovernanceText>
+      <GovernanceText variant="smallStrong">small-strong 12/20</GovernanceText>
+      <GovernanceText variant="medium">medium 14/20</GovernanceText>
+      <GovernanceText variant="mediumStrong">
+        medium-strong 14/20
+      </GovernanceText>
+      <GovernanceText variant="large">large 15/24</GovernanceText>
+      <GovernanceText variant="largeStrong">large-strong 15/24</GovernanceText>
+      <GovernanceText variant="captionSmall">
+        caption-small 10/16
+      </GovernanceText>
+      <GovernanceText variant="captionSmallStrong">
+        caption-small-strong 10/16
+      </GovernanceText>
+      <GovernanceText variant="captionSmallUppercase">
+        caption-small-uppercase 10/16
+      </GovernanceText>
+    </VStack>
   </ThemeProvider>
 );

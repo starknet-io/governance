@@ -54,7 +54,7 @@ export function DeletionDialog({
 
           <AlertDialogFooter>
             <Button
-              variant="solid"
+              variant="danger"
               onClick={() => {
                 onDelete();
                 toast({

@@ -1,11 +1,15 @@
 import { Flex } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 
-export const Logo = () => {
+type Props = {
+  href: string;
+};
+
+export const Logo = ({ href }: Props) => {
   return (
     <Flex
       as="a"
-      href="/snips"
+      href={href}
       gap="8px"
       height="78px"
       // mt="-34px"

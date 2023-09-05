@@ -54,7 +54,7 @@ export const FormModal: FC<FormModalProps> = ({
               variant="outline"
               color="#D83E2C"
               ml={3}
-              disabled={!isValid}
+              isDisabled={!isValid}
             >
               {submitButtonText}
             </Button>
