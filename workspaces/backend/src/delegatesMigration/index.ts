@@ -26,16 +26,14 @@ async function createAdminUsers() {
     });
 
     if (!existingUser) {
-      const newUser = {
+      await db.insert(users).values({
         publicIdentifier: address,
         address: address,
         ensName: null, // Set to a suitable value
         role: 'admin',
         createdAt: new Date(),
         updatedAt: new Date(),
-      };
-
-      await db.insert(users).values(newUser).returning();
+      }).returning();
     }
   }
 }
@@ -147,12 +145,12 @@ async function seedData() {
   // Delegates seeding
   console.log('Creating delegates')
   for (const entry of dataDump) {
-    const interestsStatements = JSON.parse(entry.c4);
+    const interestsStatements = entry.c4 ? JSON.parse(entry.c4) : [];
     const interests =
-      interestsStatements?.find((item) => item.label === 'Interests')?.value ||
+      interestsStatements?.find((item: any) => item.label === 'Interests')?.value ||
       [];
     const statement =
-      interestsStatements?.find((item) => item.label === 'statement')?.value ||
+      interestsStatements?.find((item: any) => item.label === 'statement')?.value ||
       '';
 
     // Step 1: Check if the user exists
@@ -163,17 +161,16 @@ async function seedData() {
     let userId;
     if (!existingUser) {
       // Step 2: Insert new user if not exists
-      const newUser = {
-        publicIdentifier: entry.c0,
-        address: entry.c0,
-        ensName: entry.c1,
-        role: 'user',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
       const insertedUser = await db
         .insert(users)
-        .values({ ...newUser })
+        .values({
+          publicIdentifier: entry.c0,
+          address: entry.c0,
+          ensName: entry.c1,
+          role: 'user',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
         .returning();
       userId = insertedUser[0].id;
     } else {
@@ -189,7 +186,7 @@ async function seedData() {
       // Step 4: Insert new delegate if not exists
       const newDelegate = {
         userId: userId,
-        delegateType: interests.map((interest) =>
+        delegateType: interests.map((interest: any) =>
           interest.toLowerCase().replace(/\s+/g, '_'),
         ),
         delegateStatement: statement,
