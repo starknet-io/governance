@@ -7,7 +7,6 @@ import {
   DelegateCard,
   SimpleGrid,
   PageTitle,
-  ButtonGroup,
   ContentContainer,
   HiAdjustmentsHorizontal,
   Popover,
@@ -23,7 +22,6 @@ import {
   SkeletonText,
   DelegateModal,
   ConfirmModal,
-  Flex,
 } from "@yukilabs/governance-components";
 
 import { useDebouncedCallback } from "use-debounce";
