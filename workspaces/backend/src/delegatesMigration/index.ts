@@ -1,28 +1,149 @@
-import dataDump from "./starknet-delegates";
-import { db } from '../db/db'; // Replace with the actual path to your db file
-import { delegates } from "../db/schema/delegates";
-import {users} from "../db/schema/users";
-import {eq} from "drizzle-orm";
+import dataDump from './starknet-delegates';
+import { db } from '../db/db';
+import { delegates } from '../db/schema/delegates';
+import { users } from '../db/schema/users';
+import slugify from 'slugify';
+import { eq } from 'drizzle-orm';
+import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
+import { councils } from '../db/schema/councils';
+import {usersToCouncils} from "../db/schema/usersToCouncils";
+import {posts} from "../db/schema/posts";
 
-let counter = 0;
+const adminUsers = [
+  '0x7cC03a29B9c9aBC73E797cD5D341cA58e3e9f744',
+  '0x2eB998FB2B8Bcd77c1095EA5D1fe4807b6e2282e',
+  '0x68Be7aDe3b4cF6CF8063f92882265a6492b6B33D',
+  '0xb9A677edf29C080A80076dB94fbb4CbBF99bEf24',
+  '0x77A653A468ded01fDfA4D78C0C23B35D1060A350',
+  '0x106b1F88867D99840CaaCAC2dA91265BA6E93e2B',
+];
 
+async function createAdminUsers() {
+  for (const address of adminUsers) {
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.address, address),
+    });
+
+    if (!existingUser) {
+      const newUser = {
+        publicIdentifier: address,
+        address: address,
+        ensName: null, // Set to a suitable value
+        role: 'admin',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      await db.insert(users).values(newUser).returning();
+    }
+  }
+}
+
+async function createCouncils() {
+  const councilsData = [
+    {
+      name: 'Builder Council',
+      description: 'Description of Builder Council',
+      statement: 'Statement of Builder Council',
+    },
+    {
+      name: 'Security Council',
+      description: 'Description of Security Council',
+      statement: 'Statement of Security Council',
+    },
+  ];
+
+  for (const councilData of councilsData) {
+    const existingCouncil = await db.query.councils.findFirst({
+      where: eq(councils.name, councilData.name),
+    });
+
+    if (existingCouncil) {
+      console.log(`Council ${councilData.name} already exists.`);
+      continue; // Skip to the next council if this one already exists
+    }
+
+    const insertedCouncil = await db
+      .insert(councils)
+      .values({
+        name: councilData.name,
+        description: councilData.description,
+        statement: councilData.statement,
+        slug: slugify(councilData.name, { replacement: '_', lower: true }),
+        address: 'dummy_address', // Adjust as necessary
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+
+    const councilId = insertedCouncil[0].id;
+
+    // Add admin users to council
+    for (const address of adminUsers) {
+      const user = await db.query.users.findFirst({
+        where: eq(users.address, address),
+      });
+      if (user) {
+        await db
+          .insert(usersToCouncils)
+          .values({
+            userId: user.id,
+            councilId: councilId,
+          })
+          .execute();
+      }
+    }
+
+    // Create dummy posts
+    const dummyPosts = [
+      {
+        title: 'Dummy Post 1',
+        content: 'Content of dummy post 1',
+        councilId: councilId,
+      },
+      {
+        title: 'Dummy Post 2',
+        content: 'Content of dummy post 2',
+        councilId: councilId,
+      },
+    ];
+
+    for (const post of dummyPosts) {
+      await db
+        .insert(posts)
+        .values({
+          title: post.title,
+          content: post.content,
+          councilId: post.councilId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .execute();
+    }
+  }
+}
 
 async function migrateData() {
+  // First, create admin users if they don't exist
+  await createAdminUsers();
+
+  // Second, create councils and add admin users if not exist
+  await createCouncils();
+
+  // Delegates seeding
   for (const entry of dataDump) {
-    counter ++ ;
-    if (counter > 20) {
-      return
-    }
     const interestsStatements = JSON.parse(entry.c4);
-    const interests = interestsStatements?.find(item => item.label === "Interests")?.value || [];
-    const statement = interestsStatements?.find(item => item.label === "statement")?.value || "";
+    const interests =
+      interestsStatements?.find((item) => item.label === 'Interests')?.value ||
+      [];
+    const statement =
+      interestsStatements?.find((item) => item.label === 'statement')?.value ||
+      '';
 
     // Step 1: Check if the user exists
-
     const existingUser = await db.query.users.findFirst({
-      where: eq(users.address, entry.c0)
+      where: eq(users.address, entry.c0),
     });
-    console.log(existingUser)
 
     let userId;
     if (!existingUser) {
@@ -33,34 +154,60 @@ async function migrateData() {
         ensName: entry.c1,
         role: 'user',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
-      const insertedUser = await db.insert(users).values({ ... newUser }).returning();
-      userId = insertedUser[0].id; // Assuming the insert method returns the inserted record
+      const insertedUser = await db
+        .insert(users)
+        .values({ ...newUser })
+        .returning();
+      userId = insertedUser[0].id;
     } else {
-      userId = existingUser.id; // Get the user ID from the existing record
+      userId = existingUser.id;
     }
 
-    const newDelegate = {
-      userId: userId,
-      delegateStatement: statement,
-      delegateType: interests.map(interest => interest.toLowerCase().replace(/\s+/g, '_')),
-      twitter: entry.c5 === '@' + entry.c5 ? entry.c5 : null,
-      discord: null,
-      discourse: null,
-      confirmDelegateAgreement: !!entry.c6,
-      agreeTerms: true,
-      understandRole: true,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    // Step 3: Check if the delegate exists
+    const existingDelegate = await db.query.delegates.findFirst({
+      where: eq(delegates.userId, userId),
+    });
 
-    console.log(newDelegate)
+    if (!existingDelegate) {
+      // Step 4: Insert new delegate if not exists
+      const newDelegate = {
+        userId: userId,
+        delegateType: interests.map((interest) =>
+          interest.toLowerCase().replace(/\s+/g, '_'),
+        ),
+        delegateStatement: statement,
+        twitter: entry.c5 === '@' + entry.c5 ? entry.c5 : null,
+        discord: null,
+        discourse: null,
+        confirmDelegateAgreement: !!entry.c6,
+        agreeTerms: true,
+        understandRole: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-    await db.insert(delegates).values({
-      ...newDelegate
-    }).execute();
+      const insertedDelegate = await db
+        .insert(delegates)
+        .values(newDelegate)
+        .returning();
+      const delegateId = insertedDelegate[0].id;
+
+      // Step 5: Insert the custom delegate agreement
+      const newCustomAgreement = {
+        delegateId: delegateId,
+        content: statement,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      await db
+        .insert(customDelegateAgreement)
+        .values(newCustomAgreement)
+        .execute();
+    }
   }
 }
 
-export default migrateData
+export default migrateData;
