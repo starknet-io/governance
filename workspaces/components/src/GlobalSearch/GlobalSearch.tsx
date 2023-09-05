@@ -33,13 +33,8 @@ interface Props {
 export function GlobalSearch({ searchResults, onSearchItems }: Props) {
   const [searchText, setSearchText] = useState("");
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-
-  const [highlightedItem, setHighlightedItem] = useState<ISearchItem>();
   const [highlightIndex, setHighlightIndex] = useState(0);
-
-  useEffect(() => {
-    setHighlightedItem(searchResults?.[highlightIndex]);
-  }, [highlightIndex]);
+  const h = searchResults?.[highlightIndex];
 
   const handleSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -47,41 +42,27 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    console.log("YOO");
     if (e.key === "/") {
       setIsSearchModalOpen((condition) => !condition);
     }
 
     if (e.key === "ArrowDown") {
-      setHighlightIndex((i) => {
-        if (i < searchResults?.length - 1) {
-          return i + 1;
-        }
-        return i;
-      });
+      console.log("ArrowDown");
+      setHighlightIndex((i) => (i + 1 === searchResults.length ? i : i + 1));
     }
 
     if (e.key === "ArrowUp") {
-      setHighlightIndex((i) => {
-        if (i > 0) {
-          return i - 1;
-        }
-        return i;
-      });
+      setHighlightIndex((i) => (i > 0 ? i - 1 : i));
     }
 
     if (e.key === "Enter") handleEnterPress();
   };
 
   const handleEnterPress = () => {
-    if (highlightedItem) {
-      const path = getSearchItemHref(
-        highlightedItem?.type,
-        highlightedItem?.refID,
-      );
-      console.log({ path });
-      navigate(path);
+    if (h) {
+      const path = getSearchItemHref(h?.type, h?.refID);
       setIsSearchModalOpen(false);
+      navigate(path);
     }
   };
 
@@ -95,8 +76,6 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
-  console.log({ highlightIndex, highlightedItem });
 
   return (
     <Box onClick={handleSearchClick} ml="2">
@@ -160,11 +139,7 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
 
           {!!searchResults.length && (
             <ModalBody overflowY="scroll">
-              {buildSearchItems(
-                searchResults,
-                "grouped-items",
-                highlightedItem,
-              )}
+              {buildSearchItems(searchResults, "grouped-items", h)}
             </ModalBody>
           )}
 
