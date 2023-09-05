@@ -31,22 +31,36 @@ const HrefItems: Record<SearchItemType, string> = {
   delegate: "/delegates",
 };
 
+export function getSearchItemHref(type: SearchItemType, id: number | string) {
+  const href = `${HrefItems[type]}/${id}`;
+  return href;
+}
+
 export function buildSearchItems(
   searchItems = [] as ISearchItem[],
   type: BuildItemsType = "item-list",
+  highlightedItem?: ISearchItem,
 ) {
   if (type === "grouped-items") {
-    return buildGroupList(searchItems);
+    return buildGroupList(searchItems, highlightedItem);
   }
-  return buildList(searchItems);
+  return buildList(searchItems, highlightedItem);
 }
 
-function buildList(searchItems: ISearchItem[]) {
+function buildList(searchItems: ISearchItem[], highlightedItem?: ISearchItem) {
   return searchItems.map((searchItem) => {
+    const isHighlightedItem = searchItem.objectID === highlightedItem?.objectID;
+
+
+    // console.log({ in: highlightedItem, searchItem, isHighlightedItem });
     switch (searchItem.type) {
       case "voting_proposal": {
         return (
-          <HoverBox data={searchItem} key={searchItem.objectID}>
+          <HoverBox
+            isHighlightedItem={isHighlightedItem}
+            data={searchItem}
+            key={searchItem.objectID}
+          >
             <VotingProposalItem data={searchItem} />
           </HoverBox>
         );
@@ -54,7 +68,11 @@ function buildList(searchItems: ISearchItem[]) {
 
       case "council": {
         return (
-          <HoverBox data={searchItem} key={searchItem.objectID}>
+          <HoverBox
+            isHighlightedItem={isHighlightedItem}
+            data={searchItem}
+            key={searchItem.objectID}
+          >
             <CouncilItem data={searchItem} />
           </HoverBox>
         );
@@ -62,7 +80,11 @@ function buildList(searchItems: ISearchItem[]) {
 
       case "learn": {
         return (
-          <HoverBox data={searchItem} key={searchItem.objectID}>
+          <HoverBox
+            isHighlightedItem={isHighlightedItem}
+            data={searchItem}
+            key={searchItem.objectID}
+          >
             <LearnItem data={searchItem} />
           </HoverBox>
         );
@@ -70,7 +92,11 @@ function buildList(searchItems: ISearchItem[]) {
 
       case "delegate": {
         return (
-          <HoverBox data={searchItem} key={searchItem.objectID}>
+          <HoverBox
+            isHighlightedItem={isHighlightedItem}
+            data={searchItem}
+            key={searchItem.objectID}
+          >
             <DelegateItem data={searchItem} />
           </HoverBox>
         );
@@ -82,7 +108,10 @@ function buildList(searchItems: ISearchItem[]) {
   });
 }
 
-function buildGroupList(searchItems: ISearchItem[]) {
+function buildGroupList(
+  searchItems: ISearchItem[],
+  highlightedItem?: ISearchItem,
+) {
   const groupedItems: Partial<
     Record<SearchItemType, { type: SearchItemType; items: ISearchItem[] }>
   > = {};
@@ -104,7 +133,7 @@ function buildGroupList(searchItems: ISearchItem[]) {
         <Text fontSize="small" fontWeight="semibold" color="#86848D" mb="2">
           {GroupNames?.[group.type] ?? ""}
         </Text>
-        <Box>{buildList(group.items)}</Box>
+        <Box>{buildList(group.items, highlightedItem)}</Box>
       </Box>
     );
   });
@@ -240,11 +269,22 @@ function LearnItem({ data }: { data: ISearchItem }) {
   );
 }
 
-function HoverBox({ children, data }: { children: any; data: ISearchItem }) {
-  const href = `${HrefItems[data.type]}/${data.refID}`;
+function HoverBox({
+  children,
+  data,
+  isHighlightedItem,
+}: {
+  children: any;
+  data: ISearchItem;
+  isHighlightedItem?: boolean;
+}) {
+  const href = getSearchItemHref(data.type, data.refID);
   return (
     <Box as="a" href={href}>
       <Box
+        sx={{
+          backgroundColor: isHighlightedItem ? "#4826480F" : undefined,
+        }}
         _hover={{
           backgroundColor: "#4826480F",
         }}

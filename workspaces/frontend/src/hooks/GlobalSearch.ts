@@ -19,7 +19,7 @@ export const useGlobalSearch = () => {
     const { hits } = await index.search(searchText);
     //@ts-expect-error error
     setGlobalSearchResults(hits);
-  }, 100);
+  }, 150);
 
   const handleGlobalSearchItems = async (searchText: string) => {
     debounce(searchText)

@@ -18,7 +18,12 @@ import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import { ChangeEvent, useEffect, useState } from "react";
 import { SearchIcon } from "src/Icons/UiIcons";
 import EmptyState from "./assets/img.svg";
-import { ISearchItem, buildSearchItems } from "./utils/buildItems";
+import {
+  ISearchItem,
+  buildSearchItems,
+  getSearchItemHref,
+} from "./utils/buildItems";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 interface Props {
   searchResults: ISearchItem[];
@@ -29,14 +34,54 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
   const [searchText, setSearchText] = useState("");
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
+  const [highlightedItem, setHighlightedItem] = useState<ISearchItem>();
+  const [highlightIndex, setHighlightIndex] = useState(0);
+
+  useEffect(() => {
+    setHighlightedItem(searchResults?.[highlightIndex]);
+  }, [highlightIndex]);
+
   const handleSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
     onSearchItems(e.target.value);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
+    console.log("YOO");
     if (e.key === "/") {
       setIsSearchModalOpen((condition) => !condition);
+    }
+
+    if (e.key === "ArrowDown") {
+      setHighlightIndex((i) => {
+        if (i < searchResults?.length - 1) {
+          return i + 1;
+        }
+        return i;
+      });
+    }
+
+    if (e.key === "ArrowUp") {
+      setHighlightIndex((i) => {
+        if (i > 0) {
+          return i - 1;
+        }
+        return i;
+      });
+    }
+
+    if (e.key === "Enter") handleEnterPress();
+  };
+
+  const handleEnterPress = () => {
+    if (highlightedItem) {
+      const path = getSearchItemHref(
+        highlightedItem?.type,
+        highlightedItem?.refID,
+      );
+      console.log({ path });
+      navigate(path);
+      setIsSearchModalOpen(false);
     }
   };
 
@@ -50,6 +95,8 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  console.log({ highlightIndex, highlightedItem });
 
   return (
     <Box onClick={handleSearchClick} ml="2">
@@ -94,7 +141,7 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
         <ModalOverlay />
         <ModalContent height="672px" borderRadius="lg">
           <ModalHeader p="0" borderBottom="1px solid #23192D1A">
-            <Input placeholder="" hidden/>
+            <Input placeholder="" hidden />
             <InputGroup>
               <InputLeftElement height="60px">
                 <SearchIcon />
@@ -113,7 +160,11 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
 
           {!!searchResults.length && (
             <ModalBody overflowY="scroll">
-              {buildSearchItems(searchResults, "grouped-items")}
+              {buildSearchItems(
+                searchResults,
+                "grouped-items",
+                highlightedItem,
+              )}
             </ModalBody>
           )}
 
