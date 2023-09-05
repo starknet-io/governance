@@ -39,6 +39,9 @@ import {
   FiltersIcon,
   DiscordIcon,
   SearchIcon,
+  HamburgerIcon,
+  PlusIcon,
+  SortIcon,
 } from "./UiIcons";
 import {
   HiOutlineCodeBracketSquare,
@@ -116,4 +119,7 @@ export {
   DiscordIcon,
   HiOutlineArrowUpRight,
   SearchIcon,
+  HamburgerIcon,
+  PlusIcon,
+  SortIcon,
 };
