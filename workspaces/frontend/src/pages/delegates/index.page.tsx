@@ -273,27 +273,19 @@ export function Page() {
         {delegates.isLoading ? (
           <DelegatesSkeleton />
         ) : delegates.isError ? (
-          <Box position="absolute" inset="0" top="-25px" bg="#F9F8F9">
-            <EmptyState
-              type="delegates"
-              title="Something went wrong"
-              minHeight="300px"
-              action={
-                <Button variant="primary" onClick={() => delegates.refetch()}>
-                  Retry
-                </Button>
-              }
-            />
-          </Box>
+          <EmptyState
+            type="delegates"
+            title="Something went wrong"
+            minHeight="300px"
+            action={
+              <Button variant="primary" onClick={() => delegates.refetch()}>
+                Retry
+              </Button>
+            }
+          />
         ) : (
           <>
             <AppBar.Root>
-              {/* <Box mr="8px">
-                <SearchInput
-                  value={searchQuery}
-                  onChange={(e) => handleSearchInput(e.target.value)}
-                />
-              </Box> */}
               <AppBar.Group mobileDirection="row">
                 <Box minWidth={"52px"}>
                   <Text variant="mediumStrong">Sort by</Text>
