@@ -67,7 +67,7 @@ export const DelegateCard = (props: Props) => {
         <Box display="flex" flexDirection="row" gap="8px" mb="12px">
           {Array.isArray(delegateType) ? (
             <>
-              {delegateType[0].length > 20 ? (
+              {delegateType && delegateType[0] && delegateType[0].length > 20 ? (
                 <>
                   <Tag variant="listCard" key={delegateType[0]}>
                     {delegateType[0]}
