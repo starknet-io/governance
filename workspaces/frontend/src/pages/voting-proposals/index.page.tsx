@@ -132,17 +132,15 @@ export function Page() {
 
     return (
       <>
-        <Box display="flex" marginLeft="auto">
-          <Button
-            width={{ base: "100%", md: "auto" }}
-            as="a"
-            href="voting-proposals/create"
-            size="condensed"
-            variant="primary"
-          >
-            Create proposal
-          </Button>
-        </Box>
+        <Button
+          width={{ base: "100%", md: "auto" }}
+          as="a"
+          href="voting-proposals/create"
+          size="condensed"
+          variant="primary"
+        >
+          Create proposal
+        </Button>
       </>
     );
   }
