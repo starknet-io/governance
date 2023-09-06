@@ -282,51 +282,25 @@ export const SuccessIcon = ({ color, ...rest }: UiIconProps) => (
   </Icon>
 );
 export const TrashWarningIcon = ({ color, ...rest }: UiIconProps) => (
-  <Icon viewBox="0 0 104 104" {...rest}>
-    <g id="Group">
-      <path
-        id="Path"
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M40.5846 13H64.418C67.4095 13 69.8346 15.4251 69.8346 18.4167V28.1667H35.168V18.4167C35.168 15.4251 37.5931 13 40.5846 13Z"
-        stroke={color ? color : "#E4442F"}
-        strokeWidth="4"
+  <Icon viewBox="0 0 74 82" {...rest}>
+    <svg fill="none" viewBox="0 0 74 82" xmlns="http://www.w3.org/2000/svg">
+      <g
+        stroke="#E4442F"
         strokeLinecap="round"
         strokeLinejoin="round"
-      />
-      <path
-        id="Path_2"
-        d="M17.834 28.1667H87.1673"
-        stroke={color ? color : "#E4442F"}
         strokeWidth="4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        id="Path_3"
-        d="M41.668 50.9167H63.3346"
-        stroke={color ? color : "#E4442F"}
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        id="Path_4"
-        d="M41.668 68.25H63.3346"
-        stroke={color ? color : "#E4442F"}
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        id="Path_5"
-        d="M82.8346 28.1667L77.1389 83.2251C76.6819 87.6428 72.9595 91 68.5183 91H36.4843C32.0431 91 28.3207 87.6428 27.8637 83.2251L22.168 28.1667"
-        stroke={color ? color : "#E4442F"}
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </g>
+      >
+        <path
+          d="m25.088 2h23.833c2.9915 0 5.4166 2.4251 5.4166 5.4167v9.75h-34.667v-9.75c0-2.9916 2.4251-5.4167 5.4166-5.4167z"
+          clipRule="evenodd"
+          fillRule="evenodd"
+        />
+        <path d="m2.3359 17.167h69.333" />
+        <path d="m26.172 39.917h21.667" />
+        <path d="m26.172 57.25h21.667" />
+        <path d="m67.338 17.167-5.6956 55.058c-0.457 4.4176-4.1795 7.7749-8.6207 7.7749h-32.034c-4.4412 0-8.1637-3.3573-8.6207-7.7749l-5.6957-55.058" />
+      </g>
+    </svg>
   </Icon>
 );
 export const VoteIcon = ({ color, ...rest }: UiIconProps) => (
