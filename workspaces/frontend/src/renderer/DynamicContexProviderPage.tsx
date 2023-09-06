@@ -424,6 +424,15 @@ function PageLayout(props: Props) {
             <Box display={{ base: "none", lg: "flex" }} marginLeft="auto">
               {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
             </Box>
+            <Box display={{ base: "flex", lg: "none" }} marginLeft="auto">
+              <IconButton
+                aria-label="Open menu"
+                size="condensed"
+                icon={<FeedbackIcon />}
+                onClick={onOpen}
+                variant="feedback"
+              />
+            </Box>
           </Header>
           <Layout.Content>{children}</Layout.Content>
         </Layout.Main>
@@ -528,12 +537,14 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
           onClick={openSupportModal}
         />
 
-        <NavItem
-          href="https://www.starknet.io"
-          icon={<FeedbackIcon />}
-          label="Feedback"
-          variant="feedback"
-        />
+        <Box as="span" display={{ base: "none", lg: "flex" }}>
+          <NavItem
+            href="https://www.starknet.io"
+            icon={<FeedbackIcon />}
+            label="Feedback"
+            variant="feedback"
+          />
+        </Box>
       </NavGroup>
     </>
   );
