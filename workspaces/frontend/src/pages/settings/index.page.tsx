@@ -181,6 +181,7 @@ export function Page() {
               <FormControl id="address">
                 <FormLabel>Ethereum wallet address</FormLabel>
                 <Input
+                  size="standard"
                   variant="primary"
                   placeholder="Add address..."
                   {...addRegister("address", {
