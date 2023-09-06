@@ -209,7 +209,7 @@ async function seedData() {
       // Step 5: Insert the custom delegate agreement
       const newCustomAgreement = {
         delegateId: delegateId,
-        content: statement,
+        content: entry.c6,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
