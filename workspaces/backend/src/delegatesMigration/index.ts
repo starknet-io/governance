@@ -6,9 +6,9 @@ import slugify from 'slugify';
 import { eq } from 'drizzle-orm';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
 import { councils } from '../db/schema/councils';
-import {usersToCouncils} from "../db/schema/usersToCouncils";
-import {posts} from "../db/schema/posts";
-import {migrate} from "drizzle-orm/node-postgres/migrator";
+import { usersToCouncils } from '../db/schema/usersToCouncils';
+import { posts } from '../db/schema/posts';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 
 const adminUsers = [
   '0x7cC03a29B9c9aBC73E797cD5D341cA58e3e9f744',
@@ -26,14 +26,17 @@ async function createAdminUsers() {
     });
 
     if (!existingUser) {
-      await db.insert(users).values({
-        publicIdentifier: address,
-        address: address,
-        ensName: null, // Set to a suitable value
-        role: 'admin',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }).returning();
+      await db
+        .insert(users)
+        .values({
+          publicIdentifier: address,
+          address: address,
+          ensName: null, // Set to a suitable value
+          role: 'admin',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning();
     }
   }
 }
@@ -52,7 +55,7 @@ async function createCouncils() {
     },
   ];
 
-  console.log('Creating Councils')
+  console.log('Creating Councils');
 
   for (const councilData of councilsData) {
     const existingCouncil = await db.query.councils.findFirst({
@@ -63,8 +66,7 @@ async function createCouncils() {
       console.log(`Council ${councilData.name} already exists.`);
       continue; // Skip to the next council if this one already exists
     } else {
-      console.log(`Creating Council ${councilData.name}.`)
-
+      console.log(`Creating Council ${councilData.name}.`);
     }
 
     const insertedCouncil = await db
@@ -98,7 +100,7 @@ async function createCouncils() {
       }
     }
 
-    console.log('Creating Posts')
+    console.log('Creating Posts');
 
     // Create dummy posts
     const dummyPosts = [
@@ -127,31 +129,29 @@ async function createCouncils() {
         .execute();
     }
 
-    console.log('Posts Created')
-
+    console.log('Posts Created');
   }
 }
 
 async function seedData() {
   // First, create admin users if they don't exist
-  console.log('Creating Admins')
+  console.log('Creating Admins');
   await createAdminUsers();
-  console.log('Admins Created')
-
+  console.log('Admins Created');
 
   // Second, create councils and add admin users if not exist
   await createCouncils();
 
   // Delegates seeding
-  console.log('Creating delegates')
+  console.log('Creating delegates');
   for (const entry of dataDump) {
     const interestsStatements = entry.c4 ? JSON.parse(entry.c4) : [];
     const interests =
-      interestsStatements?.find((item: any) => item.label === 'Interests')?.value ||
-      [];
+      interestsStatements?.find((item: any) => item.label === 'Interests')
+        ?.value || [];
     const statement =
-      interestsStatements?.find((item: any) => item.label === 'statement')?.value ||
-      '';
+      interestsStatements?.find((item: any) => item.label === 'statement')
+        ?.value || '';
 
     // Step 1: Check if the user exists
     const existingUser = await db.query.users.findFirst({
@@ -193,7 +193,7 @@ async function seedData() {
         twitter: entry.c5 === '@' + entry.c5 ? entry.c5 : null,
         discord: null,
         discourse: null,
-        confirmDelegateAgreement: !!entry.c6,
+        confirmDelegateAgreement: null,
         agreeTerms: true,
         understandRole: true,
         createdAt: new Date(),
@@ -206,33 +206,34 @@ async function seedData() {
         .returning();
       const delegateId = insertedDelegate[0].id;
 
-      // Step 5: Insert the custom delegate agreement
-      const newCustomAgreement = {
-        delegateId: delegateId,
-        content: statement,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      if (entry.c6) {
+        // Step 5: Insert the custom delegate agreement
+        const newCustomAgreement = {
+          delegateId: delegateId,
+          content: entry.c6,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
 
-      await db
-        .insert(customDelegateAgreement)
-        .values(newCustomAgreement)
-        .execute();
+        await db
+          .insert(customDelegateAgreement)
+          .values(newCustomAgreement)
+          .execute();
+      }
     }
   }
-  console.log('Delegates created')
-
+  console.log('Delegates created');
 }
 
 async function runMigrations() {
   try {
-    console.log("Starting migrations...");
+    console.log('Starting migrations...');
     await migrate(db, { migrationsFolder: './migrations' });
-    console.log("Migration completed. Starting data seeding...");
+    console.log('Migration completed. Starting data seeding...');
     await seedData();
-    console.log("Data seeding completed.");
+    console.log('Data seeding completed.');
   } catch (error) {
-    console.error("An error occurred:", error);
+    console.error('An error occurred:', error);
   }
 }
 
