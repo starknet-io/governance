@@ -511,7 +511,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
           },
         ].map((item) => (
           <NavItem
-            active={item.href === pageContext.urlOriginal}
+            active={pageContext.urlOriginal.startsWith(item.href)}
             icon={item.icon}
             label={item.label}
             key={item.href}
