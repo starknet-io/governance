@@ -345,13 +345,17 @@ function PageLayout(props: Props) {
         </Button>
       </InfoModal>
 
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+      <Drawer
+        isOpen={isOpen}
+        size={{ base: "full", md: "sm" }}
+        placement="left"
+        onClose={onClose}
+      >
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader py="16px">Menu</DrawerHeader>
 
-          <DrawerBody px="12px" py="16px" pt="0">
+          <DrawerBody px="12px" py="16px" pt="0" mt="48px">
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
@@ -483,7 +487,10 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
           />
         ))}
         {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-          <Link href="/councils/create" style={{ border: "none" }}>
+          <Link
+            href="/councils/create"
+            style={{ border: "none", marginLeft: "6px" }}
+          >
             <IconButton
               aria-label="create"
               variant="ghost"
