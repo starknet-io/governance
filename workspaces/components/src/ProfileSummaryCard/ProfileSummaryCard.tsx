@@ -70,6 +70,7 @@ const Profile = ({
           variant="h3"
           fontSize={size === "lg" ? "20px" : "16px"}
           color="#1A1523"
+          lineHeight={size === "sm" ? "16px" : "24px"}
         >
           {formattedAddress}
         </Heading>
