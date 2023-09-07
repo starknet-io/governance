@@ -2,11 +2,8 @@ name: back deployment
 
 on:
   push:
-    branches: ['dev']
-    paths:
-      - 'workspaces/backend/**'
-  pull_request:
-    branches: [ 'dev' ]
+    tags:
+      - 'v*'
     paths:
       - 'workspaces/backend/**'
   workflow_dispatch:
@@ -27,7 +24,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: registry.digitalocean.com/governance/backend
+          images: registry.digitalocean.com/governance/backend-prod
           flavor: latest=false
           tags: |
             type=ref,suffix=-{{sha}},event=branch
@@ -48,34 +45,16 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  Deploy-review:
-    if: github.event_name == 'pull_request'
+  Deploy-production:
     needs: Build
     runs-on: ubuntu-latest
-    env:
-      tag: ${{ needs.Build.outputs.tag }}
     environment:
-      name: review-backend
-      url: https://api-review.yuki-labs.dev
+      name: production-backend
+      url: https://api.yuki-labs.dev
     steps:
       - name: DigitalOcean App Platform deployment
         uses: digitalocean/app_action@v1.1.5
         with:
-          app_name: backend-review
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "backend","image":{"registry_type": "DOCR","repository": "backend","tag": "${{ env.tag }}"}}]'
-
-  Deploy-dev:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
-    needs: Build
-    runs-on: ubuntu-latest
-    environment:
-      name: development-backend
-      url: https://api-dev.yuki-labs.dev
-    steps:
-      - name: DigitalOcean App Platform deployment
-        uses: digitalocean/app_action@v1.1.5
-        with:
-          app_name: backend-development
+          app_name: backend-production
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           images: '[{"name": "backend","image":{"registry_type": "DOCR","repository": "backend","tag": "${{ env.tag }}"}}]'
