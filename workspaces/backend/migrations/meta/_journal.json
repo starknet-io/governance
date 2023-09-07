@@ -169,6 +169,20 @@
       "when": 1694073696480,
       "tag": "0023_short_moonstone",
       "breakpoints": false
+    },
+    {
+      "idx": 24,
+      "version": "5",
+      "when": 1694076129637,
+      "tag": "0024_oval_silhouette",
+      "breakpoints": false
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1694076209251,
+      "tag": "0025_romantic_captain_flint",
+      "breakpoints": false
     }
   ]
 }

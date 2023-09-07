@@ -145,14 +145,11 @@ export const delegateInterests = {
 const sortByOptions = {
   defaultValue: "sort_by",
   options: [
-    { label: "Random", value: "random" },
-    { label: "Most voting power", value: "most_voting_power" },
+    { label: "Most voting power", value: "votingPower" },
     {
       label: "Most votes cast",
-      value: "most_votes_cast",
+      value: "totalVotes",
     },
-
-    { label: "Most comments", value: "most_comments" },
   ],
 };
 
@@ -308,10 +305,17 @@ export function Page() {
                   focusBorderColor={"red"}
                   rounded="md"
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  onChange={(e) => {
+                    setSortBy(e.target.value)
+                    setFiltersState(prevState => ({
+                      ...prevState,
+                      sortBy: e.target.value,
+                    }));
+                    delegates.refetch()
+                  }}
                 >
                   {sortByOptions.options.map((option) => (
-                    <option key={option.value} value={option.label}>
+                    <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}
@@ -363,13 +367,14 @@ export function Page() {
                 delegates.data.map((data) => (
                   <DelegateCard
                     onDelegateClick={() => console.log("test")}
+                    votingPower={data?.delegateVotes?.votingPower}
+                    delegatedVotes={data?.delegateVotes?.totalVotes || "0"}
                     profileURL={`/delegates/profile/${data.id}`}
                     ensName={data.author?.ensName}
                     key={data.author?.starknetAddress}
                     address={data?.author?.address}
                     avatarUrl={data.author?.ensAvatar}
                     delegateStatement={data?.delegateStatement}
-                    delegatedVotes={"todo"}
                     delegateType={data?.delegateType as string[]}
                   />
                 ))

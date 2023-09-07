@@ -8,6 +8,7 @@
     "dev": "nodemon --exec ts-node --transpile-only src/index.ts",
     "build": "tsc",
     "serve": "node dist/src/index.js",
+    "seed": "ts-node --transpile-only src/delegatesMigration/index.ts",
     "migration:generate": "drizzle-kit generate:pg",
     "migration:run": "drizzle-kit push:pg",
     "migration:revert": "drizzle-kit drop"
@@ -36,7 +37,7 @@
     "dotenv": "^16.3.1",
     "dotenv-cli": "^7.2.1",
     "drizzle-kit": "^0.19.12",
-    "drizzle-orm": "^0.27.2",
+    "drizzle-orm": "^0.28",
     "drizzle-zod": "^0.4.4",
     "express": "^4.18.2",
     "graphql-request": "^6.1.0",

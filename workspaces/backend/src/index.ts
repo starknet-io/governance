@@ -10,6 +10,7 @@ import { users } from './db/schema/users';
 import { eq } from 'drizzle-orm';
 import { getUserByJWT } from './utils/helpers';
 import { delegateVoting } from "./routers/delegateVoting";
+import { delegateRouter } from "./routers/delegates";
 
 dotenv.config();
 
@@ -39,7 +40,11 @@ app.use("/trpc", createExpressMiddleware({
   router: appRouter,
   createContext
 }));
+app.use('/api/delegates', createExpressMiddleware({
+  router: delegateRouter,
+  createContext
+}));
 
-delegateVoting();
+//delegateVoting();
 
 export default app;

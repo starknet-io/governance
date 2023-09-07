@@ -17,6 +17,7 @@ export const delegateRouter = router({
     async () =>
       await db.query.delegates.findMany({
         with: {
+          delegateVotes: true,
           author: true,
         },
       }),
@@ -244,16 +245,32 @@ export const delegateRouter = router({
       z.object({
         searchQuery: z.string().optional(),
         filters: z.array(z.string()).optional(),
+        sortBy: z.string().optional(),
       }),
     )
     .query(async (opts) => {
+      console.log(opts.input)
+      const orderByClause = opts.input.sortBy
+        ? (entities, { desc }) => {
+          console.log(entities)
+          return [desc(entities.delegateVotes[opts.input.sortBy])]
+        }
+        : undefined;
+      console.log(orderByClause)
       try {
         //If no filters / search is applied
         if (!opts.input?.filters?.length && !opts.input?.searchQuery) {
           return await db.query.delegates.findMany({
             with: {
               author: true,
+              delegateVotes: {
+                columns: {
+                  totalVotes: true,
+                  votingPower: true,
+                },
+              },
             },
+            orderBy: orderByClause,
           });
         }
 
@@ -267,9 +284,10 @@ export const delegateRouter = router({
         `;
 
         const result = await db.query.delegates.findMany({
-          with: { author: true },
+          with: { author: true, delegateVotes: true },
           //With or without search based on filters
           where: opts.input.filters?.length ? sql.raw(sqlQuery) : undefined,
+          orderBy: orderByClause,
         });
 
         const address = opts.input?.searchQuery;

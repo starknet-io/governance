@@ -23,6 +23,7 @@ type Props = {
   delegatedVotes?: string;
   onDelegateClick?: () => void;
   profileURL?: string;
+  votingPower?: number | null,
 };
 
 function extractParagraph(markdownContent: string, charLimit = 300): string {
@@ -63,6 +64,7 @@ export const DelegateCard = (props: Props) => {
     delegateStatement,
     ensName,
     avatarUrl,
+    votingPower,
   } = props;
   const delegatedVotesFormatted = `${delegatedVotes} Votes`;
   const formattedDelegateStatement = extractParagraph(delegateStatement);
@@ -76,6 +78,7 @@ export const DelegateCard = (props: Props) => {
               size="sm"
               address={address}
               ensName={ensName}
+              votingPower={votingPower}
               subtitle={delegatedVotesFormatted.toUpperCase()}
               avatarString={address}
             ></ProfileSummaryCard.Profile>
@@ -86,7 +89,7 @@ export const DelegateCard = (props: Props) => {
         <Box display="flex" flexDirection="row" gap="8px" mb="12px">
           {Array.isArray(delegateType) ? (
             <>
-              {delegateType[0].length > 20 ? (
+              {delegateType && delegateType[0] && delegateType[0].length > 20 ? (
                 <>
                   <Tag style={{ pointerEvents: "none" }} key={delegateType[0]}>
                     {delegateType[0]}

@@ -1,4 +1,4 @@
-import { pgTable, uuid, integer, timestamp } from 'drizzle-orm/pg-core';
+import {pgTable, uuid, integer, timestamp, text} from 'drizzle-orm/pg-core';
 import {delegates} from "./delegates";
 import {InferModel} from "drizzle-orm";
 
@@ -7,8 +7,9 @@ export const delegateVotes = pgTable('delegate_votes', {
     onDelete: 'cascade',
     onUpdate: 'cascade',
   }),
-  votingPower: integer('votingPower').notNull(),
-  totalVotes: integer('totalVotes').notNull(),
+  address: text('address').notNull(),
+  votingPower: integer('votingPower'),
+  totalVotes: integer('totalVotes'),
   updatedAt: timestamp('updatedAt', { withTimezone: true })
     .notNull()
     .defaultNow(),
