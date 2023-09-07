@@ -27,8 +27,7 @@ jobs:
           images: registry.digitalocean.com/governance/backend-prod
           flavor: latest=false
           tags: |
-            type=ref,suffix=-{{sha}},event=branch
-            type=ref,suffix=-{{sha}},event=pr
+            type=ref,event=tag
 
       - name: Login to DO Container Registry
         uses: docker/login-action@v2
