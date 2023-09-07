@@ -48,6 +48,8 @@ jobs:
   Deploy-production:
     needs: Build
     runs-on: ubuntu-latest
+    env:
+      tag: ${{ needs.Build.outputs.tag }}
     environment:
       name: production-backend
       url: https://api.yuki-labs.dev
