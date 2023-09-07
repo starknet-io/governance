@@ -235,6 +235,8 @@ export function Page() {
     );
   }
 
+  console.log(delegates.data)
+
   return (
     <ContentContainer>
       <DelegateModal

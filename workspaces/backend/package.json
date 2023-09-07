@@ -39,6 +39,7 @@
     "drizzle-orm": "^0.27.2",
     "drizzle-zod": "^0.4.4",
     "express": "^4.18.2",
+    "graphql-request": "^6.1.0",
     "jsonwebtoken": "^9.0.1",
     "node-mocks-http": "^1.12.2",
     "pg": "^8.11.2",
