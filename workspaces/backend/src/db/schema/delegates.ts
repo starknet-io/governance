@@ -10,6 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { users } from './users';
 import {customDelegateAgreement} from "./customDelegateAgreement";
+import { delegateVotes } from "./delegatesVotes";
 
 export const delegateTypeEnum = pgEnum('delegateType', [
   // 'Cairo Dev',
@@ -67,6 +68,10 @@ export const delegateRelations = relations(delegates, ({ one }) => ({
   customAgreement: one(customDelegateAgreement, {
     fields: [delegates.id],
     references: [customDelegateAgreement.delegateId],
+  }),
+  delegateVotes: one(delegateVotes, {
+    fields: [delegates.id],
+    references: [delegateVotes.delegateId],
   }),
 }));
 
