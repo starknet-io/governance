@@ -53,6 +53,7 @@ import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
+import { HiXMark } from "@yukilabs/governance-components/src";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -353,7 +354,16 @@ function PageLayout(props: Props) {
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton />
+          {/* <DrawerCloseButton /> */}
+          <Box position="absolute" top="16px" zIndex="12px">
+            <IconButton
+              aria-label="Close menu"
+              onClick={onClose}
+              variant="ghost"
+              size="condensed"
+              icon={<HiXMark />}
+            />
+          </Box>
 
           <DrawerBody px="12px" py="16px" pt="0" mt="48px">
             <NavigationMenu
@@ -382,7 +392,7 @@ function PageLayout(props: Props) {
               <IconButton
                 aria-label="Open menu"
                 size="condensed"
-                icon={<HamburgerIcon />}
+                icon={isOpen ? <HiXMark /> : <HamburgerIcon />}
                 onClick={onOpen}
                 variant="ghost"
               />
