@@ -14,13 +14,37 @@ import { Button } from "../Button";
 import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 
-type Props = {
-  delegateType: string[] | null;
-  delegateStatement: string;
-  avatarUrl?: string | null;
-  ensName?: string | null;
-  address?: string | null;
-  delegatedVotes?: string;
+type DelegateProps = {
+  id: string;
+  statement: string;
+  type: string[];
+  twitter?: string | null;
+  discord?: string | null;
+  discourse?: string | null;
+  acceptStandardDelegateAgreement?: boolean | null;
+  understandRole: boolean;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  author: {
+    id: string;
+    address: string;
+    publicIdentifier: string;
+    role: string;
+    ensName?: string | null;
+    ensAvatar?: string | null;
+    name?: string | null;
+    twitter?: string | null;
+    miniBio?: string | null;
+    username?: string | null;
+    starknetAddress?: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+  votingIno?: {
+    totalVotes: number;
+    votingPower: number;
+  };
   onDelegateClick?: () => void;
   profileURL?: string;
 };
@@ -29,11 +53,9 @@ function extractParagraph(markdownContent: string, charLimit = 300): string {
   // Remove headings
   const noHeadings = markdownContent.replace(/#+ .+\n/g, "").trim();
 
-  // Extract the first paragraph
   const firstParagraphMatch = noHeadings.match(/(?:\n|^)([^#].+?)(?:\n|$)/);
   if (firstParagraphMatch && firstParagraphMatch[1]) {
     const firstParagraph = firstParagraphMatch[1];
-    // Trim to the desired length
     return firstParagraph.substring(0, charLimit);
   }
   return "";
@@ -53,72 +75,64 @@ export const delegateNames: Record<string, string> = {
   web3_developer: "Web3 developer",
 };
 
-export const DelegateCard = (props: Props) => {
-  const {
-    onDelegateClick,
-    profileURL,
-    delegatedVotes = "0",
-    address,
-    delegateType,
-    delegateStatement,
-    ensName,
-    avatarUrl,
-  } = props;
-  const delegatedVotesFormatted = `${delegatedVotes} Votes`;
-  const formattedDelegateStatement = extractParagraph(delegateStatement);
+export const DelegateCard = (props: DelegateProps) => {
+  const { onDelegateClick, profileURL, votingIno, author, type, statement } =
+    props;
+  const votesFormatted = votingIno
+    ? `${votingIno.totalVotes} Votes`
+    : "0 Votes";
+  const formattedDelegateStatement = extractParagraph(statement);
   return (
     <LinkBox as={Card} variant="delegate">
       <CardHeader>
         <LinkOverlay href={profileURL}>
           <ProfileSummaryCard.Root>
             <ProfileSummaryCard.Profile
-              imgUrl={avatarUrl}
+              imgUrl={author.ensAvatar}
               size="sm"
-              address={address}
-              ensName={ensName}
-              subtitle={delegatedVotesFormatted.toUpperCase()}
-              avatarString={address}
-            ></ProfileSummaryCard.Profile>
+              address={author.address}
+              ensName={author.ensName}
+              subtitle={votesFormatted.toUpperCase()}
+              avatarString={author.address}
+            />
           </ProfileSummaryCard.Root>
         </LinkOverlay>
       </CardHeader>
       <CardBody>
         <Box display="flex" flexDirection="row" gap="8px" mb="12px">
-          {Array.isArray(delegateType) ? (
+          {Array.isArray(type) ? (
             <>
-              {delegateType &&
-              delegateType[0] &&
-              delegateType[0].length > 20 ? (
+              {type && type[0] && type[0].length > 20 ? (
                 <>
-                  <Tag style={{ pointerEvents: "none" }} key={delegateType[0]}>
-                    {delegateType[0]}
+                  <Tag style={{ pointerEvents: "none" }} key={type[0]}>
+                    {type[0]}
                   </Tag>
-                  {delegateType.length > 1 && (
+                  {type.length > 1 && (
                     <Tooltip
                       hasArrow
                       shouldWrapChildren
                       placement="top"
-                      label={delegateType.slice(1).join(", ")}
+                      label={type.slice(1).join(", ")}
                     >
-                      <Tag variant="amount">+{delegateType.length - 1}</Tag>
+                      <Tag variant="amount">+{type.length - 1}</Tag>
                     </Tooltip>
                   )}
                 </>
               ) : (
                 <>
-                  {delegateType.slice(0, 2).map((item: string) => (
+                  {type.slice(0, 2).map((item: string) => (
                     <Tag style={{ pointerEvents: "none" }} key={item}>
                       {delegateNames?.[item] ?? item}
                     </Tag>
                   ))}
-                  {delegateType.length > 2 && (
+                  {type.length > 2 && (
                     <Tooltip
                       hasArrow
                       shouldWrapChildren
                       placement="top"
-                      label={delegateType.slice(2).join(", ")}
+                      label={type.slice(2).join(", ")}
                     >
-                      <Tag variant="amount">+{delegateType.length - 2}</Tag>
+                      <Tag variant="amount">+{type.length - 2}</Tag>
                     </Tooltip>
                   )}
                 </>
