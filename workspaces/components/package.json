@@ -1,7 +1,7 @@
 {
   "name": "@yukilabs/governance-components",
+  "version": "0.2.0",
   "private": true,
-  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
@@ -14,19 +14,11 @@
   "dependencies": {
     "@chakra-ui/pro-theme": "^0.4.0",
     "@chakra-ui/react": "^2.7.0",
-    "@chakra-ui/storybook-addon": "^4.0.17",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fontsource-variable/inter": "^5.0.5",
     "@fontsource/poppins": "^5.0.5",
     "@heroicons/react": "^2.0.18",
-    "@storybook/addon-essentials": "^7.1.1",
-    "@storybook/addon-interactions": "^7.1.1",
-    "@storybook/addon-links": "^7.1.1",
-    "@storybook/addons": "^7.1.1",
-    "@storybook/react-vite": "^7.1.1",
-    "@types/markdown-it": "^12.2.3",
-    "@types/react-datepicker": "^4.15.0",
     "@yukilabs/governance-backend": "workspace:*",
     "chakra-dayzed-datepicker": "^0.2.9",
     "chakra-react-select": "^4.7.0",
@@ -34,7 +26,6 @@
     "date-fns": "^2.30.0",
     "dayzed": "^3.2.3",
     "framer-motion": "^10.15.0",
-    "is-hotkey": "^0.2.0",
     "markdown-it": "^13.0.1",
     "moment": "^2.29.4",
     "react": "^18.2.0",
@@ -51,14 +42,23 @@
     "slate-history": "^0.93.0",
     "slate-hyperscript": "^0.77.0",
     "slate-md-serializer": "^5.5.4",
-    "slate-react": "^0.97.2",
+    "slate-react": "^0.97.2"
+  },
+  "devDependencies": {
+    "@chakra-ui/cli": "^2.4.1",
+    "@chakra-ui/storybook-addon": "^4.0.17",
+    "@storybook/addon-essentials": "^7.1.1",
+    "@storybook/addon-interactions": "^7.1.1",
+    "@storybook/addon-links": "^7.1.1",
+    "@storybook/addons": "^7.1.1",
+    "@storybook/react-vite": "^7.1.1",
+    "@types/color-hash": "^1.0.2",
+    "@types/markdown-it": "^12.2.3",
+    "@types/react-datepicker": "^4.15.0",
+    "is-hotkey": "^0.2.0",
     "storybook": "^7.1.1",
     "storybook-addon-dark-mode-toggle": "^0.0.6",
     "vite": "^4.3.9",
     "vite-tsconfig-paths": "^4.2.0"
-  },
-  "devDependencies": {
-    "@chakra-ui/cli": "^2.4.1",
-    "@types/color-hash": "^1.0.2"
   }
 }
