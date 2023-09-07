@@ -69,6 +69,8 @@ jobs:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
     needs: Build
     runs-on: ubuntu-latest
+    env:
+      tag: ${{ needs.Build.outputs.tag }}
     environment:
       name: development-backend
       url: https://api-dev.yuki-labs.dev
