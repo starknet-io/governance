@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  Flex,
 } from "@chakra-ui/react";
 
 interface FormModalProps {
@@ -46,18 +47,19 @@ export const FormModal: FC<FormModalProps> = ({
           <ModalBody>{children}</ModalBody>
 
           <ModalFooter>
-            <Button variant="ghost" onClick={onClose}>
-              {cancelButtonText}
-            </Button>
-            <Button
-              type="submit"
-              variant="outline"
-              color="#D83E2C"
-              ml={3}
-              isDisabled={!isValid}
-            >
-              {submitButtonText}
-            </Button>
+            <Flex justifyContent="flex-end" gap="8px" width="100%">
+              <Button size="condensed" variant="ghost" onClick={onClose}>
+                {cancelButtonText}
+              </Button>
+              <Button
+                size="condensed"
+                type="submit"
+                variant="primary"
+                isDisabled={!isValid}
+              >
+                {submitButtonText}
+              </Button>
+            </Flex>
           </ModalFooter>
         </form>
       </ModalContent>

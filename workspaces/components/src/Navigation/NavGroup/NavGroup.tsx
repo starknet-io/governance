@@ -13,7 +13,13 @@ export const NavGroup = (props: NavGroupProps) => {
   return (
     <Flex
       flexDirection="column"
-      marginTop={alignEnd ? "auto" : "20px"}
+      marginTop={[
+        alignEnd ? "20px" : "20px",
+        alignEnd ? "20px" : "20px",
+        alignEnd ? "20px" : "20px",
+        alignEnd ? "auto" : "20px",
+        alignEnd ? "auto" : "20px",
+      ]}
       padding="0"
     >
       {label && (

@@ -7,7 +7,6 @@ import {
   DelegateCard,
   SimpleGrid,
   PageTitle,
-  ButtonGroup,
   ContentContainer,
   HiAdjustmentsHorizontal,
   Popover,
@@ -23,7 +22,6 @@ import {
   SkeletonText,
   DelegateModal,
   ConfirmModal,
-  Flex,
 } from "@yukilabs/governance-components";
 
 import { useDebouncedCallback } from "use-debounce";
@@ -36,6 +34,7 @@ import { useAccount } from "wagmi";
 import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "../../wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
+
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
 }
@@ -202,7 +201,7 @@ export function Page() {
     state.onReset();
     setFiltersState({ ...filtersState, filters: [] });
   };
-  // console.log(JSON.stringify(delegates.data, null, 2));
+  console.log(JSON.stringify(delegates.data, null, 2));
 
   function ActionButtons() {
     if (!user) {
@@ -273,27 +272,19 @@ export function Page() {
         {delegates.isLoading ? (
           <DelegatesSkeleton />
         ) : delegates.isError ? (
-          <Box position="absolute" inset="0" top="-25px" bg="#F9F8F9">
-            <EmptyState
-              type="delegates"
-              title="Something went wrong"
-              minHeight="300px"
-              action={
-                <Button variant="primary" onClick={() => delegates.refetch()}>
-                  Retry
-                </Button>
-              }
-            />
-          </Box>
+          <EmptyState
+            type="delegates"
+            title="Something went wrong"
+            minHeight="300px"
+            action={
+              <Button variant="primary" onClick={() => delegates.refetch()}>
+                Retry
+              </Button>
+            }
+          />
         ) : (
           <>
             <AppBar.Root>
-              {/* <Box mr="8px">
-                <SearchInput
-                  value={searchQuery}
-                  onChange={(e) => handleSearchInput(e.target.value)}
-                />
-              </Box> */}
               <AppBar.Group mobileDirection="row">
                 <Box minWidth={"52px"}>
                   <Text variant="mediumStrong">Sort by</Text>
@@ -358,17 +349,18 @@ export function Page() {
               templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
             >
               {delegates.data && delegates.data.length > 0 ? (
-                delegates.data.map((data) => (
+                delegates.data.map((delegate) => (
                   <DelegateCard
                     onDelegateClick={() => console.log("test")}
-                    profileURL={`/delegates/profile/${data.id}`}
-                    ensName={data.author?.ensName}
-                    key={data.author?.starknetAddress}
-                    address={data?.author?.address}
-                    avatarUrl={data.author?.ensAvatar}
-                    delegateStatement={data?.delegateStatement}
-                    delegatedVotes={"todo"}
-                    delegateType={data?.delegateType as string[]}
+                    profileURL={`/delegates/profile/${delegate.id}`}
+                    statement={delegate?.delegateStatement}
+                    type={delegate?.delegateType as string[]}
+                    votingPower={0}
+                    voteCount={0}
+                    address={delegate?.author?.address}
+                    ensAvatar={delegate?.author?.ensAvatar}
+                    ensName={delegate?.author?.ensName}
+                    key={delegate?.id}
                   />
                 ))
               ) : (

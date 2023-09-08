@@ -23,7 +23,6 @@ const Root = ({ children, direction = "column" }: RootProps) => {
       flexDirection={direction}
       flexWrap={direction === "row" ? "wrap" : "nowrap"}
       justifyContent="flex-start"
-      color="#6C6C75"
     >
       {children}
     </Box>
@@ -45,12 +44,12 @@ const Item = (props: ItemProps) => {
     if (typeof value === "string") {
       return isCopiable ? (
         <CopyToClipboard text={value}>
-          <Text color="#292932" fontWeight="medium" title={value}>
+          <Text variant="small" color="content.accent.default" title={value}>
             {isTruncated ? truncateAddress(value) : value}
           </Text>
         </CopyToClipboard>
       ) : (
-        <Text color="#292932" fontWeight="medium" title={value}>
+        <Text variant="small" color="content.accent.default" title={value}>
           {isTruncated ? truncateAddress(value) : value}
         </Text>
       );
@@ -60,10 +59,12 @@ const Item = (props: ItemProps) => {
   };
 
   return (
-    <Flex justify="space-between" fontSize="sm">
-      <Text fontWeight="medium" color="#6C6C75">
-        {label}
-      </Text>
+    <Flex justify="flex-start" gap="4px">
+      <Box width="50%">
+        <Text variant="small" color="content.default.default">
+          {label}
+        </Text>
+      </Box>
       {value ? renderValue() : children}
     </Flex>
   );

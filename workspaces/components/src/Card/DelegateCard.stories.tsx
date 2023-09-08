@@ -13,29 +13,30 @@ export const DelegateCard = () => (
     <HStack p={12}>
       <>
         <GovernanceDelegateCard
-          delegateStatement="I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years..."
-          delegateType={[
-            "Dao",
-            "Infrastructure",
-            "Web3 Developer",
-            "Security",
-            "Legal",
+          statement="This is my statement lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, diam quis aliquam faucibus, quam quam aliquet elit, vitae."
+          type={[
+            "Starknet community",
+            "infrastructure_starknet_dev",
+            "web3_developer",
+            "web3_community",
           ]}
-          address="0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5"
-          avatarUrl="https://euc.li/robwalsh.eth"
-          delegatedVotes="0"
+          votingPower={0}
+          voteCount={0}
+          onDelegateClick={() => console.log("Delegate clicked")}
+          address={"0xw33242342342342342342342342342342342342343"}
+          ensAvatar="https://pbs.twimg.com/profile_images/1571999433046237185/j9ktCKhD_400x400.jpg"
           ensName="robwalsh.eth"
-          onDelegateClick={() => console.log("delegate click")}
         />
         <GovernanceDelegateCard
-          delegateStatement="I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years..."
-          delegateType={["Dao"]}
-          address="0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5"
-          avatarUrl="https://euc.li/robwalsh.eth"
-          delegatedVotes="0"
-          ensName="cillianhunter.eth"
-          onDelegateClick={() => console.log("delegate click")}
-          profileURL="https://starknet.io"
+          statement="This is my statement lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, diam quis aliquam faucibus, quam quam aliquet elit, vitae."
+          type={["Starknet community"]}
+          votingPower={0}
+          voteCount={0}
+          onDelegateClick={() => console.log("Delegate clicked")}
+          profileURL="https://example.com/profile"
+          address={"0xw33242342342342342342342342342342342342343"}
+          ensAvatar="https://pbs.twimg.com/profile_images/1571999433046237185/j9ktCKhD_400x400.jpg"
+          ensName="robwalsh.eth"
         />
       </>
     </HStack>
