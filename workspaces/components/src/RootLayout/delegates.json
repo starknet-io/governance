@@ -29,7 +29,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -69,7 +69,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 2479024
     }
@@ -104,7 +104,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -148,7 +148,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -183,7 +183,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -227,7 +227,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -262,7 +262,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -303,7 +303,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 6651685
     }
@@ -345,7 +345,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -380,7 +380,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -415,7 +415,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -450,7 +450,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 110000
     }
@@ -485,7 +485,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -529,7 +529,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 2439024
     }
@@ -564,7 +564,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4998048
     }
@@ -599,7 +599,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4878048
     }
@@ -642,7 +642,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 5221798
     }
@@ -677,7 +677,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -712,7 +712,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -747,7 +747,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -782,7 +782,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4888048
     }
@@ -817,7 +817,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -858,7 +858,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -893,7 +893,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4878048
     }
@@ -928,7 +928,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -963,7 +963,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 50000
     }
@@ -998,7 +998,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 60000
     }
@@ -1033,7 +1033,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 150000
     }
@@ -1068,7 +1068,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 7049497
     }
@@ -1103,7 +1103,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -1138,7 +1138,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4878048
     }
@@ -1183,7 +1183,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 2559024
     }
@@ -1218,7 +1218,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -1258,7 +1258,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -1293,7 +1293,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4928048
     }
@@ -1328,7 +1328,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -1363,7 +1363,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -1398,7 +1398,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 2439024
     }
@@ -1433,7 +1433,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -1476,7 +1476,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4998048
     }
@@ -1511,7 +1511,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -1546,7 +1546,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4938048
     }
@@ -1581,7 +1581,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -1625,7 +1625,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 2439024
     }
@@ -1660,7 +1660,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -1695,7 +1695,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 40000
     }
@@ -1730,7 +1730,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -1765,7 +1765,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -1800,7 +1800,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4878048
     }
@@ -1835,7 +1835,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -1870,7 +1870,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -1905,7 +1905,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -1940,7 +1940,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4998048
     }
@@ -1975,7 +1975,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 240123
     }
@@ -2010,7 +2010,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 170000
     }
@@ -2045,7 +2045,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4998048
     }
@@ -2080,7 +2080,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -2115,7 +2115,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -2150,7 +2150,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -2185,7 +2185,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4878048
     }
@@ -2226,7 +2226,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2489943
     }
@@ -2261,7 +2261,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -2305,7 +2305,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -2340,7 +2340,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 2439024
     }
@@ -2375,7 +2375,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -2410,7 +2410,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4878048
     }
@@ -2445,7 +2445,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -2480,7 +2480,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 40000
     }
@@ -2515,7 +2515,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -2550,7 +2550,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -2592,7 +2592,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -2627,7 +2627,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -2662,7 +2662,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -2697,7 +2697,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 180000
     }
@@ -2732,7 +2732,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4878048
     }
@@ -2776,7 +2776,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 4988048
     }
@@ -2811,7 +2811,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -2846,7 +2846,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -2881,7 +2881,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -2916,7 +2916,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -2951,7 +2951,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -2986,7 +2986,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -3021,7 +3021,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -3056,7 +3056,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -3098,7 +3098,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -3133,7 +3133,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 150000
     }
@@ -3168,7 +3168,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -3203,7 +3203,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 140000
     }
@@ -3238,7 +3238,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 4,
       "votingPower": 2439024
     }
@@ -3273,7 +3273,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -3308,7 +3308,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -3343,7 +3343,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -3378,7 +3378,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -3413,7 +3413,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -3454,7 +3454,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -3489,7 +3489,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -3524,7 +3524,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 140000
     }
@@ -3559,7 +3559,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -3594,7 +3594,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -3629,7 +3629,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -3664,7 +3664,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -3699,7 +3699,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -3734,7 +3734,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -3769,7 +3769,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 20000
     }
@@ -3804,7 +3804,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -3839,7 +3839,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -3874,7 +3874,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -3909,7 +3909,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -3944,7 +3944,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -3979,7 +3979,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4014,7 +4014,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4049,7 +4049,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2449024
     }
@@ -4084,7 +4084,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -4119,7 +4119,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4154,7 +4154,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -4189,7 +4189,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 2439024
     }
@@ -4224,7 +4224,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 4878048
     }
@@ -4259,7 +4259,7 @@
       "createdAt": "2023-09-07T08:20:16.000Z",
       "updatedAt": "2023-09-07T08:20:16.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4294,7 +4294,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -4329,7 +4329,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 170000
     }
@@ -4364,7 +4364,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 70000
     }
@@ -4399,7 +4399,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 140000
     }
@@ -4434,7 +4434,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -4469,7 +4469,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4504,7 +4504,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 6636743
     }
@@ -4539,7 +4539,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -4580,7 +4580,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -4615,7 +4615,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -4650,7 +4650,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4685,7 +4685,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -4728,7 +4728,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 10000
     }
@@ -4763,7 +4763,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 150000
     }
@@ -4798,7 +4798,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4833,7 +4833,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4868,7 +4868,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4908,7 +4908,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 5501798
     }
@@ -4943,7 +4943,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -4978,7 +4978,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -5013,7 +5013,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -5048,7 +5048,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 10000
     }
@@ -5083,7 +5083,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 30000
     }
@@ -5118,7 +5118,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -5153,7 +5153,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 3,
       "votingPower": 1200000000
     }
@@ -5188,7 +5188,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -5223,7 +5223,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -5258,7 +5258,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 80000
     }
@@ -5293,7 +5293,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 152382
     }
@@ -5328,7 +5328,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 70000
     }
@@ -5363,7 +5363,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 110000
     }
@@ -5398,7 +5398,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 215967
     }
@@ -5433,7 +5433,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 50000
     }
@@ -5468,7 +5468,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 80000
     }
@@ -5503,7 +5503,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 80000
     }
@@ -5538,7 +5538,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -5573,7 +5573,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 2439024
     }
@@ -5608,7 +5608,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 706916
     }
@@ -5643,7 +5643,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 80000
     }
@@ -5678,7 +5678,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 35000
     }
@@ -5713,7 +5713,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 50000
     }
@@ -5748,7 +5748,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 213621
     }
@@ -5783,7 +5783,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 20000
     }
@@ -5818,7 +5818,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 540583
     }
@@ -5853,7 +5853,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 60000
     }
@@ -5888,7 +5888,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 150000
     }
@@ -5923,7 +5923,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 60000
     }
@@ -5958,7 +5958,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 30000
     }
@@ -5993,7 +5993,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 10000
     }
@@ -6028,7 +6028,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -6063,7 +6063,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 20000
     }
@@ -6098,7 +6098,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 35000
     }
@@ -6133,7 +6133,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -6168,7 +6168,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 4878048
     }
@@ -6203,7 +6203,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 235984
     }
@@ -6238,7 +6238,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 160000
     }
@@ -6273,7 +6273,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 49830
     }
@@ -6308,7 +6308,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 2439024
     }
@@ -6343,7 +6343,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 10000
     }
@@ -6378,7 +6378,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 120000
     }
@@ -6413,7 +6413,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 10000
     }
@@ -6448,7 +6448,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 250826
     }
@@ -6483,7 +6483,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 571770
     }
@@ -6518,7 +6518,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 2439024
     }
@@ -6553,7 +6553,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 40000
     }
@@ -6588,7 +6588,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 348781
     }
@@ -6623,7 +6623,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 2,
       "votingPower": 4878048
     }
@@ -6658,7 +6658,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 333333
     }
@@ -6693,7 +6693,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 40000
     }
@@ -6728,7 +6728,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -6763,7 +6763,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 40000
     }
@@ -6798,7 +6798,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 30000
     }
@@ -6833,7 +6833,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 150000
     }
@@ -6868,7 +6868,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 1,
       "votingPower": 60000
     }
@@ -6903,7 +6903,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 4878048
     }
@@ -6938,7 +6938,7 @@
       "createdAt": "2023-09-07T08:20:17.000Z",
       "updatedAt": "2023-09-07T08:20:17.000Z"
     },
-    "votingIno": {
+    "votingInfo": {
       "totalVotes": 0,
       "votingPower": 30000
     }

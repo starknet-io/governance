@@ -16,14 +16,7 @@ import {
   SettingsIcon,
 } from "src/Icons";
 import { Header } from "src/Header";
-import {
-  Box,
-  ButtonGroup,
-  Flex,
-  Popover,
-  Select,
-  SimpleGrid,
-} from "@chakra-ui/react";
+import { Box, Popover, Select, SimpleGrid } from "@chakra-ui/react";
 import { PageTitle } from "src/PageTitle";
 import { Logo } from "src/Logo";
 import { ContentContainer } from "src/ContentContainer";
@@ -139,8 +132,19 @@ export const DelegatesPage = () => (
                 spacing={4}
                 templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
               >
-                {delegatesData.map((delegate, i) => (
-                  <DelegateCard {...delegate} key={i} />
+                {delegatesData.map((delegate) => (
+                  <DelegateCard
+                    statement={delegate.statement}
+                    type={delegate.type}
+                    votingPower={0}
+                    voteCount={0}
+                    onDelegateClick={() => console.log("Delegate clicked")}
+                    profileURL="https://example.com/profile"
+                    key={delegate.id}
+                    address={delegate?.author?.address}
+                    ensAvatar={delegate?.author?.ensAvatar}
+                    ensName={delegate?.author?.ensName}
+                  />
                 ))}
               </SimpleGrid>
             </Box>
