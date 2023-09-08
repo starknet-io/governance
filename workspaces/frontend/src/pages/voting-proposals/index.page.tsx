@@ -10,7 +10,7 @@ import {
   Skeleton,
   Select,
   Text,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";

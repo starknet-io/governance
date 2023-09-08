@@ -15,7 +15,7 @@ import {
   MarkdownEditor,
   Text,
   Divider,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { DocumentProps } from "src/renderer/types";

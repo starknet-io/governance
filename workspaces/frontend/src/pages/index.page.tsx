@@ -1,6 +1,6 @@
 import { DocumentProps } from "src/renderer/types";
 
-import { BannerHome, Box, PageTitle } from "@yukilabs/governance-components";
+import { BannerHome, Box, PageTitle } from "@starknet-foundation/governance-ui";
 
 export function Page() {
   return <BannerHome snipCount={1} />;

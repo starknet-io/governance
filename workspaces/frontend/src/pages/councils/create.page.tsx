@@ -14,11 +14,11 @@ import {
   MembersList,
   MarkdownEditor,
   useMarkdownEditor,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
-import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
+import { MemberType } from "@starknet-foundation/governance-ui/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
 
 export function Page() {

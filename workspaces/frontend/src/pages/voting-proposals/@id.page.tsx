@@ -30,11 +30,11 @@ import {
   Status,
   VoteComment,
   MarkdownRenderer,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { formatDate } from "@yukilabs/governance-components/src/utils/helpers";
+import { formatDate } from "@starknet-foundation/governance-ui/src/utils/helpers";
 import { useWalletClient } from "wagmi";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { providers } from "ethers";
@@ -43,7 +43,7 @@ import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { trpc } from "src/utils/trpc";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { useBalanceData } from "src/utils/hooks";
-import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { truncateAddress } from "@starknet-foundation/governance-ui/src/utils";
 import { stringToHex } from "viem";
 
 export function Page() {

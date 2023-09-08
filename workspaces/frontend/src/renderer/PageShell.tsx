@@ -3,7 +3,7 @@ import { PageContextProvider } from "./PageContextProvider";
 import type { PageContext } from "./types";
 import { DynamicContextProviderPage } from "./DynamicContexProviderPage";
 import { ApolloProvider, ApolloClient } from "@apollo/client";
-import { ThemeProvider } from "@yukilabs/governance-components";
+import { ThemeProvider } from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 
 interface Props {

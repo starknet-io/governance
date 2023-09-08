@@ -17,7 +17,7 @@ import {
   useDisclosure,
   PencilIcon,
   TrashIcon,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import {
@@ -28,7 +28,7 @@ import { trpc } from "src/utils/trpc";
 import { useRef, useState } from "react";
 
 import { DocumentProps } from "src/renderer/types";
-import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { truncateAddress } from "@starknet-foundation/governance-ui/src/utils";
 
 const userRoleValues = userRoleEnum.enumValues;
 

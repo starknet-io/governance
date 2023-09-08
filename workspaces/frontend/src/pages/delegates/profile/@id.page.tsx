@@ -22,7 +22,7 @@ import {
   StatusModal,
   Skeleton,
   SkeletonCircle,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { useAccount } from "wagmi";

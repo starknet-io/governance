@@ -15,7 +15,7 @@ import {
   HiEllipsisHorizontal,
   Iframely,
   MarkdownRenderer,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
@@ -36,7 +36,7 @@ export function Page() {
   });
 
   const handleCommentSend = async (value: string) => {
-    console.log('HERE', value);
+    console.log("HERE", value);
     try {
       await saveComment.mutateAsync({
         content: value,

@@ -15,7 +15,7 @@ import {
   EditorTemplate,
   useMarkdownEditor,
   MarkdownEditor,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
 import { fetchBlockNumber } from "@wagmi/core";

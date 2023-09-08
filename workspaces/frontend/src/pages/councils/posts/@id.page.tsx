@@ -13,7 +13,7 @@ import {
   ProfileSummaryCard,
   MenuItem,
   MarkdownRenderer,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";

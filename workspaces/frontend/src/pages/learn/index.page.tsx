@@ -14,7 +14,7 @@ import {
   Divider,
   MarkdownRenderer,
   Skeleton,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useMemo, useState } from "react";
 import { Page as PageInterface } from "@yukilabs/governance-backend/src/db/schema/pages";

@@ -16,11 +16,11 @@ import {
   MenuItem,
   EmptyState,
   Link,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { useEffect, useState } from "react";
-import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
+import { MemberType } from "@starknet-foundation/governance-ui/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";

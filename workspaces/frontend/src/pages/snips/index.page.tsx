@@ -10,7 +10,7 @@ import {
   BannerHome,
   EmptyState,
   Skeleton,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { trpc } from "src/utils/trpc";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";

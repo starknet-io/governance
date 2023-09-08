@@ -22,7 +22,7 @@ import {
   SkeletonText,
   DelegateModal,
   ConfirmModal,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 
 import { useDebouncedCallback } from "use-debounce";
 

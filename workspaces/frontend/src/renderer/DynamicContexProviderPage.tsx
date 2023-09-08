@@ -44,7 +44,7 @@ import {
   HamburgerIcon,
   Link,
   PlusIcon,
-} from "@yukilabs/governance-components";
+} from "@starknet-foundation/governance-ui";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
@@ -53,7 +53,7 @@ import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
-import { HiXMark } from "@yukilabs/governance-components/src";
+import { HiXMark } from "@starknet-foundation/governance-ui/src";
 
 // need to move this override to a better place
 const cssOverrides = `
