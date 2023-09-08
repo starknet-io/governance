@@ -24,3 +24,4 @@ networks:
   yuki:
     external: true
     name: 'yuki-${environment}'
+

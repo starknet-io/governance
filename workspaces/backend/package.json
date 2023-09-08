@@ -8,6 +8,7 @@
     "dev": "nodemon --exec ts-node --transpile-only src/index.ts",
     "build": "tsc",
     "serve": "node dist/src/index.js",
+    "seed": "ts-node --transpile-only src/delegatesMigration/index.ts",
     "migration:generate": "drizzle-kit generate:pg",
     "migration:run": "drizzle-kit push:pg",
     "migration:revert": "drizzle-kit drop"

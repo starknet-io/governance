@@ -9,6 +9,7 @@ import { db } from './db/db';
 import { users } from './db/schema/users';
 import { eq } from 'drizzle-orm';
 import { getUserByJWT } from './utils/helpers';
+import { delegateRouter } from "./routers/delegates";
 
 dotenv.config();
 
@@ -36,6 +37,10 @@ app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000', cre
 app.use(fetchUserMiddleware);
 app.use("/trpc", createExpressMiddleware({
   router: appRouter,
+  createContext
+}));
+app.use('/api/delegates', createExpressMiddleware({
+  router: delegateRouter,
   createContext
 }));
 
