@@ -10,7 +10,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
-import { TrashWarningIcon } from "@yukilabs/governance-components/src/Icons";
+import { TrashWarningIcon } from "../Icons";
 import { useRef } from "react";
 
 interface DeletionDialogProps {
