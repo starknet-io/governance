@@ -2,8 +2,6 @@ name: front deployment
 
 on:
   push:
-    tags:
-      - 'v*'
     branches: ['dev']
     paths:
       - 'workspaces/frontend/**'
@@ -20,7 +18,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      image: ${{ steps.meta.outputs.tags }}
+      tag: ${{ steps.meta.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -29,22 +27,18 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/${{ github.repository }}/frontend
+          images: registry.digitalocean.com/governance/frontend
           flavor: latest=false
           tags: |
             type=ref,suffix=-{{sha}},event=branch
             type=ref,suffix=-{{sha}},event=pr
-            type=ref,event=tag
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to GitHub Container Registry
+      - name: Login to DO Container Registry
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: registry.digitalocean.com
+          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v4
@@ -53,125 +47,38 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
   Deploy-review:
     if: github.event_name == 'pull_request'
     needs: Build
-    runs-on: sandbox
-    permissions:
-      contents: read
-      packages: write
+    runs-on: ubuntu-latest
     env:
-      image: ${{ needs.Build.outputs.image }}
-      external_port: 1000
-      environment: review
-      vite_app_dynamic_id: ${{ secrets.VITE_APP_DYNAMIC_ID }}
-      vite_app_trpc_url: ${{ vars.VITE_APP_TRPC_URL }}
-      vite_app_iframely_id: ${{ secrets.VITE_APP_IFRAMELY_ID }}
-      vite_app_snapshot_url: ${{ vars.VITE_APP_SNAPSHOT_URL }}
-      vite_app_SNAPSHOT_space: ${{ vars.VITE_APP_SNAPSHOT_SPACE }}
-      vite_app_SNAPSHOT_chain_id: ${{ vars.VITE_APP_SNAPSHOT_CHAIN_ID }}
-      vite_app_google_tag_id: ${{ secrets.VITE_APP_GOOGLE_TAG_ID }}
-      vite_app_delegation_registry: ${{ secrets.VITE_APP_DELEGATION_REGISTRY }}
-      vite_app_delegation_token: ${{ secrets.VITE_APP_DELEGATION_TOKEN }}
-      vite_app_delegation_symbol: ${{ vars.VITE_APP_DELEGATION_SYMBOL }}
-      vite_app_delegation_chain_id: ${{ vars.VITE_APP_DELEGATION_CHAIN_ID }}
-    defaults:
-      run:
-        working-directory: workspaces/frontend
+      tag: ${{ needs.Build.outputs.tag }}
     environment:
       name: review-frontend
       url: https://review.yuki-labs.dev
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+      - name: DigitalOcean App Platform deployment
+        uses: digitalocean/app_action@v1.1.5
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - run: docker image prune -f -a
-      - run: docker-compose -p review up -d --wait
+          app_name: frontend-review
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'
 
   Deploy-dev:
     if:  github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
     needs: Build
-    runs-on: sandbox
-    permissions:
-      contents: read
-      packages: write
+    runs-on: ubuntu-latest
     env:
-      image: ${{ needs.Build.outputs.image }}
-      external_port: 2000
-      environment: development
-      vite_app_dynamic_id: ${{ secrets.VITE_APP_DYNAMIC_ID }}
-      vite_app_trpc_url: ${{ vars.VITE_APP_TRPC_URL }}
-      vite_app_iframely_id: ${{ secrets.VITE_APP_IFRAMELY_ID }}
-      vite_app_snapshot_url: ${{ vars.VITE_APP_SNAPSHOT_URL }}
-      vite_app_SNAPSHOT_space: ${{ vars.VITE_APP_SNAPSHOT_SPACE }}
-      vite_app_SNAPSHOT_chain_id: ${{ vars.VITE_APP_SNAPSHOT_CHAIN_ID }}
-      vite_app_google_tag_id: ${{ secrets.VITE_APP_GOOGLE_TAG_ID }}
-      vite_app_delegation_registry: ${{ secrets.VITE_APP_DELEGATION_REGISTRY }}
-      vite_app_delegation_token: ${{ secrets.VITE_APP_DELEGATION_TOKEN }}
-      vite_app_delegation_symbol: ${{ vars.VITE_APP_DELEGATION_SYMBOL }}
-      vite_app_delegation_chain_id: ${{ vars.VITE_APP_DELEGATION_CHAIN_ID }}
-    defaults:
-      run:
-        working-directory: workspaces/frontend
+      tag: ${{ needs.Build.outputs.tag }}
     environment:
       name: development-frontend
       url: https://dev.yuki-labs.dev
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+      - name: DigitalOcean App Platform deployment
+        uses: digitalocean/app_action@v1.1.5
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - run: docker image prune -f -a
-      - run: docker-compose -p development up -d --wait
+          app_name: frontend-development
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'
 
-  Deploy-production:
-    if: startsWith(github.event.ref, 'refs/tags/v')
-    needs: [Build]
-    runs-on: production
-    permissions:
-      contents: read
-      packages: write
-    env:
-      image: ${{ needs.Build.outputs.image }}
-      external_port: 3000
-      environment: production
-      vite_app_dynamic_id: ${{ secrets.VITE_APP_DYNAMIC_ID }}
-      vite_app_trpc_url: ${{ vars.VITE_APP_TRPC_URL }}
-      vite_app_iframely_id: ${{ secrets.VITE_APP_IFRAMELY_ID }}
-      vite_app_snapshot_url: ${{ vars.VITE_APP_SNAPSHOT_URL }}
-      vite_app_SNAPSHOT_space: ${{ vars.VITE_APP_SNAPSHOT_SPACE }}
-      vite_app_SNAPSHOT_chain_id: ${{ vars.VITE_APP_SNAPSHOT_CHAIN_ID }}
-      vite_app_google_tag_id: ${{ secrets.VITE_APP_GOOGLE_TAG_ID }}
-      vite_app_delegation_registry: ${{ secrets.VITE_APP_DELEGATION_REGISTRY }}
-      vite_app_delegation_token: ${{ secrets.VITE_APP_DELEGATION_TOKEN }}
-      vite_app_delegation_symbol: ${{ vars.VITE_APP_DELEGATION_SYMBOL }}
-      vite_app_delegation_chain_id: ${{ vars.VITE_APP_DELEGATION_CHAIN_ID }}
-    defaults:
-      run:
-        working-directory: workspaces/frontend
-    environment:
-      name: production-frontend
-      url: https://governance.yuki-labs.dev
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - run: docker image prune -f -a
-      - run: docker-compose -p production up -d --wait

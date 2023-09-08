@@ -8,4 +8,5 @@ FROM mcr.microsoft.com/devcontainers/typescript-node:16
 RUN mkdir /runtime
 COPY --from=build /build/ /runtime/
 WORKDIR /runtime/workspaces/frontend
+EXPOSE 3000
 ENTRYPOINT [ "node", "./src/server/index.cjs" ]
