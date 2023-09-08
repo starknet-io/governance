@@ -1,5 +1,5 @@
 {
-  "name": "@yukilabs/governance-components",
+  "name": "@starknet-foundation/governance-ui",
   "version": "0.5.0",
   "type": "module",
   "scripts": {

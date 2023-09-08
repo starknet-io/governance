@@ -5,10 +5,10 @@
     "workspaces/*"
   ],
   "scripts": {
-    "lint": "yarn workspace @yukilabs/governance-frontend lint && yarn workspace @yukilabs/governance-backend lint && yarn workspace @yukilabs/governance-components lint",
+    "lint": "yarn workspace @yukilabs/governance-frontend lint && yarn workspace @yukilabs/governance-backend lint && yarn workspace @starknet-foundation/governance-ui lint",
     "frontend": "yarn workspace @yukilabs/governance-frontend dev",
     "backend": "yarn workspace @yukilabs/governance-backend dev",
-    "components": "yarn workspace @yukilabs/governance-components dev",
+    "components": "yarn workspace @starknet-foundation/governance-ui dev",
     "dev": "concurrently \"yarn frontend\" \"yarn backend\""
   },
   "devDependencies": {
