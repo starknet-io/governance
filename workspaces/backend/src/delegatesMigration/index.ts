@@ -194,7 +194,7 @@ async function seedData() {
         delegateType: interests.map((interest: any) =>
           interest.toLowerCase().replace(/\s+/g, '_'),
         ),
-        delegateStatement: statementMarkdown,
+        statement: statementMarkdown,
         twitter: entry.c5 === '@' + entry.c5 ? entry.c5 : null,
         discord: null,
         discourse: null,

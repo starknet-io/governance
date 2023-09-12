@@ -26,7 +26,7 @@ export const delegateRouter = router({
   saveDelegate: protectedProcedure
     .input(
       z.object({
-        delegateStatement: z.string(),
+        statement: z.string(),
         delegateType: z.any(),
         twitter: z.string(),
         discord: z.string(),
@@ -58,7 +58,7 @@ export const delegateRouter = router({
       const insertedDelegate = await db
         .insert(delegates)
         .values({
-          delegateStatement: opts.input.delegateStatement,
+          statement: opts.input.statement,
           delegateType: opts.input.delegateType,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
@@ -165,7 +165,7 @@ export const delegateRouter = router({
       const updatedDelegate = await db
         .update(delegates)
         .set({
-          delegateStatement: opts.input.delegateStatement,
+          statement: opts.input.statement,
           delegateType: opts.input.delegateType,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
@@ -292,7 +292,7 @@ export const delegateRouter = router({
           let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
             ...foundDelegates.delegates,
             author: { ...foundDelegates.users },
-            delegateVotes: { ...foundDelegates.delegate_votes },
+            votingInfo: { ...foundDelegates.delegate_votes },
             delegateAgreement: !!(
               foundDelegates.custom_delegate_agreement ||
               foundDelegates.confirmDelegateAgreement
@@ -302,13 +302,13 @@ export const delegateRouter = router({
           // Apply filters now
           if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
             filteredDelegates = filteredDelegates.filter(
-              (delegate: any) => delegate.delegateVotes.votingPower > 1000000,
+              (delegate: any) => delegate.votingInfo.votingPower > 1000000,
             );
           }
 
           if (appliedSpecialFilters.includes('1_or_more_votes')) {
             filteredDelegates = filteredDelegates.filter(
-              (delegate: any) => delegate.delegateVotes.totalVotes > 1,
+              (delegate: any) => delegate.votingInfo.totalVotes > 1,
             );
           }
 

@@ -25,7 +25,7 @@ import { delegateNames } from "./index.page";
 const delegateTypeValues = delegateTypeEnum.enumValues;
 
 type FormValues = {
-  delegateStatement: string;
+  statement: string;
   delegateType: string[];
   confirmDelegateAgreement: boolean;
   customDelegateAgreementContent?: string;
@@ -67,7 +67,7 @@ export function Page() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      data.delegateStatement = editorValue;
+      data.statement = editorValue;
       if (showCustomAgreementEditor) {
         data.customDelegateAgreementContent = customAgreementEditorValue;
       }
@@ -101,7 +101,7 @@ export function Page() {
                   onChange={handleEditorChange}
                   value={editorValue}
                 />
-                {errors.delegateStatement && (
+                {errors.statement && (
                   <span>This field is required.</span>
                 )}
               </FormControl>

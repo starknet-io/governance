@@ -187,7 +187,7 @@ export function Page() {
       } else {
         return {
           ...receiverData,
-          vp: foundDelegate.delegateVotes.votingPower
+          vp: foundDelegate.votingInfo.votingPower
         }
       }
     }
@@ -371,11 +371,11 @@ export function Page() {
                 delegates.data.map((delegate) => (
                   <DelegateCard
                     onDelegateClick={() => console.log("test")}
-                    votingPower={delegate?.delegateVotes?.votingPower}
-                    delegatedVotes={delegate?.delegateVotes?.totalVotes || "0"}
+                    votingPower={delegate?.votingInfo?.votingPower}
+                    delegatedVotes={delegate?.votingInfo?.totalVotes || "0"}
                     profileURL={`/delegates/profile/${delegate.id}`}
                     address={delegate?.author?.address}
-                    statement={delegate?.delegateStatement}
+                    statement={delegate?.statement}
                     type={delegate?.delegateType as string[]}
                     ensAvatar={delegate?.author?.ensAvatar}
                     ensName={delegate.author?.ensName}

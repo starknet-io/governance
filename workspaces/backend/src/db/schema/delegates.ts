@@ -40,7 +40,7 @@ export const delegateTypeEnum = pgEnum('delegateType', [
 
 export const delegates = pgTable('delegates', {
   id: uuid('id').primaryKey().defaultRandom(),
-  delegateStatement: text('delegateStatement').notNull(),
+  statement: text('statement').notNull(),
   delegateType: json('type').default('[]'),
   twitter: text('twitter'),
   discord: text('discord'),

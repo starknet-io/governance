@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "df0b3036-e88d-4c9a-bc79-2016f31e298f",
+  "id": "009122a1-8b0e-4999-b71b-8790d4919ca7",
   "prevId": "15380c8b-8bc2-496b-b9f8-a93a44313a74",
   "tables": {
     "comments": {
@@ -250,8 +250,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "delegateStatement": {
-          "name": "delegateStatement",
+        "statement": {
+          "name": "statement",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -937,6 +937,8 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {}
+    "columns": {
+      "\"delegates\".\"delegateStatement\"": "\"delegates\".\"statement\""
+    }
   }
 }

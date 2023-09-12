@@ -114,7 +114,7 @@ async function processDelegatesInBatches(
 ) {
   let batchStart = 0;
   let failedBatches: { address: string; id: string }[] = [];
-  const apiCallLimit = 29; // To stay below 64 API calls within 16 seconds - lowered to 58 just in case
+  const apiCallLimit = 24; // To stay below 64 API calls within 16 seconds - lowered to 58 just in case
   let apiCallCount = 0;
 
   while (batchStart < delegates.length) {
@@ -126,7 +126,7 @@ async function processDelegatesInBatches(
 
     if (apiCallCount >= apiCallLimit) {
       console.log('Approaching rate limit, pausing for 5 seconds...');
-      await delay(5000); // 5 seconds pause
+      await delay(6000); // 5 seconds pause
       apiCallCount = 0; // Reset the API call count
     }
 
@@ -151,7 +151,7 @@ async function processDelegatesInBatches(
   }
 
   let retryCount = 0;
-  const maxRetryCount = 5; // Set a max retry count to prevent infinite loop
+  const maxRetryCount = 10; // Set a max retry count to prevent infinite loop
   while (failedBatches.length > 0 && retryCount < maxRetryCount) {
     console.log(`Retrying failed batches: Attempt ${retryCount + 1}`);
     console.log(`Number of failed entries: ${failedBatches.length}`);

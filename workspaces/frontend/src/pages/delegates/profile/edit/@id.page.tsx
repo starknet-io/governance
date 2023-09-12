@@ -65,7 +65,7 @@ export function Page() {
     if (!delegateData) return;
 
     editor.insertNodes(
-      await convertMarkdownToSlate(delegateData.delegateStatement || ""),
+      await convertMarkdownToSlate(delegateData.statement || ""),
     );
     editorCustomAgreement.insertNodes(
       await editorCustomAgreementConvertMarkdownToSlate(
@@ -99,7 +99,7 @@ export function Page() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      data.delegateStatement = editorValue;
+      data.statement = editorValue;
       data.id = pageContext.routeParams!.id;
       if (showCustomAgreementEditor || agreementType === "custom") {
         data.customDelegateAgreementContent = editorCustomAgreementValue;
@@ -141,7 +141,7 @@ export function Page() {
                   value={editorValue}
                   customEditor={editor}
                 />
-                {errors.delegateStatement && (
+                {errors.statement && (
                   <span>This field is required.</span>
                 )}
               </FormControl>

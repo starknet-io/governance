@@ -520,7 +520,7 @@ export function Page() {
           <Heading color="#33333E" variant="h3">
             Delegate pitch
           </Heading>
-          <MarkdownRenderer content={delegate?.delegateStatement || ""} />
+          <MarkdownRenderer content={delegate?.statement || ""} />
           <Box mt="24px">
             <Heading mb="24px" color="#33333E" variant="h3">
               Past Votes
