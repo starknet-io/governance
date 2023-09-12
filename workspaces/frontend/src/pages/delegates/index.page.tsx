@@ -179,6 +179,21 @@ export function Page() {
     sortBy,
   });
 
+  const addVotingPowerToReceiver = () => {
+    if (delegates.data && delegates.data.length > 0) {
+      const foundDelegate = delegates.data.find((delegate) => delegate.author.address === receiverData.address)
+      if (!foundDelegate) {
+        return receiverData
+      } else {
+        return {
+          ...receiverData,
+          vp: foundDelegate.delegateVotes.votingPower
+        }
+      }
+    }
+    return receiverData
+  }
+
   const delegates =
     trpc.delegates.getDelegateByFiltersAndSort.useQuery(filtersState);
 
@@ -238,7 +253,7 @@ export function Page() {
         onClose={() => setIsOpen(false)}
         isConnected={isConnected}
         isValidCustomAddress={isValidAddress}
-        receiverData={!inputAddress.length ? undefined : receiverData}
+        receiverData={!inputAddress.length ? undefined : addVotingPowerToReceiver()}
         onContinue={(address) => {
           const isValid = ethers.utils.isAddress(address);
           setIsValidAddress(isValid);
