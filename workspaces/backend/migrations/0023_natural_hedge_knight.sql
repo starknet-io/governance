@@ -11,8 +11,9 @@ ALTER TYPE "delegateType" ADD VALUE 'web3_community';
 ALTER TYPE "delegateType" ADD VALUE 'web3_developer';
 CREATE TABLE IF NOT EXISTS "delegate_votes" (
 	"delegateId" uuid,
-	"votingPower" integer NOT NULL,
-	"totalVotes" integer NOT NULL,
+	"address" text NOT NULL,
+	"votingPower" integer,
+	"totalVotes" integer,
 	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 

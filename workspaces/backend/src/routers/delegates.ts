@@ -260,7 +260,7 @@ export const delegateRouter = router({
 
       const specialFilters = [
         'delegate_agreement',
-        'more_than_1m_voting_power',
+        'more_then_1m_voting_power',
         '1_or_more_votes',
         '1_or_more_comments',
       ];
@@ -300,7 +300,7 @@ export const delegateRouter = router({
           }));
 
           // Apply filters now
-          if (appliedSpecialFilters.includes('more_than_1m_voting_power')) {
+          if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
             filteredDelegates = filteredDelegates.filter(
               (delegate: any) => delegate.delegateVotes.votingPower > 1000000,
             );

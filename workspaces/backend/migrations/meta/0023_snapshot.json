@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "11a92812-00a2-4507-aa04-5e4b3f240adb",
+  "id": "df0b3036-e88d-4c9a-bc79-2016f31e298f",
   "prevId": "15380c8b-8bc2-496b-b9f8-a93a44313a74",
   "tables": {
     "comments": {
@@ -349,17 +349,23 @@
           "primaryKey": false,
           "notNull": false
         },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "votingPower": {
           "name": "votingPower",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "totalVotes": {
           "name": "totalVotes",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "updatedAt": {
           "name": "updatedAt",
