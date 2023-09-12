@@ -45,6 +45,4 @@ app.use('/api/delegates', createExpressMiddleware({
   createContext
 }));
 
-//delegateVoting();
-
 export default app;
