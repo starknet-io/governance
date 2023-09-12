@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
-  Announcements,
   DndContext,
   closestCenter,
   KeyboardSensor,
@@ -121,10 +120,6 @@ export function MultiLevelReOrderableList({
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
-  const [currentPosition, setCurrentPosition] = useState<{
-    parentId: UniqueIdentifier | null;
-    overId: UniqueIdentifier;
-  } | null>(null);
 
   const flattenedItems = useMemo(() => {
     const flattenedTree = flattenTree(items);
@@ -245,16 +240,6 @@ export function MultiLevelReOrderableList({
   function handleDragStart({ active: { id: activeId } }: DragStartEvent) {
     setActiveId(activeId);
     setOverId(activeId);
-
-    const activeItem = flattenedItems.find(({ id }) => id === activeId);
-
-    if (activeItem) {
-      setCurrentPosition({
-        parentId: activeItem.parentId,
-        overId: activeId,
-      });
-    }
-
     document.body.style.setProperty("cursor", "grabbing");
   }
 
@@ -299,8 +284,6 @@ export function MultiLevelReOrderableList({
     setOverId(null);
     setActiveId(null);
     setOffsetLeft(0);
-    setCurrentPosition(null);
-
     document.body.style.setProperty("cursor", "");
   }
 

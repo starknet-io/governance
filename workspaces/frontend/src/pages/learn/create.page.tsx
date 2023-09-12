@@ -74,6 +74,8 @@ export function Page() {
   //   );
   // }, [title, editorValue]);
 
+  const initialItems: any[] = [];
+
   const saveChanges = () => {
     saveBatchPages.mutateAsync(reorderItems, {
       onSuccess: () => {
@@ -86,7 +88,7 @@ export function Page() {
     setReorderItems(values);
   };
 
-  console.log({ reorderItems });
+  console.log({ reorderItems, pages });
 
   return (
     <>
@@ -122,7 +124,7 @@ export function Page() {
             Page Order
           </Heading>
 
-          <MultiLevelReOrderableList />
+          <MultiLevelReOrderableList defaultItems={initialItems} />
 
           <Flex justifyContent="flex-end">
             <Button
