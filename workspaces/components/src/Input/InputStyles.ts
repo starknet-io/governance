@@ -17,9 +17,9 @@ const primary = definePartsStyle({
     _hover: {
       borderColor: "#C8C7CB",
 
-      _placeholder: {
-        color: "content.support.hover",
-      },
+      // _placeholder: {
+      //   color: "content.support.hover",
+      // },
     },
     _focus: {
       borderColor: "#86848D",

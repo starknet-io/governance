@@ -1,12 +1,9 @@
-name: front deployment
+name: front deployment (prod)
 
 on:
   push:
-    branches: ['dev']
-    paths:
-      - 'workspaces/frontend/**'
-  pull_request:
-    branches: [ 'dev' ]
+    tags:
+      - 'v*'
     paths:
       - 'workspaces/frontend/**'
   workflow_dispatch:
@@ -27,11 +24,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: registry.digitalocean.com/governance/frontend
+          images: registry.digitalocean.com/governance/frontend-prod
           flavor: latest=false
           tags: |
-            type=ref,suffix=-{{sha}},event=branch
-            type=ref,suffix=-{{sha}},event=pr
+            type=ref,event=tag
 
       - name: Login to DO Container Registry
         uses: docker/login-action@v2
@@ -48,37 +44,18 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  Deploy-review:
-    if: github.event_name == 'pull_request'
+  Deploy-production:
     needs: Build
     runs-on: ubuntu-latest
     env:
       tag: ${{ needs.Build.outputs.tag }}
     environment:
-      name: review-frontend
-      url: https://review.yuki-labs.dev
+      name: production-frontend
+      url: https://governance.yuki-labs.dev
     steps:
       - name: DigitalOcean App Platform deployment
         uses: digitalocean/app_action@v1.1.5
         with:
-          app_name: frontend-review
+          app_name: frontend-production
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'
-
-  Deploy-dev:
-    if:  github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
-    needs: Build
-    runs-on: ubuntu-latest
-    env:
-      tag: ${{ needs.Build.outputs.tag }}
-    environment:
-      name: development-frontend
-      url: https://dev.yuki-labs.dev
-    steps:
-      - name: DigitalOcean App Platform deployment
-        uses: digitalocean/app_action@v1.1.5
-        with:
-          app_name: frontend-development
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'
-
+          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend-prod","tag": "${{ env.tag }}"}}]'

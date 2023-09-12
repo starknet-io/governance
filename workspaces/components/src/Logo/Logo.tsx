@@ -16,6 +16,7 @@ export const Logo = ({ href }: Props) => {
       display="flex"
       alignItems="center"
       paddingLeft="8px"
+      zIndex={1}
     >
       <svg
         width="38"

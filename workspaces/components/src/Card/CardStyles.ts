@@ -7,7 +7,6 @@ const { definePartsStyle, defineMultiStyleConfig } =
 const variants = {
   delegate: definePartsStyle({
     container: {
-      maxWidth: "377px",
       minWidth: "316px",
       borderColor: "border.forms",
       borderWidth: "1px",

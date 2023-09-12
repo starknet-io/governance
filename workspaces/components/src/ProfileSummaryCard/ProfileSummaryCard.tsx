@@ -5,7 +5,6 @@ import {
   MenuButton,
   MenuList,
   Stack,
-  Flex,
 } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 import { IconButton } from "src/IconButton";
@@ -30,7 +29,6 @@ type ProfileProps = {
   imgUrl?: string | null;
   address?: string | null | undefined;
   subtitle?: string | null;
-  votingPower?: number | null;
   children?: React.ReactNode;
   size?: "xs" | "sm" | "lg";
   avatarString?: string | null;
@@ -40,7 +38,6 @@ const Profile = ({
   imgUrl,
   address,
   subtitle,
-  votingPower,
   children,
   avatarString,
   size = "lg",
@@ -68,34 +65,23 @@ const Profile = ({
           address={avatarString}
         />
       )}
-      <Stack spacing="4px" gap={1}>
+      <Stack spacing="4px">
         <Heading
           variant="h3"
           fontSize={size === "lg" ? "20px" : "16px"}
-          color="#1A1523"
+          color="content.accent.default"
+          lineHeight={size === "sm" ? "16px" : "24px"}
         >
           {formattedAddress}
         </Heading>
-        <Stack gap={1}>
-          <Text
-            variant="breadcrumbs"
-            fontSize="10px"
-            color="#4A4A4F"
-            fontWeight="600"
-          >
-            {address && subtitle === null ? formattedAddress : subtitle}
-          </Text>
-          {votingPower ? (
-            <Text
-              variant="breadcrumbs"
-              fontSize="10px"
-              color="#4A4A4F"
-              fontWeight="600"
-            >
-              {`  ${votingPower} Voting Power`}
-            </Text>
-          ) : null}
-        </Stack>
+        <Text
+          variant="breadcrumbs"
+          fontSize="10px"
+          color="content.default.default"
+          fontWeight="600"
+        >
+          {address && subtitle === null ? formattedAddress : subtitle}
+        </Text>
       </Stack>
       <Box marginLeft="auto">{children}</Box>
     </Box>
