@@ -9,6 +9,7 @@
     "build": "tsc",
     "serve": "node dist/src/index.js",
     "seed": "ts-node --transpile-only src/delegatesMigration/index.ts",
+    "fetch-voting-power": "ts-node --transpile-only src/routers/delegateVoting.ts",
     "migration:generate": "drizzle-kit generate:pg",
     "migration:run": "drizzle-kit push:pg",
     "migration:revert": "drizzle-kit drop"

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
 import { getUserByJWT } from '../utils/helpers';
-import { eq, and, isNotNull, sql, or, desc } from 'drizzle-orm';
+import {eq, and, isNotNull, sql, or, desc, asc} from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -256,7 +256,7 @@ export const delegateRouter = router({
           ? opts.input.sortBy === 'votingPower'
             ? desc(delegateVotes.votingPower)
             : desc(delegateVotes.totalVotes)
-          : desc(delegateVotes.updatedAt);
+          : asc(delegateVotes.updatedAt);
 
       const specialFilters = [
         'delegate_agreement',

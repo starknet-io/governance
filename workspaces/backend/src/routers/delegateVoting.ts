@@ -230,3 +230,7 @@ export async function delegateVoting() {
   const delegates = await fetchAllDelegates();
   await processDelegatesInBatches(delegates, 5);
 }
+
+delegateVoting();
+
+export default delegateVoting
