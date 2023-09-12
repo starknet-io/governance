@@ -18,7 +18,6 @@ export const delegateRouter = router({
     async () =>
       await db.query.delegates.findMany({
         with: {
-          delegateVotes: true,
           author: true,
         },
       }),
