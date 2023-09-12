@@ -9,7 +9,6 @@ import { db } from './db/db';
 import { users } from './db/schema/users';
 import { eq } from 'drizzle-orm';
 import { getUserByJWT } from './utils/helpers';
-import { delegateVoting } from "./routers/delegateVoting";
 import { delegateRouter } from "./routers/delegates";
 
 dotenv.config();
