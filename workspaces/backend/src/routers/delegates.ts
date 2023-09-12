@@ -2,13 +2,14 @@ import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
 import { getUserByJWT } from '../utils/helpers';
-import { eq, and, isNotNull, sql, or } from 'drizzle-orm';
+import { eq, and, isNotNull, sql, or, desc } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
 import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
+import { delegateVotes } from '../db/schema/delegatesVotes';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -249,54 +250,84 @@ export const delegateRouter = router({
       }),
     )
     .query(async (opts) => {
-      console.log(opts.input)
-      const orderByClause = opts.input.sortBy
-        ? (entities, { desc }) => {
-          console.log(entities)
-          return [desc(entities.delegateVotes[opts.input.sortBy])]
-        }
-        : undefined;
-      console.log(orderByClause)
+      // Determine if sorting is present - voting power, votes count, created at (default)
+      const orderBy =
+        opts.input.sortBy && opts.input.sortBy.length
+          ? opts.input.sortBy === 'votingPower'
+            ? desc(delegateVotes.votingPower)
+            : desc(delegateVotes.totalVotes)
+          : desc(delegateVotes.updatedAt);
+
+      const specialFilters = [
+        'delegate_agreement',
+        'more_than_1m_voting_power',
+        '1_or_more_votes',
+        '1_or_more_comments',
+      ];
+
+      const appliedSpecialFilters =
+        opts.input.filters?.filter((filter) =>
+          specialFilters.includes(filter),
+        ) || [];
+      const appliedInterests =
+        opts.input.filters?.filter(
+          (filter) => !specialFilters.includes(filter),
+        ) || [];
+
       try {
-        //If no filters / search is applied
-        if (!opts.input?.filters?.length && !opts.input?.searchQuery) {
-          return await db.query.delegates.findMany({
-            with: {
-              author: true,
-              delegateVotes: {
-                columns: {
-                  totalVotes: true,
-                  votingPower: true,
-                },
-              },
-            },
-            orderBy: orderByClause,
-          });
-        }
-
-        const filters = opts.input.filters!.map((i) => `'${i}'`).join(',');
-        const sqlQuery = `
-          EXISTS (
-            SELECT 1
-            FROM json_array_elements_text(type) AS elem
-            WHERE elem IN (${filters})
+        const foundDelegates: any = await db
+          .select()
+          .from(delegates)
+          .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
+          .leftJoin(users, eq(users.id, delegates.userId))
+          .leftJoin(
+            customDelegateAgreement,
+            eq(customDelegateAgreement.delegateId, delegates.id),
           )
-        `;
+          .orderBy(orderBy);
 
-        const result = await db.query.delegates.findMany({
-          with: { author: true, delegateVotes: true },
-          //With or without search based on filters
-          where: opts.input.filters?.length ? sql.raw(sqlQuery) : undefined,
-          orderBy: orderByClause,
-        });
+        // Since we are using joins instead of with: [field]: true, we need to map to corresponding data format
+        if (foundDelegates && foundDelegates.length) {
 
-        const address = opts.input?.searchQuery;
-        if (opts.input?.searchQuery) {
-          //Simple solution for now till we replace it with query call
-          return result.filter((i) => i.author?.address === address);
+          let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
+            ...foundDelegates.delegates,
+            author: { ...foundDelegates.users },
+            delegateVotes: { ...foundDelegates.delegate_votes },
+            delegateAgreement: !!(
+              foundDelegates.custom_delegate_agreement ||
+              foundDelegates.confirmDelegateAgreement
+            ),
+          }));
+
+          // Apply filters now
+          if (appliedSpecialFilters.includes('more_than_1m_voting_power')) {
+            filteredDelegates = filteredDelegates.filter(
+              (delegate: any) => delegate.delegateVotes.votingPower > 1000000,
+            );
+          }
+
+          if (appliedSpecialFilters.includes('1_or_more_votes')) {
+            filteredDelegates = filteredDelegates.filter(
+              (delegate: any) => delegate.delegateVotes.totalVotes > 1,
+            );
+          }
+
+          if (appliedSpecialFilters.includes('delegate_agreement')) {
+            filteredDelegates = filteredDelegates.filter(
+              (delegate: any) => delegate.delegateAgreement,
+            );
+          }
+
+          if (appliedInterests.length) {
+            filteredDelegates = filteredDelegates.filter((delegate: any) =>
+              appliedInterests.some((interest) =>
+                delegate.delegateType.includes(interest),
+              ),
+            );
+          }
+
+          return filteredDelegates;
         }
-
-        return result;
       } catch (error) {
         console.log(error);
         return [];

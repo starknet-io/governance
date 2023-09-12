@@ -10,7 +10,6 @@ function delay(ms: number) {
 export async function saveDelegateVotes(delegateDataBatch: any) {
   try {
     for (const delegateData of delegateDataBatch) {
-      console.log(delegateData);
       const existingRecord = await db.query.delegateVotes.findFirst({
         where: eq(delegateVotes.delegateId, delegateData.delegateId),
       });
