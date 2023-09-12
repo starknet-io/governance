@@ -95,7 +95,8 @@ async function fetchDelegateData(delegate: {
     return {
       delegateId: delegate.id,
       address: delegate.address,
-      votingPower: votingPower.vp,
+      // @ts-ignore
+      votingPower: votingPower?.vp || 0,
       totalVotes,
     };
   } catch (error) {
@@ -155,7 +156,7 @@ async function processDelegatesInBatches(
     console.log(`Retrying failed batches: Attempt ${retryCount + 1}`);
     console.log(`Number of failed entries: ${failedBatches.length}`);
 
-    let newFailedBatches: { address: string; id: string }[] = [];
+    const newFailedBatches: { address: string; id: string }[] = [];
     batchStart = 0;
     apiCallCount = 0; // Reset API call count before the retry loop
 
@@ -203,7 +204,7 @@ async function processDelegatesInBatches(
 
 async function fetchAllDelegates() {
   try {
-    let delegates = await db.query.delegates.findMany({
+    const delegates = await db.query.delegates.findMany({
       columns: {
         id: true,
       },
@@ -215,11 +216,11 @@ async function fetchAllDelegates() {
         },
       },
     });
-    delegates = delegates.map((delegate) => ({
+    const parsedDelegates = delegates.map((delegate) => ({
       id: delegate.id,
-      address: delegate.author.address,
+      address: delegate?.author?.address || "",
     }));
-    return delegates;
+    return parsedDelegates;
   } catch (error) {
     console.log('Error fetching delegates:', error);
     throw error;
@@ -227,7 +228,7 @@ async function fetchAllDelegates() {
 }
 
 export async function delegateVoting() {
-  const delegates = await fetchAllDelegates();
+  const delegates: { address: string, id: string}[] = await fetchAllDelegates();
   await processDelegatesInBatches(delegates, 5);
 }
 
