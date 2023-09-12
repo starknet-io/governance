@@ -13,6 +13,7 @@ import {
   ReorderableList,
   useMarkdownEditor,
   MarkdownEditor,
+  MultiLevelReOrderableList,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -47,31 +48,31 @@ export function Page() {
     },
   ]);
 
-  useEffect(() => {
-    setReorderItems((prevItems) => {
-      const itemMap = new Map(prevItems.map((item) => [item.id, item]));
-      for (const page of pages) {
-        if (!itemMap.has(page.id)) {
-          itemMap.set(page.id, page);
-        }
-      }
-      return Array.from(itemMap.values());
-    });
-  }, [pages]);
+  // useEffect(() => {
+  //   setReorderItems((prevItems) => {
+  //     const itemMap = new Map(prevItems.map((item) => [item.id, item]));
+  //     for (const page of pages) {
+  //       if (!itemMap.has(page.id)) {
+  //         itemMap.set(page.id, page);
+  //       }
+  //     }
+  //     return Array.from(itemMap.values());
+  //   });
+  // }, [pages]);
 
-  useEffect(() => {
-    setReorderItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === 0
-          ? {
-              ...item,
-              title: title || "This is the new page",
-              content: editorValue,
-            }
-          : item,
-      ),
-    );
-  }, [title, editorValue]);
+  // useEffect(() => {
+  //   setReorderItems((prevItems) =>
+  //     prevItems.map((item) =>
+  //       item.id === 0
+  //         ? {
+  //             ...item,
+  //             title: title || "This is the new page",
+  //             content: editorValue,
+  //           }
+  //         : item,
+  //     ),
+  //   );
+  // }, [title, editorValue]);
 
   const saveChanges = () => {
     saveBatchPages.mutateAsync(reorderItems, {
@@ -84,6 +85,8 @@ export function Page() {
   const setItems = (values: any) => {
     setReorderItems(values);
   };
+
+  console.log({ reorderItems });
 
   return (
     <>
@@ -118,7 +121,9 @@ export function Page() {
           <Heading variant="h5" mb="24px">
             Page Order
           </Heading>
-          <ReorderableList items={reorderItems} setItems={setItems} />
+
+          <MultiLevelReOrderableList />
+
           <Flex justifyContent="flex-end">
             <Button
               size="condensed"
