@@ -23,7 +23,6 @@ export type DelegateCardProps = {
   address: string | null | undefined;
   ensName?: string | null;
   ensAvatar?: string | null;
-  votingPower?: number | null,
 };
 
 const delegateNames: Record<string, string> = {
@@ -102,7 +101,6 @@ export const DelegateCard = ({
   ensName,
   onDelegateClick,
   profileURL,
-  votingPower,
 }: DelegateCardProps) => {
   const votesFormatted = votingPower
     ? `${votingPower} delegated votes`
@@ -119,7 +117,6 @@ export const DelegateCard = ({
               size="sm"
               address={address}
               ensName={ensName}
-              votingPower={votingPower}
               subtitle={votesFormatted.toUpperCase()}
               avatarString={address}
             />
