@@ -5,7 +5,7 @@ export interface TreeItem {
   id: UniqueIdentifier;
   children: TreeItem[];
   data: Record<string, any>;
-  collapsed?: boolean;
+  isNew?: boolean;
 }
 
 export type TreeItems = TreeItem[];

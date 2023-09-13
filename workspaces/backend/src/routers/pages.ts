@@ -5,7 +5,7 @@ import { asc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { getUserByJWT } from '../utils/helpers';
 import slugify from 'slugify';
-import { object, array, string, number } from 'zod';
+import { object, array, string, number, boolean } from 'zod';
 
 const pageInsertSchema = createInsertSchema(pages);
 
@@ -139,34 +139,39 @@ export const pagesRouter = router({
           subPages: object({
             id: number(),
             orderNumber: number(),
-            subPages: object({ id: number(), orderNumber: number() }).array(),
+            isNew: boolean().optional(),
+            subPages: object({
+              id: number(),
+              orderNumber: number(),
+              isNew: boolean().optional(),
+            }).array(),
           }).array(),
         })
         .array(),
     )
     .mutation(async (opts) => {
-      const result = await Promise.all(
-        opts.input.map(async (page, index) => {
-          return await db
-            .insert(pages)
-            .values({
-              title: page.title,
-              content: page.content,
-              orderNumber: index + 1,
-              userId: opts.ctx?.user.id,
-              slug: slugify(page?.title + Date.now() ?? '', {
-                replacement: '_',
-                lower: true,
-              }),
-            })
-            .returning();
-        }),
-      );
+
+      // const result = await Promise.all(
+      //   opts.input.map(async (page, index) => {
+      //     return await db
+      //       .insert(pages)
+      //       .values({
+      //         title: page.title,
+      //         content: page.content,
+      //         orderNumber: index + 1,
+      //         userId: opts.ctx?.user.id,
+      //         slug: slugify(page?.title + Date.now() ?? '', {
+      //           replacement: '_',
+      //           lower: true,
+      //         }),
+      //       })
+      //       .returning();
+      //   }),
+      // );
 
       return {
         user: opts.ctx.user,
         items: opts.input,
-        result,
       };
     }),
 

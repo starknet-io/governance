@@ -15,6 +15,7 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   indicator?: boolean;
   indentationWidth: number;
   value: Record<string, any>;
+  isNew?: boolean;
   onCollapse?(): void;
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
@@ -30,6 +31,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       style,
       value,
       wrapperRef,
+      isNew,
       ...props
     },
     ref,
@@ -47,7 +49,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     return (
       <Box
         borderLeft={depth > 0 ? "1px solid #DCDBDD" : undefined}
-        backgroundColor="white"
+        backgroundColor={isNew ? "#E2E2FF" : "white"}
         p="3"
         ml={`${indentationWidth * depth}`}
         //@ts-expect-error error

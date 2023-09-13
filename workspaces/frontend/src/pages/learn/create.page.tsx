@@ -43,20 +43,19 @@ export function Page() {
   const [treeItems, setTreeItems] = useState<TreeItems>([]);
 
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
-  const [reorderItems, setReorderItems] = useState<PageWithUserInterface[]>([
-    {
-      id: 0,
-      title: "This is the new page",
-      content: editorValue,
-      author: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      orderNumber: null,
-      children: [],
-      userId: "",
-      slug: "",
-    },
-  ]);
+
+  const NEW_ITEM = {
+    id: Date.now(),
+    title: "This is the new page",
+    content: editorValue,
+    author: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    orderNumber: null,
+    children: [],
+    userId: "",
+    slug: "",
+  };
 
   // useEffect(() => {
   //   setReorderItems((prevItems) => {
@@ -88,7 +87,7 @@ export function Page() {
   console.log({ TREE: pagesTree.data });
 
   const adaptTreeForFrontend = (items: any[]) => {
-    console.log({hhe: items});
+    console.log({ hhe: items });
     return items?.map((page) => ({
       id: page.id,
       data: page,
@@ -100,8 +99,7 @@ export function Page() {
 
   useEffect(() => {
     if (pagesTree?.data?.length && !treeItems.length) {
-      //@ts-expect-error error
-      const d = adaptTreeForFrontend(pagesTree.data)
+      const d = adaptTreeForFrontend(pagesTree.data);
       console.log({ d });
       setTreeItems(d);
     }
@@ -121,18 +119,15 @@ export function Page() {
   };
 
   const saveChanges = () => {
-    //@ts-expect-error error
     savePagesTree.mutate(processTreeDataForSave(), {
       onSuccess: (d) => {
         console.log({ CHECK: d });
+              //  navigate(`/learn`);
       },
     });
-    // saveBatchPages.mutateAsync(reorderItems, {
-    //   onSuccess: () => {
-    //     navigate(`/learn`);
-    //   },
-    // });
   };
+
+  console.log({ treeItems });
 
   return (
     <>
@@ -185,6 +180,20 @@ export function Page() {
               onClick={saveChanges}
             >
               Save Changes
+            </Button>
+
+            <Button
+              size="condensed"
+              variant="primary"
+              // isDisabled={!isValid}
+              onClick={() =>
+                setTreeItems((treeItems) => [
+                  { id: Date.now(), data: NEW_ITEM, children: [], isNew: true },
+                  ...treeItems,
+                ])
+              }
+            >
+              Add new item
             </Button>
           </Flex>
         </Box>
