@@ -1,5 +1,5 @@
 import { InferModel, relations } from 'drizzle-orm';
-import { integer, pgTable, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, timestamp, uuid, json } from 'drizzle-orm/pg-core';
 import { users } from './users';
 
 export const pages = pgTable('pages', {

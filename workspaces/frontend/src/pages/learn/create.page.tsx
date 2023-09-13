@@ -20,6 +20,10 @@ import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { PageWithUserInterface } from "./index.page";
+import {
+  TreeItem,
+  TreeItems,
+} from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 
 export function Page() {
   const {
@@ -31,7 +35,12 @@ export function Page() {
   const title = watch("title", "");
   const saveBatchPages = trpc.pages.saveBatch.useMutation();
   const pagesResponse = trpc.pages.getAll.useQuery();
+
+  const savePagesTree = trpc.pages.savePagesTree.useMutation();
+
   const pages = pagesResponse.data ?? [];
+
+  const [treeItems, setTreeItems] = useState<TreeItems>([]);
 
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
   const [reorderItems, setReorderItems] = useState<PageWithUserInterface[]>([
@@ -43,6 +52,7 @@ export function Page() {
       createdAt: new Date(),
       updatedAt: new Date(),
       orderNumber: null,
+      children: [],
       userId: "",
       slug: "",
     },
@@ -74,21 +84,55 @@ export function Page() {
   //   );
   // }, [title, editorValue]);
 
-  const initialItems: any[] = [];
+  const pagesTree = trpc.pages.getPagesTree.useQuery();
+  console.log({ TREE: pagesTree.data });
+
+  const adaptTreeForFrontend = (items: any[]) => {
+    console.log({hhe: items});
+    return items?.map((page) => ({
+      id: page.id,
+      data: page,
+      children: page?.children?.length
+        ? adaptTreeForFrontend(page?.children)
+        : [],
+    }));
+  };
+
+  useEffect(() => {
+    if (pagesTree?.data?.length && !treeItems.length) {
+      //@ts-expect-error error
+      const d = adaptTreeForFrontend(pagesTree.data)
+      console.log({ d });
+      setTreeItems(d);
+    }
+  }, [pages]);
+
+  const processTreeDataForSave = () => {
+    const processedItems = treeItems.map((item) => ({
+      ...item.data,
+      subPages: item.children.map((item, index) => ({
+        id: item.id,
+        orderNumber: index + 1,
+        children: [],
+      })),
+    })) as any[];
+
+    return processedItems;
+  };
 
   const saveChanges = () => {
-    saveBatchPages.mutateAsync(reorderItems, {
-      onSuccess: () => {
-        navigate(`/learn`);
+    //@ts-expect-error error
+    savePagesTree.mutate(processTreeDataForSave(), {
+      onSuccess: (d) => {
+        console.log({ CHECK: d });
       },
     });
+    // saveBatchPages.mutateAsync(reorderItems, {
+    //   onSuccess: () => {
+    //     navigate(`/learn`);
+    //   },
+    // });
   };
-
-  const setItems = (values: any) => {
-    setReorderItems(values);
-  };
-
-  console.log({ reorderItems, pages });
 
   return (
     <>
@@ -120,17 +164,24 @@ export function Page() {
               </FormControl>
             </Stack>
           </form>
-          <Heading variant="h5" mb="24px">
-            Page Order
-          </Heading>
 
-          <MultiLevelReOrderableList defaultItems={initialItems} />
+          {!!treeItems.length && (
+            <Box mb="6">
+              <Heading variant="h5" mb="24px">
+                Page Order
+              </Heading>
+              <MultiLevelReOrderableList
+                items={treeItems}
+                setItems={setTreeItems}
+              />
+            </Box>
+          )}
 
           <Flex justifyContent="flex-end">
             <Button
               size="condensed"
               variant="primary"
-              isDisabled={!isValid}
+              // isDisabled={!isValid}
               onClick={saveChanges}
             >
               Save Changes

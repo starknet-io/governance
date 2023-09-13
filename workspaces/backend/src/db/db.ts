@@ -14,6 +14,7 @@ import * as users from './schema/users';
 import * as votes from './schema/votes';
 import * as usersToCouncils from './schema/usersToCouncils';
 import * as customDelegateAgreement from './schema/customDelegateAgreement';
+import * as pagesTree from './schema/pagesTree';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ const db = drizzle(pool, {
     ...votes,
     ...usersToCouncils,
     ...customDelegateAgreement,
+    ...pagesTree
   },
 });
 

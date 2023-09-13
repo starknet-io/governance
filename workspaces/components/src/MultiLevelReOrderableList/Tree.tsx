@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   DndContext,
@@ -102,21 +102,21 @@ const dropAnimationConfig: DropAnimation = {
 };
 
 interface Props {
-  collapsible?: boolean;
-  defaultItems?: TreeItems;
+  items: TreeItems;
   indentationWidth?: number;
-  indicator?: boolean;
   removable?: boolean;
+  onItemsChange?: (items: TreeItems) => void;
+  setItems: Dispatch<SetStateAction<TreeItems>>;
 }
 
 export function MultiLevelReOrderableList({
-  collapsible,
-  defaultItems = initialItems,
-  indicator = false,
+  items = initialItems,
   indentationWidth = 7,
   removable,
+  onItemsChange,
+  setItems
 }: Props) {
-  const [items, setItems] = useState(() => defaultItems);
+  // const [items, setItems] = useState(() => defaultItems);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
@@ -151,7 +151,7 @@ export function MultiLevelReOrderableList({
     offset: offsetLeft,
   });
   const [coordinateGetter] = useState(() =>
-    sortableTreeKeyboardCoordinates(sensorContext, indicator, indentationWidth),
+    sortableTreeKeyboardCoordinates(sensorContext, false, indentationWidth),
   );
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -197,27 +197,19 @@ export function MultiLevelReOrderableList({
           items={sortedIds}
           strategy={verticalListSortingStrategy}
         >
-          {flattenedItems.map(({ id, children, collapsed, depth, data }) => (
+          {flattenedItems.map(({ id, depth, data }) => (
             <SortableTreeItem
               key={id}
               id={id}
               value={data}
               depth={id === activeId && projected ? projected.depth : depth}
               indentationWidth={indentationWidth}
-              indicator={indicator}
-              collapsed={Boolean(collapsed && children.length)}
-              onCollapse={
-                collapsible && children.length
-                  ? () => handleCollapse(id)
-                  : undefined
-              }
               onRemove={removable ? () => handleRemove(id) : undefined}
             />
           ))}
           {createPortal(
             <DragOverlay
               dropAnimation={dropAnimationConfig}
-              modifiers={indicator ? [adjustTranslate] : undefined}
             >
               {activeId && activeItem ? (
                 <SortableTreeItem
@@ -273,6 +265,7 @@ export function MultiLevelReOrderableList({
       const newItems = buildTree(sortedItems);
 
       setItems(newItems);
+      onItemsChange?.(newItems);
     }
   }
 
@@ -288,21 +281,8 @@ export function MultiLevelReOrderableList({
   }
 
   function handleRemove(id: UniqueIdentifier) {
-    setItems((items) => removeItem(items, id));
-  }
-
-  function handleCollapse(id: UniqueIdentifier) {
-    setItems((items) =>
-      setProperty(items, id, "collapsed", (value) => {
-        return !value;
-      }),
-    );
+    const updatedItems = removeItem(items, id);
+    setItems(updatedItems);
+    onItemsChange?.(updatedItems);
   }
 }
-
-const adjustTranslate: Modifier = ({ transform }) => {
-  return {
-    ...transform,
-    y: transform.y - 25,
-  };
-};
