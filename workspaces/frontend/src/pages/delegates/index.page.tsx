@@ -136,6 +136,26 @@ export const delegateInterests = {
       value: "web3_developer",
       count: 9,
     },
+    {
+      label: "Defi",
+      value: "defi",
+      count: 9,
+    },
+    {
+      label: "Gaming",
+      value: "gaming",
+      count: 9,
+    },
+    {
+      label: "NFT",
+      value: "nft",
+      count: 9,
+    },
+    {
+      label: "Build",
+      value: "build",
+      count: 9,
+    },
   ],
 };
 {

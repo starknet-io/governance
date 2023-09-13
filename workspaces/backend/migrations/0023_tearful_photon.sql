@@ -1,14 +1,9 @@
-ALTER TYPE "delegateType" ADD VALUE 'cairo_dev';
-ALTER TYPE "delegateType" ADD VALUE 'daos';
-ALTER TYPE "delegateType" ADD VALUE 'governance';
-ALTER TYPE "delegateType" ADD VALUE 'identity';
-ALTER TYPE "delegateType" ADD VALUE 'infrastructure';
-ALTER TYPE "delegateType" ADD VALUE 'legal';
-ALTER TYPE "delegateType" ADD VALUE 'professional_delegate';
-ALTER TYPE "delegateType" ADD VALUE 'security';
-ALTER TYPE "delegateType" ADD VALUE 'starknet_community';
-ALTER TYPE "delegateType" ADD VALUE 'web3_community';
-ALTER TYPE "delegateType" ADD VALUE 'web3_developer';
+DO $$ BEGIN
+ CREATE TYPE "interests" AS ENUM('cairo_dev', 'daos', 'governance', 'identity', 'infrastructure', 'legal', 'professional_delegate', 'security', 'starknet_community', 'web3_community', 'web3_developer', 'nft', 'gaming', 'defi', 'build');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+
 CREATE TABLE IF NOT EXISTS "delegate_votes" (
 	"delegateId" uuid,
 	"address" text NOT NULL,

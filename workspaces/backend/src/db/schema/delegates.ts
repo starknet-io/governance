@@ -36,6 +36,10 @@ export const interestsEnum = pgEnum('interests', [
   'starknet_community',
   'web3_community',
   'web3_developer',
+  'nft',
+  'gaming',
+  'defi',
+  'build',
 ]);
 
 export const delegates = pgTable('delegates', {

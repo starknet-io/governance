@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "c39c6b30-72fb-44ee-8293-452f1362179e",
+  "id": "5b066591-6b21-4c80-aaa1-9c8c9085b8dd",
   "prevId": "15380c8b-8bc2-496b-b9f8-a93a44313a74",
   "tables": {
     "comments": {
@@ -881,8 +881,8 @@
     }
   },
   "enums": {
-    "delegateType": {
-      "name": "delegateType",
+    "interests": {
+      "name": "interests",
       "values": {
         "cairo_dev": "cairo_dev",
         "daos": "daos",
@@ -894,7 +894,11 @@
         "security": "security",
         "starknet_community": "starknet_community",
         "web3_community": "web3_community",
-        "web3_developer": "web3_developer"
+        "web3_developer": "web3_developer",
+        "nft": "nft",
+        "gaming": "gaming",
+        "defi": "defi",
+        "build": "build"
       }
     },
     "status": {
