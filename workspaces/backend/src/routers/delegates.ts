@@ -27,7 +27,7 @@ export const delegateRouter = router({
     .input(
       z.object({
         statement: z.string(),
-        delegateType: z.any(),
+        interests: z.any(),
         twitter: z.string(),
         discord: z.string(),
         discourse: z.string(),
@@ -59,7 +59,7 @@ export const delegateRouter = router({
         .insert(delegates)
         .values({
           statement: opts.input.statement,
-          delegateType: opts.input.delegateType,
+          interests: opts.input.interests,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
           discourse: opts.input.discourse,
@@ -166,7 +166,7 @@ export const delegateRouter = router({
         .update(delegates)
         .set({
           statement: opts.input.statement,
-          delegateType: opts.input.delegateType,
+          interests: opts.input.interests,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
           discourse: opts.input.discourse,
@@ -321,7 +321,7 @@ export const delegateRouter = router({
           if (appliedInterests.length) {
             filteredDelegates = filteredDelegates.filter((delegate: any) =>
               appliedInterests.some((interest) =>
-                delegate.delegateType.includes(interest),
+                delegate.interests.includes(interest),
               ),
             );
           }

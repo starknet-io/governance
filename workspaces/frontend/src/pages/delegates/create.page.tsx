@@ -17,16 +17,16 @@ import {
   Divider,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
+import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { DocumentProps } from "src/renderer/types";
 import { useState, useEffect } from "react";
 import { delegateNames } from "./index.page";
 
-const delegateTypeValues = delegateTypeEnum.enumValues;
+const interestsValues = interestsEnum.enumValues;
 
 type FormValues = {
   statement: string;
-  delegateType: string[];
+  interests: string[];
   confirmDelegateAgreement: boolean;
   customDelegateAgreementContent?: string;
   starknetAddress: string;
@@ -108,12 +108,12 @@ export function Page() {
               <FormControl id="starknet-type">
                 <FormLabel>Delegate type</FormLabel>
                 <Controller
-                  name="delegateType"
+                  name="interests"
                   control={control}
                   rules={{ required: true }}
                   render={({ field }) => (
                     <Multiselect
-                      options={delegateTypeValues.map((option) => ({
+                      options={interestsValues.map((option) => ({
                         value: option,
                         label: delegateNames?.[option] ?? option,
                       }))}
@@ -122,7 +122,7 @@ export function Page() {
                     />
                   )}
                 />
-                {errors.delegateType && <span>This field is required.</span>}
+                {errors.interests && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Starknet wallet address</FormLabel>

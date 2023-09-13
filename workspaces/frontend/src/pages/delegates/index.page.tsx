@@ -376,7 +376,7 @@ export function Page() {
                     profileURL={`/delegates/profile/${delegate.id}`}
                     address={delegate?.author?.address}
                     statement={delegate?.statement}
-                    type={delegate?.delegateType as string[]}
+                    type={delegate?.interests as string[]}
                     ensAvatar={delegate?.author?.ensAvatar}
                     ensName={delegate.author?.ensName}
                     key={delegate?.id}

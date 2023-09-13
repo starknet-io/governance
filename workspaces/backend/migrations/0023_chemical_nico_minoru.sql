@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS "delegate_votes" (
 );
 
 ALTER TABLE "delegates" RENAME COLUMN "delegateStatement" TO "statement";
+ALTER TABLE "delegates" RENAME COLUMN "type" TO "interests";
 DO $$ BEGIN
  ALTER TABLE "delegate_votes" ADD CONSTRAINT "delegate_votes_delegateId_delegates_id_fk" FOREIGN KEY ("delegateId") REFERENCES "delegates"("id") ON DELETE cascade ON UPDATE cascade;
 EXCEPTION

@@ -12,7 +12,7 @@ import { users } from './users';
 import {customDelegateAgreement} from "./customDelegateAgreement";
 import { delegateVotes } from "./delegatesVotes";
 
-export const delegateTypeEnum = pgEnum('delegateType', [
+export const interestsEnum = pgEnum('interests', [
   // 'Cairo Dev',
   // 'DAOs',
   // 'Governance',
@@ -41,7 +41,7 @@ export const delegateTypeEnum = pgEnum('delegateType', [
 export const delegates = pgTable('delegates', {
   id: uuid('id').primaryKey().defaultRandom(),
   statement: text('statement').notNull(),
-  delegateType: json('type').default('[]'),
+  interests: json('interests').default('[]'),
   twitter: text('twitter'),
   discord: text('discord'),
   discourse: text('discourse'),

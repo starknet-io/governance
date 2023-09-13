@@ -191,7 +191,7 @@ async function seedData() {
       // Step 4: Insert new delegate if not exists
       const newDelegate = {
         userId: userId,
-        delegateType: interests.map((interest: any) =>
+        interests: interests.map((interest: any) =>
           interest.toLowerCase().replace(/\s+/g, '_'),
         ),
         statement: statementMarkdown,
