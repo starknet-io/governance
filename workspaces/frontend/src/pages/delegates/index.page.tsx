@@ -136,6 +136,26 @@ export const delegateInterests = {
       value: "web3_developer",
       count: 9,
     },
+    {
+      label: "Defi",
+      value: "defi",
+      count: 9,
+    },
+    {
+      label: "Gaming",
+      value: "gaming",
+      count: 9,
+    },
+    {
+      label: "NFT",
+      value: "nft",
+      count: 9,
+    },
+    {
+      label: "Build",
+      value: "build",
+      count: 9,
+    },
   ],
 };
 {
@@ -144,14 +164,11 @@ export const delegateInterests = {
 const sortByOptions = {
   defaultValue: "sort_by",
   options: [
-    { label: "Random", value: "random" },
-    { label: "Most voting power", value: "most_voting_power" },
+    { label: "Most voting power", value: "votingPower" },
     {
       label: "Most votes cast",
-      value: "most_votes_cast",
+      value: "totalVotes",
     },
-
-    { label: "Most comments", value: "most_comments" },
   ],
 };
 
@@ -182,8 +199,23 @@ export function Page() {
     sortBy,
   });
 
+  const addVotingPowerToReceiver = () => {
+    if (delegates.data && delegates.data.length > 0) {
+      const foundDelegate = delegates.data.find((delegate) => delegate.author.address === receiverData.address)
+      if (!foundDelegate) {
+        return receiverData
+      } else {
+        return {
+          ...receiverData,
+          vp: foundDelegate.votingInfo.votingPower
+        }
+      }
+    }
+    return receiverData
+  }
+
   const delegates =
-    trpc.delegates.getDelegateByFiltersAndSort.useQuery(filtersState);
+    trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
 
   const { user } = usePageContext();
 
@@ -241,7 +273,7 @@ export function Page() {
         onClose={() => setIsOpen(false)}
         isConnected={isConnected}
         isValidCustomAddress={isValidAddress}
-        receiverData={!inputAddress.length ? undefined : receiverData}
+        receiverData={!inputAddress.length ? undefined : addVotingPowerToReceiver()}
         onContinue={(address) => {
           const isValid = ethers.utils.isAddress(address);
           setIsValidAddress(isValid);
@@ -297,10 +329,17 @@ export function Page() {
                   focusBorderColor={"red"}
                   rounded="md"
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  onChange={(e) => {
+                    setSortBy(e.target.value)
+                    setFiltersState(prevState => ({
+                      ...prevState,
+                      sortBy: e.target.value,
+                    }));
+                    delegates.refetch()
+                  }}
                 >
                   {sortByOptions.options.map((option) => (
-                    <option key={option.value} value={option.label}>
+                    <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}
@@ -352,14 +391,14 @@ export function Page() {
                 delegates.data.map((delegate) => (
                   <DelegateCard
                     onDelegateClick={() => console.log("test")}
+                    votingPower={delegate?.votingInfo?.votingPower}
+                    delegatedVotes={delegate?.votingInfo?.totalVotes || "0"}
                     profileURL={`/delegates/profile/${delegate.id}`}
-                    statement={delegate?.delegateStatement}
-                    type={delegate?.delegateType as string[]}
-                    votingPower={0}
-                    voteCount={0}
                     address={delegate?.author?.address}
+                    statement={delegate?.statement}
+                    type={delegate?.interests as string[]}
                     ensAvatar={delegate?.author?.ensAvatar}
-                    ensName={delegate?.author?.ensName}
+                    ensName={delegate.author?.ensName}
                     key={delegate?.id}
                   />
                 ))

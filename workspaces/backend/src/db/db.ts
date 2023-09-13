@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import * as comments from './schema/comments';
 import * as councils from './schema/councils';
 import * as delegates from './schema/delegates';
+import * as delegatesVotes from './schema/delegatesVotes';
 import * as pages from './schema/pages';
 import * as posts from './schema/posts';
 import * as snips from './schema/snips';
@@ -29,6 +30,7 @@ const db = drizzle(pool, {
     ...comments,
     ...councils,
     ...delegates,
+    ...delegatesVotes,
     ...pages,
     ...posts,
     ...snips,
