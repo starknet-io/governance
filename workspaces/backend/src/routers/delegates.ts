@@ -241,7 +241,7 @@ export const delegateRouter = router({
       return user;
     }),
 
-  getDelegateByFiltersAndSort: publicProcedure
+  getDelegatesWithSortingAndFilters: publicProcedure
     .input(
       z.object({
         searchQuery: z.string().optional(),

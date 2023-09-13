@@ -195,7 +195,7 @@ export function Page() {
   }
 
   const delegates =
-    trpc.delegates.getDelegateByFiltersAndSort.useQuery(filtersState);
+    trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
 
   const { user } = usePageContext();
 
