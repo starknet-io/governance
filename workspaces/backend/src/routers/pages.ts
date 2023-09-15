@@ -82,30 +82,79 @@ export const pagesRouter = router({
   }),
 
   savePagesTree: protectedProcedure
-    .input(pageInsertSchema.omit({ createdAt: true, updatedAt: true }).array())
+    .input(
+      pageInsertSchema
+        .extend({ isNew: boolean().optional() })
+        .omit({ createdAt: true, updatedAt: true, userId: true })
+        .array(),
+    )
     .mutation(async (opts) => {
+      const newItems = opts.input.filter((item) => item.isNew);
+      const existingItems = opts.input.filter((item) => !item.isNew);
+      const newCreatedItems = await Promise.all(
+        newItems.map(async (newItem) => {
+          const createdItem = await db
+            .insert(pages)
+            .values({
+              title: newItem.title,
+              content: newItem.content,
+              orderNumber: newItem.orderNumber,
+              userId: opts.ctx?.user.id,
+              slug: slugify(newItem.title ?? '', {
+                replacement: '_',
+                lower: true,
+              }),
+            })
+            .returning();
+          return {
+            createdItem: createdItem[0],
+            oldId: newItem.id,
+          };
+        }),
+      );
+
+      const finalItems = existingItems.map((existingItem) => {        
+        const isLinkedToNew = newCreatedItems.find(
+          (item) => item.oldId === existingItem.parentId,
+        );
+
+        if (isLinkedToNew) {
+          return {
+            ...existingItem,
+            parentId: isLinkedToNew.createdItem.parentId,
+          };
+        }
+
+        return existingItem;
+      });
+
+      const mapThrough = [
+        ...finalItems,
+        ...newCreatedItems.map((i) => i.createdItem),
+      ];
+
       const result = await Promise.all(
-        opts.input.map(async (page) => {
-          if (page.id) {
-            return await db
-              .update(pages)
-              .set({
-                ...page,
-                userId: opts.ctx?.user.id,
-                slug: slugify(page?.title ?? '', {
-                  replacement: '_',
-                  lower: true,
-                }),
-              })
-              .where(eq(pages.id, page.id))
-              .execute();
-          }
+        mapThrough.map(async (m) => {
+          return await db
+            .update(pages)
+            .set({
+              title: m.title,
+              content: m.content,
+              parentId: m.parentId,
+              slug: slugify(m?.title ?? '', {
+                replacement: '_',
+                lower: true,
+              }),
+            })
+            .where(eq(pages.id, m.id!));
         }),
       );
 
       return {
         items: opts.input,
-        result,
+        newItems,
+        newCreatedItems,
+        mapThrough,
       };
     }),
 

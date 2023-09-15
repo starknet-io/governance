@@ -46,6 +46,7 @@ export function Page() {
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
   const NEW_ITEM = {
+    id: Date.now(),
     title: "This is the new page",
     content: editorValue,
     author: null,

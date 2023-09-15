@@ -28,6 +28,7 @@ export function flattenTreeItems(items: TreeItems) {
       ...(item.data as PageWithChildren),
       parentId: parent,
       orderNumber: flattenedItems.length + 1,
+      isNew: item.isNew
     };
     flattenedItems.push(flattenedItem);
 
