@@ -5,54 +5,12 @@ import { asc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { getUserByJWT } from '../utils/helpers';
 import slugify from 'slugify';
-import { object, array, string, number, boolean } from 'zod';
+import { object, number, boolean } from 'zod';
+import { buildLearnItemsHierarchy } from '../utils/buildLearnHierarchy';
 
 const pageInsertSchema = createInsertSchema(pages);
 
 // list(page, perPage, sortBy, filters)
-
-async function getAllPagesData(data: any[]) {
-  const resultPages: any[] = [];
-
-  async function getNestedData(page: any) {
-    const subPages: any[] = [];
-
-    if (Array.isArray(page.children) && page.children.length > 0) {
-      for (const subPage of page.children) {
-        if (subPage.id) {
-          const subPageData = await db.query.pages.findFirst({
-            where: eq(pages.id, subPage.id),
-          });
-
-          subPages.push({
-            ...subPageData,
-            children: await getAllPagesData(subPage.children),
-          });
-        }
-      }
-    }
-
-    if (page?.page) {
-      return { ...page?.page, children: subPages };
-    }
-
-    const pageData = await db.query.pages.findFirst({
-      where: eq(pages.id, page.id),
-    });
-
-    return {
-      ...pageData,
-      children: subPages,
-    };
-  }
-
-  for (const page of data) {
-    const r = await getNestedData(page);
-    r && resultPages.push(r);
-  }
-
-  return resultPages;
-}
 
 export const pagesRouter = router({
   getAll: publicProcedure.query(
@@ -119,59 +77,35 @@ export const pagesRouter = router({
     }),
 
   getPagesTree: publicProcedure.query(async () => {
-    const pagesTree = await db.query.pagesTree.findMany({
-      with: {
-        page: {
-          with: {
-            author: true,
-          },
-        },
-      },
-    });
-    return await getAllPagesData(pagesTree);
+    const allPages = await db.query.pages.findMany();
+    return buildLearnItemsHierarchy(allPages);
   }),
 
   savePagesTree: protectedProcedure
-    .input(
-      pageInsertSchema
-        .omit({ userId: true, createdAt: true, updatedAt: true, author: true })
-        .extend({
-          subPages: object({
-            id: number(),
-            orderNumber: number(),
-            isNew: boolean().optional(),
-            subPages: object({
-              id: number(),
-              orderNumber: number(),
-              isNew: boolean().optional(),
-            }).array(),
-          }).array(),
-        })
-        .array(),
-    )
+    .input(pageInsertSchema.omit({ createdAt: true, updatedAt: true }).array())
     .mutation(async (opts) => {
-
-      // const result = await Promise.all(
-      //   opts.input.map(async (page, index) => {
-      //     return await db
-      //       .insert(pages)
-      //       .values({
-      //         title: page.title,
-      //         content: page.content,
-      //         orderNumber: index + 1,
-      //         userId: opts.ctx?.user.id,
-      //         slug: slugify(page?.title + Date.now() ?? '', {
-      //           replacement: '_',
-      //           lower: true,
-      //         }),
-      //       })
-      //       .returning();
-      //   }),
-      // );
+      const result = await Promise.all(
+        opts.input.map(async (page) => {
+          if (page.id) {
+            return await db
+              .update(pages)
+              .set({
+                ...page,
+                userId: opts.ctx?.user.id,
+                slug: slugify(page?.title ?? '', {
+                  replacement: '_',
+                  lower: true,
+                }),
+              })
+              .where(eq(pages.id, page.id))
+              .execute();
+          }
+        }),
+      );
 
       return {
-        user: opts.ctx.user,
         items: opts.input,
+        result,
       };
     }),
 

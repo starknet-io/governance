@@ -24,6 +24,7 @@ import {
   TreeItem,
   TreeItems,
 } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
+import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";
 
 export function Page() {
   const {
@@ -45,7 +46,6 @@ export function Page() {
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
   const NEW_ITEM = {
-    id: Date.now(),
     title: "This is the new page",
     content: editorValue,
     author: null,
@@ -84,50 +84,29 @@ export function Page() {
   // }, [title, editorValue]);
 
   const pagesTree = trpc.pages.getPagesTree.useQuery();
-  console.log({ TREE: pagesTree.data });
-
-  const adaptTreeForFrontend = (items: any[]) => {
-    console.log({ hhe: items });
-    return items?.map((page) => ({
-      id: page.id,
-      data: page,
-      children: page?.children?.length
-        ? adaptTreeForFrontend(page?.children)
-        : [],
-    }));
-  };
+  // console.log({ TREE: pagesTree.data });
 
   useEffect(() => {
     if (pagesTree?.data?.length && !treeItems.length) {
-      const d = adaptTreeForFrontend(pagesTree.data);
-      console.log({ d });
-      setTreeItems(d);
+      setTreeItems(adaptTreeForFrontend(pagesTree.data));
     }
   }, [pages]);
 
-  const processTreeDataForSave = () => {
-    const processedItems = treeItems.map((item) => ({
-      ...item.data,
-      subPages: item.children.map((item, index) => ({
-        id: item.id,
-        orderNumber: index + 1,
-        children: [],
-      })),
-    })) as any[];
-
-    return processedItems;
+  const handleAddNewItem = () => {
+    setTreeItems((treeItems) => [
+      { id: Date.now(), data: NEW_ITEM, children: [], isNew: true },
+      ...treeItems,
+    ]);
   };
 
   const saveChanges = () => {
-    savePagesTree.mutate(processTreeDataForSave(), {
+    savePagesTree.mutate(flattenTreeItems(treeItems), {
       onSuccess: (d) => {
         console.log({ CHECK: d });
-              //  navigate(`/learn`);
+        //  navigate(`/learn`);
       },
     });
   };
-
-  console.log({ treeItems });
 
   return (
     <>
@@ -186,12 +165,7 @@ export function Page() {
               size="condensed"
               variant="primary"
               // isDisabled={!isValid}
-              onClick={() =>
-                setTreeItems((treeItems) => [
-                  { id: Date.now(), data: NEW_ITEM, children: [], isNew: true },
-                  ...treeItems,
-                ])
-              }
+              onClick={handleAddNewItem}
             >
               Add new item
             </Button>
