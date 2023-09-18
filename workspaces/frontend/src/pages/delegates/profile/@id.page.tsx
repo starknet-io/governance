@@ -252,7 +252,7 @@ export function Page() {
 
     const canEdit =
       (hasPermission(user.role, [ROLES.USER]) &&
-        user.delegationStatement.id === delegateId) ||
+        user.delegationStatement?.id === delegateId) ||
       hasPermission(user.role, [ROLES.ADMIN, ROLES.MODERATOR]);
 
     return (

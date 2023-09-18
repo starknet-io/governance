@@ -11,9 +11,25 @@ dotenv.config();
 
 export const getWalletAddressFromPrivateKey = async (token: string): Promise<string | undefined> => {
   const publicKey = process.env.DYNAMIC_PUBLIC_KEY || '';
-  const decodedToken = await jwt.verify(token, publicKey) as DecodedToken;
+  let decodedToken: DecodedToken | null = null;
+
+  try {
+    decodedToken = await new Promise<DecodedToken>((resolve, reject) => {
+      jwt.verify(token, publicKey, (err, decoded) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(decoded as DecodedToken);
+        }
+      });
+    });
+  } catch (err) {
+    return undefined;
+  }
+
   return decodedToken.verified_credentials?.[0].address || undefined;
-}
+};
+
 
 export const getUserByJWT = async (token: string): Promise<User> => {
   const walletAddress = await getWalletAddressFromPrivateKey(token);

@@ -103,6 +103,7 @@ export {
   EmptyState,
   UserProfileMenu,
   SupportModal,
+  ShareDialog,
   FiltersIcon,
   SearchIcon,
   HamburgerIcon,

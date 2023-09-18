@@ -39,6 +39,7 @@ import {
   FormLabel,
   Input,
   SupportModal,
+  ShareDialog,
   HomeIcon,
   IconButton,
   HamburgerIcon,
@@ -431,7 +432,10 @@ function PageLayout(props: Props) {
             >
               <Logo href="/" />
             </Box>
-            <Box display={{ base: "none", lg: "flex" }} marginLeft="auto">
+            <Box display="flex" marginLeft="auto">
+              <ShareDialog />
+            </Box>
+            <Box display={{ base: "none", lg: "flex" }}>
               {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
             </Box>
             <Box display={{ base: "flex", lg: "none" }} marginLeft="auto">
