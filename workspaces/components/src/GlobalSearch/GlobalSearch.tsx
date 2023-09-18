@@ -13,10 +13,17 @@ import {
   ModalFooter,
   Flex,
   Image,
+  Show,
 } from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
-import { ChangeEvent, useEffect, useState } from "react";
-import { SearchIcon } from "src/Icons/UiIcons";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+import { CloseIcon, SearchIcon } from "src/Icons/UiIcons";
 import EmptyState from "./assets/img.svg";
 import {
   ISearchItem,
@@ -26,13 +33,19 @@ import {
 import { navigate } from "vite-plugin-ssr/client/router";
 
 interface Props {
+  isOpen?: boolean;
   searchResults: ISearchItem[];
   onSearchItems: (searchText: string) => void;
+  setIsSearchModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function GlobalSearch({ searchResults, onSearchItems }: Props) {
+export function GlobalSearch({
+  searchResults,
+  onSearchItems,
+  isOpen = false,
+  setIsSearchModalOpen,
+}: Props) {
   const [searchText, setSearchText] = useState("");
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(0);
   const h = searchResults?.[highlightIndex];
 
@@ -77,45 +90,49 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
     };
   }, []);
 
+  const isMobile = window?.screen?.width < 567;
+
   return (
     <Box onClick={handleSearchClick} ml="2">
-      <InputGroup>
-        <InputLeftElement
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          pointerEvents="none"
-          height="44px"
-        >
-          <SearchIcon />
-        </InputLeftElement>
-        <Input
-          placeholder="Search"
-          backgroundColor="white"
-          width="238px"
-          height="44px"
-          pointerEvents="none"
-        />
-        <InputRightElement height="44px">
-          <Box
-            width="28px"
-            height="28px"
-            backgroundColor="#23192D1A"
-            borderRadius="base"
+      <Show breakpoint="(min-width: 567px)">
+        <InputGroup>
+          <InputLeftElement
             display="flex"
             alignItems="center"
             justifyContent="center"
+            pointerEvents="none"
+            height="44px"
           >
-            <Text fontWeight="500">/</Text>
-          </Box>
-        </InputRightElement>
-      </InputGroup>
+            <SearchIcon />
+          </InputLeftElement>
+          <Input
+            placeholder="Search"
+            backgroundColor="white"
+            width="238px"
+            height="44px"
+            pointerEvents="none"
+          />
+          <InputRightElement height="44px">
+            <Box
+              width="28px"
+              height="28px"
+              backgroundColor="#23192D1A"
+              borderRadius="base"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text fontWeight="500">/</Text>
+            </Box>
+          </InputRightElement>
+        </InputGroup>
+      </Show>
 
       <Modal
-        isOpen={isSearchModalOpen}
+        isOpen={isOpen}
         onClose={() => setIsSearchModalOpen(false)}
         autoFocus={false}
-        size="3xl"
+        size={isMobile ? "full" : "3xl"}
       >
         <ModalOverlay />
         <ModalContent height="672px" borderRadius="lg">
@@ -134,6 +151,11 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
                 value={searchText}
                 onChange={handleSearchTextChange}
               />
+              <Show breakpoint="(max-width: 567px)">
+                <InputRightElement onClick={() => setIsSearchModalOpen(false)}>
+                  <CloseIcon />
+                </InputRightElement>
+              </Show>
             </InputGroup>
           </ModalHeader>
 
@@ -167,49 +189,51 @@ export function GlobalSearch({ searchResults, onSearchItems }: Props) {
             </ModalBody>
           )}
 
-          <ModalFooter borderTop="1px solid #23192D1A">
-            <Flex>
-              <Flex mr="6">
-                <Flex mr="2">
-                  <Box
-                    mr="1"
-                    border="1px solid #23192D1A"
-                    borderRadius="base"
-                    width="5"
-                    height="5"
-                  >
-                    <ArrowUpIcon />
-                  </Box>
-                  <Box
-                    border="1px solid #23192D1A"
-                    borderRadius="base"
-                    width="5"
-                    height="5"
-                  >
-                    <ArrowDownIcon />
-                  </Box>
-                </Flex>
-                <Text fontSize="small" fontWeight="medium" color="#86848D">
-                  to navigate
-                </Text>
-              </Flex>
+          <Show breakpoint="(min-width: 567px)">
+            <ModalFooter borderTop="1px solid #23192D1A">
               <Flex>
-                <Box mr="2" border="1px solid #23192D1A" borderRadius="base">
-                  <Text
-                    fontWeight="semibold"
-                    px="1.5"
-                    fontSize="xs"
-                    lineHeight="20px"
-                  >
-                    Enter
+                <Flex mr="6">
+                  <Flex mr="2">
+                    <Box
+                      mr="1"
+                      border="1px solid #23192D1A"
+                      borderRadius="base"
+                      width="5"
+                      height="5"
+                    >
+                      <ArrowUpIcon />
+                    </Box>
+                    <Box
+                      border="1px solid #23192D1A"
+                      borderRadius="base"
+                      width="5"
+                      height="5"
+                    >
+                      <ArrowDownIcon />
+                    </Box>
+                  </Flex>
+                  <Text fontSize="small" fontWeight="medium" color="#86848D">
+                    to navigate
                   </Text>
-                </Box>
-                <Text fontSize="small" fontWeight="medium" color="#86848D">
-                  to select
-                </Text>
+                </Flex>
+                <Flex>
+                  <Box mr="2" border="1px solid #23192D1A" borderRadius="base">
+                    <Text
+                      fontWeight="semibold"
+                      px="1.5"
+                      fontSize="xs"
+                      lineHeight="20px"
+                    >
+                      Enter
+                    </Text>
+                  </Box>
+                  <Text fontSize="small" fontWeight="medium" color="#86848D">
+                    to select
+                  </Text>
+                </Flex>
               </Flex>
-            </Flex>
-          </ModalFooter>
+            </ModalFooter>
+          </Show>
         </ModalContent>
       </Modal>
     </Box>

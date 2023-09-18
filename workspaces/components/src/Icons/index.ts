@@ -42,6 +42,7 @@ import {
   HamburgerIcon,
   PlusIcon,
   SortIcon,
+  CloseIcon
 } from "./UiIcons";
 import {
   HiOutlineCodeBracketSquare,
@@ -122,4 +123,5 @@ export {
   HamburgerIcon,
   PlusIcon,
   SortIcon,
+  CloseIcon
 };

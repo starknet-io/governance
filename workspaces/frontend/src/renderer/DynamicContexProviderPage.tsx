@@ -44,6 +44,8 @@ import {
   HamburgerIcon,
   Link,
   PlusIcon,
+  Show,
+  Flex,
 } from "@yukilabs/governance-components";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { PageContext, ROLES } from "./types";
@@ -51,7 +53,7 @@ import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
-import { GlobalSearch } from "@yukilabs/governance-components/src";
+import { GlobalSearch, SearchIcon } from "@yukilabs/governance-components/src";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
@@ -309,6 +311,8 @@ function PageLayout(props: Props) {
   const { user } = usePageContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
+
   useEffect(() => {
     setRenderDone(true);
   }, []);
@@ -428,6 +432,24 @@ function PageLayout(props: Props) {
                 pageContext={pageContext}
               />
             </Box>
+
+            <Show breakpoint="(max-width: 567px)">
+              <Flex
+                w="5"
+                height="5"
+                onClick={() => setIsGlobalSearchOpen(true)}
+                ml="2"
+                alignItems="center"
+                justifyContent="center"
+                position="absolute"
+                top="50%"
+                left="40px"
+                transform="translateY(-50%)"
+              >
+                <SearchIcon />
+              </Flex>
+            </Show>
+
             <Box
               display={{ base: "flex", lg: "none" }}
               flex="1"
@@ -442,6 +464,8 @@ function PageLayout(props: Props) {
             <GlobalSearch
               searchResults={globalSearchResults}
               onSearchItems={handleGlobalSearchItems}
+              isOpen={isGlobalSearchOpen}
+              setIsSearchModalOpen={setIsGlobalSearchOpen}
             />
             <Box display={{ base: "flex", lg: "none" }} marginLeft="auto">
               <IconButton

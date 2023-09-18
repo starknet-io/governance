@@ -16,6 +16,7 @@ export const Header = (props: Props) => {
       borderColor="border.forms"
       px={{ base: "standard.xs", lg: "spacing-md" }}
       bg="surface.bgPage"
+      position="relative"
     >
       {props.children}
     </Box>

@@ -184,6 +184,7 @@ import {
   Spinner,
   InputLeftElement,
   InputRightElement,
+  Show
 } from "@chakra-ui/react";
 
 export {
@@ -241,4 +242,5 @@ export {
   Spinner,
   InputLeftElement,
   InputRightElement,
+  Show
 };
