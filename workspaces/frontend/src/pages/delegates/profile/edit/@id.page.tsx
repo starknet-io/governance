@@ -20,9 +20,9 @@ import { Controller, useForm, FieldErrors } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { delegateTypeEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
+import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 
-const delegateTypeValues = delegateTypeEnum.enumValues;
+const interestsValues = interestsEnum.enumValues;
 
 export function Page() {
   const {
@@ -65,14 +65,14 @@ export function Page() {
     if (!delegateData) return;
 
     editor.insertNodes(
-      await convertMarkdownToSlate(delegateData.delegateStatement || ""),
+      await convertMarkdownToSlate(delegateData.statement || ""),
     );
     editorCustomAgreement.insertNodes(
       await editorCustomAgreementConvertMarkdownToSlate(
         delegateData?.customAgreement?.content || "",
       ),
     );
-    setValue("delegateType", delegateData.delegateType as string[]);
+    setValue("interests", delegateData.interests as string[]);
     setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
     setValue("twitter", delegateData.twitter as string);
     setValue("discord", delegateData.discord as string);
@@ -99,7 +99,7 @@ export function Page() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      data.delegateStatement = editorValue;
+      data.statement = editorValue;
       data.id = pageContext.routeParams!.id;
       if (showCustomAgreementEditor || agreementType === "custom") {
         data.customDelegateAgreementContent = editorCustomAgreementValue;
@@ -141,19 +141,19 @@ export function Page() {
                   value={editorValue}
                   customEditor={editor}
                 />
-                {errors.delegateStatement && (
+                {errors.statement && (
                   <span>This field is required.</span>
                 )}
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Delegate type</FormLabel>
                 <Controller
-                  name="delegateType"
+                  name="interests"
                   control={control}
                   rules={{ required: true }}
                   render={({ field }) => (
                     <Multiselect
-                      options={delegateTypeValues.map((option) => ({
+                      options={interestsValues.map((option) => ({
                         value: option,
                         label: option,
                       }))}
@@ -162,7 +162,7 @@ export function Page() {
                     />
                   )}
                 />
-                {formErrors.delegateType && (
+                {formErrors.interests && (
                   <span>This field is required.</span>
                 )}
               </FormControl>

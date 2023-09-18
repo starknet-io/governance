@@ -12,9 +12,10 @@ export const Header = (props: Props) => {
       alignItems="center"
       justifyContent="flex-start"
       height="68px"
-      borderBottom="1px solid #E4E5E7"
-      px="32px"
-      bg="#F9F8F9"
+      borderBottom="1px solid"
+      borderColor="border.forms"
+      px={{ base: "standard.xs", lg: "spacing-md" }}
+      bg="surface.bgPage"
     >
       {props.children}
     </Box>

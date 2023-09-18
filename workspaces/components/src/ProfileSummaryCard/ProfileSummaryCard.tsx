@@ -69,14 +69,15 @@ const Profile = ({
         <Heading
           variant="h3"
           fontSize={size === "lg" ? "20px" : "16px"}
-          color="#1A1523"
+          color="content.accent.default"
+          lineHeight={size === "sm" ? "16px" : "24px"}
         >
           {formattedAddress}
         </Heading>
         <Text
           variant="breadcrumbs"
           fontSize="10px"
-          color="#4A4A4F"
+          color="content.default.default"
           fontWeight="600"
         >
           {address && subtitle === null ? formattedAddress : subtitle}

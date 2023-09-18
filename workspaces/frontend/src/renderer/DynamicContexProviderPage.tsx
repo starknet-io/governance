@@ -29,7 +29,6 @@ import {
   DrawerBody,
   useDisclosure,
   Button,
-  GiHamburgerMenu,
   ArrowLeftIcon,
   SettingsIcon,
   Spinner,
@@ -41,6 +40,10 @@ import {
   Input,
   SupportModal,
   HomeIcon,
+  IconButton,
+  HamburgerIcon,
+  Link,
+  PlusIcon,
 } from "@yukilabs/governance-components";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { PageContext, ROLES } from "./types";
@@ -52,6 +55,7 @@ import { GlobalSearch } from "@yukilabs/governance-components/src";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
+import { HiXMark } from "@yukilabs/governance-components/src";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -347,211 +351,107 @@ function PageLayout(props: Props) {
         </Button>
       </InfoModal>
 
-      <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+      <Drawer
+        isOpen={isOpen}
+        size={{ base: "full", md: "sm" }}
+        placement="left"
+        onClose={onClose}
+      >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader py="16px">Menu</DrawerHeader>
+          {/* <DrawerCloseButton /> */}
+          <Box position="absolute" top="16px" zIndex="12px">
+            <IconButton
+              aria-label="Close menu"
+              onClick={onClose}
+              variant="ghost"
+              size="condensed"
+              icon={<HiXMark />}
+            />
+          </Box>
 
-          <DrawerBody px="12px" py="16px" pt="0">
-            <NavGroup>
-              <NavItem
-                // active={pageContext.urlOriginal}
-                icon={<FeedbackIcon />}
-                label="Feedback"
-                variant="feedback"
-              />
-              <NavItem
-                // active={pageContext.urlOriginal}
-                icon={<SupportIcon />}
-                label="Support"
-              />
-              <NavItem
-                href="/learn"
-                // active={pageContext.urlOriginal}
-                icon={<LearnIcon />}
-                label="Learn"
-              />
-            </NavGroup>
-            <NavGroup>
-              {councilResp.data?.map((council) => (
-                <NavItem
-                  key={council.id}
-                  // active={pageContext.urlOriginal}
-                  icon={<SecurityIcon />}
-                  label={council.name ?? "Unknown"}
-                  href={
-                    council.slug ? `/councils/${council.slug}` : "/councils"
-                  }
-                />
-              ))}
-            </NavGroup>
-            <NavGroup>
-              <NavItem
-                icon={<DelegatesIcon />}
-                // active={pageContext.urlOriginal}
-                href="/delegates"
-                label="Delegates"
-              />
-
-              <NavItem
-                href="/voting-proposals"
-                //todo: fix how active state for menu works
-                // active={pageContext.urlOriginal}
-                icon={<ProposalsIcon />}
-                label="Voting proposals"
-              />
-            </NavGroup>
+          <DrawerBody px="12px" py="16px" pt="0" mt="48px">
+            <NavigationMenu
+              pageContext={pageContext}
+              userRole={user?.role}
+              councilData={councilResp.data}
+              openSupportModal={() => setIsModalOpen(!isModalOpen)}
+            />
           </DrawerBody>
         </DrawerContent>
       </Drawer>
 
       <Layout.Root>
-        <Box
-          display={{ base: "block", md: "none" }}
-          zIndex="2"
-          position="fixed"
-          right="24px"
-          bottom="16px"
-        >
-          <Button
-            leftIcon={<GiHamburgerMenu />}
-            variant="primary"
-            onClick={onOpen}
-          >
-            Menu
-          </Button>
-        </Box>
         <Layout.LeftAside>
-          <Logo href="/voting-proposals" />
-          <Box mt="-20px">
-            <NavGroup>
-              {[
-                {
-                  href: "/",
-                  label: "Home",
-                  icon: <HomeIcon />,
-                },
-                {
-                  href: "/voting-proposals",
-                  label: "Voting proposals",
-                  icon: <ProposalsIcon />,
-                },
-                {
-                  href: "/delegates",
-                  label: "Delegates",
-                  icon: <DelegatesIcon />,
-                },
-              ].map((item) => (
-                <NavItem
-                  active={item.href === pageContext.urlOriginal}
-                  icon={item.icon}
-                  label={item.label}
-                  key={item.href}
-                  href={item.href}
-                />
-              ))}
-            </NavGroup>
-          </Box>
-          <NavGroup
-            label="Councils"
-            action={
-              hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-                <Button
-                  as="a"
-                  href="/councils/create"
-                  variant="ghost"
-                  size="md"
-                >
-                  +
-                </Button>
-              ) : (
-                <></>
-              )
-            }
-          >
-            {councilResp.data?.map((council) => (
-              <NavItem
-                key={council.id}
-                icon={<SecurityIcon />}
-                label={council.name ?? "Unknown"}
-                href={council.slug ? `/councils/${council.slug}` : "/councils"}
-                active={council.slug === pageContext.urlOriginal}
-              />
-            ))}
-          </NavGroup>
-          <NavGroup alignEnd>
-            {[
-              {
-                href: "/learn",
-                label: "Learn",
-                icon: <LearnIcon />,
-              },
-            ].map((item) => (
-              <NavItem
-                active={item.href === pageContext.urlOriginal}
-                icon={item.icon}
-                label={item.label}
-                key={item.href}
-                href={item.href}
-              />
-            ))}
-
-            {hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-              <NavItem
-                href="/settings"
-                icon={<SettingsIcon />}
-                label="Settings"
-              />
-            ) : null}
-            <NavItem
-              icon={<SupportIcon />}
-              label="Support"
-              onClick={() => setIsModalOpen(!isModalOpen)}
-            />
-
-            <NavItem
-              href="https://www.starknet.io"
-              icon={<FeedbackIcon />}
-              label="Feedback"
-              variant="feedback"
-            />
-          </NavGroup>
+          <Logo href="/" />
+          <NavigationMenu
+            pageContext={pageContext}
+            userRole={user?.role}
+            councilData={councilResp.data}
+            openSupportModal={() => setIsModalOpen(!isModalOpen)}
+          />
         </Layout.LeftAside>
         <Layout.Main>
           <Header>
-            <BackButton
-              urlStart="/delegates/profile/"
-              href="/delegates"
-              buttonText="Delegates"
-              pageContext={pageContext}
-            />
-            <BackButton
-              urlStart="/voting-proposals/"
-              href="/voting-proposals"
-              buttonText="Voting proposals"
-              pageContext={pageContext}
-            />
-            <BackButton
-              urlStart="/snips/"
-              href="/snips"
-              buttonText="Core snips"
-              pageContext={pageContext}
-            />
-            <BackButton
-              urlStart="/councils/"
-              href="/councils"
-              buttonText="Back to councils"
-              pageContext={pageContext}
-            />
-
-            <Box display="flex" marginLeft="auto">
+            <Box display={{ base: "block", lg: "none" }}>
+              <IconButton
+                aria-label="Open menu"
+                size="condensed"
+                icon={isOpen ? <HiXMark /> : <HamburgerIcon />}
+                onClick={onOpen}
+                variant="ghost"
+              />
+            </Box>
+            <Box display={{ base: "none", lg: "block" }}>
+              <BackButton
+                urlStart="/delegates/profile/"
+                href="/delegates"
+                buttonText="Delegates"
+                pageContext={pageContext}
+              />
+              <BackButton
+                urlStart="/voting-proposals/"
+                href="/voting-proposals"
+                buttonText="Voting proposals"
+                pageContext={pageContext}
+              />
+              <BackButton
+                urlStart="/snips/"
+                href="/snips"
+                buttonText="Core snips"
+                pageContext={pageContext}
+              />
+              <BackButton
+                urlStart="/councils/"
+                href="/councils"
+                buttonText="Back to councils"
+                pageContext={pageContext}
+              />
+            </Box>
+            <Box
+              display={{ base: "flex", lg: "none" }}
+              flex="1"
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
+              <Logo href="/" />
+            </Box>
+            <Box display={{ base: "none", lg: "flex" }} marginLeft="auto">
               {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
             </Box>
             <GlobalSearch
               searchResults={globalSearchResults}
               onSearchItems={handleGlobalSearchItems}
             />
+            <Box display={{ base: "flex", lg: "none" }} marginLeft="auto">
+              <IconButton
+                aria-label="Open menu"
+                size="condensed"
+                icon={<FeedbackIcon />}
+                onClick={onOpen}
+                variant="feedback"
+              />
+            </Box>
           </Header>
           <Layout.Content>{children}</Layout.Content>
         </Layout.Main>
@@ -559,3 +459,112 @@ function PageLayout(props: Props) {
     </>
   );
 }
+
+interface NavigationMenuProps {
+  pageContext: any;
+  userRole: string | undefined;
+  councilData: any[] | undefined;
+  openSupportModal: () => void;
+}
+
+const NavigationMenu: React.FC<NavigationMenuProps> = ({
+  pageContext,
+  userRole,
+  councilData,
+  openSupportModal,
+}) => {
+  return (
+    <>
+      <Box mt="-20px">
+        <NavGroup>
+          {[
+            {
+              href: "/",
+              label: "Home",
+              icon: <HomeIcon />,
+            },
+            {
+              href: "/voting-proposals",
+              label: "Voting proposals",
+              icon: <ProposalsIcon />,
+            },
+            {
+              href: "/delegates",
+              label: "Delegates",
+              icon: <DelegatesIcon />,
+            },
+          ].map((item) => (
+            <NavItem
+              active={item.href === pageContext.urlOriginal}
+              icon={item.icon}
+              label={item.label}
+              key={item.href}
+              href={item.href}
+            />
+          ))}
+        </NavGroup>
+      </Box>
+      <NavGroup label="Councils">
+        {councilData?.map((council) => (
+          <NavItem
+            key={council.id}
+            icon={<SecurityIcon />}
+            label={council.name ?? "Unknown"}
+            href={council.slug ? `/councils/${council.slug}` : "/councils"}
+            active={council.slug === pageContext.urlOriginal}
+          />
+        ))}
+        {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+          <Link
+            href="/councils/create"
+            style={{ border: "none", marginLeft: "6px" }}
+          >
+            <IconButton
+              aria-label="create"
+              variant="ghost"
+              size="condensed"
+              icon={<PlusIcon />}
+            />
+          </Link>
+        ) : (
+          <></>
+        )}
+      </NavGroup>
+      <NavGroup alignEnd>
+        {[
+          {
+            href: "/learn",
+            label: "Learn",
+            icon: <LearnIcon />,
+          },
+        ].map((item) => (
+          <NavItem
+            active={pageContext.urlOriginal.startsWith(item.href)}
+            icon={item.icon}
+            label={item.label}
+            key={item.href}
+            href={item.href}
+          />
+        ))}
+
+        {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+          <NavItem href="/settings" icon={<SettingsIcon />} label="Settings" />
+        ) : null}
+        <NavItem
+          icon={<SupportIcon />}
+          label="Support"
+          onClick={openSupportModal}
+        />
+
+        <Box as="span" display={{ base: "none", lg: "flex" }}>
+          <NavItem
+            href="https://www.starknet.io"
+            icon={<FeedbackIcon />}
+            label="Feedback"
+            variant="feedback"
+          />
+        </Box>
+      </NavGroup>
+    </>
+  );
+};

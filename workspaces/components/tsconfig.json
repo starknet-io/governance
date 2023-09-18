@@ -5,10 +5,10 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": ["vite/client"],
     "jsx": "react-jsx",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "moduleResolution": "node",
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
-  "references": [
-    { "path": "../backend" }
-  ]
+  "include": ["src/**/*", "**/*.json"],
+  "references": [{ "path": "../backend" }]
 }

@@ -19,7 +19,7 @@ const LeftAside = ({ children }: LeftAsideProps) => {
       top="0"
       paddingLeft="12px"
       paddingRight="12px"
-      display={{ base: "none", md: "flex" }}
+      display={{ base: "none", lg: "flex" }}
       borderRight="1px solid #E4E5E7"
       // paddingTop="34px"
       paddingBottom="24px"
@@ -67,6 +67,7 @@ const Root = ({ children }: LayoutProps) => {
       display="flex"
       bg="#F9F8F9"
       flexDirection={{ base: "column", md: "row", lg: "row" }}
+      minHeight={{ base: "100vh", md: "100vh", lg: "100vh" }}
     >
       {children}
     </Box>

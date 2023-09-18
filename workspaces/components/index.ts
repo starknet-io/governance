@@ -105,6 +105,9 @@ export {
   SupportModal,
   FiltersIcon,
   SearchIcon,
+  HamburgerIcon,
+  PlusIcon,
+  SortIcon,
 } from "./src";
 
 import * as Layout from "./src/RootLayout/RootLayout";

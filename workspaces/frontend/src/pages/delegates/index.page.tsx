@@ -7,7 +7,6 @@ import {
   DelegateCard,
   SimpleGrid,
   PageTitle,
-  ButtonGroup,
   ContentContainer,
   HiAdjustmentsHorizontal,
   Popover,
@@ -23,7 +22,6 @@ import {
   SkeletonText,
   DelegateModal,
   ConfirmModal,
-  Flex,
 } from "@yukilabs/governance-components";
 
 import { useDebouncedCallback } from "use-debounce";
@@ -36,6 +34,7 @@ import { useAccount } from "wagmi";
 import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "../../wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
+
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
 }
@@ -137,6 +136,26 @@ export const delegateInterests = {
       value: "web3_developer",
       count: 9,
     },
+    {
+      label: "Defi",
+      value: "defi",
+      count: 9,
+    },
+    {
+      label: "Gaming",
+      value: "gaming",
+      count: 9,
+    },
+    {
+      label: "NFT",
+      value: "nft",
+      count: 9,
+    },
+    {
+      label: "Build",
+      value: "build",
+      count: 9,
+    },
   ],
 };
 {
@@ -145,14 +164,11 @@ export const delegateInterests = {
 const sortByOptions = {
   defaultValue: "sort_by",
   options: [
-    { label: "Random", value: "random" },
-    { label: "Most voting power", value: "most_voting_power" },
+    { label: "Most voting power", value: "votingPower" },
     {
       label: "Most votes cast",
-      value: "most_votes_cast",
+      value: "totalVotes",
     },
-
-    { label: "Most comments", value: "most_comments" },
   ],
 };
 
@@ -183,8 +199,23 @@ export function Page() {
     sortBy,
   });
 
+  const addVotingPowerToReceiver = () => {
+    if (delegates.data && delegates.data.length > 0) {
+      const foundDelegate = delegates.data.find((delegate) => delegate.author.address === receiverData.address)
+      if (!foundDelegate) {
+        return receiverData
+      } else {
+        return {
+          ...receiverData,
+          vp: foundDelegate.votingInfo.votingPower
+        }
+      }
+    }
+    return receiverData
+  }
+
   const delegates =
-    trpc.delegates.getDelegateByFiltersAndSort.useQuery(filtersState);
+    trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
 
   const { user } = usePageContext();
 
@@ -202,7 +233,7 @@ export function Page() {
     state.onReset();
     setFiltersState({ ...filtersState, filters: [] });
   };
-  // console.log(JSON.stringify(delegates.data, null, 2));
+  console.log(JSON.stringify(delegates.data, null, 2));
 
   function ActionButtons() {
     if (!user) {
@@ -242,7 +273,7 @@ export function Page() {
         onClose={() => setIsOpen(false)}
         isConnected={isConnected}
         isValidCustomAddress={isValidAddress}
-        receiverData={!inputAddress.length ? undefined : receiverData}
+        receiverData={!inputAddress.length ? undefined : addVotingPowerToReceiver()}
         onContinue={(address) => {
           const isValid = ethers.utils.isAddress(address);
           setIsValidAddress(isValid);
@@ -273,27 +304,19 @@ export function Page() {
         {delegates.isLoading ? (
           <DelegatesSkeleton />
         ) : delegates.isError ? (
-          <Box position="absolute" inset="0" top="-25px" bg="#F9F8F9">
-            <EmptyState
-              type="delegates"
-              title="Something went wrong"
-              minHeight="300px"
-              action={
-                <Button variant="primary" onClick={() => delegates.refetch()}>
-                  Retry
-                </Button>
-              }
-            />
-          </Box>
+          <EmptyState
+            type="delegates"
+            title="Something went wrong"
+            minHeight="300px"
+            action={
+              <Button variant="primary" onClick={() => delegates.refetch()}>
+                Retry
+              </Button>
+            }
+          />
         ) : (
           <>
             <AppBar.Root>
-              {/* <Box mr="8px">
-                <SearchInput
-                  value={searchQuery}
-                  onChange={(e) => handleSearchInput(e.target.value)}
-                />
-              </Box> */}
               <AppBar.Group mobileDirection="row">
                 <Box minWidth={"52px"}>
                   <Text variant="mediumStrong">Sort by</Text>
@@ -306,10 +329,17 @@ export function Page() {
                   focusBorderColor={"red"}
                   rounded="md"
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  onChange={(e) => {
+                    setSortBy(e.target.value)
+                    setFiltersState(prevState => ({
+                      ...prevState,
+                      sortBy: e.target.value,
+                    }));
+                    delegates.refetch()
+                  }}
                 >
                   {sortByOptions.options.map((option) => (
-                    <option key={option.value} value={option.label}>
+                    <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}
@@ -358,17 +388,18 @@ export function Page() {
               templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
             >
               {delegates.data && delegates.data.length > 0 ? (
-                delegates.data.map((data) => (
+                delegates.data.map((delegate) => (
                   <DelegateCard
                     onDelegateClick={() => console.log("test")}
-                    profileURL={`/delegates/profile/${data.id}`}
-                    ensName={data.author?.ensName}
-                    key={data.author?.starknetAddress}
-                    address={data?.author?.address}
-                    avatarUrl={data.author?.ensAvatar}
-                    delegateStatement={data?.delegateStatement}
-                    delegatedVotes={"todo"}
-                    delegateType={data?.delegateType as string[]}
+                    votingPower={delegate?.votingInfo?.votingPower}
+                    delegatedVotes={delegate?.votingInfo?.totalVotes || "0"}
+                    profileURL={`/delegates/profile/${delegate.id}`}
+                    address={delegate?.author?.address}
+                    statement={delegate?.statement}
+                    type={delegate?.interests as string[]}
+                    ensAvatar={delegate?.author?.ensAvatar}
+                    ensName={delegate.author?.ensName}
+                    key={delegate?.id}
                   />
                 ))
               ) : (

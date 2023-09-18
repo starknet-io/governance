@@ -16,14 +16,7 @@ import {
   SettingsIcon,
 } from "src/Icons";
 import { Header } from "src/Header";
-import {
-  Box,
-  ButtonGroup,
-  Flex,
-  Popover,
-  Select,
-  SimpleGrid,
-} from "@chakra-ui/react";
+import { Box, Popover, Select, SimpleGrid } from "@chakra-ui/react";
 import { PageTitle } from "src/PageTitle";
 import { Logo } from "src/Logo";
 import { ContentContainer } from "src/ContentContainer";
@@ -32,129 +25,7 @@ import { Button } from "src/Button";
 import { FilterPopoverContent, FilterPopoverIcon } from "src/Filter";
 import { Text } from "src/Text";
 import { AppBar } from "../../";
-
-const delegatesData = [
-  {
-    address: "0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5",
-    avatarUrl: "https://euc.li/robwalsh.eth",
-    delegatedVotes: "0",
-    ensName: "robwalsh.eth",
-    delegateType: [
-      "Dao",
-      "Infrastructure",
-      "Web3 Developer",
-      "Security",
-      "Legal",
-    ],
-    delegateStatement:
-      "I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years...",
-  },
-  {
-    address: "0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5",
-    avatarUrl: "https://euc.li/robwalsh.eth",
-    delegatedVotes: "0",
-    ensName: "robwalsh.eth",
-    delegateType: [
-      "Dao",
-      "Infrastructure",
-      "Web3 Developer",
-      "Security",
-      "Legal",
-    ],
-    delegateStatement:
-      "I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years...",
-  },
-  {
-    address: "0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5",
-    avatarUrl: "https://euc.li/robwalsh.eth",
-    delegatedVotes: "0",
-    ensName: "robwalsh.eth",
-    delegateType: [
-      "Dao",
-      "Infrastructure",
-      "Web3 Developer",
-      "Security",
-      "Legal",
-    ],
-    delegateStatement:
-      "I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years...",
-  },
-  {
-    address: "0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5",
-    avatarUrl: "https://euc.li/robwalsh.eth",
-    delegatedVotes: "0",
-    ensName: "robwalsh.eth",
-    delegateType: [
-      "Dao",
-      "Infrastructure",
-      "Web3 Developer",
-      "Security",
-      "Legal",
-    ],
-    delegateStatement:
-      "I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years...",
-  },
-  {
-    address: "0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5",
-    avatarUrl: "https://euc.li/robwalsh.eth",
-    delegatedVotes: "0",
-    ensName: "robwalsh.eth",
-    delegateType: [
-      "Dao",
-      "Infrastructure",
-      "Web3 Developer",
-      "Security",
-      "Legal",
-    ],
-    delegateStatement:
-      "I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years...",
-  },
-  {
-    address: "0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5",
-    avatarUrl: "https://euc.li/robwalsh.eth",
-    delegatedVotes: "0",
-    ensName: "robwalsh.eth",
-    delegateType: [
-      "Dao",
-      "Infrastructure",
-      "Web3 Developer",
-      "Security",
-      "Legal",
-    ],
-    delegateStatement:
-      "I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years...",
-  },
-  {
-    address: "0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5",
-    avatarUrl: "https://euc.li/robwalsh.eth",
-    delegatedVotes: "0",
-    ensName: "robwalsh.eth",
-    delegateType: [
-      "Dao",
-      "Infrastructure",
-      "Web3 Developer",
-      "Security",
-      "Legal",
-    ],
-    delegateStatement:
-      "I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years...",
-  },
-  {
-    address: "0x391316cF14cc62ef9C384e8D7EaE3ca7F111DbA5",
-    avatarUrl: "https://euc.li/robwalsh.eth",
-    delegatedVotes: "0",
-    ensName: "robwalsh.eth",
-    delegateType: [
-      "Dao",
-      "Infrastructure",
-      "Web3 Developer",
-      "Security",
-      "Legal",
-    ],
-    delegateStatement:
-      "I have a background in theoretical computer science and cryptography and I have been deeply interested in decentralization for the past 10 years...",
-  },
-];
+import delegatesData from "./delegates.json";
 
 // import { PopoverIcon } from "../../components/Layout/Navbar/PopoverIcon";
 
@@ -261,8 +132,19 @@ export const DelegatesPage = () => (
                 spacing={4}
                 templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
               >
-                {delegatesData.map((delegate, i) => (
-                  <DelegateCard {...delegate} key={i} />
+                {delegatesData.map((delegate) => (
+                  <DelegateCard
+                    statement={delegate.statement}
+                    type={delegate.type}
+                    votingPower={0}
+                    voteCount={0}
+                    onDelegateClick={() => console.log("Delegate clicked")}
+                    profileURL="https://example.com/profile"
+                    key={delegate.id}
+                    address={delegate?.author?.address}
+                    ensAvatar={delegate?.author?.ensAvatar}
+                    ensName={delegate?.author?.ensName}
+                  />
                 ))}
               </SimpleGrid>
             </Box>

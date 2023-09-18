@@ -96,6 +96,9 @@ export {
   VoteForIcon,
   FiltersIcon,
   SearchIcon,
+  HamburgerIcon,
+  PlusIcon,
+  SortIcon,
 } from "./Icons";
 
 export { MarkdownEditor } from "./Editor";
