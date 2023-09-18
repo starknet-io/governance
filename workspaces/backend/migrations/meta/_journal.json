@@ -176,6 +176,13 @@
       "when": 1695037980400,
       "tag": "0024_wealthy_paladin",
       "breakpoints": false
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1695058444962,
+      "tag": "0025_slim_franklin_storm",
+      "breakpoints": false
     }
   ]
 }

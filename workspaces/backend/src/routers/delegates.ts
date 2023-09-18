@@ -130,7 +130,6 @@ export const delegateRouter = router({
     .input(z.object({ delegateId: z.string() }))
     .query(async (opts) => {
       return await db
-        // @ts-expect-error TODO fix types issue here
         .select({
           ...comments,
           author: users,

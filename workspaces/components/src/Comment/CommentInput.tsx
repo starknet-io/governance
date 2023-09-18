@@ -2,12 +2,26 @@ import { MarkdownEditor, useMarkdownEditor } from "src/Editor";
 import "./comment.css";
 import { Button } from "src/Button";
 import { Box } from "@chakra-ui/react";
+import { useEffect } from "react";
 
 interface CommentInputProps {
   onSend: (value: string) => void;
+  defaultValue?: string;
 }
-export const CommentInput = ({ onSend }: CommentInputProps) => {
-  const { editorValue, handleEditorChange } = useMarkdownEditor("");
+export const CommentInput = ({
+  defaultValue = "Type your comment",
+  onSend,
+}: CommentInputProps) => {
+  const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
+    useMarkdownEditor(defaultValue);
+
+  const processData = async () => {
+    editor.insertNodes(await convertMarkdownToSlate(defaultValue));
+  };
+
+  useEffect(() => {
+    processData();
+  }, []);
 
   const handleSend = () => {
     onSend(editorValue);
@@ -18,6 +32,7 @@ export const CommentInput = ({ onSend }: CommentInputProps) => {
       <MarkdownEditor
         onChange={handleEditorChange}
         value={editorValue}
+        customEditor={editor}
       />
       <Button
         className="submit-button"

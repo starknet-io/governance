@@ -5,6 +5,7 @@ import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import dotenv from 'dotenv';
 
 import * as comments from './schema/comments';
+import * as commentVotes from "./schema/commentVotes";
 import * as councils from './schema/councils';
 import * as delegates from './schema/delegates';
 import * as delegatesVotes from './schema/delegatesVotes';
@@ -30,6 +31,7 @@ const pool = new Pool({
 const db = drizzle(pool, {
   schema: {
     ...comments,
+    ...commentVotes,
     ...councils,
     ...delegates,
     ...delegatesVotes,
