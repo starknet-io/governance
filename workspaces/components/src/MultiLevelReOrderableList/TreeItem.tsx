@@ -37,21 +37,25 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     ref,
   ) => {
     let fontColor: string | undefined;
-    let fontSize: string | undefined = 'sm';
+    let fontSize: string | undefined = "sm";
+    const isFirstLevel = depth === 0;
+    const paddingLeft = isFirstLevel ? 2 : indentationWidth * depth;
+
     if (depth == 1) {
       fontColor = "#4A4A4F";
-      fontSize = 'xs';
+      fontSize = "xs";
     } else if (depth == 2) {
       fontColor = "#86848D";
-      fontSize = 'xs';
+      fontSize = "xs";
     }
 
     return (
       <Box
-        borderLeft={depth > 0 ? "1px solid #DCDBDD" : undefined}
+        // mt={isFirstLevel ? "2" : "0"}
+        // borderLeft={depth > 0 ? "1px solid #DCDBDD" : undefined}
         backgroundColor={isNew ? "#E2E2FF" : "white"}
         p="3"
-        ml={`${indentationWidth * depth}`}
+        pl={`${paddingLeft}`}
         //@ts-expect-error error
         ref={wrapperRef}
         style={
@@ -63,12 +67,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       >
         <Flex alignItems="center" ref={ref} style={style}>
           <Handle {...handleProps} />
-          <Text
-            fontSize={fontSize}
-            color={fontColor}
-            fontWeight="medium"
-          >
-            {value?.title ?? ''}
+          <Text fontSize={fontSize} color={fontColor} fontWeight="medium">
+            {value?.title ?? ""}
           </Text>
         </Flex>
       </Box>

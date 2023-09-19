@@ -1,6 +1,11 @@
 import { Page } from '../db/schema/pages';
+import { User } from '../db/schema/users';
 
-export type PageWithChildren = Page & { children: PageWithChildren[], isNew?: boolean };
+export type PageWithChildren = Page & {
+  children: PageWithChildren[];
+  isNew?: boolean;
+  author?: User;
+};
 
 export function buildLearnItemsHierarchy(items: Page[]) {
   const pages: PageWithChildren[] = items.map((i) => ({ ...i, children: [] }));

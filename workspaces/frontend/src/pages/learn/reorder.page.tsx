@@ -11,11 +11,12 @@ import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrder
 import { useEffect, useState } from "react";
 import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";
 import { trpc } from "src/utils/trpc";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 export function Page() {
   const [treeItems, setTreeItems] = useState<TreeItems>([]);
 
-  const { data, isLoading } = trpc.pages.getPagesTree.useQuery();
+  const { data } = trpc.pages.getPagesTree.useQuery();
   const { mutateAsync } = trpc.pages.savePagesTree.useMutation();
 
   const pagesTree = data ?? [];
@@ -33,7 +34,7 @@ export function Page() {
   const handleSaveChangesClick = () => {
     mutateAsync(flattenTreeItems(treeItems), {
       onSuccess: () => {
-        console.log("Success");
+        navigate('/learn')
       },
     });
   };

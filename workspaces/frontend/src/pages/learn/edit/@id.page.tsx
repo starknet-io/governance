@@ -8,17 +8,20 @@ import {
   Input,
   Stack,
   ContentContainer,
-  ReorderableList,
   Button,
   MarkdownEditor,
   useMarkdownEditor,
+  MultiLevelReOrderableList,
+  Divider,
+  Flex,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { PageWithUserInterface } from "../index.page";
+import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";
+import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 
 export function Page() {
   const {
@@ -26,59 +29,48 @@ export function Page() {
     watch,
     register,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<RouterInput["pages"]["editPage"]>();
+
   const pageContext = usePageContext();
-  const saveBatchPages = trpc.pages.saveBatch.useMutation();
+  const pageId = pageContext.routeParams!.id;
 
-  const { data, isSuccess } = trpc.pages.getAll.useQuery();
-
-  const [reorderItems, setReorderItems] = useState<PageWithUserInterface[]>([]);
-  const title = watch("title");
+  const [treeItems, setTreeItems] = useState<TreeItems>([]);
+  const { data: pagesTree, isSuccess } = trpc.pages.getPagesTree.useQuery();
+  const savePagesTree = trpc.pages.savePagesTree.useMutation();
+  const { mutateAsync: deletePage } = trpc.pages.deletePage.useMutation();
 
   const { editor, editorValue, handleEditorChange, setMarkdownValue } =
     useMarkdownEditor("");
 
   async function processData() {
-    const page = data?.find(
+    setTreeItems(adaptTreeForFrontend(pagesTree));
+    const page = pagesTree?.find(
       (page: any) => page.id === Number(pageContext.routeParams!.id),
     );
     setValue("title", page?.title);
     await setMarkdownValue(page?.content ?? "");
-    setReorderItems(data ?? []);
   }
 
   useEffect(() => {
-    if (isSuccess && data.length) {
+    if (isSuccess && pagesTree.length && !treeItems.length) {
       processData();
     }
   }, [isSuccess]);
 
-  useEffect(() => {
-    setReorderItems((prevItems) => {
-      const itemIndex = prevItems.findIndex(
-        (item) => item.id === Number(pageContext.routeParams!.id),
-      );
-      if (itemIndex !== -1) {
-        const updatedItems = [...prevItems];
-        updatedItems[itemIndex] = {
-          ...updatedItems[itemIndex],
-          title: title ?? "",
-          content: editorValue,
+  const onSubmit = handleSubmit(async (data) => {
+    const updatedItems = flattenTreeItems(treeItems).map((item) => {
+      if (item.id === +pageId) {
+        return {
+          ...item,
+          title: data.title,
         };
-        return updatedItems;
       }
-      return prevItems;
+      return item;
     });
-  }, [title, editorValue]);
 
-  const setItems = (values: any) => {
-    setReorderItems(values);
-  };
-
-  const onSubmit = handleSubmit(async () => {
     try {
-      saveBatchPages.mutateAsync(reorderItems, {
+      savePagesTree.mutateAsync(updatedItems, {
         onSuccess: () => {
           navigate(`/learn`);
         },
@@ -88,6 +80,18 @@ export function Page() {
       console.log(error);
     }
   });
+
+  const handleDeletePage = () => {
+    deletePage({ id: +pageId }, {
+      onSuccess: () => {
+        navigate(`/learn`);
+      },
+    });
+  };
+
+  const handleClickCancel = () => {
+    window.history.back();
+  };
 
   return (
     <>
@@ -119,18 +123,46 @@ export function Page() {
                 {errors.content && <span>This field is required.</span>}
               </FormControl>
             </Stack>
-            <Heading variant="h5" mb="24px">
-              Page Order
-            </Heading>
-            <ReorderableList items={reorderItems} setItems={setItems} />
-            <Button
-              type="submit"
-              size="condensed"
-              variant="primary"
-              isDisabled={!isValid}
-            >
-              Save
-            </Button>
+            {!!treeItems.length && (
+              <Box>
+                <Heading variant="h5" mb="24px">
+                  Page Order
+                </Heading>
+                <MultiLevelReOrderableList
+                  items={treeItems}
+                  setItems={setTreeItems}
+                />
+              </Box>
+            )}
+            <Divider mt="14" mb="6" />
+            <Flex justifyContent="space-between">
+              <Button
+                onClick={handleDeletePage}
+                size="condensed"
+                variant="danger"
+              >
+                Delete
+              </Button>
+
+              <Flex>
+                <Button
+                  onClick={handleClickCancel}
+                  size="condensed"
+                  variant="ghost"
+                  mr="2"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  size="condensed"
+                  variant="primary"
+                  // isDisabled={!isValid}
+                >
+                  Save
+                </Button>
+              </Flex>
+            </Flex>
           </form>
         </Box>
       </ContentContainer>

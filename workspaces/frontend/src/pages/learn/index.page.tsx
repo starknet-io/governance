@@ -22,7 +22,10 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { PageWithChildren } from "@yukilabs/governance-backend/src/utils/buildLearnHierarchy";
 import { AddIcon, CloseIcon } from "@dynamic-labs/sdk-react";
-import { PlusIcon, ReOrderIcon } from "@yukilabs/governance-components/src/Icons/UiIcons";
+import {
+  PlusIcon,
+  ReOrderIcon,
+} from "@yukilabs/governance-components/src/Icons/UiIcons";
 
 export interface PageWithUserInterface extends PageInterface {
   author: User | null;
@@ -141,7 +144,7 @@ export function Page() {
                 {hasPermission(loggedUser?.role, [
                   ROLES.ADMIN,
                   ROLES.MODERATOR,
-                ]) ? (
+                ]) && (
                   <Box>
                     <ProfileSummaryCard.MoreActions>
                       <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
@@ -150,21 +153,19 @@ export function Page() {
                       <MenuItem>Delete</MenuItem>
                     </ProfileSummaryCard.MoreActions>
                   </Box>
-                ) : (
-                  <></>
                 )}
               </Box>
             </Box>
             <Flex gap="16px" paddingTop="24px">
               <Stat.Root>
-                {/* <Stat.Text
+                <Stat.Text
                   label={
                     selectedPage?.author?.ensName ??
                     selectedPage?.author?.address.slice(0, 3) +
                       "..." +
                       selectedPage?.author?.address.slice(-3)
                   }
-                /> */}
+                />
               </Stat.Root>
               <Stat.Root>
                 <Stat.Date date={selectedPage?.createdAt} />
@@ -220,6 +221,7 @@ function LearnPageTree({
         flexDirection="column"
         gap="8px"
         mb="24px"
+        px="2"
         width="100%"
         bg="transparent"
       >

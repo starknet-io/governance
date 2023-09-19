@@ -10,7 +10,6 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  ReorderableList,
   useMarkdownEditor,
   MarkdownEditor,
   MultiLevelReOrderableList,
@@ -19,22 +18,20 @@ import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { PageWithUserInterface } from "./index.page";
 import {
-  TreeItem,
   TreeItems,
 } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";
 
 export function Page() {
   const {
+    handleSubmit,
     register,
     watch,
     formState: { errors, isValid },
   } = useForm<RouterInput["pages"]["savePage"]>();
-  // const [editorValue, setEditorValue] = useState<string>("");
+  
   const title = watch("title", "");
-  const saveBatchPages = trpc.pages.saveBatch.useMutation();
   const pagesResponse = trpc.pages.getAll.useQuery();
 
   const savePagesTree = trpc.pages.savePagesTree.useMutation();
@@ -58,56 +55,35 @@ export function Page() {
     slug: "",
   };
 
-  // useEffect(() => {
-  //   setReorderItems((prevItems) => {
-  //     const itemMap = new Map(prevItems.map((item) => [item.id, item]));
-  //     for (const page of pages) {
-  //       if (!itemMap.has(page.id)) {
-  //         itemMap.set(page.id, page);
-  //       }
-  //     }
-  //     return Array.from(itemMap.values());
-  //   });
-  // }, [pages]);
-
-  // useEffect(() => {
-  //   setReorderItems((prevItems) =>
-  //     prevItems.map((item) =>
-  //       item.id === 0
-  //         ? {
-  //             ...item,
-  //             title: title || "This is the new page",
-  //             content: editorValue,
-  //           }
-  //         : item,
-  //     ),
-  //   );
-  // }, [title, editorValue]);
-
   const pagesTree = trpc.pages.getPagesTree.useQuery();
-  // console.log({ TREE: pagesTree.data });
 
   useEffect(() => {
     if (pagesTree?.data?.length && !treeItems.length) {
-      setTreeItems(adaptTreeForFrontend(pagesTree.data));
+      setTreeItems([
+        { id: Date.now(), data: NEW_ITEM, children: [], isNew: true },
+        ...adaptTreeForFrontend(pagesTree.data),
+      ]);
     }
   }, [pages]);
 
-  const handleAddNewItem = () => {
-    setTreeItems((treeItems) => [
-      { id: Date.now(), data: NEW_ITEM, children: [], isNew: true },
-      ...treeItems,
-    ]);
-  };
+  const saveChanges = handleSubmit((data) => {
+    const newItems = flattenTreeItems(treeItems).map((item) => {
+      if (item.isNew) {
+        return {
+          ...item,
+          title: data.title,
+          content: editorValue,
+        };
+      }
+      return item;
+    });
 
-  const saveChanges = () => {
-    savePagesTree.mutate(flattenTreeItems(treeItems), {
-      onSuccess: (d) => {
-        console.log({ CHECK: d });
-        //  navigate(`/learn`);
+    savePagesTree.mutate(newItems, {
+      onSuccess: () => {
+        navigate(`/learn`);
       },
     });
-  };
+  });
 
   return (
     <>
@@ -156,19 +132,10 @@ export function Page() {
             <Button
               size="condensed"
               variant="primary"
-              // isDisabled={!isValid}
+              isDisabled={!isValid}
               onClick={saveChanges}
             >
               Save Changes
-            </Button>
-
-            <Button
-              size="condensed"
-              variant="primary"
-              // isDisabled={!isValid}
-              onClick={handleAddNewItem}
-            >
-              Add new item
             </Button>
           </Flex>
         </Box>

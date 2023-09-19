@@ -197,7 +197,7 @@ export function MultiLevelReOrderableList({
 
   return (
     <Box
-      backgroundColor="white"
+      // backgroundColor="white"
       boxShadow="sm"
       borderRadius="base"
       overflow="hidden"

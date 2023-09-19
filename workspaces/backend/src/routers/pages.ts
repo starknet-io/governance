@@ -61,6 +61,7 @@ export const pagesRouter = router({
   deletePage: protectedProcedure
     .input(pageInsertSchema.required({ id: true }).pick({ id: true }))
     .mutation(async (opts) => {
+      await db.delete(pages).where(eq(pages.parentId, opts.input.id)).execute();
       await db.delete(pages).where(eq(pages.id, opts.input.id)).execute();
     }),
 
@@ -77,7 +78,11 @@ export const pagesRouter = router({
     }),
 
   getPagesTree: publicProcedure.query(async () => {
-    const allPages = await db.query.pages.findMany();
+    const allPages = await db.query.pages.findMany({
+      with: {
+        author: true,
+      },
+    });
     return buildLearnItemsHierarchy(allPages);
   }),
 
@@ -113,7 +118,7 @@ export const pagesRouter = router({
         }),
       );
 
-      const finalItems = existingItems.map((existingItem) => {        
+      const finalItems = existingItems.map((existingItem) => {
         const isLinkedToNew = newCreatedItems.find(
           (item) => item.oldId === existingItem.parentId,
         );
@@ -133,7 +138,7 @@ export const pagesRouter = router({
         ...newCreatedItems.map((i) => i.createdItem),
       ];
 
-      const result = await Promise.all(
+      await Promise.all(
         mapThrough.map(async (m) => {
           return await db
             .update(pages)
@@ -157,6 +162,8 @@ export const pagesRouter = router({
         mapThrough,
       };
     }),
+
+
 
   saveBatch: protectedProcedure
     .input(pageInsertSchema.omit({ userId: true }).array())
