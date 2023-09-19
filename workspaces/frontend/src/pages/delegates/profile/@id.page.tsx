@@ -252,7 +252,7 @@ export function Page() {
 
     const canEdit =
       (hasPermission(user.role, [ROLES.USER]) &&
-        user.delegationStatement.id === delegateId) ||
+        user.delegationStatement?.id === delegateId) ||
       hasPermission(user.role, [ROLES.ADMIN, ROLES.MODERATOR]);
 
     return (
@@ -500,8 +500,8 @@ export function Page() {
         </SummaryItems.Root>
         <Divider mt="32px" mb="32px" />
         <SummaryItems.Root>
-          {Array.isArray(delegate?.delegateType) ? (
-            delegate?.delegateType?.map((item: any) => (
+          {Array.isArray(delegate?.interests) ? (
+            delegate?.interests?.map((item: any) => (
               <SummaryItems.Tags key={item} type={item} />
             ))
           ) : (
@@ -520,7 +520,7 @@ export function Page() {
           <Heading color="#33333E" variant="h3">
             Delegate pitch
           </Heading>
-          <MarkdownRenderer content={delegate?.delegateStatement || ""} />
+          <MarkdownRenderer content={delegate?.statement || ""} />
           <Box mt="24px">
             <Heading mb="24px" color="#33333E" variant="h3">
               Past Votes

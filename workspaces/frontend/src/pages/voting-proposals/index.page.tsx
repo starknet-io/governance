@@ -74,7 +74,7 @@ function Proposal({ data }: any) {
       </Box>
       <ListRow.Title label={data.title} />
       <Box display={{ base: "none", md: "flex" }}>
-        <ListRow.CategoryText category={"category"} />
+        <ListRow.CategoryText category={data?.category || ""} />
       </Box>
       <ListRow.VoteResults
         choices={

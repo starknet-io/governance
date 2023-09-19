@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "5b066591-6b21-4c80-aaa1-9c8c9085b8dd",
-  "prevId": "15380c8b-8bc2-496b-b9f8-a93a44313a74",
+  "id": "c35d5e77-3822-403e-86c3-891930f40d25",
+  "prevId": "2aae23dc-84f8-4899-9132-d7a8659a3bee",
   "tables": {
     "comments": {
       "name": "comments",
@@ -49,6 +49,26 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "upvotes": {
+          "name": "upvotes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "downvotes": {
+          "name": "downvotes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
         },
         "createdAt": {
           "name": "createdAt",
@@ -112,6 +132,87 @@
           "tableTo": "snips",
           "columnsFrom": [
             "snip_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "comments_parent_id_comments_id_fk": {
+          "name": "comments_parent_id_comments_id_fk",
+          "tableFrom": "comments",
+          "tableTo": "comments",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "comment_votes": {
+      "name": "comment_votes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment_id": {
+          "name": "comment_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vote_type": {
+          "name": "vote_type",
+          "type": "voteType",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "comment_votes_user_id_users_id_fk": {
+          "name": "comment_votes_user_id_users_id_fk",
+          "tableFrom": "comment_votes",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "comment_votes_comment_id_comments_id_fk": {
+          "name": "comment_votes_comment_id_comments_id_fk",
+          "tableFrom": "comment_votes",
+          "tableTo": "comments",
+          "columnsFrom": [
+            "comment_id"
           ],
           "columnsTo": [
             "id"
@@ -557,6 +658,48 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "proposals": {
+      "name": "proposals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "proposal_id": {
+          "name": "proposal_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "category",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "snips": {
       "name": "snips",
       "schema": "",
@@ -881,6 +1024,13 @@
     }
   },
   "enums": {
+    "voteType": {
+      "name": "voteType",
+      "values": {
+        "upvote": "upvote",
+        "downvote": "downvote"
+      }
+    },
     "interests": {
       "name": "interests",
       "values": {
@@ -899,6 +1049,14 @@
         "gaming": "gaming",
         "defi": "defi",
         "build": "build"
+      }
+    },
+    "category": {
+      "name": "category",
+      "values": {
+        "category1": "category1",
+        "category2": "category2",
+        "category3": "category3"
       }
     },
     "status": {
@@ -941,9 +1099,6 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {
-      "\"delegates\".\"delegateStatement\"": "\"delegates\".\"statement\"",
-      "\"delegates\".\"type\"": "\"delegates\".\"interests\""
-    }
+    "columns": {}
   }
 }

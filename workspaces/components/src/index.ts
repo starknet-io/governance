@@ -118,3 +118,4 @@ export { StatusModal } from "./StatusModal";
 export { EmptyState } from "./EmptyState";
 export { UserProfileMenu } from "./UserProfileMenu";
 export { SupportModal } from "./SupportModal";
+export { ShareDialog } from "./ShareDialog"

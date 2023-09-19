@@ -2,13 +2,14 @@ import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
 import { getUserByJWT } from '../utils/helpers';
-import { eq, and, isNotNull, sql, or } from 'drizzle-orm';
+import { eq, and, isNotNull, or, desc, asc } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
 import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
+import { delegateVotes } from '../db/schema/delegatesVotes';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -25,8 +26,8 @@ export const delegateRouter = router({
   saveDelegate: protectedProcedure
     .input(
       z.object({
-        delegateStatement: z.string(),
-        delegateType: z.any(),
+        statement: z.string(),
+        interests: z.any(),
         twitter: z.string(),
         discord: z.string(),
         discourse: z.string(),
@@ -39,6 +40,9 @@ export const delegateRouter = router({
     .mutation(async (opts) => {
       const userAddress = (await getUserByJWT(opts.ctx.req.cookies.JWT))
         ?.address;
+      if (!userAddress) {
+        throw new Error('User not found');
+      }
       const user = await db.query.users.findFirst({
         where: eq(users.address, userAddress),
         with: {
@@ -57,8 +61,8 @@ export const delegateRouter = router({
       const insertedDelegate = await db
         .insert(delegates)
         .values({
-          delegateStatement: opts.input.delegateStatement,
-          delegateType: opts.input.delegateType,
+          statement: opts.input.statement,
+          interests: opts.input.interests,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
           discourse: opts.input.discourse,
@@ -129,7 +133,6 @@ export const delegateRouter = router({
     .input(z.object({ delegateId: z.string() }))
     .query(async (opts) => {
       return await db
-        // @ts-expect-error TODO fix types issue here
         .select({
           ...comments,
           author: users,
@@ -152,6 +155,7 @@ export const delegateRouter = router({
     .input(
       delegateInsertSchema.required({ id: true }).extend({
         starknetAddress: z.string() || z.null(),
+        id: z.string(),
         customDelegateAgreementContent: z.optional(z.string()),
       }),
     )
@@ -163,13 +167,13 @@ export const delegateRouter = router({
       const updatedDelegate = await db
         .update(delegates)
         .set({
-          delegateStatement: opts.input.delegateStatement,
-          delegateType: opts.input.delegateType,
+          statement: opts.input.statement,
+          interests: opts.input.interests,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
           discourse: opts.input.discourse,
-          understandRole: opts.input.understandRole,
-          confirmDelegateAgreement, // Use the determined value
+          understandRole: !!opts.input.understandRole,
+          confirmDelegateAgreement: !!opts.input.confirmDelegateAgreement, // Use the determined value
         })
         .where(eq(delegates.id, opts.input.id))
         .returning();
@@ -239,46 +243,93 @@ export const delegateRouter = router({
       return user;
     }),
 
-  getDelegateByFiltersAndSort: publicProcedure
+  getDelegatesWithSortingAndFilters: publicProcedure
     .input(
       z.object({
         searchQuery: z.string().optional(),
         filters: z.array(z.string()).optional(),
+        sortBy: z.string().optional(),
       }),
     )
     .query(async (opts) => {
+      // Determine if sorting is present - voting power, votes count, created at (default)
+      const orderBy =
+        opts.input.sortBy && opts.input.sortBy.length
+          ? opts.input.sortBy === 'votingPower'
+            ? desc(delegateVotes.votingPower)
+            : desc(delegateVotes.totalVotes)
+          : asc(delegateVotes.updatedAt);
+
+      const specialFilters = [
+        'delegate_agreement',
+        'more_then_1m_voting_power',
+        '1_or_more_votes',
+        '1_or_more_comments',
+      ];
+
+      const appliedSpecialFilters =
+        opts.input.filters?.filter((filter) =>
+          specialFilters.includes(filter),
+        ) || [];
+      const appliedInterests =
+        opts.input.filters?.filter(
+          (filter) => !specialFilters.includes(filter),
+        ) || [];
+
       try {
-        //If no filters / search is applied
-        if (!opts.input?.filters?.length && !opts.input?.searchQuery) {
-          return await db.query.delegates.findMany({
-            with: {
-              author: true,
-            },
-          });
-        }
-
-        const filters = opts.input.filters!.map((i) => `'${i}'`).join(',');
-        const sqlQuery = `
-          EXISTS (
-            SELECT 1
-            FROM json_array_elements_text(type) AS elem
-            WHERE elem IN (${filters})
+        const foundDelegates: any = await db
+          .select()
+          .from(delegates)
+          .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
+          .leftJoin(users, eq(users.id, delegates.userId))
+          .leftJoin(
+            customDelegateAgreement,
+            eq(customDelegateAgreement.delegateId, delegates.id),
           )
-        `;
+          .orderBy(orderBy);
 
-        const result = await db.query.delegates.findMany({
-          with: { author: true },
-          //With or without search based on filters
-          where: opts.input.filters?.length ? sql.raw(sqlQuery) : undefined,
-        });
+        // Since we are using joins instead of with: [field]: true, we need to map to corresponding data format
+        if (foundDelegates && foundDelegates.length) {
 
-        const address = opts.input?.searchQuery;
-        if (opts.input?.searchQuery) {
-          //Simple solution for now till we replace it with query call
-          return result.filter((i) => i.author?.address === address);
+          let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
+            ...foundDelegates.delegates,
+            author: { ...foundDelegates.users },
+            votingInfo: { ...foundDelegates.delegate_votes },
+            delegateAgreement: !!(
+              foundDelegates.custom_delegate_agreement ||
+              foundDelegates.confirmDelegateAgreement
+            ),
+          }));
+
+          // Apply filters now
+          if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
+            filteredDelegates = filteredDelegates.filter(
+              (delegate: any) => delegate.votingInfo.votingPower > 1000000,
+            );
+          }
+
+          if (appliedSpecialFilters.includes('1_or_more_votes')) {
+            filteredDelegates = filteredDelegates.filter(
+              (delegate: any) => delegate.votingInfo.totalVotes > 1,
+            );
+          }
+
+          if (appliedSpecialFilters.includes('delegate_agreement')) {
+            filteredDelegates = filteredDelegates.filter(
+              (delegate: any) => delegate.delegateAgreement,
+            );
+          }
+
+          if (appliedInterests.length) {
+            filteredDelegates = filteredDelegates.filter((delegate: any) =>
+              appliedInterests.some((interest) =>
+                delegate.interests.includes(interest),
+              ),
+            );
+          }
+
+          return filteredDelegates;
         }
-
-        return result;
       } catch (error) {
         console.log(error);
         return [];

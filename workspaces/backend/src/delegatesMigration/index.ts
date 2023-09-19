@@ -9,6 +9,9 @@ import { councils } from '../db/schema/councils';
 import { usersToCouncils } from '../db/schema/usersToCouncils';
 import { posts } from '../db/schema/posts';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import TurndownService from 'turndown';
+
+const turndownService = new TurndownService();
 
 const adminUsers = [
   '0x7cC03a29B9c9aBC73E797cD5D341cA58e3e9f744',
@@ -147,11 +150,23 @@ async function seedData() {
   for (const entry of dataDump) {
     const interestsStatements = entry.c4 ? JSON.parse(entry.c4) : [];
     const interests =
-      interestsStatements?.find((item: any) => item.label === 'Interests')
-        ?.value || [];
+      interestsStatements
+        ?.find((item: any) => item.label === 'Interests')
+        ?.value.map((interest: string) => {
+          const parsedInterest = interest.toLowerCase().replace(/\s+/g, '_')
+          if (parsedInterest === 'infrastructure_starknet_dev') {
+            return 'infrastructure';
+          }
+          if (parsedInterest === 'professional_delegates') {
+            return 'professional_delegate';
+          }
+          return parsedInterest;
+        }) || [];
+
     const statement =
       interestsStatements?.find((item: any) => item.label === 'statement')
         ?.value || '';
+    const statementMarkdown = turndownService.turndown(statement);
 
     // Step 1: Check if the user exists
     const existingUser = await db.query.users.findFirst({
@@ -186,10 +201,8 @@ async function seedData() {
       // Step 4: Insert new delegate if not exists
       const newDelegate = {
         userId: userId,
-        delegateType: interests.map((interest: any) =>
-          interest.toLowerCase().replace(/\s+/g, '_'),
-        ),
-        delegateStatement: statement,
+        interests,
+        statement: statementMarkdown,
         twitter: entry.c5 === '@' + entry.c5 ? entry.c5 : null,
         discord: null,
         discourse: null,

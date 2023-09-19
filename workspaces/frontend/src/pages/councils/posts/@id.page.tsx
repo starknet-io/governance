@@ -27,9 +27,13 @@ export function Page() {
   const { data: post } = postResp;
   const { user } = usePageContext();
 
+  const comments = trpc.posts.getPostComments.useQuery({
+    postId: pageContext.routeParams!.id,
+  });
+
   const saveComment = trpc.comments.saveComment.useMutation({
     onSuccess: () => {
-      postResp.refetch();
+      comments.refetch();
     },
   });
 
@@ -38,6 +42,93 @@ export function Page() {
       await saveComment.mutateAsync({
         content: value,
         postId: parseInt(pageContext.routeParams!.id),
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+  };
+
+  const editComment = trpc.comments.editComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const deleteComment = trpc.comments.deleteComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const voteComment = trpc.comments.voteComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const handleCommentEdit = async ({
+    content,
+    commentId,
+  }: {
+    content: string;
+    commentId: number;
+  }) => {
+    try {
+      await editComment.mutateAsync({
+        content,
+        id: commentId,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log(content);
+  };
+
+  const handleCommentDelete = async ({ commentId }: { commentId: number }) => {
+    try {
+      await deleteComment.mutateAsync({
+        id: commentId,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log("Deleted");
+  };
+
+  const handleReplySend = async ({
+    content,
+    parentId,
+  }: {
+    content: string;
+    parentId: number;
+  }) => {
+    try {
+      await saveComment.mutateAsync({
+        content,
+        parentId,
+        postId: parseInt(pageContext.routeParams!.id),
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log(content);
+  };
+
+  const handleCommentVote = async ({
+    commentId,
+    voteType,
+  }: {
+    commentId: number;
+    voteType: "upvote" | "downvote";
+  }) => {
+    try {
+      await voteComment.mutateAsync({
+        commentId,
+        voteType,
       });
     } catch (error) {
       // Handle error
@@ -111,7 +202,13 @@ export function Page() {
               ) : (
                 <></>
               )}
-              <CommentList commentsList={post?.comments || []} />
+              <CommentList
+                commentsList={comments?.data || []}
+                onVote={handleCommentVote}
+                onReply={handleReplySend}
+                onDelete={handleCommentDelete}
+                onEdit={handleCommentEdit}
+              />
             </Stack>
           </Box>
         </ContentContainer>

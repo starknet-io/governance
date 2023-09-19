@@ -1,6 +1,7 @@
 import { DocumentProps } from "src/renderer/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  AppBar,
   Box,
   Button,
   ButtonGroup,
@@ -30,6 +31,7 @@ import {
   Status,
   VoteComment,
   MarkdownRenderer,
+  Select,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -45,6 +47,14 @@ import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { useBalanceData } from "src/utils/hooks";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { stringToHex } from "viem";
+
+const sortByOptions = {
+  defaultValue: "date",
+  options: [
+    { label: "Date", value: "date" },
+    { label: "Upvotes", value: "upvotes" },
+  ],
+};
 
 export function Page() {
   const pageContext = usePageContext();
@@ -212,7 +222,6 @@ export function Page() {
     }
   }
 
-  const commentCount = 0;
   console.log(JSON.stringify(data, null, 2));
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
@@ -220,11 +229,37 @@ export function Page() {
   const [isSuccessModalOpen, setisSuccessModalOpen] = useState(false);
   const [currentChoice, setcurrentChoice] = useState<number>(0);
   const [comment, setComment] = useState("");
+  const [sortBy, setSortBy] = useState<"date" | "upvotes">("date");
   const { user } = useDynamicContext();
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
+    sort: sortBy,
   });
+  const commentCount = comments?.data?.length || 0;
+
+  useEffect(() => {
+    comments.refetch();
+  }, [user?.isAuthenticatedWithAWallet]);
+
   const saveComment = trpc.comments.saveComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const editComment = trpc.comments.editComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const deleteComment = trpc.comments.deleteComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const voteComment = trpc.comments.voteComment.useMutation({
     onSuccess: () => {
       comments.refetch();
     },
@@ -241,6 +276,75 @@ export function Page() {
       console.log(error);
     }
     console.log(value);
+  };
+
+  const handleCommentEdit = async ({
+    content,
+    commentId,
+  }: {
+    content: string;
+    commentId: number;
+  }) => {
+    try {
+      await editComment.mutateAsync({
+        content,
+        id: commentId,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log(content);
+  };
+
+  const handleCommentDelete = async ({ commentId }: { commentId: number }) => {
+    try {
+      await deleteComment.mutateAsync({
+        id: commentId,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log("Deleted");
+  };
+
+  const handleReplySend = async ({
+    content,
+    parentId,
+  }: {
+    content: string;
+    parentId: number;
+  }) => {
+    try {
+      await saveComment.mutateAsync({
+        content,
+        parentId,
+        proposalId: data?.proposal?.id,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log(content);
+  };
+
+  const handleCommentVote = async ({
+    commentId,
+    voteType,
+  }: {
+    commentId: number;
+    voteType: "upvote" | "downvote";
+  }) => {
+    try {
+      await voteComment.mutateAsync({
+        commentId,
+        voteType,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
   };
 
   if (data == null) return null;
@@ -387,8 +491,37 @@ export function Page() {
             ) : (
               <Box>Show logged out state for comment input</Box>
             )}
-
-            <CommentList commentsList={comments.data || []} />
+            <AppBar.Root>
+              <AppBar.Group mobileDirection="row">
+                <Box minWidth={"52px"}>
+                  <Text variant="mediumStrong">Sort by</Text>
+                </Box>
+                <Select
+                  size="sm"
+                  aria-label="Sort by"
+                  placeholder="Sort by"
+                  focusBorderColor={"red"}
+                  rounded="md"
+                  value={sortBy}
+                  onChange={(e) =>
+                    setSortBy(e.target.value as "upvotes" | "date")
+                  }
+                >
+                  {sortByOptions.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              </AppBar.Group>
+            </AppBar.Root>
+            <CommentList
+              commentsList={comments.data || []}
+              onVote={handleCommentVote}
+              onDelete={handleCommentDelete}
+              onReply={handleReplySend}
+              onEdit={handleCommentEdit}
+            />
           </Stack>
         </Box>
       </ContentContainer>

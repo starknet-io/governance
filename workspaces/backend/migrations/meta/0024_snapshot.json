@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "5b066591-6b21-4c80-aaa1-9c8c9085b8dd",
-  "prevId": "15380c8b-8bc2-496b-b9f8-a93a44313a74",
+  "id": "2aae23dc-84f8-4899-9132-d7a8659a3bee",
+  "prevId": "5b066591-6b21-4c80-aaa1-9c8c9085b8dd",
   "tables": {
     "comments": {
       "name": "comments",
@@ -557,6 +557,48 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "proposals": {
+      "name": "proposals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "proposal_id": {
+          "name": "proposal_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "category",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "snips": {
       "name": "snips",
       "schema": "",
@@ -901,6 +943,14 @@
         "build": "build"
       }
     },
+    "category": {
+      "name": "category",
+      "values": {
+        "category1": "category1",
+        "category2": "category2",
+        "category3": "category3"
+      }
+    },
     "status": {
       "name": "status",
       "values": {
@@ -941,9 +991,6 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {
-      "\"delegates\".\"delegateStatement\"": "\"delegates\".\"statement\"",
-      "\"delegates\".\"type\"": "\"delegates\".\"interests\""
-    }
+    "columns": {}
   }
 }

@@ -5,6 +5,8 @@ import { desc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { getUserByJWT } from '../utils/helpers';
 import { comments } from '../db/schema/comments';
+import {commentVotes} from "../db/schema/commentVotes";
+import {z} from "zod";
 
 const postInsertSchema = createInsertSchema(posts);
 
@@ -26,6 +28,47 @@ export const postsRouter = router({
         .returning();
 
       return insertedPost[0];
+    }),
+
+  getPostComments: publicProcedure
+    .input(z.object({ postId: z.string(), sort: z.enum(['upvotes', 'date']).optional() }))
+    .query(async (opts) => {
+      const userId = opts.ctx.req.cookies.JWT ? (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id : null;
+
+      const orderByClause = [];
+      if (opts.input.sort === 'upvotes') {
+        orderByClause.push(desc(comments.upvotes));
+      } else {
+        // default to date sorting if no sort is provided or if it's 'date'
+        orderByClause.push(desc(comments.createdAt));
+      }
+
+      const rawComments = await db.query.comments.findMany({
+        where: eq(comments.postId, opts.input.postId),
+        orderBy: orderByClause,
+        with: {
+          author: true,
+          ...userId && {
+            votes: {
+              where: eq(commentVotes.userId, userId)
+            }
+          }
+        },
+      });
+
+      function buildCommentTree(parentId: number | null, commentList: any) {
+        return commentList
+          .filter((comment: any) => comment.parentId === parentId)
+          .map((comment: any) => ({
+            ...comment,
+            netVotes: comment.upvotes - comment.downvotes,
+            replies: buildCommentTree(comment.id, commentList),
+          }));
+      }
+
+      const structuredComments = buildCommentTree(null, rawComments);
+
+      return structuredComments;
     }),
 
   editPost: protectedProcedure
