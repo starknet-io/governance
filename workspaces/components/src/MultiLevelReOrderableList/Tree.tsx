@@ -89,7 +89,6 @@ export function MultiLevelReOrderableList({
   onItemsChange,
   setItems,
 }: Props) {
-  // const [items, setItems] = useState(() => defaultItems);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
@@ -197,7 +196,6 @@ export function MultiLevelReOrderableList({
 
   return (
     <Box
-      // backgroundColor="white"
       boxShadow="sm"
       borderRadius="base"
       overflow="hidden"

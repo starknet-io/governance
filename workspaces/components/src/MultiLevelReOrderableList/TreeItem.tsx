@@ -1,4 +1,4 @@
-import React, { forwardRef, HTMLAttributes } from "react";
+import { forwardRef, HTMLAttributes } from "react";
 
 import { Handle } from "./Handle";
 import { Box, Flex, Text } from "@chakra-ui/react";
@@ -58,11 +58,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
         pl={`${paddingLeft}`}
         //@ts-expect-error error
         ref={wrapperRef}
-        style={
-          {
-            "--spacing": `${indentationWidth * depth}px`,
-          } as React.CSSProperties
-        }
         {...props}
       >
         <Flex alignItems="center" ref={ref} style={style}>
