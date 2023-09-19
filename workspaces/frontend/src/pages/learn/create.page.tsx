@@ -32,11 +32,9 @@ export function Page() {
   } = useForm<RouterInput["pages"]["savePage"]>();
   
   const title = watch("title", "");
-  const pagesResponse = trpc.pages.getAll.useQuery();
 
   const savePagesTree = trpc.pages.savePagesTree.useMutation();
-
-  const pages = pagesResponse.data ?? [];
+  const pagesTree = trpc.pages.getPagesTree.useQuery();
 
   const [treeItems, setTreeItems] = useState<TreeItems>([]);
 
@@ -55,16 +53,14 @@ export function Page() {
     slug: "",
   };
 
-  const pagesTree = trpc.pages.getPagesTree.useQuery();
-
   useEffect(() => {
-    if (pagesTree?.data?.length && !treeItems.length) {
+    if (pagesTree?.isSuccess && !treeItems.length) {
       setTreeItems([
         { id: Date.now(), data: NEW_ITEM, children: [], isNew: true },
         ...adaptTreeForFrontend(pagesTree.data),
       ]);
     }
-  }, [pages]);
+  }, [pagesTree]);
 
   const saveChanges = handleSubmit((data) => {
     const newItems = flattenTreeItems(treeItems).map((item) => {

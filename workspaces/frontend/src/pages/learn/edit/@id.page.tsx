@@ -28,7 +28,7 @@ export function Page() {
     handleSubmit,
     register,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<RouterInput["pages"]["editPage"]>();
 
   const pageContext = usePageContext();
