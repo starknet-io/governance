@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
 import { getUserByJWT } from '../utils/helpers';
-import {eq, and, isNotNull, or, desc, asc} from 'drizzle-orm';
+import { eq, and, isNotNull, or, desc, asc } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -40,6 +40,9 @@ export const delegateRouter = router({
     .mutation(async (opts) => {
       const userAddress = (await getUserByJWT(opts.ctx.req.cookies.JWT))
         ?.address;
+      if (!userAddress) {
+        throw new Error('User not found');
+      }
       const user = await db.query.users.findFirst({
         where: eq(users.address, userAddress),
         with: {

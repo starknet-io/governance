@@ -4,7 +4,6 @@ import { DecodedToken } from '../routers/auth';
 import { db } from '../db/db';
 import { User, users } from '../db/schema/users';
 import { eq } from 'drizzle-orm';
-import { delegates } from '../db/schema/delegates';
 
 
 dotenv.config();
@@ -31,20 +30,11 @@ export const getWalletAddressFromPrivateKey = async (token: string): Promise<str
 };
 
 
-export const getUserByJWT = async (token: string): Promise<User> => {
+export const getUserByJWT = async (token: string): Promise<User | undefined> => {
   const walletAddress = await getWalletAddressFromPrivateKey(token);
   if (!walletAddress) {
-    throw new Error('No wallet address found');
+    return undefined;
   }
   const user = await db.select().from(users).where(eq(users.address, walletAddress));
   return user[0];
-}
-
-export const checkDelegation = async (token: string) => {
-  const user = await getUserByJWT(token);
-  if (!user) {
-    throw new Error('No user found');
-  }
-  const delegation = await db.select().from(users).leftJoin(delegates, eq(delegates.userId, user.id));
-  return delegation[0].delegates
 }

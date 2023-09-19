@@ -5,7 +5,6 @@ import dotenv from 'dotenv';
 import { TRPCError } from "@trpc/server";
 import { db } from "../db/db";
 import { users } from "../db/schema/users";
-import { checkDelegation } from "../utils/helpers";
 import { eq } from "drizzle-orm";
 
 export interface DecodedToken extends JwtPayload {
@@ -94,32 +93,6 @@ export const authRouter = router({
       opts.ctx.req.user = null;
       return
     }),
-
-  checkAuth: publicProcedure
-    .query(async (opts) => {
-      try {
-        const token = opts.ctx.req.cookies?.JWT;
-        if (!token) {
-          throw new TRPCError({ code: "UNAUTHORIZED", message: "No token provided" });
-        }
-        const decodedToken = jwt.verify(token, publicKey) as DecodedToken;
-
-        if (!decodedToken) {
-          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid token" });
-        }
-        const now = Math.floor(Date.now() / 1000);
-        if (decodedToken?.exp && decodedToken.exp < now) {
-          throw new TRPCError({ code: "UNAUTHORIZED", message: "Session has expired" });
-        }
-        if (await checkDelegation(token) !== null) {
-          throw new TRPCError({ code: "FORBIDDEN" });
-        }
-        return { authenticated: true };
-      } catch (err) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-    }),
-
 
   currentUser: publicProcedure
     .query(async (opts) => {
