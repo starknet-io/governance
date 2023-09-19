@@ -26,7 +26,6 @@ import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrder
 export function Page() {
   const {
     handleSubmit,
-    watch,
     register,
     setValue,
     formState: { errors },
@@ -157,7 +156,7 @@ export function Page() {
                   type="submit"
                   size="condensed"
                   variant="primary"
-                  // isDisabled={!isValid}
+                  isDisabled={!isValid}
                 >
                   Save
                 </Button>
