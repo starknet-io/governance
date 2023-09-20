@@ -7,8 +7,8 @@ import {
 export type PageDnD = {
   id: number;
   data: PageWithChildren;
-  children: PageDnD[]
-}
+  children: PageDnD[];
+};
 
 export const hasPermission = (
   userRole: string | undefined,
@@ -28,7 +28,7 @@ export function flattenTreeItems(items: TreeItems) {
       ...(item.data as PageWithChildren),
       parentId: parent,
       orderNumber: flattenedItems.length + 1,
-      isNew: item.isNew
+      isNew: item.isNew,
     };
     flattenedItems.push(flattenedItem);
 
@@ -46,7 +46,30 @@ export function flattenTreeItems(items: TreeItems) {
   return flattenedItems;
 }
 
-export function adaptTreeForFrontend(items: PageWithChildren[] = []): PageDnD[] {
+export function flattenPageWithChildren(pages: PageWithChildren[]) {
+  const result: PageWithChildren[] = [];
+
+  function recursiveFlatten(arr: PageWithChildren[]) {
+    for (const item of arr) {
+      result.push(item);
+      if (
+        item.children &&
+        Array.isArray(item.children) &&
+        item.children.length > 0
+      ) {
+        recursiveFlatten(item.children);
+      }
+    }
+  }
+
+  recursiveFlatten(pages);
+
+  return result;
+}
+
+export function adaptTreeForFrontend(
+  items: PageWithChildren[] = [],
+): PageDnD[] {
   return items?.map((page) => ({
     id: page.id,
     data: page,

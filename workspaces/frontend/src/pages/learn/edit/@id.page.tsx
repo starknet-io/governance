@@ -66,6 +66,7 @@ export function Page() {
         return {
           ...item,
           title: data.title,
+          content: editorValue
         };
       }
       return item;
@@ -163,6 +164,7 @@ export function Page() {
                   type="submit"
                   size="condensed"
                   variant="primary"
+                  isLoading={savePagesTree.isLoading}
                   // isDisabled={!isValid}
                 >
                   Save

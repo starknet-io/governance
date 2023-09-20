@@ -146,6 +146,7 @@ export const pagesRouter = router({
               title: m.title,
               content: m.content,
               parentId: m.parentId,
+              orderNumber: m.orderNumber,
               slug: slugify(m?.title ?? '', {
                 replacement: '_',
                 lower: true,

@@ -149,7 +149,6 @@ export function Page() {
                       <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
                         Edit
                       </MenuItem>
-                      <MenuItem>Delete</MenuItem>
                     </ProfileSummaryCard.MoreActions>
                   </Box>
                 )}

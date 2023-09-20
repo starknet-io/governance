@@ -22,6 +22,7 @@ interface DeletionDialogProps {
   entityName?: string;
   customTitle?: string;
   customDeleteTitle?: string;
+  children?: JSX.Element;
 }
 
 export function DeletionDialog({
@@ -32,6 +33,7 @@ export function DeletionDialog({
   entityName = "Entity",
   customTitle,
   customDeleteTitle,
+  children,
 }: DeletionDialogProps) {
   cancelRef = useRef<HTMLElement>(null);
   const toast = useToast();
@@ -54,6 +56,7 @@ export function DeletionDialog({
       isOpen={isOpen}
       onClose={onClose}
       isCentered
+      size="lg"
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
@@ -62,7 +65,7 @@ export function DeletionDialog({
             fontWeight="bold"
             display={"flex"}
             justifyContent={"center"}
-            maxWidth="70%"
+            maxWidth="90%"
             mx="auto"
             textAlign="center"
           >
@@ -70,9 +73,13 @@ export function DeletionDialog({
             <AlertDialogCloseButton />
           </AlertDialogHeader>
 
-          <AlertDialogBody display={"flex"} justifyContent={"center"}>
-            <Icon as={TrashWarningIcon} boxSize={104} />
-          </AlertDialogBody>
+          {!children ? (
+            <AlertDialogBody display={"flex"} justifyContent={"center"}>
+              <Icon as={TrashWarningIcon} boxSize={104} />
+            </AlertDialogBody>
+          ) : (
+            children
+          )}
 
           <AlertDialogFooter>
             <Flex gap="1" width="100%" justifyContent="space-between">

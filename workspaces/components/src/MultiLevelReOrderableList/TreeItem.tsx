@@ -1,7 +1,8 @@
 import { forwardRef, HTMLAttributes } from "react";
 
 import { Handle } from "./Handle";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Button, Flex, Text } from "@chakra-ui/react";
+import { TrashIcon } from "src/Icons";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   childCount?: number;
@@ -20,6 +21,7 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
   isLast?: boolean;
+  onDeleteClick?: (id: number) => void;
 }
 
 // eslint-disable-next-line react/display-name
@@ -34,6 +36,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       wrapperRef,
       isNew,
       isLast,
+      onDeleteClick,
       ...props
     },
     ref,
@@ -52,22 +55,37 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     }
 
     return (
-      <Box
+      <Flex
+        alignItems="center"
+        height="50px"
         borderBottom={isFirstLevel && !isLast ? "1px solid #DCDBDD" : "unset"}
         backgroundColor={isNew ? "#E2E2FF" : "white"}
-        p="3"
         pl={`${paddingLeft}`}
+        pr="1"
         //@ts-expect-error error
         ref={wrapperRef}
         {...props}
       >
-        <Flex alignItems="center" ref={ref} style={style}>
-          <Handle {...handleProps} />
-          <Text fontSize={fontSize} color={fontColor} fontWeight="medium">
-            {value?.title ?? ""}
-          </Text>
+        <Flex
+          flex="1"
+          alignItems="center"
+          justifyContent="space-between"
+          ref={ref}
+          style={style}
+        >
+          <Flex alignItems="center">
+            <Handle {...handleProps} />
+            <Text fontSize={fontSize} color={fontColor} fontWeight="medium">
+              {value?.title ?? ""}
+            </Text>
+          </Flex>
+          {isFirstLevel && (
+            <Button onClick={() => onDeleteClick?.(value.id)} p="0" m="0" variant="ghost">
+              <TrashIcon />
+            </Button>
+          )}
         </Flex>
-      </Box>
+      </Flex>
     );
   },
 );

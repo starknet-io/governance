@@ -80,6 +80,7 @@ interface Props {
   removable?: boolean;
   onItemsChange?: (items: TreeItems) => void;
   setItems: Dispatch<SetStateAction<TreeItems>>;
+  onItemDeleteClick?: (id: number) => void;
 }
 
 export function MultiLevelReOrderableList({
@@ -88,6 +89,7 @@ export function MultiLevelReOrderableList({
   removable,
   onItemsChange,
   setItems,
+  onItemDeleteClick
 }: Props) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
@@ -220,6 +222,7 @@ export function MultiLevelReOrderableList({
               indentationWidth={indentationWidth}
               onRemove={removable ? () => handleRemove(id) : undefined}
               isLast={flattenedItems.length === index + 1}
+              onDeleteClick={onItemDeleteClick}
             />
           ))}
           {createPortal(
@@ -232,6 +235,7 @@ export function MultiLevelReOrderableList({
                   childCount={getChildCount(items, activeId) + 1}
                   value={activeItem.data}
                   indentationWidth={indentationWidth}
+                  onDeleteClick={onItemDeleteClick}
                 />
               ) : null}
             </DragOverlay>,

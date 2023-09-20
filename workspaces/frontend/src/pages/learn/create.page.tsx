@@ -27,11 +27,8 @@ export function Page() {
   const {
     handleSubmit,
     register,
-    watch,
     formState: { errors, isValid },
   } = useForm<RouterInput["pages"]["savePage"]>();
-  
-  const title = watch("title", "");
 
   const savePagesTree = trpc.pages.savePagesTree.useMutation();
   const pagesTree = trpc.pages.getPagesTree.useQuery();
@@ -130,6 +127,7 @@ export function Page() {
               variant="primary"
               isDisabled={!isValid}
               onClick={saveChanges}
+              isLoading={savePagesTree.isLoading}
             >
               Save Changes
             </Button>
