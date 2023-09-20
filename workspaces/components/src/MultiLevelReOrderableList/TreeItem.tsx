@@ -19,6 +19,7 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   onCollapse?(): void;
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
+  isLast?: boolean;
 }
 
 // eslint-disable-next-line react/display-name
@@ -32,6 +33,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       value,
       wrapperRef,
       isNew,
+      isLast,
       ...props
     },
     ref,
@@ -51,8 +53,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     return (
       <Box
-        // mt={isFirstLevel ? "2" : "0"}
-        // borderLeft={depth > 0 ? "1px solid #DCDBDD" : undefined}
+        borderBottom={isFirstLevel && !isLast ? "1px solid #DCDBDD" : "unset"}
         backgroundColor={isNew ? "#E2E2FF" : "white"}
         p="3"
         pl={`${paddingLeft}`}

@@ -8,6 +8,7 @@ import { iOS } from "./utils";
 
 interface Props extends TreeItemProps {
   id: UniqueIdentifier;
+  isLast?: boolean;
   isNew?: boolean;
 }
 
@@ -16,7 +17,13 @@ const animateLayoutChanges: AnimateLayoutChanges = ({
   wasDragging,
 }) => (isSorting || wasDragging ? false : true);
 
-export function SortableTreeItem({ id, depth, isNew, ...props }: Props) {
+export function SortableTreeItem({
+  id,
+  depth,
+  isNew,
+  isLast,
+  ...props
+}: Props) {
   const {
     attributes,
     isDragging,
@@ -45,6 +52,7 @@ export function SortableTreeItem({ id, depth, isNew, ...props }: Props) {
       ghost={isDragging}
       disableSelection={iOS}
       disableInteraction={isSorting}
+      isLast={isLast}
       handleProps={{
         ...attributes,
         ...listeners,

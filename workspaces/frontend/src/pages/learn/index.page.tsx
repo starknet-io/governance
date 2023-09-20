@@ -21,7 +21,6 @@ import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { PageWithChildren } from "@yukilabs/governance-backend/src/utils/buildLearnHierarchy";
-import { AddIcon, CloseIcon } from "@dynamic-labs/sdk-react";
 import {
   PlusIcon,
   ReOrderIcon,
@@ -99,7 +98,7 @@ export function Page() {
             <Button
               height="44px"
               width="44px"
-              variant="navLink"
+              variant="ghost"
               href="/learn/reorder"
               p="4"
             >
@@ -108,7 +107,7 @@ export function Page() {
             <Button
               height="44px"
               width="44px"
-              variant="navLink"
+              variant="ghost"
               href="/learn/create"
               p="0"
             >
@@ -300,8 +299,7 @@ function NavItemWrapper({
       }}
     >
       <Button
-        // @ts-ignore
-        variant="navLink"
+        variant="ghost"
         fontWeight="medium"
         fontSize={fontSize}
         color={fontColor}

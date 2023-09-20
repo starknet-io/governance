@@ -195,11 +195,7 @@ export function MultiLevelReOrderableList({
   }
 
   return (
-    <Box
-      boxShadow="sm"
-      borderRadius="base"
-      overflow="hidden"
-    >
+    <Box boxShadow="sm" borderRadius="base" overflow="hidden">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -214,7 +210,7 @@ export function MultiLevelReOrderableList({
           items={sortedIds}
           strategy={verticalListSortingStrategy}
         >
-          {flattenedItems.map(({ id, depth, data, isNew }) => (
+          {flattenedItems.map(({ id, depth, data, isNew }, index) => (
             <SortableTreeItem
               key={id}
               id={id}
@@ -223,6 +219,7 @@ export function MultiLevelReOrderableList({
               depth={id === activeId && projected ? projected.depth : depth}
               indentationWidth={indentationWidth}
               onRemove={removable ? () => handleRemove(id) : undefined}
+              isLast={flattenedItems.length === index + 1}
             />
           ))}
           {createPortal(

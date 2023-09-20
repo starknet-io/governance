@@ -1,5 +1,5 @@
 import { DocumentProps } from "src/renderer/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Heading,
@@ -14,6 +14,7 @@ import {
   MultiLevelReOrderableList,
   Divider,
   Flex,
+  DeletionDialog,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -33,7 +34,9 @@ export function Page() {
 
   const pageContext = usePageContext();
   const pageId = pageContext.routeParams!.id;
+  const cancelRef = useRef(null);
 
+  const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
   const [treeItems, setTreeItems] = useState<TreeItems>([]);
   const { data: pagesTree, isSuccess } = trpc.pages.getPagesTree.useQuery();
   const savePagesTree = trpc.pages.savePagesTree.useMutation();
@@ -44,7 +47,7 @@ export function Page() {
 
   async function processData() {
     setTreeItems(adaptTreeForFrontend(pagesTree));
-    const page = pagesTree?.find(
+    const page = flattenTreeItems(adaptTreeForFrontend(pagesTree))?.find(
       (page: any) => page.id === Number(pageContext.routeParams!.id),
     );
     setValue("title", page?.title);
@@ -81,11 +84,15 @@ export function Page() {
   });
 
   const handleDeletePage = () => {
-    deletePage({ id: +pageId }, {
-      onSuccess: () => {
-        navigate(`/learn`);
+    setIsDeleteDialogVisible(true);
+    deletePage(
+      { id: +pageId },
+      {
+        onSuccess: () => {
+          navigate(`/learn`);
+        },
       },
-    });
+    );
   };
 
   const handleClickCancel = () => {
@@ -136,7 +143,7 @@ export function Page() {
             <Divider mt="14" mb="6" />
             <Flex justifyContent="space-between">
               <Button
-                onClick={handleDeletePage}
+                onClick={() => setIsDeleteDialogVisible(true)}
                 size="condensed"
                 variant="danger"
               >
@@ -156,7 +163,7 @@ export function Page() {
                   type="submit"
                   size="condensed"
                   variant="primary"
-                  isDisabled={!isValid}
+                  // isDisabled={!isValid}
                 >
                   Save
                 </Button>
@@ -164,6 +171,16 @@ export function Page() {
             </Flex>
           </form>
         </Box>
+
+        <DeletionDialog
+          isOpen={isDeleteDialogVisible}
+          onClose={() => setIsDeleteDialogVisible(false)}
+          onDelete={handleDeletePage}
+          cancelRef={cancelRef}
+          customTitle="Are you sure that you want delete this page?"
+          customDeleteTitle="Delete"
+          entityName="Page"
+        />
       </ContentContainer>
     </>
   );
