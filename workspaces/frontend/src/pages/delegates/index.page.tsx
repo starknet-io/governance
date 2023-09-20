@@ -22,9 +22,8 @@ import {
   SkeletonText,
   DelegateModal,
   ConfirmModal,
+  StatusModal,
 } from "@yukilabs/governance-components";
-
-import { useDebouncedCallback } from "use-debounce";
 
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -34,6 +33,7 @@ import { useAccount } from "wagmi";
 import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "../../wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
+import { MINIMUM_TOKENS_FOR_DELEGATION } from "./profile/@id.page";
 
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
@@ -179,7 +179,10 @@ export function Page() {
   const receiverData = useBalanceData(inputAddress as `0x${string}`);
   const [isValidAddress, setIsValidAddress] = useState(true);
   const senderData = useBalanceData(address);
-  const { isLoading, write } = useDelegateRegistrySetDelegate({
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
+  const [statusTitle, setStatusTitle] = useState<string>("");
+  const [statusDescription, setStatusDescription] = useState<string>("");
+  const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
   });
@@ -199,35 +202,29 @@ export function Page() {
     sortBy,
   });
 
+  console.log(receiverData)
+
   const addVotingPowerToReceiver = () => {
     if (delegates.data && delegates.data.length > 0) {
-      const foundDelegate = delegates.data.find((delegate) => delegate.author.address === receiverData.address)
+      const foundDelegate = delegates.data.find(
+        (delegate) => delegate.author.address === receiverData.address,
+      );
       if (!foundDelegate) {
-        return receiverData
+        return receiverData;
       } else {
         return {
           ...receiverData,
-          vp: foundDelegate.votingInfo.votingPower
-        }
+          vp: foundDelegate.votingInfo.votingPower,
+        };
       }
     }
-    return receiverData
-  }
+    return receiverData;
+  };
 
   const delegates =
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
 
   const { user } = usePageContext();
-
-  const debounce = useDebouncedCallback(
-    (searchQuery: string) => setFiltersState({ ...filtersState, searchQuery }),
-    500,
-  );
-
-  const handleSearchInput = (input: string) => {
-    setSearchQuery(input);
-    debounce(input);
-  };
 
   const handleResetFilters = () => {
     state.onReset();
@@ -270,10 +267,15 @@ export function Page() {
     <ContentContainer>
       <DelegateModal
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={() => {
+          setIsOpen(false)
+          setInputAddress("")
+        }}
         isConnected={isConnected}
         isValidCustomAddress={isValidAddress}
-        receiverData={!inputAddress.length ? undefined : addVotingPowerToReceiver()}
+        receiverData={
+          !inputAddress.length ? undefined : addVotingPowerToReceiver()
+        }
         onContinue={(address) => {
           const isValid = ethers.utils.isAddress(address);
           setIsValidAddress(isValid);
@@ -283,18 +285,52 @@ export function Page() {
         }}
         senderData={senderData}
         delegateTokens={() => {
-          write?.({
-            args: [
-              stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                size: 32,
-              }),
-              inputAddress as `0x${string}`,
-            ],
-          });
-          setIsOpen(false);
+          if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
+            setIsStatusModalOpen(true);
+            setStatusTitle("No voting power");
+            setStatusDescription(
+              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
+            );
+            setIsOpen(false);
+          } else {
+            writeAsync?.({
+              args: [
+                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                  size: 32,
+                }),
+                inputAddress as `0x${string}`,
+              ],
+            })
+              .then(() => {
+                setIsStatusModalOpen(true);
+                setStatusTitle("Tokens delegated successfully");
+                setStatusDescription("");
+              })
+              .catch((err) => {
+                setIsStatusModalOpen(true);
+                setStatusTitle("Tokens delegation failed");
+                setStatusDescription(
+                  err.shortMessage ||
+                    err.message ||
+                    err.name ||
+                    "An error occurred",
+                );
+              });
+            setIsOpen(false);
+          }
         }}
       />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
+      <StatusModal
+        isOpen={isStatusModalOpen}
+        isSuccess={!statusDescription?.length}
+        isFail={!!statusDescription?.length}
+        onClose={() => {
+          setIsStatusModalOpen(false);
+        }}
+        title={statusTitle}
+        description={statusDescription}
+      />
       <Box width="100%">
         <PageTitle
           learnMoreLink="/learn"
@@ -330,12 +366,12 @@ export function Page() {
                   rounded="md"
                   value={sortBy}
                   onChange={(e) => {
-                    setSortBy(e.target.value)
-                    setFiltersState(prevState => ({
+                    setSortBy(e.target.value);
+                    setFiltersState((prevState) => ({
                       ...prevState,
                       sortBy: e.target.value,
                     }));
-                    delegates.refetch()
+                    delegates.refetch();
                   }}
                 >
                   {sortByOptions.options.map((option) => (
@@ -390,7 +426,10 @@ export function Page() {
               {delegates.data && delegates.data.length > 0 ? (
                 delegates.data.map((delegate) => (
                   <DelegateCard
-                    onDelegateClick={() => console.log("test")}
+                    onDelegateClick={() => {
+                      setIsOpen(true);
+                      setInputAddress(delegate?.author?.address);
+                    }}
                     votingPower={delegate?.votingInfo?.votingPower}
                     delegatedVotes={delegate?.votingInfo?.totalVotes || "0"}
                     profileURL={`/delegates/profile/${delegate.id}`}

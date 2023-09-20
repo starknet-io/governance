@@ -135,7 +135,7 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
 `);
 
 // Extract this to some constants file
-const MINIMUM_TOKENS_FOR_DELEGATION = 1;
+export const MINIMUM_TOKENS_FOR_DELEGATION = 1;
 
 export function Page() {
   const pageContext = usePageContext();
@@ -352,7 +352,12 @@ export function Page() {
               .catch((err) => {
                 setIsStatusModalOpen(true);
                 setStatusTitle("Tokens delegation failed");
-                setStatusDescription(err.shortMessage);
+                setStatusDescription(
+                  err.shortMessage ||
+                    err.message ||
+                    err.name ||
+                    "An error occurred",
+                );
               });
             setIsOpen(false);
           }
@@ -370,8 +375,8 @@ export function Page() {
       />
       <StatusModal
         isOpen={isStatusModalOpen}
-        isSuccess={!statusDescription.length}
-        isFail={!!statusDescription.length}
+        isSuccess={!statusDescription?.length}
+        isFail={!!statusDescription?.length}
         onClose={() => {
           setIsStatusModalOpen(false);
         }}
