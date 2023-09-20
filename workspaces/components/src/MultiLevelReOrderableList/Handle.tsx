@@ -6,12 +6,12 @@ export interface Props extends React.HTMLAttributes<HTMLButtonElement> {
     fill: string;
     background: string;
   };
-  cursor?: CSSProperties['cursor'];
+  cursor?: CSSProperties["cursor"];
 }
 
 // eslint-disable-next-line react/display-name
 export const Action = forwardRef<HTMLButtonElement, Props>(
-  ({active, cursor, style, ...props}, ref) => {
+  ({ cursor, style, ...props }, ref) => {
     return (
       <button
         ref={ref}
@@ -21,27 +21,18 @@ export const Action = forwardRef<HTMLButtonElement, Props>(
           {
             ...style,
             cursor,
-            '--fill': active?.fill,
-            '--background': active?.background,
           } as CSSProperties
         }
       />
     );
-  }
+  },
 );
 
 // eslint-disable-next-line react/display-name
-export const Handle = forwardRef<HTMLButtonElement, Props>(
-  (props, ref) => {
-    return (
-      <Action
-        ref={ref}
-        cursor="grab"
-        data-cypress="draggable-handle"
-        {...props}
-      >
-        <DragHoldIcon />
-      </Action>
-    );
-  }
-);
+export const Handle = forwardRef<HTMLButtonElement, Props>((props, ref) => {
+  return (
+    <Action ref={ref} cursor="grab" data-cypress="draggable-handle" {...props}>
+      <DragHoldIcon />
+    </Action>
+  );
+});

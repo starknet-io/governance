@@ -156,15 +156,8 @@ export const pagesRouter = router({
         }),
       );
 
-      return {
-        items: opts.input,
-        newItems,
-        newCreatedItems,
-        mapThrough,
-      };
+      return;
     }),
-
-
 
   saveBatch: protectedProcedure
     .input(pageInsertSchema.omit({ userId: true }).array())

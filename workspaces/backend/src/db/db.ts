@@ -22,9 +22,9 @@ dotenv.config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // ssl: {
-  //   ca: process.env.DO_CERT
-  // },
+  ssl: {
+    ca: process.env.DO_CERT
+  },
 });
 
 
