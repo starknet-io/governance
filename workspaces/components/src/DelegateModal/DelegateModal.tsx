@@ -37,6 +37,7 @@ type Props = {
   delegateTokens: () => void;
   onContinue?: (address: string) => void;
   isValidCustomAddress?: boolean;
+  isUndelegation?: boolean;
 };
 
 export const DelegateModal = ({
@@ -48,6 +49,7 @@ export const DelegateModal = ({
   delegateTokens,
   onContinue,
   isValidCustomAddress,
+  isUndelegation,
 }: Props) => {
   const [customAddress, setCustomAddress] = useState("");
   const getTotalVotingPower = () => {
@@ -90,7 +92,7 @@ export const DelegateModal = ({
         >
           <Stack spacing="6">
             <Heading fontSize="21px" fontWeight="semibold" variant="h3">
-              Delegate votes
+              {isUndelegation ? "Undelegate votes" : "Delegate votes"}
             </Heading>
             <Stack spacing="32px">
               <Swap.Root>
@@ -151,7 +153,7 @@ export const DelegateModal = ({
                     size="lg"
                     onClick={delegateTokens}
                   >
-                    Delegate your votes
+                    {isUndelegation ? "Undelegate your votes" : "Delegate your votes"}
                   </Button>
                 )
               ) : (
