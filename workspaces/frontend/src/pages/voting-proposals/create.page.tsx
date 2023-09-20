@@ -53,7 +53,7 @@ export function Page() {
     async defaultValues() {
       return {
         title: "",
-        category: "",
+        category: categories[0],
         body: EditorTemplate.proposalMarkDown,
         discussion: "",
         votingPeriod: [new Date(), new Date()], // This will hold both start and end dates
