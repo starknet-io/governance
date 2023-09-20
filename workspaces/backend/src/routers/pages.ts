@@ -5,7 +5,7 @@ import { asc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { getUserByJWT } from '../utils/helpers';
 import slugify from 'slugify';
-import { object, number, boolean } from 'zod';
+import { boolean } from 'zod';
 import { buildLearnItemsHierarchy } from '../utils/buildLearnHierarchy';
 
 const pageInsertSchema = createInsertSchema(pages);
