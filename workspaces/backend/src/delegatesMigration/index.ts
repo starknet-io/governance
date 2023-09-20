@@ -10,8 +10,53 @@ import { usersToCouncils } from '../db/schema/usersToCouncils';
 import { posts } from '../db/schema/posts';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import TurndownService from 'turndown';
+import {pages} from "../db/schema/pages";
 
 const turndownService = new TurndownService();
+
+function generateDummyContent(): string {
+  const sentences = [
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "Vestibulum vehicula ex at molestie cursus.",
+    "Nulla facilisi. Maecenas consectetur metus nec urna placerat, non luctus ante facilisis.",
+    "Phasellus aliquam id metus a commodo.",
+    "Duis dignissim libero in nibh imperdiet, non dignissim neque ultricies.",
+    "Morbi eu velit a ante pulvinar ornare sed vel nulla.",
+    "Nulla facilisi. Nulla iaculis justo ut massa ullamcorper, a dictum est cursus.",
+    "Suspendisse potenti. Integer in sagittis purus.",
+    "Nunc non nisi sit amet nisl tempus consectetur nec id enim.",
+    "Aliquam ac augue pharetra, volutpat dui ac, dictum metus."
+  ];
+
+  let content = "";
+  for (let i = 0; i < 200; i++) {
+    content += sentences[Math.floor(Math.random() * sentences.length)] + "\n\n";
+  }
+
+  return content;
+}
+
+async function createLearnSections(userId: string | null) {
+  console.log('Creating Learn Sections');
+
+  for (let orderNumber = 1; orderNumber <= 5; orderNumber++) {
+    const content = generateDummyContent();
+
+    const newPage = {
+      title: `Learn Section ${orderNumber}`,
+      content: content,
+      orderNumber: orderNumber,
+      userId: userId,
+      slug: `learn_section_${orderNumber}`,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    await db.insert(pages).values(newPage).execute();
+  }
+
+  console.log('Learn Sections Created');
+}
 
 const adminUsers = [
   '0x7cC03a29B9c9aBC73E797cD5D341cA58e3e9f744',
@@ -220,10 +265,12 @@ async function seedData() {
       const delegateId = insertedDelegate[0].id;
 
       if (entry.c6) {
+        const customAgreement = entry.c6.replace(/\\/g, '');
+
         // Step 5: Insert the custom delegate agreement
         const newCustomAgreement = {
           delegateId: delegateId,
-          content: entry.c6,
+          content: customAgreement,
           createdAt: new Date(),
           updatedAt: new Date(),
         };
@@ -236,6 +283,15 @@ async function seedData() {
     }
   }
   console.log('Delegates created');
+  // Find one admin user to pass to createLearnSections
+  const oneAdminUser = await db.query.users.findFirst({
+    where: eq(users.role, 'admin'),
+  });
+
+  console.log('Populate learn sections')
+  // Then, create Learn sections
+  await createLearnSections(oneAdminUser?.id || null);
+  console.log('Learn section populated')
 }
 
 async function runMigrations() {

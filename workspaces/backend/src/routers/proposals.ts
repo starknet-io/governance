@@ -7,11 +7,14 @@ import { z } from 'zod';
 import { proposals } from '../db/schema/proposals';
 import { createInsertSchema } from 'drizzle-zod';
 
+type CategoryEnum = 'category1' | 'category2' | 'category3';
+
 interface IProposal {
   id: string;
   title: string;
   choices: string[];
   start: number;
+  category?: CategoryEnum;
   end: number;
   snapshot: string;
   state: string;
@@ -142,6 +145,7 @@ export const proposalsRouter = router({
         .object({
           sortBy: z.enum(['desc', 'asc', 'most_discussed', '']).optional(),
           searchQuery: z.string().optional(),
+          filters: z.array(z.string()).optional(),
         })
         .optional(),
     )
@@ -151,6 +155,15 @@ export const proposalsRouter = router({
 
       const orderDirection = opts.input?.sortBy || 'desc';
       const searchQuery = opts.input?.searchQuery || undefined;
+      const filters = opts.input?.filters;
+      const possibleStateFilters = ['active', 'pending', 'closed'];
+
+      const statesFilter =
+        filters?.filter((filter) => possibleStateFilters.includes(filter)) ||
+        [];
+      const categoriesFilter =
+        filters?.filter((filter) => !possibleStateFilters.includes(filter)) ||
+        [];
 
       let mappedProposals: IProposal[];
       if (opts.input?.sortBy === 'most_discussed') {
@@ -190,12 +203,27 @@ export const proposalsRouter = router({
           mostDiscussedProposals,
         );
 
+        if (statesFilter.length > 0) {
+          mappedProposals = mappedProposals.filter((proposal) =>
+            statesFilter.includes(proposal.state),
+          );
+        }
+
         mappedProposals = mappedProposals.map((proposal, index) => {
           return {
             ...proposal,
-            category: mostDiscussedItems.rows[index].category,
+            category: mostDiscussedItems.rows[index].category as CategoryEnum,
           };
         });
+
+        if (categoriesFilter.length > 0) {
+          mappedProposals = mappedProposals.filter((proposal) => {
+            if (!proposal?.category) {
+              return false;
+            }
+            return categoriesFilter.includes(proposal.category);
+          });
+        }
       } else {
         const { proposals: queriedProposals } = (await graphQLClient.request(
           GET_PROPOSALS,
@@ -216,15 +244,35 @@ export const proposalsRouter = router({
           .execute();
 
         const categoriesMap = Object.fromEntries(
-          categoriesResult.map(row => [row.proposalId, row.category])
+          categoriesResult.map((row) => [row.proposalId, row.category]),
         );
 
         // Merge category data into the proposals array
-        mappedProposals = queriedProposals.map(proposal => ({
+        mappedProposals = queriedProposals.map((proposal) => ({
           ...proposal,
-          category: categoriesMap[proposal.id] || null,
-        }));      }
+          category: categoriesMap[proposal.id] as CategoryEnum,
+        }));
+      }
 
-      return await populateProposalsWithComments(mappedProposals, limit, offset);
+      if (statesFilter.length > 0) {
+        mappedProposals = mappedProposals.filter((proposal) =>
+          statesFilter.includes(proposal.state),
+        );
+      }
+
+      if (categoriesFilter.length > 0) {
+        mappedProposals = mappedProposals.filter((proposal) => {
+          if (!proposal.category) {
+            return false;
+          }
+          return categoriesFilter.includes(proposal.category);
+        });
+      }
+
+      return await populateProposalsWithComments(
+        mappedProposals,
+        limit,
+        offset,
+      );
     }),
 });

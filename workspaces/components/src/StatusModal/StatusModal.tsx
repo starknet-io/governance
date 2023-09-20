@@ -77,7 +77,7 @@ export const StatusModal = ({
               {isFail && <FiAlertOctagon size={48} color="#E54D66" />}
               {isSuccess && <MdTaskAlt size={48} color="#29AB87" />}
             </Flex>
-            <Text>{description}</Text>
+            <Text align="center" variant="mediuStrong">{description}</Text>
             <Button type="button" variant="primary" size="lg" onClick={onClose}>
               Close
             </Button>

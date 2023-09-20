@@ -10,10 +10,15 @@ import {
   Skeleton,
   Select,
   Text,
+  FilterPopoverIcon,
+  HiAdjustmentsHorizontal,
+  FilterPopoverContent,
+  CheckboxFilter,
+  Popover,
+  useFilterState,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 
@@ -30,6 +35,48 @@ const SkeletonRow = ({ numItems, width }: SkeletonRowProps) => (
     ))}
   </Box>
 );
+
+const statusFilters = {
+  defaultValue: [] as string[],
+  options: [
+    {
+      value: "active",
+      label: "Active",
+      count: 9,
+    },
+    {
+      value: "pending",
+      label: "Pending",
+      count: 9,
+    },
+    {
+      value: "closed",
+      label: "Closed",
+      count: 9,
+    },
+  ],
+};
+
+const categoriesFilters = {
+  defaultValue: [] as string[],
+  options: [
+    {
+      value: "category1",
+      label: "Category1",
+      count: 9,
+    },
+    {
+      value: "category2",
+      label: "Category2",
+      count: 9,
+    },
+    {
+      value: "category3",
+      label: "Category3",
+      count: 9,
+    },
+  ],
+};
 
 interface VotingPropsSkeletonProps {
   numRows?: number;
@@ -103,10 +150,24 @@ function Proposal({ data }: any) {
 }
 
 export function Page() {
-  const [searchInput, setSearchInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortingTypes>("desc");
   const { user } = usePageContext();
+  const state = useFilterState({
+    defaultValue: categoriesFilters.defaultValue,
+    onSubmit: (filters) => {
+      setFiltersState({ ...filtersState, filters });
+    },
+  });
+
+  const [filtersState, setFiltersState] = useState({
+    filters: [] as string[],
+    sortBy,
+  });
+
+  const handleResetFilters = () => {
+    state.onReset();
+    setFiltersState({ ...filtersState, filters: [] });
+  };
 
   const {
     data,
@@ -114,16 +175,8 @@ export function Page() {
     isError: error,
     refetch,
   } = trpc.proposals.getProposals.useQuery({
-    searchQuery,
-    sortBy,
+    ...filtersState,
   });
-
-  const debounce = useDebouncedCallback((query) => setSearchQuery(query), 500);
-
-  const handleInputChange = (searchInput: string) => {
-    setSearchInput(searchInput);
-    debounce(searchInput);
-  };
 
   function ActionButtons() {
     if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR])) {
@@ -168,7 +221,14 @@ export function Page() {
               placeholder="All"
               rounded="md"
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortingTypes)}
+              onChange={(e) => {
+                setSortBy(e.target.value as SortingTypes);
+                setFiltersState((prevState) => ({
+                  ...prevState,
+                  sortBy: e.target.value as SortingTypes,
+                }));
+                refetch();
+              }}
             >
               {SORTING_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -176,6 +236,37 @@ export function Page() {
                 </option>
               ))}
             </Select>
+            <Popover placement="bottom-start">
+              <FilterPopoverIcon
+                label="Filter by"
+                icon={HiAdjustmentsHorizontal}
+                badgeContent={filtersState.filters.length}
+              />
+              <FilterPopoverContent
+                isCancelDisabled={!state.canCancel}
+                onClickApply={state.onSubmit}
+                onClickCancel={handleResetFilters}
+              >
+                <Text mt="4" mb="2" fontWeight="bold">
+                  Status
+                </Text>
+                <CheckboxFilter
+                  hideLabel
+                  value={state.value}
+                  onChange={(v) => state.onChange(v)}
+                  options={statusFilters.options}
+                />
+                <Text mt="4" mb="2" fontWeight="bold">
+                  Categories
+                </Text>
+                <CheckboxFilter
+                  hideLabel
+                  value={state.value}
+                  onChange={(v) => state.onChange(v)}
+                  options={categoriesFilters.options}
+                />
+              </FilterPopoverContent>
+            </Popover>
           </AppBar.Group>
           <AppBar.Group alignEnd>
             <ActionButtons />
