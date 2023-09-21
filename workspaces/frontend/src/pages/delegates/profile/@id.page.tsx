@@ -145,7 +145,7 @@ export function Page() {
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const { user } = usePageContext();
 
   const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
@@ -419,7 +419,7 @@ export function Page() {
             >
               <ActionButtons />
             </ProfileSummaryCard.Profile>
-            {isConnected ? (
+            {user ? (
               <ProfileSummaryCard.PrimaryButton
                 label={
                   hasUserDelegatedTokensToThisDelegate

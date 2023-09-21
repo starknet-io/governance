@@ -27,6 +27,7 @@ import {
   VoteModal,
   VoteReview,
   VoteStat,
+  StatusModal,
   Iframely,
   Status,
   VoteComment,
@@ -47,6 +48,7 @@ import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { useBalanceData } from "src/utils/hooks";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { stringToHex } from "viem";
+import { MINIMUM_TOKENS_FOR_DELEGATION } from "../delegates/profile/@id.page";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -182,6 +184,16 @@ export function Page() {
     try {
       if (walletClient == null) return;
 
+      if ((vp?.vp?.vp || 0) < MINIMUM_TOKENS_FOR_DELEGATION) {
+        setIsStatusModalOpen(true);
+        setStatusTitle("No voting power");
+        setStatusDescription(
+          `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
+        );
+        setIsOpen(false);
+        return
+      }
+
       const client = new snapshot.Client712(
         import.meta.env.VITE_APP_SNAPSHOT_URL,
       );
@@ -215,10 +227,14 @@ export function Page() {
       refetch();
       vote.refetch();
       votes.refetch();
-      console.log(receipt);
-    } catch (error) {
+    } catch (error: any) {
       // Handle error
-      console.log(error);
+      setIsStatusModalOpen(true);
+      setStatusTitle("Voting failed");
+      setStatusDescription(
+        error?.error_description || error?.error || "An error occurred",
+      );
+      setisConfirmOpen(false);
     }
   }
 
@@ -230,7 +246,13 @@ export function Page() {
   const [currentChoice, setcurrentChoice] = useState<number>(0);
   const [comment, setComment] = useState("");
   const [sortBy, setSortBy] = useState<"date" | "upvotes">("date");
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
+  const [statusTitle, setStatusTitle] = useState<string>("");
+  const [statusDescription, setStatusDescription] = useState<string>("");
   const { user } = useDynamicContext();
+  const hasVoted = vote.data && vote.data.votes?.[0];
+  const canVote = data?.proposal?.state === "active"
+  console.log('VOTING', canVote, data?.proposal?.state)
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
@@ -379,6 +401,16 @@ export function Page() {
           Submit vote
         </Button>
       </VoteModal>
+      <StatusModal
+        isOpen={isStatusModalOpen}
+        isSuccess={!statusDescription?.length}
+        isFail={!!statusDescription?.length}
+        onClose={() => {
+          setIsStatusModalOpen(false);
+        }}
+        title={statusTitle}
+        description={statusDescription}
+      />
       <InfoModal
         title="Snapshot info"
         isOpen={isInfoOpen}
@@ -569,30 +601,31 @@ export function Page() {
                 } using ${vote.data.votes[0].vp} votes`}
               />
             )}
-
-            <ButtonGroup
-              mb="40px"
-              spacing="8px"
-              display="flex"
-              flexDirection="row"
-              justifyContent="space-around"
-            >
-              {data.proposal?.choices.map((choice, index) => {
-                return (
-                  <VoteButton
-                    key={choice}
-                    onClick={() => {
-                      setcurrentChoice(index + 1);
-                      setIsOpen(true);
-                    }}
-                    active={false}
-                    // @ts-expect-error todo
-                    type={choice}
-                    label={`${choice}`}
-                  />
-                );
-              })}
-            </ButtonGroup>
+            {!hasVoted && canVote ? (
+              <ButtonGroup
+                mb="40px"
+                spacing="8px"
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-around"
+              >
+                {data.proposal?.choices.map((choice, index) => {
+                  return (
+                    <VoteButton
+                      key={choice}
+                      onClick={() => {
+                        setcurrentChoice(index + 1);
+                        setIsOpen(true);
+                      }}
+                      active={false}
+                      // @ts-expect-error todo
+                      type={choice}
+                      label={`${choice}`}
+                    />
+                  );
+                })}
+              </ButtonGroup>
+            ) : null}
             <Divider mb="40px" />
             <Box mb="40px">
               <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">

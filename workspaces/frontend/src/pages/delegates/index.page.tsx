@@ -34,10 +34,8 @@ import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "../../wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "./profile/@id.page";
-
-{
-  /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
-}
+import { gql } from "../../gql";
+import { useQuery } from "@apollo/client";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -189,6 +187,25 @@ export function Page() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
 
+  const { data: votingPower } = useQuery(
+    gql(`
+    query VotingPower($voter: String!, $space: String!) {
+      vp(voter: $voter, space: $space) {
+        vp
+        vp_by_strategy
+        vp_state
+      }
+    }
+  `),
+    {
+      variables: {
+        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+        voter: inputAddress,
+      },
+      skip: !inputAddress,
+    },
+  );
+
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
     onSubmit: (filters) => {
@@ -202,13 +219,17 @@ export function Page() {
     sortBy,
   });
 
-  console.log(receiverData)
-
   const addVotingPowerToReceiver = () => {
     if (delegates.data && delegates.data.length > 0) {
       const foundDelegate = delegates.data.find(
         (delegate) => delegate.author.address === receiverData.address,
       );
+      if (votingPower?.vp?.vp) {
+        return {
+          ...receiverData,
+          vp: votingPower?.vp?.vp,
+        };
+      }
       if (!foundDelegate) {
         return receiverData;
       } else {
@@ -230,7 +251,6 @@ export function Page() {
     state.onReset();
     setFiltersState({ ...filtersState, filters: [] });
   };
-  console.log(JSON.stringify(delegates.data, null, 2));
 
   function ActionButtons() {
     if (!user) {
@@ -268,8 +288,8 @@ export function Page() {
       <DelegateModal
         isOpen={isOpen}
         onClose={() => {
-          setIsOpen(false)
-          setInputAddress("")
+          setIsOpen(false);
+          setInputAddress("");
         }}
         isConnected={isConnected}
         isValidCustomAddress={isValidAddress}
@@ -427,8 +447,10 @@ export function Page() {
                 delegates.data.map((delegate) => (
                   <DelegateCard
                     onDelegateClick={() => {
-                      setIsOpen(true);
-                      setInputAddress(delegate?.author?.address);
+                      if (user) {
+                        setIsOpen(true);
+                        setInputAddress(delegate?.author?.address);
+                      }
                     }}
                     votingPower={delegate?.votingInfo?.votingPower}
                     delegatedVotes={delegate?.votingInfo?.totalVotes || "0"}
