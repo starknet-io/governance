@@ -8,10 +8,10 @@ import {
   LinkBox,
   LinkOverlay,
 } from "@chakra-ui/react";
-import { Tag } from "../Tag";
+import { Tag } from "../Tag/";
 import { Button } from "../Button";
-import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
-import { MarkdownRenderer } from "src/MarkdownRenderer";
+import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
+import { MarkdownRenderer } from "../MarkdownRenderer";
 
 export type DelegateCardProps = {
   statement: string | null;
@@ -39,6 +39,18 @@ const delegateNames: Record<string, string> = {
   web3_community: "Web3 community",
   web3_developer: "Web3 developer",
 };
+
+function formatVotingPower(number: number) {
+  if (number >= 1e9) {
+    return `${(number / 1e9).toFixed(1).replace(".0", "")}b`;
+  } else if (number >= 1e6) {
+    return `${(number / 1e6).toFixed(1).replace(".0", "")}m`;
+  } else if (number >= 1e3) {
+    return `${(number / 1e3).toFixed(1).replace(".0", "")}k`;
+  } else {
+    return `${number}`;
+  }
+}
 
 function extractParagraph(markdownContent: string, charLimit = 300): string {
   // Remove headings
@@ -102,9 +114,7 @@ export const DelegateCard = ({
   onDelegateClick,
   profileURL,
 }: DelegateCardProps) => {
-  const votesFormatted = votingPower
-    ? `${votingPower} delegated votes`
-    : "0 delegated votes";
+  const votesFormatted = formatVotingPower(votingPower) + " delegated votes";
   const formattedDelegateStatement = extractParagraph(statement || "");
 
   return (
@@ -126,7 +136,11 @@ export const DelegateCard = ({
       <CardBody>
         <DelegateTags type={type} />
         <MarkdownRenderer
-          textProps={{ fontSize: "14px", noOfLines: 3, color: "#4A4A4F" }}
+          textProps={{
+            fontSize: "14px",
+            noOfLines: 3,
+            color: "#4A4A4F",
+          }}
           content={formattedDelegateStatement || ""}
         />
       </CardBody>
@@ -138,7 +152,7 @@ export const DelegateCard = ({
               variant="outline"
               onClick={onDelegateClick}
             >
-              Delegate
+              Delegate 2 ddddd
             </Button>
           </Box>
         </Box>
