@@ -69,7 +69,6 @@ export {
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
-  HiXMark,
   StarknetCommunityIcon,
   StarknetIcon,
   DiscordIcon,
@@ -79,6 +78,9 @@ export {
   HamburgerIcon,
   PlusIcon,
   SortIcon,
+  EllipsisIcon,
+  InfoIcon,
+  XIcon,
 } from "../components/src/Icons/index";
 
 export {
