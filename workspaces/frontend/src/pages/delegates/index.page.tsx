@@ -224,10 +224,10 @@ export function Page() {
       const foundDelegate = delegates.data.find(
         (delegate) => delegate.author.address === receiverData.address,
       );
-      if (votingPower) {
+      if (votingPower?.vp?.vp) {
         return {
           ...receiverData,
-          vp: votingPower,
+          vp: votingPower?.vp?.vp,
         };
       }
       if (!foundDelegate) {
