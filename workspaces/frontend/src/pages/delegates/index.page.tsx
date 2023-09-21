@@ -26,7 +26,7 @@ import {
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useBalanceData } from "../../utils/hooks";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
