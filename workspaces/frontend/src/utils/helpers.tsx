@@ -48,7 +48,6 @@ export function flattenTreeItems(items: TreeItems) {
 
 export function flattenPageWithChildren(pages: PageWithChildren[]) {
   const result: PageWithChildren[] = [];
-
   function recursiveFlatten(arr: PageWithChildren[]) {
     for (const item of arr) {
       result.push(item);
@@ -61,9 +60,7 @@ export function flattenPageWithChildren(pages: PageWithChildren[]) {
       }
     }
   }
-
   recursiveFlatten(pages);
-
   return result;
 }
 
