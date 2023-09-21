@@ -1,62 +1,40 @@
+export { theme } from "./src/style/theme";
+export { Heading } from "./src/Heading";
+export { Text } from "./src/Text";
+export { Header } from "./src/Header";
+export { Badge } from "./src/Badge";
+export { Button } from "./src/Button";
+export { Logo } from "./src/Logo";
+export { PageTitle } from "./src/PageTitle";
+export { ThemeProvider } from "./src/ThemeProvider";
+export { NavGroup } from "./src/Navigation/NavGroup";
+export { NavItem } from "./src/Navigation/NavItem";
+export { SearchInput } from "./src/SearchInput";
+export { DelegateCard } from "./src/Card";
+export { Tag } from "./src/Tag";
+export { ContentContainer } from "./src/ContentContainer";
+export { IconButton, IconButtonWithBadge } from "./src/IconButton";
+export { Collapse } from "./src/Collapse";
+export { VoteButton } from "./src/VoteButton";
+export { VoteStat } from "./src/VoteStat";
+export { VoteComment } from "./src/VoteComment";
+export { VoteModal } from "./src/VoteModal";
+export { InfoModal } from "./src/InfoModal";
+export { PlaceholderImage } from "./src/PlaceholderImage";
+export { VoteReview } from "./src/VoteReview";
+export { DelegateModal } from "./src/DelegateModal";
+export { AgreementModal } from "./src/AgreementModal";
+export { DatePicker } from "./src/DatePicker";
+export { ConfirmModal } from "./src/ConfirmModal";
+export { ChakraDatePicker } from "./src/ChakraDatePicker";
+export { LinkCard } from "./src/LinkCard";
+export { CheckboxFilter } from "./src/Filter/CheckboxFilter";
+export { useMarkdownEditor } from "./src/Editor/useMarkdownEditor";
+export { CopyToClipboard } from "./src/CopyToClipboard";
+export { BannerHome } from "./src/BannerHome";
+export { Input } from "./src/Input";
+
 export {
-  Header,
-  Button,
-  ThemeProvider,
-  NavGroup,
-  NavItem,
-  HiOutlineCodeBracketSquare,
-  HiOutlineLockClosed,
-  HiOutlineDocumentText,
-  HiOutlineUserCircle,
-  HiOutlineAcademicCap,
-  HiOutlineQuestionMarkCircle,
-  HiOutlineChatBubbleLeftRight,
-  HiOutlineChatBubbleLeftEllipsis,
-  HiAdjustmentsHorizontal,
-  HiEllipsisHorizontal,
-  MdOutlineHowToVote,
-  MdOutlineAssignment,
-  Heading,
-  Text,
-  Logo,
-  Input,
-  Badge,
-  SearchInput,
-  DelegateCard,
-  Tag,
-  PageTitle,
-  ContentContainer,
-  VoteStat,
-  IconButton,
-  IconButtonWithBadge,
-  MarkdownEditor,
-  Collapse,
-  Multiselect,
-  VoteButton,
-  VoteComment,
-  VoteModal,
-  DelegateModal,
-  AgreementModal,
-  DatePicker,
-  ChakraDatePicker,
-  ConfirmModal,
-  LinkCard,
-  CheckboxFilter,
-  FilterPopoverButton,
-  FilterPopoverContent,
-  useFilterState,
-  FilterPopoverIcon,
-  CommentInput,
-  CommentList,
-  InfoModal,
-  PlaceholderImage,
-  VoteReview,
-  CopyToClipboard,
-  MembersList,
-  HiTrash,
-  MarkdownRenderer,
-  useMarkdownEditor,
-  Iframely,
   BoldIcon,
   ItalicIcon,
   UnderlineIcon,
@@ -65,7 +43,6 @@ export {
   BulletedListIcon,
   ImageIcon,
   LinkIcon,
-  QuillEditor,
   ProposalsIcon,
   HomeIcon,
   SnipsIcon,
@@ -76,42 +53,56 @@ export {
   SecurityIcon,
   SettingsIcon,
   SupportIcon,
-  GiHamburgerMenu,
   ArrowLeftIcon,
-  ReorderableList,
-  FormModal,
-  DeletionDialog,
-  HiOutlinePencil,
-  HiOutlineTrash,
   CommentIcon,
   NoDelegatesIcon,
   NoPostsIcon,
   NoSnipsIcon,
   PencilIcon,
   TrashIcon,
+  FiltersIcon,
   SuccessIcon,
   TrashWarningIcon,
   VoteIcon,
   WarningIcon,
-  BannerHome,
   ExternalLinkIcon,
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
-  Status,
-  StatusModal,
-  EmptyState,
-  UserProfileMenu,
-  SupportModal,
-  ShareDialog,
-  FiltersIcon,
+  HiXMark,
+  StarknetCommunityIcon,
+  StarknetIcon,
+  DiscordIcon,
+  ShareIcon,
+  CopyIcon,
   SearchIcon,
   HamburgerIcon,
   PlusIcon,
   SortIcon,
-} from "./src";
+} from "../components/src/Icons/index";
 
-export { theme } from "./src/style/theme";
+export {
+  FilterPopoverButton,
+  FilterPopoverContent,
+  useFilterState,
+  FilterPopoverIcon,
+} from "./src/Filter/";
+export { MarkdownEditor } from "./src/Editor";
+export { Multiselect } from "./src/Multiselect";
+export { ShareDialog } from "./src/ShareDialog";
+export { SupportModal } from "./src/SupportModal";
+export { StatusModal } from "./src/StatusModal";
+export { FormModal } from "./src/FormModal";
+export { DeletionDialog } from "./src/DeletionDialog";
+export { CommentInput, CommentList } from "./src/Comment";
+export { UserProfileMenu } from "./src/UserProfileMenu";
+export { EmptyState } from "./src/EmptyState";
+export { MembersList } from "./src/MembersList";
+export { ReorderableList } from "./src/ReorderableList";
+export { MarkdownRenderer } from "./src/MarkdownRenderer";
+export { Iframely } from "./src/Iframely";
+export { Status } from "./src/Status";
+export { QuillEditor } from "./src/Editor/QuillEditor";
 
 import * as Layout from "./src/RootLayout/RootLayout";
 import * as SummaryItems from "./src/SummaryItems/SummaryItems";
