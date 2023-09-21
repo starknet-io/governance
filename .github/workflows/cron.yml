@@ -1,14 +1,14 @@
-name: back deployment
+name: cron deployment
 
 on:
   push:
     branches: ['dev']
     paths:
-      - 'workspaces/backend/**'
+      - 'workspaces/cron/**'
   pull_request:
     branches: [ 'dev' ]
     paths:
-      - 'workspaces/backend/**'
+      - 'workspaces/cron/**'
   workflow_dispatch:
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: registry.digitalocean.com/governance/backend
+          images: registry.digitalocean.com/governance/cron
           flavor: latest=false
           tags: |
             type=ref,suffix=-{{sha}},event=branch
@@ -40,7 +40,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          file: backend.Dockerfile
+          context: workspaces/cron
+          file: workspaces/cron/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -51,16 +52,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       tag: ${{ needs.Build.outputs.tag }}
-    environment:
-      name: review-backend
-      url: https://api-review.yuki-labs.dev
     steps:
       - name: DigitalOcean App Platform deployment
         uses: digitalocean/app_action@v1.1.5
         with:
           app_name: backend-review
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "backend","image":{"registry_type": "DOCR","repository": "backend","tag": "${{ env.tag }}"}}]'
+          images: '[{"name": "cron","image":{"registry_type": "DOCR","repository": "cron","tag": "${{ env.tag }}"}}]'
 
   Deploy-dev:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
@@ -68,13 +66,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       tag: ${{ needs.Build.outputs.tag }}
-    environment:
-      name: development-backend
-      url: https://api-dev.yuki-labs.dev
     steps:
       - name: DigitalOcean App Platform deployment
         uses: digitalocean/app_action@v1.1.5
         with:
           app_name: backend-development
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "backend","image":{"registry_type": "DOCR","repository": "backend","tag": "${{ env.tag }}"}}]'
+          images: '[{"name": "cron","image":{"registry_type": "DOCR","repository": "cron","tag": "${{ env.tag }}"}}]'

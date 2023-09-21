@@ -1,30 +1,33 @@
 name: "Retention policy"
 on:
+  push:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * *"
+  #schedule:
+  #  - cron: "0 0 * * *"
 
 jobs:
   frontend_cleanup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - uses: actions/delete-package-versions@v4
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          package-name: 'governance-app/frontend'
-          package-type: 'container'
-          min-versions-to-keep: 1
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: cleanup frontend images
+        run: |
+          TAGS=$(doctl registry repository lt frontend | tail -n +5 | awk '{print $1}')
+          [[ -n $TAGS ]] && doctl registry repository dt frontend $TAGS --force
+          echo Tags removed: $TAGS
 
   backend_cleanup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - uses: actions/delete-package-versions@v4
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          package-name: 'governance-app/backend'
-          package-type: 'container'
-          min-versions-to-keep: 1
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: cleanup backend images
+        run: |
+          TAGS=$(doctl registry repository lt backend | tail -n +5 | awk '{print $1}')
+          [[ -n $TAGS ]] && doctl registry repository dt backend $TAGS --force
+          echo Tags removed: $TAGS

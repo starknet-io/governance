@@ -1,11 +1,11 @@
-name: back deployment (prod)
+name: cron deployment (prod)
 
 on:
   push:
     tags:
       - 'v*'
     paths:
-      - 'workspaces/backend/**'
+      - 'workspaces/cron/**'
   workflow_dispatch:
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: registry.digitalocean.com/governance/backend-prod
+          images: registry.digitalocean.com/governance/cron-prod
           flavor: latest=false
           tags: |
             type=ref,event=tag
@@ -46,13 +46,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       tag: ${{ needs.Build.outputs.tag }}
-    environment:
-      name: production-backend
-      url: https://api.yuki-labs.dev
     steps:
       - name: DigitalOcean App Platform deployment
         uses: digitalocean/app_action@v1.1.5
         with:
           app_name: backend-production
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "backend","image":{"registry_type": "DOCR","repository": "backend-prod","tag": "${{ env.tag }}"}}]'
+          images: '[{"name": "cron","image":{"registry_type": "DOCR","repository": "cron-prod","tag": "${{ env.tag }}"}}]'
