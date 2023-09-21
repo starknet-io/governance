@@ -24,8 +24,6 @@ import {
   Drawer,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
-  DrawerHeader,
   DrawerBody,
   useDisclosure,
   Button,
@@ -54,7 +52,6 @@ import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
-import { HiXMark } from "@yukilabs/governance-components/src";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -355,14 +352,14 @@ function PageLayout(props: Props) {
       >
         <DrawerOverlay />
         <DrawerContent>
-          {/* <DrawerCloseButton /> */}
           <Box position="absolute" top="16px" zIndex="12px">
             <IconButton
               aria-label="Close menu"
               onClick={onClose}
               variant="ghost"
               size="condensed"
-              icon={<HiXMark />}
+              //todo replace with close icon
+              icon={<div>X</div>}
             />
           </Box>
 
@@ -393,7 +390,8 @@ function PageLayout(props: Props) {
               <IconButton
                 aria-label="Open menu"
                 size="condensed"
-                icon={isOpen ? <HiXMark /> : <HamburgerIcon />}
+                // toDo replace with x icon
+                icon={isOpen ? <HamburgerIcon /> : <HamburgerIcon />}
                 onClick={onOpen}
                 variant="ghost"
               />
