@@ -191,7 +191,7 @@ export function Page() {
           `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
         );
         setIsOpen(false);
-        return
+        return;
       }
 
       const client = new snapshot.Client712(
@@ -251,8 +251,13 @@ export function Page() {
   const [statusDescription, setStatusDescription] = useState<string>("");
   const { user } = useDynamicContext();
   const hasVoted = vote.data && vote.data.votes?.[0];
-  const canVote = data?.proposal?.state === "active"
-  console.log('VOTING', canVote, data?.proposal?.state)
+  const canVote = data?.proposal?.state === "active";
+  const hasDelegated =
+    delegation.isFetched &&
+    userBalance.isFetched &&
+    delegation.data &&
+    delegation.data != "0x0000000000000000000000000000000000000000";
+  console.log("VOTING", canVote, data?.proposal?.state);
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
@@ -601,7 +606,7 @@ export function Page() {
                 } using ${vote.data.votes[0].vp} votes`}
               />
             )}
-            {!hasVoted && canVote ? (
+            {!hasVoted && canVote && !hasDelegated ? (
               <ButtonGroup
                 mb="40px"
                 spacing="8px"
