@@ -14,7 +14,6 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  HiEllipsisHorizontal,
   IconButton,
   InfoModal,
   PlaceholderImage,
@@ -473,7 +472,8 @@ export function Page() {
                 variant="simple"
                 onClick={() => console.log("clicked")}
                 aria-label="Search database"
-                icon={<HiEllipsisHorizontal size="24px" />}
+                //toDo replace with ellipsis icon
+                icon={<div>...</div>}
               />
             </Box>
             <Flex gap="16px" paddingTop="0" alignItems="center">
