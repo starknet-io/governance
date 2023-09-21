@@ -238,7 +238,6 @@ export function Page() {
     }
   }
 
-  console.log(JSON.stringify(data, null, 2));
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
   const [isConfirmOpen, setisConfirmOpen] = useState(false);
@@ -257,7 +256,6 @@ export function Page() {
     userBalance.isFetched &&
     delegation.data &&
     delegation.data != "0x0000000000000000000000000000000000000000";
-  console.log("VOTING", canVote, data?.proposal?.state);
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
