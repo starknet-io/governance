@@ -45,6 +45,7 @@ export const textTheme = defineStyleConfig({
     small: {
       fontSize: "0.75rem",
       lineHeight: "1.25rem",
+      fontWeight: "400",
     },
     smallStrong: {
       fontSize: "0.75rem",
