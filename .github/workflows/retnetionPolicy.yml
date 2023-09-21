@@ -2,8 +2,8 @@ name: "Retention policy"
 on:
   push:
   workflow_dispatch:
-  #schedule:
-  #  - cron: "0 0 * * *"
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   frontend_cleanup:
@@ -31,3 +31,26 @@ jobs:
           TAGS=$(doctl registry repository lt backend | tail -n +5 | awk '{print $1}')
           [[ -n $TAGS ]] && doctl registry repository dt backend $TAGS --force
           echo Tags removed: $TAGS
+  cron_cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: cleanup backend images
+        run: |
+          TAGS=$(doctl registry repository lt cron | tail -n +5 | awk '{print $1}')
+          [[ -n $TAGS ]] && doctl registry repository dt cron $TAGS --force
+          echo Tags removed: $TAGS
+
+  garbage-collection:
+    runs-on: ubuntu-latest
+    needs: [cron_cleanup, backend_cleanup, frontend_cleanup]
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: garbage-collection
+        run: doctl registry garbage-collection start --include-untagged-manifests --force
