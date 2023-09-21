@@ -427,8 +427,10 @@ export function Page() {
                 delegates.data.map((delegate) => (
                   <DelegateCard
                     onDelegateClick={() => {
-                      setIsOpen(true);
-                      setInputAddress(delegate?.author?.address);
+                      if (user) {
+                        setIsOpen(true);
+                        setInputAddress(delegate?.author?.address);
+                      }
                     }}
                     votingPower={delegate?.votingInfo?.votingPower}
                     delegatedVotes={delegate?.votingInfo?.totalVotes || "0"}
