@@ -13,7 +13,7 @@ import {
   StarknetCommunityIcon,
   StarknetIcon,
   DiscordIcon,
-  HiOutlineArrowUpRight,
+  ExternalLinkIcon,
 } from "src/Icons";
 import { Text } from "../Text";
 import { Heading } from "src/Heading";
@@ -99,7 +99,7 @@ const LinkBox = ({ href, icon, label }: LinkBoxProps) => {
       target={"_blank"}
       size="lg"
       leftIcon={icon}
-      rightIcon={<HiOutlineArrowUpRight size="20px" color="#86848D" />}
+      rightIcon={<ExternalLinkIcon />}
       width="100%"
       justifyContent={"space-between"}
       height="44px"
