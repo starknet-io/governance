@@ -53,15 +53,9 @@ export const DelegateModal = ({
 }: Props) => {
   const [customAddress, setCustomAddress] = useState("");
   const getTotalVotingPower = () => {
-    if (receiverData) {
-      return receiverData.vp
-        ? (
-            parseInt(receiverData.balance || "0") + (receiverData?.vp || 0)
-          ).toString()
-        : receiverData.balance;
-    } else {
-      return "0";
-    }
+    return receiverData?.vp || receiverData?.vp === 0
+      ? receiverData.vp.toString()
+      : receiverData?.balance?.toString() || "0";
   };
   return (
     <Modal
@@ -153,7 +147,9 @@ export const DelegateModal = ({
                     size="lg"
                     onClick={delegateTokens}
                   >
-                    {isUndelegation ? "Undelegate your votes" : "Delegate your votes"}
+                    {isUndelegation
+                      ? "Undelegate your votes"
+                      : "Delegate your votes"}
                   </Button>
                 )
               ) : (

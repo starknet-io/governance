@@ -34,10 +34,12 @@ import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "../../wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "./profile/@id.page";
+import {gql} from "../../gql";
 
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
 }
+
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -201,8 +203,6 @@ export function Page() {
     searchQuery,
     sortBy,
   });
-
-  console.log(receiverData)
 
   const addVotingPowerToReceiver = () => {
     if (delegates.data && delegates.data.length > 0) {
