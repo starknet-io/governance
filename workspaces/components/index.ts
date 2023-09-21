@@ -111,6 +111,8 @@ export {
   SortIcon,
 } from "./src";
 
+export { theme } from "./src/style/theme";
+
 import * as Layout from "./src/RootLayout/RootLayout";
 import * as SummaryItems from "./src/SummaryItems/SummaryItems";
 import * as ListRow from "./src/ListRow/ListRowGeneric";

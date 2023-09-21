@@ -23,7 +23,7 @@ const config = {
   initialColorMode: "light",
 };
 
-const theme = extendTheme({
+export const theme = extendTheme({
   config,
   colors: {
     ...colors,
@@ -65,5 +65,3 @@ const theme = extendTheme({
     Switch: switchTheme,
   },
 });
-
-export default theme;
