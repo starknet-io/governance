@@ -34,7 +34,6 @@ import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "../../wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "./profile/@id.page";
-import {gql} from "../../gql";
 
 {
   /* Filter: already voted, >1million voting power, agree with delegate agreement, category   */
