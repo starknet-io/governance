@@ -12,6 +12,7 @@ import { Tag } from "../Tag/";
 import { Button } from "../Button";
 import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
 import { MarkdownRenderer } from "../MarkdownRenderer";
+import { formatVotesAmount } from "src/utils";
 
 export type DelegateCardProps = {
   statement: string | null;
@@ -39,18 +40,6 @@ const delegateNames: Record<string, string> = {
   web3_community: "Web3 community",
   web3_developer: "Web3 developer",
 };
-
-function formatVotingPower(number: number) {
-  if (number >= 1e9) {
-    return `${(number / 1e9).toFixed(1).replace(".0", "")}b`;
-  } else if (number >= 1e6) {
-    return `${(number / 1e6).toFixed(1).replace(".0", "")}m`;
-  } else if (number >= 1e3) {
-    return `${(number / 1e3).toFixed(1).replace(".0", "")}k`;
-  } else {
-    return `${number}`;
-  }
-}
 
 function extractParagraph(markdownContent: string, charLimit = 300): string {
   // Remove headings
@@ -114,7 +103,7 @@ export const DelegateCard = ({
   onDelegateClick,
   profileURL,
 }: DelegateCardProps) => {
-  const votesFormatted = formatVotingPower(votingPower) + " delegated votes";
+  const votesFormatted = formatVotesAmount(votingPower) + " delegated votes";
   const formattedDelegateStatement = extractParagraph(statement || "");
 
   return (
