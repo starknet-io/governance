@@ -45,7 +45,7 @@ import {
   HamburgerIcon,
   PlusIcon,
   SortIcon,
-  CloseIcon
+  CloseIcon,
   EllipsisIcon,
   InfoIcon,
   XIcon,
