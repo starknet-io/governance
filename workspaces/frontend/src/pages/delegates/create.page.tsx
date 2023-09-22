@@ -21,6 +21,7 @@ import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delega
 import { DocumentProps } from "src/renderer/types";
 import { useState, useEffect } from "react";
 import { delegateNames } from "./index.page";
+import { useFileUpload } from "src/hooks/useFileUpload";
 
 const interestsValues = interestsEnum.enumValues;
 
@@ -49,6 +50,8 @@ export function Page() {
     editorValue: customAgreementEditorValue,
     handleEditorChange: handleCustomAgreementEditorChange,
   } = useMarkdownEditor("");
+
+  const { handleUpload } = useFileUpload();
 
   const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
     useState(false);
@@ -100,6 +103,7 @@ export function Page() {
                 <MarkdownEditor
                   onChange={handleEditorChange}
                   value={editorValue}
+                  handleUpload={handleUpload}
                 />
                 {errors.statement && (
                   <span>This field is required.</span>
@@ -215,6 +219,7 @@ export function Page() {
                   <MarkdownEditor
                     onChange={handleCustomAgreementEditorChange}
                     value={customAgreementEditorValue}
+                    handleUpload={handleUpload}
                   />
                 </FormControl>
               )}

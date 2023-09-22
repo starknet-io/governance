@@ -13,11 +13,16 @@ import { useMarkdownEditor } from "./useMarkdownEditor";
 import ImageBlockButton from "./ImageBlockButton";
 import LinkBlockButton from "./LinkBlockButton";
 
-export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
+export const MarkdownEditor: React.FC<
+  MarkdownEditorProps & {
+    handleUpload?: (file: File) => Promise<string | void> | void;
+  }
+> = ({
   onChange,
   minHeight = "200",
   customEditor,
   hideTabBar = false,
+  handleUpload,
 }) => {
   const { convertMarkdownToSlate } = useMarkdownEditor("");
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
@@ -50,7 +55,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             <BlockButton format="block_quote" />
             <BlockButton format="ul_list" />
             <BlockButton format="ol_list" />
-            <ImageBlockButton editor={mainEditor} />
+            <ImageBlockButton editor={mainEditor} handleUpload={handleUpload} />
             <LinkBlockButton editor={mainEditor} />
           </Toolbar>
         )}

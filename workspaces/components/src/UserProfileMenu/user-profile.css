@@ -1,6 +1,6 @@
 .user-profile-menu {
   width: 350px;
-  height: 400px;
+  height: 'auto';
   border-radius: 16px;
   background-color: #fff;
   position: absolute;

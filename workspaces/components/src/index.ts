@@ -119,4 +119,7 @@ export { StatusModal } from "./StatusModal";
 export { EmptyState } from "./EmptyState";
 export { UserProfileMenu } from "./UserProfileMenu";
 export { SupportModal } from "./SupportModal";
+export { FileUploader } from "./FileUploader";
+export { ProfileImage } from "./ProfileImage";
+export { UploadImage } from "./UploadImage";
 export { ShareDialog } from "./ShareDialog"

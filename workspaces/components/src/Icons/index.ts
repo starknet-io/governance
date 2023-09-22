@@ -36,14 +36,16 @@ import {
   VoteForIcon,
   StarknetCommunityIcon,
   StarknetIcon,
-  ShareIcon,
   CopyIcon,
   FiltersIcon,
   DiscordIcon,
   SearchIcon,
+  ShareIcon,
+  ProfileIcon,
   HamburgerIcon,
   PlusIcon,
   SortIcon,
+  ImageWarningIcon
   CloseIcon
 } from "./UiIcons";
 import {
@@ -121,11 +123,13 @@ export {
   StarknetIcon,
   DiscordIcon,
   HiOutlineArrowUpRight,
-  ShareIcon,
   CopyIcon,
   SearchIcon,
+  ShareIcon,
+  ProfileIcon,
   HamburgerIcon,
   PlusIcon,
   SortIcon,
+  ImageWarningIcon
   CloseIcon
 };

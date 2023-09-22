@@ -20,6 +20,7 @@ import { Controller, useForm, FieldErrors } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
+import { useFileUpload } from "src/hooks/useFileUpload";
 import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 
 const interestsValues = interestsEnum.enumValues;
@@ -92,7 +93,7 @@ export function Page() {
   };
 
   const deleteDelegate = trpc.delegates.deleteDelegate.useMutation();
-
+  const { handleUpload } = useFileUpload();
   useEffect(() => {
     if (delegate && isSuccess) processData();
   }, [isSuccess]);
@@ -140,10 +141,9 @@ export function Page() {
                   onChange={handleEditorChange}
                   value={editorValue}
                   customEditor={editor}
+                  handleUpload={handleUpload}
                 />
-                {errors.statement && (
-                  <span>This field is required.</span>
-                )}
+                {errors.statement && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Delegate type</FormLabel>
@@ -162,9 +162,7 @@ export function Page() {
                     />
                   )}
                 />
-                {formErrors.interests && (
-                  <span>This field is required.</span>
-                )}
+                {formErrors.interests && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Starknet wallet address</FormLabel>
@@ -258,6 +256,7 @@ export function Page() {
                         ? editorCustomAgreement
                         : undefined
                     }
+                    handleUpload={handleUpload}
                   />
                 </FormControl>
               </div>

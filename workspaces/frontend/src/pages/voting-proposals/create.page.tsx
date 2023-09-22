@@ -24,6 +24,7 @@ import { providers } from "ethers";
 import { Proposal } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useForm, Controller } from "react-hook-form";
+import { useFileUpload } from "src/hooks/useFileUpload";
 
 interface FieldValues {
   // type: ProposalType;
@@ -40,9 +41,9 @@ const categories = ["category1", "category2", "category3"];
 export function Page() {
   const { data: walletClient } = useWalletClient();
   const { convertSlateToMarkdown } = useMarkdownEditor("");
+  const { handleUpload } = useFileUpload();
 
   const createProposal = trpc.proposals.createProposal.useMutation();
-
 
   const {
     handleSubmit,
@@ -75,7 +76,10 @@ export function Page() {
 
       console.log(block);
 
-      const params: Proposal & { categories: Array<string>, votingPeriod?: Date[] } = {
+      const params: Proposal & {
+        categories: Array<string>;
+        votingPeriod?: Date[];
+      } = {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         type: "basic",
         title: data.title,
@@ -87,7 +91,7 @@ export function Page() {
         snapshot: Number(block),
         plugins: JSON.stringify({}),
         discussion: data.discussion,
-      }
+      };
 
       const web3 = new providers.Web3Provider(walletClient.transport);
 
@@ -117,7 +121,6 @@ export function Page() {
       }
 
       console.log(receipt);
-
     } catch (error) {
       // Handle error
       console.log(error);
@@ -150,7 +153,11 @@ export function Page() {
                   control={control}
                   name="body"
                   render={({ field: { onChange, value } }) => (
-                    <MarkdownEditor onChange={onChange} value={value} />
+                    <MarkdownEditor
+                      onChange={onChange}
+                      value={value}
+                      handleUpload={handleUpload}
+                    />
                   )}
                 />
               </FormControl>

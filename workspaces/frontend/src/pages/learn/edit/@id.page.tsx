@@ -23,6 +23,7 @@ import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";
 import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
+import { useFileUpload } from "src/hooks/useFileUpload";
 
 export function Page() {
   const {
@@ -33,6 +34,7 @@ export function Page() {
   } = useForm<RouterInput["pages"]["editPage"]>();
 
   const pageContext = usePageContext();
+  const { handleUpload } = useFileUpload();
   const pageId = pageContext.routeParams!.id;
   const cancelRef = useRef(null);
 
@@ -66,7 +68,7 @@ export function Page() {
         return {
           ...item,
           title: data.title,
-          content: editorValue
+          content: editorValue,
         };
       }
       return item;
@@ -126,6 +128,7 @@ export function Page() {
                   customEditor={editor}
                   value={editorValue}
                   onChange={handleEditorChange}
+                  handleUpload={handleUpload}
                 />
                 {errors.content && <span>This field is required.</span>}
               </FormControl>
