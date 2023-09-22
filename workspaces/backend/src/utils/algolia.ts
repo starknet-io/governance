@@ -5,6 +5,7 @@ interface RecordData {
   name: string;
   type: RecordType;
   refID: number | string;
+  content?: string;
 }
 
 const client = algoliasearch(

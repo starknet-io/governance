@@ -73,9 +73,10 @@ export const delegateRouter = router({
         .returning();
 
       await Algolia.saveObjectToIndex({
-        name: opts.input.delegateStatement ?? '',
+        name: (user?.ensName || user?.address) ?? '',
         type: 'delegate',
         refID: insertedDelegate[0].id,
+        content: opts.input.statement + " " + opts.input.interests
       });
 
       const insertedDelegateRecord = insertedDelegate[0];
@@ -184,11 +185,22 @@ export const delegateRouter = router({
         .returning();
       const updatedDelegateRecord = updatedDelegate[0];
 
-      await Algolia.updateObjectFromIndex({
-        name: updatedDelegateRecord.delegateStatement,
-        type: 'delegate',
-        refID: updatedDelegateRecord.id,
-      });
+      if (updatedDelegate[0].userId) {
+        const user = await db.query.users.findFirst({
+          where: eq(users.id, updatedDelegate[0].userId),
+        });
+
+        if (user) {
+          await Algolia.updateObjectFromIndex({
+            refID: updatedDelegate[0].id,
+            type: 'delegate',
+            name: user.ensName || user.address,
+            content: opts.input.statement + ' ' + opts.input?.interests,
+          });
+        } else {
+          console.error('User not found for delegate with ID:', updatedDelegate[0].id);
+        }
+      }
 
       // Handle customDelegateAgreementContent if provided
       if (opts.input.customDelegateAgreementContent) {

@@ -48,9 +48,11 @@ export const councilsRouter = router({
         .returning();
 
       await Algolia.saveObjectToIndex({
-        name: insertedCouncil[0].name ?? '',
+        name: insertedCouncil[0].name || "",
         type: 'council',
         refID: insertedCouncil[0].id,
+        content:
+          insertedCouncil[0].description + ' ' + insertedCouncil[0].statement,
       });
 
       for (const member of opts.input.members) {

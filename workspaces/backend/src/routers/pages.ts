@@ -40,6 +40,7 @@ export const pagesRouter = router({
         name: page.title ?? '',
         type: 'learn',
         refID: page.id,
+        content: page.content ?? "",
       });
 
       return page;
@@ -66,6 +67,7 @@ export const pagesRouter = router({
         name: page.title ?? '',
         type: 'learn',
         refID: page.id,
+        content: page.content || "",
       });
 
       return page;
@@ -194,6 +196,7 @@ export const pagesRouter = router({
             name: page.title ?? '',
             type: 'learn',
             refID: page.id,
+            content: page.content || '',
           });
         } else {
           const insertedPage = await db.insert(pages)
@@ -206,10 +209,11 @@ export const pagesRouter = router({
             })
             .returning();
           const newPage = insertedPage[0];
-          await Algolia.saveObjectToIndex({
-            name: newPage.title ?? '',
+          await Algolia.updateObjectFromIndex({
+            name: newPage.title || '',
             type: 'learn',
             refID: newPage.id,
+            content: newPage.content || '',
           });
         }
       }));

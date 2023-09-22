@@ -10,27 +10,28 @@ import { usersToCouncils } from '../db/schema/usersToCouncils';
 import { posts } from '../db/schema/posts';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import TurndownService from 'turndown';
-import {pages} from "../db/schema/pages";
+import { pages } from '../db/schema/pages';
+import { Algolia } from '../utils/algolia';
 
 const turndownService = new TurndownService();
 
 function generateDummyContent(): string {
   const sentences = [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Vestibulum vehicula ex at molestie cursus.",
-    "Nulla facilisi. Maecenas consectetur metus nec urna placerat, non luctus ante facilisis.",
-    "Phasellus aliquam id metus a commodo.",
-    "Duis dignissim libero in nibh imperdiet, non dignissim neque ultricies.",
-    "Morbi eu velit a ante pulvinar ornare sed vel nulla.",
-    "Nulla facilisi. Nulla iaculis justo ut massa ullamcorper, a dictum est cursus.",
-    "Suspendisse potenti. Integer in sagittis purus.",
-    "Nunc non nisi sit amet nisl tempus consectetur nec id enim.",
-    "Aliquam ac augue pharetra, volutpat dui ac, dictum metus."
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    'Vestibulum vehicula ex at molestie cursus.',
+    'Nulla facilisi. Maecenas consectetur metus nec urna placerat, non luctus ante facilisis.',
+    'Phasellus aliquam id metus a commodo.',
+    'Duis dignissim libero in nibh imperdiet, non dignissim neque ultricies.',
+    'Morbi eu velit a ante pulvinar ornare sed vel nulla.',
+    'Nulla facilisi. Nulla iaculis justo ut massa ullamcorper, a dictum est cursus.',
+    'Suspendisse potenti. Integer in sagittis purus.',
+    'Nunc non nisi sit amet nisl tempus consectetur nec id enim.',
+    'Aliquam ac augue pharetra, volutpat dui ac, dictum metus.',
   ];
 
-  let content = "";
-  for (let i = 0; i < 200; i++) {
-    content += sentences[Math.floor(Math.random() * sentences.length)] + "\n\n";
+  let content = '';
+  for (let i = 0; i < 20; i++) {
+    content += sentences[Math.floor(Math.random() * sentences.length)] + '\n\n';
   }
 
   return content;
@@ -40,6 +41,26 @@ async function createLearnSections(userId: string | null) {
   console.log('Creating Learn Sections');
 
   for (let orderNumber = 1; orderNumber <= 5; orderNumber++) {
+    const slug = `learn_section_${orderNumber}`;
+
+    // Check if the Learn section with the given slug already exists
+    const existingPage = await db.query.pages.findFirst({
+      where: eq(pages.slug, slug),
+    });
+
+    if (existingPage) {
+      console.log(`Learn Section with slug ${slug} already exists.`);
+      console.log(`Updating Learn Section ${existingPage.id} in Algolia.`);
+      await Algolia.updateObjectFromIndex({
+        name: existingPage.title || '',
+        type: 'learn',
+        refID: existingPage.id,
+        content: existingPage.content || '',
+      });
+
+      continue; // Skip to the next iteration if this Learn section already exists
+    }
+
     const content = generateDummyContent();
 
     const newPage = {
@@ -47,12 +68,20 @@ async function createLearnSections(userId: string | null) {
       content: content,
       orderNumber: orderNumber,
       userId: userId,
-      slug: `learn_section_${orderNumber}`,
+      slug: slug,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    await db.insert(pages).values(newPage).execute();
+    const insertedPage = await db.insert(pages).values(newPage).returning();
+
+    console.log(`Saving Learn Section ${insertedPage[0].id} to Algolia.`);
+    await Algolia.saveObjectToIndex({
+      name: insertedPage[0].title || '',
+      type: 'learn',
+      refID: insertedPage[0].id,
+      content: insertedPage[0].content || '',
+    });
   }
 
   console.log('Learn Sections Created');
@@ -112,6 +141,13 @@ async function createCouncils() {
 
     if (existingCouncil) {
       console.log(`Council ${councilData.name} already exists.`);
+      console.log(`Updating council ${councilData.name} on alogolia.`);
+      await Algolia.updateObjectFromIndex({
+        name: existingCouncil.name || '',
+        type: 'council',
+        refID: existingCouncil.id,
+        content: existingCouncil.description + ' ' + existingCouncil.statement,
+      });
       continue; // Skip to the next council if this one already exists
     } else {
       console.log(`Creating Council ${councilData.name}.`);
@@ -129,6 +165,15 @@ async function createCouncils() {
         updatedAt: new Date(),
       })
       .returning();
+
+    console.log(`Saving Council ${insertedCouncil[0].id} to Algolia.`);
+    await Algolia.saveObjectToIndex({
+      name: insertedCouncil[0].name || '',
+      type: 'council',
+      refID: insertedCouncil[0].id,
+      content:
+        insertedCouncil[0].description + ' ' + insertedCouncil[0].statement,
+    });
 
     const councilId = insertedCouncil[0].id;
 
@@ -198,7 +243,7 @@ async function seedData() {
       interestsStatements
         ?.find((item: any) => item.label === 'Interests')
         ?.value.map((interest: string) => {
-          const parsedInterest = interest.toLowerCase().replace(/\s+/g, '_')
+          const parsedInterest = interest.toLowerCase().replace(/\s+/g, '_');
           if (parsedInterest === 'infrastructure_starknet_dev') {
             return 'infrastructure';
           }
@@ -219,6 +264,7 @@ async function seedData() {
     });
 
     let userId;
+    let user;
     if (!existingUser) {
       // Step 2: Insert new user if not exists
       const insertedUser = await db
@@ -233,14 +279,18 @@ async function seedData() {
         })
         .returning();
       userId = insertedUser[0].id;
+      user = insertedUser[0];
     } else {
       userId = existingUser.id;
+      user = existingUser;
     }
 
     // Step 3: Check if the delegate exists
     const existingDelegate = await db.query.delegates.findFirst({
       where: eq(delegates.userId, userId),
     });
+
+    const userInfo = user;
 
     if (!existingDelegate) {
       // Step 4: Insert new delegate if not exists
@@ -264,6 +314,14 @@ async function seedData() {
         .returning();
       const delegateId = insertedDelegate[0].id;
 
+      console.log('Saving ', delegateId, ' for algolia');
+      await Algolia.saveObjectToIndex({
+        refID: delegateId,
+        type: 'delegate',
+        name: (userInfo.ensName || userInfo.address) as string,
+        content: insertedDelegate[0].statement + ' ' + interests,
+      });
+
       if (entry.c6) {
         const customAgreement = entry.c6.replace(/\\/g, '');
 
@@ -280,6 +338,19 @@ async function seedData() {
           .values(newCustomAgreement)
           .execute();
       }
+    } else {
+      console.log(
+        'Updating delegate',
+        existingDelegate.id,
+        `(${user.ensName || user.address})`,
+        ' in algolia',
+      );
+      await Algolia.updateObjectFromIndex({
+        refID: existingDelegate.id,
+        type: 'delegate',
+        name: (userInfo.ensName || userInfo.address) as string,
+        content: statementMarkdown + ' ' + interests.join(' '),
+      });
     }
   }
   console.log('Delegates created');
@@ -288,10 +359,10 @@ async function seedData() {
     where: eq(users.role, 'admin'),
   });
 
-  console.log('Populate learn sections')
+  console.log('Populate learn sections');
   // Then, create Learn sections
   await createLearnSections(oneAdminUser?.id || null);
-  console.log('Learn section populated')
+  console.log('Learn section populated');
 }
 
 async function runMigrations() {

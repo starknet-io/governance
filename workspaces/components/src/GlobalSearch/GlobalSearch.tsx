@@ -72,9 +72,13 @@ export function GlobalSearch({
   };
 
   const handleEnterPress = () => {
+    debugger
     if (h) {
-      const path = getSearchItemHref(h?.type, h?.refID);
+      let path = getSearchItemHref(h?.type, h?.refID);
       setIsSearchModalOpen(false);
+      if (h?.type === 'delegate') {
+        path = path.replace("/delegates/", "/delegates/profile/");
+      }
       navigate(path);
     }
   };

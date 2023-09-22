@@ -51,7 +51,6 @@ function buildList(searchItems: ISearchItem[], highlightedItem?: ISearchItem) {
   return searchItems.map((searchItem) => {
     const isHighlightedItem = searchItem.objectID === highlightedItem?.objectID;
 
-
     // console.log({ in: highlightedItem, searchItem, isHighlightedItem });
     switch (searchItem.type) {
       case "voting_proposal": {
@@ -278,7 +277,11 @@ function HoverBox({
   data: ISearchItem;
   isHighlightedItem?: boolean;
 }) {
-  const href = getSearchItemHref(data.type, data.refID);
+  let href = getSearchItemHref(data.type, data.refID);
+
+  if (data.type === "delegate") {
+    href = href.replace("/delegates/", "/delegates/profile/");
+  }
   return (
     <Box as="a" href={href}>
       <Box
