@@ -109,6 +109,7 @@ export { ReorderableList } from "./src/ReorderableList";
 export { MarkdownRenderer } from "./src/MarkdownRenderer";
 export { Iframely } from "./src/Iframely";
 export { Status } from "./src/Status";
+export { GlobalSearch } from "./src/GlobalSearch";
 export { QuillEditor } from "./src/Editor/QuillEditor";
 
 import * as Layout from "./src/RootLayout/RootLayout";

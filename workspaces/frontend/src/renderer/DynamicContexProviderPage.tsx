@@ -44,6 +44,8 @@ import {
   Link,
   PlusIcon,
   Show,
+  GlobalSearch,
+  SearchIcon,
   Flex,
 } from "@yukilabs/governance-components";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
@@ -52,7 +54,6 @@ import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
-import { GlobalSearch, SearchIcon } from "@yukilabs/governance-components/src";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
