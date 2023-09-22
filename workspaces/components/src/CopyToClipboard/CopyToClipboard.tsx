@@ -26,7 +26,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
   };
 
   return (
-    <Box display="flex" alignItems="center">
+    <Box display={"flex"} alignItems="center">
       {children}
       <IconButton
         aria-label="Copy to clipboard"
