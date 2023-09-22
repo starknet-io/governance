@@ -1,15 +1,7 @@
-name: front deployment
+name: test
 
 on:
   push:
-    branches: ['dev']
-    paths:
-      - 'workspaces/frontend/**'
-  pull_request:
-    branches: [ 'dev' ]
-    paths:
-      - 'workspaces/frontend/**'
-  workflow_dispatch:
 
 jobs:
   Build:
@@ -44,38 +36,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-  Deploy-review:
-    if: github.event_name == 'pull_request'
-    needs: Build
-    runs-on: ubuntu-latest
-    env:
-      tag: ${{ needs.Build.outputs.tag }}
-    environment:
-      name: review-frontend
-      url: https://review.yuki-labs.dev
-    steps:
-      - name: DigitalOcean App Platform deployment
-        uses: digitalocean/app_action@v1.1.5
-        with:
-          app_name: frontend-review
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'
-
-  Deploy-dev:
-    if:  github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
-    needs: Build
-    runs-on: ubuntu-latest
-    env:
-      tag: ${{ needs.Build.outputs.tag }}
-    environment:
-      name: development-frontend
-      url: https://dev.yuki-labs.dev
-    steps:
-      - name: DigitalOcean App Platform deployment
-        uses: digitalocean/app_action@v1.1.5
-        with:
-          app_name: frontend-development
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'
-
