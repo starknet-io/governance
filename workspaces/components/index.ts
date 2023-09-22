@@ -33,6 +33,7 @@ export { useMarkdownEditor } from "./src/Editor/useMarkdownEditor";
 export { CopyToClipboard } from "./src/CopyToClipboard";
 export { BannerHome } from "./src/BannerHome";
 export { Input } from "./src/Input";
+export { Banner } from "./src/Banner/Banner";
 
 export {
   BoldIcon,
