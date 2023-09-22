@@ -1,8 +1,8 @@
 import React from "react";
 import { VStack } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
-import theme from "src/style/theme";
-import { ThemeProvider } from "../ThemeProvider";
+import { theme } from "src/style/theme";
+
 import { Text as GovernanceText } from "./Text";
 import { ChakraProvider } from "@chakra-ui/react";
 
@@ -20,25 +20,19 @@ export default {
 } as Meta<typeof Text>;
 
 export const Text = () => (
-  <ThemeProvider>
-    <VStack p={12} align="flex-start">
-      <GovernanceText variant="small">small 12/20</GovernanceText>
-      <GovernanceText variant="smallStrong">small-strong 12/20</GovernanceText>
-      <GovernanceText variant="medium">medium 14/20</GovernanceText>
-      <GovernanceText variant="mediumStrong">
-        medium-strong 14/20
-      </GovernanceText>
-      <GovernanceText variant="large">large 15/24</GovernanceText>
-      <GovernanceText variant="largeStrong">large-strong 15/24</GovernanceText>
-      <GovernanceText variant="captionSmall">
-        caption-small 10/16
-      </GovernanceText>
-      <GovernanceText variant="captionSmallStrong">
-        caption-small-strong 10/16
-      </GovernanceText>
-      <GovernanceText variant="captionSmallUppercase">
-        caption-small-uppercase 10/16
-      </GovernanceText>
-    </VStack>
-  </ThemeProvider>
+  <VStack p={12} align="flex-start">
+    <GovernanceText variant="small">small 12/20</GovernanceText>
+    <GovernanceText variant="smallStrong">small-strong 12/20</GovernanceText>
+    <GovernanceText variant="medium">medium 14/20</GovernanceText>
+    <GovernanceText variant="mediumStrong">medium-strong 14/20</GovernanceText>
+    <GovernanceText variant="large">large 15/24</GovernanceText>
+    <GovernanceText variant="largeStrong">large-strong 15/24</GovernanceText>
+    <GovernanceText variant="captionSmall">caption-small 10/16</GovernanceText>
+    <GovernanceText variant="captionSmallStrong">
+      caption-small-strong 10/16
+    </GovernanceText>
+    <GovernanceText variant="captionSmallUppercase">
+      caption-small-uppercase 10/16
+    </GovernanceText>
+  </VStack>
 );
