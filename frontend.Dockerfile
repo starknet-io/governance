@@ -1,12 +1,9 @@
-FROM mcr.microsoft.com/devcontainers/typescript-node:16 as build
-WORKDIR /build/
-ADD ./ ./
+FROM node:18.18.0-bullseye-slim as build
+RUN apt-get update && apt-get upgrade -y
+WORKDIR /app
+COPY . .
 RUN yarn install
 RUN NODE_OPTIONS="--max-old-space-size=8192" yarn workspace @yukilabs/governance-frontend build
-
-FROM mcr.microsoft.com/devcontainers/typescript-node:16
-RUN mkdir /runtime
-COPY --from=build /build/ /runtime/
-WORKDIR /runtime/workspaces/frontend
+WORKDIR /app/workspaces/frontend
 EXPOSE 3000
 ENTRYPOINT [ "node", "./src/server/index.cjs" ]

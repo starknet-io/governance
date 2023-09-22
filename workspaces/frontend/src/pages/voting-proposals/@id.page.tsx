@@ -1,6 +1,7 @@
 import { DocumentProps } from "src/renderer/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  AppBar,
   Box,
   Button,
   ButtonGroup,
@@ -26,10 +27,12 @@ import {
   VoteModal,
   VoteReview,
   VoteStat,
+  StatusModal,
   Iframely,
   Status,
   VoteComment,
   MarkdownRenderer,
+  Select,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -45,6 +48,15 @@ import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { useBalanceData } from "src/utils/hooks";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { stringToHex } from "viem";
+import { MINIMUM_TOKENS_FOR_DELEGATION } from "../delegates/profile/@id.page";
+
+const sortByOptions = {
+  defaultValue: "date",
+  options: [
+    { label: "Date", value: "date" },
+    { label: "Upvotes", value: "upvotes" },
+  ],
+};
 
 export function Page() {
   const pageContext = usePageContext();
@@ -172,6 +184,16 @@ export function Page() {
     try {
       if (walletClient == null) return;
 
+      if ((vp?.vp?.vp || 0) < MINIMUM_TOKENS_FOR_DELEGATION) {
+        setIsStatusModalOpen(true);
+        setStatusTitle("No voting power");
+        setStatusDescription(
+          `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
+        );
+        setIsOpen(false);
+        return;
+      }
+
       const client = new snapshot.Client712(
         import.meta.env.VITE_APP_SNAPSHOT_URL,
       );
@@ -205,26 +227,64 @@ export function Page() {
       refetch();
       vote.refetch();
       votes.refetch();
-      console.log(receipt);
-    } catch (error) {
+    } catch (error: any) {
       // Handle error
-      console.log(error);
+      setIsStatusModalOpen(true);
+      setStatusTitle("Voting failed");
+      setStatusDescription(
+        error?.error_description || error?.error || "An error occurred",
+      );
+      setisConfirmOpen(false);
     }
   }
 
-  const commentCount = 0;
-  console.log(JSON.stringify(data, null, 2));
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
   const [isConfirmOpen, setisConfirmOpen] = useState(false);
   const [isSuccessModalOpen, setisSuccessModalOpen] = useState(false);
   const [currentChoice, setcurrentChoice] = useState<number>(0);
   const [comment, setComment] = useState("");
+  const [sortBy, setSortBy] = useState<"date" | "upvotes">("date");
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
+  const [statusTitle, setStatusTitle] = useState<string>("");
+  const [statusDescription, setStatusDescription] = useState<string>("");
   const { user } = useDynamicContext();
+  const hasVoted = vote.data && vote.data.votes?.[0];
+  const canVote = data?.proposal?.state === "active";
+  const hasDelegated =
+    delegation.isFetched &&
+    userBalance.isFetched &&
+    delegation.data &&
+    delegation.data != "0x0000000000000000000000000000000000000000";
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
+    sort: sortBy,
   });
+  const commentCount = comments?.data?.length || 0;
+
+  useEffect(() => {
+    comments.refetch();
+  }, [user?.isAuthenticatedWithAWallet]);
+
   const saveComment = trpc.comments.saveComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const editComment = trpc.comments.editComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const deleteComment = trpc.comments.deleteComment.useMutation({
+    onSuccess: () => {
+      comments.refetch();
+    },
+  });
+
+  const voteComment = trpc.comments.voteComment.useMutation({
     onSuccess: () => {
       comments.refetch();
     },
@@ -241,6 +301,75 @@ export function Page() {
       console.log(error);
     }
     console.log(value);
+  };
+
+  const handleCommentEdit = async ({
+    content,
+    commentId,
+  }: {
+    content: string;
+    commentId: number;
+  }) => {
+    try {
+      await editComment.mutateAsync({
+        content,
+        id: commentId,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log(content);
+  };
+
+  const handleCommentDelete = async ({ commentId }: { commentId: number }) => {
+    try {
+      await deleteComment.mutateAsync({
+        id: commentId,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log("Deleted");
+  };
+
+  const handleReplySend = async ({
+    content,
+    parentId,
+  }: {
+    content: string;
+    parentId: number;
+  }) => {
+    try {
+      await saveComment.mutateAsync({
+        content,
+        parentId,
+        proposalId: data?.proposal?.id,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
+    console.log(content);
+  };
+
+  const handleCommentVote = async ({
+    commentId,
+    voteType,
+  }: {
+    commentId: number;
+    voteType: "upvote" | "downvote";
+  }) => {
+    try {
+      await voteComment.mutateAsync({
+        commentId,
+        voteType,
+      });
+    } catch (error) {
+      // Handle error
+      console.log(error);
+    }
   };
 
   if (data == null) return null;
@@ -275,6 +404,16 @@ export function Page() {
           Submit vote
         </Button>
       </VoteModal>
+      <StatusModal
+        isOpen={isStatusModalOpen}
+        isSuccess={!statusDescription?.length}
+        isFail={!!statusDescription?.length}
+        onClose={() => {
+          setIsStatusModalOpen(false);
+        }}
+        title={statusTitle}
+        description={statusDescription}
+      />
       <InfoModal
         title="Snapshot info"
         isOpen={isInfoOpen}
@@ -387,8 +526,37 @@ export function Page() {
             ) : (
               <Box>Show logged out state for comment input</Box>
             )}
-
-            <CommentList commentsList={comments.data || []} />
+            <AppBar.Root>
+              <AppBar.Group mobileDirection="row">
+                <Box minWidth={"52px"}>
+                  <Text variant="mediumStrong">Sort by</Text>
+                </Box>
+                <Select
+                  size="sm"
+                  aria-label="Sort by"
+                  placeholder="Sort by"
+                  focusBorderColor={"red"}
+                  rounded="md"
+                  value={sortBy}
+                  onChange={(e) =>
+                    setSortBy(e.target.value as "upvotes" | "date")
+                  }
+                >
+                  {sortByOptions.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              </AppBar.Group>
+            </AppBar.Root>
+            <CommentList
+              commentsList={comments.data || []}
+              onVote={handleCommentVote}
+              onDelete={handleCommentDelete}
+              onReply={handleReplySend}
+              onEdit={handleCommentEdit}
+            />
           </Stack>
         </Box>
       </ContentContainer>
@@ -436,30 +604,31 @@ export function Page() {
                 } using ${vote.data.votes[0].vp} votes`}
               />
             )}
-
-            <ButtonGroup
-              mb="40px"
-              spacing="8px"
-              display="flex"
-              flexDirection="row"
-              justifyContent="space-around"
-            >
-              {data.proposal?.choices.map((choice, index) => {
-                return (
-                  <VoteButton
-                    key={choice}
-                    onClick={() => {
-                      setcurrentChoice(index + 1);
-                      setIsOpen(true);
-                    }}
-                    active={false}
-                    // @ts-expect-error todo
-                    type={choice}
-                    label={`${choice}`}
-                  />
-                );
-              })}
-            </ButtonGroup>
+            {!hasVoted && canVote && !hasDelegated ? (
+              <ButtonGroup
+                mb="40px"
+                spacing="8px"
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-around"
+              >
+                {data.proposal?.choices.map((choice, index) => {
+                  return (
+                    <VoteButton
+                      key={choice}
+                      onClick={() => {
+                        setcurrentChoice(index + 1);
+                        setIsOpen(true);
+                      }}
+                      active={false}
+                      // @ts-expect-error todo
+                      type={choice}
+                      label={`${choice}`}
+                    />
+                  );
+                })}
+              </ButtonGroup>
+            ) : null}
             <Divider mb="40px" />
             <Box mb="40px">
               <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">

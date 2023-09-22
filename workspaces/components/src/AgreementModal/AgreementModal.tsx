@@ -7,7 +7,7 @@ import {
   ModalOverlay,
   Stack,
 } from "@chakra-ui/react";
-import {QuillEditor} from "../Editor";
+import { MarkdownRenderer } from "src/MarkdownRenderer";
 
 type Props = {
   isOpen: boolean;
@@ -48,7 +48,7 @@ export const AgreementModal = ({ isOpen = false, onClose, content }: Props) => {
           minHeight="272px"
         >
           <Stack spacing="6">
-            <QuillEditor value={content} readOnly />
+            <MarkdownRenderer content={content || ""} />
           </Stack>
         </ModalBody>
       </ModalContent>

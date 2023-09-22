@@ -22,7 +22,10 @@ app.listen(port, () => {
 
 const fetchUserMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (req.cookies?.JWT) {
-    const userId: string = (await getUserByJWT(req.cookies.JWT))?.id
+    const userId: string | undefined = (await getUserByJWT(req.cookies.JWT))?.id
+    if (!userId) {
+      return next();
+    }
     const user = await db.query.users.findFirst({ where: eq(users.id, userId), with: { delegationStatement: true } });
     if (user) {
       req.user = user;

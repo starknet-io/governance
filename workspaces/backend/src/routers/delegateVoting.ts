@@ -204,7 +204,7 @@ async function processDelegatesInBatches(
 
 async function fetchAllDelegates() {
   try {
-    const delegates = await db.query.delegates.findMany({
+    const delegates: any = await db.query.delegates.findMany({
       columns: {
         id: true,
       },
@@ -216,7 +216,7 @@ async function fetchAllDelegates() {
         },
       },
     });
-    const parsedDelegates = delegates.map((delegate) => ({
+    const parsedDelegates = delegates.map((delegate: any) => ({
       id: delegate.id,
       address: delegate?.author?.address || "",
     }));

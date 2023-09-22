@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest",
-    "dev": "nodemon --exec ts-node --transpile-only src/index.ts",
+    "dev": "NODE_ENV=development nodemon --exec ts-node --transpile-only src/index.ts",
     "build": "tsc",
     "serve": "node dist/src/index.js",
     "seed": "ts-node --transpile-only src/delegatesMigration/index.ts",

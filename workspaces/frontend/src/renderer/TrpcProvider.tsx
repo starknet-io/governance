@@ -2,10 +2,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { PropsWithChildren, useState } from "react";
 import { trpc } from "../utils/trpc";
-import superjson from 'superjson';
+import superjson from "superjson";
 
 export function TrpcProvider({ children }: PropsWithChildren) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+          },
+        },
+      }),
+  );
   const [trpcClient] = useState(() =>
     trpc.createClient({
       transformer: superjson,
@@ -25,7 +34,7 @@ export function TrpcProvider({ children }: PropsWithChildren) {
           // },
         }),
       ],
-    })
+    }),
   );
 
   return (

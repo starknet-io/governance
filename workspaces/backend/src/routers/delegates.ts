@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import { getUserByJWT } from '../utils/helpers';
-import {eq, and, isNotNull, or, desc, asc} from 'drizzle-orm';
+import { eq, and, isNotNull, or, desc, asc } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -39,8 +38,10 @@ export const delegateRouter = router({
       }),
     )
     .mutation(async (opts) => {
-      const userAddress = (await getUserByJWT(opts.ctx.req.cookies.JWT))
-        ?.address;
+      const userAddress = opts.ctx.user?.address;
+      if (!userAddress) {
+        throw new Error('User not found');
+      }
       const user = await db.query.users.findFirst({
         where: eq(users.address, userAddress),
         with: {
@@ -65,7 +66,7 @@ export const delegateRouter = router({
           discord: opts.input.discord,
           discourse: opts.input.discourse,
           understandRole: opts.input.understandRole,
-          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id,
+          userId: opts.ctx.user?.id,
           createdAt: new Date(),
           confirmDelegateAgreement, // Use the determined value
         })
@@ -137,7 +138,6 @@ export const delegateRouter = router({
     .input(z.object({ delegateId: z.string() }))
     .query(async (opts) => {
       return await db
-        // @ts-expect-error TODO fix types issue here
         .select({
           ...comments,
           author: users,

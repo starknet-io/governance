@@ -8,7 +8,6 @@ import {
   Flex,
   Stat,
   Button,
-  NavItem,
   ProfileSummaryCard,
   MenuItem,
   Divider,
@@ -21,25 +20,31 @@ import { Page as PageInterface } from "@yukilabs/governance-backend/src/db/schem
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
+import { PageWithChildren } from "@yukilabs/governance-backend/src/utils/buildLearnHierarchy";
+import {
+  PlusIcon,
+  ReOrderIcon,
+} from "@yukilabs/governance-components/src/Icons/UiIcons";
 
 export interface PageWithUserInterface extends PageInterface {
   author: User | null;
 }
 
 export function Page() {
-  const [selectedPage, setSelectedPage] =
-    useState<PageWithUserInterface | null>(null);
+  const [selectedPage, setSelectedPage] = useState<PageWithChildren | null>(
+    null,
+  );
   const pagesResp = trpc.pages.getAll.useQuery();
   const pages = useMemo(() => pagesResp.data ?? [], [pagesResp.data]);
   const isLoading = pagesResp.isLoading;
   const { user: loggedUser } = usePageContext();
   const pageContext = usePageContext();
 
-  useEffect(() => {
-    setSelectedPage(getPageFromURL());
+  const { data: pagesTree } = trpc.pages.getPagesTree.useQuery();
 
-    if (pages.length > 0 && !getPageFromURL()) {
-      setSelectedPage(pages[0]);
+  useEffect(() => {
+    if (pagesTree && pagesTree?.length > 0) {
+      setSelectedPage(pagesTree[0]);
     }
   }, [pages]);
 
@@ -47,36 +52,14 @@ export function Page() {
     if (!pageContext.routeParams.slug && pages.length > 0) {
       window.history.pushState(null, "", `/learn/${pages[0]?.slug}`);
       if (pages.length > 0) {
-        setSelectedPage(pages[0]);
+        setSelectedPage(pagesTree?.[0] ?? null);
       }
     }
-  }, [pageContext.routeParams, pages]);
+  }, [pageContext.routeParams, pagesTree]);
 
-  const getPageFromURL = () => {
-    const slug = window.location.pathname.split("/").pop();
-    if (slug) {
-      return pages.find((page) => page.slug === slug) || null;
-    }
-    return null;
-  };
-
-  const selectPage = (page: PageWithUserInterface) => {
+  const selectPage = (page: PageWithChildren) => {
     setSelectedPage(page);
     window.history.pushState(null, "", `/learn/${page.slug}`);
-  };
-
-  const NavItemWrapper = ({ page }: { page: PageWithUserInterface }) => {
-    return (
-      <div style={{ display: "flex" }}>
-        <div style={{ width: "100%" }} onClick={() => selectPage(page)}>
-          <NavItem
-            label={page.title ?? ""}
-            // activePage={selectedPage?.id === page.id}
-            active={selectedPage?.id == page?.id}
-          />
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -88,8 +71,7 @@ export function Page() {
       justifyContent="center"
     >
       <Box
-        pt="40px"
-        px="16px"
+        pt="20px"
         borderRight="1px solid #E7E8E9"
         display="flex"
         flexDirection="column"
@@ -102,36 +84,36 @@ export function Page() {
           spacing="1px"
           direction={{ base: "column" }}
           color="#545464"
-          mb="24px"
+          mb="1"
         >
-          {isLoading ? (
-            <Box
-              display={"flex"}
-              flexDirection="column"
-              gap="8px"
-              mb="24px"
-              width="100%"
-              bg="transparent"
-            >
-              <Skeleton height="42px" width="100%" />
-              <Skeleton height="40px" width="100%" />
-              <Skeleton height="40px" width="100%" />
-              <Skeleton height="42px" width="100%" />
-              <Skeleton height="40px" width="100%" />
-              <Skeleton height="40px" width="100%" />
-            </Box>
-          ) : (
-            pages.map((page: PageWithUserInterface) => (
-              <NavItemWrapper key={page.id} page={page} />
-            ))
-          )}
+          <LearnPageTree
+            isLoading={isLoading}
+            selectedPage={selectedPage}
+            selectPage={selectPage}
+            pages={pagesTree}
+          />
         </Stack>
-        {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-          <Button variant="outline" href="/learn/create">
-            Add new page
-          </Button>
-        ) : (
-          <></>
+        {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) && (
+          <Flex pl="2">
+            <Button
+              height="44px"
+              width="44px"
+              variant="ghost"
+              href="/learn/reorder"
+              p="4"
+            >
+              <ReOrderIcon />
+            </Button>
+            <Button
+              height="44px"
+              width="44px"
+              variant="ghost"
+              href="/learn/create"
+              p="0"
+            >
+              <PlusIcon />
+            </Button>
+          </Flex>
         )}
       </Box>
       <ContentContainer maxWidth="800px" center>
@@ -161,17 +143,14 @@ export function Page() {
                 {hasPermission(loggedUser?.role, [
                   ROLES.ADMIN,
                   ROLES.MODERATOR,
-                ]) ? (
+                ]) && (
                   <Box>
                     <ProfileSummaryCard.MoreActions>
                       <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
                         Edit
                       </MenuItem>
-                      <MenuItem>Delete</MenuItem>
                     </ProfileSummaryCard.MoreActions>
                   </Box>
-                ) : (
-                  <></>
                 )}
               </Box>
             </Box>
@@ -210,6 +189,124 @@ export function Page() {
           </Box>
         )}
       </ContentContainer>
+    </Box>
+  );
+}
+
+interface LearnPageTreeProps {
+  selectedPage: PageWithChildren | null;
+  isLoading: boolean;
+  pages?: PageWithChildren[];
+  selectPage: (page: PageWithChildren) => void;
+  pl?: number;
+  depth?: number;
+  isChildTree?: boolean;
+}
+
+function LearnPageTree({
+  isLoading = true,
+  pages = [],
+  selectedPage,
+  selectPage,
+  depth = 0,
+}: LearnPageTreeProps) {
+  const mainDepth = depth + 1;
+
+  if (isLoading) {
+    return (
+      <Box
+        display={"flex"}
+        flexDirection="column"
+        gap="8px"
+        mb="24px"
+        px="2"
+        width="100%"
+        bg="transparent"
+      >
+        <Skeleton height="42px" width="100%" />
+        <Skeleton height="40px" width="100%" />
+        <Skeleton height="40px" width="100%" />
+        <Skeleton height="42px" width="100%" />
+        <Skeleton height="40px" width="100%" />
+        <Skeleton height="40px" width="100%" />
+      </Box>
+    );
+  }
+
+  return (
+    <Box pr="2">
+      {pages.map((page) => (
+        <Box key={page.id}>
+          <NavItemWrapper
+            pl={`${mainDepth}`}
+            page={page}
+            isChild={mainDepth > 1}
+            selectPage={selectPage}
+            selectedPage={selectedPage}
+          />
+          {page.children && (
+            <LearnPageTree
+              isChildTree={mainDepth > 1}
+              isLoading={isLoading}
+              selectedPage={selectedPage}
+              selectPage={selectPage}
+              pages={page.children}
+              depth={mainDepth + 1}
+            />
+          )}
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
+interface NavItemWrapperProps {
+  page: PageWithChildren;
+  isChild?: boolean;
+  pl?: string;
+  selectedPage: PageWithChildren | null;
+  selectPage: (page: PageWithChildren) => void;
+}
+
+function NavItemWrapper({
+  page,
+  isChild = false,
+  pl,
+  selectedPage,
+  selectPage,
+}: NavItemWrapperProps) {
+  const isSelectedPage = selectedPage?.id === page.id;
+  const fontSize = isChild ? "xs" : "sm";
+  const fontColor = isSelectedPage ? "#1A1523" : "#4A4A4F";
+
+  return (
+    <Box
+      onClick={() => selectPage(page)}
+      pl={pl}
+      position="relative"
+      _before={{
+        content: '""',
+        position: "absolute",
+        width: "2px",
+        height: "70%",
+        backgroundColor: isSelectedPage ? "#1A1523" : "transparent",
+        left: 0,
+        top: "50%",
+        transform: "translateY(-50%)",
+        borderTopRightRadius: 4,
+        borderBottomRightRadius: 4,
+      }}
+    >
+      <Button
+        variant="ghost"
+        fontWeight="medium"
+        fontSize={fontSize}
+        color={fontColor}
+        size="navLink"
+        width="100%"
+      >
+        {(isChild ? `- ${page.title}` : page.title) ?? ""}
+      </Button>
     </Box>
   );
 }

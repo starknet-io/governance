@@ -1,15 +1,20 @@
-import { desc, eq, sql } from 'drizzle-orm';
+import { desc, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '../db/db';
-import { router, publicProcedure } from '../utils/trpc';
+import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { gql, GraphQLClient } from 'graphql-request';
 import { comments } from '../db/schema/comments';
 import { z } from 'zod';
+import { proposals } from '../db/schema/proposals';
+import { createInsertSchema } from 'drizzle-zod';
+
+type CategoryEnum = 'category1' | 'category2' | 'category3';
 
 interface IProposal {
   id: string;
   title: string;
   choices: string[];
   start: number;
+  category?: CategoryEnum;
   end: number;
   snapshot: string;
   state: string;
@@ -125,12 +130,22 @@ const populateProposalsWithComments = async (
 };
 
 export const proposalsRouter = router({
+  createProposal: protectedProcedure
+    .input(createInsertSchema(proposals).omit({ id: true })) // Adjust as needed
+    .mutation(async (opts) => {
+      const insertedProposal = await db
+        .insert(proposals)
+        .values(opts.input)
+        .returning();
+      return insertedProposal[0];
+    }),
   getProposals: publicProcedure
     .input(
       z
         .object({
           sortBy: z.enum(['desc', 'asc', 'most_discussed', '']).optional(),
           searchQuery: z.string().optional(),
+          filters: z.array(z.string()).optional(),
         })
         .optional(),
     )
@@ -140,17 +155,29 @@ export const proposalsRouter = router({
 
       const orderDirection = opts.input?.sortBy || 'desc';
       const searchQuery = opts.input?.searchQuery || undefined;
-      let proposals: IProposal[];
+      const filters = opts.input?.filters;
+      const possibleStateFilters = ['active', 'pending', 'closed'];
 
+      const statesFilter =
+        filters?.filter((filter) => possibleStateFilters.includes(filter)) ||
+        [];
+      const categoriesFilter =
+        filters?.filter((filter) => !possibleStateFilters.includes(filter)) ||
+        [];
+
+      let mappedProposals: IProposal[];
       if (opts.input?.sortBy === 'most_discussed') {
         const mostDiscussedItems = await db.execute(sql`
           SELECT
-            proposal_id,
+            comments.proposal_id,
+            proposals.category,  -- It will return NULL if the category is not found
             COUNT(*) AS comment_count
           FROM
             comments
+          LEFT JOIN
+            proposals ON comments.proposal_id = proposals.proposal_id  -- Changing to LEFT JOIN to include rows even if there is no matching row in the proposals table
           GROUP BY
-            proposal_id
+            comments.proposal_id, proposals.category  -- Group by category as well, it will group by NULL as a separate group if there are null values
           ORDER BY
             comment_count DESC
           LIMIT ${limit} OFFSET ${offset};
@@ -171,11 +198,32 @@ export const proposalsRouter = router({
           },
         )) as { proposals: IProposal[] };
 
-        proposals = sortProposalsByIDsOrder(
+        mappedProposals = sortProposalsByIDsOrder(
           queriedProposals,
           mostDiscussedProposals,
         );
 
+        if (statesFilter.length > 0) {
+          mappedProposals = mappedProposals.filter((proposal) =>
+            statesFilter.includes(proposal.state),
+          );
+        }
+
+        mappedProposals = mappedProposals.map((proposal, index) => {
+          return {
+            ...proposal,
+            category: mostDiscussedItems.rows[index].category as CategoryEnum,
+          };
+        });
+
+        if (categoriesFilter.length > 0) {
+          mappedProposals = mappedProposals.filter((proposal) => {
+            if (!proposal?.category) {
+              return false;
+            }
+            return categoriesFilter.includes(proposal.category);
+          });
+        }
       } else {
         const { proposals: queriedProposals } = (await graphQLClient.request(
           GET_PROPOSALS,
@@ -188,9 +236,43 @@ export const proposalsRouter = router({
           },
         )) as { proposals: IProposal[] };
 
-        proposals = queriedProposals;
+        const proposalIds = queriedProposals.map((proposal) => proposal.id);
+        const categoriesResult = await db
+          .select()
+          .from(proposals)
+          .where(inArray(proposals.proposalId, proposalIds))
+          .execute();
+
+        const categoriesMap = Object.fromEntries(
+          categoriesResult.map((row) => [row.proposalId, row.category]),
+        );
+
+        // Merge category data into the proposals array
+        mappedProposals = queriedProposals.map((proposal) => ({
+          ...proposal,
+          category: categoriesMap[proposal.id] as CategoryEnum,
+        }));
       }
 
-      return await populateProposalsWithComments(proposals, limit, offset);
+      if (statesFilter.length > 0) {
+        mappedProposals = mappedProposals.filter((proposal) =>
+          statesFilter.includes(proposal.state),
+        );
+      }
+
+      if (categoriesFilter.length > 0) {
+        mappedProposals = mappedProposals.filter((proposal) => {
+          if (!proposal.category) {
+            return false;
+          }
+          return categoriesFilter.includes(proposal.category);
+        });
+      }
+
+      return await populateProposalsWithComments(
+        mappedProposals,
+        limit,
+        offset,
+      );
     }),
 });

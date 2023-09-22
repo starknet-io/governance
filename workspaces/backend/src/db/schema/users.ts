@@ -40,6 +40,5 @@ export const userDelegate = relations(users, ({ one, many }) => ({
   pages: many(pages)
 }));
 
-
 export type User = InferModel<typeof users>;
 export type NewUser = InferModel<typeof users, 'insert'>;

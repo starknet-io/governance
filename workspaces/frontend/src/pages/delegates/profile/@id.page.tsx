@@ -28,6 +28,7 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import {
+  useDelegateRegistryClearDelegate,
   useDelegateRegistryDelegation,
   useDelegateRegistrySetDelegate,
 } from "src/wagmi/DelegateRegistry";
@@ -134,16 +135,17 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
 `);
 
 // Extract this to some constants file
-const MINIMUM_TOKENS_FOR_DELEGATION = 1;
+export const MINIMUM_TOKENS_FOR_DELEGATION = 1;
 
 export function Page() {
   const pageContext = usePageContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isUndelegation, setIsUndelegation] = useState<boolean>(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const { user } = usePageContext();
 
   const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
@@ -160,6 +162,14 @@ export function Page() {
     watch: false,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
+  });
+
+  const {
+    isLoading: isLoadingUndelegation,
+    writeAsync: writeAsyncUndelegation,
+  } = useDelegateRegistryClearDelegate({
+    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
   });
 
   const delegateId = pageContext.routeParams!.id;
@@ -252,7 +262,7 @@ export function Page() {
 
     const canEdit =
       (hasPermission(user.role, [ROLES.USER]) &&
-        user.delegationStatement.id === delegateId) ||
+        user.delegationStatement?.id === delegateId) ||
       hasPermission(user.role, [ROLES.ADMIN, ROLES.MODERATOR]);
 
     return (
@@ -276,6 +286,9 @@ export function Page() {
   const isLoadingComments = !delegateCommentsResponse.isFetched;
   const isLoadingSummary = !gqlResponse.loading || !delegateResponse.isLoading;
 
+  const hasUserDelegatedTokensToThisDelegate =
+    delegation.isFetched && delegation.data === delegateAddress;
+
   return (
     <Box
       display="flex"
@@ -287,13 +300,35 @@ export function Page() {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         isConnected
+        isUndelegation={isUndelegation}
         senderData={senderData}
         receiverData={{
           ...receiverData,
           vp: gqlResponse?.data?.vp?.vp,
         }}
         delegateTokens={() => {
-          if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
+          if (hasUserDelegatedTokensToThisDelegate) {
+            writeAsyncUndelegation?.({
+              args: [
+                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                  size: 32,
+                }),
+              ],
+            })
+              .then(() => {
+                setIsStatusModalOpen(true);
+                setStatusTitle("Tokens undelegated successfully");
+                setStatusDescription("");
+              })
+              .catch((err) => {
+                setIsStatusModalOpen(true);
+                setStatusTitle("Tokens undelegation failed");
+                setStatusDescription(err.shortMessage);
+              });
+            setIsOpen(false);
+          } else if (
+            parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION
+          ) {
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
@@ -317,13 +352,18 @@ export function Page() {
               .catch((err) => {
                 setIsStatusModalOpen(true);
                 setStatusTitle("Tokens delegation failed");
-                setStatusDescription(err.shortMessage);
+                setStatusDescription(
+                  err.shortMessage ||
+                    err.message ||
+                    err.name ||
+                    "An error occurred",
+                );
               });
             setIsOpen(false);
           }
         }}
       />
-      <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
+      <ConfirmModal isOpen={isLoading || isLoadingUndelegation} onClose={() => setIsOpen(false)} />
       <AgreementModal
         isOpen={showAgreement}
         onClose={() => setShowAgreement(false)}
@@ -335,8 +375,8 @@ export function Page() {
       />
       <StatusModal
         isOpen={isStatusModalOpen}
-        isSuccess={!statusDescription.length}
-        isFail={!!statusDescription.length}
+        isSuccess={!statusDescription?.length}
+        isFail={!!statusDescription?.length}
         onClose={() => {
           setIsStatusModalOpen(false);
         }}
@@ -379,10 +419,19 @@ export function Page() {
             >
               <ActionButtons />
             </ProfileSummaryCard.Profile>
-            {isConnected ? (
+            {user ? (
               <ProfileSummaryCard.PrimaryButton
-                label="Delegate your votes"
-                onClick={() => setIsOpen(true)}
+                label={
+                  hasUserDelegatedTokensToThisDelegate
+                    ? "Undelegate your votes"
+                    : "Delegate your votes"
+                }
+                onClick={() => {
+                  setIsOpen(true)
+                  if (hasUserDelegatedTokensToThisDelegate) {
+                    setIsUndelegation(true)
+                  }
+                }}
               />
             ) : (
               <></>

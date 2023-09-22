@@ -3,8 +3,9 @@ import { pages } from '../db/schema/pages';
 import { db } from '../db/db';
 import { asc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { getUserByJWT } from '../utils/helpers';
 import slugify from 'slugify';
+import { boolean } from 'zod';
+import { buildLearnItemsHierarchy } from '../utils/buildLearnHierarchy';
 import { Algolia } from '../utils/algolia';
 
 const pageInsertSchema = createInsertSchema(pages);
@@ -29,11 +30,8 @@ export const pagesRouter = router({
         .insert(pages)
         .values({
           ...opts.input,
-          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id,
-          slug: slugify(opts.input.title ?? '', {
-            replacement: '_',
-            lower: true,
-          }),
+          userId: opts.ctx.user?.id,
+          slug: slugify(opts.input.title ?? '', { replacement: "_", lower: true },),
         })
         .returning();
       const page = insertedPage[0];
@@ -76,6 +74,7 @@ export const pagesRouter = router({
   deletePage: protectedProcedure
     .input(pageInsertSchema.required({ id: true }).pick({ id: true }))
     .mutation(async (opts) => {
+      await db.delete(pages).where(eq(pages.parentId, opts.input.id)).execute();
       await db.delete(pages).where(eq(pages.id, opts.input.id)).execute();
       await Algolia.deleteObjectFromIndex({
         type: 'learn',
@@ -95,52 +94,124 @@ export const pagesRouter = router({
       return page;
     }),
 
+  getPagesTree: publicProcedure.query(async () => {
+    const allPages = await db.query.pages.findMany({
+      with: {
+        author: true,
+      },
+    });
+    return buildLearnItemsHierarchy(allPages);
+  }),
+
+  savePagesTree: protectedProcedure
+    .input(
+      pageInsertSchema
+        .extend({ isNew: boolean().optional() })
+        .omit({ createdAt: true, updatedAt: true, userId: true })
+        .array(),
+    )
+    .mutation(async (opts) => {
+      const newItems = opts.input.filter((item) => item.isNew);
+      const existingItems = opts.input.filter((item) => !item.isNew);
+      const newCreatedItems = await Promise.all(
+        newItems.map(async (newItem) => {
+          const createdItem = await db
+            .insert(pages)
+            .values({
+              title: newItem.title,
+              content: newItem.content,
+              orderNumber: newItem.orderNumber,
+              userId: opts.ctx?.user.id,
+              slug: slugify(newItem.title ?? '', {
+                replacement: '_',
+                lower: true,
+              }),
+            })
+            .returning();
+          return {
+            createdItem: createdItem[0],
+            oldId: newItem.id,
+          };
+        }),
+      );
+
+      const finalItems = existingItems.map((existingItem) => {
+        const isLinkedToNew = newCreatedItems.find(
+          (item) => item.oldId === existingItem.parentId,
+        );
+
+        if (isLinkedToNew) {
+          return {
+            ...existingItem,
+            parentId: isLinkedToNew.createdItem.parentId,
+          };
+        }
+
+        return existingItem;
+      });
+
+      const mapThrough = [
+        ...finalItems,
+        ...newCreatedItems.map((i) => i.createdItem),
+      ];
+
+      await Promise.all(
+        mapThrough.map(async (m) => {
+          return await db
+            .update(pages)
+            .set({
+              title: m.title,
+              content: m.content,
+              parentId: m.parentId,
+              orderNumber: m.orderNumber,
+              slug: slugify(m?.title ?? '', {
+                replacement: '_',
+                lower: true,
+              }),
+            })
+            .where(eq(pages.id, m.id!));
+        }),
+      );
+
+      return;
+    }),
+
   saveBatch: protectedProcedure
     .input(pageInsertSchema.omit({ userId: true }).array())
     .mutation(async (opts) => {
-      const userId = (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id;
-      await Promise.all(
-        opts.input.map(async (page, index) => {
-          if (page.id) {
-            await db
-              .update(pages)
-              .set({
-                ...page,
-                orderNumber: index + 1,
-                slug: slugify(page.title ?? '', {
-                  replacement: '_',
-                  lower: true,
-                }),
-              })
-              .where(eq(pages.id, page.id))
-              .execute();
-            await Algolia.updateObjectFromIndex({
-              name: page.title ?? '',
-              type: 'learn',
-              refID: page.id,
-            });
-          } else {
-            const insertedPage = await db
-              .insert(pages)
-              .values({
-                title: page.title,
-                content: page.content,
-                orderNumber: index + 1,
-                userId: userId,
-                slug: slugify(page.title ?? '', {
-                  replacement: '_',
-                  lower: true,
-                }),
-              })
-              .returning();
-            const newPage = insertedPage[0];
-            await Algolia.saveObjectToIndex({
-              name: newPage.title ?? '',
-              type: 'learn',
-              refID: newPage.id,
-            });
-          }
-        }),
-      );
-    }),
+      const userId = opts.ctx.user?.id;
+      await Promise.all(opts.input.map(async (page, index) => {
+        if (page.id) {
+          await db.update(pages)
+            .set({
+              ...page,
+              orderNumber: index + 1,
+              slug: slugify(page.title ?? '', { replacement: "_", lower: true },),
+            })
+            .where(eq(pages.id, page.id))
+            .execute();
+          await Algolia.updateObjectFromIndex({
+            name: page.title ?? '',
+            type: 'learn',
+            refID: page.id,
+          });
+        } else {
+          const insertedPage = await db.insert(pages)
+            .values({
+              title: page.title,
+              content: page.content,
+              orderNumber: index + 1,
+              userId: userId,
+              slug: slugify(page.title ?? '', { replacement: "_", lower: true },),
+            })
+            .returning();
+          const newPage = insertedPage[0];
+          await Algolia.saveObjectToIndex({
+            name: newPage.title ?? '',
+            type: 'learn',
+            refID: newPage.id,
+          });
+        }
+      }));
+    })
 });

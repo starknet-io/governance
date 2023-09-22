@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
-import { getUserByJWT } from '../utils/helpers';
 import { TRPCError } from '@trpc/server';
 
 export const usersRouter = router({
@@ -154,7 +153,7 @@ export const usersRouter = router({
 
   me: protectedProcedure
     .query(async (opts) => {
-      return (await getUserByJWT(opts.ctx.req.cookies.JWT))
+      return opts.ctx.user
     }),
 
   editUserProfileByAddress: protectedProcedure

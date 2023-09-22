@@ -1,4 +1,4 @@
-FROM node:18.17.1-bullseye as build
+FROM node:18.18.0-bullseye-slim as build
 RUN apt-get update && apt-get upgrade -y
 
 WORKDIR /app

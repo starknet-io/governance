@@ -7,24 +7,49 @@ on:
 jobs:
   frontend_cleanup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - uses: actions/delete-package-versions@v4
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          package-name: 'governance-app/frontend'
-          package-type: 'container'
-          min-versions-to-keep: 1
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: cleanup frontend images
+        run: |
+          TAGS=$(doctl registry repository lt frontend | tail -n +5 | awk '{print $1}')
+          [[ -n $TAGS ]] && doctl registry repository dt frontend $TAGS --force
+          echo Tags removed: $TAGS
 
   backend_cleanup:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - uses: actions/delete-package-versions@v4
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          package-name: 'governance-app/backend'
-          package-type: 'container'
-          min-versions-to-keep: 1
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: cleanup backend images
+        run: |
+          TAGS=$(doctl registry repository lt backend | tail -n +5 | awk '{print $1}')
+          [[ -n $TAGS ]] && doctl registry repository dt backend $TAGS --force
+          echo Tags removed: $TAGS
+  cron_cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: cleanup backend images
+        run: |
+          TAGS=$(doctl registry repository lt cron | tail -n +5 | awk '{print $1}')
+          [[ -n $TAGS ]] && doctl registry repository dt cron $TAGS --force
+          echo Tags removed: $TAGS
+
+  garbage-collection:
+    runs-on: ubuntu-latest
+    needs: [cron_cleanup, backend_cleanup, frontend_cleanup]
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: garbage-collection
+        run: doctl registry garbage-collection start --include-untagged-manifests --force

@@ -7,6 +7,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
+  Flex,
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
@@ -19,6 +20,9 @@ interface DeletionDialogProps {
   onDelete: () => void;
   cancelRef: React.Ref<HTMLElement>;
   entityName?: string;
+  customTitle?: string;
+  customDeleteTitle?: string;
+  children?: JSX.Element;
 }
 
 export function DeletionDialog({
@@ -27,14 +31,32 @@ export function DeletionDialog({
   onDelete,
   cancelRef,
   entityName = "Entity",
+  customTitle,
+  customDeleteTitle,
+  children,
 }: DeletionDialogProps) {
   cancelRef = useRef<HTMLElement>(null);
   const toast = useToast();
+
+  const handleDeleteClick = () => {
+    onDelete();
+    toast({
+      position: "top-right",
+      title: `${entityName} deleted`,
+      description: `${entityName} is now deleted`,
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+  };
+
   return (
     <AlertDialog
       leastDestructiveRef={cancelRef}
       isOpen={isOpen}
       onClose={onClose}
+      isCentered
+      size="lg"
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
@@ -43,33 +65,31 @@ export function DeletionDialog({
             fontWeight="bold"
             display={"flex"}
             justifyContent={"center"}
+            maxWidth="90%"
+            mx="auto"
+            textAlign="center"
           >
-            Confirm {entityName} Deletion
+            {customTitle ? customTitle : `Confirm ${entityName} Deletion`}
             <AlertDialogCloseButton />
           </AlertDialogHeader>
 
-          <AlertDialogBody display={"flex"} justifyContent={"center"}>
-            <Icon as={TrashWarningIcon} boxSize={104} />
-          </AlertDialogBody>
+          {!children ? (
+            <AlertDialogBody display={"flex"} justifyContent={"center"}>
+              <Icon as={TrashWarningIcon} boxSize={104} />
+            </AlertDialogBody>
+          ) : (
+            children
+          )}
 
           <AlertDialogFooter>
-            <Button
-              variant="danger"
-              onClick={() => {
-                onDelete();
-                toast({
-                  position: "top-right",
-                  title: `${entityName} deleted`,
-                  description: `${entityName} is now deleted`,
-                  status: "success",
-                  duration: 9000,
-                  isClosable: true,
-                });
-              }}
-              width={"100%"}
-            >
-              Delete {entityName}
-            </Button>
+            <Flex gap="1" width="100%" justifyContent="space-between">
+              <Button variant="ghost" onClick={onClose} width={"100%"}>
+                Cancel
+              </Button>
+              <Button onClick={handleDeleteClick} width={"100%"}>
+                {customDeleteTitle ? customDeleteTitle : `Delete ${entityName}`}
+              </Button>
+            </Flex>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialogOverlay>

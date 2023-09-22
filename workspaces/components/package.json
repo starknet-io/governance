@@ -24,6 +24,7 @@
     "color-hash": "^2.0.2",
     "date-fns": "^2.30.0",
     "dayzed": "^3.2.3",
+    "dnd-kit-sortable-tree": "^0.1.73",
     "framer-motion": "^10.15.0",
     "markdown-it": "^13.0.1",
     "moment": "^2.29.4",
@@ -36,12 +37,14 @@
     "react-markdown-editor-lite": "^1.3.4",
     "react-quill": "^2.0.0",
     "react-select": "^5.7.4",
+    "react-sortablejs": "^6.1.4",
     "remark-slate": "^1.8.6",
     "slate": "^0.94.1",
     "slate-history": "^0.93.0",
     "slate-hyperscript": "^0.77.0",
     "slate-md-serializer": "^5.5.4",
-    "slate-react": "^0.97.2"
+    "slate-react": "^0.97.2",
+    "sortablejs": "^1.15.0"
   },
   "devDependencies": {
     "@chakra-ui/cli": "^2.4.1",
