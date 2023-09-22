@@ -513,13 +513,13 @@ export const XIcon = ({ color, ...rest }: UiIconProps) => (
   </Icon>
 );
 export const InfoIcon = ({ color, ...rest }: UiIconProps) => (
-  <Icon viewBox="0 0 20 20" {...rest}>
+  <Icon viewBox="0 0 20 20" {...rest} style={{ fill: "none" }}>
     <g id="Group">
       <g id="Group_2">
         <path
           id="Path"
           d="M10 10V15"
-          stroke={color ? color : "#4A4A4F"}
+          stroke={color ? color : "#1A1523"}
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -527,7 +527,7 @@ export const InfoIcon = ({ color, ...rest }: UiIconProps) => (
         <path
           id="Path_2"
           d="M9.999 6C9.861 6 9.749 6.112 9.75 6.25C9.75 6.388 9.862 6.5 10 6.5C10.138 6.5 10.25 6.388 10.25 6.25C10.25 6.112 10.138 6 9.999 6"
-          stroke={color ? color : "#4A4A4F"}
+          stroke={color ? color : "#1A1523"}
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -537,7 +537,7 @@ export const InfoIcon = ({ color, ...rest }: UiIconProps) => (
           fillRule="evenodd"
           clipRule="evenodd"
           d="M17 19H3C1.895 19 1 18.105 1 17V3C1 1.895 1.895 1 3 1H17C18.105 1 19 1.895 19 3V17C19 18.105 18.105 19 17 19Z"
-          stroke={color ? color : "#4A4A4F"}
+          stroke={color ? color : "#1A1523"}
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
