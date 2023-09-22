@@ -45,7 +45,7 @@ import {
   HamburgerIcon,
   PlusIcon,
   SortIcon,
-  ImageWarningIcon
+  ImageWarningIcon,
   CloseIcon
 } from "./UiIcons";
 import {
@@ -130,6 +130,6 @@ export {
   HamburgerIcon,
   PlusIcon,
   SortIcon,
-  ImageWarningIcon
+  ImageWarningIcon,
   CloseIcon
 };
