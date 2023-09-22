@@ -66,8 +66,9 @@ export const VoteComment = ({
           <Text variant="smallStrong" color="content.support.default">
             {formatVotes} votes
           </Text>
-
-          <SignatureIcon />
+          <Box as="span" mt="-3px">
+            <SignatureIcon />
+          </Box>
         </Flex>
       </Flex>
       <Box>
