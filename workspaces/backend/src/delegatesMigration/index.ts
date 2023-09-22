@@ -145,7 +145,7 @@ async function createCouncils() {
       await Algolia.updateObjectFromIndex({
         name: existingCouncil.name || '',
         type: 'council',
-        refID: existingCouncil.id,
+        refID: existingCouncil.slug || existingCouncil.id,
         content: existingCouncil.description + ' ' + existingCouncil.statement,
       });
       continue; // Skip to the next council if this one already exists
@@ -170,7 +170,7 @@ async function createCouncils() {
     await Algolia.saveObjectToIndex({
       name: insertedCouncil[0].name || '',
       type: 'council',
-      refID: insertedCouncil[0].id,
+      refID: insertedCouncil[0].slug || insertedCouncil[0].id,
       content:
         insertedCouncil[0].description + ' ' + insertedCouncil[0].statement,
     });

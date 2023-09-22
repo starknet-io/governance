@@ -50,7 +50,7 @@ export const councilsRouter = router({
       await Algolia.saveObjectToIndex({
         name: insertedCouncil[0].name || "",
         type: 'council',
-        refID: insertedCouncil[0].id,
+        refID: insertedCouncil[0].slug || insertedCouncil[0].id,
         content:
           insertedCouncil[0].description + ' ' + insertedCouncil[0].statement,
       });
@@ -136,7 +136,10 @@ export const councilsRouter = router({
           .where(eq(users.id, userId))
           .execute();
       };
-
+      const slug = slugify(opts.input.name ?? '', {
+        replacement: '_',
+        lower: true,
+      })
       // Update council.
       const updatedCouncil = await db
         .update(councils)
@@ -144,10 +147,7 @@ export const councilsRouter = router({
           name: opts.input.name,
           description: opts.input.description,
           statement: opts.input.statement,
-          slug: slugify(opts.input.name ?? '', {
-            replacement: '_',
-            lower: true,
-          }),
+          slug: slug,
           address: opts.input.address,
         })
         .where(eq(councils.id, opts.input.id))
@@ -156,7 +156,8 @@ export const councilsRouter = router({
       await Algolia.updateObjectFromIndex({
         name: opts.input.name ?? '',
         type: 'council',
-        refID: opts.input.id,
+        refID: slug || opts.input.id,
+        content: opts.input.description + " " + opts.input.statement,
       });
 
       // Process members.
