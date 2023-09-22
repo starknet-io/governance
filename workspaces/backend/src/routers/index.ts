@@ -10,6 +10,7 @@ import { snipsRouter } from './snips';
 import { usersRouter } from './users';
 import { votesRouter } from './votes';
 import { proposalsRouter } from './proposals';
+import { fileUploadRouter } from './fileUpload';
 
 export const appRouter = router({
   comments: commentsRouter,
@@ -21,7 +22,8 @@ export const appRouter = router({
   votes: votesRouter,
   auth: authRouter,
   delegates: delegateRouter,
-  proposals: proposalsRouter
+  proposals: proposalsRouter,
+  fileUpload: fileUploadRouter,
 });
 
 export type AppRouter = typeof appRouter;

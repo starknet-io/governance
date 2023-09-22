@@ -17,6 +17,7 @@ import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
+import { useFileUpload } from "src/hooks/useFileUpload";
 
 export function Page() {
   const {
@@ -30,7 +31,7 @@ export function Page() {
   const councilSlug =
     trpc.councils.getCouncilSlug.useQuery({ councilId: Number(councilId) })
       .data ?? "";
-
+  const { handleUpload } = useFileUpload();
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
   useEffect(() => {
@@ -79,6 +80,7 @@ export function Page() {
                 <MarkdownEditor
                   onChange={handleEditorChange}
                   value={editorValue}
+                  handleUpload={handleUpload}
                 />
                 {errors.content && <span>This field is required.</span>}
               </FormControl>

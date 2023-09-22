@@ -22,7 +22,7 @@ export interface DocumentProps {
   image?: string;
 }
 
-interface IUser extends User {
+export interface IUser extends User {
   delegationStatement: Delegate
 }
 

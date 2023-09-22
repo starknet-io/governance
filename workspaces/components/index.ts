@@ -106,9 +106,12 @@ export {
   ShareDialog,
   FiltersIcon,
   SearchIcon,
+  FileUploader,
+  ProfileImage,
   HamburgerIcon,
   PlusIcon,
   SortIcon,
+  UploadImage,
   MultiLevelReOrderableList
 } from "./src";
 

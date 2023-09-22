@@ -18,9 +18,8 @@ import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
-import {
-  TreeItems,
-} from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
+import { useFileUpload } from "src/hooks/useFileUpload";
+import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";
 
 export function Page() {
@@ -34,7 +33,7 @@ export function Page() {
   const pagesTree = trpc.pages.getPagesTree.useQuery();
 
   const [treeItems, setTreeItems] = useState<TreeItems>([]);
-
+  const { handleUpload } = useFileUpload();
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
   const NEW_ITEM = {
@@ -103,6 +102,7 @@ export function Page() {
                 <MarkdownEditor
                   value={editorValue}
                   onChange={handleEditorChange}
+                  handleUpload={handleUpload}
                 />
                 {errors.content && <span>This field is required.</span>}
               </FormControl>
