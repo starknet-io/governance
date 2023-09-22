@@ -5,7 +5,7 @@ on:
 
 jobs:
   Build:
-    runs-on: ubuntu-20.04-16core
+    runs-on: ubuntu-20.04-4core
     outputs:
       tag: ${{ steps.meta.outputs.version }}
     steps:
