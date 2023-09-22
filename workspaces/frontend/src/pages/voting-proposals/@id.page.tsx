@@ -458,14 +458,18 @@ export function Page() {
       </InfoModal>
       <ContentContainer>
         <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
-          <Stack spacing="24px" direction={{ base: "column" }} color="#545464">
+          <Stack
+            spacing="0"
+            direction={{ base: "column" }}
+            color="content.default.default"
+          >
             <Box display="flex" alignItems="center">
               <Box flex="1">
                 <Heading
-                  color="#33333E"
-                  variant="h3"
+                  color="content.accent.default"
+                  variant="h2"
                   maxWidth="90%"
-                  lineHeight="1.4em"
+                  mb="standard.md"
                 >
                   {data?.proposal?.title}
                 </Heading>
@@ -478,7 +482,12 @@ export function Page() {
                 icon={<EllipsisIcon />}
               />
             </Box>
-            <Flex gap="standard.sm" paddingTop="0" alignItems="center">
+            <Flex
+              gap="standard.sm"
+              mb="standard.md"
+              paddingTop="0"
+              alignItems="center"
+            >
               <Stat.Root>
                 <Stat.Status status={data?.proposal?.state} />
               </Stat.Root>
@@ -498,30 +507,36 @@ export function Page() {
                 <Stat.Link label={`${commentCount} comments`} />
               </Stat.Root>
             </Flex>
-            <Flex>
-              <Box>
-                <Link
-                  as="button"
-                  size="small"
-                  onClick={() => setIsInfoOpen(true)}
-                >
-                  View Snapshot info
-                </Link>
-              </Box>
-            </Flex>
-            <Divider />
+
+            <Box mb="standard.2xl">
+              <Link
+                as="button"
+                size="small"
+                onClick={() => setIsInfoOpen(true)}
+              >
+                View Snapshot info
+              </Link>
+            </Box>
+
             {data?.proposal?.discussion !== "" ? (
-              <Iframely
-                id={import.meta.env.VITE_APP_IFRAMELY_ID}
-                url={`${data?.proposal?.discussion}`}
-              />
+              <>
+                <Iframely
+                  id={import.meta.env.VITE_APP_IFRAMELY_ID}
+                  url={`${data?.proposal?.discussion}`}
+                />
+                <Box mb="standard.2xl"></Box>
+              </>
             ) : (
               <></>
             )}
             <MarkdownRenderer content={data?.proposal?.body || ""} />
 
-            <Divider my="32px" />
-            <Heading color="#33333E" variant="h3">
+            <Divider my="standard.2xl" />
+            <Heading
+              color="content.accent.default"
+              variant="h3"
+              mb="standard.2xl"
+            >
               Discussion
             </Heading>
             {user ? (
@@ -529,7 +544,7 @@ export function Page() {
                 <CommentInput onSend={handleCommentSend} />
               </FormControl>
             ) : (
-              <Box>Show logged out state for comment input</Box>
+              <Box></Box>
             )}
             <AppBar.Root>
               <AppBar.Group mobileDirection="row">
