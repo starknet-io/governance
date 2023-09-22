@@ -1,4 +1,4 @@
-import { Box, Icon, Image } from "@chakra-ui/react";
+import { Box, Image } from "@chakra-ui/react";
 
 import img from "./assets/voting-starts-in-X-days.png";
 export const PlaceholderImage = () => {
