@@ -289,13 +289,7 @@ const DynamicCustomWidget = () => {
   const { user } = useDynamicContext();
   const isAuthorized = !!user;
 
-  return isAuthorized ? (
-    <Suspense fallback={<Spinner size="sm" />}>
-      <LazyDataComponent />
-    </Suspense>
-  ) : (
-    <DynamicWidget />
-  );
+  return isAuthorized ? <LazyDataComponent /> : <DynamicWidget />;
 };
 
 function PageLayout(props: Props) {

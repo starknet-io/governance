@@ -3,7 +3,6 @@ import { pages } from '../db/schema/pages';
 import { db } from '../db/db';
 import { asc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { getUserByJWT } from '../utils/helpers';
 import slugify from 'slugify';
 import { boolean } from 'zod';
 import { buildLearnItemsHierarchy } from '../utils/buildLearnHierarchy';
@@ -30,11 +29,8 @@ export const pagesRouter = router({
         .insert(pages)
         .values({
           ...opts.input,
-          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id,
-          slug: slugify(opts.input.title ?? '', {
-            replacement: '_',
-            lower: true,
-          }),
+          userId: opts.ctx.user?.id,
+          slug: slugify(opts.input.title ?? '', { replacement: "_", lower: true },),
         })
         .returning();
 
@@ -162,38 +158,28 @@ export const pagesRouter = router({
   saveBatch: protectedProcedure
     .input(pageInsertSchema.omit({ userId: true }).array())
     .mutation(async (opts) => {
-      const userId = (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id;
-      await Promise.all(
-        opts.input.map(async (page, index) => {
-          if (page.id) {
-            await db
-              .update(pages)
-              .set({
-                ...page,
-                orderNumber: index + 1,
-                slug: slugify(page.title ?? '', {
-                  replacement: '_',
-                  lower: true,
-                }),
-              })
-              .where(eq(pages.id, page.id))
-              .execute();
-          } else {
-            await db
-              .insert(pages)
-              .values({
-                title: page.title,
-                content: page.content,
-                orderNumber: index + 1,
-                userId: userId,
-                slug: slugify(page.title ?? '', {
-                  replacement: '_',
-                  lower: true,
-                }),
-              })
-              .returning();
-          }
-        }),
-      );
-    }),
+      const userId = opts.ctx.user?.id;
+      await Promise.all(opts.input.map(async (page, index) => {
+        if (page.id) {
+          await db.update(pages)
+            .set({
+              ...page,
+              orderNumber: index + 1,
+              slug: slugify(page.title ?? '', { replacement: "_", lower: true },),
+            })
+            .where(eq(pages.id, page.id))
+            .execute();
+        } else {
+          await db.insert(pages)
+            .values({
+              title: page.title,
+              content: page.content,
+              orderNumber: index + 1,
+              userId: userId,
+              slug: slugify(page.title ?? '', { replacement: "_", lower: true },),
+            })
+            .returning();
+        }
+      }));
+    })
 });
