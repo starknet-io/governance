@@ -33,6 +33,7 @@ import {
   Select,
   Banner,
   EllipsisIcon,
+  Link,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -477,7 +478,7 @@ export function Page() {
                 icon={<EllipsisIcon />}
               />
             </Box>
-            <Flex gap="16px" paddingTop="0" alignItems="center">
+            <Flex gap="standard.sm" paddingTop="0" alignItems="center">
               <Stat.Root>
                 <Stat.Status status={data?.proposal?.state} />
               </Stat.Root>
@@ -496,13 +497,16 @@ export function Page() {
               <Stat.Root>
                 <Stat.Link label={`${commentCount} comments`} />
               </Stat.Root>
-              <Box ml="auto">
-                <Stat.Root>
-                  <Stat.Button
-                    onClick={() => setIsInfoOpen(true)}
-                    label={`View Snapshot info`}
-                  />
-                </Stat.Root>
+            </Flex>
+            <Flex>
+              <Box>
+                <Link
+                  as="button"
+                  size="small"
+                  onClick={() => setIsInfoOpen(true)}
+                >
+                  View Snapshot info
+                </Link>
               </Box>
             </Flex>
             <Divider />
@@ -735,11 +739,11 @@ export function Page() {
             overflow="hidden"
           >
             <PlaceholderImage />
-            <Heading variant="h3" fontSize="16px" color="#2A2A32">
+            <Heading variant="h4" color="content.default.default">
               Voting starts{" "}
               {`${formatDate(data?.proposal?.start ?? 0, "yyyy-MM-dd", true)}`}
             </Heading>
-            <Text textAlign="center" fontSize="12px" color="#4D4D56">
+            <Text variant="small" color="content.default.default">
               The Builder’s council is excited about the new features but
               expects higher quality of documentation.
             </Text>
