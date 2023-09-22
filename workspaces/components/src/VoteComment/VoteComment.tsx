@@ -1,6 +1,12 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Icon } from "@chakra-ui/react";
+import {
+  SignatureIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
+} from "src/Icons";
 import { Text } from "src/Text";
-import { truncateAddress } from "src/utils";
+import { formatVotesAmount, truncateAddress } from "src/utils";
 
 type Props = {
   address: string;
@@ -23,28 +29,49 @@ export const VoteComment = ({
   voteCount,
   comment,
 }: Props) => {
+  const formatVotes = formatVotesAmount(voteCount);
   return (
-    <Flex flexDirection="column" gap="6px" mb="32px">
-      <Flex flexDirection="row" gap="8px" alignItems="center">
-        <Box
-          width="10px"
-          height="10px"
-          bg={variant[voted]}
-          borderRadius="50%"
-        />
+    <Flex
+      flexDirection="column"
+      gap="standard.base"
+      borderBottom="1px solid"
+      borderColor="border.forms"
+      mb="standard.sm"
+      pb="standard.sm"
+    >
+      <Flex
+        flexDirection="row"
+        gap="standard.xs"
+        alignItems="center"
+        justifyContent="flex-start"
+      >
+        <Box mt="-5px">
+          {voted === "For" && (
+            <VoteForIcon boxSize="15px" color={variant[voted]} />
+          )}
+          {voted === "Against" && (
+            <VoteAgainstIcon boxSize="15px" color={variant[voted]} />
+          )}
+          {voted === "Abstain" && (
+            <VoteAbstainIcon boxSize="15px" color={variant[voted]} />
+          )}
+        </Box>
+
         <Box>
-          <Text variant="breadcrumbs" fontWeight="500" color="#292932">
+          <Text variant="smallStrong" color="content.accent.default">
             {ethAddress ? ethAddress : truncateAddress(address)}
           </Text>
         </Box>
-        <Box>
-          <Text variant="breadcrumbs" color="#6C6C75">
-            {voteCount} votes
+        <Flex ml="auto" justifyContent={"center"} gap="standard.xs">
+          <Text variant="smallStrong" color="content.support.default">
+            {formatVotes} votes
           </Text>
-        </Box>
+
+          <SignatureIcon />
+        </Flex>
       </Flex>
       <Box>
-        <Text variant="breadcrumbs" color="#545464">
+        <Text variant="small" color="content.default.default">
           {comment}
         </Text>
       </Box>

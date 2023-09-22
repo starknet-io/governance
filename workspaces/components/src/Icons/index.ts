@@ -47,6 +47,7 @@ import {
   EllipsisIcon,
   InfoIcon,
   XIcon,
+  SignatureIcon,
 } from "./UiIcons";
 // import {
 //   HiOutlineCodeBracketSquare,
@@ -126,4 +127,5 @@ export {
   EllipsisIcon,
   InfoIcon,
   XIcon,
+  SignatureIcon,
 };
