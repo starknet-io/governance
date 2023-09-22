@@ -76,19 +76,18 @@ export {
   ShareIcon,
   CopyIcon,
   SearchIcon,
-  FileUploader,
-  ProfileImage,
   HamburgerIcon,
   PlusIcon,
   SortIcon,
-  UploadImage,
-  MultiLevelReOrderableList
   EllipsisIcon,
   InfoIcon,
   XIcon,
   SignatureIcon,
 } from "../components/src/Icons/index";
-
+export { FileUploader } from "./src/FileUploader";
+export { MultiLevelReOrderableList } from "./src/MultiLevelReOrderableList";
+export { UploadImage } from "./src/UploadImage";
+export { ProfileImage } from "./src/ProfileImage";
 export {
   FilterPopoverButton,
   FilterPopoverContent,
