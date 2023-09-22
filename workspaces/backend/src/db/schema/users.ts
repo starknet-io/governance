@@ -22,6 +22,7 @@ export const users = pgTable('users', {
   miniBio: text('miniBio'),
   username: text('username'),
   starknetAddress: text('starknetAddress'),
+  profileImage: text('profileImage'),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -39,7 +40,6 @@ export const userDelegate = relations(users, ({ one, many }) => ({
   posts: many(posts),
   pages: many(pages)
 }));
-
 
 export type User = InferModel<typeof users>;
 export type NewUser = InferModel<typeof users, 'insert'>;

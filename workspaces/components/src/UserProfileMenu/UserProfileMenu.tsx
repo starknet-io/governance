@@ -18,6 +18,7 @@ import { XIcon } from "../Icons";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
+import { CopyToClipboard } from "src/CopyToClipboard";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -161,14 +162,31 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                 <Spacer />
                 <Box>
                   <Text color="#2A2A32">
-                    {delegatedTo ? (
-                      <Link
-                        href={`delegates/profile/${delegatedTo?.delegationStatement?.id}`}
-                      >
-                        {truncateAddress(delegatedTo?.address || "")}
-                      </Link>
+                    {delegatedTo?.delegationStatement ? (
+                      <Flex>
+                        <Link
+                          fontSize="small"
+                          fontWeight="normal"
+                          href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
+                        >
+                          {truncateAddress(delegatedTo?.address || "")}
+                        </Link>
+
+                        <CopyToClipboard text={delegatedTo?.address} />
+                      </Flex>
                     ) : (
-                      "-"
+                      <>
+                        {delegatedTo?.address ? (
+                          <Flex>
+                            <Text>
+                              {truncateAddress(delegatedTo?.address || "")}
+                            </Text>
+                            <CopyToClipboard text={delegatedTo?.address} />
+                          </Flex>
+                        ) : (
+                          "-"
+                        )}
+                      </>
                     )}
                   </Text>
                 </Box>

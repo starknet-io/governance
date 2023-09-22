@@ -7,6 +7,7 @@ import { useBalanceData } from "src/utils/hooks";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
+import { stringToHex } from "viem";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -45,19 +46,31 @@ const AuthorizedUserView = () => {
     user?.verifiedCredentials[0]?.address as `0x${string}`,
   );
 
+  // const { data: delegationData } = useDelegateRegistryDelegation({
+  //   address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+  //   args: [
+  //     address! as `0x${string}`,
+  //     "0x0000000000000000000000000000000000000000000000000000000000000000",
+  //   ],
+  //   watch: false,
+  //   chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+  //   enabled: address != null,
+  //   suspense: true,
+  //   onError: (error) => {
+  //     console.log("error", error);
+  //   },
+  // });
+
   const { data: delegationData } = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
       address! as `0x${string}`,
-      "0x0000000000000000000000000000000000000000000000000000000000000000",
+      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
     watch: false,
+    suspense: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
-    suspense: true,
-    onError: (error) => {
-      console.log("error", error);
-    },
   });
 
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({

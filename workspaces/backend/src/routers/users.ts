@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
-import { getUserByJWT } from '../utils/helpers';
 import { TRPCError } from '@trpc/server';
 
 export const usersRouter = router({
@@ -49,6 +48,7 @@ export const usersRouter = router({
         walletProvider: z.string().optional(),
         publicIdentifier: z.string().optional(),
         dynamicId: z.string().optional(),
+        profileImage: z.string().optional() || z.null(),
       })
     )
     .mutation(async (opts) => {
@@ -60,6 +60,7 @@ export const usersRouter = router({
           walletProvider: opts.input.walletProvider,
           publicIdentifier: opts.input.publicIdentifier,
           dynamicId: opts.input.dynamicId,
+          profileImage: opts.input.profileImage === "none" ? null : opts.input.profileImage,
           updatedAt: new Date(),
         })
         .where(eq(users.id, opts.input.id))
@@ -154,7 +155,7 @@ export const usersRouter = router({
 
   me: protectedProcedure
     .query(async (opts) => {
-      return (await getUserByJWT(opts.ctx.req.cookies.JWT))
+      return opts.ctx.user
     }),
 
   editUserProfileByAddress: protectedProcedure

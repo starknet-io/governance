@@ -3,7 +3,6 @@ import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
 import { desc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { getUserByJWT } from "../utils/helpers";
 import { comments } from '../db/schema/comments';
 
 const snipInsertSchema = createInsertSchema(snips);
@@ -50,7 +49,7 @@ export const snipsRouter = router({
           ...opts.input,
           type: 'snip',
           status: 'Draft',
-          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id,
+          userId: opts.ctx.user?.id
         })
         .returning();
 

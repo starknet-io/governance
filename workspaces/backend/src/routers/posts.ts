@@ -3,10 +3,9 @@ import { posts } from '../db/schema/posts';
 import { db } from '../db/db';
 import { desc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { getUserByJWT } from '../utils/helpers';
 import { comments } from '../db/schema/comments';
-import {commentVotes} from "../db/schema/commentVotes";
-import {z} from "zod";
+import { commentVotes } from "../db/schema/commentVotes";
+import { z } from "zod";
 
 const postInsertSchema = createInsertSchema(posts);
 
@@ -23,7 +22,7 @@ export const postsRouter = router({
         .values({
           ...opts.input,
           createdAt: new Date(),
-          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id
+          userId: opts.ctx.user?.id
         })
         .returning();
 
@@ -33,7 +32,7 @@ export const postsRouter = router({
   getPostComments: publicProcedure
     .input(z.object({ postId: z.string(), sort: z.enum(['upvotes', 'date']).optional() }))
     .query(async (opts) => {
-      const userId = opts.ctx.req.cookies.JWT ? (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id : null;
+      const userId = opts.ctx.user?.id || null;
 
       const orderByClause = [];
       if (opts.input.sort === 'upvotes') {

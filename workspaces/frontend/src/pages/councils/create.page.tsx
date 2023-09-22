@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
+import { useFileUpload } from "src/hooks/useFileUpload";
 
 export function Page() {
   const {
@@ -30,7 +31,7 @@ export function Page() {
 
   const [members, setMembers] = useState<MemberType[]>([]);
   const createCouncil = trpc.councils.saveCouncil.useMutation();
-
+  const { handleUpload } = useFileUpload();
   const { editorValue, handleEditorChange, editor } = useMarkdownEditor(
     "",
     EditorTemplate.proposalMarkDown,
@@ -96,6 +97,7 @@ export function Page() {
                   value={editorValue}
                   onChange={handleEditorChange}
                   customEditor={editor}
+                  handleUpload={handleUpload}
                 />
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>

@@ -10,80 +10,72 @@ import {
   Stack,
   Flex,
   ContentContainer,
-  ReorderableList,
   useMarkdownEditor,
   MarkdownEditor,
+  MultiLevelReOrderableList,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { PageWithUserInterface } from "./index.page";
+import { useFileUpload } from "src/hooks/useFileUpload";
+import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
+import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";
 
 export function Page() {
   const {
+    handleSubmit,
     register,
-    watch,
     formState: { errors, isValid },
   } = useForm<RouterInput["pages"]["savePage"]>();
-  // const [editorValue, setEditorValue] = useState<string>("");
-  const title = watch("title", "");
-  const saveBatchPages = trpc.pages.saveBatch.useMutation();
-  const pagesResponse = trpc.pages.getAll.useQuery();
-  const pages = pagesResponse.data ?? [];
 
+  const savePagesTree = trpc.pages.savePagesTree.useMutation();
+  const pagesTree = trpc.pages.getPagesTree.useQuery();
+
+  const [treeItems, setTreeItems] = useState<TreeItems>([]);
+  const { handleUpload } = useFileUpload();
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
-  const [reorderItems, setReorderItems] = useState<PageWithUserInterface[]>([
-    {
-      id: 0,
-      title: "This is the new page",
-      content: editorValue,
-      author: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      orderNumber: null,
-      userId: "",
-      slug: "",
-    },
-  ]);
+
+  const NEW_ITEM = {
+    id: Date.now(),
+    title: "This is the new page",
+    content: editorValue,
+    author: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    orderNumber: null,
+    children: [],
+    userId: "",
+    slug: "",
+  };
 
   useEffect(() => {
-    setReorderItems((prevItems) => {
-      const itemMap = new Map(prevItems.map((item) => [item.id, item]));
-      for (const page of pages) {
-        if (!itemMap.has(page.id)) {
-          itemMap.set(page.id, page);
-        }
+    if (pagesTree?.isSuccess && !treeItems.length) {
+      setTreeItems([
+        { id: Date.now(), data: NEW_ITEM, children: [], isNew: true },
+        ...adaptTreeForFrontend(pagesTree.data),
+      ]);
+    }
+  }, [pagesTree]);
+
+  const saveChanges = handleSubmit((data) => {
+    const newItems = flattenTreeItems(treeItems).map((item) => {
+      if (item.isNew) {
+        return {
+          ...item,
+          title: data.title,
+          content: editorValue,
+        };
       }
-      return Array.from(itemMap.values());
+      return item;
     });
-  }, [pages]);
 
-  useEffect(() => {
-    setReorderItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === 0
-          ? {
-              ...item,
-              title: title || "This is the new page",
-              content: editorValue,
-            }
-          : item,
-      ),
-    );
-  }, [title, editorValue]);
-
-  const saveChanges = () => {
-    saveBatchPages.mutateAsync(reorderItems, {
+    savePagesTree.mutate(newItems, {
       onSuccess: () => {
         navigate(`/learn`);
       },
     });
-  };
-
-  const setItems = (values: any) => {
-    setReorderItems(values);
-  };
+  });
 
   return (
     <>
@@ -110,21 +102,32 @@ export function Page() {
                 <MarkdownEditor
                   value={editorValue}
                   onChange={handleEditorChange}
+                  handleUpload={handleUpload}
                 />
                 {errors.content && <span>This field is required.</span>}
               </FormControl>
             </Stack>
           </form>
-          <Heading variant="h5" mb="24px">
-            Page Order
-          </Heading>
-          <ReorderableList items={reorderItems} setItems={setItems} />
+
+          {!!treeItems.length && (
+            <Box mb="6">
+              <Heading variant="h5" mb="24px">
+                Page Order
+              </Heading>
+              <MultiLevelReOrderableList
+                items={treeItems}
+                setItems={setTreeItems}
+              />
+            </Box>
+          )}
+
           <Flex justifyContent="flex-end">
             <Button
               size="condensed"
               variant="primary"
               isDisabled={!isValid}
               onClick={saveChanges}
+              isLoading={savePagesTree.isLoading}
             >
               Save Changes
             </Button>

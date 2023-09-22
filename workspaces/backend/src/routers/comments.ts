@@ -3,7 +3,6 @@ import { comments } from '../db/schema/comments';
 import { db } from '../db/db';
 import { eq, desc, and } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { getUserByJWT } from '../utils/helpers';
 import { z } from 'zod';
 import { commentVotes } from '../db/schema/commentVotes';
 
@@ -24,9 +23,7 @@ export const commentsRouter = router({
       }),
     )
     .query(async (opts) => {
-      const userId = opts.ctx.req.cookies.JWT
-        ? (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id
-        : null;
+      const userId = opts.ctx.user?.id || null;
 
       const orderByClause = [];
       if (opts.input.sort === 'upvotes') {
@@ -72,7 +69,7 @@ export const commentsRouter = router({
       }),
     )
     .mutation(async (opts) => {
-      const userId = (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id;
+      const userId = opts.ctx.user?.id;
       if (!userId) {
         throw new Error('User not authenticated');
       }
@@ -165,7 +162,7 @@ export const commentsRouter = router({
         .insert(comments)
         .values({
           ...opts.input,
-          userId: (await getUserByJWT(opts.ctx.req.cookies.JWT))?.id,
+          userId: opts.ctx.user?.id,
         })
         .returning();
 
@@ -175,7 +172,7 @@ export const commentsRouter = router({
   editComment: protectedProcedure
     .input(commentInsertSchema.required({ id: true }))
     .mutation(async (opts) => {
-      const user = await getUserByJWT(opts.ctx.req.cookies.JWT);
+      const user = opts.ctx.user?.id;
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -202,7 +199,7 @@ export const commentsRouter = router({
   deleteComment: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async (opts) => {
-      const user = await getUserByJWT(opts.ctx.req.cookies.JWT);
+      const user = opts.ctx.user;
       if (user?.role !== 'admin') {
         throw new Error('Permission denied: Only admins can delete comments');
       }

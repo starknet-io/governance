@@ -76,9 +76,13 @@ export {
   ShareIcon,
   CopyIcon,
   SearchIcon,
+  FileUploader,
+  ProfileImage,
   HamburgerIcon,
   PlusIcon,
   SortIcon,
+  UploadImage,
+  MultiLevelReOrderableList
   EllipsisIcon,
   InfoIcon,
   XIcon,

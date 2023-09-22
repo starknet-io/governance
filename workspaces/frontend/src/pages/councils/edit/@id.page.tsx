@@ -23,6 +23,7 @@ import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
+import { useFileUpload } from "src/hooks/useFileUpload";
 
 export function Page() {
   const {
@@ -37,7 +38,7 @@ export function Page() {
     setValue,
     formState: { errors, isValid },
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
-
+  const { handleUpload } = useFileUpload();
   const [members, setMembers] = useState<MemberType[]>([]);
   const editCouncil = trpc.councils.editCouncil.useMutation();
   const pageContext = usePageContext();
@@ -167,6 +168,7 @@ export function Page() {
                   onChange={handleEditorChange}
                   value={editorValue}
                   customEditor={editor}
+                  handleUpload={handleUpload}
                 />
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>

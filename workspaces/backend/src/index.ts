@@ -9,9 +9,13 @@ import { db } from './db/db';
 import { users } from './db/schema/users';
 import { eq } from 'drizzle-orm';
 import { getUserByJWT } from './utils/helpers';
+import multer from 'multer';
 import { delegateRouter } from "./routers/delegates";
 
 dotenv.config();
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage });
 
 const app: Express = express();
 const port = process.env.PORT || 8000;
@@ -38,7 +42,8 @@ const fetchUserMiddleware = async (req: express.Request, res: express.Response, 
 app.use(cookieParser());
 app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000', credentials: true }));
 app.use(fetchUserMiddleware);
-app.use("/trpc", createExpressMiddleware({
+
+app.use("/trpc", upload.single('file'), createExpressMiddleware({
   router: appRouter,
   createContext
 }));

@@ -45,7 +45,7 @@ import {
   PlusIcon,
 } from "@yukilabs/governance-components";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
-import { PageContext, ROLES } from "./types";
+import { IUser, PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import React, { useCallback } from "react";
@@ -286,13 +286,7 @@ const DynamicCustomWidget = () => {
   const { user } = useDynamicContext();
   const isAuthorized = !!user;
 
-  return isAuthorized ? (
-    <Suspense fallback={<Spinner size="sm" />}>
-      <LazyDataComponent />
-    </Suspense>
-  ) : (
-    <DynamicWidget />
-  );
+  return isAuthorized ? <LazyDataComponent /> : <DynamicWidget />;
 };
 
 function PageLayout(props: Props) {
@@ -382,6 +376,7 @@ function PageLayout(props: Props) {
             userRole={user?.role}
             councilData={councilResp.data}
             openSupportModal={() => setIsModalOpen(!isModalOpen)}
+            user={user}
           />
         </Layout.LeftAside>
         <Layout.Main>
@@ -458,6 +453,7 @@ interface NavigationMenuProps {
   userRole: string | undefined;
   councilData: any[] | undefined;
   openSupportModal: () => void;
+  user?: IUser | null;
 }
 
 const NavigationMenu: React.FC<NavigationMenuProps> = ({
@@ -465,6 +461,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
   userRole,
   councilData,
   openSupportModal,
+  user,
 }) => {
   return (
     <>
@@ -540,7 +537,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
           />
         ))}
 
-        {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+        {user ? (
           <NavItem href="/settings" icon={<SettingsIcon />} label="Settings" />
         ) : null}
         <NavItem
