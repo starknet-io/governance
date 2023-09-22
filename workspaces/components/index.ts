@@ -82,6 +82,7 @@ export {
   EllipsisIcon,
   InfoIcon,
   XIcon,
+  SignatureIcon,
 } from "../components/src/Icons/index";
 
 export {
