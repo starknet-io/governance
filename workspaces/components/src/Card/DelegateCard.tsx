@@ -8,10 +8,11 @@ import {
   LinkBox,
   LinkOverlay,
 } from "@chakra-ui/react";
-import { Tag } from "../Tag";
+import { Tag } from "../Tag/";
 import { Button } from "../Button";
-import * as ProfileSummaryCard from "src/ProfileSummaryCard/ProfileSummaryCard";
-import { MarkdownRenderer } from "src/MarkdownRenderer";
+import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
+import { MarkdownRenderer } from "../MarkdownRenderer";
+import { formatVotesAmount } from "src/utils";
 
 export type DelegateCardProps = {
   statement: string | null;
@@ -102,9 +103,7 @@ export const DelegateCard = ({
   onDelegateClick,
   profileURL,
 }: DelegateCardProps) => {
-  const votesFormatted = votingPower
-    ? `${votingPower} delegated votes`
-    : "0 delegated votes";
+  const votesFormatted = formatVotesAmount(votingPower) + " delegated votes";
   const formattedDelegateStatement = extractParagraph(statement || "");
 
   return (
@@ -126,7 +125,11 @@ export const DelegateCard = ({
       <CardBody>
         <DelegateTags type={type} />
         <MarkdownRenderer
-          textProps={{ fontSize: "14px", noOfLines: 3, color: "#4A4A4F" }}
+          textProps={{
+            fontSize: "14px",
+            noOfLines: 3,
+            color: "#4A4A4F",
+          }}
           content={formattedDelegateStatement || ""}
         />
       </CardBody>
@@ -138,7 +141,7 @@ export const DelegateCard = ({
               variant="outline"
               onClick={onDelegateClick}
             >
-              Delegate
+              Delegate 2 ddddd
             </Button>
           </Box>
         </Box>

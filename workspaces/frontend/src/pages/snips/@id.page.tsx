@@ -2,53 +2,53 @@ import { DocumentProps } from "src/renderer/types";
 
 import {
   Box,
-  Heading,
-  ContentContainer,
-  Stack,
-  Flex,
-  Stat,
-  Divider,
-  FormControl,
-  CommentInput,
-  CommentList,
-  IconButton,
-  HiEllipsisHorizontal,
-  Iframely,
-  MarkdownRenderer,
+  // Heading,
+  // ContentContainer,
+  // Stack,
+  // Flex,
+  // Stat,
+  // Divider,
+  // FormControl,
+  // CommentInput,
+  // CommentList,
+  // IconButton,
+  // Iframely,
+  // MarkdownRenderer,
+  // EllipsisIcon,
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
-import { usePageContext } from "src/renderer/PageContextProvider";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+// import { trpc } from "src/utils/trpc";
+// import { usePageContext } from "src/renderer/PageContextProvider";
+// import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 export function Page() {
-  const pageContext = usePageContext();
+  // const pageContext = usePageContext();
 
-  const { user } = useDynamicContext();
+  // const { user } = useDynamicContext();
 
-  const snip = trpc.snips.getSNIP.useQuery({
-    id: parseInt(pageContext.routeParams!.id),
-  });
+  // const snip = trpc.snips.getSNIP.useQuery({
+  //   id: parseInt(pageContext.routeParams!.id),
+  // });
 
-  const saveComment = trpc.comments.saveComment.useMutation({
-    onSuccess: () => {
-      snip.refetch();
-    },
-  });
+  // const saveComment = trpc.comments.saveComment.useMutation({
+  //   onSuccess: () => {
+  //     snip.refetch();
+  //   },
+  // });
 
-  const handleCommentSend = async (value: string) => {
-    console.log('HERE', value);
-    try {
-      await saveComment.mutateAsync({
-        content: value,
-        snipId: parseInt(pageContext.routeParams!.id),
-      });
-    } catch (error) {
-      // Handle error
-      console.log(error);
-    }
-    console.log(value);
-  };
-  console.log(typeof snip.data?.discussionURL);
+  // const handleCommentSend = async (value: string) => {
+  //   console.log("HERE", value);
+  //   try {
+  //     await saveComment.mutateAsync({
+  //       content: value,
+  //       snipId: parseInt(pageContext.routeParams!.id),
+  //     });
+  //   } catch (error) {
+  //     // Handle error
+  //     console.log(error);
+  //   }
+  //   console.log(value);
+  // };
+  // console.log(typeof snip.data?.discussionURL);
 
   return (
     <>
@@ -58,7 +58,7 @@ export function Page() {
         flex="1"
         height="100%"
       >
-        <ContentContainer>
+        {/* <ContentContainer>
           <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
             <Stack
               spacing="24px"
@@ -80,7 +80,7 @@ export function Page() {
                   variant="simple"
                   onClick={() => console.log("clicked")}
                   aria-label="Search database"
-                  icon={<HiEllipsisHorizontal size="24px" />}
+                  icon={<EllipsisIcon />}
                 />
               </Box>
               <Flex gap="16px" paddingTop="0" alignItems="center">
@@ -137,9 +137,8 @@ export function Page() {
               <CommentList commentsList={snip.data?.comments || []} />
             </Stack>
           </Box>
-        </ContentContainer>
+        </ContentContainer> */}
       </Box>
-      <Box></Box>
     </>
   );
 }

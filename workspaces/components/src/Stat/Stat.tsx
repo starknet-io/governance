@@ -61,7 +61,11 @@ const Text = ({ label }: TextProps) => {
     label && label.startsWith("By 0x") ? truncateAddress(label) : label;
 
   return (
-    <ChakraText variant="breadcrumbs" fontWeight="500" color="#4D4D56">
+    <ChakraText
+      variant="small"
+      fontWeight="500"
+      color="content.default.default"
+    >
       {displayLabel}
     </ChakraText>
   );
@@ -72,9 +76,7 @@ interface DateProps {
   date?: Date;
 }
 const Date = ({ date }: DateProps) => {
-  const formattedDate = moment(date).format(
-    "MMMM Do YYYY"
-  );
+  const formattedDate = moment(date).format("MMMM Do YYYY");
   return (
     <ChakraText variant="breadcrumbs" fontWeight="500" color="#4D4D56">
       {date && formattedDate}
@@ -84,7 +86,7 @@ const Date = ({ date }: DateProps) => {
 
 interface LinkProps {
   label: string | null | undefined;
-  href?: string ;
+  href?: string;
 }
 const Link = ({ label, href }: LinkProps) => {
   return (

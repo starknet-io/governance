@@ -1,10 +1,16 @@
 import React, { useEffect } from "react";
 import { PageContextProvider } from "./PageContextProvider";
+import { ChakraProvider } from "@chakra-ui/react";
+import "@fontsource-variable/inter/slnt.css";
+import "@fontsource/poppins/600.css";
+import "@fontsource/poppins/500.css";
 import type { PageContext } from "./types";
 import { DynamicContextProviderPage } from "./DynamicContexProviderPage";
 import { ApolloProvider, ApolloClient } from "@apollo/client";
-import { ThemeProvider } from "@yukilabs/governance-components";
+
 import { trpc } from "src/utils/trpc";
+
+import { theme } from "@yukilabs/governance-components";
 
 interface Props {
   readonly pageContext: PageContext;
@@ -38,13 +44,13 @@ export function PageShell(props: Props) {
   return (
     // <React.StrictMode>
     <PageContextProvider pageContext={{ ...pageContext, user: user || null }}>
-      <ThemeProvider>
+      <ChakraProvider theme={theme}>
         <ApolloProvider client={props.apolloClient}>
           <DynamicContextProviderPage pageContext={pageContext}>
             {children}
           </DynamicContextProviderPage>
         </ApolloProvider>
-      </ThemeProvider>
+      </ChakraProvider>
     </PageContextProvider>
     // </React.StrictMode>
   );

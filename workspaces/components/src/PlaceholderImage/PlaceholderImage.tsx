@@ -1,16 +1,16 @@
-import { Box, Icon } from "@chakra-ui/react";
-import { VoteIcon } from "src/Icons";
+import { Box, Image } from "@chakra-ui/react";
 
+import img from "./assets/voting-starts-in-X-days.png";
 export const PlaceholderImage = () => {
   return (
     <Box
       width="100%"
-      height=" 100px"
+      height=" 240px"
       display="flex"
       alignItems={"center"}
       justifyContent={"center"}
     >
-      <Icon as={VoteIcon} boxSize={104} />
+      <Image src={img} width="240px" />
     </Box>
   );
 };

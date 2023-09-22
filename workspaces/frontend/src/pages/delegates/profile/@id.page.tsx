@@ -15,13 +15,13 @@ import {
   Stack,
   SummaryItems,
   MenuItem,
-  Status,
   EmptyState,
   AgreementModal,
   Link,
   StatusModal,
   Skeleton,
   SkeletonCircle,
+  Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -282,9 +282,6 @@ export function Page() {
   }
 
   const isLoadingProfile = !delegateResponse.isFetched;
-  const isLoadingVotes = !gqlResponse.loading;
-  const isLoadingComments = !delegateCommentsResponse.isFetched;
-  const isLoadingSummary = !gqlResponse.loading || !delegateResponse.isLoading;
 
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched && delegation.data === delegateAddress;
@@ -363,7 +360,10 @@ export function Page() {
           }
         }}
       />
-      <ConfirmModal isOpen={isLoading || isLoadingUndelegation} onClose={() => setIsOpen(false)} />
+      <ConfirmModal
+        isOpen={isLoading || isLoadingUndelegation}
+        onClose={() => setIsOpen(false)}
+      />
       <AgreementModal
         isOpen={showAgreement}
         onClose={() => setShowAgreement(false)}
@@ -427,9 +427,9 @@ export function Page() {
                     : "Delegate your votes"
                 }
                 onClick={() => {
-                  setIsOpen(true)
+                  setIsOpen(true);
                   if (hasUserDelegatedTokensToThisDelegate) {
-                    setIsUndelegation(true)
+                    setIsUndelegation(true);
                   }
                 }}
               />
@@ -441,13 +441,13 @@ export function Page() {
 
         <Box mt="24px">
           {delegation.isFetched && delegation.data === delegateAddress && (
-            <Status
+            <Banner
               label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
             />
           )}
 
           {delegateResponse.isFetched && address === delegateAddress && (
-            <Status label="You can’t delegate votes to your own account." />
+            <Banner label="You can’t delegate votes to your own account." />
           )}
         </Box>
 

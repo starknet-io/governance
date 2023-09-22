@@ -20,6 +20,7 @@ export const ProgressTheme = defineStyleConfig({
   baseStyle: {
     filledTrack: {
       backgroundColor: "#20AC70",
+      borderRadius: "2px",
     },
     track: {
       backgroundColor: "#E7E8E9",

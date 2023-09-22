@@ -14,7 +14,6 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  HiEllipsisHorizontal,
   IconButton,
   InfoModal,
   PlaceholderImage,
@@ -29,10 +28,12 @@ import {
   VoteStat,
   StatusModal,
   Iframely,
-  Status,
   VoteComment,
   MarkdownRenderer,
   Select,
+  Banner,
+  EllipsisIcon,
+  Link,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -457,14 +458,18 @@ export function Page() {
       </InfoModal>
       <ContentContainer>
         <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
-          <Stack spacing="24px" direction={{ base: "column" }} color="#545464">
+          <Stack
+            spacing="0"
+            direction={{ base: "column" }}
+            color="content.default.default"
+          >
             <Box display="flex" alignItems="center">
               <Box flex="1">
                 <Heading
-                  color="#33333E"
-                  variant="h3"
+                  color="content.accent.default"
+                  variant="h2"
                   maxWidth="90%"
-                  lineHeight="1.4em"
+                  mb="standard.md"
                 >
                   {data?.proposal?.title}
                 </Heading>
@@ -473,10 +478,16 @@ export function Page() {
                 variant="simple"
                 onClick={() => console.log("clicked")}
                 aria-label="Search database"
-                icon={<HiEllipsisHorizontal size="24px" />}
+                //toDo replace with ellipsis icon
+                icon={<EllipsisIcon />}
               />
             </Box>
-            <Flex gap="16px" paddingTop="0" alignItems="center">
+            <Flex
+              gap="standard.sm"
+              mb="standard.md"
+              paddingTop="0"
+              alignItems="center"
+            >
               <Stat.Root>
                 <Stat.Status status={data?.proposal?.state} />
               </Stat.Root>
@@ -495,28 +506,37 @@ export function Page() {
               <Stat.Root>
                 <Stat.Link label={`${commentCount} comments`} />
               </Stat.Root>
-              <Box ml="auto">
-                <Stat.Root>
-                  <Stat.Button
-                    onClick={() => setIsInfoOpen(true)}
-                    label={`View Snapshot info`}
-                  />
-                </Stat.Root>
-              </Box>
             </Flex>
-            <Divider />
+
+            <Box mb="standard.2xl">
+              <Link
+                as="button"
+                size="small"
+                onClick={() => setIsInfoOpen(true)}
+              >
+                View Snapshot info
+              </Link>
+            </Box>
+
             {data?.proposal?.discussion !== "" ? (
-              <Iframely
-                id={import.meta.env.VITE_APP_IFRAMELY_ID}
-                url={`${data?.proposal?.discussion}`}
-              />
+              <>
+                <Iframely
+                  id={import.meta.env.VITE_APP_IFRAMELY_ID}
+                  url={`${data?.proposal?.discussion}`}
+                />
+                <Box mb="standard.2xl"></Box>
+              </>
             ) : (
               <></>
             )}
             <MarkdownRenderer content={data?.proposal?.body || ""} />
 
-            <Divider my="32px" />
-            <Heading color="#33333E" variant="h3">
+            <Divider my="standard.2xl" />
+            <Heading
+              color="content.accent.default"
+              variant="h3"
+              mb="standard.2xl"
+            >
               Discussion
             </Heading>
             {user ? (
@@ -524,7 +544,7 @@ export function Page() {
                 <CommentInput onSend={handleCommentSend} />
               </FormControl>
             ) : (
-              <Box>Show logged out state for comment input</Box>
+              <Box></Box>
             )}
             <AppBar.Root>
               <AppBar.Group mobileDirection="row">
@@ -561,48 +581,74 @@ export function Page() {
         </Box>
       </ContentContainer>
       <Box
-        pt="40px"
-        px="32px"
-        borderLeft="1px solid #E7E8E9"
+        pt="standard.3xl"
+        px="standard.xl"
+        borderLeft="1px solid"
+        borderColor="border.forms"
         display="flex"
         flexDirection="column"
-        flexBasis={{ base: "100%", md: "391px" }}
+        flexBasis={{ base: "100%", md: "380px" }}
         height="100vh"
-        pb="100px"
         top="0"
         position={{ base: "unset", lg: "sticky" }}
       >
         {data?.proposal?.state === "active" ||
         data?.proposal?.state === "closed" ? (
           <>
-            <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
-              Cast your vote
-            </Heading>
+            {!hasVoted && canVote && !hasDelegated && (
+              <Heading
+                color="content.accent.default"
+                variant="h4"
+                mb="standard.md"
+              >
+                Cast your vote
+              </Heading>
+            )}
 
             {delegation.isFetched &&
               userBalance.isFetched &&
               delegation.data &&
               delegation.data !=
                 "0x0000000000000000000000000000000000000000" && (
-                <Status
-                  label={`Your voting power of ${userBalance.balance} ${
-                    userBalance.symbol
-                  } is currently assigned to delegate ${truncateAddress(
-                    delegation.data,
-                  )}`}
-                />
+                <>
+                  <Heading
+                    color="content.accent.default"
+                    variant="h4"
+                    mb="standard.md"
+                  >
+                    Your vote
+                  </Heading>
+                  <Banner
+                    label={`Your voting power of ${userBalance.balance} ${
+                      userBalance.symbol
+                    } is currently assigned to delegate ${truncateAddress(
+                      delegation.data,
+                    )}`}
+                  />
+                  <Divider mb="standard.2xl" />
+                </>
               )}
 
             {vote.data && vote.data.votes?.[0] && (
-              <Status
-                label={`You voted ${
-                  vote.data.votes[0].choice === 1
-                    ? "For"
-                    : vote.data.votes[0].choice === 2
-                    ? "Against"
-                    : "Abstain"
-                } using ${vote.data.votes[0].vp} votes`}
-              />
+              <>
+                <Heading
+                  color="content.accent.default"
+                  variant="h4"
+                  mb="standard.md"
+                >
+                  Your vote
+                </Heading>
+                <Banner
+                  label={`You voted ${
+                    vote.data.votes[0].choice === 1
+                      ? "For"
+                      : vote.data.votes[0].choice === 2
+                      ? "Against"
+                      : "Abstain"
+                  } using ${vote.data.votes[0].vp} votes`}
+                />
+                <Divider mb="standard.2xl" />
+              </>
             )}
             {!hasVoted && canVote && !hasDelegated ? (
               <ButtonGroup
@@ -629,10 +675,16 @@ export function Page() {
                 })}
               </ButtonGroup>
             ) : null}
-            <Divider mb="40px" />
-            <Box mb="40px">
-              <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
-                Results
+
+            <Box>
+              <Heading
+                color="content.accent.default"
+                variant="h4"
+                mb="standard.md"
+              >
+                {data?.proposal?.state === "active"
+                  ? `Current results`
+                  : "Final Results"}
               </Heading>
 
               {data?.proposal?.choices.map((choice, index) => {
@@ -662,9 +714,15 @@ export function Page() {
                 );
               })}
             </Box>
-            <Divider mb="40px" />
-            <Box mb="40px">
-              <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
+            <Divider
+              mb="standard.2xl"
+              mt="standard.2xl"
+              position="relative"
+              left="-24px"
+              width={`calc(100% + 48px)`}
+            />
+            <Box mb="standard.2xl">
+              <Heading variant="h4" mb="standard.md">
                 Votes
               </Heading>
 
@@ -696,11 +754,11 @@ export function Page() {
             overflow="hidden"
           >
             <PlaceholderImage />
-            <Heading variant="h3" fontSize="16px" color="#2A2A32">
+            <Heading variant="h4" color="content.default.default">
               Voting starts{" "}
               {`${formatDate(data?.proposal?.start ?? 0, "yyyy-MM-dd", true)}`}
             </Heading>
-            <Text textAlign="center" fontSize="12px" color="#4D4D56">
+            <Text variant="small" color="content.default.default">
               The Builder’s council is excited about the new features but
               expects higher quality of documentation.
             </Text>
