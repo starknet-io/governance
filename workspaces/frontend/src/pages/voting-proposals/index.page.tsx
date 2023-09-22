@@ -11,7 +11,6 @@ import {
   Select,
   Text,
   FilterPopoverIcon,
-  HiAdjustmentsHorizontal,
   FilterPopoverContent,
   CheckboxFilter,
   Popover,
@@ -239,7 +238,6 @@ export function Page() {
             <Popover placement="bottom-start">
               <FilterPopoverIcon
                 label="Filter by"
-                icon={HiAdjustmentsHorizontal}
                 badgeContent={filtersState.filters.length}
               />
               <FilterPopoverContent

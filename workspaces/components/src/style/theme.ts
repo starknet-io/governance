@@ -18,12 +18,13 @@ import { colors, spacing, radii } from "./tokens";
 import { checkboxTheme } from "src/Checkbox/CheckboxStyles";
 import { radioTheme } from "src/Radio/RadioStyles";
 import { switchTheme } from "src/Switch/SwitchStyles";
+import { alertTheme } from "src/Banner/AlertStyles";
 
 const config = {
   initialColorMode: "light",
 };
 
-const theme = extendTheme({
+export const theme = extendTheme({
   config,
   colors: {
     ...colors,
@@ -40,6 +41,7 @@ const theme = extendTheme({
   },
 
   components: {
+    Alert: alertTheme,
     Button,
     Badge,
     Text,
@@ -65,5 +67,3 @@ const theme = extendTheme({
     Switch: switchTheme,
   },
 });
-
-export default theme;

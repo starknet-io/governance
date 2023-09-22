@@ -8,7 +8,6 @@ import {
   SimpleGrid,
   PageTitle,
   ContentContainer,
-  HiAdjustmentsHorizontal,
   Popover,
   FilterPopoverContent,
   CheckboxFilter,
@@ -219,6 +218,8 @@ export function Page() {
     sortBy,
   });
 
+  console.log(receiverData);
+
   const addVotingPowerToReceiver = () => {
     if (delegates.data && delegates.data.length > 0) {
       const foundDelegate = delegates.data.find(
@@ -403,7 +404,6 @@ export function Page() {
                 <Popover placement="bottom-start">
                   <FilterPopoverIcon
                     label="Filter by"
-                    icon={HiAdjustmentsHorizontal}
                     badgeContent={filtersState.filters.length}
                   />
                   <FilterPopoverContent

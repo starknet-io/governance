@@ -14,7 +14,7 @@ import "./user-profile.css";
 import { Button } from "src/Button";
 import { Indenticon } from "../Indenticon";
 import { useState } from "react";
-import { HiXMark } from "../Icons";
+import { XIcon } from "../Icons";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
@@ -69,7 +69,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               onClick={handleCancel}
               cursor="pointer"
             >
-              <HiXMark className="x-mark" size={20} />
+              <XIcon />
             </Box>
             <Flex
               lineHeight="32px"

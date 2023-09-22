@@ -1,5 +1,5 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import theme from "../src/style/theme";
+import { theme } from "../src/style/theme";
 import { PageContextProvider } from "@yukilabs/governance-frontend/src/renderer/PageContextProvider";
 import React from "react";
 

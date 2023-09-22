@@ -3,8 +3,8 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Code } from "@chakra-ui/react";
-import { Heading } from "src/Heading";
-import { Text, LocalTextProps } from "src/Text/Text";
+import { Heading } from "../Heading";
+import { Text, LocalTextProps } from "../Text";
 
 export interface MarkdownRendererProps {
   content: string;
@@ -18,22 +18,42 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   return (
     <ReactMarkdown
       components={{
-        h1: ({ ...props }) => <Heading variant="h1" {...props} />,
-        h2: ({ ...props }) => <Heading variant="h2" {...props} />,
-        h3: ({ ...props }) => <Heading variant="h3" {...props} />,
-        h4: ({ ...props }) => <Heading variant="h4" {...props} />,
-        h5: ({ ...props }) => <Heading variant="h5" {...props} />,
-        h6: ({ ...props }) => <Heading variant="h6" {...props} />,
-        p: ({ ...props }) => <Text variant="large" {...textProps} {...props} />,
-        code: ({ ...props }) => <Code maxWidth="100%" {...props} />,
-        ol: ({ ...props }) => <ol style={{ paddingLeft: 16 }} {...props} />,
-        ul: ({ ...props }) => <ul style={{ paddingLeft: 16 }} {...props} />,
+        h1: ({ ...props }) => (
+          <Heading variant="h1" {...props} mt="20px" mb="4px" />
+        ),
+        h2: ({ ...props }) => (
+          <Heading variant="h2" mt="20px" mb="4px" {...props} />
+        ),
+        h3: ({ ...props }) => (
+          <Heading variant="h3" mt="20px" mb="4px" {...props} />
+        ),
+        h4: ({ ...props }) => (
+          <Heading variant="h4" mt="20px" mb="4px" {...props} />
+        ),
+        h5: ({ ...props }) => (
+          <Heading variant="h5" mt="20px" mb="4px" {...props} />
+        ),
+        h6: ({ ...props }) => (
+          <Heading variant="h6" mt="20px" mb="4px" {...props} />
+        ),
+        p: ({ ...props }) => (
+          <Text variant="large" {...textProps} {...props} mb="16px" mt="8px" />
+        ),
+        code: ({ ...props }) => (
+          <Code maxWidth="100%" p="16px" {...props} mb="18px" />
+        ),
+        ol: ({ ...props }) => (
+          <ol style={{ paddingLeft: 16, marginBottom: 18 }} {...props} />
+        ),
+        ul: ({ ...props }) => (
+          <ul style={{ paddingLeft: 16, marginBottom: 18 }} {...props} />
+        ),
         blockquote: ({ ...props }) => (
           <blockquote
             style={{
-              color: "#DCDBDD",
               borderLeft: "3px solid #DCDBDD",
               paddingLeft: "12px",
+              marginBottom: 18,
             }}
             {...props}
           />

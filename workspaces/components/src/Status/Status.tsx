@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { Text } from "src/Text";
+import { Text } from "../Text";
 
 type Props = {
   label: string;
@@ -10,11 +10,11 @@ export const Status = ({ label }: Props) => {
     <Box
       borderRadius="4px"
       mb="24px"
-      padding="12px"
-      bg="#4A4A4F"
-      fontSize="12px"
+      px="32px"
+      py="12px"
+      bg={"surface.info.default"}
     >
-      <Text variant="breadcrumbs" color="white">
+      <Text variant="smallStrong" color="content.onSurface.default">
         {label}
       </Text>
     </Box>
