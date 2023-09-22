@@ -1,6 +1,7 @@
 import { Box, Flex, Progress, Stack, Tooltip } from "@chakra-ui/react";
 
 import { Text } from "../Text";
+import { formatVotesAmount } from "src/utils";
 
 type Props = {
   voteCount?: number;
@@ -31,8 +32,8 @@ export const VoteStat = (props: Props) => {
     props.totalVotes > 0
       ? ((props.voteCount || 0) / props.totalVotes) * 100
       : 0;
-  const voteCountFormatted = formatVoteCount(props.voteCount || 0);
-
+  // const voteCountFormatted = formatVoteCount(props.voteCount || 0);
+  const voteCountFormatted = formatVotesAmount(props.voteCount || 0);
   return (
     <Tooltip
       label={props.strategies.map((strategy, index) => (
@@ -47,16 +48,23 @@ export const VoteStat = (props: Props) => {
       placement="top"
       hasArrow
     >
-      <Stack fontSize="10px" spacing="4px" textTransform="uppercase">
-        <Flex flexDirection="row" gap="8px" justifyContent="space-between">
+      <Stack mb="standard.sm" spacing="0" textTransform="uppercase">
+        <Flex
+          flexDirection="row"
+          gap="8px"
+          justifyContent="space-between"
+          mb="standard.base"
+        >
           <Box>
-            <Text fontWeight="medium" color="black">
+            <Text variant="captionSmallStrong" color="content.default.default">
               {formatPercentage(votePercentage)} % {props.userVote ? "✓" : ""}
             </Text>
           </Box>
-          <Text color="black">{voteCountFormatted} Votes</Text>
+          <Text variant="captionSmallStrong" color="content.default.default">
+            {voteCountFormatted} Votes
+          </Text>
         </Flex>
-        <Box mb="20px" width="100%">
+        <Box bg="purple" width="100%">
           <Progress
             variant={variant[props.type]}
             height="4px"
