@@ -28,10 +28,11 @@ import {
   VoteStat,
   StatusModal,
   Iframely,
-  Status,
   VoteComment,
   MarkdownRenderer,
   Select,
+  Banner,
+  EllipsisIcon,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -473,7 +474,7 @@ export function Page() {
                 onClick={() => console.log("clicked")}
                 aria-label="Search database"
                 //toDo replace with ellipsis icon
-                icon={<div>...</div>}
+                icon={<EllipsisIcon />}
               />
             </Box>
             <Flex gap="16px" paddingTop="0" alignItems="center">
@@ -561,48 +562,74 @@ export function Page() {
         </Box>
       </ContentContainer>
       <Box
-        pt="40px"
-        px="32px"
-        borderLeft="1px solid #E7E8E9"
+        pt="standard.3xl"
+        px="standard.xl"
+        borderLeft="1px solid"
+        borderColor="border.forms"
         display="flex"
         flexDirection="column"
-        flexBasis={{ base: "100%", md: "391px" }}
+        flexBasis={{ base: "100%", md: "380px" }}
         height="100vh"
-        pb="100px"
         top="0"
         position={{ base: "unset", lg: "sticky" }}
       >
         {data?.proposal?.state === "active" ||
         data?.proposal?.state === "closed" ? (
           <>
-            <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
-              Cast your vote
-            </Heading>
+            {!hasVoted && canVote && !hasDelegated && (
+              <Heading
+                color="content.accent.default"
+                variant="h4"
+                mb="standard.md"
+              >
+                Cast your vote
+              </Heading>
+            )}
 
             {delegation.isFetched &&
               userBalance.isFetched &&
               delegation.data &&
               delegation.data !=
                 "0x0000000000000000000000000000000000000000" && (
-                <Status
-                  label={`Your voting power of ${userBalance.balance} ${
-                    userBalance.symbol
-                  } is currently assigned to delegate ${truncateAddress(
-                    delegation.data,
-                  )}`}
-                />
+                <>
+                  <Heading
+                    color="content.accent.default"
+                    variant="h4"
+                    mb="standard.md"
+                  >
+                    Your vote
+                  </Heading>
+                  <Banner
+                    label={`Your voting power of ${userBalance.balance} ${
+                      userBalance.symbol
+                    } is currently assigned to delegate ${truncateAddress(
+                      delegation.data,
+                    )}`}
+                  />
+                  <Divider mb="standard.2xl" />
+                </>
               )}
 
             {vote.data && vote.data.votes?.[0] && (
-              <Status
-                label={`You voted ${
-                  vote.data.votes[0].choice === 1
-                    ? "For"
-                    : vote.data.votes[0].choice === 2
-                    ? "Against"
-                    : "Abstain"
-                } using ${vote.data.votes[0].vp} votes`}
-              />
+              <>
+                <Heading
+                  color="content.accent.default"
+                  variant="h4"
+                  mb="standard.md"
+                >
+                  Your vote
+                </Heading>
+                <Banner
+                  label={`You voted ${
+                    vote.data.votes[0].choice === 1
+                      ? "For"
+                      : vote.data.votes[0].choice === 2
+                      ? "Against"
+                      : "Abstain"
+                  } using ${vote.data.votes[0].vp} votes`}
+                />
+                <Divider mb="standard.2xl" />
+              </>
             )}
             {!hasVoted && canVote && !hasDelegated ? (
               <ButtonGroup
@@ -629,10 +656,16 @@ export function Page() {
                 })}
               </ButtonGroup>
             ) : null}
-            <Divider mb="40px" />
-            <Box mb="40px">
-              <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
-                Results
+
+            <Box>
+              <Heading
+                color="content.accent.default"
+                variant="h4"
+                mb="standard.md"
+              >
+                {data?.proposal?.state === "active"
+                  ? `Current results`
+                  : "Final Results"}
               </Heading>
 
               {data?.proposal?.choices.map((choice, index) => {
@@ -662,9 +695,15 @@ export function Page() {
                 );
               })}
             </Box>
-            <Divider mb="40px" />
-            <Box mb="40px">
-              <Heading variant="h4" mb="16px" fontWeight="500 " fontSize="16px">
+            <Divider
+              mb="standard.2xl"
+              mt="standard.2xl"
+              position="relative"
+              left="-24px"
+              width={`calc(100% + 48px)`}
+            />
+            <Box mb="standard.2xl">
+              <Heading variant="h4" mb="standard.md">
                 Votes
               </Heading>
 
