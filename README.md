@@ -23,7 +23,31 @@ all secrets and variables are declared in the digitalocean app platform
 
 - FE:
 
-To start the application, follow these steps:
+## Set up a local database
+
+1. Right click Servers tab in PgAdmin and choose `Register -> Server`.
+2. In `General` tab, write `governance` in `Name` field.
+3. In `Connection` tab, write `localhost` for `Host name/address` field. 
+4. Click `save`
+
+> If you get `role "postgress" does not exist` error, do following steps.
+
+-  Connect to psql shell (e.g  `psql -U postgres`)
+- Run the command below in shell
+
+  ```SQL
+  CREATE ROLE postgres SUPERUSER LOGIN PASSWORD 'governance';
+  ```
+
+  > In this example, we are giving `SUPERUSER` to `postgres` role but `CREATEDB` should work as well. 
+
+- Confirm that the role is created by running `\du` in psql shell. 
+
+  > TIP: You can exit psql vim-like view by hitting `q` 
+- Go back to PgAdmin and try saving now.
+- Go to project root and run `yarn seed` to seed your local db.
+
+## To start the application, follow these steps:
 
 1. Clone the repository:
 
