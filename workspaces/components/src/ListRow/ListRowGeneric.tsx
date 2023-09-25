@@ -16,13 +16,13 @@ import {
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import "./styles.css";
 
-type Props = {
+type Props = BoxProps & {
   children?: React.ReactNode;
 };
 
-const Container = ({ children }: Props) => {
+const Container = ({ children, ...rest }: Props) => {
   return (
-    <Box mt="24px" display="flex" flexDirection="column">
+    <Box mt="24px" display="flex" flexDirection="column" {...rest}>
       {children}
     </Box>
   );

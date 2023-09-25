@@ -12,7 +12,7 @@ export { NavItem } from "./src/Navigation/NavItem";
 export { SearchInput } from "./src/SearchInput";
 export { DelegateCard } from "./src/Card";
 export { Tag } from "./src/Tag";
-export { ContentContainer } from "./src/ContentContainer";
+export { ContentContainer, HomeContainer } from "./src/ContentContainer";
 export { IconButton, IconButtonWithBadge } from "./src/IconButton";
 export { Collapse } from "./src/Collapse";
 export { VoteButton } from "./src/VoteButton";
@@ -31,6 +31,7 @@ export { CheckboxFilter } from "./src/Filter/CheckboxFilter";
 export { useMarkdownEditor } from "./src/Editor/useMarkdownEditor";
 export { CopyToClipboard } from "./src/CopyToClipboard";
 export { BannerHome } from "./src/BannerHome";
+export { LearnBanner } from "./src/LearnBanner";
 export { Input } from "./src/Input";
 export { Banner } from "./src/Banner/Banner";
 
