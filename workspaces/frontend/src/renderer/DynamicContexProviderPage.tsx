@@ -44,7 +44,7 @@ import {
   Link,
   PlusIcon,
 } from "@yukilabs/governance-components";
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IUser, PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
@@ -52,6 +52,7 @@ import React, { useCallback } from "react";
 import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
+import AuthorizedUserView from "./AuthorizedUserView";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -199,30 +200,7 @@ export function DynamicContextProviderPage(props: Props) {
         }}
       >
         <DynamicWagmiConnector>
-          <Suspense
-            fallback={
-              <Box
-                display="flex"
-                height="100vh"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="#fff"
-                  color="#ccc"
-                  size="xl"
-                />
-              </Box>
-            }
-          >
-            {(pageContext.hasLayout ?? true) === true ? (
-              <PageLayout pageContext={pageContext}>{children}</PageLayout>
-            ) : (
-              children
-            )}
-          </Suspense>
+          <PageLayout pageContext={pageContext}>{children}</PageLayout>
         </DynamicWagmiConnector>
       </DynamicContextProvider>
     </HelpMessageProvider>
@@ -280,13 +258,11 @@ const BackButton = ({
   return null;
 };
 
-const LazyDataComponent = lazy(() => import("./AuthorizedUserView"));
-
 const DynamicCustomWidget = () => {
   const { user } = useDynamicContext();
   const isAuthorized = !!user;
 
-  return isAuthorized ? <LazyDataComponent /> : <DynamicWidget />;
+  return isAuthorized ? <AuthorizedUserView /> : <DynamicWidget />;
 };
 
 function PageLayout(props: Props) {
