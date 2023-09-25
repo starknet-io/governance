@@ -27,8 +27,8 @@ const BlockButton = ({ format }: BlockButtonProps) => {
   return (
     <IconButton
       aria-label={format}
+      variant="ghost"
       size="condensed"
-      variant="toolbar"
       isActive={isBlockActive(editor, format)}
       onMouseDown={(event) => {
         event.preventDefault();

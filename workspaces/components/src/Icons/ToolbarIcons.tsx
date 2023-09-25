@@ -29,6 +29,7 @@ export const ItalicIcon = ({ color, ...rest }: ToolbarIconProps) => (
     </g>
   </Icon>
 );
+
 export const UnderlineIcon = ({ color, ...rest }: ToolbarIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <g id="wrapper">
@@ -42,6 +43,7 @@ export const UnderlineIcon = ({ color, ...rest }: ToolbarIconProps) => (
     </g>
   </Icon>
 );
+
 export const StrikeThroughIcon = ({ color, ...rest }: ToolbarIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <g id="wrapper">
@@ -55,6 +57,7 @@ export const StrikeThroughIcon = ({ color, ...rest }: ToolbarIconProps) => (
     </g>
   </Icon>
 );
+
 export const Heading2Icon = ({ color, ...rest }: ToolbarIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <path
@@ -63,6 +66,7 @@ export const Heading2Icon = ({ color, ...rest }: ToolbarIconProps) => (
     />
   </Icon>
 );
+
 export const NumberedListIcon = ({ color, ...rest }: ToolbarIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <path
@@ -71,6 +75,7 @@ export const NumberedListIcon = ({ color, ...rest }: ToolbarIconProps) => (
     />
   </Icon>
 );
+
 export const BulletedListIcon = ({ color, ...rest }: ToolbarIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <rect width="20" height="20" fill="white" fillOpacity="0.01" />
@@ -80,6 +85,7 @@ export const BulletedListIcon = ({ color, ...rest }: ToolbarIconProps) => (
     />
   </Icon>
 );
+
 export const ImageIcon = ({ color, ...rest }: ToolbarIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <g id="wrapper">
@@ -93,6 +99,7 @@ export const ImageIcon = ({ color, ...rest }: ToolbarIconProps) => (
     </g>
   </Icon>
 );
+
 export const LinkIcon = ({ color, ...rest }: ToolbarIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <path
@@ -101,6 +108,7 @@ export const LinkIcon = ({ color, ...rest }: ToolbarIconProps) => (
     />
   </Icon>
 );
+
 export const BlockQuoteIcon = ({ color, ...rest }: ToolbarIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <g id="wrapper">
@@ -112,5 +120,39 @@ export const BlockQuoteIcon = ({ color, ...rest }: ToolbarIconProps) => (
         fill={color ? color : "inherit"}
       />
     </g>
+  </Icon>
+);
+
+export const TextTypeIcon = ({ color, ...rest }: ToolbarIconProps) => (
+  <Icon viewBox="0 0 20 20" {...rest}>
+    <rect width="20" height="20" fill="white" fillOpacity="0.01" />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M9.16642 4.24805C8.75221 4.24805 8.41642 4.58383 8.41642 4.99805C8.41642 5.41226 8.75221 5.74805 9.16642 5.74805H12.5848V15.0022C12.5848 15.4164 12.9206 15.7522 13.3348 15.7522C13.749 15.7522 14.0848 15.4164 14.0848 15.0022V5.74805H17.5032C17.9174 5.74805 18.2532 5.41226 18.2532 4.99805C18.2532 4.58383 17.9174 4.24805 17.5032 4.24805H13.3348H9.16642ZM5.02251 9.08277V15.0022C5.02251 15.4164 5.3583 15.7522 5.77251 15.7522C6.18672 15.7522 6.52251 15.4164 6.52251 15.0022V9.08277H8.74958C9.1638 9.08277 9.49958 8.74698 9.49958 8.33277C9.49958 7.91856 9.1638 7.58277 8.74958 7.58277H5.77311C5.77291 7.58277 5.77271 7.58277 5.77251 7.58277C5.77231 7.58277 5.77211 7.58277 5.7719 7.58277H2.91382C2.4996 7.58277 2.16382 7.91856 2.16382 8.33277C2.16382 8.74698 2.4996 9.08277 2.91382 9.08277H5.02251Z"
+      fill={color ? color : "inherit"}
+    />
+  </Icon>
+);
+
+export const MoreDotsIcon = ({ color, ...rest }: ToolbarIconProps) => (
+  <Icon viewBox="0 0 20 20" {...rest}>
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4.9979 8.83325C5.64232 8.83325 6.16474 9.35566 6.16474 10.0001C6.16474 10.6445 5.64232 11.1669 4.9979 11.1669C4.35347 11.1669 3.83105 10.6445 3.83105 10.0001C3.83105 9.35566 4.35347 8.83325 4.9979 8.83325ZM11.1668 10.0001C11.1668 9.35566 10.6444 8.83325 9.99998 8.83325C9.35555 8.83325 8.83314 9.35566 8.83314 10.0001C8.83314 10.6445 9.35555 11.1669 9.99998 11.1669C10.6444 11.1669 11.1668 10.6445 11.1668 10.0001ZM16.1689 10.0001C16.1689 9.35566 15.6465 8.83325 15.0021 8.83325C14.3576 8.83325 13.8352 9.35566 13.8352 10.0001C13.8352 10.6445 14.3576 11.1669 15.0021 11.1669C15.6465 11.1669 16.1689 10.6445 16.1689 10.0001Z"
+      fill={color ? color : "inherit"}
+    />
+  </Icon>
+);
+
+export const ExpandIcon = ({ color, ...rest }: ToolbarIconProps) => (
+  <Icon viewBox="0 0 20 20" {...rest}>
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M6.13642 7.80317C6.42931 7.51027 6.90418 7.51027 7.19708 7.80317L10.0001 10.6062L12.8031 7.80317C13.096 7.51027 13.5709 7.51027 13.8637 7.80317C14.1566 8.09606 14.1566 8.57093 13.8637 8.86383L10.5304 12.1972C10.3898 12.3378 10.199 12.4168 10.0001 12.4168C9.80117 12.4168 9.6104 12.3378 9.46975 12.1972L6.13642 8.86383C5.84352 8.57093 5.84352 8.09606 6.13642 7.80317Z"
+      fill={color ? color : "inherit"}
+    />
   </Icon>
 );
