@@ -5,10 +5,6 @@ on:
     branches: ['dev']
     paths:
       - 'workspaces/backend/**'
-  pull_request:
-    branches: [ 'dev' ]
-    paths:
-      - 'workspaces/backend/**'
   workflow_dispatch:
 
 jobs:
@@ -46,7 +42,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   Deploy-review:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'workflow_dispatch'
     needs: Build
     runs-on: ubuntu-latest
     env:

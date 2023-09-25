@@ -141,7 +141,7 @@ export const DelegateCard = ({
               variant="outline"
               onClick={onDelegateClick}
             >
-              Delegate 2 ddddd
+              Delegate
             </Button>
           </Box>
         </Box>

@@ -1,4 +1,4 @@
-import { Box, Flex, Icon } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { VoteAbstainIcon, VoteAgainstIcon, VoteForIcon } from "src/Icons";
 import { Text } from "src/Text";
 
@@ -53,17 +53,29 @@ export const VoteButton = ({
         alignItems="center"
       >
         {type === "For" && (
-          <Icon as={VoteForIcon} boxSize="24px" aria-label="For" />
+          <VoteForIcon
+            width="24px"
+            height="24px"
+            color={active ? currentVariation[type] : "content.default.default"}
+          />
         )}
         {type === "Against" && (
-          <Icon as={VoteAgainstIcon} boxSize="24px" aria-label="Against" />
+          <VoteAgainstIcon
+            width="24px"
+            height="24px"
+            color={active ? currentVariation[type] : "content.default.default"}
+          />
         )}
         {type === "Abstain" && (
-          <Icon as={VoteAbstainIcon} boxSize="25px" aria-label="Abstain" />
+          <VoteAbstainIcon
+            width="24px"
+            height="24px"
+            color={active ? currentVariation[type] : "content.default.default"}
+          />
         )}
 
         <Box>
-          <Text variant="medium">{label}</Text>
+          <Text variant="mediumStrong">{label}</Text>
         </Box>
       </Flex>
     </Box>

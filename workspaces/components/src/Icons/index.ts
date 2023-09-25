@@ -51,6 +51,7 @@ import {
   XIcon,
   SignatureIcon,
   ImageWarningIcon,
+  WalletIcon,
 } from "./UiIcons";
 // import {
 //   HiOutlineCodeBracketSquare,
@@ -133,5 +134,6 @@ export {
   XIcon,
   SignatureIcon,
   ImageWarningIcon,
-  CloseIcon
+  CloseIcon,
+  WalletIcon
 };

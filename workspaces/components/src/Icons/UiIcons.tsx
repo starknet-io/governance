@@ -647,3 +647,43 @@ export const SignatureIcon = ({ color, ...rest }: UiIconProps) => (
     </g>
   </Icon>
 );
+
+export const WalletIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 104 104" width="104" height="104" fill="none" {...rest}>
+    <path
+      d="M12.9839 30.3242H82.3461C87.1346 30.3242 91.0164 34.206 91.0164 38.9945V80.1783C91.0164 86.1639 86.1641 91.0162 80.1785 91.0162H56.3353"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M73.6758 30.3243V25.9891C73.6758 21.2007 69.794 17.3188 65.0056 17.3188H23.8217C17.8362 17.3188 12.9839 22.1711 12.9839 28.1567V65.0054"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M43.3299 82.3459H12.9839"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M34.6597 91.0162L43.3299 82.3459L34.6597 73.6757"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M73.6757 60.6703H65.0054"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Icon>
+);
