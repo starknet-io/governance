@@ -226,5 +226,5 @@ export function Page() {
 }
 
 export const documentProps = {
-  title: "Snip / Create",
+  title: "Council / Edit",
 } satisfies DocumentProps;
