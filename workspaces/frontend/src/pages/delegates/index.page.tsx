@@ -490,8 +490,13 @@ export function Page() {
                     address={delegate?.author?.address}
                     statement={delegate?.statement}
                     type={delegate?.interests as string[]}
-                    ensAvatar={delegate?.author?.ensAvatar}
-                    ensName={delegate.author?.ensName}
+                    ensAvatar={
+                      delegate?.author?.ensAvatar ??
+                      delegate?.author?.profileImage
+                    }
+                    ensName={
+                      delegate.author?.ensName ?? delegate.author?.username
+                    }
                     key={delegate?.id}
                   />
                 ))

@@ -453,8 +453,10 @@ export function Page() {
         ) : (
           <ProfileSummaryCard.Root>
             <ProfileSummaryCard.Profile
-              imgUrl={delegate?.author?.ensAvatar}
-              ensName={delegate?.author?.ensName}
+              imgUrl={
+                delegate?.author?.ensAvatar || delegate?.author?.profileImage
+              }
+              ensName={delegate?.author?.ensName || delegate?.author?.username}
               address={delegate?.author?.ensName || delegateAddress}
               avatarString={delegate?.author?.ensAvatar || delegateAddress}
             >

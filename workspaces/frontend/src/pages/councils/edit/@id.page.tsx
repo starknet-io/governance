@@ -118,7 +118,8 @@ export function Page() {
 
     try {
       await deleteCouncil.mutateAsync({ id: council.id });
-      navigate("/snips");
+      navigate("/");
+      utils.councils.getAll.invalidate();
     } catch (error) {
       // Handle error
       console.log(error);
