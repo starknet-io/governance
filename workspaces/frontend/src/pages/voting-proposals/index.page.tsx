@@ -16,6 +16,8 @@ import {
   Popover,
   useFilterState,
   ContentContainer,
+  Link,
+  Flex,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -269,7 +271,7 @@ export function Page() {
             </AppBar.Group>
           </AppBar.Root>
         )}
-        <Box position={"relative"}>
+        <Box position={"relative"} mb="24px">
           <ListRow.Container>
             {loading ? (
               <VotingPropsSkeleton
@@ -312,6 +314,14 @@ export function Page() {
             )}
           </ListRow.Container>
         </Box>
+        <Flex justifyContent={"flex-end"} gap="standard.base">
+          <Text pt="1px" color="content.support.default" variant="small">
+            Voting proposals powered by{" "}
+          </Text>
+          <Link size="small" href="https://snapshot.org" isExternal>
+            Snapshot
+          </Link>
+        </Flex>
       </Box>
     </ContentContainer>
   );
