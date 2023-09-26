@@ -1,9 +1,11 @@
 import {
   Avatar,
   Box,
+  Flex,
   Menu,
   MenuButton,
   MenuList,
+  Spinner,
   Stack,
 } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
@@ -110,11 +112,23 @@ const MoreActions = ({ children }: MoreActionsProps) => {
 type PrimaryButtonProps = {
   onClick: () => void;
   label: string;
+  isLoading?: boolean;
 };
-const PrimaryButton = ({ onClick, label = "button" }: PrimaryButtonProps) => {
+const PrimaryButton = ({
+  onClick,
+  label = "button",
+  isLoading,
+}: PrimaryButtonProps) => {
   return (
     <Button onClick={onClick} variant="primary">
-      {label}
+      {isLoading ? (
+        <Flex gap={1.5} align="center">
+          <Spinner size="sm" />
+          <Text variant="mediumStrong">{label}</Text>
+        </Flex>
+      ) : (
+        <>{label}</>
+      )}
     </Button>
   );
 };

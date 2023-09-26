@@ -5,6 +5,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
+  Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
@@ -20,6 +21,7 @@ type Props = {
   description: string;
   isSuccess?: boolean;
   isFail?: boolean;
+  isPending?: boolean;
 };
 
 export const StatusModal = ({
@@ -28,6 +30,7 @@ export const StatusModal = ({
   title,
   description,
   isFail,
+  isPending,
   isSuccess,
 }: Props) => {
   return (
@@ -74,10 +77,17 @@ export const StatusModal = ({
               justifyContent="center"
               position="relative"
             >
-              {isFail && <FiAlertOctagon size={48} color="#E54D66" />}
-              {isSuccess && <MdTaskAlt size={48} color="#29AB87" />}
+              {isPending && <Spinner size="xxl" />}
+              {isFail && !isPending && (
+                <FiAlertOctagon size={48} color="#E54D66" />
+              )}
+              {isSuccess && !isPending && (
+                <MdTaskAlt size={48} color="#29AB87" />
+              )}
             </Flex>
-            <Text align="center" variant="mediuStrong">{description}</Text>
+            <Text align="center" variant="mediuStrong">
+              {description}
+            </Text>
             <Button type="button" variant="primary" size="lg" onClick={onClose}>
               Close
             </Button>

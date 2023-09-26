@@ -24,8 +24,8 @@ import {
   Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useEffect, useState } from "react";
+import { useAccount, useWaitForTransaction } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import {
   useDelegateRegistryClearDelegate,
@@ -147,6 +147,50 @@ export function Page() {
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address } = useAccount();
   const { user } = usePageContext();
+  // get delegation hash
+  const [txHash, setTxHash] = useState("");
+  // listen to txn with delegation hash
+  const {
+    isLoading: isDelegationLoading,
+    isError: isDelegationError,
+    isSuccess: isDelegationSuccess,
+    error: delegationError,
+  } = useWaitForTransaction({ hash: txHash as `0x${string}` });
+  // handle delegation cases
+  useEffect(() => {
+    if (isDelegationLoading) {
+      setIsStatusModalOpen(true);
+      setStatusTitle(
+        hasUserDelegatedTokensToThisDelegate
+          ? "Tokens pending to undelegate"
+          : "Tokens pending to delegate",
+      );
+      setStatusDescription("");
+    }
+
+    if (isDelegationError) {
+      console.log(delegationError);
+      setIsStatusModalOpen(true);
+      setStatusTitle(
+        hasUserDelegatedTokensToThisDelegate
+          ? "Tokens undelegation failed"
+          : "Tokens delegation failed",
+      );
+      setStatusDescription(
+        "An error occurred while processing your transaction.",
+      );
+    }
+
+    if (isDelegationSuccess) {
+      setIsStatusModalOpen(true);
+      setStatusTitle(
+        hasUserDelegatedTokensToThisDelegate
+          ? "Tokens delegated successfully"
+          : "Tokens undelegated successfully",
+      );
+      setStatusDescription("");
+    }
+  }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
   const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
@@ -159,7 +203,7 @@ export function Page() {
       address!,
       stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
-    watch: false,
+    watch: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
@@ -312,10 +356,8 @@ export function Page() {
                 }),
               ],
             })
-              .then(() => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Tokens undelegated successfully");
-                setStatusDescription("");
+              .then((tx) => {
+                setTxHash(tx.hash);
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
@@ -341,10 +383,8 @@ export function Page() {
                 delegateAddress,
               ],
             })
-              .then(() => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Tokens delegated successfully");
-                setStatusDescription("");
+              .then((tx) => {
+                setTxHash(tx.hash);
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
@@ -375,8 +415,9 @@ export function Page() {
       />
       <StatusModal
         isOpen={isStatusModalOpen}
-        isSuccess={!statusDescription?.length}
-        isFail={!!statusDescription?.length}
+        isPending={isDelegationLoading}
+        isSuccess={isDelegationSuccess}
+        isFail={isDelegationError}
         onClose={() => {
           setIsStatusModalOpen(false);
         }}

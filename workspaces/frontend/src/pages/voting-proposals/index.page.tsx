@@ -210,10 +210,6 @@ export function Page() {
             <Box minWidth={"52px"}>
               <Text variant="mediumStrong">Sort by</Text>
             </Box>
-            {/* Implement after next merge  */}
-            {/* <Button as="a" href="/delegates/create" variant="outline">
-              Filter by
-            </Button> */}
             <Select
               size="sm"
               aria-label="All"

@@ -399,6 +399,7 @@ export function Page() {
           <Textarea
             variant="primary"
             name="comment"
+            maxLength={140}
             placeholder="I voted X because Y"
             rows={4}
             focusBorderColor={"#292932"}
