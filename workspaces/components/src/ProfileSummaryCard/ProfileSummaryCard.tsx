@@ -77,9 +77,8 @@ const Profile = ({
           {formattedAddress}
         </Heading>
         <Text
-          variant="breadcrumbs"
-          fontSize="10px"
-          color="content.default.default"
+          variant="captionSmallUppercase"
+          color="content.support.default"
           fontWeight="600"
         >
           {address && subtitle === null ? formattedAddress : subtitle}
