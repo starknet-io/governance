@@ -22,7 +22,7 @@ export const ContentContainer = ({
         lg: "standard.2xl",
         xl: "standard.2xl",
       }}
-      pt={{
+      py={{
         base: "standard.2xl",
         md: "standard.2xl",
         lg: "standard.3xl",
