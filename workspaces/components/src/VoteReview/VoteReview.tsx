@@ -1,5 +1,5 @@
 import { Box, Icon } from "@chakra-ui/react";
-import { MdStopCircle, MdThumbDown, MdThumbUp } from "react-icons/md";
+import { VoteAbstainIcon, VoteAgainstIcon, VoteForIcon } from "src/Icons";
 
 type Props = {
   choice: number;
@@ -17,11 +17,12 @@ export const VoteReview = ({ voteCount = 0, choice }: Props) => {
       color="#6C6C75"
     >
       Voting
-      {choice === 1 && <Icon mx="4px" color="#20AC70" as={MdThumbUp} />}{" "}
-      {choice === 2 && <Icon mx="4px" color="#E54D66" as={MdThumbDown} />}
+      {choice === 1 && <Icon mx="4px" color="#20AC70" as={VoteForIcon} />}{" "}
+      {choice === 2 && <Icon mx="4px" color="#E54D66" as={VoteAgainstIcon} />}
       {choice === 3 && (
-        <Icon mx="4px" color="#4D4D56" as={MdStopCircle} />
-      )} with {voteCount} votes
+        <Icon mx="4px" color="#4D4D56" as={VoteAbstainIcon} />
+      )}{" "}
+      with {voteCount} votes
     </Box>
   );
 };

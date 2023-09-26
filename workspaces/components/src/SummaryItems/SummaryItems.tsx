@@ -1,13 +1,13 @@
 import { Box, Flex, Icon, Link } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
-import { BsDiscord, BsGithub, BsTelegram, BsTwitter } from "react-icons/bs";
 
 import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { truncateAddress } from "src/utils";
 import { Heading } from "src/Heading";
-import moment from "moment";
+import { format } from "date-fns";
 import { CopyToClipboard } from "src/CopyToClipboard";
+import { DiscordIcon, DiscourseIcon, GithubIcon, TwitterIcon } from "src/Icons";
 // import type { delegateTypeEnum } from '@yukilabs/governance-backend/src/db/schema/delegates';
 
 type RootProps = {
@@ -116,16 +116,16 @@ const Socials = (props: SocialsProps) => {
       <Icon
         as={
           label === "twitter"
-            ? BsTwitter
+            ? TwitterIcon
             : label === "github"
-            ? BsGithub
+            ? GithubIcon
             : label === "discourse"
-            ? BsDiscord
+            ? DiscourseIcon
             : label === "discord"
-            ? BsDiscord
+            ? DiscordIcon
             : label === "telegram"
-            ? BsTelegram
-            : BsTwitter
+            ? DiscourseIcon
+            : TwitterIcon
         }
         w={"16px"}
         h={"16px"}
@@ -175,13 +175,15 @@ type DateProps = {
   label: string;
 };
 
-const Date = (props: DateProps) => {
+const CustomDate = (props: DateProps) => {
   const { value, label } = props;
   let displayValue = "N/A";
 
   if (value !== null) {
-    const timestamp = value < 10000000000 ? value * 1000 : value;
-    displayValue = moment(timestamp).format("MMM DD, YYYY");
+    const timestamp: number = value < 10000000000 ? value * 1000 : value;
+    //ts-expect-error
+    const dateObject: Date = new Date(timestamp);
+    displayValue = format(dateObject, "MMM dd, yyyy");
   }
 
   return (
@@ -196,4 +198,4 @@ const Date = (props: DateProps) => {
   );
 };
 
-export { Root, Item, Title, Socials, Tags, Date };
+export { Root, Item, Title, Socials, Tags, CustomDate };

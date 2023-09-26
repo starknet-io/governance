@@ -12,7 +12,7 @@ import {
   usePopoverContext,
 } from "@chakra-ui/react";
 import { ElementType, ReactNode } from "react";
-import { HiChevronDown } from "react-icons/hi";
+
 import {
   FilterActionButtons,
   FilterActionButtonsProps,
@@ -51,7 +51,7 @@ export const FilterPopoverButton = (props: FilterPopoverButtonProps) => {
       >
         {icon && <Icon as={icon} boxSize="2" />}
         <Text fontWeight="medium">{label}</Text>
-        <Icon as={HiChevronDown} fontSize="xl" color="gray.400" />
+        {/* <Icon as={<></>} fontSize="xl" color="gray.400" /> */}
       </HStack>
     </PopoverTrigger>
   );

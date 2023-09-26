@@ -1,6 +1,7 @@
 import { ChangeEvent, FC } from "react";
 import { Icon, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
-import { HiOutlineMagnifyingGlass } from "react-icons/hi2";
+
+import { SearchIcon } from "src/Icons";
 
 // Define the props that the SearchInput component will accept
 interface SearchInputProps {
@@ -20,7 +21,7 @@ export const SearchInput: FC<SearchInputProps> = ({
   return (
     <InputGroup>
       <InputLeftElement pointerEvents="none">
-        <Icon as={HiOutlineMagnifyingGlass} color="muted" boxSize="5" />
+        <Icon as={SearchIcon} color="muted" boxSize="5" />
       </InputLeftElement>
       <Input
         variant="primary"

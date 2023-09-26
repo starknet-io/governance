@@ -6,7 +6,7 @@ import {
   Button as ChakraButton,
 } from "@chakra-ui/react";
 import { Text as ChakraText } from "../Text";
-import moment from "moment";
+import { format } from "date-fns";
 import { truncateAddress } from "src/utils";
 
 // interface Props {
@@ -76,7 +76,11 @@ interface DateProps {
   date?: Date;
 }
 const Date = ({ date }: DateProps) => {
-  const formattedDate = moment(date).format("MMMM Do YYYY");
+  if (!date) {
+    return null; // or return <ChakraText>Default Message</ChakraText>;
+  }
+
+  const formattedDate = format(date, "MMMM do yyyy");
   return (
     <ChakraText variant="breadcrumbs" fontWeight="500" color="#4D4D56">
       {date && formattedDate}

@@ -11,7 +11,7 @@ import {
   StackProps,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { FiSearch } from "react-icons/fi";
+import { SearchIcon } from "src/Icons";
 
 type CheckboxFilterProps = Omit<CheckboxGroupProps, "onChange"> & {
   hideLabel?: boolean;
@@ -51,7 +51,7 @@ export const CheckboxFilter = (props: CheckboxFilterProps) => {
             color="gray.400"
             fontSize="lg"
           >
-            <FiSearch />
+            <SearchIcon />
           </InputRightElement>
         </InputGroup>
       )}

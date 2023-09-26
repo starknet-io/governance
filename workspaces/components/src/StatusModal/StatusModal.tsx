@@ -9,10 +9,10 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { MdTaskAlt } from "react-icons/md";
-import { FiAlertOctagon } from "react-icons/fi";
+
 import { Heading } from "../Heading";
 import { Button } from "../Button";
+import { SuccessIcon, WarningIcon } from "src/Icons";
 
 type Props = {
   isOpen: boolean;
@@ -78,12 +78,8 @@ export const StatusModal = ({
               position="relative"
             >
               {isPending && <Spinner size="xxl" />}
-              {isFail && !isPending && (
-                <FiAlertOctagon size={48} color="#E54D66" />
-              )}
-              {isSuccess && !isPending && (
-                <MdTaskAlt size={48} color="#29AB87" />
-              )}
+              {isFail && !isPending && <WarningIcon color="#E54D66" />}
+              {isSuccess && !isPending && <SuccessIcon color="#29AB87" />}
             </Flex>
             <Text align="center" variant="mediuStrong">
               {description}
