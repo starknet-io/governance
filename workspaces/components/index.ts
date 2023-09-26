@@ -24,7 +24,6 @@ export { PlaceholderImage } from "./src/PlaceholderImage";
 export { VoteReview } from "./src/VoteReview";
 export { DelegateModal } from "./src/DelegateModal";
 export { AgreementModal } from "./src/AgreementModal";
-export { DatePicker } from "./src/DatePicker";
 export { ConfirmModal } from "./src/ConfirmModal";
 export { ChakraDatePicker } from "./src/ChakraDatePicker";
 export { LinkCard } from "./src/LinkCard";
@@ -83,6 +82,15 @@ export {
   InfoIcon,
   XIcon,
   SignatureIcon,
+  TwitterIcon,
+  DiscourseIcon,
+  GithubIcon,
+  ArrowDownCircleFillIcon,
+  ArrowDownCircleIcon,
+  ArrowUpCircleFillIcon,
+  ArrowUpCircleIcon,
+  PlusCircleIcon,
+  MinusCircleIcon,
 } from "../components/src/Icons/index";
 export { FileUploader } from "./src/FileUploader";
 export { MultiLevelReOrderableList } from "./src/MultiLevelReOrderableList";
