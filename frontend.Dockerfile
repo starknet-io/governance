@@ -1,4 +1,5 @@
 FROM node:18.18.0-bullseye-slim as build
+ENV NODE_ENV=production
 RUN apt-get update && apt-get upgrade -y
 WORKDIR /app
 COPY . .
