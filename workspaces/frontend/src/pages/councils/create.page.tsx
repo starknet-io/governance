@@ -32,6 +32,7 @@ export function Page() {
   const [members, setMembers] = useState<MemberType[]>([]);
   const createCouncil = trpc.councils.saveCouncil.useMutation();
   const { handleUpload } = useFileUpload();
+  const utils = trpc.useContext();
   const { editorValue, handleEditorChange, editor } = useMarkdownEditor(
     "",
     EditorTemplate.proposalMarkDown,
@@ -49,6 +50,7 @@ export function Page() {
       data.members = members;
       await createCouncil.mutateAsync(data, {
         onSuccess: (res) => {
+          utils.councils.getAll.invalidate();
           navigate(`/councils/${res.slug}`);
         },
       });

@@ -10,9 +10,7 @@ import {
   MultiLevelReOrderableList,
   Text,
 } from "@yukilabs/governance-components";
-import {
-  TreeItems,
-} from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
+import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 import { useEffect, useRef, useState } from "react";
 import {
   adaptTreeForFrontend,
@@ -32,7 +30,8 @@ export function Page() {
 
   const { data, refetch } = trpc.pages.getPagesTree.useQuery();
   const { mutateAsync, isLoading } = trpc.pages.savePagesTree.useMutation();
-  const { mutateAsync: deletePage, isLoading: isDeleting } = trpc.pages.deletePage.useMutation();
+  const { mutateAsync: deletePage, isLoading: isDeleting } =
+    trpc.pages.deletePage.useMutation();
 
   const pagesTree = data ?? [];
 
