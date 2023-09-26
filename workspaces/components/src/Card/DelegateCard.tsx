@@ -75,7 +75,7 @@ const DelegateTags = ({ type }: { type: string[] }) => {
         .map((t) => delegateNames?.[t] ?? t)
         .join(", ")}
     >
-      <Tag variant="review">+{type.length - startIndex}</Tag>
+      <Tag>+{type.length - startIndex}</Tag>
     </Tooltip>
   );
 
