@@ -1,5 +1,6 @@
 FROM node:18.18.0-bullseye-slim as build
 ENV NODE_ENV=production
+ENV VITE_APP_TRPC_URL=https://api-review.yuki-labs.dev/trpc
 RUN apt-get update && apt-get upgrade -y
 WORKDIR /app
 COPY . .
