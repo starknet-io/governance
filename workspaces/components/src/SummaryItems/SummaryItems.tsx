@@ -165,7 +165,7 @@ const Tags = (props: TagsProps) => {
 
   return (
     <Box>
-      <Tag variant="review">{`${type}`}</Tag>
+      <Tag variant="neutral">{`${type}`}</Tag>
     </Box>
   );
 };
