@@ -89,7 +89,7 @@ export function MultiLevelReOrderableList({
   removable,
   onItemsChange,
   setItems,
-  onItemDeleteClick
+  onItemDeleteClick,
 }: Props) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
@@ -197,7 +197,12 @@ export function MultiLevelReOrderableList({
   }
 
   return (
-    <Box boxShadow="sm" borderRadius="base" overflow="hidden">
+    <Box
+      boxShadow="sm"
+      backgroundColor="white"
+      borderRadius="base"
+      overflow="hidden"
+    >
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -232,7 +237,8 @@ export function MultiLevelReOrderableList({
                   id={activeId}
                   depth={activeItem.depth}
                   clone
-                  childCount={getChildCount(items, activeId) + 1}
+                  isNew={activeItem.isNew}
+                  childCount={getChildCount(items, activeId)}
                   value={activeItem.data}
                   indentationWidth={indentationWidth}
                   onDeleteClick={onItemDeleteClick}

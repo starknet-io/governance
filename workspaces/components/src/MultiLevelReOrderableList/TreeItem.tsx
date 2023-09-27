@@ -33,7 +33,10 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       indentationWidth,
       style,
       value,
+      ghost,
+      clone,
       wrapperRef,
+      childCount,
       isNew,
       isLast,
       onDeleteClick,
@@ -54,12 +57,25 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       fontSize = "xs";
     }
 
+    const borderBottom = isFirstLevel && !clone && !isLast ? "1px solid #DCDBDD" : undefined;
+    const borderRadius = clone ? "base" : "white";
+    const hoverStyles =
+      clone && isNew
+        ? "#E2E2FF"
+        : isNew && !clone && !ghost
+        ? "#E2E2FF"
+        : "white";
+
     return (
       <Flex
+        position="relative"
         alignItems="center"
         height="50px"
-        borderBottom={isFirstLevel && !isLast ? "1px solid #DCDBDD" : "unset"}
-        backgroundColor={isNew ? "#E2E2FF" : "white"}
+        border={clone ? "1px solid #DCDBDD" : "unset"}
+        borderBottom={borderBottom}
+        backgroundColor={hoverStyles}
+        borderRadius={borderRadius}
+        width={ghost ? "200px" : undefined}
         pl={`${paddingLeft}`}
         pr="1"
         //@ts-expect-error error
@@ -79,8 +95,31 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               {value?.title ?? ""}
             </Text>
           </Flex>
+          {!!childCount && (
+            <Flex
+              top="-10px"
+              right="-10px"
+              position="absolute"
+              w="20px"
+              height="20px"
+              borderRadius="10px"
+              boxShadow="base"
+              alignItems="center"
+              justifyContent="center"
+              backgroundColor="white"
+            >
+              <Text color="black" fontSize="sm">
+                {childCount}
+              </Text>
+            </Flex>
+          )}
           {isFirstLevel && (
-            <Button onClick={() => onDeleteClick?.(value.id)} p="0" m="0" variant="ghost">
+            <Button
+              onClick={() => onDeleteClick?.(value.id)}
+              p="0"
+              m="0"
+              variant="ghost"
+            >
               <TrashIcon />
             </Button>
           )}
