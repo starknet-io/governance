@@ -11,12 +11,12 @@ import {
   LearnBanner,
   ListRow,
   Text,
+  ArrowRightIcon,
 } from "@yukilabs/governance-components";
 
 import { Delegates } from "src/components/Delegates";
 import { trpc } from "src/utils/trpc";
 import { Proposal, VotingPropsSkeleton } from "./voting-proposals/index.page";
-import { ArrowRightIcon } from "@dynamic-labs/sdk-react";
 
 export function Page() {
   const {
