@@ -20,7 +20,7 @@ import { trpc } from "src/utils/trpc";
 import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { DocumentProps } from "src/renderer/types";
 import { useState, useEffect } from "react";
-import { delegateNames } from "./index.page";
+import { delegateNames } from "../../components/Delegates";
 import { useFileUpload } from "src/hooks/useFileUpload";
 
 const interestsValues = interestsEnum.enumValues;
@@ -105,9 +105,7 @@ export function Page() {
                   value={editorValue}
                   handleUpload={handleUpload}
                 />
-                {errors.statement && (
-                  <span>This field is required.</span>
-                )}
+                {errors.statement && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Delegate type</FormLabel>
