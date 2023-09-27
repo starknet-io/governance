@@ -479,7 +479,7 @@ export function Page() {
         </Button>
       </InfoModal>
       <ContentContainer>
-        <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
+        <Box width="100%" maxWidth="710px" mx="auto">
           <Stack
             spacing="0"
             direction={{ base: "column" }}
@@ -780,7 +780,7 @@ export function Page() {
             alignItems="center"
             justifyContent="center"
             gap="16px"
-            height={data?.proposal?.state === "pending" ? "100vh" : "100%"}
+            height={data?.proposal?.state === "pending" ? "100%" : "100%"}
             overflow="hidden"
           >
             <PlaceholderImage />
