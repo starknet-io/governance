@@ -6,7 +6,6 @@ const { definePartsStyle, defineMultiStyleConfig } =
 
 const info = definePartsStyle({
   container: {
-    maxWidth: "327px",
     border: "0px solid",
     borderRadius: "standard.base",
     py: "standard.sm",

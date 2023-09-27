@@ -127,6 +127,7 @@ import * as Stat from "./src/Stat/Stat";
 import * as ProfileSummaryCard from "./src/ProfileSummaryCard/ProfileSummaryCard";
 import * as EditorTemplate from "./src/Editor/templates";
 import * as Swap from "./src/Swap/Swap";
+
 export {
   Layout,
   SummaryItems,
@@ -185,8 +186,8 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogCloseButton,
-  Skeleton,
   HStack,
+  Skeleton,
   SkeletonCircle,
   SkeletonText,
   Spinner,
