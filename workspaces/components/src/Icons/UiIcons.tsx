@@ -284,6 +284,19 @@ export const ArrowDownIcon = ({ color, ...rest }: UiIconProps) => (
     </g>
   </Icon>
 );
+export const ArrowRightIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 20 20" {...rest}>
+    <g id="wrapper">
+      <path
+        id="Union"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M10.0947 3.84467C10.3876 3.55178 10.8624 3.55178 11.1553 3.84467L16.7803 9.46967C17.0732 9.76256 17.0732 10.2374 16.7803 10.5303L11.1553 16.1553C10.8624 16.4482 10.3876 16.4482 10.0947 16.1553C9.80178 15.8624 9.80178 15.3876 10.0947 15.0947L14.4393 10.75L3.75 10.75C3.33579 10.75 3 10.4142 3 10C3 9.58578 3.33579 9.25 3.75 9.25L14.4393 9.25L10.0947 4.90533C9.80178 4.61244 9.80178 4.13756 10.0947 3.84467Z"
+        fill={color ? color : "inherit"}
+      />
+    </g>
+  </Icon>
+);
 
 export const ArrowDownCircleFillIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>

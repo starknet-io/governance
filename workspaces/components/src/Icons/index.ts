@@ -62,6 +62,7 @@ import {
   ArrowUpCircleIcon,
   PlusCircleIcon,
   MinusCircleIcon,
+  ArrowRightIcon,
 } from "./UiIcons";
 
 export {
@@ -126,4 +127,5 @@ export {
   ArrowUpCircleIcon,
   PlusCircleIcon,
   MinusCircleIcon,
+  ArrowRightIcon,
 };

@@ -92,6 +92,7 @@ export {
   ArrowUpCircleIcon,
   PlusCircleIcon,
   MinusCircleIcon,
+  ArrowRightIcon,
 } from "../components/src/Icons/index";
 export { FileUploader } from "./src/FileUploader";
 export { MultiLevelReOrderableList } from "./src/MultiLevelReOrderableList";
