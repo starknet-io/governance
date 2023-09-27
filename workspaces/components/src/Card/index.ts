@@ -1,1 +1,1 @@
-export { DelegateCard } from './DelegateCard';
+export { DelegateCard } from "./DelegateCard";

@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Icon, Tooltip } from "@chakra-ui/react";
+import { Badge, Box, BoxProps, Flex, Icon, Tooltip } from "@chakra-ui/react";
 import { HiHandThumbUp, HiHandThumbDown, HiHandRaised } from "react-icons/hi2";
 import { Text } from "../Text";
 import moment from "moment";
@@ -6,13 +6,13 @@ import { CommentIcon } from "src/Icons";
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import "./styles.css";
 
-type Props = {
+type Props = BoxProps & {
   children?: React.ReactNode;
 };
 
-const Container = ({ children }: Props) => {
+const Container = ({ children, ...rest }: Props) => {
   return (
-    <Box mt="24px" display="flex" flexDirection="column">
+    <Box mt="24px" display="flex" flexDirection="column" {...rest}>
       {children}
     </Box>
   );
