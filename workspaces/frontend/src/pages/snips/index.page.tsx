@@ -1,7 +1,7 @@
 import { DocumentProps } from "src/renderer/types";
 
 export function Page() {
-  return <div></div>;
+  return <div> to be removed</div>;
 }
 
 export const documentProps = {
