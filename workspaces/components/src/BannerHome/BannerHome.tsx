@@ -1,96 +1,129 @@
-import { Box } from "@chakra-ui/react";
+import { Box, SimpleGrid } from "@chakra-ui/react";
 import { Pattern } from "./Pattern";
 import { Heading } from "src/Heading";
 import { Text } from "src/Text";
+import { HomePageCard } from "src/Card/HomePageCard";
+import { HomeContainer } from "src/ContentContainer";
+
 
 type Props = {
   title?: string;
   tagline?: string;
-  snipCount?: number;
-  votePropCount?: number;
-  delegateCount?: number;
-  delegatedTokens?: number;
+  strapline?: string;
 };
 
+const homeLinks = [
+  {
+    title: "What is Starknet?",
+    description:
+      "Starknet is a Validity Rollup Layer 2 – scaling Ethereum with high throughput & low gas costs.",
+    link: "https://dev.yuki-labs.dev/learn/governance_for_dummies",
+  },
+  {
+    title: "What is the Governance Hub?",
+    description:
+      "The Hub is where the community propose, debate and vote on Starknet’s future.",
+    link: "https://dev.yuki-labs.dev/learn/governance_for_dummies",
+  },
+  {
+    title: "How does Governance work?",
+    description: "Governance is a decentralised, community driven process.",
+    link: "https://dev.yuki-labs.dev/learn/governance_for_dummies",
+  },
+];
 export const BannerHome = ({
-  title = "Starknet governance hub",
-  tagline = "Where the community propose, discuss and influence the direction of Starknet. ",
-  snipCount = 0,
-  votePropCount = 0,
-  delegateCount = 0,
-  delegatedTokens = 0,
+  strapline = "Starknet",
+  title = "Governance Hub",
+  tagline = "Where the community propose, debate and vote on the direction of Starknet",
 }: Props) => {
   return (
-    <Box position={"relative"} mb="48px">
-      <Box
-        px={{ base: "26.5px", md: "76.5px" }}
-        position="absolute"
-        bottom="-32px"
-        display={{ base: "none", md: "none", lg: "flex" }}
-        alignItems={"center"}
-        flexDirection={{ base: "column", md: "row" }}
-        height="68px"
-        zIndex={"2"}
-        gap="16px"
-      >
-        <Stat label="Total Snips" value={snipCount} />
-        <Stat label="Total Voting Proposals" value={votePropCount} />
-        <Stat label="Total Delegates" value={delegateCount} />
-        <Stat label="Delegated Tokens" value={delegatedTokens} />
-      </Box>
-
+    <>
       <Box
         width="100%"
-        height="373px"
+        height={{
+          base: "420px",
+          md: "373px",
+        }}
         position="relative"
         borderBottom="1px solid #DCDBDD"
         overflow="hidden"
+        bgGradient="radial(573.81% 50% at 50% 50%, #F9F3EF 0%, #F5F2FA 82.25%, #F1F6FA 100%)"
       >
         <Box position="absolute" inset="0">
           <Pattern />
         </Box>
-        <Box position="absolute" inset="0" zIndex="1">
-          <Box px={{ base: "26.5px", md: "76.5px" }} pt="72px">
-            <Box>
-              <Heading
-                bgGradient="linear(119deg, #EC796B , #D672EF )"
+        <HomeContainer pt="72px">
+          <Box pos="relative">
+            <Heading
+              letterSpacing="-0.48px"
+              variant="h2"
+              fontWeight="700"
+              fontSize="48px"
+              lineHeight="48px"
+              display="flex"
+              flexDirection="column"
+            >
+              <span>{strapline}</span>
+              <Box
+                bgGradient="linear(270deg, #F09280 1.91%, #E87888 38.19%, #D672EF 73.51%, #BCA1F3 95.51%)"
                 bgClip="text"
-                variant="h2"
-                fontWeight="500"
-                fontSize="48px"
-                lineHeight={"1.5em"}
               >
                 {title}
-              </Heading>
-            </Box>
-            <Box>
-              <Text fontWeight="500" fontSize="15px">
-                {tagline}
-              </Text>
+              </Box>
+            </Heading>
+            <Box pos="absolute" top={-2} left={-3}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M10.6412 19.4833L12.2663 14.4623C12.5966 13.4412 13.4025 12.6465 14.4274 12.3331L19.4727 10.7816C20.171 10.5683 20.1767 9.58296 19.484 9.35834L14.4614 7.73315C13.4422 7.40282 12.6475 6.59683 12.3323 5.57188L10.7827 0.526415C10.5694 -0.170097 9.58417 -0.177648 9.35956 0.516977L7.73444 5.5379C7.40413 6.55719 6.59818 7.35186 5.57328 7.66708L0.528047 9.21678C-0.170321 9.43196 -0.177871 10.4154 0.516721 10.64L5.5393 12.2652C6.55854 12.5955 7.35317 13.4034 7.66838 14.4283L9.218 19.4719C9.43128 20.1703 10.4165 20.1779 10.6412 19.4833Z"
+                  fill="#0B0B4C"
+                />
+              </svg>
             </Box>
           </Box>
-        </Box>
+          <Box maxW={400} mt="8px">
+            <Text fontWeight="600" lineHeight={1.5} color="#0B0B4C">
+              {tagline}
+            </Text>
+          </Box>
+        </HomeContainer>
       </Box>
-    </Box>
-  );
-};
-
-const Stat = ({ label, value }: { label: string; value: number }) => {
-  return (
-    <Box
-      pl="12px"
-      pr="56px"
-      py="8px"
-      borderRadius="6px"
-      bg="#FBFBFB"
-      border="1px solid rgba(35, 25, 45, 0.10)"
-    >
-      <Text color="#86848D" fontSize="12px" textTransform={"uppercase"}>
-        {label}
-      </Text>
-      <Text color="#4A4A4F" fontSize="21px" fontWeight="600">
-        {value}
-      </Text>
-    </Box>
+      <HomeContainer
+        zIndex="2"
+        transform="translateY(-50%)"
+        px="0px"
+        mb="-60px"
+      >
+        <SimpleGrid
+          columns={3}
+          // gap="standard.md" // gap causing overflow on tablet
+          overflowX="scroll"
+          gridTemplateColumns="repeat(3, minmax(246px, 1fr))"
+          py="16px"
+          px="32px"
+          sx={{
+            "> *:not(:last-child)": {
+              marginRight: "standard.md",
+            },
+          }}
+        >
+          {homeLinks.map((link) => (
+            <HomePageCard
+              key={link.title}
+              title={link.title}
+              description={link.description}
+              link={link.link}
+            />
+          ))}
+        </SimpleGrid>
+      </HomeContainer>
+    </>
   );
 };
