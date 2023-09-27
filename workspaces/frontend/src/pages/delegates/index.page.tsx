@@ -25,10 +25,10 @@ import {
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useBalanceData } from "../../utils/hooks";
 import { ethers } from "ethers";
-import { useAccount } from "wagmi";
+import { useAccount, useWaitForTransaction } from "wagmi";
 import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "../../wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -185,7 +185,38 @@ export function Page() {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
+  // get delegation hash
+  const [txHash, setTxHash] = useState("");
+  // listen to txn with delegation hash
+  const {
+    isLoading: isDelegationLoading,
+    isError: isDelegationError,
+    isSuccess: isDelegationSuccess,
+    error: delegationError,
+  } = useWaitForTransaction({ hash: txHash as `0x${string}` });
+  // handle delegation cases
+  useEffect(() => {
+    if (isDelegationLoading) {
+      setIsStatusModalOpen(true);
+      setStatusTitle("Tokens pending to delegate");
+      setStatusDescription("");
+    }
 
+    if (isDelegationError) {
+      console.log(delegationError);
+      setIsStatusModalOpen(true);
+      setStatusTitle("Tokens delegation failed");
+      setStatusDescription(
+        "An error occurred while processing your transaction.",
+      );
+    }
+
+    if (isDelegationSuccess) {
+      setIsStatusModalOpen(true);
+      setStatusTitle("Tokens delegated successfully");
+      setStatusDescription("");
+    }
+  }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
   const { data: votingPower } = useQuery(
     gql(`
     query VotingPower($voter: String!, $space: String!) {
@@ -217,8 +248,6 @@ export function Page() {
     searchQuery,
     sortBy,
   });
-
-  console.log(receiverData);
 
   const addVotingPowerToReceiver = () => {
     if (delegates.data && delegates.data.length > 0) {
@@ -322,10 +351,8 @@ export function Page() {
                 inputAddress as `0x${string}`,
               ],
             })
-              .then(() => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Tokens delegated successfully");
-                setStatusDescription("");
+              .then((tx) => {
+                setTxHash(tx.hash);
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
@@ -346,6 +373,7 @@ export function Page() {
         isOpen={isStatusModalOpen}
         isSuccess={!statusDescription?.length}
         isFail={!!statusDescription?.length}
+        isPending={isDelegationLoading}
         onClose={() => {
           setIsStatusModalOpen(false);
         }}
@@ -452,14 +480,23 @@ export function Page() {
                         setInputAddress(delegate?.author?.address);
                       }
                     }}
+                    isDelegationLoading={
+                      isDelegationLoading &&
+                      delegate?.author?.address === inputAddress
+                    }
                     votingPower={delegate?.votingInfo?.votingPower}
                     delegatedVotes={delegate?.votingInfo?.totalVotes || "0"}
                     profileURL={`/delegates/profile/${delegate.id}`}
                     address={delegate?.author?.address}
                     statement={delegate?.statement}
                     type={delegate?.interests as string[]}
-                    ensAvatar={delegate?.author?.ensAvatar}
-                    ensName={delegate.author?.ensName}
+                    ensAvatar={
+                      delegate?.author?.ensAvatar ??
+                      delegate?.author?.profileImage
+                    }
+                    ensName={
+                      delegate.author?.ensName ?? delegate.author?.username
+                    }
                     key={delegate?.id}
                   />
                 ))

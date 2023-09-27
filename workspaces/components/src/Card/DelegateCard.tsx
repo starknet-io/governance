@@ -4,9 +4,11 @@ import {
   CardBody,
   CardFooter,
   Box,
+  Text,
   Tooltip,
   LinkBox,
   LinkOverlay,
+  Spinner,
 } from "@chakra-ui/react";
 import { Tag } from "../Tag/";
 import { Button } from "../Button";
@@ -24,6 +26,7 @@ export type DelegateCardProps = {
   address: string | null | undefined;
   ensName?: string | null;
   ensAvatar?: string | null;
+  isDelegationLoading?: boolean;
 };
 
 const delegateNames: Record<string, string> = {
@@ -102,6 +105,7 @@ export const DelegateCard = ({
   ensName,
   onDelegateClick,
   profileURL,
+  isDelegationLoading,
 }: DelegateCardProps) => {
   const votesFormatted = formatVotesAmount(votingPower) + " delegated votes";
   const formattedDelegateStatement = extractParagraph(statement || "");
@@ -136,13 +140,28 @@ export const DelegateCard = ({
       <CardFooter>
         <Box width="100%" display="flex" flexDirection="column" gap="16px">
           <Box>
-            <Button
-              size="condensed"
-              variant="outline"
-              onClick={onDelegateClick}
-            >
-              Delegate 2 ddddd
-            </Button>
+            {!isDelegationLoading ? (
+              <Button
+                size="condensed"
+                variant="outline"
+                onClick={onDelegateClick}
+              >
+                Delegate
+              </Button>
+            ) : (
+              <Button
+                size="condensed"
+                variant="outline"
+                disabled
+                gap={1.5}
+                onClick={() => {
+                  console.log("disabled");
+                }}
+              >
+                <Spinner size="sm" />
+                <Text variant="mediumStrong">Pending</Text>
+              </Button>
+            )}
           </Box>
         </Box>
       </CardFooter>

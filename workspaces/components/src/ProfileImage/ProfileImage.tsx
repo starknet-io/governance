@@ -3,17 +3,41 @@ import { ProfileIcon } from "src/Icons";
 
 interface ProfileImageProps {
   imageUrl: string | null | undefined;
+  size?: "small" | "medium" | "large";
 }
 
-export const ProfileImage: React.FC<ProfileImageProps> = ({ imageUrl }) => {
+const sizeStyles = {
+  small: {
+    width: "40px",
+    height: "40px",
+  },
+  medium: {
+    width: "70px",
+    height: "70px",
+  },
+  large: {
+    width: "150px",
+    height: "150px",
+  },
+  default: {
+    width: "100px",
+    height: "100px",
+  },
+};
+
+export const ProfileImage: React.FC<ProfileImageProps> = ({
+  imageUrl,
+  size,
+}) => {
+  const { width, height } = sizeStyles[size || "default"];
+
   return (
     <div
       style={{
-        width: "100px",
-        height: "100px",
+        width: width,
+        height: height,
         borderRadius: "50%",
         overflow: "hidden",
-        border: "1px solid #333",
         backgroundColor: "black",
         display: "flex",
         alignItems: "center",

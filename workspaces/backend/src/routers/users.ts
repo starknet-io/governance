@@ -132,21 +132,27 @@ export const usersRouter = router({
     .input(
       z.object({
         id: z.string(),
-        username: z.string().optional(),
-        starknetAddress: z.string().optional(),
+        username: z.any(),
+        starknetAddress: z.any(),
       })
     )
     .mutation(async (opts) => {
+      const { id, username, starknetAddress } = opts.input;
+
+      const updatedUsername = (username !== undefined && username !== "") ? username : null;
+      const updatedAddress = (starknetAddress !== undefined && starknetAddress !== "") ? starknetAddress : null;
+
       await db
         .update(users)
         .set({
-          username: opts.input.username,
-          starknetAddress: opts.input.starknetAddress,
+          username: updatedUsername,
+          starknetAddress: updatedAddress,
         })
-        .where(eq(users.id, opts.input.id))
+        .where(eq(users.id, id))
         .returning();
+
       return await db.query.users.findFirst({
-        where: eq(users.id, opts.input.id),
+        where: eq(users.id, id),
         with: {
           delegationStatement: true
         }

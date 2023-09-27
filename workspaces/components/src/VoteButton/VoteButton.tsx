@@ -1,6 +1,11 @@
-import { Box, Flex, Icon } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { VoteAbstainIcon, VoteAgainstIcon, VoteForIcon } from "src/Icons";
 import { Text } from "src/Text";
+import {
+  VoteAbstainIconFilled,
+  VoteAgainstIconFilled,
+  VoteForIconFilled,
+} from "../Icons/UiIcons";
 
 type Props = {
   label: string;
@@ -53,17 +58,34 @@ export const VoteButton = ({
         alignItems="center"
       >
         {type === "For" && (
-          <Icon as={VoteForIcon} boxSize="24px" aria-label="For" />
+          <>
+            {active ? (
+              <VoteForIconFilled width="24px" height="24px" />
+            ) : (
+              <VoteForIcon width="24px" height="24px" />
+            )}
+          </>
         )}
         {type === "Against" && (
-          <Icon as={VoteAgainstIcon} boxSize="24px" aria-label="Against" />
+          <>
+            {active ? (
+              <VoteAgainstIconFilled width="24px" height="24px" />
+            ) : (
+              <VoteAgainstIcon width="24px" height="24px" />
+            )}
+          </>
         )}
         {type === "Abstain" && (
-          <Icon as={VoteAbstainIcon} boxSize="25px" aria-label="Abstain" />
+          <>
+            {active ? (
+              <VoteAbstainIconFilled width="24px" height="24px" />
+            ) : (
+              <VoteAbstainIcon width="24px" height="24px" />
+            )}
+          </>
         )}
-
         <Box>
-          <Text variant="medium">{label}</Text>
+          <Text variant="mediumStrong">{label}</Text>
         </Box>
       </Flex>
     </Box>

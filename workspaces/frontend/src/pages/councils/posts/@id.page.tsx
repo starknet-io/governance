@@ -218,5 +218,5 @@ export function Page() {
 }
 
 export const documentProps = {
-  title: "Post / Create",
+  title: "Post",
 } satisfies DocumentProps;

@@ -57,7 +57,15 @@ const proposalMarkDown: ParagraphElement[] = [
   },
   {
     type: "paragraph",
+    children: [{ text: "" }],
+  },
+  {
+    type: "paragraph",
     children: [{ text: "#Abstract" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "" }],
   },
   {
     type: "paragraph",
@@ -65,7 +73,15 @@ const proposalMarkDown: ParagraphElement[] = [
   },
   {
     type: "paragraph",
+    children: [{ text: "" }],
+  },
+  {
+    type: "paragraph",
     children: [{ text: "#Specification" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "" }],
   },
   {
     type: "paragraph",
@@ -73,7 +89,15 @@ const proposalMarkDown: ParagraphElement[] = [
   },
   {
     type: "paragraph",
+    children: [{ text: "" }],
+  },
+  {
+    type: "paragraph",
     children: [{ text: "#Preamble" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "" }],
   },
   {
     type: "paragraph",
@@ -81,11 +105,23 @@ const proposalMarkDown: ParagraphElement[] = [
   },
   {
     type: "paragraph",
+    children: [{ text: "" }],
+  },
+  {
+    type: "paragraph",
     children: [{ text: "#Test cases" }],
   },
   {
     type: "paragraph",
+    children: [{ text: "" }],
+  },
+  {
+    type: "paragraph",
     children: [{ text: "#Reference implementation" }],
+  },
+  {
+    type: "paragraph",
+    children: [{ text: "" }],
   },
   {
     type: "paragraph",

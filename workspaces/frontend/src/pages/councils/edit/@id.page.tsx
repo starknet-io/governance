@@ -48,6 +48,8 @@ export function Page() {
   const removeUserFromCouncilData =
     trpc.councils.deleteUserFromCouncil.useMutation();
 
+  const utils = trpc.useContext();
+
   const { editorValue, handleEditorChange, editor, setMarkdownValue } =
     useMarkdownEditor("");
   const {
@@ -91,8 +93,10 @@ export function Page() {
         ...data,
         id: council.id,
       };
-      await editCouncil.mutateAsync(saveData).then(() => {
-        navigate(`/councils/${pageContext.routeParams!.id}`);
+      await editCouncil.mutateAsync(saveData).then((resp: any) => {
+        utils.councils.getAll.invalidate();
+        utils.councils.getCouncilBySlug.invalidate();
+        navigate(`/councils/${resp.slug}`);
       });
     } catch (error) {
       // Handle error
@@ -114,7 +118,8 @@ export function Page() {
 
     try {
       await deleteCouncil.mutateAsync({ id: council.id });
-      navigate("/snips");
+      navigate("/");
+      utils.councils.getAll.invalidate();
     } catch (error) {
       // Handle error
       console.log(error);
@@ -226,5 +231,5 @@ export function Page() {
 }
 
 export const documentProps = {
-  title: "Snip / Create",
+  title: "Council / Edit",
 } satisfies DocumentProps;

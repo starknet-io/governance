@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Button,
   Input,
   VStack,
   ListItem,
@@ -22,8 +21,10 @@ import {
   FormLabel,
   FormControl,
 } from "@chakra-ui/react";
-import { HiTrash } from "react-icons/hi2";
 import "./members-list.css";
+import { Button } from "src/Button";
+import { TrashIcon } from "src/Icons";
+import { truncateAddress } from "src/utils";
 
 export type MemberType = {
   address: string;
@@ -62,6 +63,7 @@ export const MembersList: React.FC<MembersListProps> = ({
   };
 
   const handleAddMember = () => {
+    if (!member.address && !member.name && !member.twitterHandle) return;
     setMembers([...members, member]);
     setMember({ address: "", name: "", twitterHandle: "", miniBio: "" });
     onClose();
@@ -126,7 +128,13 @@ export const MembersList: React.FC<MembersListProps> = ({
           </ModalBody>
 
           <ModalFooter>
-            <Button variant="primary" onClick={handleAddMember}>
+            <Button
+              variant="primary"
+              onClick={handleAddMember}
+              disabled={
+                !member.address && !member.name && !member.twitterHandle
+              }
+            >
               Add Member
             </Button>
           </ModalFooter>
@@ -145,21 +153,32 @@ export const MembersList: React.FC<MembersListProps> = ({
                 <Flex justify="space-between" align="center">
                   <VStack align="start">
                     <Flex height="20px">
-                      <Text fontSize="14px" lineHeight="22px">
-                        {member.name}
-                      </Text>
-                      <Text>
-                        <span>&nbsp;</span>
-                        <span style={{ fontWeight: "bold" }}>&bull;</span>
-                        <span>&nbsp;</span>
-                      </Text>
-                      <Text
-                        fontSize="14px"
-                        lineHeight="22px"
-                        textDecoration="underline"
-                      >
-                        @{member.twitterHandle}
-                      </Text>
+                      {member.name ? (
+                        <Text fontSize="14px" lineHeight="22px">
+                          {member.name}
+                        </Text>
+                      ) : (
+                        <Text fontSize="14px" lineHeight="22px">
+                          {truncateAddress(member.address)}
+                        </Text>
+                      )}
+                      {member.twitterHandle ? (
+                        <>
+                          <Text>
+                            <span>&nbsp;</span>
+                            <span style={{ fontWeight: "bold" }}>&bull;</span>
+                            <span>&nbsp;</span>
+                          </Text>
+
+                          <Text
+                            fontSize="14px"
+                            lineHeight="22px"
+                            textDecoration="underline"
+                          >
+                            @{member.twitterHandle}
+                          </Text>
+                        </>
+                      ) : null}
                     </Flex>
                     <Flex>
                       <Text fontSize="12px" lineHeight="18px" color="#6F6E77">
@@ -170,8 +189,8 @@ export const MembersList: React.FC<MembersListProps> = ({
                   {readonly ? null : (
                     <IconButton
                       aria-label="Delete member"
-                      icon={<HiTrash />}
-                      variant="ghost"
+                      icon={<TrashIcon cursor={"pointer"} />}
+                      variant="simple"
                       onClick={() => handleRemoveMember(index)}
                     />
                   )}

@@ -4,6 +4,7 @@ import { Text } from "../Text";
 import moment from "moment";
 import { CommentIcon } from "src/Icons";
 import { MarkdownRenderer } from "src/MarkdownRenderer";
+import "./styles.css";
 
 type Props = {
   children?: React.ReactNode;
@@ -143,15 +144,15 @@ const PastVotes = ({
   const renderIconBasedOnVotePreference = () => {
     switch (votePreference) {
       case "for":
-        return HiHandThumbUp
+        return HiHandThumbUp;
       case "against":
-        return HiHandThumbDown
+        return HiHandThumbDown;
       case "abstain":
-        return HiHandRaised
+        return HiHandRaised;
       default:
-        return HiHandThumbUp
+        return HiHandThumbUp;
     }
-  }
+  };
   return (
     <Flex flexDirection="column" flex={1} gap="6px">
       <Text
@@ -365,20 +366,21 @@ const Post = ({ post }: any) => {
         variant="breadcrumbs"
         fontSize="12px"
         noOfLines={1}
-        fontWeight="500"
+        fontWeight="400"
         color="#292932"
         width={"100%"}
       >
         {post.title}
       </Text>
       <Text
-        color="#6C6C75"
+        color="#292932"
         variant="breadcrumbs"
         noOfLines={1}
-        fontWeight="500"
-        width={"100%"}
+        fontWeight="400"
       >
-        <MarkdownRenderer content={post.content ?? ""} />
+        <Box className="post-markdown">
+          <MarkdownRenderer content={post.content ?? ""} />
+        </Box>
       </Text>
     </Flex>
   );

@@ -1,5 +1,5 @@
 import { DocumentProps } from "src/renderer/types";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Box,
@@ -50,6 +50,7 @@ import { useBalanceData } from "src/utils/hooks";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { stringToHex } from "viem";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "../delegates/profile/@id.page";
+import { WalletIcon } from "@yukilabs/governance-components/src/Icons";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -97,7 +98,7 @@ export function Page() {
       },
     },
   );
-  const { data: vp } = useQuery(
+  const { data: vp, loading: isVotingPowerLoading } = useQuery(
     gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
       vp(voter: $voter, space: $space, proposal: $proposal) {
         vp
@@ -249,14 +250,18 @@ export function Page() {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
-  const { user } = useDynamicContext();
+  const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
+  const { user, setShowAuthFlow } = useDynamicContext();
   const hasVoted = vote.data && vote.data.votes?.[0];
-  const canVote = data?.proposal?.state === "active";
+  const canVote =
+    data?.proposal?.state === "active" && vp?.vp?.vp && vp?.vp?.vp !== 0;
   const hasDelegated =
     delegation.isFetched &&
     userBalance.isFetched &&
     delegation.data &&
     delegation.data != "0x0000000000000000000000000000000000000000";
+  const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
+
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
@@ -266,6 +271,12 @@ export function Page() {
   useEffect(() => {
     comments.refetch();
   }, [user?.isAuthenticatedWithAWallet]);
+
+  useEffect(() => {
+    if (user) {
+      setIsConnectedModal(false);
+    }
+  }, [user]);
 
   const saveComment = trpc.comments.saveComment.useMutation({
     onSuccess: () => {
@@ -388,6 +399,7 @@ export function Page() {
           <Textarea
             variant="primary"
             name="comment"
+            maxLength={140}
             placeholder="I voted X because Y"
             rows={4}
             focusBorderColor={"#292932"}
@@ -415,6 +427,16 @@ export function Page() {
         title={statusTitle}
         description={statusDescription}
       />
+      <InfoModal
+        title="Connect wallet to cast a vote"
+        isOpen={isConnectedModal}
+        onClose={() => setIsConnectedModal(false)}
+      >
+        <WalletIcon />
+        <Button variant="primary" onClick={() => setShowAuthFlow(true)}>
+          Connect your wallet
+        </Button>
+      </InfoModal>
       <InfoModal
         title="Snapshot info"
         isOpen={isInfoOpen}
@@ -588,14 +610,14 @@ export function Page() {
         display="flex"
         flexDirection="column"
         flexBasis={{ base: "100%", md: "380px" }}
-        height="100vh"
+        height="100%"
         top="0"
         position={{ base: "unset", lg: "sticky" }}
       >
         {data?.proposal?.state === "active" ||
         data?.proposal?.state === "closed" ? (
           <>
-            {!hasVoted && canVote && !hasDelegated && (
+            {!hasVoted && canVote ? (
               <Heading
                 color="content.accent.default"
                 variant="h4"
@@ -603,31 +625,35 @@ export function Page() {
               >
                 Cast your vote
               </Heading>
-            )}
-
-            {delegation.isFetched &&
-              userBalance.isFetched &&
-              delegation.data &&
-              delegation.data !=
-                "0x0000000000000000000000000000000000000000" && (
+            ) : null}
+            {vp?.vp?.vp === 0 &&
+              !isVotingPowerLoading &&
+              !shouldShowHasDelegated && (
                 <>
-                  <Heading
-                    color="content.accent.default"
-                    variant="h4"
-                    mb="standard.md"
-                  >
-                    Your vote
-                  </Heading>
-                  <Banner
-                    label={`Your voting power of ${userBalance.balance} ${
-                      userBalance.symbol
-                    } is currently assigned to delegate ${truncateAddress(
-                      delegation.data,
-                    )}`}
-                  />
+                  <Banner label="You cannot vote as it seems you didn’t have any voting power when this Snapshot was taken." />
                   <Divider mb="standard.2xl" />
                 </>
               )}
+
+            {shouldShowHasDelegated && data?.proposal?.state !== "closed" && (
+              <>
+                <Heading
+                  color="content.accent.default"
+                  variant="h4"
+                  mb="standard.md"
+                >
+                  Your vote
+                </Heading>
+                <Banner
+                  label={`Your voting power of ${userBalance.balance} ${
+                    userBalance.symbol
+                  } is currently assigned to delegate ${truncateAddress(
+                    delegation.data!,
+                  )}`}
+                />
+                <Divider mb="standard.2xl" />
+              </>
+            )}
 
             {vote.data && vote.data.votes?.[0] && (
               <>
@@ -650,7 +676,7 @@ export function Page() {
                 <Divider mb="standard.2xl" />
               </>
             )}
-            {!hasVoted && canVote && !hasDelegated ? (
+            {(hasVoted || canVote) && data?.proposal?.state !== "closed" ? (
               <ButtonGroup
                 mb="40px"
                 spacing="8px"
@@ -663,10 +689,14 @@ export function Page() {
                     <VoteButton
                       key={choice}
                       onClick={() => {
-                        setcurrentChoice(index + 1);
-                        setIsOpen(true);
+                        if (!user) {
+                          setIsConnectedModal(true);
+                        } else {
+                          setcurrentChoice(index + 1);
+                          setIsOpen(true);
+                        }
                       }}
-                      active={false}
+                      active={vote?.data?.votes?.[0]?.choice === index + 1}
                       // @ts-expect-error todo
                       type={choice}
                       label={`${choice}`}
@@ -750,7 +780,7 @@ export function Page() {
             alignItems="center"
             justifyContent="center"
             gap="16px"
-            height="100%"
+            height={data?.proposal?.state === "pending" ? "100vh" : "100%"}
             overflow="hidden"
           >
             <PlaceholderImage />
@@ -759,8 +789,7 @@ export function Page() {
               {`${formatDate(data?.proposal?.start ?? 0, "yyyy-MM-dd", true)}`}
             </Heading>
             <Text variant="small" color="content.default.default">
-              The Builder’s council is excited about the new features but
-              expects higher quality of documentation.
+              Review the proposal, discuss and debate before voting starts.
             </Text>
           </Box>
         )}

@@ -280,5 +280,5 @@ export function Page() {
 }
 
 export const documentProps = {
-  title: "Councils / Builders",
+  title: "Council",
 } satisfies DocumentProps;

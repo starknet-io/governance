@@ -9,10 +9,11 @@ export type props = {
   href?: string;
   isExternal?: boolean;
   target?: ButtonProps["formTarget"];
+  disabled?: boolean;
 } & ButtonProps;
 
 export const Button = forwardRef<HTMLButtonElement, props>(
-  ({ children, toId, href, ...rest }, ref) => {
+  ({ children, toId, href, disabled = false, ...rest }, ref) => {
     const handleOnClick = () => {
       if (!toId) {
         return;
@@ -27,6 +28,7 @@ export const Button = forwardRef<HTMLButtonElement, props>(
         onClick={handleOnClick}
         ref={ref}
         href={href}
+        isDisabled={disabled}
         {...rest}
       >
         {children}
