@@ -2,16 +2,18 @@ import { useMemo, ClipboardEvent } from "react";
 import { withReact, Slate } from "slate-react";
 import { withHistory } from "slate-history";
 import { Toolbar } from "./EditorComponents";
-import { Box } from "@chakra-ui/react";
+import { Box, IconButton, Divider } from "@chakra-ui/react";
 import { EditableComponent } from "./EditableComponent";
 import { MarkdownEditorProps } from "./MarkdownEditorProps";
 import { initialValue } from "./initialValue";
 import { createEditor } from "slate";
 import MarkButton from "./MarkButton";
-import BlockButton from "./BlockButton";
 import { useMarkdownEditor } from "./useMarkdownEditor";
 import ImageBlockButton from "./ImageBlockButton";
 import LinkBlockButton from "./LinkBlockButton";
+import { MoreDotsIcon } from "src/Icons/ToolbarIcons";
+import { TextTypeButton } from "./TextTypeButton";
+import { MoreButton } from "./MoreButton";
 
 export const MarkdownEditor: React.FC<
   MarkdownEditorProps & {
@@ -31,8 +33,10 @@ export const MarkdownEditor: React.FC<
     e.preventDefault();
     const data = e.clipboardData?.getData("Text") ?? "";
     const mainEditor = customEditor ?? editor;
-    const markdown = await convertMarkdownToSlate(data);
-    mainEditor?.insertNodes(markdown);
+    const markdown = await convertMarkdownToSlate(` ${data}`);
+    mainEditor?.insertNodes(markdown, {
+      at: editor.selection?.focus,
+    });
   };
 
   const mainEditor = customEditor || editor;
@@ -48,15 +52,11 @@ export const MarkdownEditor: React.FC<
           <Toolbar>
             <MarkButton format="bold" />
             <MarkButton format="italic" />
-            <MarkButton format="underline" />
-            <MarkButton format="strikeThrough" />
-            <BlockButton format="heading_one" />
-            <BlockButton format="heading_two" />
-            <BlockButton format="block_quote" />
-            <BlockButton format="ul_list" />
-            <BlockButton format="ol_list" />
+            <TextTypeButton />
             <ImageBlockButton editor={mainEditor} handleUpload={handleUpload} />
             <LinkBlockButton editor={mainEditor} />
+            <Divider ml="2" orientation="vertical" />
+            <MoreButton />
           </Toolbar>
         )}
         <EditableComponent onPaste={handlePaste} minHeight={minHeight} />
