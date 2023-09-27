@@ -2,7 +2,7 @@ import { useMemo, ClipboardEvent } from "react";
 import { withReact, Slate } from "slate-react";
 import { withHistory } from "slate-history";
 import { Toolbar } from "./EditorComponents";
-import { Box, IconButton, Divider } from "@chakra-ui/react";
+import { Box, Divider } from "@chakra-ui/react";
 import { EditableComponent } from "./EditableComponent";
 import { MarkdownEditorProps } from "./MarkdownEditorProps";
 import { initialValue } from "./initialValue";

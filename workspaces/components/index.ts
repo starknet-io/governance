@@ -24,7 +24,6 @@ export { PlaceholderImage } from "./src/PlaceholderImage";
 export { VoteReview } from "./src/VoteReview";
 export { DelegateModal } from "./src/DelegateModal";
 export { AgreementModal } from "./src/AgreementModal";
-export { DatePicker } from "./src/DatePicker";
 export { ConfirmModal } from "./src/ConfirmModal";
 export { ChakraDatePicker } from "./src/ChakraDatePicker";
 export { LinkCard } from "./src/LinkCard";
@@ -84,6 +83,16 @@ export {
   InfoIcon,
   XIcon,
   SignatureIcon,
+  TwitterIcon,
+  DiscourseIcon,
+  GithubIcon,
+  ArrowDownCircleFillIcon,
+  ArrowDownCircleIcon,
+  ArrowUpCircleFillIcon,
+  ArrowUpCircleIcon,
+  PlusCircleIcon,
+  MinusCircleIcon,
+  ArrowRightIcon,
 } from "../components/src/Icons/index";
 export { FileUploader } from "./src/FileUploader";
 export { MultiLevelReOrderableList } from "./src/MultiLevelReOrderableList";
@@ -110,7 +119,7 @@ export { ReorderableList } from "./src/ReorderableList";
 export { MarkdownRenderer } from "./src/MarkdownRenderer";
 export { Iframely } from "./src/Iframely";
 export { Status } from "./src/Status";
-export { QuillEditor } from "./src/Editor/QuillEditor";
+export { Link } from "./src/Link";
 
 import * as Layout from "./src/RootLayout/RootLayout";
 import * as SummaryItems from "./src/SummaryItems/SummaryItems";
@@ -120,6 +129,7 @@ import * as Stat from "./src/Stat/Stat";
 import * as ProfileSummaryCard from "./src/ProfileSummaryCard/ProfileSummaryCard";
 import * as EditorTemplate from "./src/Editor/templates";
 import * as Swap from "./src/Swap/Swap";
+
 export {
   Layout,
   SummaryItems,
@@ -178,9 +188,8 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogCloseButton,
-  Link,
-  Skeleton,
   HStack,
+  Skeleton,
   SkeletonCircle,
   SkeletonText,
   Spinner,
@@ -234,7 +243,6 @@ export {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogCloseButton,
-  Link,
   Skeleton,
   SkeletonCircle,
   SkeletonText,

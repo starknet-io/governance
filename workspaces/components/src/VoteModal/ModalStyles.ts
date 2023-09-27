@@ -1,22 +1,43 @@
 import { modalAnatomy as parts } from "@chakra-ui/anatomy";
-import { createMultiStyleConfigHelpers } from "@chakra-ui/styled-system";
+import {
+  createMultiStyleConfigHelpers,
+  defineStyle,
+} from "@chakra-ui/styled-system";
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(parts.keys);
 
-const purple = definePartsStyle({
+const primary = definePartsStyle({
   dialog: {
-    borderRadius: "md",
-    bg: `purple.100`,
-
+    px: 0,
     // Let's also provide dark mode alternatives
-    _dark: {
-      bg: `purple.600`,
-      color: "white",
-    },
+    bg: "surface.cards.default",
   },
 });
 
+const xl = defineStyle({
+  px: "standard.xl",
+  py: "standard.xl",
+  width: "100%",
+  maxWidth: "446px",
+  borderRadius: "standard.lg",
+});
+
+const sm = defineStyle({
+  fontSize: "sm",
+  py: "6",
+});
+const bodySm = defineStyle({});
+
+const sizes = {
+  standard: definePartsStyle({ header: sm, dialog: xl, body: bodySm }),
+};
+
 export const modalTheme = defineMultiStyleConfig({
-  variants: { purple },
+  variants: { primary },
+  sizes,
+  defaultProps: {
+    variant: "primary",
+    size: "standard",
+  },
 });

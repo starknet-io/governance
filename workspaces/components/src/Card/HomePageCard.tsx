@@ -6,7 +6,11 @@ import {
   LinkBox,
   LinkOverlay,
 } from "@chakra-ui/react";
-import { HiArrowUpRight } from "react-icons/hi2";
+
+
+import { ExternalLinkIcon } from "src/Icons";
+
+
 
 type HomePageCardProps = {
   title: string;
@@ -31,7 +35,8 @@ export const HomePageCard = ({
           alignItems="center"
         >
           <span>Learn more</span>
-          <HiArrowUpRight size="24px" />
+          <ExternalLinkIcon boxSize="24px" color="content.default.default" />
+
         </CardFooter>
       </Card>
     </LinkBox>

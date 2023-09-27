@@ -14,7 +14,6 @@ import {
   NavItem,
   Layout,
   Header,
-  Box,
   ProposalsIcon,
   DelegatesIcon,
   SecurityIcon,
@@ -44,6 +43,7 @@ import {
   Link,
   PlusIcon,
 } from "@yukilabs/governance-components";
+import { Box } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { IUser, PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";

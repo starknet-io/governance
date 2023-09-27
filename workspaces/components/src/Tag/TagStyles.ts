@@ -22,15 +22,32 @@ const review = definePartsStyle({
 });
 const amount = definePartsStyle({
   container: {
-    px: "standard.xs",
+    px: "standard.base",
     py: "standard.base",
-    background: "#DCDBDD",
-    borderColor: "transparent",
-    borderWidth: "1px",
-    color: "#1A1523",
+    background: "component.tag.neutral.surface",
+    borderColor: "border.forms",
+    borderWidth: "0px",
+    color: "component.tag.neutral.content",
     fontSize: "10px",
-    fontWeight: "500",
-    borderRadius: "condensed.round",
+    fontWeight: "600",
+    borderRadius: "standard.base",
+    position: "relative",
+    lineHeight: "16px",
+    letterSpacing: "0.2px",
+  },
+});
+
+const neutral = definePartsStyle({
+  container: {
+    px: "standard.base",
+    py: "standard.base",
+    background: "component.tag.neutral.surface",
+    borderColor: "border.forms",
+    borderWidth: "0px",
+    color: "component.tag.neutral.content",
+    fontSize: "10px",
+    fontWeight: "600",
+    borderRadius: "standard.base",
     position: "relative",
     lineHeight: "16px",
     letterSpacing: "0.2px",
@@ -41,8 +58,9 @@ export const tagTheme = defineMultiStyleConfig({
   variants: {
     review,
     amount,
+    neutral,
   },
   defaultProps: {
-    variant: "review",
+    variant: "neutral",
   },
 });

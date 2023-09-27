@@ -9,15 +9,24 @@ type Props = {
 
 export const ContentContainer = ({
   children,
-  center,
-  maxWidth = "auto",
+  center = true,
+  maxWidth = "1046px",
 }: Props) => {
   return (
     <Box
       flex="1"
       display="flex"
-      px={{ base: "26.5px", md: "36.5px", lg: "36.5px", xl: "76.5px" }}
-      pt="40px"
+      px={{
+        base: "standard.md",
+        md: "standard.2xl",
+        lg: "standard.2xl",
+        xl: "standard.2xl",
+      }}
+      py={{
+        base: "standard.2xl",
+        md: "standard.2xl",
+        lg: "standard.3xl",
+      }}
       maxWidth={maxWidth === "auto" ? "auto" : `${maxWidth}`}
       mx={center ? "auto" : "0"}
     >

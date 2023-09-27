@@ -14,10 +14,16 @@ import {
   Box,
   InputGroup,
 } from "@chakra-ui/react";
-import { FaTwitter, FaTelegramPlane, FaDiscord } from "react-icons/fa";
+
 import { Text } from "../Text";
 import { Heading } from "src/Heading";
-import { CopyIcon, ShareIcon } from "src/Icons/UiIcons";
+import {
+  CopyIcon,
+  DiscordIcon,
+  DiscourseIcon,
+  ShareIcon,
+  TwitterIcon,
+} from "src/Icons/UiIcons";
 
 export const ShareDialog: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -140,21 +146,21 @@ export const ShareDialog: React.FC = () => {
 
             <Flex justifyContent="space-between" width="100%" mt="24px">
               <LinkBox
-                icon={<FaTwitter size="20px" />}
+                icon={<TwitterIcon />}
                 label="Twitter"
                 onClick={shareTwitter}
                 flex="1"
                 mr="3"
               />
               <LinkBox
-                icon={<FaTelegramPlane size="20px" />}
+                icon={<DiscourseIcon />}
                 label="Telegram"
                 onClick={shareTelegram}
                 flex="1"
                 mr="3"
               />
               <LinkBox
-                icon={<FaDiscord size="20px" color="#363636" />}
+                icon={<DiscordIcon color="#363636" />}
                 label="Discord"
                 onClick={shareDiscord}
                 flex="1"
