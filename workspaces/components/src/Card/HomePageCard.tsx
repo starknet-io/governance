@@ -7,7 +7,10 @@ import {
   LinkOverlay,
 } from "@chakra-ui/react";
 
+
 import { ExternalLinkIcon } from "src/Icons";
+
+
 
 type HomePageCardProps = {
   title: string;
@@ -33,6 +36,7 @@ export const HomePageCard = ({
         >
           <span>Learn more</span>
           <ExternalLinkIcon boxSize="24px" color="content.default.default" />
+
         </CardFooter>
       </Card>
     </LinkBox>

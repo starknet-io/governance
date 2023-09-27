@@ -507,6 +507,7 @@ const DelegatesSkeleton = ({ count = 6 }: DelegatesSkeletonProps) => {
         width="100%"
         spacing="standard.md"
         templateColumns="repeat(auto-fill, minmax(316px, 1fr))"
+
       >
         {Array.from({ length: count }).map((_, index) => (
           <Box key={index} padding="6" bg="#fff" borderRadius="8px">
