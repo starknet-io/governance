@@ -6,6 +6,7 @@ on:
       - 'v*'
     paths:
       - 'workspaces/frontend/**'
+      - 'workspaces/components/**'
   workflow_dispatch:
 
 jobs:

@@ -5,6 +5,7 @@ on:
     branches: ['dev']
     paths:
       - 'workspaces/frontend/**'
+      - 'workspaces/components/**'
   workflow_dispatch:
 
 jobs:
