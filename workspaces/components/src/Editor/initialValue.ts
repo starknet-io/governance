@@ -8,6 +8,6 @@ export interface ParagraphElement {
 export const initialValue: ParagraphElement[] = [
   {
     type: "paragraph",
-    children: [{ text: "Type your message" }],
+    children: [{ text: "" }],
   },
 ];

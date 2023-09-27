@@ -79,7 +79,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               {value?.title ?? ""}
             </Text>
           </Flex>
-          {isFirstLevel && (
+          {isFirstLevel && onDeleteClick != undefined && (
             <Button onClick={() => onDeleteClick?.(value.id)} p="0" m="0" variant="ghost">
               <TrashIcon />
             </Button>

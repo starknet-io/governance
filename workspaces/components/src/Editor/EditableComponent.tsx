@@ -3,12 +3,10 @@ import { useSlate } from "slate-react";
 import { useCallback, ClipboardEvent } from "react";
 import { RenderElementProps, RenderLeafProps } from "slate-react";
 
-import { 
-  Element, 
-  Leaf,
-} from "./ElementLeaf";
+import { Element, Leaf } from "./ElementLeaf";
 import { toggleMark, HOTKEYS } from "./hotkeys";
 import isHotkey from "is-hotkey";
+import { Text } from "src/Text";
 
 interface EditableComponentProps {
   minHeight?: string;
@@ -19,15 +17,15 @@ interface EditableComponentProps {
 export const EditableComponent = ({
   minHeight,
   autoFocus = false,
-  onPaste
+  onPaste,
 }: EditableComponentProps) => {
   const renderElement = useCallback(
     (props: RenderElementProps) => <Element {...props} />,
-    []
+    [],
   );
   const renderLeaf = useCallback(
     (props: RenderLeafProps) => <Leaf {...props} />,
-    []
+    [],
   );
 
   const editor = useSlate();
@@ -36,11 +34,27 @@ export const EditableComponent = ({
     <Editable
       renderElement={renderElement}
       renderLeaf={renderLeaf}
-      placeholder=""
+      placeholder="Type your message"
+      renderPlaceholder={({ children, attributes }) => (
+        <Text
+          as="span"
+          variant="medium"
+          {...attributes}
+          fontWeight="medium"
+          style={{ color: "grey" }}
+        >
+          {children}
+        </Text>
+      )}
       spellCheck
       autoFocus={autoFocus}
       onPaste={onPaste}
       onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          editor.insertBreak();
+        }
+
         for (const hotkey in HOTKEYS) {
           if (isHotkey(hotkey, event as any)) {
             event.preventDefault();
@@ -50,7 +64,7 @@ export const EditableComponent = ({
         }
       }}
       style={{
-        backgroundColor: "#fff",
+        backgroundColor: "surface.forms.default",
         padding: "12px",
         paddingBottom: "44px",
         borderRadius: "4px",
