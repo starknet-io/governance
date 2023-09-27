@@ -20,7 +20,7 @@ export type DelegateCardProps = {
   statement: string | null;
   type: string[];
   votingPower: number;
-  voteCount: number;
+  voteCount?: number;
   onDelegateClick?: () => void;
   profileURL?: string;
   address: string | null | undefined;
