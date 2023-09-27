@@ -450,8 +450,8 @@ export function Delegates({
             <SimpleGrid
               position="relative"
               width="100%"
-              spacing={4}
-              templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
+              spacing="standard.md"
+              templateColumns="repeat(auto-fill, minmax(316px, 1fr))"
             >
               {delegates.data && delegates.data.length > 0 ? (
                 transformData?.(delegates.data)?.map((delegate) => (

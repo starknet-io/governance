@@ -12,11 +12,11 @@ import {
   ListRow,
   Text,
 } from "@yukilabs/governance-components";
-import { HiArrowRight } from "react-icons/hi2";
+
 import { Delegates } from "src/components/Delegates";
 import { trpc } from "src/utils/trpc";
 import { Proposal, VotingPropsSkeleton } from "./voting-proposals/index.page";
-
+import { ArrowRightIcon } from "@dynamic-labs/sdk-react";
 
 export function Page() {
   const {
@@ -73,7 +73,7 @@ export function Page() {
               >
                 All voting proposals
               </Box>
-              <HiArrowRight />
+              <ArrowRightIcon />
             </Button>
           </Flex>
           <ListRow.Container mt={0}>
