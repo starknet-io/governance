@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Editable } from "slate-react";
 import { useSlate } from "slate-react";
 import { useCallback, ClipboardEvent } from "react";
@@ -7,6 +8,7 @@ import { Element, Leaf } from "./ElementLeaf";
 import { toggleMark, HOTKEYS } from "./hotkeys";
 import isHotkey from "is-hotkey";
 import { Text } from "src/Text";
+import "./EditableComponent.css";
 
 interface EditableComponentProps {
   minHeight?: string;
@@ -29,19 +31,30 @@ export const EditableComponent = ({
   );
 
   const editor = useSlate();
-
+  const [isFocused, setIsFocused] = useState(false);
+  const styleObj = {
+    backgroundColor: "#FBFBFB",
+    padding: "12px",
+    paddingBottom: "44px",
+    borderRadius: "4px",
+    boxShadow: "0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
+    border: "1px solid rgba(35, 25, 45, 0.10)",
+    fontSize: "14px",
+    minHeight: `${minHeight}px`,
+    // Adjust outline based on focus state
+  };
   return (
     <Editable
+      className={isFocused ? "editableComponent" : ""}
       renderElement={renderElement}
       renderLeaf={renderLeaf}
       placeholder="Type your message"
       renderPlaceholder={({ children, attributes }) => (
         <Text
-          as="span"
-          variant="medium"
+          variant="mediumStrong"
           {...attributes}
-          fontWeight="medium"
-          style={{ color: "grey" }}
+          mt="12px"
+          position="relative"
         >
           {children}
         </Text>
@@ -49,6 +62,8 @@ export const EditableComponent = ({
       spellCheck
       autoFocus={autoFocus}
       onPaste={onPaste}
+      onFocus={() => setIsFocused(true)} // Set focus state to true
+      onBlur={() => setIsFocused(false)} // Set focus state to false
       onKeyDown={(event) => {
         if (event.key === "Enter") {
           event.preventDefault();
@@ -63,16 +78,7 @@ export const EditableComponent = ({
           }
         }
       }}
-      style={{
-        backgroundColor: "surface.forms.default",
-        padding: "12px",
-        paddingBottom: "44px",
-        borderRadius: "4px",
-        boxShadow: "0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
-        border: "1px solid rgba(0, 0, 0, 0.05)",
-        fontSize: "14px",
-        minHeight: `${minHeight}px`,
-      }}
+      style={styleObj}
     />
   );
 };
