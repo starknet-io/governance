@@ -24,7 +24,11 @@ export function TextTypeButton({ format = "heading_one" }) {
     <Menu placement="top-start">
       {({ isOpen }) => (
         <>
-          <MenuButton _hover={{ backgroundColor: "white" }} type="button">
+          <MenuButton
+            backgroundColor="transparent"
+            _hover={{ backgroundColor: "transparent" }}
+            type="button"
+          >
             <IconButton
               aria-label={format}
               variant="ghost"

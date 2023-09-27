@@ -7,7 +7,6 @@ import { Element, Leaf } from "./ElementLeaf";
 import { toggleMark, HOTKEYS } from "./hotkeys";
 import isHotkey from "is-hotkey";
 import { Text } from "src/Text";
-import { Editor } from "slate";
 
 interface EditableComponentProps {
   minHeight?: string;
@@ -65,7 +64,7 @@ export const EditableComponent = ({
         }
       }}
       style={{
-        backgroundColor: "#fff",
+        backgroundColor: "surface.forms.default",
         padding: "12px",
         paddingBottom: "44px",
         borderRadius: "4px",
