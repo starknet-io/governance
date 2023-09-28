@@ -46,7 +46,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   Deploy-review:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/dev'
     needs: Build
     runs-on: ubuntu-latest
     env:
