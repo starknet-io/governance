@@ -543,7 +543,7 @@ export function Page() {
                   <Stat.Text label={`By ${data?.proposal?.author}`} />
                 </Stat.Root>
               </Flex>
-              <Flex gap="standard.sm" paddingTop="0" alignItems="center">
+              <Flex gap="standard.xs" paddingTop="0" alignItems="center">
                 <Text
                   display={{ base: "none", md: "inline-block" }}
                   variant="small"

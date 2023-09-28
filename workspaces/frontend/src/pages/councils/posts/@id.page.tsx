@@ -13,6 +13,7 @@ import {
   ProfileSummaryCard,
   MenuItem,
   MarkdownRenderer,
+  Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -172,7 +173,7 @@ export function Page() {
                 )}
               </Box>
 
-              <Flex gap="16px" paddingTop="0" alignItems="center">
+              <Flex gap="standard.xs" paddingTop="0" alignItems="center">
                 <Stat.Root>
                   <Stat.Text
                     label={
@@ -182,10 +183,15 @@ export function Page() {
                     }
                   />
                 </Stat.Root>
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
                 <Stat.Root>
                   <Stat.Date date={post?.createdAt} />
                 </Stat.Root>
-
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
                 <Stat.Root>
                   <Stat.Link
                     href="#discussion"
