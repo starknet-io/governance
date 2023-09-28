@@ -95,7 +95,7 @@ const MoreActions = ({ children }: MoreActionsProps) => {
   return (
     <Box style={{ position: "relative" }}>
       <Menu>
-        <MenuButton as={IconButton} icon={<EllipsisIcon />} variant="icon" />
+        <MenuButton as={IconButton} icon={<EllipsisIcon />} variant="ghost" />
 
         <Box top="0px" position="relative">
           <MenuList>{children}</MenuList>
