@@ -252,10 +252,10 @@ const CommentItem: React.FC<CommentProps> = ({
               left="50%"
               zIndex="0"
             />
-            {author?.ensAvatar || author?.profileImage ? (
+            {author?.profileImage || author?.ensAvatar ? (
               <Avatar
                 size={"sm"}
-                src={author?.ensAvatar || (author?.profileImage as string)}
+                src={author?.profileImage || (author?.ensAvatar as string)}
               />
             ) : (
               <Indenticon size={40} address={author?.address || ""} />
@@ -271,8 +271,8 @@ const CommentItem: React.FC<CommentProps> = ({
           <Box display="flex" flexDirection="column" gap={3} w="full">
             <Flex direction="column">
               <Text fontWeight="bold" fontSize="12px">
-                {author?.ensName ||
-                  author?.username ||
+                {author?.username ||
+                  author?.ensName ||
                   truncateAddress(author ? author.address : "")}
               </Text>
               <Text fontSize="12px" color="#6C6C75">

@@ -122,9 +122,9 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
           >
             <Flex direction="row" mb={4}>
               <Box>
-                {user?.ensAvatar || user?.profileImage ? (
+                {user?.profileImage || user?.ensAvatar ? (
                   <ProfileImage
-                    imageUrl={user.ensAvatar ?? user.profileImage}
+                    imageUrl={user.profileImage ?? user.ensAvatar}
                     size={"small"}
                   />
                 ) : (
@@ -133,8 +133,8 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               </Box>
               <Box pl={4}>
                 <Text color="#2A2A32" fontWeight="bold" fontSize="14px">
-                  {user?.ensName ||
-                    user?.username ||
+                  {user?.username ||
+                    user?.ensName ||
                     truncateAddress(user?.address || "")}
                 </Text>
                 <Text color="#6C6C75" fontSize="12px">

@@ -15,6 +15,7 @@ import {
   DeletionDialog,
   MarkdownEditor,
   useMarkdownEditor,
+  Textarea,
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
@@ -52,13 +53,7 @@ export function Page() {
 
   const { editorValue, handleEditorChange, editor, setMarkdownValue } =
     useMarkdownEditor("");
-  const {
-    editor: shortDescEditor,
-    editorValue: shortDescValue,
-    handleEditorChange: handleShortDescValue,
-    setMarkdownValue: shortDescSetMarkdownValue,
-  } = useMarkdownEditor("");
-
+  const [shortDescValue, setShortDescValue] = useState("");
   useEffect(() => {
     if (council && isSuccess) processData();
   }, [isSuccess]);
@@ -66,7 +61,7 @@ export function Page() {
   async function processData() {
     setValue("name", council?.name);
     setValue("address", council?.address);
-    await shortDescSetMarkdownValue(council?.description ?? "");
+    setShortDescValue(council?.description ?? "");
     await setMarkdownValue(council?.statement ?? "");
 
     const tempMembers = council?.members?.map((member: any) => {
@@ -157,12 +152,16 @@ export function Page() {
 
               <FormControl id="description">
                 <FormLabel>Short description</FormLabel>
-                <MarkdownEditor
-                  customEditor={shortDescEditor}
-                  onChange={handleShortDescValue}
+                <Textarea
+                  variant="primary"
+                  name="comment"
+                  maxLength={280}
+                  placeholder="Short description"
+                  rows={4}
+                  focusBorderColor={"#292932"}
+                  resize="none"
                   value={shortDescValue}
-                  minHeight="120"
-                  hideTabBar
+                  onChange={(e) => setShortDescValue(e.target.value)}
                 />
                 {errors.description && <span>This field is required.</span>}
               </FormControl>

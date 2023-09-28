@@ -16,10 +16,11 @@ import {
   MenuItem,
   EmptyState,
   Link,
+  Textarea,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { gql } from "src/gql";
@@ -65,7 +66,7 @@ export function Page() {
   const councilResp = trpc.councils.getCouncilBySlug.useQuery({
     slug: pageContext.routeParams!.id,
   });
-
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { data: council } = councilResp;
   const { user: loggedUser } = usePageContext();
 
@@ -108,6 +109,13 @@ export function Page() {
     {},
   );
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "unset";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [textareaRef.current?.value]);
+
   return (
     <Box
       display="flex"
@@ -128,7 +136,7 @@ export function Page() {
       >
         <ProfileSummaryCard.Root>
           <ProfileSummaryCard.Profile
-            address="0x2EF324324234234234234234231234"
+            address={council?.address ?? ""}
             ensName={council?.name ?? "Council"}
           >
             {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
@@ -146,9 +154,20 @@ export function Page() {
 
         <Divider my="24px" />
         <Box>
-          <MarkdownRenderer content={council?.description || ""} />
+          <Textarea
+            ref={textareaRef}
+            resize="none"
+            value={council?.description ? council?.description : ""}
+            isDisabled={true}
+            style={{
+              opacity: 1,
+              border: "none",
+              padding: "0",
+              cursor: "default",
+            }}
+          />
           {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-            <Button mt="24px" variant="outline" onClick={handleClick}>
+            <Button variant="outline" onClick={handleClick}>
               Add new post
             </Button>
           ) : (
