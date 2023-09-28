@@ -611,30 +611,34 @@ export function Page() {
             ) : (
               <Box></Box>
             )}
-            <AppBar.Root>
-              <AppBar.Group mobileDirection="row">
-                <Box minWidth={"52px"}>
-                  <Text variant="mediumStrong">Sort by</Text>
-                </Box>
-                <Select
-                  size="sm"
-                  aria-label="Sort by"
-                  placeholder="Sort by"
-                  focusBorderColor={"red"}
-                  rounded="md"
-                  value={sortBy}
-                  onChange={(e) =>
-                    setSortBy(e.target.value as "upvotes" | "date")
-                  }
-                >
-                  {sortByOptions.options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </AppBar.Group>
-            </AppBar.Root>
+            {comments.data && comments.data.length > 0 && (
+              <>
+                <AppBar.Root>
+                  <AppBar.Group mobileDirection="row">
+                    <Box minWidth={"52px"}>
+                      <Text variant="mediumStrong">Sort by</Text>
+                    </Box>
+                    <Select
+                      size="sm"
+                      aria-label="Sort by"
+                      placeholder="Sort by"
+                      focusBorderColor={"red"}
+                      rounded="md"
+                      value={sortBy}
+                      onChange={(e) =>
+                        setSortBy(e.target.value as "upvotes" | "date")
+                      }
+                    >
+                      {sortByOptions.options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </AppBar.Group>
+                </AppBar.Root>
+              </>
+            )}
             <CommentList
               commentsList={comments.data || []}
               onVote={handleCommentVote}
