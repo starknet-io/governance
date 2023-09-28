@@ -71,8 +71,13 @@ export const VoteComment = ({
           </Box>
         </Flex>
       </Flex>
-      <Box>
-        <Text variant="small" color="content.default.default">
+      <Box maxWidth={{ base: "500px", md: "800px", lg: "380px" }}>
+        <Text
+          width="100%"
+          sx={{ whiteSpace: "pre-wrap" }}
+          variant="small"
+          color="content.default.default"
+        >
           {comment}
         </Text>
       </Box>
