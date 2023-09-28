@@ -149,15 +149,14 @@ export function Page() {
             <Stack
               spacing="24px"
               direction={{ base: "column" }}
-              color="#545464"
+              color="content.default.default"
             >
               <Box display="flex" alignItems="center">
                 <Box flex="1">
                   <Heading
-                    color="#33333E"
-                    variant="h3"
+                    color="content.accent.default"
+                    variant="h2"
                     maxWidth="90%"
-                    lineHeight="1.4em"
                   >
                     {post?.title}
                   </Heading>
@@ -192,7 +191,11 @@ export function Page() {
 
               <MarkdownRenderer content={post?.content || ""} />
               <Divider my="32px" />
-              <Heading id="#discussion" color="#33333E" variant="h3">
+              <Heading
+                id="#discussion"
+                color="content.accent.default"
+                variant="h3"
+              >
                 Discussion
               </Heading>
               {user ? (
