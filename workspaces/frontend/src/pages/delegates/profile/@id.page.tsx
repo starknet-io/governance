@@ -647,7 +647,7 @@ export function Page() {
                 ))}
               </ListRow.Container>
             ) : (
-              <EmptyState type="votesCast" title="No data to display" />
+              <EmptyState type="votesCast" title="No votes yet" />
             )}
           </Box>
           <Box mt="24px" mb={10}>
@@ -682,7 +682,7 @@ export function Page() {
             </ListRow.Container>
 
             {!delegateCommentsResponse?.data?.length ? (
-              <EmptyState type="posts" title="No data to display" />
+              <EmptyState type="posts" title="No comments yet" />
             ) : null}
           </Box>
         </Stack>
