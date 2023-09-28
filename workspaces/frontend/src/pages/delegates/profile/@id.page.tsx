@@ -682,7 +682,7 @@ export function Page() {
             </ListRow.Container>
 
             {!delegateCommentsResponse?.data?.length ? (
-              <EmptyState type="posts" title="No comments yet" />
+              <EmptyState type="comments" title="No comments yet" />
             ) : null}
           </Box>
         </Stack>

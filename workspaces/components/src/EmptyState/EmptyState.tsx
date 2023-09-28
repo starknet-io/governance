@@ -5,10 +5,18 @@ import noVotingProps from "./assets/no-voting-proposals-found.svg";
 import noDelegates from "./assets/no-delegates-found.svg";
 import noPastComments from "./assets/no-past-comments-yet.svg";
 import noPastVotes from "./assets/no-past-votes-yet.svg";
+import noPosts from "./assets/no-posts.svg";
 type Props = {
   title?: string;
   border?: boolean;
-  type: "posts" | "votes" | "delegates" | "proposals" | "votesCast" | null;
+  type:
+    | "posts"
+    | "votes"
+    | "delegates"
+    | "proposals"
+    | "comments"
+    | "votesCast"
+    | null;
   minHeight?: string;
   action?: React.ReactNode;
 };
@@ -34,10 +42,8 @@ export const EmptyState = ({
       minHeight={minHeight}
       gap="standard.xl"
     >
-      {type === "posts" && (
-        // <Icon as={NoPostsIcon} boxSize={104} color="#86848D" />
-        <Image src={noPastComments} width="200px" />
-      )}
+      {type === "posts" && <Image src={noPosts} width="200px" />}
+      {type === "comments" && <Image src={noPastComments} width="200px" />}
       {type === "votes" && <Image src={noVotingProps} width="200px" />}
       {type === "delegates" && <Image src={noDelegates} width="320px" />}
       {type === "proposals" && <Image src={noVotingProps} width="320px" />}
