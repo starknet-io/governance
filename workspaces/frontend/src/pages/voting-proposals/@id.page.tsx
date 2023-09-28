@@ -35,7 +35,10 @@ import {
   EllipsisIcon,
   Link,
   EmptyState,
-  Skeleton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -386,6 +389,23 @@ export function Page() {
     }
   };
 
+  type MoreActionsProps = {
+    children: React.ReactNode;
+  };
+  const MoreActions = ({ children }: MoreActionsProps) => {
+    return (
+      <Box style={{ position: "relative" }}>
+        <Menu>
+          <MenuButton as={IconButton} icon={<EllipsisIcon />} variant="ghost" />
+
+          <Box top="0px" position="relative">
+            <MenuList>{children}</MenuList>
+          </Box>
+        </Menu>
+      </Box>
+    );
+  };
+
   if (data == null) return null;
   return (
     <Box
@@ -498,13 +518,12 @@ export function Page() {
                   {data?.proposal?.title}
                 </Heading>
               </Box>
-              <IconButton
-                variant="simple"
-                onClick={() => console.log("clicked")}
-                aria-label="Search database"
-                //toDo replace with ellipsis icon
-                icon={<EllipsisIcon boxSize="24px" />}
-              />
+
+              <MoreActions>
+                <MenuItem as="a" href="#">
+                  Report
+                </MenuItem>
+              </MoreActions>
             </Box>
             <Flex
               gap="standard.sm"
