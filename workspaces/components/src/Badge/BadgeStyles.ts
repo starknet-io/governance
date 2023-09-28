@@ -51,7 +51,7 @@ const amount = defineStyle({
 });
 
 const condensed = defineStyle({
-  px: "standard.xs",
+  px: "standard.base",
   py: "standard.base",
   borderRadius: "standard.base",
   height: "auto",
