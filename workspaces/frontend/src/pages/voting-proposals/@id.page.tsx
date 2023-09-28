@@ -851,7 +851,7 @@ export function Page() {
               height="800px"
               alignItems="center"
               justifyContent="center"
-              position="sticky"
+              position={{ base: "unset", lg: "sticky" }}
               top="0"
             >
               <PlaceholderImage />
