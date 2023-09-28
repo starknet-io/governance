@@ -238,7 +238,7 @@ export function Page() {
                   );
                 })
               ) : (
-                <EmptyState type="posts" title="No posts yet" />
+                <EmptyState type="posts" title="No data to display" />
               )}
             </ListRow.Container>
           </Box>
@@ -270,7 +270,7 @@ export function Page() {
                 ))}
               </ListRow.Container>
             ) : (
-              <EmptyState type="votes" title="No past votes" />
+              <EmptyState type="votesCast" title="No data to display" />
             )}
           </Box>
         </Stack>

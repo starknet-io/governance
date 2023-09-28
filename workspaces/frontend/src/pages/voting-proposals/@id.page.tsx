@@ -34,6 +34,7 @@ import {
   Banner,
   EllipsisIcon,
   Link,
+  EmptyState,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -752,25 +753,31 @@ export function Page() {
               width={`calc(100% + 48px)`}
             />
             <Box mb="standard.2xl">
-              <Heading variant="h4" mb="standard.md">
-                Votes
-              </Heading>
+              <Heading variant="h4">Votes</Heading>
 
-              {votes.data?.votes?.map((vote, index) => (
-                <VoteComment
-                  key={index}
-                  address={vote?.voter as string}
-                  voted={
-                    vote?.choice === 1
-                      ? "For"
-                      : vote?.choice === 2
-                      ? "Against"
-                      : "Abstain"
-                  }
-                  comment={vote?.reason as string}
-                  voteCount={vote?.vp as number}
+              {votes.data?.votes && votes.data.votes.length > 0 ? (
+                votes.data.votes.map((vote, index) => (
+                  <VoteComment
+                    key={index}
+                    address={vote?.voter as string}
+                    voted={
+                      vote?.choice === 1
+                        ? "For"
+                        : vote?.choice === 2
+                        ? "Against"
+                        : "Abstain"
+                    }
+                    comment={vote?.reason as string}
+                    voteCount={vote?.vp as number}
+                  />
+                ))
+              ) : (
+                <EmptyState
+                  title="No votes yet"
+                  type="votesCast"
+                  border={false}
                 />
-              ))}
+              )}
             </Box>
           </>
         ) : (
