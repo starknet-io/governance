@@ -158,6 +158,7 @@ export function Page() {
               <Stat.Root>
                 <Stat.Text
                   label={
+                    selectedPage?.author?.username ??
                     selectedPage?.author?.ensName ??
                     selectedPage?.author?.address.slice(0, 3) +
                       "..." +

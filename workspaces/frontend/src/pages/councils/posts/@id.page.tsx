@@ -175,7 +175,13 @@ export function Page() {
 
               <Flex gap="16px" paddingTop="0" alignItems="center">
                 <Stat.Root>
-                  <Stat.Text label={`By cillian`} />
+                  <Stat.Text
+                    label={
+                      post?.author?.username ??
+                      post?.author?.ensName ??
+                      post?.author?.address
+                    }
+                  />
                 </Stat.Root>
                 <Stat.Root>
                   <Stat.Date date={post?.createdAt} />
