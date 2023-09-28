@@ -13,7 +13,7 @@ WORKDIR /app
 COPY . .
 RUN yarn install
 
-RUN crontab cron
+RUN crontab /cron
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
