@@ -19,22 +19,22 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     <ReactMarkdown
       components={{
         h1: ({ ...props }) => (
-          <Heading variant="h1" {...props} mt="20px" mb="4px" />
+          <Heading variant="h3" {...props} mt="20px" mb="4px" />
         ),
         h2: ({ ...props }) => (
-          <Heading variant="h2" mt="20px" mb="4px" {...props} />
+          <Heading variant="h4" mt="20px" mb="4px" {...props} />
         ),
         h3: ({ ...props }) => (
-          <Heading variant="h3" mt="20px" mb="4px" {...props} />
+          <Heading variant="h4" mt="20px" mb="4px" {...props} />
         ),
         h4: ({ ...props }) => (
           <Heading variant="h4" mt="20px" mb="4px" {...props} />
         ),
         h5: ({ ...props }) => (
-          <Heading variant="h5" mt="20px" mb="4px" {...props} />
+          <Heading variant="h4" mt="20px" mb="4px" {...props} />
         ),
         h6: ({ ...props }) => (
-          <Heading variant="h6" mt="20px" mb="4px" {...props} />
+          <Heading variant="h4" mt="20px" mb="4px" {...props} />
         ),
         p: ({ ...props }) => (
           <Text variant="large" {...textProps} {...props} mb="16px" mt="8px" />
