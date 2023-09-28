@@ -22,7 +22,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
           <Heading
             variant="h3"
             {...props}
-            mt="20px"
+            mt="standard.2xl"
             mb="4px"
             color="content.accent.default"
           />

@@ -60,7 +60,7 @@ export function Iframely(props: IframelyProps) {
       </div>
     );
   } else if (!isLoaded) {
-    return <Skeleton height="140px" />;
+    return <Skeleton height="110px" />;
   } else {
     return <div dangerouslySetInnerHTML={html} />;
   }

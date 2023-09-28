@@ -573,7 +573,7 @@ export function Page() {
                 </Stat.Root>
               </Flex>
             </Flex>
-            <Box pb="standard.2xl">
+            <Box>
               <Link
                 as="button"
                 size="small"
@@ -584,16 +584,16 @@ export function Page() {
             </Box>
 
             {data?.proposal?.discussion !== "" ? (
-              <>
+              <Box height="110px!important" overflow="hidden" mt="standard.2xl">
                 <Iframely
                   id={import.meta.env.VITE_APP_IFRAMELY_ID}
                   url={`${data?.proposal?.discussion}`}
                 />
-                <Box mb="standard.2xl"></Box>
-              </>
+              </Box>
             ) : (
               <></>
             )}
+
             <MarkdownRenderer content={data?.proposal?.body || ""} />
 
             <Divider my="standard.2xl" />
@@ -799,8 +799,16 @@ export function Page() {
               width={`calc(100% + 48px)`}
             />
             <Box mb="standard.2xl">
-              <Heading variant="h4">Votes</Heading>
-
+              <Heading
+                variant="h4"
+                mb={
+                  votes.data?.votes && votes.data.votes.length > 0
+                    ? "standard.sm"
+                    : "0px"
+                }
+              >
+                Votes
+              </Heading>
               {votes.data?.votes && votes.data.votes.length > 0 ? (
                 votes.data.votes.map((vote, index) => (
                   <VoteComment
@@ -819,7 +827,9 @@ export function Page() {
                 ))
               ) : (
                 <EmptyState
-                  title="No votes yet"
+                  title={`No votes ${
+                    data?.proposal?.state !== "closed" ? "yet" : ""
+                  }`}
                   type="votesCast"
                   border={false}
                 />
