@@ -612,15 +612,15 @@ export function Page() {
         <Stack
           spacing="24px"
           direction={{ base: "column" }}
-          color="#545464"
+          color="content.default.default"
           width="100%"
         >
-          <Heading color="#33333E" variant="h3">
+          <Heading color="content.accent.default" variant="h2">
             Delegate pitch
           </Heading>
           <MarkdownRenderer content={delegate?.statement || ""} />
           <Box mt="24px">
-            <Heading mb="24px" color="#33333E" variant="h3">
+            <Heading mb="24px" color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
             {gqlResponse.data?.votes?.length ? (
@@ -647,11 +647,11 @@ export function Page() {
                 ))}
               </ListRow.Container>
             ) : (
-              <EmptyState type="votes" title="No past votes" />
+              <EmptyState type="votesCast" title="No votes yet" />
             )}
           </Box>
           <Box mt="24px" mb={10}>
-            <Heading mb="24px" color="#33333E" variant="h3">
+            <Heading mb="24px" color="content.accent.default" variant="h3">
               Comments
             </Heading>
             <ListRow.Container>
@@ -682,7 +682,7 @@ export function Page() {
             </ListRow.Container>
 
             {!delegateCommentsResponse?.data?.length ? (
-              <EmptyState type="posts" title="No past comments" />
+              <EmptyState type="posts" title="No comments yet" />
             ) : null}
           </Box>
         </Stack>

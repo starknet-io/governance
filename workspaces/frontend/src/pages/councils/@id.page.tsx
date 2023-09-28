@@ -190,14 +190,14 @@ export function Page() {
               direction={{ base: "column" }}
               color="#545464"
             >
-              <Heading color="#33333E" variant="h3">
+              <Heading color="content.accent.default" variant="h3">
                 The role of the {council?.name ?? "Council"}
               </Heading>
 
               <MarkdownRenderer content={council?.statement || ""} />
               {members.length > 0 ? (
                 <Box mb="24px">
-                  <Heading color="#33333E" variant="h5">
+                  <Heading color="content.accent.default" variant="h3">
                     Members
                   </Heading>
                   <MembersList
@@ -211,7 +211,7 @@ export function Page() {
           </Collapse>
 
           <Box mt="24px">
-            <Heading color="#33333E" variant="h3">
+            <Heading variant="h3" color="content.accent.default">
               Posts
             </Heading>
             <ListRow.Container>
@@ -243,7 +243,7 @@ export function Page() {
             </ListRow.Container>
           </Box>
           <Box mt="24px">
-            <Heading color="#33333E" variant="h3">
+            <Heading mb="24px" color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
             {gqlResponse.data?.votes?.length ? (
@@ -270,7 +270,7 @@ export function Page() {
                 ))}
               </ListRow.Container>
             ) : (
-              <EmptyState type="votes" title="No past votes" />
+              <EmptyState type="votesCast" title="No votes yet" />
             )}
           </Box>
         </Stack>
