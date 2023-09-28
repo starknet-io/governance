@@ -197,10 +197,10 @@ export const buttonTheme = {
       },
       _active: {
         outlineWidth: 0,
-        bg: "surface.forms.selectedInverted",
-        color: "content.default.selectedInverted",
+        bg: "surface.forms.selected",
+        color: "content.default.selected",
         svg: {
-          fill: "content.default.selectedInverted",
+          fill: "content.default.selected",
         },
       },
       _disabled: {
