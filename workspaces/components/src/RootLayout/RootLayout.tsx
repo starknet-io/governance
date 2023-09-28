@@ -21,7 +21,6 @@ const LeftAside = ({ children }: LeftAsideProps) => {
       paddingRight="12px"
       display={{ base: "none", lg: "flex" }}
       borderRight="1px solid #E4E5E7"
-      // paddingTop="34px"
       paddingBottom="24px"
     >
       {children}
@@ -44,14 +43,7 @@ type ContentProps = {
 };
 const Content = ({ children }: ContentProps) => {
   return (
-    <Box
-      as="main"
-      role="main"
-      flex={1}
-      // paddingLeft="48px"
-      // paddingRight="48px"
-      // paddingTop="40px"
-    >
+    <Box as="main" role="main" flex={1}>
       {children}
     </Box>
   );

@@ -500,31 +500,32 @@ export function Page() {
           Close
         </Button>
       </InfoModal>
-      <ContentContainer>
+      <ContentContainer subpage>
         <Box width="100%" maxWidth="710px" mx="auto">
-          <Stack
-            spacing="0"
+          <Flex
+            gap="0"
             direction={{ base: "column" }}
             color="content.default.default"
           >
-            <Box display="flex" alignItems="center ">
-              <Box flex="1">
+            <Flex alignItems="center " overflow={"hidden"}>
+              <Box>
                 <Heading
                   color="content.accent.default"
                   variant="h2"
-                  maxWidth="90%"
                   mb="standard.md"
                 >
                   {data?.proposal?.title}
                 </Heading>
               </Box>
 
-              <MoreActions>
-                <MenuItem as="a" href="#">
-                  Report
-                </MenuItem>
-              </MoreActions>
-            </Box>
+              <Box marginLeft="auto">
+                <MoreActions>
+                  <MenuItem as="a" href="#">
+                    Report
+                  </MenuItem>
+                </MoreActions>
+              </Box>
+            </Flex>
             <Flex
               gap="standard.sm"
               flexWrap={"wrap"}
@@ -646,7 +647,7 @@ export function Page() {
               onReply={handleReplySend}
               onEdit={handleCommentEdit}
             />
-          </Stack>
+          </Flex>
         </Box>
       </ContentContainer>
       <Box
