@@ -3,7 +3,13 @@ import { scrollIntoView } from "../utils/scrollIntoView";
 import React, { forwardRef } from "react";
 
 export type props = {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "danger"
+    | "special";
   children: React.ReactNode;
   toId?: string;
   href?: string;

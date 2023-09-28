@@ -6,6 +6,7 @@ import {
   VoteAgainstIconFilled,
   VoteForIconFilled,
 } from "../Icons/UiIcons";
+import { Button } from "../Button";
 
 type Props = {
   label: string;
@@ -26,29 +27,17 @@ export const VoteButton = ({
   onClick,
 }: Props) => {
   return (
-    <Box
+    <Button
       onClick={onClick}
-      as="button"
-      // minHeight="72px"
-      // lineHeight="1.2"
-      border="1px"
-      px="standard.lg"
-      py="standard.sm"
+      variant="special"
       width="100%"
-      borderRadius="6px"
-      fontSize="13px"
-      bg="#FFFFFF"
-      borderColor="rgba(35, 25, 45, 0.10)"
-      boxShadow="  0px 1px 1px 0px rgba(0, 0, 0, 0.05)"
+      isDisabled={active}
       color={active ? currentVariation[type] : "content.default.default"}
-      _hover={{ bg: active ? "white" : "#fafafa" }}
-      _active={{
-        bg: "#eaeaea",
-        // transform: "scale(0.98)",
-        // borderColor: "#bec3c9",
-      }}
-      _focus={{
-        boxShadow: "0 0 1px 2px rgba(88, 144, 255, .75)",
+      borderColor={active ? "#86848D" : "border.forms"}
+      sx={{
+        "&:hover": {
+          color: active ? currentVariation[type] : "content.default.default",
+        },
       }}
     >
       <Flex
@@ -58,36 +47,18 @@ export const VoteButton = ({
         alignItems="center"
       >
         {type === "For" && (
-          <>
-            {active ? (
-              <VoteForIconFilled width="24px" height="24px" />
-            ) : (
-              <VoteForIcon width="24px" height="24px" />
-            )}
-          </>
+          <>{active ? <VoteForIconFilled /> : <VoteForIcon />}</>
         )}
         {type === "Against" && (
-          <>
-            {active ? (
-              <VoteAgainstIconFilled width="24px" height="24px" />
-            ) : (
-              <VoteAgainstIcon width="24px" height="24px" />
-            )}
-          </>
+          <>{active ? <VoteAgainstIconFilled /> : <VoteAgainstIcon />}</>
         )}
         {type === "Abstain" && (
-          <>
-            {active ? (
-              <VoteAbstainIconFilled width="24px" height="24px" />
-            ) : (
-              <VoteAbstainIcon width="24px" height="24px" />
-            )}
-          </>
+          <>{active ? <VoteAbstainIconFilled /> : <VoteAbstainIcon />}</>
         )}
         <Box>
           <Text variant="mediumStrong">{label}</Text>
         </Box>
       </Flex>
-    </Box>
+    </Button>
   );
 };
