@@ -507,7 +507,7 @@ export function Page() {
             direction={{ base: "column" }}
             color="content.default.default"
           >
-            <Flex alignItems="center " overflow={"hidden"}>
+            <Flex alignItems="center ">
               <Box>
                 <Heading
                   color="content.accent.default"
@@ -520,6 +520,9 @@ export function Page() {
 
               <Box marginLeft="auto">
                 <MoreActions>
+                  <MenuItem as="a" href="#">
+                    Share
+                  </MenuItem>
                   <MenuItem as="a" href="#">
                     Report
                   </MenuItem>
@@ -543,7 +546,7 @@ export function Page() {
                   <Stat.Text label={`By ${data?.proposal?.author}`} />
                 </Stat.Root>
               </Flex>
-              <Flex gap="standard.sm" paddingTop="0" alignItems="center">
+              <Flex gap="standard.xs" paddingTop="0" alignItems="center">
                 <Text
                   display={{ base: "none", md: "inline-block" }}
                   variant="small"
@@ -564,7 +567,10 @@ export function Page() {
                   •
                 </Text>
                 <Stat.Root>
-                  <Stat.Link label={`${commentCount} comments`} />
+                  <Stat.Link
+                    href="#discussion"
+                    label={`${commentCount} comments`}
+                  />
                 </Stat.Root>
                 <Text variant="small" color="content.default.default">
                   •
@@ -602,6 +608,7 @@ export function Page() {
               color="content.accent.default"
               variant="h3"
               mb="standard.2xl"
+              id="discussion"
             >
               Discussion
             </Heading>
