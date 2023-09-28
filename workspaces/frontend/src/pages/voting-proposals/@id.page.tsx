@@ -35,6 +35,7 @@ import {
   EllipsisIcon,
   Link,
   EmptyState,
+  Skeleton,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -486,7 +487,7 @@ export function Page() {
             direction={{ base: "column" }}
             color="content.default.default"
           >
-            <Box display="flex" alignItems="center">
+            <Box display="flex" alignItems="center ">
               <Box flex="1">
                 <Heading
                   color="content.accent.default"
@@ -502,36 +503,58 @@ export function Page() {
                 onClick={() => console.log("clicked")}
                 aria-label="Search database"
                 //toDo replace with ellipsis icon
-                icon={<EllipsisIcon />}
+                icon={<EllipsisIcon boxSize="24px" />}
               />
             </Box>
             <Flex
               gap="standard.sm"
+              flexWrap={"wrap"}
+              rowGap="standard.sm"
               mb="standard.md"
-              paddingTop="0"
-              alignItems="center"
             >
-              <Stat.Root>
-                <Stat.Status status={data?.proposal?.state} />
-              </Stat.Root>
-              <Stat.Root>
-                <Stat.Text label={`By ${data?.proposal?.author}`} />
-              </Stat.Root>
-              <Stat.Root>
-                <Stat.Date
-                  date={
-                    data?.proposal?.start
-                      ? new Date(data?.proposal?.start * 1000)
-                      : undefined
-                  }
-                />
-              </Stat.Root>
-              <Stat.Root>
-                <Stat.Link label={`${commentCount} comments`} />
-              </Stat.Root>
+              <Flex gap="standard.sm" paddingTop="0" alignItems="center">
+                <Stat.Root>
+                  <Stat.Status status={data?.proposal?.state} />
+                </Stat.Root>
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
+                <Stat.Root>
+                  <Stat.Text label={`By ${data?.proposal?.author}`} />
+                </Stat.Root>
+              </Flex>
+              <Flex gap="standard.sm" paddingTop="0" alignItems="center">
+                <Text
+                  display={{ base: "none", md: "inline-block" }}
+                  variant="small"
+                  color="content.default.default"
+                >
+                  •
+                </Text>
+                <Stat.Root>
+                  <Stat.Date
+                    date={
+                      data?.proposal?.start
+                        ? new Date(data?.proposal?.start * 1000)
+                        : undefined
+                    }
+                  />
+                </Stat.Root>
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
+                <Stat.Root>
+                  <Stat.Link label={`${commentCount} comments`} />
+                </Stat.Root>
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
+                <Stat.Root>
+                  <Stat.Text label={`Category`} />
+                </Stat.Root>
+              </Flex>
             </Flex>
-
-            <Box mb="standard.2xl">
+            <Box pb="standard.2xl">
               <Link
                 as="button"
                 size="small"
