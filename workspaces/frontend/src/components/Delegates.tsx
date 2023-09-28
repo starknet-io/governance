@@ -467,8 +467,13 @@ export function Delegates({
                     address={delegate?.author?.address}
                     statement={delegate?.statement}
                     type={delegate?.interests as string[]}
-                    ensAvatar={delegate?.author?.ensAvatar}
-                    ensName={delegate.author?.ensName}
+                    ensAvatar={
+                      delegate?.author?.profileImage ??
+                      delegate?.author?.ensAvatar
+                    }
+                    ensName={
+                      delegate.author?.username ?? delegate.author?.ensName
+                    }
                     key={delegate?.id}
                   />
                 ))

@@ -459,7 +459,7 @@ export function Page() {
               imgUrl={
                 delegate?.author?.ensAvatar || delegate?.author?.profileImage
               }
-              ensName={delegate?.author?.ensName || delegate?.author?.username}
+              ensName={delegate?.author?.username || delegate?.author?.ensName}
               address={delegate?.author?.ensName || delegateAddress}
               avatarString={delegate?.author?.ensAvatar || delegateAddress}
             >

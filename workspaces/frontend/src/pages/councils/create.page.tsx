@@ -14,6 +14,7 @@ import {
   MembersList,
   MarkdownEditor,
   useMarkdownEditor,
+  Textarea,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -37,10 +38,7 @@ export function Page() {
     "",
     EditorTemplate.proposalMarkDown,
   );
-  const {
-    editorValue: shortDescValue,
-    handleEditorChange: handleShortDescValue,
-  } = useMarkdownEditor("");
+  const [shortDescValue, setShortDescValue] = useState("");
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -84,11 +82,16 @@ export function Page() {
 
               <FormControl id="description">
                 <FormLabel>Short description</FormLabel>
-                <MarkdownEditor
-                  onChange={handleShortDescValue}
+                <Textarea
+                  variant="primary"
+                  name="comment"
+                  maxLength={280}
+                  placeholder="Short description"
+                  rows={4}
+                  focusBorderColor={"#292932"}
+                  resize="none"
                   value={shortDescValue}
-                  minHeight="100px"
-                  hideTabBar
+                  onChange={(e) => setShortDescValue(e.target.value)}
                 />
                 {errors.description && <span>This field is required.</span>}
               </FormControl>
