@@ -47,13 +47,13 @@ export const VoteComment = ({
       >
         <Box mt="-5px">
           {voted === "For" && (
-            <VoteForIcon boxSize="15px" color={variant[voted]} />
+            <VoteForIcon boxSize="18px" color={variant[voted]} />
           )}
           {voted === "Against" && (
-            <VoteAgainstIcon boxSize="15px" color={variant[voted]} />
+            <VoteAgainstIcon boxSize="18px" color={variant[voted]} />
           )}
           {voted === "Abstain" && (
-            <VoteAbstainIcon boxSize="15px" color={variant[voted]} />
+            <VoteAbstainIcon boxSize="18px" color={variant[voted]} />
           )}
         </Box>
 
