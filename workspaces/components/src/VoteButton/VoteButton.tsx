@@ -15,9 +15,9 @@ type Props = {
   onClick?: () => void;
 };
 const currentVariation = {
-  For: "#20AC70",
-  Against: "#E1503E",
-  Abstain: "#6C6C75",
+  For: "surface.success.default",
+  Against: "surface.danger.default",
+  Abstain: "surface.accentSecondary.default",
 };
 //todo: add some kind of animation for voting
 export const VoteButton = ({

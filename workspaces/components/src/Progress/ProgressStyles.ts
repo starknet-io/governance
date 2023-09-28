@@ -2,25 +2,25 @@ import { defineStyle, defineStyleConfig } from "@chakra-ui/react";
 
 const success = defineStyle({
   filledTrack: {
-    backgroundColor: "#20AC70",
+    backgroundColor: "surface.success.default",
   },
 });
 const danger = defineStyle({
   filledTrack: {
-    backgroundColor: "#E1503E",
+    backgroundColor: "surface.danger.default",
   },
 });
 const neutral = defineStyle({
   filledTrack: {
-    backgroundColor: "#6C6C75",
+    backgroundColor: "surface.accentSecondary.default",
   },
 });
 
 export const ProgressTheme = defineStyleConfig({
   baseStyle: {
     filledTrack: {
-      backgroundColor: "#20AC70",
-      borderRadius: "2px",
+      backgroundColor: "surface.success.default",
+      borderRadius: "999px",
     },
     track: {
       backgroundColor: "#E7E8E9",
