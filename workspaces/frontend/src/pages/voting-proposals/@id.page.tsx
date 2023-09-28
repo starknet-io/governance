@@ -840,20 +840,37 @@ export function Page() {
           <Box
             display="flex"
             flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
             gap="16px"
-            height={data?.proposal?.state === "pending" ? "100%" : "100%"}
-            overflow="hidden"
+            height="100%"
+            // height={data?.proposal?.state === "pending" ? "100vh" : "100%"}
+
+            position="relative"
           >
-            <PlaceholderImage />
-            <Heading variant="h4" color="content.default.default">
-              Voting starts{" "}
-              {`${formatDate(data?.proposal?.start ?? 0, "yyyy-MM-dd", true)}`}
-            </Heading>
-            <Text variant="small" color="content.default.default">
-              Review the proposal, discuss and debate before voting starts.
-            </Text>
+            <Flex
+              direction="column"
+              height="800px"
+              alignItems="center"
+              justifyContent="center"
+              position="sticky"
+              top="0"
+            >
+              <PlaceholderImage />
+              <Heading variant="h4" color="content.default.default" mb="8px">
+                Voting starts{" "}
+                {`${formatDate(
+                  data?.proposal?.start ?? 0,
+                  "yyyy-MM-dd",
+                  true,
+                )}`}
+              </Heading>
+              <Text
+                textAlign="center"
+                variant="small"
+                color="content.default.default"
+              >
+                Review the proposal, discuss and debate before voting starts.
+              </Text>
+            </Flex>
           </Box>
         )}
       </Box>
