@@ -4,7 +4,7 @@ import { DocumentProps } from "src/renderer/types";
 
 export const Page = () => {
   return (
-    <ContentContainer>
+    <ContentContainer maxWidth="1240px">
       <Delegates />
     </ContentContainer>
   );

@@ -202,7 +202,7 @@ export function Page() {
   }
 
   return (
-    <ContentContainer>
+    <ContentContainer maxWidth="1240px">
       <Box width="100%">
         <PageTitle
           learnMoreLink="/learn"
