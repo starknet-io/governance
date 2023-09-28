@@ -507,7 +507,7 @@ export function Page() {
             direction={{ base: "column" }}
             color="content.default.default"
           >
-            <Flex alignItems="center " overflow={"hidden"}>
+            <Flex alignItems="center ">
               <Box>
                 <Heading
                   color="content.accent.default"
@@ -520,6 +520,9 @@ export function Page() {
 
               <Box marginLeft="auto">
                 <MoreActions>
+                  <MenuItem as="a" href="#">
+                    Share
+                  </MenuItem>
                   <MenuItem as="a" href="#">
                     Report
                   </MenuItem>
