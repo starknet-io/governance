@@ -564,7 +564,10 @@ export function Page() {
                   •
                 </Text>
                 <Stat.Root>
-                  <Stat.Link label={`${commentCount} comments`} />
+                  <Stat.Link
+                    href="#discussion"
+                    label={`${commentCount} comments`}
+                  />
                 </Stat.Root>
                 <Text variant="small" color="content.default.default">
                   •
@@ -602,6 +605,7 @@ export function Page() {
               color="content.accent.default"
               variant="h3"
               mb="standard.2xl"
+              id="discussion"
             >
               Discussion
             </Heading>
