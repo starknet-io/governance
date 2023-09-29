@@ -610,7 +610,7 @@ export function Page() {
 
       <ContentContainer maxWidth="800px" center>
         <Stack
-          spacing="24px"
+          spacing="0"
           direction={{ base: "column" }}
           color="content.default.default"
           width="100%"
