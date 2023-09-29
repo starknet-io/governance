@@ -21,7 +21,6 @@ const app: Express = express();
 const port = process.env.PORT || 8000;
 
 const fetchUserMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.log('aaaaa')
   if (req.cookies?.JWT) {
     const userId: string | undefined = (await getUserByJWT(req.cookies.JWT))?.id
     if (!userId) {
