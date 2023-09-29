@@ -9,14 +9,17 @@ import { Text, LocalTextProps } from "../Text";
 export interface MarkdownRendererProps {
   content: string;
   textProps?: LocalTextProps;
+  className?: string;
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   content,
   textProps,
+  className = "markdown-body",
 }) => {
   return (
     <ReactMarkdown
+      className={className}
       components={{
         h1: ({ ...props }) => (
           <Heading

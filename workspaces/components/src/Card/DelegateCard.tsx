@@ -15,6 +15,7 @@ import { Button } from "../Button";
 import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
 import { MarkdownRenderer } from "../MarkdownRenderer";
 import { formatVotesAmount } from "src/utils";
+import "./karma.css";
 
 export type DelegateCardProps = {
   statement: string | null;
@@ -129,10 +130,13 @@ export const DelegateCard = ({
       <CardBody>
         <DelegateTags type={type} />
         <MarkdownRenderer
+          className="karma-delegates"
           textProps={{
             fontSize: "14px",
             noOfLines: 3,
             color: "#4A4A4F",
+            fontStyle: "normal!important",
+            fontWeight: "400!important",
           }}
           content={formattedDelegateStatement || ""}
         />
