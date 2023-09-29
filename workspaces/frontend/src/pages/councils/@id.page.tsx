@@ -16,16 +16,16 @@ import {
   MenuItem,
   EmptyState,
   Link,
-  Textarea,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { hasPermission } from "src/utils/helpers";
+import { Text } from "@chakra-ui/react";
 
 const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   query DelegateProfilePageQuery(
@@ -66,7 +66,7 @@ export function Page() {
   const councilResp = trpc.councils.getCouncilBySlug.useQuery({
     slug: pageContext.routeParams!.id,
   });
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
   const { data: council } = councilResp;
   const { user: loggedUser } = usePageContext();
 
@@ -109,13 +109,6 @@ export function Page() {
     {},
   );
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "unset";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [textareaRef.current?.value]);
-
   return (
     <Box
       display="flex"
@@ -152,22 +145,17 @@ export function Page() {
           </ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>
 
-        <Divider my="24px" />
+        <Divider my="standard.xl" />
         <Box>
-          <Textarea
-            ref={textareaRef}
-            resize="none"
-            value={council?.description ? council?.description : ""}
-            isDisabled={true}
-            style={{
-              opacity: 1,
-              border: "none",
-              padding: "0",
-              cursor: "default",
-            }}
-          />
+          <Text
+            variant="medium"
+            mb="standard.xl"
+            color="content.default.default"
+          >
+            {council?.description ? council?.description : ""}
+          </Text>
           {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-            <Button variant="outline" onClick={handleClick}>
+            <Button variant="outline" onClick={handleClick} width="100%">
               Add new post
             </Button>
           ) : (
@@ -196,26 +184,21 @@ export function Page() {
       </Box>
 
       <ContentContainer center maxWidth="800px">
-        <Stack
-          width="100%"
-          spacing="24px"
-          direction={{ base: "column" }}
-          color="#545464"
-          paddingBottom="200px"
-        >
+        <Stack width="100%" spacing="0" direction={{ base: "column" }}>
           <Collapse startingHeight={100}>
-            <Stack
-              spacing="24px"
-              direction={{ base: "column" }}
-              color="#545464"
-            >
-              <Heading color="content.accent.default" variant="h3">
+            <Stack spacing="0" direction={{ base: "column" }}>
+              <Heading
+                lineHeight="32px"
+                color="content.accent.default"
+                variant="h3"
+                mb="8px"
+              >
                 The role of the {council?.name ?? "Council"}
               </Heading>
 
               <MarkdownRenderer content={council?.statement || ""} />
               {members.length > 0 ? (
-                <Box mb="24px">
+                <Box mb="standard.xs" mt="standard.2xl">
                   <Heading color="content.accent.default" variant="h3">
                     Members
                   </Heading>

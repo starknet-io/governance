@@ -1,4 +1,9 @@
-import { Collapse as ChakraCollapse, Divider, HStack } from "@chakra-ui/react";
+import {
+  Box,
+  Collapse as ChakraCollapse,
+  Divider,
+  HStack,
+} from "@chakra-ui/react";
 import React from "react";
 import { Button } from "src/Button";
 
@@ -13,8 +18,8 @@ export const Collapse = ({ startingHeight = 20, children }: Props) => {
   const handleToggle = () => setShow(!show);
   return (
     <>
-      <ChakraCollapse startingHeight={"300px"} in={show} animateOpacity>
-        {children}
+      <ChakraCollapse startingHeight={"285px"} in={show} animateOpacity>
+        <Box pb="32px">{children}</Box>
       </ChakraCollapse>
       <HStack position="relative" mt="-24px" spacing="0">
         <Divider />

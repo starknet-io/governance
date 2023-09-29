@@ -1,5 +1,5 @@
 // /workspaces/components/MarkdownRenderer.tsx
-
+// todo use chakra components for list and list items
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Code } from "@chakra-ui/react";
@@ -87,16 +87,38 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         ),
         ol: ({ ...props }) => (
           <ol
-            style={{ paddingLeft: 16, marginBottom: 18 }}
+            style={{
+              fontFamily: "Inter",
+              fontSize: "15px",
+              lineHeight: "24px",
+              paddingLeft: 17,
+              marginBottom: 16,
+              marginTop: "8px",
+            }}
             {...props}
             color="content.default.default"
           />
         ),
         ul: ({ ...props }) => (
           <ul
-            style={{ paddingLeft: 16, marginBottom: 18 }}
+            style={{
+              fontFamily: "Inter",
+              fontSize: "15px",
+              lineHeight: "24px",
+              paddingLeft: 17,
+              marginBottom: 16,
+              marginTop: "8px",
+            }}
             {...props}
-            color="content.default.default"
+            color="#4A4A4F"
+          />
+        ),
+        li: ({ ...props }) => (
+          <li
+            style={{
+              marginBottom: "8px",
+            }}
+            {...props}
           />
         ),
         blockquote: ({ ...props }) => (
@@ -106,6 +128,11 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
               paddingLeft: "12px",
               marginBottom: 18,
               color: "content.default.default",
+              fontFamily: "Inter",
+              fontSize: "15px",
+              lineHeight: "24px",
+
+              marginTop: "8px",
             }}
             {...props}
           />

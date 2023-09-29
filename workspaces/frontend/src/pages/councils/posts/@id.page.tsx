@@ -148,7 +148,7 @@ export function Page() {
         <ContentContainer>
           <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
             <Stack
-              spacing="24px"
+              spacing="0"
               direction={{ base: "column" }}
               color="content.default.default"
             >
@@ -158,6 +158,7 @@ export function Page() {
                     color="content.accent.default"
                     variant="h2"
                     maxWidth="90%"
+                    mb="16px"
                   >
                     {post?.title}
                   </Heading>
@@ -173,7 +174,12 @@ export function Page() {
                 )}
               </Box>
 
-              <Flex gap="standard.xs" paddingTop="0" alignItems="center">
+              <Flex
+                mb="24px"
+                gap="standard.xs"
+                paddingTop="0"
+                alignItems="center"
+              >
                 <Stat.Root>
                   <Stat.Text
                     label={
@@ -204,7 +210,7 @@ export function Page() {
               <MarkdownRenderer content={post?.content || ""} />
               <Divider my="32px" />
               <Heading
-                id="#discussion"
+                id="discussion"
                 color="content.accent.default"
                 variant="h3"
               >
