@@ -182,8 +182,7 @@ export const commentsRouter = router({
         .from(comments)
         .where(eq(comments.id, opts.input.id))
         .execute();
-
-      if (originalComment[0].userId !== user.id) {
+      if (originalComment[0].userId !== user) {
         throw new Error('Permission denied: Can only edit your own comments');
       }
 
