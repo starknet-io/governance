@@ -41,6 +41,7 @@
   "devDependencies": {
     "@chakra-ui/cli": "^2.4.1",
     "@chakra-ui/storybook-addon": "^4.0.17",
+    "@heroicons/react": "^2.0.18",
     "@storybook/addon-essentials": "^7.1.1",
     "@storybook/addon-interactions": "^7.1.1",
     "@storybook/addon-links": "^7.1.1",

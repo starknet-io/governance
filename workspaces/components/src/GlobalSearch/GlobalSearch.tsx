@@ -72,11 +72,10 @@ export function GlobalSearch({
   };
 
   const handleEnterPress = () => {
-    debugger
     if (h) {
       let path = getSearchItemHref(h?.type, h?.refID);
       setIsSearchModalOpen(false);
-      if (h?.type === 'delegate') {
+      if (h?.type === "delegate") {
         path = path.replace("/delegates/", "/delegates/profile/");
       }
       navigate(path);
@@ -88,13 +87,17 @@ export function GlobalSearch({
   };
 
   useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
+    if (typeof window !== "undefined") {
+      window.addEventListener("keydown", handleKeyDown);
+    }
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      if (typeof window !== "undefined") {
+        window.removeEventListener("keydown", handleKeyDown);
+      }
     };
   }, []);
 
-  const isMobile = window?.screen?.width < 567;
+  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
 
   return (
     <Box onClick={handleSearchClick} ml="2">
