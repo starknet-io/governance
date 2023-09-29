@@ -5,7 +5,7 @@ import markdown from "remark-parse";
 import slate from "remark-slate";
 import { withHistory } from "slate-history";
 import { withReact } from "slate-react";
-import { createEditor } from "slate";
+import { Editor, Transforms, createEditor } from "slate";
 import { ParagraphElement } from "./initialValue";
 
 export function useMarkdownEditor(
@@ -16,10 +16,6 @@ export function useMarkdownEditor(
 
   useEffect(() => {
     initialSlateData && editor.insertNodes(initialSlateData);
-
-    return () => {
-      editor.delete();
-    };
   }, []);
 
   const [editorValue, setEditorValue] = useState(initialValue);
@@ -27,6 +23,15 @@ export function useMarkdownEditor(
   const handleEditorChange = (value: any[]) => {
     setEditorValue(convertSlateToMarkdown(value));
   };
+
+  const clearEditor = () => {
+    Transforms.delete(editor, {
+      at: {
+        anchor: Editor.start(editor, []),
+        focus: Editor.end(editor, []),
+      },
+    });
+  }
 
   const resetEditorValue = () => {
     setEditorValue(initialValue);
@@ -67,5 +72,6 @@ export function useMarkdownEditor(
     convertSlateToMarkdown,
     setMarkdownValue,
     editor,
+    clearEditor,
   };
 }

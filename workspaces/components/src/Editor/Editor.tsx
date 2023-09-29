@@ -42,11 +42,14 @@ export const MarkdownEditor: React.FC<
 
   const mainEditor = customEditor || editor;
 
+  if (!mainEditor) return;
+
   return (
     <Box position="relative">
       <Slate
         editor={mainEditor}
-        initialValue={customEditor ? [] : initialValue}
+        // initialValue={customEditor ? [] : initialValue}
+        initialValue={initialValue}
         onChange={onChange}
       >
         {!hideTabBar && (
