@@ -43,6 +43,7 @@ const AuthorizedUserView = () => {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         voter: user?.address as string,
       },
+      skip: !user?.address, // Skip the query if the user address is not available
     },
   );
 
