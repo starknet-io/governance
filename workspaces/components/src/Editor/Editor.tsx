@@ -48,7 +48,6 @@ export const MarkdownEditor: React.FC<
     <Box position="relative">
       <Slate
         editor={mainEditor}
-        // initialValue={customEditor ? [] : initialValue}
         initialValue={initialValue}
         onChange={onChange}
       >
