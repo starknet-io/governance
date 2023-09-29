@@ -20,11 +20,8 @@ const upload = multer({ storage: storage });
 const app: Express = express();
 const port = process.env.PORT || 8000;
 
-app.listen(port, () => {
-  console.log(`Express app listening at http://localhost:${port}`);
-});
-
 const fetchUserMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.log('aaaaa')
   if (req.cookies?.JWT) {
     const userId: string | undefined = (await getUserByJWT(req.cookies.JWT))?.id
     if (!userId) {
@@ -38,10 +35,9 @@ const fetchUserMiddleware = async (req: express.Request, res: express.Response, 
   next();
 };
 
-
 app.use(cookieParser());
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000', credentials: true }));
 app.use(fetchUserMiddleware);
+app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000', credentials: true }));
 
 app.use("/trpc", upload.single('file'), createExpressMiddleware({
   router: appRouter,
@@ -51,5 +47,9 @@ app.use('/api/delegates', createExpressMiddleware({
   router: delegateRouter,
   createContext
 }));
+
+app.listen(port, () => {
+  console.log(`Express app listening at http://localhost:${port}`);
+});
 
 export default app;
