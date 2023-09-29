@@ -3,8 +3,10 @@ import { Heading } from "src/Heading";
 import { BookIcon } from "./BookIcon";
 import { Text } from "src/Text";
 import { Button } from "src/Button";
-import { HiArrowRight } from "react-icons/hi2";
-import avatar from './avatar.jpg'
+
+import avatar from "./avatar.jpg";
+import { ArrowRightIcon } from "src/Icons";
+
 
 const data = {
   title: "Governance for dummies",
@@ -59,7 +61,9 @@ export const LearnBanner = () => {
           alignItems="center"
         >
           <Flex gap="standard.base" alignItems="center">
+
             <Avatar width="22px" height="22px" title={data.author.username} src={data.author.avatar}/>
+
             <Text>{data.author.username} </Text>
           </Flex>
           <Text>•</Text>
@@ -94,7 +98,9 @@ export const LearnBanner = () => {
           mt="standard.md"
         >
           Read more
-          <HiArrowRight />
+
+          <ArrowRightIcon />
+
         </Button>
       </Box>
     </Box>

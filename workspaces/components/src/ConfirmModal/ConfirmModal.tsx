@@ -28,16 +28,10 @@ export const ConfirmModal = ({
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
       isCentered
-      variant="unstyled"
     >
       <ModalOverlay />
-      <ModalContent
-        borderRadius="xl"
-        mx={{ base: "2.5", lg: "16" }}
-        overflow="hidden"
-      >
+      <ModalContent borderRadius="xl" overflow="hidden">
         <ModalCloseButton
           top="0"
           right="0"
@@ -45,12 +39,7 @@ export const ConfirmModal = ({
           borderRadius="none"
           borderBottomLeftRadius="md"
         />
-        <ModalBody
-          px={{ base: "5", md: "12", lg: "16" }}
-          py={{ base: "10", md: "12", lg: "16" }}
-          pb={{ base: "6" }}
-          minHeight="272px"
-        >
+        <ModalBody minHeight="272px">
           <Stack spacing="6">
             <Heading
               textAlign="center"

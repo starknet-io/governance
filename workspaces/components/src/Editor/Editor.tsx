@@ -63,7 +63,6 @@ export const MarkdownEditor: React.FC<
                 <LinkBlockButton editor={mainEditor} />
               </>
             )}
-
             <Divider ml="2" orientation="vertical" />
             <MoreButton />
           </Toolbar>

@@ -425,15 +425,18 @@ export function Page() {
         description={statusDescription}
       />
       <Box
-        pt="40px"
-        px="32px"
-        borderRight="1px solid #E7E8E9"
+        pt="standard.3xl"
+        pb="standard.2xl"
+        px={{ base: "standard.md", md: "standard.2xl", lg: "standard.xl" }}
+        borderRight="1px solid"
+        borderColor="border.dividers"
         display="flex"
         flexDirection="column"
-        flexBasis={{ base: "100%", md: "391px" }}
+        flexBasis={{ base: "100%", md: "372px" }}
         position={{ base: "unset", lg: "sticky" }}
         height="calc(100vh - 80px)"
         top="0"
+        overflow="auto"
       >
         {isLoadingProfile ? (
           <Box
@@ -456,7 +459,7 @@ export function Page() {
               imgUrl={
                 delegate?.author?.ensAvatar || delegate?.author?.profileImage
               }
-              ensName={delegate?.author?.ensName || delegate?.author?.username}
+              ensName={delegate?.author?.username || delegate?.author?.ensName}
               address={delegate?.author?.ensName || delegateAddress}
               avatarString={delegate?.author?.ensAvatar || delegateAddress}
             >
@@ -575,7 +578,10 @@ export function Page() {
             </SummaryItems.Root>
           )} */}
         </Box>
-        <Divider mt="32px" mb="32px" />
+        {delegate?.twitter || delegate?.discourse || delegate?.discord ? (
+          <Divider mt="32px" mb="32px" />
+        ) : null}
+
         <SummaryItems.Root direction="row">
           {delegate?.twitter && (
             <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
@@ -606,15 +612,15 @@ export function Page() {
         <Stack
           spacing="24px"
           direction={{ base: "column" }}
-          color="#545464"
+          color="content.default.default"
           width="100%"
         >
-          <Heading color="#33333E" variant="h3">
+          <Heading color="content.accent.default" variant="h2">
             Delegate pitch
           </Heading>
           <MarkdownRenderer content={delegate?.statement || ""} />
           <Box mt="24px">
-            <Heading mb="24px" color="#33333E" variant="h3">
+            <Heading mb="24px" color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
             {gqlResponse.data?.votes?.length ? (
@@ -641,11 +647,11 @@ export function Page() {
                 ))}
               </ListRow.Container>
             ) : (
-              <EmptyState type="votes" title="No past votes" />
+              <EmptyState type="votesCast" title="No votes yet" />
             )}
           </Box>
           <Box mt="24px" mb={10}>
-            <Heading mb="24px" color="#33333E" variant="h3">
+            <Heading mb="24px" color="content.accent.default" variant="h3">
               Comments
             </Heading>
             <ListRow.Container>
@@ -676,7 +682,7 @@ export function Page() {
             </ListRow.Container>
 
             {!delegateCommentsResponse?.data?.length ? (
-              <EmptyState type="posts" title="No past comments" />
+              <EmptyState type="comments" title="No comments yet" />
             ) : null}
           </Box>
         </Stack>

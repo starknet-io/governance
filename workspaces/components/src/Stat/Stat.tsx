@@ -4,9 +4,10 @@ import {
   Stack,
   Link as ChakraLink,
   Button as ChakraButton,
+  LinkProps as ChakraLinkProps,
 } from "@chakra-ui/react";
 import { Text as ChakraText } from "../Text";
-import moment from "moment";
+import { format } from "date-fns";
 import { truncateAddress } from "src/utils";
 
 // interface Props {
@@ -76,28 +77,35 @@ interface DateProps {
   date?: Date;
 }
 const Date = ({ date }: DateProps) => {
-  const formattedDate = moment(date).format("MMMM Do YYYY");
+  if (!date) {
+    return null; // or return <ChakraText>Default Message</ChakraText>;
+  }
+
+  const formattedDate = format(date, "MMM do yyyy");
   return (
-    <ChakraText variant="breadcrumbs" fontWeight="500" color="#4D4D56">
+    <ChakraText
+      variant="small"
+      fontWeight="500"
+      color="content.default.default"
+    >
       {date && formattedDate}
     </ChakraText>
   );
 };
 
-interface LinkProps {
+interface LinkProps extends ChakraLinkProps {
   label: string | null | undefined;
-  href?: string;
 }
 const Link = ({ label, href }: LinkProps) => {
   return (
-    <ChakraLink
-      fontWeight="500"
-      fontSize="12px"
-      padding="0"
-      color="#4D4D56"
-      href={href}
-    >
-      {label}
+    <ChakraLink href={href} variant="unstyled" lineHeight="20px" padding="0">
+      <ChakraText
+        variant="small"
+        fontWeight="500"
+        color="content.default.default"
+      >
+        {label}
+      </ChakraText>
     </ChakraLink>
   );
 };

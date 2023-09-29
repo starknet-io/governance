@@ -1,6 +1,6 @@
 import { Box, Image } from "@chakra-ui/react";
 
-import img from "./assets/voting-starts-in-X-days.png";
+import img from "./assets/voting-starts-in-X-days.svg";
 export const PlaceholderImage = () => {
   return (
     <Box

@@ -34,6 +34,11 @@ import {
   Banner,
   EllipsisIcon,
   Link,
+  EmptyState,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -384,6 +389,23 @@ export function Page() {
     }
   };
 
+  type MoreActionsProps = {
+    children: React.ReactNode;
+  };
+  const MoreActions = ({ children }: MoreActionsProps) => {
+    return (
+      <Box style={{ position: "relative" }}>
+        <Menu>
+          <MenuButton as={IconButton} icon={<EllipsisIcon />} variant="ghost" />
+
+          <Box top="0px" position="relative">
+            <MenuList>{children}</MenuList>
+          </Box>
+        </Menu>
+      </Box>
+    );
+  };
+
   if (data == null) return null;
   return (
     <Box
@@ -478,59 +500,87 @@ export function Page() {
           Close
         </Button>
       </InfoModal>
-      <ContentContainer>
-        <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
-          <Stack
-            spacing="0"
+      <ContentContainer subpage>
+        <Box width="100%" maxWidth="710px" mx="auto">
+          <Flex
+            gap="0"
             direction={{ base: "column" }}
             color="content.default.default"
           >
-            <Box display="flex" alignItems="center">
-              <Box flex="1">
+            <Flex alignItems="center ">
+              <Box>
                 <Heading
                   color="content.accent.default"
                   variant="h2"
-                  maxWidth="90%"
                   mb="standard.md"
                 >
                   {data?.proposal?.title}
                 </Heading>
               </Box>
-              <IconButton
-                variant="simple"
-                onClick={() => console.log("clicked")}
-                aria-label="Search database"
-                //toDo replace with ellipsis icon
-                icon={<EllipsisIcon />}
-              />
-            </Box>
+
+              <Box marginLeft="auto">
+                <MoreActions>
+                  <MenuItem as="a" href="#">
+                    Share
+                  </MenuItem>
+                  <MenuItem as="a" href="#">
+                    Report
+                  </MenuItem>
+                </MoreActions>
+              </Box>
+            </Flex>
             <Flex
               gap="standard.sm"
+              flexWrap={"wrap"}
+              rowGap="standard.sm"
               mb="standard.md"
-              paddingTop="0"
-              alignItems="center"
             >
-              <Stat.Root>
-                <Stat.Status status={data?.proposal?.state} />
-              </Stat.Root>
-              <Stat.Root>
-                <Stat.Text label={`By ${data?.proposal?.author}`} />
-              </Stat.Root>
-              <Stat.Root>
-                <Stat.Date
-                  date={
-                    data?.proposal?.start
-                      ? new Date(data?.proposal?.start * 1000)
-                      : undefined
-                  }
-                />
-              </Stat.Root>
-              <Stat.Root>
-                <Stat.Link label={`${commentCount} comments`} />
-              </Stat.Root>
+              <Flex gap="standard.sm" paddingTop="0" alignItems="center">
+                <Stat.Root>
+                  <Stat.Status status={data?.proposal?.state} />
+                </Stat.Root>
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
+                <Stat.Root>
+                  <Stat.Text label={`By ${data?.proposal?.author}`} />
+                </Stat.Root>
+              </Flex>
+              <Flex gap="standard.xs" paddingTop="0" alignItems="center">
+                <Text
+                  display={{ base: "none", md: "inline-block" }}
+                  variant="small"
+                  color="content.default.default"
+                >
+                  •
+                </Text>
+                <Stat.Root>
+                  <Stat.Date
+                    date={
+                      data?.proposal?.start
+                        ? new Date(data?.proposal?.start * 1000)
+                        : undefined
+                    }
+                  />
+                </Stat.Root>
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
+                <Stat.Root>
+                  <Stat.Link
+                    href="#discussion"
+                    label={`${commentCount} comments`}
+                  />
+                </Stat.Root>
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
+                <Stat.Root>
+                  <Stat.Text label={`Category`} />
+                </Stat.Root>
+              </Flex>
             </Flex>
-
-            <Box mb="standard.2xl">
+            <Box>
               <Link
                 as="button"
                 size="small"
@@ -541,16 +591,16 @@ export function Page() {
             </Box>
 
             {data?.proposal?.discussion !== "" ? (
-              <>
+              <Box height="110px!important" overflow="hidden" mt="standard.2xl">
                 <Iframely
                   id={import.meta.env.VITE_APP_IFRAMELY_ID}
                   url={`${data?.proposal?.discussion}`}
                 />
-                <Box mb="standard.2xl"></Box>
-              </>
+              </Box>
             ) : (
               <></>
             )}
+
             <MarkdownRenderer content={data?.proposal?.body || ""} />
 
             <Divider my="standard.2xl" />
@@ -558,6 +608,7 @@ export function Page() {
               color="content.accent.default"
               variant="h3"
               mb="standard.2xl"
+              id="discussion"
             >
               Discussion
             </Heading>
@@ -568,30 +619,34 @@ export function Page() {
             ) : (
               <Box></Box>
             )}
-            <AppBar.Root>
-              <AppBar.Group mobileDirection="row">
-                <Box minWidth={"52px"}>
-                  <Text variant="mediumStrong">Sort by</Text>
-                </Box>
-                <Select
-                  size="sm"
-                  aria-label="Sort by"
-                  placeholder="Sort by"
-                  focusBorderColor={"red"}
-                  rounded="md"
-                  value={sortBy}
-                  onChange={(e) =>
-                    setSortBy(e.target.value as "upvotes" | "date")
-                  }
-                >
-                  {sortByOptions.options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </AppBar.Group>
-            </AppBar.Root>
+            {comments.data && comments.data.length > 0 && (
+              <>
+                <AppBar.Root>
+                  <AppBar.Group mobileDirection="row">
+                    <Box minWidth={"52px"}>
+                      <Text variant="mediumStrong">Sort by</Text>
+                    </Box>
+                    <Select
+                      size="sm"
+                      aria-label="Sort by"
+                      placeholder="Sort by"
+                      focusBorderColor={"red"}
+                      rounded="md"
+                      value={sortBy}
+                      onChange={(e) =>
+                        setSortBy(e.target.value as "upvotes" | "date")
+                      }
+                    >
+                      {sortByOptions.options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </AppBar.Group>
+                </AppBar.Root>
+              </>
+            )}
             <CommentList
               commentsList={comments.data || []}
               onVote={handleCommentVote}
@@ -599,7 +654,7 @@ export function Page() {
               onReply={handleReplySend}
               onEdit={handleCommentEdit}
             />
-          </Stack>
+          </Flex>
         </Box>
       </ContentContainer>
       <Box
@@ -752,45 +807,78 @@ export function Page() {
               width={`calc(100% + 48px)`}
             />
             <Box mb="standard.2xl">
-              <Heading variant="h4" mb="standard.md">
+              <Heading
+                variant="h4"
+                mb={
+                  votes.data?.votes && votes.data.votes.length > 0
+                    ? "standard.sm"
+                    : "0px"
+                }
+              >
                 Votes
               </Heading>
-
-              {votes.data?.votes?.map((vote, index) => (
-                <VoteComment
-                  key={index}
-                  address={vote?.voter as string}
-                  voted={
-                    vote?.choice === 1
-                      ? "For"
-                      : vote?.choice === 2
-                      ? "Against"
-                      : "Abstain"
-                  }
-                  comment={vote?.reason as string}
-                  voteCount={vote?.vp as number}
+              {votes.data?.votes && votes.data.votes.length > 0 ? (
+                votes.data.votes.map((vote, index) => (
+                  <VoteComment
+                    key={index}
+                    address={vote?.voter as string}
+                    voted={
+                      vote?.choice === 1
+                        ? "For"
+                        : vote?.choice === 2
+                        ? "Against"
+                        : "Abstain"
+                    }
+                    comment={vote?.reason as string}
+                    voteCount={vote?.vp as number}
+                  />
+                ))
+              ) : (
+                <EmptyState
+                  title={`No votes ${
+                    data?.proposal?.state !== "closed" ? "yet" : ""
+                  }`}
+                  type="votesCast"
+                  border={false}
                 />
-              ))}
+              )}
             </Box>
           </>
         ) : (
           <Box
             display="flex"
             flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
             gap="16px"
-            height={data?.proposal?.state === "pending" ? "100vh" : "100%"}
-            overflow="hidden"
+            height="100%"
+            // height={data?.proposal?.state === "pending" ? "100vh" : "100%"}
+
+            position="relative"
           >
-            <PlaceholderImage />
-            <Heading variant="h4" color="content.default.default">
-              Voting starts{" "}
-              {`${formatDate(data?.proposal?.start ?? 0, "yyyy-MM-dd", true)}`}
-            </Heading>
-            <Text variant="small" color="content.default.default">
-              Review the proposal, discuss and debate before voting starts.
-            </Text>
+            <Flex
+              direction="column"
+              height="800px"
+              alignItems="center"
+              justifyContent="center"
+              position={{ base: "unset", lg: "sticky" }}
+              top="0"
+            >
+              <PlaceholderImage />
+              <Heading variant="h4" color="content.default.default" mb="8px">
+                Voting starts{" "}
+                {`${formatDate(
+                  data?.proposal?.start ?? 0,
+                  "yyyy-MM-dd",
+                  true,
+                )}`}
+              </Heading>
+              <Text
+                textAlign="center"
+                variant="small"
+                color="content.default.default"
+              >
+                Review the proposal, discuss and debate before voting starts.
+              </Text>
+            </Flex>
           </Box>
         )}
       </Box>

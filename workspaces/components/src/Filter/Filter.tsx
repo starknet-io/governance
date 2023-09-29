@@ -2,7 +2,7 @@ import { Popover } from "@chakra-ui/react";
 import { CheckboxFilter } from "./CheckboxFilter";
 import { FilterPopoverButton, FilterPopoverContent } from "./FilterPopover";
 import { useFilterState } from "./useFilterState";
-import { HiAdjustmentsHorizontal } from "react-icons/hi2";
+import { FiltersIcon } from "src/Icons";
 
 export const blueFilters = {
   defaultValue: ["casio", "fossil"],
@@ -23,7 +23,7 @@ export const CheckboxFilterPopover = () => {
   });
   return (
     <Popover placement="bottom-start">
-      <FilterPopoverButton label="Brand" icon={HiAdjustmentsHorizontal} />
+      <FilterPopoverButton label="Brand" icon={FiltersIcon} />
       <FilterPopoverContent
         isCancelDisabled={!state.canCancel}
         onClickApply={state.onSubmit}

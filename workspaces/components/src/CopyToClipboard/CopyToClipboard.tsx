@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, IconButton, useToast, useClipboard } from "@chakra-ui/react";
-import { MdContentCopy } from "react-icons/md";
+import { CopyIcon } from "src/Icons";
 
 interface CopyToClipboardProps {
   text: string;
@@ -30,7 +30,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
       {children}
       <IconButton
         aria-label="Copy to clipboard"
-        icon={<MdContentCopy size="14px" />}
+        icon={<CopyIcon />}
         variant="ghost"
         size="xs"
         borderRadius={0}

@@ -1,8 +1,7 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
 import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
-import React from "react";
-import { MdArrowDownward } from "react-icons/md";
 import { Text } from "src/Text";
+import { ArrowDownIcon } from "src/Icons";
 
 type Props = {
   children: React.ReactNode;
@@ -77,7 +76,7 @@ const Arrow = () => {
       width="100%"
       py="11px"
     >
-      <Icon as={MdArrowDownward} color="#6C6C75" boxSize="24px" />
+      <Icon as={ArrowDownIcon} color="#6C6C75" boxSize="24px" />
     </Box>
   );
 };

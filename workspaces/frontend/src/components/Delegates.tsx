@@ -463,13 +463,17 @@ export function Delegates({
                       }
                     }}
                     votingPower={delegate?.votingInfo?.votingPower}
-                    delegatedVotes={delegate?.votingInfo?.totalVotes || "0"}
                     profileURL={`/delegates/profile/${delegate.id}`}
                     address={delegate?.author?.address}
                     statement={delegate?.statement}
                     type={delegate?.interests as string[]}
-                    ensAvatar={delegate?.author?.ensAvatar}
-                    ensName={delegate.author?.ensName}
+                    ensAvatar={
+                      delegate?.author?.profileImage ??
+                      delegate?.author?.ensAvatar
+                    }
+                    ensName={
+                      delegate.author?.username ?? delegate.author?.ensName
+                    }
                     key={delegate?.id}
                   />
                 ))
@@ -505,8 +509,8 @@ const DelegatesSkeleton = ({ count = 6 }: DelegatesSkeletonProps) => {
       <SimpleGrid
         position="relative"
         width="100%"
-        spacing={4}
-        templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
+        spacing="standard.md"
+        templateColumns="repeat(auto-fill, minmax(316px, 1fr))"
       >
         {Array.from({ length: count }).map((_, index) => (
           <Box key={index} padding="6" bg="#fff" borderRadius="8px">

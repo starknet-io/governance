@@ -19,41 +19,93 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     <ReactMarkdown
       components={{
         h1: ({ ...props }) => (
-          <Heading variant="h1" {...props} mt="20px" mb="4px" />
+          <Heading
+            variant="h3"
+            {...props}
+            mt="standard.2xl"
+            mb="4px"
+            color="content.accent.default"
+          />
         ),
         h2: ({ ...props }) => (
-          <Heading variant="h2" mt="20px" mb="4px" {...props} />
+          <Heading
+            variant="h4"
+            mt="20px"
+            mb="4px"
+            {...props}
+            color="content.accent.default"
+          />
         ),
         h3: ({ ...props }) => (
-          <Heading variant="h3" mt="20px" mb="4px" {...props} />
+          <Heading
+            variant="h4"
+            mt="20px"
+            mb="4px"
+            {...props}
+            color="content.accent.default"
+          />
         ),
         h4: ({ ...props }) => (
-          <Heading variant="h4" mt="20px" mb="4px" {...props} />
+          <Heading
+            variant="h4"
+            mt="20px"
+            mb="4px"
+            {...props}
+            color="content.accent.default"
+          />
         ),
         h5: ({ ...props }) => (
-          <Heading variant="h5" mt="20px" mb="4px" {...props} />
+          <Heading
+            variant="h4"
+            mt="20px"
+            mb="4px"
+            {...props}
+            color="content.accent.default"
+          />
         ),
         h6: ({ ...props }) => (
-          <Heading variant="h6" mt="20px" mb="4px" {...props} />
+          <Heading
+            variant="h4"
+            mt="20px"
+            mb="4px"
+            {...props}
+            color="content.accent.default"
+          />
         ),
         p: ({ ...props }) => (
-          <Text variant="large" {...textProps} {...props} mb="16px" mt="8px" />
+          <Text
+            variant="large"
+            {...textProps}
+            {...props}
+            mb="16px"
+            mt="8px"
+            color="content.default.default"
+          />
         ),
         code: ({ ...props }) => (
           <Code maxWidth="100%" p="16px" {...props} mb="18px" />
         ),
         ol: ({ ...props }) => (
-          <ol style={{ paddingLeft: 16, marginBottom: 18 }} {...props} />
+          <ol
+            style={{ paddingLeft: 16, marginBottom: 18 }}
+            {...props}
+            color="content.default.default"
+          />
         ),
         ul: ({ ...props }) => (
-          <ul style={{ paddingLeft: 16, marginBottom: 18 }} {...props} />
+          <ul
+            style={{ paddingLeft: 16, marginBottom: 18 }}
+            {...props}
+            color="content.default.default"
+          />
         ),
         blockquote: ({ ...props }) => (
           <blockquote
             style={{
-              borderLeft: "3px solid #DCDBDD",
+              borderLeft: "3px solid content.default.default",
               paddingLeft: "12px",
               marginBottom: 18,
+              color: "content.default.default",
             }}
             {...props}
           />

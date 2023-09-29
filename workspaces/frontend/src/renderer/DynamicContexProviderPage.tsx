@@ -14,7 +14,6 @@ import {
   NavItem,
   Layout,
   Header,
-  Box,
   ProposalsIcon,
   DelegatesIcon,
   SecurityIcon,
@@ -44,6 +43,7 @@ import {
   Link,
   PlusIcon,
 } from "@yukilabs/governance-components";
+import { Box } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { IUser, PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
@@ -262,7 +262,15 @@ const DynamicCustomWidget = () => {
   const { user } = useDynamicContext();
   const isAuthorized = !!user;
 
-  return isAuthorized ? <AuthorizedUserView /> : <DynamicWidget />;
+  return isAuthorized ? (
+    <AuthorizedUserView />
+  ) : (
+    <DynamicWidget
+      innerButtonComponent="Connect"
+      buttonClassName="connect-button"
+      buttonContainerClassName="connect-button-container"
+    />
+  );
 };
 
 function PageLayout(props: Props) {
@@ -310,7 +318,7 @@ function PageLayout(props: Props) {
       >
         <Text>To action you need to connect your wallet</Text>
         <Button variant="primary" onClick={() => console.log("connect wallet")}>
-          Connect your wallet
+          Connect
         </Button>
       </InfoModal>
 
@@ -331,6 +339,9 @@ function PageLayout(props: Props) {
               //todo replace with close icon
               icon={<div>X</div>}
             />
+          </Box>
+          <Box display={{ base: "none", lg: "flex" }}>
+            {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
 
           <DrawerBody px="12px" py="16px" pt="0" mt="48px">
@@ -404,10 +415,10 @@ function PageLayout(props: Props) {
             <Box display="flex" marginLeft="auto">
               <ShareDialog />
             </Box>
-            <Box display={{ base: "none", lg: "flex" }}>
+            <Box display={{ base: "flex" }}>
               {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
             </Box>
-            <Box display={{ base: "flex", lg: "none" }} marginLeft="auto">
+            <Box display={{ base: "none", lg: "none" }} marginLeft="auto">
               <IconButton
                 aria-label="Open menu"
                 size="condensed"

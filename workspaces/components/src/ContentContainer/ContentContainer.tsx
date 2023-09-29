@@ -5,19 +5,38 @@ type Props = {
   children?: React.ReactNode;
   maxWidth?: string;
   center?: boolean;
+  subpage?: boolean;
 };
 
 export const ContentContainer = ({
   children,
-  center,
-  maxWidth = "auto",
+  center = true,
+  maxWidth = "1046px",
+  subpage = false,
 }: Props) => {
+  const pxValues = subpage
+    ? {
+        base: "standard.md", // or whatever value you want when subpages is true
+        md: "standard.2xl",
+        lg: "standard.xl",
+        xl: "standard.xl",
+      }
+    : {
+        base: "standard.md",
+        md: "standard.2xl",
+        lg: "standard.2xl",
+        xl: "standard.2xl",
+      };
   return (
     <Box
       flex="1"
       display="flex"
-      px={{ base: "26.5px", md: "36.5px", lg: "36.5px", xl: "76.5px" }}
-      pt="40px"
+      px={pxValues}
+      py={{
+        base: "standard.2xl",
+        md: "standard.2xl",
+        lg: "standard.3xl",
+      }}
       maxWidth={maxWidth === "auto" ? "auto" : `${maxWidth}`}
       mx={center ? "auto" : "0"}
     >

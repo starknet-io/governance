@@ -47,13 +47,13 @@ export const VoteComment = ({
       >
         <Box mt="-5px">
           {voted === "For" && (
-            <VoteForIcon boxSize="15px" color={variant[voted]} />
+            <VoteForIcon boxSize="18px" color={variant[voted]} />
           )}
           {voted === "Against" && (
-            <VoteAgainstIcon boxSize="15px" color={variant[voted]} />
+            <VoteAgainstIcon boxSize="18px" color={variant[voted]} />
           )}
           {voted === "Abstain" && (
-            <VoteAbstainIcon boxSize="15px" color={variant[voted]} />
+            <VoteAbstainIcon boxSize="18px" color={variant[voted]} />
           )}
         </Box>
 
@@ -71,8 +71,13 @@ export const VoteComment = ({
           </Box>
         </Flex>
       </Flex>
-      <Box>
-        <Text variant="small" color="content.default.default">
+      <Box maxWidth={{ base: "500px", md: "800px", lg: "380px" }}>
+        <Text
+          width="100%"
+          sx={{ whiteSpace: "pre-wrap" }}
+          variant="small"
+          color="content.default.default"
+        >
           {comment}
         </Text>
       </Box>

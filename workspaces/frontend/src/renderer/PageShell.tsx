@@ -1,15 +1,10 @@
 import React, { useEffect } from "react";
 import { PageContextProvider } from "./PageContextProvider";
 import { ChakraProvider } from "@chakra-ui/react";
-import "@fontsource-variable/inter/slnt.css";
-import "@fontsource/poppins/600.css";
-import "@fontsource/poppins/500.css";
 import type { PageContext } from "./types";
 import { DynamicContextProviderPage } from "./DynamicContexProviderPage";
 import { ApolloProvider, ApolloClient } from "@apollo/client";
-
 import { trpc } from "src/utils/trpc";
-
 import { theme } from "@yukilabs/governance-components";
 
 interface Props {
