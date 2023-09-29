@@ -55,7 +55,10 @@ import { useBalanceData } from "src/utils/hooks";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { stringToHex } from "viem";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "../delegates/profile/@id.page";
-import { WalletIcon } from "@yukilabs/governance-components/src/Icons";
+import {
+  SuccessIcon,
+  WalletIcon,
+} from "@yukilabs/governance-components/src/Icons";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -417,12 +420,17 @@ export function Page() {
       <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <VoteReview choice={currentChoice} voteCount={vp?.vp?.vp as number} />
         <FormControl id="comment">
-          <FormLabel color={"#292932"}>Reason for vote (optional)</FormLabel>
+          <FormLabel fontSize="14px" color={"content.default.default"}>
+            Reason{" "}
+            <Text color="content.support.default" as="span">
+              (optional)
+            </Text>
+          </FormLabel>
           <Textarea
             variant="primary"
             name="comment"
             maxLength={140}
-            placeholder="I voted X because Y"
+            placeholder="Type your message..."
             rows={4}
             focusBorderColor={"#292932"}
             resize="none"
@@ -433,7 +441,7 @@ export function Page() {
         <Button
           type="submit"
           variant="primary"
-          size="lg"
+          size="standard"
           onClick={() => handleVote(currentChoice, comment)}
         >
           Submit vote
@@ -495,7 +503,10 @@ export function Page() {
         isOpen={isSuccessModalOpen}
         onClose={() => setisSuccessModalOpen(false)}
       >
-        Success!!
+        <Flex alignItems="center" justifyContent="center">
+          <SuccessIcon boxSize="104px" />
+        </Flex>
+
         <Button variant="primary" onClick={() => setisSuccessModalOpen(false)}>
           Close
         </Button>
