@@ -14,18 +14,21 @@ import {
 } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
-import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
-import {
-  BsArrowUpCircle,
-  BsArrowDownCircle,
-  BsFillArrowUpCircleFill,
-  BsFillArrowDownCircleFill,
-} from "react-icons/bs";
+
 import { MarkdownRenderer } from "src/MarkdownRenderer";
-import { ReplyIcon } from "../Icons/UiIcons";
+import {
+  ArrowDownCircleFillIcon,
+  ArrowDownCircleIcon,
+  ArrowUpCircleFillIcon,
+  ArrowUpCircleIcon,
+  EllipsisIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+  ReplyIcon,
+} from "../Icons/UiIcons";
 import { CommentInput } from "./CommentInput";
 import { IconButton } from "../IconButton";
-import { HiEllipsisHorizontal } from "react-icons/hi2";
+
 import { usePageContext } from "@yukilabs/governance-frontend/src/renderer/PageContextProvider";
 import { hasPermission } from "@yukilabs/governance-frontend/src/utils/helpers";
 import { ROLES } from "@yukilabs/governance-frontend/src/renderer/types";
@@ -68,9 +71,9 @@ const CommentShowMoreReplies = ({
     mt={3}
   >
     {isThreadOpen ? (
-      <AiOutlineMinusCircle fontSize="22px" />
+      <MinusCircleIcon boxSize="22px" />
     ) : (
-      <AiOutlinePlusCircle fontSize="22px" />
+      <PlusCircleIcon boxSize="22px" />
     )}
     {nestedReplies > 2 && (
       <Text variant="mediumStrong">
@@ -108,7 +111,7 @@ const CommentVotes = ({
           }}
           aria-label="More comment actions"
           size="small"
-          icon={<BsFillArrowUpCircleFill color="#30B37C" size="20px" />}
+          icon={<ArrowUpCircleFillIcon color="#30B37C" boxSize="20px" />}
         />
       ) : (
         <IconButton
@@ -120,7 +123,7 @@ const CommentVotes = ({
           }}
           aria-label="More comment actions"
           size="small"
-          icon={<BsArrowUpCircle size="20px" />}
+          icon={<ArrowUpCircleIcon boxSize="20px" />}
         />
       )}
 
@@ -142,7 +145,7 @@ const CommentVotes = ({
           }}
           aria-label="More comment actions"
           size="small"
-          icon={<BsFillArrowDownCircleFill size="20px" color="#E4442F" />}
+          icon={<ArrowDownCircleFillIcon color="#E4442F" boxSize="20px" />}
         />
       ) : (
         <IconButton
@@ -154,7 +157,7 @@ const CommentVotes = ({
           }}
           aria-label="More comment actions"
           size="small"
-          icon={<BsArrowDownCircle size="20px" />}
+          icon={<ArrowDownCircleIcon boxSize="20px" />}
         />
       )}
     </Flex>
@@ -167,7 +170,7 @@ const CommentMoreActions = ({ children }: { children: ReactNode }) => (
       <MenuButton
         as={IconButton}
         size="small"
-        icon={<HiEllipsisHorizontal size="20px" />}
+        icon={<EllipsisIcon boxSize="20px" />}
         variant="icon"
       />
 
@@ -249,8 +252,11 @@ const CommentItem: React.FC<CommentProps> = ({
               left="50%"
               zIndex="0"
             />
-            {author?.ensAvatar ? (
-              <Avatar size={"sm"} src={author?.ensAvatar} />
+            {author?.profileImage || author?.ensAvatar ? (
+              <Avatar
+                size={"sm"}
+                src={author?.profileImage || (author?.ensAvatar as string)}
+              />
             ) : (
               <Indenticon size={40} address={author?.address || ""} />
             )}
@@ -265,7 +271,8 @@ const CommentItem: React.FC<CommentProps> = ({
           <Box display="flex" flexDirection="column" gap={3} w="full">
             <Flex direction="column">
               <Text fontWeight="bold" fontSize="12px">
-                {author?.ensName ||
+                {author?.username ||
+                  author?.ensName ||
                   truncateAddress(author ? author.address : "")}
               </Text>
               <Text fontSize="12px" color="#6C6C75">

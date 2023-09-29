@@ -3,16 +3,23 @@ import { scrollIntoView } from "../utils/scrollIntoView";
 import React, { forwardRef } from "react";
 
 export type props = {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "danger"
+    | "special";
   children: React.ReactNode;
   toId?: string;
   href?: string;
   isExternal?: boolean;
   target?: ButtonProps["formTarget"];
+  disabled?: boolean;
 } & ButtonProps;
 
 export const Button = forwardRef<HTMLButtonElement, props>(
-  ({ children, toId, href, ...rest }, ref) => {
+  ({ children, toId, href, disabled = false, ...rest }, ref) => {
     const handleOnClick = () => {
       if (!toId) {
         return;
@@ -27,6 +34,7 @@ export const Button = forwardRef<HTMLButtonElement, props>(
         onClick={handleOnClick}
         ref={ref}
         href={href}
+        isDisabled={disabled}
         {...rest}
       >
         {children}

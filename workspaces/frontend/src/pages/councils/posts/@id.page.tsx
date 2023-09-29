@@ -13,6 +13,7 @@ import {
   ProfileSummaryCard,
   MenuItem,
   MarkdownRenderer,
+  Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -149,15 +150,14 @@ export function Page() {
             <Stack
               spacing="24px"
               direction={{ base: "column" }}
-              color="#545464"
+              color="content.default.default"
             >
               <Box display="flex" alignItems="center">
                 <Box flex="1">
                   <Heading
-                    color="#33333E"
-                    variant="h3"
+                    color="content.accent.default"
+                    variant="h2"
                     maxWidth="90%"
-                    lineHeight="1.4em"
                   >
                     {post?.title}
                   </Heading>
@@ -173,14 +173,25 @@ export function Page() {
                 )}
               </Box>
 
-              <Flex gap="16px" paddingTop="0" alignItems="center">
+              <Flex gap="standard.xs" paddingTop="0" alignItems="center">
                 <Stat.Root>
-                  <Stat.Text label={`By cillian`} />
+                  <Stat.Text
+                    label={
+                      post?.author?.username ??
+                      post?.author?.ensName ??
+                      post?.author?.address
+                    }
+                  />
                 </Stat.Root>
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
                 <Stat.Root>
                   <Stat.Date date={post?.createdAt} />
                 </Stat.Root>
-
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
                 <Stat.Root>
                   <Stat.Link
                     href="#discussion"
@@ -192,12 +203,19 @@ export function Page() {
 
               <MarkdownRenderer content={post?.content || ""} />
               <Divider my="32px" />
-              <Heading id="#discussion" color="#33333E" variant="h3">
+              <Heading
+                id="#discussion"
+                color="content.accent.default"
+                variant="h3"
+              >
                 Discussion
               </Heading>
               {user ? (
                 <FormControl id="delegate-statement">
-                  <CommentInput onSend={handleCommentSend} />
+                  <CommentInput
+                    placeholder="Type your comment"
+                    onSend={handleCommentSend}
+                  />
                 </FormControl>
               ) : (
                 <></>
@@ -218,5 +236,5 @@ export function Page() {
 }
 
 export const documentProps = {
-  title: "Post / Create",
+  title: "Post",
 } satisfies DocumentProps;

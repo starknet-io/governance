@@ -1,9 +1,11 @@
 import {
   Avatar,
   Box,
+  Flex,
   Menu,
   MenuButton,
   MenuList,
+  Spinner,
   Stack,
 } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
@@ -11,8 +13,8 @@ import { IconButton } from "src/IconButton";
 import { Indenticon } from "../Indenticon";
 import { Text } from "../Text";
 import { truncateAddress } from "src/utils";
-import { HiEllipsisHorizontal } from "react-icons/hi2";
 import { Button } from "src/Button";
+import { EllipsisIcon } from "src/Icons";
 
 type RootProps = {
   children: React.ReactNode;
@@ -75,9 +77,8 @@ const Profile = ({
           {formattedAddress}
         </Heading>
         <Text
-          variant="breadcrumbs"
-          fontSize="10px"
-          color="content.default.default"
+          variant="captionSmallUppercase"
+          color="content.support.default"
           fontWeight="600"
         >
           {address && subtitle === null ? formattedAddress : subtitle}
@@ -94,11 +95,7 @@ const MoreActions = ({ children }: MoreActionsProps) => {
   return (
     <Box style={{ position: "relative" }}>
       <Menu>
-        <MenuButton
-          as={IconButton}
-          icon={<HiEllipsisHorizontal size="32px" />}
-          variant="icon"
-        />
+        <MenuButton as={IconButton} icon={<EllipsisIcon />} variant="ghost" />
 
         <Box top="0px" position="relative">
           <MenuList>{children}</MenuList>
@@ -110,11 +107,23 @@ const MoreActions = ({ children }: MoreActionsProps) => {
 type PrimaryButtonProps = {
   onClick: () => void;
   label: string;
+  isLoading?: boolean;
 };
-const PrimaryButton = ({ onClick, label = "button" }: PrimaryButtonProps) => {
+const PrimaryButton = ({
+  onClick,
+  label = "button",
+  isLoading,
+}: PrimaryButtonProps) => {
   return (
     <Button onClick={onClick} variant="primary">
-      {label}
+      {isLoading ? (
+        <Flex gap={1.5} align="center">
+          <Spinner size="sm" />
+          <Text variant="mediumStrong">{label}</Text>
+        </Flex>
+      ) : (
+        <>{label}</>
+      )}
     </Button>
   );
 };

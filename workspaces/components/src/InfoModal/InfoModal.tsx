@@ -26,16 +26,10 @@ export const InfoModal = ({
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      size="md"
       isCentered
-      variant="unstyled"
     >
       <ModalOverlay />
-      <ModalContent
-        borderRadius="xl"
-        mx={{ base: "32px", lg: "32px" }}
-        overflow="hidden"
-      >
+      <ModalContent borderRadius="xl" overflow="hidden">
         <ModalCloseButton
           top="0"
           right="0"
@@ -43,11 +37,7 @@ export const InfoModal = ({
           borderRadius="none"
           borderBottomLeftRadius="md"
         />
-        <ModalBody
-          px={{ base: "32px" }}
-          py={{ base: "32px" }}
-          pb={{ base: "32px" }}
-        >
+        <ModalBody>
           <Stack spacing="32px">
             <Heading
               textAlign={"center"}

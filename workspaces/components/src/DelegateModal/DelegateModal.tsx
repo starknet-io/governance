@@ -62,16 +62,10 @@ export const DelegateModal = ({
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
       isCentered
-      variant="unstyled"
     >
       <ModalOverlay />
-      <ModalContent
-        borderRadius="xl"
-        mx={{ base: "2.5", lg: "16" }}
-        overflow="hidden"
-      >
+      <ModalContent overflow="hidden">
         <ModalCloseButton
           top="0"
           right="0"
@@ -79,11 +73,7 @@ export const DelegateModal = ({
           borderRadius="none"
           borderBottomLeftRadius="md"
         />
-        <ModalBody
-          px={{ base: "5", md: "12", lg: "16" }}
-          py={{ base: "10", md: "12", lg: "16" }}
-          pb={{ base: "6" }}
-        >
+        <ModalBody>
           <Stack spacing="6">
             <Heading fontSize="21px" fontWeight="semibold" variant="h3">
               {isUndelegation ? "Undelegate votes" : "Delegate votes"}

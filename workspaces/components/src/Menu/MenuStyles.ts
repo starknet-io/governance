@@ -20,23 +20,34 @@ const baseStyle = definePartsStyle({
   },
   list: {
     // this will style the MenuList component
-    padding: "4px",
-    borderRadius: "4px",
-    border: "1px solid var(--border-forms, rgba(26, 21, 35, 0.09))",
-    bg: "hsla(300, 8%, 97%, 1)",
-    boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.04)",
+    padding: "standard.base",
+    borderRadius: "standard.base",
+    border: "1px solid",
+    borderColor: "border.forms",
+    bg: "surface.forms.default",
+    boxShadow:
+      "0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)",
   },
 
   item: {
     // this will style the MenuItem and MenuItemOption components
-    color: "hsla(261, 25%, 11%, 1)",
-    bg: "hsla(300, 8%, 97%, 1)",
-    borderRadius: "4px",
+    color: "content.accent.default",
+    fontSize: "14px",
+    bg: "transparent",
+    borderRadius: "standard.base",
+    fontWeight: "400",
+    letterSpacing: "0.07px",
     _hover: {
-      bg: "hsla(255, 4%, 57%, 0.06)",
+      bg: "surface.forms.hover",
+      color: "content-accent-default",
+    },
+    _selected: {
+      bg: "transparent",
+      color: "content-accent-default",
     },
     _focus: {
-      bg: "hsla(255, 4%, 57%, 0.06)",
+      bg: "transparent",
+      color: "content-accent-default",
     },
   },
   groupTitle: {

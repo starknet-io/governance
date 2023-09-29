@@ -17,7 +17,18 @@ jobs:
           TAGS=$(doctl registry repository lt frontend | tail -n +5 | awk '{print $1}')
           [[ -n $TAGS ]] && doctl registry repository dt frontend $TAGS --force
           echo Tags removed: $TAGS
-
+  frontend_prod_cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: cleanup frontend images
+        run: |
+          TAGS=$(doctl registry repository lt frontend-prod | tail -n +5 | awk '{print $1}')
+          [[ -n $TAGS ]] && doctl registry repository dt frontend-prod $TAGS --force
+          echo Tags removed: $TAGS
   backend_cleanup:
     runs-on: ubuntu-latest
     steps:
@@ -30,6 +41,19 @@ jobs:
           TAGS=$(doctl registry repository lt backend | tail -n +5 | awk '{print $1}')
           [[ -n $TAGS ]] && doctl registry repository dt backend $TAGS --force
           echo Tags removed: $TAGS
+  backend_prod_cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: cleanup backend images
+        run: |
+          TAGS=$(doctl registry repository lt backend-prod | tail -n +5 | awk '{print $1}')
+          [[ -n $TAGS ]] && doctl registry repository dt backend-prod $TAGS --force
+          echo Tags removed: $TAGS
+
   cron_cleanup:
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +66,19 @@ jobs:
           TAGS=$(doctl registry repository lt cron | tail -n +5 | awk '{print $1}')
           [[ -n $TAGS ]] && doctl registry repository dt cron $TAGS --force
           echo Tags removed: $TAGS
+  cron_prod_cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: cleanup backend images
+        run: |
+          TAGS=$(doctl registry repository lt cron-prod | tail -n +5 | awk '{print $1}')
+          [[ -n $TAGS ]] && doctl registry repository dt cron-prod $TAGS --force
+          echo Tags removed: $TAGS
+
 
   garbage-collection:
     runs-on: ubuntu-latest

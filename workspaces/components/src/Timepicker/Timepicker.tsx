@@ -10,7 +10,8 @@ import {
 import { Text } from "../Text";
 import { IconButton } from "../IconButton";
 import { Button } from "../Button";
-import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+
+import { MinusIcon, PlusIcon } from "src/Icons";
 
 export const Timepicker: React.FC<{
   onSelectTime?: (a: string[]) => void;
@@ -113,7 +114,7 @@ export const Timepicker: React.FC<{
               <IconButton
                 aria-label="minus"
                 padding={3}
-                icon={<AiOutlineMinus size="14px" />}
+                icon={<MinusIcon />}
                 variant="outline"
                 onClick={() => {
                   setActiveTime("start");
@@ -181,7 +182,7 @@ export const Timepicker: React.FC<{
               <IconButton
                 aria-label="plus"
                 padding={3}
-                icon={<AiOutlinePlus size="14px" />}
+                icon={<PlusIcon />}
                 variant="outline"
                 onClick={() => {
                   setActiveTime("start");
@@ -216,7 +217,7 @@ export const Timepicker: React.FC<{
               <IconButton
                 aria-label="minus"
                 size="md"
-                icon={<AiOutlineMinus size="14px" />}
+                icon={<MinusIcon />}
                 variant="outline"
                 padding={3}
                 onClick={() => {
@@ -286,7 +287,7 @@ export const Timepicker: React.FC<{
                 aria-label="plus"
                 size="md"
                 padding={3}
-                icon={<AiOutlinePlus size="14px" />}
+                icon={<PlusIcon />}
                 variant="outline"
                 onClick={() => {
                   setActiveTime("end");
@@ -299,9 +300,9 @@ export const Timepicker: React.FC<{
         <PopoverFooter marginTop={6}>
           <Button
             onClick={handleSelectTime}
-            variant="solid"
+            variant="primary"
             width="100%"
-            style={{ background: "black", color: "white" }}
+            // style={{ background: "black", color: "white" }}
           >
             {"Apply"}
           </Button>

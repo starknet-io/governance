@@ -7,7 +7,8 @@ import {
   Textarea,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { MdThumbUp } from "react-icons/md";
+
+import { VoteForIcon } from "src/Icons";
 
 export const ReviewForm = (props: React.ComponentProps<"form">) => (
   <form {...props}>
@@ -20,7 +21,7 @@ export const ReviewForm = (props: React.ComponentProps<"form">) => (
         borderRadius="8px"
         color="#6C6C75"
       >
-        Voting <Icon mx="4px" color="#20AC70" as={MdThumbUp} /> with 7m votes
+        Voting <Icon mx="4px" color="#20AC70" as={VoteForIcon} /> with 7m votes
       </Box>
       <FormControl id="comment">
         <FormLabel color={useColorModeValue("gray.700", "gray.200")}>

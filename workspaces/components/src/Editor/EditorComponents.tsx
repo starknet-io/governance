@@ -127,6 +127,7 @@ const toolbarStyles: BoxProps = {
   right: "12px",
   height: "32px",
   display: "flex",
+  alignItems: 'center',
   gap: "4px",
   zIndex: 1,
 };

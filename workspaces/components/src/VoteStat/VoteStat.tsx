@@ -48,20 +48,24 @@ export const VoteStat = (props: Props) => {
       placement="top"
       hasArrow
     >
-      <Stack mb="standard.sm" spacing="0" textTransform="uppercase">
+      <Stack mb="condensed.sm" spacing="0" textTransform="uppercase">
         <Flex
           flexDirection="row"
-          gap="8px"
+          gap="standard.base"
           justifyContent="space-between"
-          mb="standard.base"
+          mb="1px"
         >
           <Box>
             <Text variant="captionSmallStrong" color="content.default.default">
               {formatPercentage(votePercentage)} % {props.userVote ? "✓" : ""}
             </Text>
           </Box>
-          <Text variant="captionSmallStrong" color="content.default.default">
-            {voteCountFormatted} Votes
+          <Text
+            textTransform="lowercase"
+            variant="captionSmallStrong"
+            color="content.default.default"
+          >
+            {voteCountFormatted} votes
           </Text>
         </Flex>
         <Box bg="purple" width="100%">

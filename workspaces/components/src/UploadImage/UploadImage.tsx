@@ -1,6 +1,7 @@
 import { Box, Button, Text, Spinner, VStack, Flex } from "@chakra-ui/react";
 import React, { useMemo, CSSProperties, useState, useEffect } from "react";
-import { useDropzone } from "react-dropzone";
+import * as ReactDropzone from "react-dropzone";
+const { useDropzone } = ReactDropzone;
 import { IconButton } from "src/IconButton";
 import { ImageIcon, ImageWarningIcon, TrashIcon } from "src/Icons";
 

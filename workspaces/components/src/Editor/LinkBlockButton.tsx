@@ -46,9 +46,10 @@ const LinkBlockButton = ({ editor, format }: any) => {
       variant="toolbar"
       isActive={isBlockActive(editor, format)}
       onMouseDown={handleInsertLink}
+      height="100%"
       icon={
         <LinkIcon
-          boxSize="18px"
+          boxSize="20px"
           color={isBlockActive(editor, format) ? activeColor : inactiveColor}
         />
       }

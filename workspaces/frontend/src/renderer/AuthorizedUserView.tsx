@@ -8,23 +8,27 @@ import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { stringToHex } from "viem";
+import { usePageContext } from "./PageContextProvider";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userData, setUserData] = useState<any>(null);
+  const utils = trpc.useContext();
+  // const [userData, setUserData] = useState<any>(null);
 
   const { handleLogOut } = useDynamicContext();
-  const { user } = useDynamicContext();
-  const address = user?.verifiedCredentials[0]?.address;
-  trpc.users.getUser.useQuery(
-    { address: address ?? "" },
-    {
-      onSuccess: (data) => {
-        setUserData(data);
-      },
-    },
-  );
+  // const { user } = useDynamicContext();
+  // const address = user?.verifiedCredentials[0]?.address;
+  // trpc.users.getUser.useQuery(
+  //   { address: address ?? "" },
+  //   {
+  //     onSuccess: (data) => {
+  //       setUserData(data);
+  //     },
+  //   },
+  // );
+
+  const { user } = usePageContext();
 
   const { data: vp } = useQuery(
     gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
@@ -37,14 +41,12 @@ const AuthorizedUserView = () => {
     {
       variables: {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: address as string,
+        voter: user?.address as string,
       },
     },
   );
 
-  const userBalance = useBalanceData(
-    user?.verifiedCredentials[0]?.address as `0x${string}`,
-  );
+  const userBalance = useBalanceData(user?.address as `0x${string}`);
 
   // const { data: delegationData } = useDelegateRegistryDelegation({
   //   address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
@@ -64,13 +66,13 @@ const AuthorizedUserView = () => {
   const { data: delegationData } = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
-      address! as `0x${string}`,
+      user?.address as `0x${string}`,
       stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
-    watch: false,
+    watch: true,
     suspense: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
-    enabled: address != null,
+    enabled: user?.address != null,
   });
 
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
@@ -127,15 +129,18 @@ const AuthorizedUserView = () => {
   };
 
   const handleSave = (username: string, starknetAddress: string) => {
+    if (!user) {
+      return;
+    }
     editUserProfile.mutateAsync(
       {
-        id: userData.id,
+        id: user.id,
         username,
         starknetAddress,
       },
       {
-        onSuccess: (data) => {
-          setUserData(data);
+        onSuccess: () => {
+          utils.auth.currentUser.invalidate();
         },
       },
     );
@@ -151,7 +156,7 @@ const AuthorizedUserView = () => {
             <UserProfileMenu
               delegatedTo={delegatedTo?.data ? delegatedTo?.data : null}
               onDisconnect={handleDisconnect}
-              user={userData}
+              user={user}
               onSave={handleSave}
               vp={vp?.vp?.vp ?? 0}
               userBalance={userBalance}

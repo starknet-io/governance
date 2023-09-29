@@ -24,8 +24,8 @@ import {
   Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useEffect, useState } from "react";
+import { useAccount, useWaitForTransaction } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import {
   useDelegateRegistryClearDelegate,
@@ -147,6 +147,50 @@ export function Page() {
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address } = useAccount();
   const { user } = usePageContext();
+  // get delegation hash
+  const [txHash, setTxHash] = useState("");
+  // listen to txn with delegation hash
+  const {
+    isLoading: isDelegationLoading,
+    isError: isDelegationError,
+    isSuccess: isDelegationSuccess,
+    error: delegationError,
+  } = useWaitForTransaction({ hash: txHash as `0x${string}` });
+  // handle delegation cases
+  useEffect(() => {
+    if (isDelegationLoading) {
+      setIsStatusModalOpen(true);
+      setStatusTitle(
+        hasUserDelegatedTokensToThisDelegate
+          ? "Tokens pending to undelegate"
+          : "Tokens pending to delegate",
+      );
+      setStatusDescription("");
+    }
+
+    if (isDelegationError) {
+      console.log(delegationError);
+      setIsStatusModalOpen(true);
+      setStatusTitle(
+        hasUserDelegatedTokensToThisDelegate
+          ? "Tokens undelegation failed"
+          : "Tokens delegation failed",
+      );
+      setStatusDescription(
+        "An error occurred while processing your transaction.",
+      );
+    }
+
+    if (isDelegationSuccess) {
+      setIsStatusModalOpen(true);
+      setStatusTitle(
+        hasUserDelegatedTokensToThisDelegate
+          ? "Tokens delegated successfully"
+          : "Tokens undelegated successfully",
+      );
+      setStatusDescription("");
+    }
+  }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
   const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
@@ -159,7 +203,7 @@ export function Page() {
       address!,
       stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
-    watch: false,
+    watch: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
@@ -312,10 +356,8 @@ export function Page() {
                 }),
               ],
             })
-              .then(() => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Tokens undelegated successfully");
-                setStatusDescription("");
+              .then((tx) => {
+                setTxHash(tx.hash);
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
@@ -341,10 +383,8 @@ export function Page() {
                 delegateAddress,
               ],
             })
-              .then(() => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Tokens delegated successfully");
-                setStatusDescription("");
+              .then((tx) => {
+                setTxHash(tx.hash);
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
@@ -375,8 +415,9 @@ export function Page() {
       />
       <StatusModal
         isOpen={isStatusModalOpen}
-        isSuccess={!statusDescription?.length}
-        isFail={!!statusDescription?.length}
+        isPending={isDelegationLoading}
+        isSuccess={isDelegationSuccess}
+        isFail={isDelegationError}
         onClose={() => {
           setIsStatusModalOpen(false);
         }}
@@ -384,15 +425,18 @@ export function Page() {
         description={statusDescription}
       />
       <Box
-        pt="40px"
-        px="32px"
-        borderRight="1px solid #E7E8E9"
+        pt="standard.3xl"
+        pb="standard.2xl"
+        px={{ base: "standard.md", md: "standard.2xl", lg: "standard.xl" }}
+        borderRight="1px solid"
+        borderColor="border.dividers"
         display="flex"
         flexDirection="column"
-        flexBasis={{ base: "100%", md: "391px" }}
+        flexBasis={{ base: "100%", md: "372px" }}
         position={{ base: "unset", lg: "sticky" }}
         height="calc(100vh - 80px)"
         top="0"
+        overflow="auto"
       >
         {isLoadingProfile ? (
           <Box
@@ -412,8 +456,10 @@ export function Page() {
         ) : (
           <ProfileSummaryCard.Root>
             <ProfileSummaryCard.Profile
-              imgUrl={delegate?.author?.ensAvatar}
-              ensName={delegate?.author?.ensName}
+              imgUrl={
+                delegate?.author?.ensAvatar || delegate?.author?.profileImage
+              }
+              ensName={delegate?.author?.username || delegate?.author?.ensName}
               address={delegate?.author?.ensName || delegateAddress}
               avatarString={delegate?.author?.ensAvatar || delegateAddress}
             >
@@ -532,7 +578,10 @@ export function Page() {
             </SummaryItems.Root>
           )} */}
         </Box>
-        <Divider mt="32px" mb="32px" />
+        {delegate?.twitter || delegate?.discourse || delegate?.discord ? (
+          <Divider mt="32px" mb="32px" />
+        ) : null}
+
         <SummaryItems.Root direction="row">
           {delegate?.twitter && (
             <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
@@ -563,15 +612,15 @@ export function Page() {
         <Stack
           spacing="24px"
           direction={{ base: "column" }}
-          color="#545464"
+          color="content.default.default"
           width="100%"
         >
-          <Heading color="#33333E" variant="h3">
+          <Heading color="content.accent.default" variant="h2">
             Delegate pitch
           </Heading>
           <MarkdownRenderer content={delegate?.statement || ""} />
           <Box mt="24px">
-            <Heading mb="24px" color="#33333E" variant="h3">
+            <Heading mb="24px" color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
             {gqlResponse.data?.votes?.length ? (
@@ -598,11 +647,11 @@ export function Page() {
                 ))}
               </ListRow.Container>
             ) : (
-              <EmptyState type="votes" title="No past votes" />
+              <EmptyState type="votesCast" title="No votes yet" />
             )}
           </Box>
           <Box mt="24px" mb={10}>
-            <Heading mb="24px" color="#33333E" variant="h3">
+            <Heading mb="24px" color="content.accent.default" variant="h3">
               Comments
             </Heading>
             <ListRow.Container>
@@ -633,7 +682,7 @@ export function Page() {
             </ListRow.Container>
 
             {!delegateCommentsResponse?.data?.length ? (
-              <EmptyState type="posts" title="No past comments" />
+              <EmptyState type="comments" title="No comments yet" />
             ) : null}
           </Box>
         </Stack>

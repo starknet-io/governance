@@ -1,5 +1,5 @@
 import { Box, Flex, HStack, Icon, Image, Link } from "@chakra-ui/react";
-import { MdLink } from "react-icons/md";
+import { ExternalLinkIcon } from "src/Icons";
 import { Text } from "src/Text";
 
 type Props = {
@@ -37,7 +37,7 @@ export const LinkCard = ({
           </Text>
         </Flex>
         <Box>
-          <Icon as={MdLink} />
+          <Icon as={ExternalLinkIcon} />
         </Box>
       </HStack>
     </Link>

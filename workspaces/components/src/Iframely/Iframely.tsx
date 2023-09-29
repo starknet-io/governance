@@ -1,3 +1,4 @@
+import { Skeleton } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 declare global {
@@ -14,7 +15,7 @@ interface IframelyProps {
 export function Iframely(props: IframelyProps) {
   const KEY = props.id;
   const [error, setError] = useState<{ code: number; message: string } | null>(
-    null
+    null,
   );
   const [isLoaded, setIsLoaded] = useState(false);
   const [html, setHtml] = useState({
@@ -25,8 +26,8 @@ export function Iframely(props: IframelyProps) {
     if (props && props.url) {
       fetch(
         `https://cdn.iframe.ly/api/iframely?url=${encodeURIComponent(
-          props.url
-        )}&key=${KEY}&iframe=1&omit_script=1`
+          props.url,
+        )}&key=${KEY}&iframe=1&omit_script=1`,
       )
         .then((res) => res.json())
         .then(
@@ -41,7 +42,7 @@ export function Iframely(props: IframelyProps) {
           (error) => {
             setIsLoaded(true);
             setError({ code: 500, message: error.message });
-          }
+          },
         );
     } else {
       setError({ code: 400, message: "Provide url attribute for the element" });
@@ -59,7 +60,7 @@ export function Iframely(props: IframelyProps) {
       </div>
     );
   } else if (!isLoaded) {
-    return <div>Loading…</div>;
+    return <Skeleton height="110px" />;
   } else {
     return <div dangerouslySetInnerHTML={html} />;
   }

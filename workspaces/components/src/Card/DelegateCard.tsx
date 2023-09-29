@@ -4,9 +4,11 @@ import {
   CardBody,
   CardFooter,
   Box,
+  Text,
   Tooltip,
   LinkBox,
   LinkOverlay,
+  Spinner,
 } from "@chakra-ui/react";
 import { Tag } from "../Tag/";
 import { Button } from "../Button";
@@ -18,12 +20,13 @@ export type DelegateCardProps = {
   statement: string | null;
   type: string[];
   votingPower: number;
-  voteCount: number;
+  voteCount?: number;
   onDelegateClick?: () => void;
   profileURL?: string;
   address: string | null | undefined;
   ensName?: string | null;
   ensAvatar?: string | null;
+  isDelegationLoading?: boolean;
 };
 
 const delegateNames: Record<string, string> = {
@@ -72,7 +75,7 @@ const DelegateTags = ({ type }: { type: string[] }) => {
         .map((t) => delegateNames?.[t] ?? t)
         .join(", ")}
     >
-      <Tag variant="review">+{type.length - startIndex}</Tag>
+      <Tag>+{type.length - startIndex}</Tag>
     </Tooltip>
   );
 
@@ -102,6 +105,7 @@ export const DelegateCard = ({
   ensName,
   onDelegateClick,
   profileURL,
+  isDelegationLoading,
 }: DelegateCardProps) => {
   const votesFormatted = formatVotesAmount(votingPower) + " delegated votes";
   const formattedDelegateStatement = extractParagraph(statement || "");
@@ -136,13 +140,28 @@ export const DelegateCard = ({
       <CardFooter>
         <Box width="100%" display="flex" flexDirection="column" gap="16px">
           <Box>
-            <Button
-              size="condensed"
-              variant="outline"
-              onClick={onDelegateClick}
-            >
-              Delegate
-            </Button>
+            {!isDelegationLoading ? (
+              <Button
+                size="condensed"
+                variant="outline"
+                onClick={onDelegateClick}
+              >
+                Delegate
+              </Button>
+            ) : (
+              <Button
+                size="condensed"
+                variant="outline"
+                disabled
+                gap={1.5}
+                onClick={() => {
+                  console.log("disabled");
+                }}
+              >
+                <Spinner size="sm" />
+                <Text variant="mediumStrong">Pending</Text>
+              </Button>
+            )}
           </Box>
         </Box>
       </CardFooter>

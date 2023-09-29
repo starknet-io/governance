@@ -192,5 +192,5 @@ export function Page() {
 }
 
 export const documentProps = {
-  title: "Page / Edit",
+  title: "Learn / Edit",
 } satisfies DocumentProps;

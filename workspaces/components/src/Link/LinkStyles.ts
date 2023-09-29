@@ -41,6 +41,7 @@ const small = defineStyle({
   fontWeight: "600",
   fontSize: "12px",
   pb: "2px",
+  letterSpacing: "0.12px",
 });
 
 export const linkTheme = defineStyleConfig({

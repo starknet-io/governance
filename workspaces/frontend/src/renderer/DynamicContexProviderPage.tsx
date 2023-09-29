@@ -14,7 +14,6 @@ import {
   NavItem,
   Layout,
   Header,
-  Box,
   ProposalsIcon,
   DelegatesIcon,
   SecurityIcon,
@@ -48,7 +47,8 @@ import {
   SearchIcon,
   Flex,
 } from "@yukilabs/governance-components";
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { Box } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 import { IUser, PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
@@ -57,6 +57,7 @@ import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
+import AuthorizedUserView from "./AuthorizedUserView";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -204,30 +205,7 @@ export function DynamicContextProviderPage(props: Props) {
         }}
       >
         <DynamicWagmiConnector>
-          <Suspense
-            fallback={
-              <Box
-                display="flex"
-                height="100vh"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="#fff"
-                  color="#ccc"
-                  size="xl"
-                />
-              </Box>
-            }
-          >
-            {(pageContext.hasLayout ?? true) === true ? (
-              <PageLayout pageContext={pageContext}>{children}</PageLayout>
-            ) : (
-              children
-            )}
-          </Suspense>
+          <PageLayout pageContext={pageContext}>{children}</PageLayout>
         </DynamicWagmiConnector>
       </DynamicContextProvider>
     </HelpMessageProvider>
@@ -285,13 +263,19 @@ const BackButton = ({
   return null;
 };
 
-const LazyDataComponent = lazy(() => import("./AuthorizedUserView"));
-
 const DynamicCustomWidget = () => {
   const { user } = useDynamicContext();
   const isAuthorized = !!user;
 
-  return isAuthorized ? <LazyDataComponent /> : <DynamicWidget />;
+  return isAuthorized ? (
+    <AuthorizedUserView />
+  ) : (
+    <DynamicWidget
+      innerButtonComponent="Connect"
+      buttonClassName="connect-button"
+      buttonContainerClassName="connect-button-container"
+    />
+  );
 };
 
 function PageLayout(props: Props) {
@@ -329,8 +313,6 @@ function PageLayout(props: Props) {
     };
   }, [helpMessage, setHelpMessage]);
 
-  console.log({ globalSearchResults });
-
   return (
     <>
       <SupportModal
@@ -344,7 +326,7 @@ function PageLayout(props: Props) {
       >
         <Text>To action you need to connect your wallet</Text>
         <Button variant="primary" onClick={() => console.log("connect wallet")}>
-          Connect your wallet
+          Connect
         </Button>
       </InfoModal>
 
@@ -365,6 +347,9 @@ function PageLayout(props: Props) {
               //todo replace with close icon
               icon={<div>X</div>}
             />
+          </Box>
+          <Box display={{ base: "none", lg: "flex" }}>
+            {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
 
           <DrawerBody px="12px" py="16px" pt="0" mt="48px">
@@ -456,7 +441,7 @@ function PageLayout(props: Props) {
             <Box display="flex" marginLeft="auto">
               <ShareDialog />
             </Box>
-            <Box display={{ base: "none", lg: "flex" }}>
+            <Box display={{ base: "flex" }}>
               {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
             </Box>
             <GlobalSearch
@@ -465,7 +450,7 @@ function PageLayout(props: Props) {
               isOpen={isGlobalSearchOpen}
               setIsSearchModalOpen={setIsGlobalSearchOpen}
             />
-            <Box display={{ base: "flex", lg: "none" }} marginLeft="auto">
+            <Box display={{ base: "none", lg: "none" }} marginLeft="auto">
               <IconButton
                 aria-label="Open menu"
                 size="condensed"

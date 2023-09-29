@@ -197,10 +197,10 @@ export const buttonTheme = {
       },
       _active: {
         outlineWidth: 0,
-        bg: "surface.forms.selectedInverted",
-        color: "content.default.selectedInverted",
+        bg: "surface.forms.selected",
+        color: "content.default.selected",
         svg: {
-          fill: "content.default.selectedInverted",
+          fill: "content.default.selected",
         },
       },
       _disabled: {
@@ -340,6 +340,38 @@ export const buttonTheme = {
             fill: "content.onSurfaceInverted.default",
           },
         },
+      },
+    },
+    special: {
+      borderColor: "border.forms",
+      minHeight: "72px",
+      px: "standard.xl",
+      py: "standard.sm",
+      bg: "surface.forms.default",
+      color: "content.default.default",
+      boxShadow: "0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
+      svg: {
+        width: "24px!important",
+        height: "24px!important",
+      },
+
+      _hover: {
+        color: "content.default.hover",
+      },
+      _active: {
+        bg: "surface.forms.selected",
+        borderColor: "border.forms",
+        color: "content.default.selected",
+      },
+      _disabled: {
+        bg: "surface.forms.default",
+
+        boxShadow: "0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
+        pointerEvents: "none",
+        opacity: 1,
+      },
+      _focusVisible: {
+        boxShadow: "0px 0px 0px 4px #3F8CFF, 0px 0px 0px 1px #F9F9FB",
       },
     },
   },

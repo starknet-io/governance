@@ -5,6 +5,7 @@ on:
     branches: ['dev']
     paths:
       - 'workspaces/frontend/**'
+      - 'workspaces/components/**'
   workflow_dispatch:
 
 jobs:
@@ -12,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.meta.outputs.version }}
+    environment:
+      name: ${{ github.ref_name == 'dev' && 'development-frontend' || 'review-frontend' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -40,9 +43,24 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_APP_GOOGLE_TAG_ID=${{ secrets.VITE_APP_GOOGLE_TAG_ID }}
+            VITE_APP_SNAPSHOT_SPACE=${{ vars.VITE_APP_SNAPSHOT_SPACE }}
+            VITE_APP_SNAPSHOT_CHAIN_ID=${{ vars.VITE_APP_SNAPSHOT_CHAIN_ID }}
+            VITE_APP_DELEGATION_TOKEN=${{ secrets.VITE_APP_DELEGATION_TOKEN }}
+            VITE_APP_DYNAMIC_ID=${{ secrets.VITE_APP_DYNAMIC_ID }}
+            VITE_APP_IFRAMELY_ID=${{ secrets.VITE_APP_IFRAMELY_ID }}
+            VITE_APP_TRPC_URL=${{ vars.VITE_APP_TRPC_URL }}
+            VITE_APP_DELEGATION_SYMBOL=${{ vars.VITE_APP_DELEGATION_SYMBOL }}
+            VITE_APP_SNAPSHOT_URL=${{ vars.VITE_APP_SNAPSHOT_URL }}
+            VITE_APP_DELEGATION_REGISTRY=${{ vars.VITE_APP_DELEGATION_REGISTRY }}
+            VITE_APP_DELEGATION_CHAIN_ID=${{ vars.VITE_APP_DELEGATION_CHAIN_ID }}
+            VITE_APP_ALGOLIA_APP_ID=${{ secrets.VITE_APP_ALGOLIA_APP_ID }}
+            VITE_APP_ALGOLIA_PUBLIC_API_KEY=${{ secrets.VITE_APP_ALGOLIA_PUBLIC_API_KEY }}
+            VITE_APP_ALGOLIA_INDEX=${{ vars.VITE_APP_ALGOLIA_INDEX }}
 
   Deploy-review:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/dev'
     needs: Build
     runs-on: ubuntu-latest
     env:

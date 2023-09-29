@@ -19,6 +19,7 @@ import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
 import { CopyToClipboard } from "src/CopyToClipboard";
+import { ProfileImage } from "src/ProfileImage";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -26,7 +27,7 @@ interface IUser extends User {
 
 interface UserProfileMenuProps {
   onDisconnect: () => void;
-  user: IUser;
+  user: IUser | null;
   onSave: (address: string, starknetAddress: string) => void;
   vp: number;
   userBalance: any;
@@ -121,11 +122,20 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
           >
             <Flex direction="row" mb={4}>
               <Box>
-                <Indenticon size={40} address={"asdasdascascascasc"} />
+                {user?.profileImage || user?.ensAvatar ? (
+                  <ProfileImage
+                    imageUrl={user.profileImage ?? user.ensAvatar}
+                    size={"small"}
+                  />
+                ) : (
+                  <Indenticon size={40} address={user?.address} />
+                )}
               </Box>
               <Box pl={4}>
                 <Text color="#2A2A32" fontWeight="bold" fontSize="14px">
-                  {user?.username ?? truncateAddress(user?.address || "")}
+                  {user?.username ||
+                    user?.ensName ||
+                    truncateAddress(user?.address || "")}
                 </Text>
                 <Text color="#6C6C75" fontSize="12px">
                   {truncateAddress(user?.address || "")}

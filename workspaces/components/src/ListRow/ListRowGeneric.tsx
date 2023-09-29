@@ -1,17 +1,29 @@
-import { Badge, Box, Flex, Icon, Tooltip } from "@chakra-ui/react";
-import { HiHandThumbUp, HiHandThumbDown, HiHandRaised } from "react-icons/hi2";
-import { Text } from "../Text";
-import moment from "moment";
-import { CommentIcon } from "src/Icons";
-import { MarkdownRenderer } from "src/MarkdownRenderer";
+import { Badge, Box, BoxProps, Flex, Icon, Tooltip } from "@chakra-ui/react";
 
-type Props = {
+import { Text } from "../Text";
+import {
+  differenceInDays,
+  differenceInHours,
+  differenceInWeeks,
+  differenceInMonths,
+  differenceInYears,
+} from "date-fns";
+import {
+  CommentIcon,
+  VoteAbstainIcon,
+  VoteAgainstIcon,
+  VoteForIcon,
+} from "src/Icons";
+import { MarkdownRenderer } from "src/MarkdownRenderer";
+import "./styles.css";
+
+type Props = BoxProps & {
   children?: React.ReactNode;
 };
 
-const Container = ({ children }: Props) => {
+const Container = ({ children, ...rest }: Props) => {
   return (
-    <Box mt="24px" display="flex" flexDirection="column">
+    <Box mt="24px" display="flex" flexDirection="column" {...rest}>
       {children}
     </Box>
   );
@@ -75,7 +87,7 @@ const Title = ({ label = "" }: TitleProps) => {
 //   label?: string | null;
 // };
 
-const Date = () => {
+const CustomDate = () => {
   return (
     <Box>
       <Text variant="breadcrumbs" noOfLines={1} fontWeight="500">
@@ -143,15 +155,15 @@ const PastVotes = ({
   const renderIconBasedOnVotePreference = () => {
     switch (votePreference) {
       case "for":
-        return HiHandThumbUp
+        return VoteForIcon;
       case "against":
-        return HiHandThumbDown
+        return VoteAgainstIcon;
       case "abstain":
-        return HiHandRaised
+        return VoteAbstainIcon;
       default:
-        return HiHandThumbUp
+        return VoteForIcon;
     }
-  }
+  };
   return (
     <Flex flexDirection="column" flex={1} gap="6px">
       <Text
@@ -237,28 +249,25 @@ const Comments = ({ count, width }: CommentsProps) => {
   );
 };
 
-function dateDiff(now: moment.Moment, futureDate: moment.Moment) {
-  const diff = moment.duration(futureDate.diff(now));
-
+function dateDiff(now: Date, futureDate: Date) {
   let unit = "day";
-  let count = diff.days();
+  let count = differenceInDays(futureDate, now);
 
   if (count === 0) {
-    count = diff.hours();
+    count = differenceInHours(futureDate, now);
     unit = "hour";
   } else if (count >= 7 && count < 30) {
-    count = diff.weeks();
+    count = differenceInWeeks(futureDate, now);
     unit = "week";
   } else if (count >= 30 && count < 365) {
-    count = diff.months();
+    count = differenceInMonths(futureDate, now);
     unit = "month";
   } else if (count >= 365) {
-    count = diff.years();
+    count = differenceInYears(futureDate, now);
     unit = "year";
   }
 
   unit = count > 1 ? unit + "s" : unit; // pluralize the unit if necessary
-
   return `${count} ${unit}`;
 }
 
@@ -269,10 +278,10 @@ type DateRangeProps = {
 };
 
 const DateRange = ({ start, end, state }: DateRangeProps) => {
-  const now = moment();
+  const now = new Date();
 
-  const startDate = moment.unix(Number(start));
-  const endDate = moment.unix(Number(end));
+  const startDate = start ? new Date(start * 1000) : new Date();
+  const endDate = end ? new Date(end * 1000) : new Date();
 
   let dateText = "";
   if (state === "pending") {
@@ -282,7 +291,6 @@ const DateRange = ({ start, end, state }: DateRangeProps) => {
   } else if (state === "closed") {
     dateText = "Ended " + dateDiff(endDate, now) + " ago";
   }
-
   return (
     <Box width="120px">
       <Text
@@ -365,20 +373,21 @@ const Post = ({ post }: any) => {
         variant="breadcrumbs"
         fontSize="12px"
         noOfLines={1}
-        fontWeight="500"
+        fontWeight="400"
         color="#292932"
         width={"100%"}
       >
         {post.title}
       </Text>
       <Text
-        color="#6C6C75"
+        color="#292932"
         variant="breadcrumbs"
         noOfLines={1}
-        fontWeight="500"
-        width={"100%"}
+        fontWeight="400"
       >
-        <MarkdownRenderer content={post.content ?? ""} />
+        <Box className="post-markdown">
+          <MarkdownRenderer content={post.content ?? ""} />
+        </Box>
       </Text>
     </Flex>
   );
@@ -388,7 +397,7 @@ export {
   Root,
   Status,
   Title,
-  Date,
+  CustomDate,
   MutedText,
   Vote,
   PastVotes,

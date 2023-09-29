@@ -45,12 +45,14 @@ export const textTheme = defineStyleConfig({
     small: {
       fontSize: "0.75rem",
       lineHeight: "1.25rem",
-      fontWeight: "400",
+      fontWeight: "500",
+      letterSpacing: "0.12px",
     },
     smallStrong: {
       fontSize: "0.75rem",
       lineHeight: "1.25rem",
-      fontWeight: "500",
+      fontWeight: "600",
+      letterSpacing: "0.12px",
     },
     medium: { fontSize: "0.875rem", lineHeight: "1.25rem" },
     mediumStrong: {
@@ -64,16 +66,22 @@ export const textTheme = defineStyleConfig({
       lineHeight: "1.5rem",
       fontWeight: "600",
     },
-    captionSmall: { fontSize: "0.625rem", lineHeight: "1rem" },
+    captionSmall: {
+      fontSize: "0.625rem",
+      lineHeight: "1rem",
+      letterSpacing: "0.2px",
+    },
     captionSmallStrong: {
       fontSize: "0.625rem",
       lineHeight: "1rem",
-      fontWeight: "500",
+      fontWeight: "600",
+      letterSpacing: "0.2px",
     },
     captionSmallUppercase: {
       fontSize: "0.625rem",
       lineHeight: "1rem",
       fontWeight: "600",
+      letterSpacing: "0.2px",
     },
   },
 });
