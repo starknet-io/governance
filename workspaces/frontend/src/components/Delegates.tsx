@@ -264,7 +264,14 @@ export function Delegates({
     if (!user) {
       return null;
     }
-
+    const delegateId =
+      user &&
+      delegates.data &&
+      delegates.data.find(
+        (delegate) =>
+          delegate?.author?.address?.toLowerCase() ===
+          user?.address?.toLowerCase(),
+      )?.id;
     return (
       <>
         <Button
@@ -276,7 +283,7 @@ export function Delegates({
           Delegate to address
         </Button>
 
-        {!user.delegationStatement && (
+        {!user.delegationStatement && !delegateId ? (
           <Button
             width={{ base: "100%", md: "auto" }}
             as="a"
@@ -285,6 +292,16 @@ export function Delegates({
             variant="primary"
           >
             Create delegate profile
+          </Button>
+        ) : (
+          <Button
+            width={{ base: "100%", md: "auto" }}
+            as="a"
+            href={`/delegates/profile/edit/${delegateId!}`}
+            size="condensed"
+            variant="primary"
+          >
+            Edit delegate profile
           </Button>
         )}
       </>

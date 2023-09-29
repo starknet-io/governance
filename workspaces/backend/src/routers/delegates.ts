@@ -38,9 +38,20 @@ export const delegateRouter = router({
     )
     .mutation(async (opts) => {
       const userAddress = opts.ctx.user?.address;
+      const userId = opts.ctx.user?.id;
       if (!userAddress) {
         throw new Error('User not found');
       }
+
+      // Check if a delegate with the user’s address already exists.
+      const existingDelegate = await db.query.delegates.findFirst({
+        where: eq(delegates.userId, userId),
+      });
+
+      if (existingDelegate) {
+        throw new Error('A delegate with the address of the user already exists');
+      }
+
       const user = await db.query.users.findFirst({
         where: eq(users.address, userAddress),
         with: {
