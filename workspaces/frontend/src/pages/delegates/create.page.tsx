@@ -46,6 +46,7 @@ export function Page() {
     formState: { errors, isValid },
   } = useForm<FormValues>();
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
+  const [error, setError] = useState("");
   const {
     editorValue: customAgreementEditorValue,
     handleEditorChange: handleCustomAgreementEditorChange,
@@ -78,9 +79,11 @@ export function Page() {
         .mutateAsync(data as FormValues)
         .then((res) => {
           window.location.href = `/delegates/profile/${res.id}`;
+          setError("");
         })
         .catch((err) => {
           console.log(err);
+          setError(err?.message ? err.message : JSON.stringify(err));
         });
     } catch (error) {
       // Handle error
@@ -247,6 +250,7 @@ export function Page() {
                   Submit delegate profile
                 </Button>
               </Flex>
+              {error.length ? <Text color="red">{error}</Text> : null}
             </Stack>
           </form>
         </Box>
