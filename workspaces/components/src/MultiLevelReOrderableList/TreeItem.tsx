@@ -38,6 +38,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       wrapperRef,
       childCount,
       isNew,
+      clone,
+      ghost,
       isLast,
       onDeleteClick,
       ...props
@@ -48,6 +50,16 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     let fontSize: string | undefined = "sm";
     const isFirstLevel = depth === 0;
     const paddingLeft = isFirstLevel ? 2 : indentationWidth * depth;
+    const backgroundColor = isNew ? "#E2E2FF" : "white";
+    const borderBottom =
+      isFirstLevel && !clone && !isLast ? "1px solid #DCDBDD" : undefined;
+    const borderRadius = clone ? "base" : "white";
+    const hoverStyles =
+      clone && isNew
+        ? "#E2E2FF"
+        : isNew && !clone && !ghost
+        ? "#E2E2FF"
+        : "white";
 
     if (depth == 1) {
       fontColor = "#4A4A4F";
@@ -57,25 +69,15 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       fontSize = "xs";
     }
 
-    const borderBottom = isFirstLevel && !clone && !isLast ? "1px solid #DCDBDD" : undefined;
-    const borderRadius = clone ? "base" : "white";
-    const hoverStyles =
-      clone && isNew
-        ? "#E2E2FF"
-        : isNew && !clone && !ghost
-        ? "#E2E2FF"
-        : "white";
-
     return (
       <Flex
-        position="relative"
+        opacity={ghost ? 0.5 : 1}
         alignItems="center"
         height="50px"
-        border={clone ? "1px solid #DCDBDD" : "unset"}
-        borderBottom={borderBottom}
-        backgroundColor={hoverStyles}
+        boxShadow={borderRadius}
         borderRadius={borderRadius}
-        width={ghost ? "200px" : undefined}
+        borderBottom={borderBottom}
+        backgroundColor={backgroundColor}
         pl={`${paddingLeft}`}
         pr="1"
         //@ts-expect-error error

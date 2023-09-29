@@ -83,7 +83,7 @@ interface VotingPropsSkeletonProps {
   firstSkeletonWidth?: string;
 }
 
-const VotingPropsSkeleton = ({
+export const VotingPropsSkeleton = ({
   numRows = 9,
   numSkeletonsPerRow = 3,
   firstSkeletonWidth = "500%",
@@ -109,7 +109,7 @@ const SORTING_OPTIONS = [
 
 type SortingTypes = "desc" | "asc" | "most_discussed" | "" | undefined;
 
-function Proposal({ data }: any) {
+export function Proposal({ data }: any) {
   const comments = data.comments;
   const count = comments ? comments.length : 0;
 
@@ -168,6 +168,7 @@ export function Page() {
     setFiltersState({ ...filtersState, filters: [] });
   };
 
+  console.log("filtersState", filtersState);
   const {
     data,
     isLoading: loading,

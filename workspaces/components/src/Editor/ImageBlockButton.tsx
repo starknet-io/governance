@@ -100,7 +100,7 @@ const ImageBlockButton: React.FC<ImageBlockButtonProps> = ({
         isActive={isBlockActive(editor, format)}
         icon={
           <ImageIcon
-            boxSize="18px"
+            boxSize="20px"
             color={isBlockActive(editor, format) ? activeColor : inactiveColor}
           />
         }

@@ -97,8 +97,13 @@ export function MultiLevelReOrderableList({
 
   const flattenedItems = useMemo(() => {
     const flattenedTree = flattenTree(items);
-    return removeChildrenOf(flattenedTree, []);
-  }, [items]);
+    const collapsedItems = flattenedTree.reduce(
+      (acc: UniqueIdentifier[], { children, id }) =>
+        activeId === id && children.length ? [...acc, id] : acc,
+      [],
+    );
+    return removeChildrenOf(flattenedTree, collapsedItems);
+  }, [items, activeId]);
 
   const projected =
     activeId && overId
@@ -217,7 +222,7 @@ export function MultiLevelReOrderableList({
           items={sortedIds}
           strategy={verticalListSortingStrategy}
         >
-          {flattenedItems.map(({ id, depth, data, isNew }, index) => (
+          {flattenedItems.map(({ id, depth, data, isNew, children }, index) => (
             <SortableTreeItem
               key={id}
               id={id}
@@ -228,6 +233,11 @@ export function MultiLevelReOrderableList({
               onRemove={removable ? () => handleRemove(id) : undefined}
               isLast={flattenedItems.length === index + 1}
               onDeleteClick={onItemDeleteClick}
+              // onCollapse={
+              //   collapsible && children.length
+              //     ? () => handleCollapse(id)
+              //     : undefined
+              // }
             />
           ))}
           {createPortal(
