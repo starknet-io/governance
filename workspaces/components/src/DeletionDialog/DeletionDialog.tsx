@@ -74,8 +74,12 @@ export function DeletionDialog({
           </AlertDialogHeader>
 
           {!children ? (
-            <AlertDialogBody display={"flex"} justifyContent={"center"}>
-              <Icon as={TrashWarningIcon} boxSize={104} />
+            <AlertDialogBody
+              display={"flex"}
+              justifyContent={"center"}
+              gap="24px"
+            >
+              <TrashWarningIcon boxSize={104} color="#E4442F" />
             </AlertDialogBody>
           ) : (
             children
