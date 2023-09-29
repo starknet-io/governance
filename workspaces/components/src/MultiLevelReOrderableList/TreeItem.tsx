@@ -35,6 +35,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       value,
       wrapperRef,
       isNew,
+      clone,
+      ghost,
       isLast,
       onDeleteClick,
       ...props
@@ -45,6 +47,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     let fontSize: string | undefined = "sm";
     const isFirstLevel = depth === 0;
     const paddingLeft = isFirstLevel ? 2 : indentationWidth * depth;
+    const borderBottom =
+      isFirstLevel && !isLast && !clone ? "1px solid #DCDBDD" : "unset";
+    const backgroundColor = isNew ? "#E2E2FF" : "white";
 
     if (depth == 1) {
       fontColor = "#4A4A4F";
@@ -56,10 +61,13 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     return (
       <Flex
+        opacity={ghost ? 0.5 : 1}
         alignItems="center"
         height="50px"
-        borderBottom={isFirstLevel && !isLast ? "1px solid #DCDBDD" : "unset"}
-        backgroundColor={isNew ? "#E2E2FF" : "white"}
+        boxShadow={clone ? "base" : undefined}
+        borderRadius={clone ? "base" : undefined}
+        borderBottom={borderBottom}
+        backgroundColor={backgroundColor}
         pl={`${paddingLeft}`}
         pr="1"
         //@ts-expect-error error
@@ -79,8 +87,13 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               {value?.title ?? ""}
             </Text>
           </Flex>
-          {isFirstLevel && onDeleteClick != undefined && (
-            <Button onClick={() => onDeleteClick?.(value.id)} p="0" m="0" variant="ghost">
+          {isFirstLevel && !clone && onDeleteClick != undefined && (
+            <Button
+              onClick={() => onDeleteClick?.(value.id)}
+              p="0"
+              m="0"
+              variant="ghost"
+            >
               <TrashIcon />
             </Button>
           )}
