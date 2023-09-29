@@ -357,6 +357,7 @@ export const buttonTheme = {
 
       _hover: {
         color: "content.default.hover",
+        backgroundColor: "surface.forms.hover",
       },
       _active: {
         bg: "surface.forms.selected",

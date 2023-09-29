@@ -88,7 +88,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         ol: ({ ...props }) => (
           <ol
             style={{
-              fontFamily: "Inter",
+              fontFamily: `'Inter Variable', sans-serif`,
               fontSize: "15px",
               lineHeight: "24px",
               paddingLeft: 17,
@@ -102,7 +102,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         ul: ({ ...props }) => (
           <ul
             style={{
-              fontFamily: "Inter",
+              fontFamily: `'Inter Variable', sans-serif`,
               fontSize: "15px",
               lineHeight: "24px",
               paddingLeft: 17,
@@ -128,7 +128,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
               paddingLeft: "12px",
               marginBottom: 18,
               color: "content.default.default",
-              fontFamily: "Inter",
+              fontFamily: `'Inter Variable', sans-serif`,
               fontSize: "15px",
               lineHeight: "24px",
 

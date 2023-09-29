@@ -32,15 +32,20 @@ export const VoteModal = ({ children, isOpen = false, onClose }: Props) => {
       <ModalOverlay />
       <ModalContent borderRadius="xl" overflow="hidden">
         <ModalCloseButton
-          top="0"
-          right="0"
+          top="standard.xl"
+          right="standard.xl"
           size="lg"
           borderRadius="none"
           borderBottomLeftRadius="md"
+          color="#4A4A4F"
         />
         <ModalBody>
-          <Stack spacing="6">
-            <Heading fontSize="21px" fontWeight="semibold" variant="h3">
+          <Stack spacing="standard.xl">
+            <Heading
+              textAlign="center"
+              color="content.accent.default"
+              variant="h3"
+            >
               Confirm Vote
             </Heading>
 
