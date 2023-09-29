@@ -11,7 +11,6 @@ import MarkButton from "./MarkButton";
 import { useMarkdownEditor } from "./useMarkdownEditor";
 import ImageBlockButton from "./ImageBlockButton";
 import LinkBlockButton from "./LinkBlockButton";
-import { MoreDotsIcon } from "src/Icons/ToolbarIcons";
 import { TextTypeButton } from "./TextTypeButton";
 import { MoreButton } from "./MoreButton";
 
@@ -25,6 +24,8 @@ export const MarkdownEditor: React.FC<
   customEditor,
   hideTabBar = false,
   handleUpload,
+  placeholder,
+  basicEditor = false,
 }) => {
   const { convertMarkdownToSlate } = useMarkdownEditor("");
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
@@ -41,25 +42,38 @@ export const MarkdownEditor: React.FC<
 
   const mainEditor = customEditor || editor;
 
+  if (!mainEditor) return;
+
   return (
     <Box position="relative">
       <Slate
         editor={mainEditor}
-        initialValue={customEditor ? [] : initialValue}
+        initialValue={initialValue}
         onChange={onChange}
       >
         {!hideTabBar && (
           <Toolbar>
             <MarkButton format="bold" />
             <MarkButton format="italic" />
-            <TextTypeButton />
-            <ImageBlockButton editor={mainEditor} handleUpload={handleUpload} />
-            <LinkBlockButton editor={mainEditor} />
+            {!basicEditor && (
+              <>
+                <TextTypeButton />
+                <ImageBlockButton
+                  editor={mainEditor}
+                  handleUpload={handleUpload}
+                />
+                <LinkBlockButton editor={mainEditor} />
+              </>
+            )}
             <Divider ml="2" orientation="vertical" />
             <MoreButton />
           </Toolbar>
         )}
-        <EditableComponent onPaste={handlePaste} minHeight={minHeight} />
+        <EditableComponent
+          placeholder={placeholder}
+          onPaste={handlePaste}
+          minHeight={minHeight}
+        />
       </Slate>
     </Box>
   );

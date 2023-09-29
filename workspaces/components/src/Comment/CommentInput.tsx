@@ -7,16 +7,23 @@ import { useEffect } from "react";
 interface CommentInputProps {
   onSend: (value: string) => void;
   defaultValue?: string;
+  placeholder?: string;
 }
 export const CommentInput = ({
-  defaultValue = "Type your comment",
+  defaultValue,
+  placeholder = "Type your comment",
   onSend,
 }: CommentInputProps) => {
-  const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
-    useMarkdownEditor(defaultValue);
+  const {
+    editorValue,
+    handleEditorChange,
+    editor,
+    clearEditor,
+    setMarkdownValue,
+  } = useMarkdownEditor(defaultValue);
 
   const processData = async () => {
-    editor.insertNodes(await convertMarkdownToSlate(defaultValue));
+    await setMarkdownValue(defaultValue ?? '');
   };
 
   useEffect(() => {
@@ -24,16 +31,20 @@ export const CommentInput = ({
   }, []);
 
   const handleSend = () => {
+    clearEditor();
     onSend(editorValue);
   };
 
   return (
     <Box mb="16px" position="relative">
       <MarkdownEditor
+        basicEditor
+        customEditor={editor}
+        placeholder={placeholder}
         onChange={handleEditorChange}
         value={editorValue}
-        customEditor={editor}
       />
+
       <Button
         className="submit-button"
         variant="primary"

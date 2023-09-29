@@ -212,7 +212,10 @@ export function Page() {
               </Heading>
               {user ? (
                 <FormControl id="delegate-statement">
-                  <CommentInput onSend={handleCommentSend} />
+                  <CommentInput
+                    placeholder="Type your comment"
+                    onSend={handleCommentSend}
+                  />
                 </FormControl>
               ) : (
                 <></>

@@ -89,7 +89,7 @@ export function MultiLevelReOrderableList({
   removable,
   onItemsChange,
   setItems,
-  onItemDeleteClick
+  onItemDeleteClick,
 }: Props) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
@@ -97,8 +97,13 @@ export function MultiLevelReOrderableList({
 
   const flattenedItems = useMemo(() => {
     const flattenedTree = flattenTree(items);
-    return removeChildrenOf(flattenedTree, []);
-  }, [items]);
+    const collapsedItems = flattenedTree.reduce(
+      (acc: UniqueIdentifier[], { children, id }) =>
+        activeId === id && children.length ? [...acc, id] : acc,
+      [],
+    );
+    return removeChildrenOf(flattenedTree, collapsedItems);
+  }, [items, activeId]);
 
   const projected =
     activeId && overId
@@ -197,7 +202,12 @@ export function MultiLevelReOrderableList({
   }
 
   return (
-    <Box boxShadow="sm" borderRadius="base" overflow="hidden">
+    <Box
+      boxShadow="sm"
+      backgroundColor="white"
+      borderRadius="base"
+      overflow="hidden"
+    >
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -212,7 +222,7 @@ export function MultiLevelReOrderableList({
           items={sortedIds}
           strategy={verticalListSortingStrategy}
         >
-          {flattenedItems.map(({ id, depth, data, isNew }, index) => (
+          {flattenedItems.map(({ id, depth, data, isNew, children }, index) => (
             <SortableTreeItem
               key={id}
               id={id}
@@ -232,7 +242,8 @@ export function MultiLevelReOrderableList({
                   id={activeId}
                   depth={activeItem.depth}
                   clone
-                  childCount={getChildCount(items, activeId) + 1}
+                  isNew={activeItem.isNew}
+                  childCount={getChildCount(items, activeId)}
                   value={activeItem.data}
                   indentationWidth={indentationWidth}
                   onDeleteClick={onItemDeleteClick}
