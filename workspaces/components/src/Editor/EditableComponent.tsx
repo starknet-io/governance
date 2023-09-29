@@ -9,6 +9,7 @@ import isHotkey from "is-hotkey";
 import { Text } from "src/Text";
 
 interface EditableComponentProps {
+  placeholder?: string;
   minHeight?: string;
   autoFocus?: boolean;
   onPaste?: (event: ClipboardEvent<HTMLDivElement>) => void;
@@ -18,6 +19,7 @@ export const EditableComponent = ({
   minHeight,
   autoFocus = false,
   onPaste,
+  placeholder
 }: EditableComponentProps) => {
   const renderElement = useCallback(
     (props: RenderElementProps) => <Element {...props} />,
@@ -34,7 +36,7 @@ export const EditableComponent = ({
     <Editable
       renderElement={renderElement}
       renderLeaf={renderLeaf}
-      placeholder="Type your message"
+      placeholder={placeholder}
       renderPlaceholder={({ children, attributes }) => (
         <Text
           as="span"

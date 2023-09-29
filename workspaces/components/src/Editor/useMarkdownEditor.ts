@@ -9,7 +9,7 @@ import { createEditor } from "slate";
 import { ParagraphElement } from "./initialValue";
 
 export function useMarkdownEditor(
-  initialValue: any,
+  initialValue?: any,
   initialSlateData?: ParagraphElement[],
 ) {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);

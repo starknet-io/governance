@@ -8,4 +8,6 @@ export interface MarkdownEditorProps {
   minHeight?: string;
   customEditor?: BaseEditor & ReactEditor & HistoryEditor;
   hideTabBar?: boolean;
+  placeholder?: string;
+  basicEditor?: boolean;
 }

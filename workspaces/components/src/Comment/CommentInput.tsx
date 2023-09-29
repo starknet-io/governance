@@ -9,7 +9,7 @@ interface CommentInputProps {
   defaultValue?: string;
 }
 export const CommentInput = ({
-  defaultValue = "Type your comment",
+  defaultValue = "",
   onSend,
 }: CommentInputProps) => {
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
@@ -30,6 +30,8 @@ export const CommentInput = ({
   return (
     <Box mb="16px" position="relative">
       <MarkdownEditor
+        basicEditor
+        placeholder={"Type your message"}
         onChange={handleEditorChange}
         value={editorValue}
         customEditor={editor}
