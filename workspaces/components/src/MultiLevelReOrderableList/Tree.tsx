@@ -233,11 +233,6 @@ export function MultiLevelReOrderableList({
               onRemove={removable ? () => handleRemove(id) : undefined}
               isLast={flattenedItems.length === index + 1}
               onDeleteClick={onItemDeleteClick}
-              // onCollapse={
-              //   collapsible && children.length
-              //     ? () => handleCollapse(id)
-              //     : undefined
-              // }
             />
           ))}
           {createPortal(
