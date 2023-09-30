@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { Code } from "@chakra-ui/react";
 import { Heading } from "../Heading";
 import { Text, LocalTextProps } from "../Text";
+import "./bodyText.css";
 
 export interface MarkdownRendererProps {
   content: string;
@@ -25,16 +26,16 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
           <Heading
             variant="h3"
             {...props}
-            mt="standard.2xl"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             color="content.accent.default"
           />
         ),
         h2: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -42,8 +43,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h3: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -51,8 +52,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h4: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -60,8 +61,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h5: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -69,8 +70,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h6: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -80,8 +81,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
             variant="large"
             {...textProps}
             {...props}
-            mb="16px"
-            mt="8px"
+            mb="standard.md"
+            mt="standard.xs"
             color="content.default.default"
           />
         ),
