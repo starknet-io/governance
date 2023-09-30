@@ -1938,16 +1938,6 @@ const delegates = [
     "c5": null,
     "c6": null,
     "c7": null
-  },
-  {
-    "c0": "0x106b1F88867D99840CaaCAC2dA91265BA6E93e2B",
-    "c1": null,
-    "c2": null,
-    "c3": "https://fastly.picsum.photos/id/337/200/300.jpg?hmac=0CnfGB9OuB4D8IneXqgjPMaGgLSHBKRjSkl_ITBmDxQ",
-    "c4": "30000",
-    "c5": null,
-    "c6": null,
-    "c7": null
   }
 ]
 
