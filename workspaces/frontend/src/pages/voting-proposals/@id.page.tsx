@@ -39,6 +39,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Username,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -553,9 +554,12 @@ export function Page() {
                 <Text variant="small" color="content.default.default">
                   •
                 </Text>
-                <Stat.Root>
-                  <Stat.Text label={`By ${data?.proposal?.author}`} />
-                </Stat.Root>
+                {/* toDo get user images / display names */}
+                <Username
+                  src={null}
+                  displayName={truncateAddress(`${data?.proposal?.author}`)}
+                  address={`${data?.proposal?.author}`}
+                />
               </Flex>
               <Flex gap="standard.xs" paddingTop="0" alignItems="center">
                 <Text
