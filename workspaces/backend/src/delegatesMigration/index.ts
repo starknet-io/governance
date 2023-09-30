@@ -85,6 +85,13 @@ async function createAdminUsers() {
           updatedAt: new Date(),
         })
         .returning();
+    } else {
+      await db
+        .update(users)
+        .set({
+          role: 'admin',
+        })
+        .returning();
     }
   }
 }
@@ -182,14 +189,6 @@ async function createCouncils() {
 }
 
 async function seedData() {
-  // First, create admin users if they don't exist
-  console.log('Creating Admins');
-  await createAdminUsers();
-  console.log('Admins Created');
-
-  // Second, create councils and add admin users if not exist
-  await createCouncils();
-
   // Delegates seeding
   console.log('Creating delegates');
   /*
@@ -265,7 +264,6 @@ async function seedData() {
     if (!existingDelegate) {
       // Step 4: Insert new delegate if not exists
       console.log('new delegate query')
-      console.log(entry.c3)
 
       const newDelegate = {
         userId: userId,
@@ -317,6 +315,14 @@ async function seedData() {
     }
   }
   console.log('Delegates created');
+  // Create admin users if they don't exist
+  console.log('Creating Admins');
+  await createAdminUsers();
+  console.log('Admins Created');
+
+  // Second, create councils and add admin users if not exist
+  await createCouncils();
+
   // Find one admin user to pass to createLearnSections
   const oneAdminUser = await db.query.users.findFirst({
     where: eq(users.role, 'admin'),
