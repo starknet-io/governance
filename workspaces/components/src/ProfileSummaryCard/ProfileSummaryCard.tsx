@@ -51,7 +51,7 @@ const Profile = ({
     <Box
       display="flex"
       alignItems="center"
-      gap={size === "lg" ? "16px" : size === "xs" ? "8px" : "16px"}
+      gap={size === "lg" ? "16px" : size === "xs" ? "standard.sm" : "16px"}
     >
       {imgUrl ? (
         // debug next line
@@ -72,7 +72,7 @@ const Profile = ({
           variant="h3"
           fontSize={size === "lg" ? "20px" : "16px"}
           color="content.accent.default"
-          lineHeight={size === "sm" ? "16px" : "24px"}
+          lineHeight={size === "lg" ? "24px" : "16px"}
         >
           {formattedAddress}
         </Heading>

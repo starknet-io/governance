@@ -118,7 +118,7 @@ export const DelegateCard = ({
           <ProfileSummaryCard.Root>
             <ProfileSummaryCard.Profile
               imgUrl={ensAvatar}
-              size="sm"
+              size="xs"
               address={address}
               ensName={ensName}
               subtitle={votesFormatted.toUpperCase()}
