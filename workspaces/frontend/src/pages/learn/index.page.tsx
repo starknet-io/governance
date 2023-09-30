@@ -167,7 +167,9 @@ export function Page() {
               </Stat.Root>
             </Flex>
             <Divider mt="standard.xl" />
-            <MarkdownRenderer content={selectedPage?.content ?? ""} />
+            <Box mt="standard.2xl">
+              <MarkdownRenderer content={selectedPage?.content ?? ""} />
+            </Box>
           </Stack>
         ) : (
           <Box
