@@ -14,10 +14,12 @@ import {
   MenuItem,
   MarkdownRenderer,
   Text,
+  Username,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -136,7 +138,7 @@ export function Page() {
       console.log(error);
     }
   };
-
+  const formattedAddress = truncateAddress(`${post?.author?.address}`);
   return (
     <>
       <Box
@@ -180,15 +182,20 @@ export function Page() {
                 paddingTop="0"
                 alignItems="center"
               >
-                <Stat.Root>
-                  <Stat.Text
-                    label={
-                      post?.author?.username ??
-                      post?.author?.ensName ??
-                      post?.author?.address
-                    }
-                  />
-                </Stat.Root>
+                <Username
+                  address={post?.author?.address}
+                  displayName={
+                    post?.author?.username ??
+                    post?.author?.ensName ??
+                    formattedAddress
+                  }
+                  src={
+                    post?.author?.profileImage ??
+                    post?.author?.ensAvatar ??
+                    null
+                  }
+                />
+
                 <Text variant="small" color="content.default.default">
                   •
                 </Text>
