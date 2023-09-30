@@ -206,13 +206,15 @@ export function Page() {
                 </Stat.Root>
               </Flex>
               <Divider />
-
-              <MarkdownRenderer content={post?.content || ""} />
+              <Box mt="standard.2xl">
+                <MarkdownRenderer content={post?.content || ""} />
+              </Box>
               <Divider my="32px" />
               <Heading
                 id="discussion"
                 color="content.accent.default"
                 variant="h3"
+                mb="standard.lg"
               >
                 Discussion
               </Heading>
