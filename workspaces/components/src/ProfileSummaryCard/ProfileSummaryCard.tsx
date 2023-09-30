@@ -67,7 +67,7 @@ const Profile = ({
           address={avatarString}
         />
       )}
-      <Stack spacing="4px">
+      <Stack spacing={size === "lg" ? "4px" : "2px"}>
         <Heading
           variant="h3"
           fontSize={size === "lg" ? "20px" : "16px"}
@@ -80,6 +80,7 @@ const Profile = ({
           variant="captionSmallUppercase"
           color="content.support.default"
           fontWeight="600"
+          letterSpacing="0.5px"
         >
           {address && subtitle === null ? formattedAddress : subtitle}
         </Text>
