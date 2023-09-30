@@ -271,7 +271,7 @@ async function seedData() {
         statement: statementMarkdown,
         twitter: entry.c1 ? `@${entry.c1}` : null,
         discord: null,
-        discourse: null,
+        discourse: entry.c6,
         confirmDelegateAgreement: null,
         agreeTerms: true,
         understandRole: true,
