@@ -21,6 +21,7 @@ const variants = {
     },
     header: {
       pb: "0",
+      px: "standard.md",
     },
     body: {
       px: "standard.md",

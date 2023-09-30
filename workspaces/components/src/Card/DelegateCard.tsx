@@ -10,12 +10,13 @@ import {
   LinkOverlay,
   Spinner,
 } from "@chakra-ui/react";
-import { Tag } from "../Tag/";
+import { Tag } from "../Tag";
 import { Button } from "../Button";
 import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
 import { MarkdownRenderer } from "../MarkdownRenderer";
 import { formatVotesAmount } from "src/utils";
 import "./karma.css";
+import { Username } from "src/Username";
 
 export type DelegateCardProps = {
   statement: string | null;
@@ -144,6 +145,7 @@ export const DelegateCard = ({
           content={formattedDelegateStatement || ""}
         />
       </CardBody>
+
       <CardFooter>
         <Box width="100%" display="flex" flexDirection="column" gap="16px">
           <Box>
