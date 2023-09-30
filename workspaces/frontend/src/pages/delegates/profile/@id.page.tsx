@@ -615,10 +615,12 @@ export function Page() {
           color="content.default.default"
           width="100%"
         >
-          <Heading color="content.accent.default" variant="h2">
+          <Heading color="content.accent.default" variant="h2" mb="12px">
             Delegate pitch
           </Heading>
-          <MarkdownRenderer content={delegate?.statement || ""} />
+          <Box mt="standard.2xl">
+            <MarkdownRenderer content={delegate?.statement || ""} />
+          </Box>
           <Box mt="24px">
             <Heading mb="24px" color="content.accent.default" variant="h3">
               Past Votes
