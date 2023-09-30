@@ -612,8 +612,9 @@ export function Page() {
               <></>
             )}
 
-            <MarkdownRenderer content={data?.proposal?.body || ""} />
-
+            <Box mt="standard.2xl">
+              <MarkdownRenderer content={data?.proposal?.body || ""} />
+            </Box>
             <Divider my="standard.2xl" />
             <Heading
               color="content.accent.default"
