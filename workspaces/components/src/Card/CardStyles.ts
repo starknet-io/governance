@@ -17,16 +17,17 @@ const variants = {
   delegate: definePartsStyle({
     container: {
       minWidth: "316px",
+      gap: "standard.lg",
     },
     header: {
-      paddingBottom: "standard.lg",
+      pb: "0",
     },
     body: {
       px: "standard.md",
       py: "0px",
     },
     footer: {
-      paddingTop: "standard.lg",
+      paddingTop: "0",
     },
   }),
   homePage: definePartsStyle({

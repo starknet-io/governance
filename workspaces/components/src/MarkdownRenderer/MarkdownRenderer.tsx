@@ -79,11 +79,11 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         p: ({ ...props }) => (
           <Text
             variant="large"
-            {...textProps}
             {...props}
             mb="standard.md"
             mt="standard.xs"
             color="content.default.default"
+            {...textProps}
           />
         ),
         code: ({ ...props }) => (

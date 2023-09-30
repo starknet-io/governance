@@ -81,7 +81,7 @@ const DelegateTags = ({ type }: { type: string[] }) => {
   );
 
   return (
-    <Box display="flex" flexDirection="row" gap="8px" mb="12px">
+    <Box display="flex" flexDirection="row" gap="8px" mb="standard.xs">
       {type[0].length > 20 ? (
         <>
           {renderTags(0, 1)}
@@ -137,6 +137,9 @@ export const DelegateCard = ({
             color: "#4A4A4F",
             fontStyle: "normal!important",
             fontWeight: "400!important",
+
+            marginTop: "-0px!important",
+            marginBottom: "0px!important",
           }}
           content={formattedDelegateStatement || ""}
         />
