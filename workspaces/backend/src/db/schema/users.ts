@@ -5,7 +5,6 @@ import {
   text,
   timestamp,
   uuid,
-  boolean,
 } from 'drizzle-orm/pg-core';
 import { delegates } from './delegates';
 import { usersToCouncils } from './usersToCouncils';
