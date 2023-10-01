@@ -11,7 +11,6 @@ import {
   Heading,
   ListRow,
   MarkdownRenderer,
-  ProfileSummaryCard,
   Stack,
   SummaryItems,
   MenuItem,
@@ -22,6 +21,9 @@ import {
   Skeleton,
   SkeletonCircle,
   Banner,
+  AvatarWithText,
+  Button,
+  Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
@@ -37,6 +39,25 @@ import { gql } from "src/gql";
 import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
 import { hasPermission } from "src/utils/helpers";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+
+const delegateInterests: Record<string, string> = {
+  cairo_dev: "Cairo Dev",
+  daos: "DAOs",
+  governance: "Governance",
+  identity: "Identity",
+  infrastructure: "Infrastructure",
+  infrastructure_starknet_dev: "Infrastructure Starknet dev",
+  legal: "Legal",
+  professional_delegate: "Professional delegate",
+  security: "Security",
+  starknet_community: "Starknet community",
+  web3_community: "Web3 community",
+  web3_developer: "Web3 developer",
+  gaming: "Gaming",
+  nft: "NFT",
+  defi: "DeFi",
+};
 
 const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
   query DelegateProposals($space: String!) {
@@ -270,16 +291,34 @@ export function Page() {
   const renderAgreementValue = () => {
     if (delegate?.confirmDelegateAgreement) {
       return (
-        <Flex color="#292932" fontWeight="medium" gap={1}>
-          <div>Yes</div>-
-          <button onClick={() => setShowAgreement(true)}>View</button>
+        <Flex gap={1}>
+          <Text variant="small" color="content.accent.default">
+            Yes -
+          </Text>
+          <Button
+            top="-1px"
+            left="-6px"
+            variant="textSmall"
+            onClick={() => setShowAgreement(true)}
+          >
+            View
+          </Button>
         </Flex>
       );
     } else if (delegate?.customAgreement) {
       return (
         <Flex color="#292932" fontWeight="medium" gap={1}>
-          <div>Custom</div>-
-          <button onClick={() => setShowAgreement(true)}>View</button>
+          <Text variant="small" color="content.accent.default">
+            Custom -
+          </Text>
+          <Button
+            top="-1px"
+            left="-6px"
+            variant="textSmall"
+            onClick={() => setShowAgreement(true)}
+          >
+            View
+          </Button>
         </Flex>
       );
     } else {
@@ -311,22 +350,21 @@ export function Page() {
 
     return (
       <>
-        <ProfileSummaryCard.MoreActions>
-          {canEdit && (
-            <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
-              Edit
-            </MenuItem>
-          )}
-          <MenuItem as="a" href="/delegate/edit/">
-            Report
+        {canEdit && (
+          <MenuItem as="a" href={`/delegates/profile/edit/${delegate?.id}`}>
+            Edit
           </MenuItem>
-        </ProfileSummaryCard.MoreActions>
+        )}
+        <MenuItem as="a" href="/delegate/edit/">
+          Report
+        </MenuItem>
       </>
     );
   }
 
   const isLoadingProfile = !delegateResponse.isFetched;
-
+  const isLoadingSocials = !delegateResponse.isFetched;
+  const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched && delegation.data === delegateAddress;
 
@@ -439,53 +477,65 @@ export function Page() {
         overflow="auto"
       >
         {isLoadingProfile ? (
-          <Box
-            display="flex"
-            flexDirection="column"
-            gap="12px"
-            padding="12px"
-            mb="24px"
-          >
+          <Box display="flex" flexDirection="column" gap="12px" mb="18px">
             <Flex gap="20px" alignItems="center">
-              <SkeletonCircle size="60px" />
-              <Skeleton height="24px" width="70%" />
+              {/* Avatar or Indenticon */}
+              <SkeletonCircle size="64px" />
+
+              <Flex flex="1" direction="column">
+                {/* Header Text */}
+                <Skeleton height="24px" width="70%" mb="4px" />
+
+                {/* Subheader Text */}
+                <Skeleton height="16px" width="50%" />
+              </Flex>
+
+              {/* Dropdown Skeleton */}
             </Flex>
-            {/* Profile Image */}
-            <Skeleton height="44px" width="100%" /> {/* ENS Name */}
+            {/* Delegate Your Votes Button Skeleton */}
+            <Skeleton height="44px" width="100%" borderRadius="md" />
           </Box>
         ) : (
-          <ProfileSummaryCard.Root>
-            <ProfileSummaryCard.Profile
-              imgUrl={
-                delegate?.author?.ensAvatar || delegate?.author?.profileImage
-              }
-              ensName={delegate?.author?.username || delegate?.author?.ensName}
-              address={delegate?.author?.ensName || delegateAddress}
-              avatarString={delegate?.author?.ensAvatar || delegateAddress}
-            >
-              <ActionButtons />
-            </ProfileSummaryCard.Profile>
-            {user ? (
-              <ProfileSummaryCard.PrimaryButton
-                label={
-                  hasUserDelegatedTokensToThisDelegate
-                    ? "Undelegate your votes"
-                    : "Delegate your votes"
-                }
-                onClick={() => {
-                  setIsOpen(true);
-                  if (hasUserDelegatedTokensToThisDelegate) {
-                    setIsUndelegation(true);
-                  }
-                }}
-              />
-            ) : (
-              <></>
-            )}
-          </ProfileSummaryCard.Root>
+          <AvatarWithText
+            src={
+              delegate?.author?.ensAvatar ||
+              delegate?.author?.profileImage ||
+              null
+            }
+            headerText={
+              delegate?.author?.username ||
+              delegate?.author?.ensName ||
+              truncateAddress(delegateAddress)
+            }
+            subheaderText={
+              delegate?.author?.username || delegate?.author?.ensName
+                ? truncateAddress(delegateAddress)
+                : null
+            }
+            address={delegateAddress}
+            dropdownChildren={<ActionButtons />}
+          />
         )}
-
-        <Box mt="24px">
+        {user ? (
+          <Button
+            mt="standard.2xl"
+            variant="primary"
+            size="standard"
+            onClick={() => {
+              setIsOpen(true);
+              if (hasUserDelegatedTokensToThisDelegate) {
+                setIsUndelegation(true);
+              }
+            }}
+          >
+            {hasUserDelegatedTokensToThisDelegate
+              ? "Undelegate your votes"
+              : "Delegate your votes"}
+          </Button>
+        ) : (
+          <></>
+        )}
+        <Box mt="standard.md">
           {delegation.isFetched && delegation.data === delegateAddress && (
             <Banner
               label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
@@ -496,25 +546,30 @@ export function Page() {
             <Banner label="You can’t delegate votes to your own account." />
           )}
         </Box>
-
-        <Box mt="32px">
+        <Box pt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
             <SummaryItems.Item
+              isLoading={isLoadingGqlResponse}
               label="Proposals voted on"
-              value={gqlResponse.data?.votes?.length.toString() ?? ""}
+              value={gqlResponse.data?.votes?.length.toString() || "0"}
             />
             <SummaryItems.Item
+              isLoading={isLoadingGqlResponse}
               label="Delegated votes"
-              value={gqlResponse.data?.vp?.vp?.toString()}
+              value={(gqlResponse.data?.vp?.vp || 0).toString()}
             />
             <SummaryItems.Item
+              isLoading={!delegateCommentsResponse.isFetched}
               label="Total comments"
-              value={delegateCommentsResponse.data?.length.toString()}
+              value={delegateCommentsResponse.data?.length.toString() || "0"}
             />
             <SummaryItems.Item
+              isLoading={isLoadingGqlResponse}
               label="For/against/abstain"
               value={
-                stats && `${stats[1] ?? 0}/${stats[2] ?? 0}/${stats[3] ?? 0}`
+                stats
+                  ? `${stats[1] ?? 0}/${stats[2] ?? 0}/${stats[3] ?? 0}`
+                  : "0/0/0"
               }
             />
             <SummaryItems.Item
@@ -522,85 +577,61 @@ export function Page() {
               value={renderAgreementValue()}
             />
             <SummaryItems.Item
-              isCopiable
-              isTruncated
+              isLoading={!delegateResponse.isFetched}
+              isCopiable={!!delegate?.author?.starknetAddress}
+              isTruncated={!!delegate?.author?.starknetAddress}
               label="Starknet address"
-              value={delegate?.author?.starknetAddress ?? ""}
+              value={delegate?.author?.starknetAddress || "None"}
             />
           </SummaryItems.Root>
-          {/* {isLoadingSummary ? (
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap="12px"
-              padding="12px"
-              mb="24px"
-            >
-              <Skeleton height="36px" width="100%" />
-              <Skeleton height="36px" width="100%" />
-              <Skeleton height="36px" width="100%" />
-              <Skeleton height="36px" width="100%" />
-              <Skeleton height="36px" width="100%" />
-              <Skeleton height="36px" width="100%" />
-              <Skeleton height="100px" width="100%" />
-              <Skeleton height="36px" width="100%" />
-            </Box>
-          ) : (
-            <SummaryItems.Root>
-              <SummaryItems.Item
-                label="Proposals voted on"
-                value={gqlResponse.data?.votes?.length.toString() ?? ""}
-              />
-              <SummaryItems.Item
-                label="Delegated votes"
-                value={gqlResponse.data?.vp?.vp?.toString()}
-              />
-              <SummaryItems.Item
-                label="Total comments"
-                value={delegateCommentsResponse.data?.length.toString()}
-              />
-              <SummaryItems.Item
-                label="For/against/abstain"
-                value={
-                  stats && `${stats[1] ?? 0}/${stats[2] ?? 0}/${stats[3] ?? 0}`
-                }
-              />
-              <SummaryItems.Item
-                label="Delegation agreement"
-                value={renderAgreementValue()}
-              />
-              <SummaryItems.Item
-                isCopiable
-                isTruncated
-                label="Starknet address"
-                value={delegate?.author?.starknetAddress ?? ""}
-              />
-            </SummaryItems.Root>
-          )} */}
         </Box>
-        {delegate?.twitter || delegate?.discourse || delegate?.discord ? (
-          <Divider mt="32px" mb="32px" />
+        {isLoadingSocials ||
+        delegate?.twitter ||
+        delegate?.discourse ||
+        delegate?.discord ? (
+          <>
+            <Divider mb="standard.2xl" />
+            <SummaryItems.Root direction="row">
+              {(isLoadingSocials || delegate?.twitter) && (
+                <SummaryItems.Socials
+                  label="twitter"
+                  value={delegate?.twitter}
+                  isLoading={isLoadingSocials}
+                />
+              )}
+              {(isLoadingSocials || delegate?.discourse) && (
+                <SummaryItems.Socials
+                  label="discourse"
+                  value={delegate?.discourse}
+                  isLoading={isLoadingSocials}
+                />
+              )}
+              {(isLoadingSocials || delegate?.discord) && (
+                <SummaryItems.Socials
+                  label="discord"
+                  value={delegate?.discord}
+                  isLoading={isLoadingSocials}
+                />
+              )}
+            </SummaryItems.Root>
+          </>
         ) : null}
-
-        <SummaryItems.Root direction="row">
-          {delegate?.twitter && (
-            <SummaryItems.Socials label="twitter" value={delegate?.twitter} />
-          )}
-          {delegate?.discourse && (
-            <SummaryItems.Socials
-              label="discourse"
-              value={delegate?.discourse}
-            />
-          )}
-          {delegate?.discord && (
-            <SummaryItems.Socials label="discord" value={delegate?.discord} />
-          )}
-        </SummaryItems.Root>
-        <Divider mt="32px" mb="32px" />
+        <Divider mt="standard.2xl" mb="standard.2xl" />
         <SummaryItems.Root>
-          {Array.isArray(delegate?.interests) ? (
+          {isLoadingProfile ? (
+            // Skeleton representation for interests tags
+            <Flex gap="8px">
+              <Skeleton height="24px" width="80px" borderRadius="md" />
+              <Skeleton height="24px" width="100px" borderRadius="md" />
+              <Skeleton height="24px" width="90px" borderRadius="md" />
+              {/* Add or remove skeletons based on expected number of tags */}
+            </Flex>
+          ) : Array.isArray(delegate?.interests) ? (
             delegate?.interests?.map((item: any) => (
-              <SummaryItems.Tags key={item} type={item} />
+              <SummaryItems.Tags
+                key={item}
+                type={delegateInterests[item] || item}
+              />
             ))
           ) : (
             <></>
@@ -615,11 +646,19 @@ export function Page() {
           color="content.default.default"
           width="100%"
         >
-          <Heading color="content.accent.default" variant="h2" mb="12px">
+          <Heading color="content.accent.default" variant="h2">
             Delegate pitch
           </Heading>
           <Box mt="standard.2xl">
-            <MarkdownRenderer content={delegate?.statement || ""} />
+            {isLoadingProfile ? (
+              <Box display="flex" flexDirection="column" gap="20px">
+                <Skeleton height="40px" width="100%" />
+                <Skeleton height="300px" width="90%" />
+                <Skeleton height="100px" width="80%" />
+              </Box>
+            ) : (
+              <MarkdownRenderer content={delegate?.statement || ""} />
+            )}
           </Box>
           <Box mt="24px">
             <Heading mb="24px" color="content.accent.default" variant="h3">
