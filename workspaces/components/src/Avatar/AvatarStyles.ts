@@ -27,7 +27,7 @@ const xlg = defineStyle({
 const withBorder = definePartsStyle({
   container: {
     bg: "#1A1523",
-    border: "1px solid #1A1523",
+    padding: "1px",
   },
 });
 
