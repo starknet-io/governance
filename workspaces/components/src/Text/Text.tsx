@@ -1,3 +1,4 @@
+import React from "react";
 import { Text as ChakraText, TextProps } from "@chakra-ui/react";
 
 export interface LocalTextProps extends TextProps {
@@ -17,10 +18,15 @@ export interface LocalTextProps extends TextProps {
     | "captionSmallUppercase";
 }
 
-export const Text = ({ variant, children, ...rest }: LocalTextProps) => {
+const TextComponent = (
+  { variant, children, ...rest }: LocalTextProps,
+  ref: React.Ref<any>,
+) => {
   return (
-    <ChakraText variant={variant} {...rest}>
+    <ChakraText ref={ref} variant={variant} {...rest}>
       {children}
     </ChakraText>
   );
 };
+
+export const Text = React.forwardRef(TextComponent);
