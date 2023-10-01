@@ -165,6 +165,14 @@ export function Proposal({ data }: any) {
                 ?.map((score: any) => score || 0)
                 ?.filter(Number.isFinite) || []
             }
+            w={{
+              base: "auto",
+              md: "108px",
+            }}
+            maxW={{
+              base: "200px",
+              md: "108px",
+            }}
           />
           <ListRow.Status
             status={data.state}
@@ -180,6 +188,7 @@ export function Proposal({ data }: any) {
           base: "100%",
           xl: "auto",
         }}
+        alignItems="center"
       >
         <ListRow.Status
           status={data.state}
