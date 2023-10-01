@@ -2,6 +2,7 @@ import { HStack } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
 import { DelegateCard as GovernanceDelegateCard } from "./DelegateCard";
 import { ThemeProvider } from "../ThemeProvider";
+import { truncateAddress } from "src/utils";
 
 export default {
   title: "governance-ui/Cards",
@@ -21,22 +22,20 @@ export const DelegateCard = () => (
             "web3_community",
           ]}
           votingPower={0}
-          voteCount={0}
           onDelegateClick={() => console.log("Delegate clicked")}
           address={"0xw33242342342342342342342342342342342342343"}
-          ensAvatar="https://pbs.twimg.com/profile_images/1571999433046237185/j9ktCKhD_400x400.jpg"
-          ensName="robwalsh.eth"
+          src="https://pbs.twimg.com/profile_images/1571999433046237185/j9ktCKhD_400x400.jpg"
+          user="robwalsh.eth"
         />
         <GovernanceDelegateCard
           statement="This is my statement lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, diam quis aliquam faucibus, quam quam aliquet elit, vitae."
           type={["Starknet community"]}
           votingPower={0}
-          voteCount={0}
           onDelegateClick={() => console.log("Delegate clicked")}
           profileURL="https://example.com/profile"
           address={"0xw33242342342342342342342342342342342342343"}
-          ensAvatar="https://pbs.twimg.com/profile_images/1571999433046237185/j9ktCKhD_400x400.jpg"
-          ensName="robwalsh.eth"
+          src={null}
+          user={truncateAddress("0xw33242342342342342342342342342342342342343")}
         />
       </>
     </HStack>

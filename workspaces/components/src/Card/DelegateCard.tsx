@@ -12,11 +12,11 @@ import {
 } from "@chakra-ui/react";
 import { Tag } from "../Tag";
 import { Button } from "../Button";
-import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
 import { MarkdownRenderer } from "../MarkdownRenderer";
 import { formatVotesAmount } from "src/utils";
 import "./karma.css";
-import { Username } from "src/Username";
+
+import { AvatarWithText } from "src/AvatarWithText";
 
 export type DelegateCardProps = {
   statement: string | null;
@@ -26,12 +26,12 @@ export type DelegateCardProps = {
   onDelegateClick?: () => void;
   profileURL?: string;
   address: string | null | undefined;
-  ensName?: string | null;
-  ensAvatar?: string | null;
+  user?: string | null;
+  src?: string | null;
   isDelegationLoading?: boolean;
 };
 
-const delegateNames: Record<string, string> = {
+const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
   daos: "DAOs",
   governance: "Governance",
@@ -44,6 +44,9 @@ const delegateNames: Record<string, string> = {
   starknet_community: "Starknet community",
   web3_community: "Web3 community",
   web3_developer: "Web3 developer",
+  gaming: "Gaming",
+  nft: "NFT",
+  defi: "DeFi",
 };
 
 function extractParagraph(markdownContent: string, charLimit = 300): string {
@@ -63,7 +66,7 @@ const DelegateTags = ({ type }: { type: string[] }) => {
   const renderTags = (startIndex: number, endIndex: number) =>
     type.slice(startIndex, endIndex).map((item: string) => (
       <Tag style={{ pointerEvents: "none" }} key={item}>
-        {delegateNames?.[item] ?? item}
+        {delegateInterests?.[item] ?? item}
       </Tag>
     ));
 
@@ -74,7 +77,7 @@ const DelegateTags = ({ type }: { type: string[] }) => {
       placement="top"
       label={type
         .slice(startIndex)
-        .map((t) => delegateNames?.[t] ?? t)
+        .map((t) => delegateInterests?.[t] ?? t)
         .join(", ")}
     >
       <Tag>+{type.length - startIndex}</Tag>
@@ -102,9 +105,9 @@ export const DelegateCard = ({
   statement,
   type,
   votingPower,
-  ensAvatar,
+  src,
   address,
-  ensName,
+  user,
   onDelegateClick,
   profileURL,
   isDelegationLoading,
@@ -116,16 +119,13 @@ export const DelegateCard = ({
     <LinkBox as={Card} variant="delegate">
       <CardHeader>
         <LinkOverlay href={profileURL}>
-          <ProfileSummaryCard.Root>
-            <ProfileSummaryCard.Profile
-              imgUrl={ensAvatar}
-              size="xs"
-              address={address}
-              ensName={ensName}
-              subtitle={votesFormatted.toUpperCase()}
-              avatarString={address}
-            />
-          </ProfileSummaryCard.Root>
+          <AvatarWithText
+            size="condensed"
+            headerText={user}
+            subheaderText={votesFormatted}
+            address={address}
+            src={src}
+          />
         </LinkOverlay>
       </CardHeader>
       <CardBody>
