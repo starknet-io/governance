@@ -34,7 +34,13 @@ export const LearnBanner = () => {
         md: "row",
       }}
     >
-      <Box display="grid" gap="standard.xl" maxW="320px">
+      <Box
+        display="grid"
+        gap="standard.xl"
+        minW={{
+          md: "320px",
+        }}
+      >
         <Heading
           display="flex"
           alignItems="center"
@@ -72,7 +78,7 @@ export const LearnBanner = () => {
           <Text>{data.author.date}</Text>
         </Flex>
       </Box>
-      <Box flexBasis="50%">
+      <Box>
         <Heading
           variant="h3"
           color="content.accent.default"
@@ -86,6 +92,8 @@ export const LearnBanner = () => {
             base: 6,
             md: 4,
           }}
+          fontSize="15px"
+          lineHeight="24px"
         >
           {data.overview}
         </Text>
