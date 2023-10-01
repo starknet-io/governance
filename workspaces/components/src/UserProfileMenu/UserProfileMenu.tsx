@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Flex,
   FormControl,
@@ -20,6 +21,7 @@ import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
 import { CopyToClipboard } from "src/CopyToClipboard";
 import { ProfileImage } from "src/ProfileImage";
+import { AvatarWithText } from "src/AvatarWithText";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -120,7 +122,18 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
             spacing={3}
             align="stretch"
           >
-            <Flex direction="row" mb={4}>
+            <AvatarWithText
+              size="condensed"
+              address={user?.address}
+              headerText={
+                user?.username ||
+                user?.ensName ||
+                truncateAddress(user?.address || "")
+              }
+              subheaderText={truncateAddress(user?.address || "")}
+              src={user?.profileImage ?? user?.ensAvatar ?? null}
+            />
+            {/* <Flex direction="row" mb={4}>
               <Box>
                 {user?.profileImage || user?.ensAvatar ? (
                   <ProfileImage
@@ -141,7 +154,8 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                   {truncateAddress(user?.address || "")}
                 </Text>
               </Box>
-            </Flex>
+              </Flex> */}
+
             <Flex>
               <Box>
                 <Text color="#4D4D56">Starknet address</Text>
