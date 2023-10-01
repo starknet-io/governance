@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Link } from "@chakra-ui/react";
+import { Box, Flex, Icon, Link, Skeleton, Tooltip } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 
 import { Text } from "../Text";
@@ -19,7 +19,7 @@ const Root = ({ children, direction = "column" }: RootProps) => {
     <Box
       display="flex"
       position="relative"
-      rowGap={{ base: "16px" }}
+      rowGap={{ base: "12px" }}
       flexDirection={direction}
       flexWrap={direction === "row" ? "wrap" : "nowrap"}
       justifyContent="flex-start"
@@ -35,21 +35,33 @@ type ItemProps = {
   children?: React.ReactNode;
   isTruncated?: boolean;
   isCopiable?: boolean;
+  isLoading?: boolean;
 };
 
 const Item = (props: ItemProps) => {
-  const { label, value, children, isTruncated, isCopiable } = props;
-
+  const { label, isLoading, value, children, isTruncated, isCopiable } = props;
+  if (isLoading) {
+    return (
+      <Flex justify="flex-start" gap="4px">
+        <Box width="50%">
+          <Text variant="small" color="content.default.default">
+            {label}
+          </Text>
+        </Box>
+        <Skeleton height="14px" position="relative" top="4px" width="50%" />
+      </Flex>
+    );
+  }
   const renderValue = () => {
     if (typeof value === "string") {
       return isCopiable ? (
-        <CopyToClipboard text={value}>
-          <Text variant="small" color="content.accent.default" title={value}>
+        <CopyToClipboard text={value} iconSize="13px">
+          <Text variant="small" color="content.accent.default">
             {isTruncated ? truncateAddress(value) : value}
           </Text>
         </CopyToClipboard>
       ) : (
-        <Text variant="small" color="content.accent.default" title={value}>
+        <Text variant="small" color="content.accent.default">
           {isTruncated ? truncateAddress(value) : value}
         </Text>
       );
@@ -97,6 +109,7 @@ type SocialsProps = {
   label?: "twitter" | "telegram" | "discord" | "discourse" | "github";
   value?: string | null;
   children?: React.ReactNode;
+  isLoading?: boolean;
 };
 
 const platformBaseUrl = {
@@ -108,7 +121,7 @@ const platformBaseUrl = {
 };
 
 const Socials = (props: SocialsProps) => {
-  const { label = "twitter", value, children } = props;
+  const { label = "twitter", isLoading, value, children } = props;
   const link = value ? `${platformBaseUrl[label]}${value}` : "";
 
   return (
@@ -131,7 +144,9 @@ const Socials = (props: SocialsProps) => {
         h={"16px"}
         color="gray.600"
       />
-      {value ? (
+      {isLoading ? (
+        <Skeleton height="20px" width="80%" />
+      ) : value ? (
         <Link href={link} isExternal fontSize="sm" fontWeight="medium">
           {value}
         </Link>
@@ -141,21 +156,7 @@ const Socials = (props: SocialsProps) => {
     </Flex>
   );
 };
-// can't seem to use the exported DelegateTypeEnum from the governance-backend package
-// export enum DelegateTypeEnum {
-//   CairoDev = 'Cairo Dev',
-//   DAOs = 'DAOs',
-//   Governance = 'Governance',
-//   Identity = 'Identity',
-//   InfrastructureStarknetDev = 'Infrastructure Starknet Dev',
-//   Legal = 'Legal',
-//   NFT = 'NFT',
-//   ProfessionalDelegates = 'Professional Delegates',
-//   Security = 'Security',
-//   StarknetCommunity = 'Starknet Community',
-//   Web3Community = 'Web3 Community',
-//   Web3Developer = 'Web3 Developer',
-// }
+
 type TagsProps = {
   type?: string | null;
 };
