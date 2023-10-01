@@ -10,6 +10,7 @@ import {
   Stack,
   Select,
   InputGroup,
+  Text,
   ChakraDatePicker,
   ContentContainer,
   EditorTemplate,
@@ -25,6 +26,7 @@ import { Proposal } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useForm, Controller } from "react-hook-form";
 import { useFileUpload } from "src/hooks/useFileUpload";
+import { useState } from "react";
 
 interface FieldValues {
   // type: ProposalType;
@@ -42,6 +44,7 @@ export function Page() {
   const { data: walletClient } = useWalletClient();
   const { convertSlateToMarkdown } = useMarkdownEditor("");
   const { handleUpload } = useFileUpload();
+  const [error, setError] = useState("");
 
   const createProposal = trpc.proposals.createProposal.useMutation();
 
@@ -110,6 +113,7 @@ export function Page() {
         await createProposal
           .mutateAsync(proposalData)
           .then(() => {
+            setError("");
             navigate(`/voting-proposals/${receipt.id}`);
           })
           .catch((err) => {
@@ -118,11 +122,13 @@ export function Page() {
       } catch (error) {
         // Handle error
         console.log(error);
+        // error.description is actual error from snapshot
       }
 
       console.log(receipt);
-    } catch (error) {
+    } catch (error: any) {
       // Handle error
+      setError(`Error: ${error?.error_description}`);
       console.log(error);
     }
   });
@@ -259,6 +265,13 @@ export function Page() {
                   Create voting proposal
                 </Button>
               </Box>
+              {error && error.length && (
+                <Box>
+                  <Text variant="mediumStrong" color="content.danger.default">
+                    {error}
+                  </Text>
+                </Box>
+              )}
             </Stack>
           </form>
         </Box>
