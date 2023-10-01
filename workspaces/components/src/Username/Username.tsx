@@ -1,4 +1,4 @@
-import { Avatar, Flex } from "@chakra-ui/react";
+import { Avatar, Box, Flex } from "@chakra-ui/react";
 import { Text } from "../Text";
 import { Heading } from "../Heading";
 import { Indenticon } from "src/Indenticon";
@@ -19,11 +19,13 @@ export const Username = ({
   if (size === "condensed") {
     return (
       <Flex alignItems="center" gap="standard.base">
-        {src !== null ? (
-          <Avatar variant="withBorder" size="xs" src={src} />
-        ) : (
-          <Indenticon size={20} address={address} />
-        )}
+        <Box height="22px">
+          {src !== null ? (
+            <Avatar variant="withBorder" size="xs" src={src} />
+          ) : (
+            <Indenticon size={22} address={address} />
+          )}
+        </Box>
 
         <Text color="content.accent.default" variant="small">
           {displayName}
