@@ -35,8 +35,8 @@ export const Username = ({
   }
   return (
     <Flex
-      pl="standard.sm"
-      pr="standard.xs"
+      // pl="standard.sm"
+      // pr="standard.xs"
       alignItems="center"
       gap="standard.xs"
     >
