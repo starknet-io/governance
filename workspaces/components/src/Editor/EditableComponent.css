@@ -1,8 +1,6 @@
 .editableComponent:focus-visible {
   outline: 1px solid #86848d !important;
 }
-.editableComponent {
-}
 
 .editableComponent p:first-child:not(.fake-placeholder) {
   margin-top: -2px !important;

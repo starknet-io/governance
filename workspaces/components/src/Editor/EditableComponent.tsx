@@ -45,6 +45,7 @@ export const EditableComponent = ({
     minHeight: `${minHeight}px`,
     // Adjust outline based on focus state
   };
+  console.log(isFocused);
   return (
     <Editable
       className={"editableComponent"}
