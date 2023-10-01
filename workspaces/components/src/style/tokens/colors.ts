@@ -1,3 +1,14 @@
+export const baseColors = {
+  brand: {
+    primary: {
+      cosmicBlue: {
+        solid: {
+          "12": "#0B0B4C",
+        }
+      }
+    }
+  }
+}
 export const colors = {
   content: {
     support: {

@@ -19,6 +19,8 @@ import {
   DelegateModal,
   ConfirmModal,
   StatusModal,
+  Flex,
+  ArrowRightIcon,
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
@@ -170,6 +172,7 @@ const sortByOptions = {
 export type DelegatesProps = {
   showFilers?: boolean;
   transformData?: (data: any) => any;
+  showAllDeligatesLink?: boolean;
 };
 
 const transformDataDefault = (data: any) => {
@@ -178,6 +181,7 @@ const transformDataDefault = (data: any) => {
 
 export function Delegates({
   showFilers = true,
+  showAllDeligatesLink = false,
   transformData = transformDataDefault,
 }: DelegatesProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -378,11 +382,42 @@ export function Delegates({
         description={statusDescription}
       />
       <Box width="100%">
-        <PageTitle
-          learnMoreLink="/learn"
-          title="Delegates"
-          description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol."
-        />
+        <Flex
+          alignItems="flex-start"
+          justifyContent="space-between"
+          gap="standard.xl"
+        >
+          <PageTitle
+            learnMoreLink={showAllDeligatesLink ? undefined : "/learn"}
+            title="Delegates"
+            description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol."
+            maxW={showAllDeligatesLink ? "580px" : undefined}
+            mb={0}
+          />
+          {showAllDeligatesLink && (
+            <Button
+              variant="outline"
+              display="flex"
+              gap="standard.xs"
+              as="a"
+              href="/delegates"
+              px={{
+                base: "standard.sm",
+                lg: "standard.lg",
+              }}
+            >
+              <Box
+                display={{
+                  base: "none",
+                  lg: "block",
+                }}
+              >
+                All delegates
+              </Box>
+              <ArrowRightIcon />
+            </Button>
+          )}
+        </Flex>
         {delegates.isLoading ? (
           <DelegatesSkeleton />
         ) : delegates.isError ? (
