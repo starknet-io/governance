@@ -34,6 +34,8 @@ export { BannerHome } from "./src/BannerHome";
 export { LearnBanner } from "./src/LearnBanner";
 export { Input } from "./src/Input";
 export { Banner } from "./src/Banner/Banner";
+export { AvatarWithText } from "./src/AvatarWithText";
+export { Dropdown } from "./src/Dropdown";
 
 export {
   BoldIcon,
