@@ -21,7 +21,7 @@ export const EditableComponent = ({
   minHeight,
   autoFocus = false,
   onPaste,
-  placeholder
+  placeholder,
 }: EditableComponentProps) => {
   const renderElement = useCallback(
     (props: RenderElementProps) => <Element {...props} />,
@@ -47,7 +47,7 @@ export const EditableComponent = ({
   };
   return (
     <Editable
-      className={isFocused ? "editableComponent" : ""}
+      className={"editableComponent"}
       renderElement={renderElement}
       renderLeaf={renderLeaf}
       placeholder={placeholder}
@@ -56,6 +56,7 @@ export const EditableComponent = ({
           variant="mediumStrong"
           {...attributes}
           mt="12px"
+          className="fake-placeholder"
           position="relative"
         >
           {children}

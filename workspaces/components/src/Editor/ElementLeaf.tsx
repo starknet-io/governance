@@ -52,31 +52,72 @@ export const Element = (props: RenderElementProps) => {
       );
     case "heading_one":
       return (
-        <h1 style={{ fontSize: 34, ...style }} {...attributes}>
+        <h1
+          style={{
+            fontSize: "1.313rem",
+            lineHeight: "2rem",
+            fontWeight: 600,
+            fontFamily: "Poppins, sans-serif",
+            marginTop: "20px",
+            marginBottom: "4px",
+            ...style,
+          }}
+          {...attributes}
+        >
           {children}
         </h1>
       );
     case "heading_two":
       return (
-        <h2 style={{ fontSize: 32, ...style }} {...attributes}>
+        <h2
+          style={{
+            fontSize: "1rem",
+            lineHeight: "1.5rem",
+            fontWeight: 600,
+            fontFamily: "Poppins, sans-serif",
+            marginTop: "20px",
+            marginBottom: "4px",
+            ...style,
+          }}
+          {...attributes}
+        >
           {children}
         </h2>
       );
     case "ul_list":
       return (
-        <ul style={{ paddingLeft: 16, ...style }} {...attributes}>
+        <ul
+          style={{
+            paddingLeft: 16,
+            fontWeight: "400",
+            fontFamily: "Inter Variable, sans-serif",
+            ...style,
+          }}
+          {...attributes}
+        >
           {children}
         </ul>
       );
     case "ol_list":
       return (
-        <ol style={{ paddingLeft: 16, ...style }} {...attributes}>
+        <ol
+          style={{
+            paddingLeft: 16,
+            fontWeight: "400",
+            fontFamily: "Inter Variable, sans-serif",
+            ...style,
+          }}
+          {...attributes}
+        >
           {children}
         </ol>
       );
     case "list_item":
       return (
-        <li style={style} {...attributes}>
+        <li
+          style={{ fontSize: "0.938rem", lineHeight: "1.5rem", ...style }}
+          {...attributes}
+        >
           {children}
         </li>
       );
@@ -86,9 +127,18 @@ export const Element = (props: RenderElementProps) => {
       return <LinkBlock {...props} />;
     default:
       return (
-        <span style={style} {...attributes}>
+        <p
+          style={{
+            fontSize: "0.938rem",
+            lineHeight: "1.5rem",
+            marginTop: "8px",
+            marginBottom: "16px",
+            ...style,
+          }}
+          {...attributes}
+        >
           {children}
-        </span>
+        </p>
       );
   }
 };
