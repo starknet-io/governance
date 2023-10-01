@@ -15,6 +15,7 @@ import {
   MarkdownRenderer,
   Text,
   Username,
+  AvatarWithText,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -213,6 +214,7 @@ export function Page() {
                 </Stat.Root>
               </Flex>
               <Divider />
+
               <Box mt="standard.2xl">
                 <MarkdownRenderer content={post?.content || ""} />
               </Box>
