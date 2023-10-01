@@ -45,10 +45,9 @@ export const EditableComponent = ({
     minHeight: `${minHeight}px`,
     // Adjust outline based on focus state
   };
-  console.log(isFocused);
   return (
     <Editable
-      className={"editableComponent"}
+      className={isFocused ? "editableComponent" : "editableComponent"}
       renderElement={renderElement}
       renderLeaf={renderLeaf}
       placeholder={placeholder}
@@ -57,8 +56,8 @@ export const EditableComponent = ({
           variant="mediumStrong"
           {...attributes}
           mt="12px"
-          className="fake-placeholder"
           position="relative"
+          className="fake-placeholder"
         >
           {children}
         </Text>
