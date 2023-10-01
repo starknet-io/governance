@@ -532,7 +532,9 @@ export function Page() {
               }
             }}
           >
-            <ActionButtons />
+            {hasUserDelegatedTokensToThisDelegate
+              ? "Undelegate your votes"
+              : "Delegate your votes"}
           </Button>
         ) : (
           <></>
@@ -552,7 +554,7 @@ export function Page() {
           </Box>
         )}
 
-        <Box mt="standard.2xl" pb="standard.2xl">
+        <Box pt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
