@@ -20,7 +20,9 @@ export const Banner = ({ label, onClose, type = "info", ...rest }: Props) => {
       {type === "info" && <Icon color="#1A1523" as={InfoIcon} />}
       {type === "pending" && <Spinner size="sm" />}
 
-      <AlertDescription pr={onClose && "standard.sm"}>{label}</AlertDescription>
+      <AlertDescription pr={onClose && "standard.2xl"}>
+        {label}
+      </AlertDescription>
       {onClose && (
         <Box position="absolute" right="0" top="0">
           <IconButton
