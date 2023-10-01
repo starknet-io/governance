@@ -32,6 +32,7 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -484,12 +485,15 @@ export function Delegates({
                     address={delegate?.author?.address}
                     statement={delegate?.statement}
                     type={delegate?.interests as string[]}
-                    ensAvatar={
+                    src={
                       delegate?.author?.profileImage ??
-                      delegate?.author?.ensAvatar
+                      delegate?.author?.ensAvatar ??
+                      null
                     }
-                    ensName={
-                      delegate.author?.username ?? delegate.author?.ensName
+                    user={
+                      delegate.author?.username ??
+                      delegate.author?.ensName ??
+                      truncateAddress(delegate.author?.address)
                     }
                     key={delegate?.id}
                   />
