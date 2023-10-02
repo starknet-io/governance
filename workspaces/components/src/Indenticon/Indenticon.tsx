@@ -1,5 +1,5 @@
 import { Box, Image } from "@chakra-ui/react";
-import img from "./assets/star.svg";
+import img from "./assets/Star.svg";
 import { useColorGenerator } from "./useColorGenerator";
 type Props = {
   address?: string | null;
