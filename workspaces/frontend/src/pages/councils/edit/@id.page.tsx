@@ -16,6 +16,7 @@ import {
   MarkdownEditor,
   useMarkdownEditor,
   Textarea,
+  Banner,
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
@@ -41,6 +42,7 @@ export function Page() {
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
   const { handleUpload } = useFileUpload();
   const [members, setMembers] = useState<MemberType[]>([]);
+  const [error, setError] = useState("");
   const editCouncil = trpc.councils.editCouncil.useMutation();
   const pageContext = usePageContext();
   const { data: council, isSuccess } = trpc.councils.getCouncilBySlug.useQuery({
@@ -88,11 +90,17 @@ export function Page() {
         ...data,
         id: council.id,
       };
-      await editCouncil.mutateAsync(saveData).then((resp: any) => {
-        utils.councils.getAll.invalidate();
-        utils.councils.getCouncilBySlug.invalidate();
-        navigate(`/councils/${resp.slug}`);
-      });
+      await editCouncil
+        .mutateAsync(saveData)
+        .then((resp: any) => {
+          utils.councils.getAll.invalidate();
+          utils.councils.getCouncilBySlug.invalidate();
+          navigate(`/councils/${resp.slug}`);
+        })
+        .catch((err) => {
+          console.log(err);
+          setError(err?.message ? err.message : JSON.stringify(err));
+        });
     } catch (error) {
       // Handle error
       console.log(error);
@@ -221,6 +229,9 @@ export function Page() {
                   Save
                 </Button>
               </Flex>
+              {error.length ? (
+                <Banner label={error} variant="error" type="error" />
+              ) : null}
             </Stack>
           </form>
         </Box>
