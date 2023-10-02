@@ -554,7 +554,7 @@ export function Page() {
           </Box>
         )}
 
-        <Box pt="standard.2xl" pb="standard.2xl">
+        <Box mt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
