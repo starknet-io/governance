@@ -368,7 +368,9 @@ export function Page() {
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched && delegation.data === delegateAddress;
 
-  const delegateOwnProfile = delegateAddress === address;
+
+  const delegateOwnProfile = delegateAddress === address
+
 
   return (
     <Box
@@ -538,6 +540,14 @@ export function Page() {
           </Button>
         ) : (
           <></>
+        )}
+
+        {delegation.isFetched && delegation.data === delegateAddress && (
+          <Box mt="standard.md">
+            <Banner
+              label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
+            />
+          </Box>
         )}
 
         {delegation.isFetched && delegation.data === delegateAddress && (
