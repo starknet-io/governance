@@ -110,7 +110,6 @@ export const authRouter = router({
 
   currentUser: publicProcedure.query(async (opts) => {
     try {
-      console.log(opts.ctx.user)
       if (opts.ctx.user) {
         return opts.ctx.user;
       }
