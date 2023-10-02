@@ -1,8 +1,9 @@
-import { Box, Flex, Icon, Link, Skeleton, Tooltip } from "@chakra-ui/react";
+import { Box, Flex, Icon, Skeleton, Tooltip } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 
 import { Text } from "../Text";
 import { Tag } from "../Tag";
+import { Link } from "../Link";
 import { truncateAddress } from "src/utils";
 import { Heading } from "src/Heading";
 import { format } from "date-fns";
@@ -42,7 +43,7 @@ const Item = (props: ItemProps) => {
   const { label, isLoading, value, children, isTruncated, isCopiable } = props;
   if (isLoading) {
     return (
-      <Flex justify="flex-start" gap="4px">
+      <Flex justify="flex-start" gap="4px" alignItems="center">
         <Box width="50%">
           <Text variant="small" color="content.default.default">
             {label}
@@ -181,22 +182,126 @@ const CustomDate = (props: DateProps) => {
   let displayValue = "N/A";
 
   if (value !== null) {
-    const timestamp: number = value < 10000000000 ? value * 1000 : value;
-    //ts-expect-error
-    const dateObject: Date = new Date(timestamp);
-    displayValue = format(dateObject, "MMM dd, yyyy");
+    try {
+      const timestamp: number = value < 10000000000 ? value * 1000 : value;
+      const dateObject: Date = new Date(timestamp);
+      displayValue = format(dateObject, "MMM dd, yyyy");
+    } catch (error) {
+      console.error("Error formatting date:", error);
+    }
   }
 
   return (
-    <Flex justify="space-between" fontSize="sm">
-      <Text fontWeight="medium" color="#6C6C75">
-        {label}
-      </Text>
-      <Text color="#292932" fontWeight="medium">
+    <Flex justify="flex-start" gap="4px" alignItems="center">
+      <Box width="50%">
+        <Text variant="small" color="content.default.default">
+          {label}
+        </Text>
+      </Box>
+      <Text variant="small" color="content.accent.default">
         {displayValue}
       </Text>
     </Flex>
   );
 };
 
-export { Root, Item, Title, Socials, Tags, CustomDate };
+type LinkItemProps = {
+  label: string;
+  link?: string;
+  linkLabel?: string | React.ReactNode;
+  isExternal?: boolean;
+  isLoading?: boolean;
+};
+
+const LinkItem = (props: LinkItemProps) => {
+  const { label, isLoading, link, linkLabel, isExternal } = props;
+
+  if (isLoading) {
+    return (
+      <Flex justify="flex-start" gap="4px">
+        <Box width="50%">
+          <Text variant="small" color="content.default.default">
+            {label}
+          </Text>
+        </Box>
+        <Skeleton height="14px" position="relative" top="4px" width="50%" />
+      </Flex>
+    );
+  }
+
+  return (
+    <Flex justify="flex-start" gap="4px" alignItems="center">
+      <Box width="50%">
+        <Text variant="small" color="content.default.default">
+          {label}
+        </Text>
+      </Box>
+      <Box width="50%">
+        <Link
+          variant="primary"
+          lineHeight={"12px"}
+          size="small"
+          href={link}
+          isExternal={isExternal}
+        >
+          {linkLabel}
+        </Link>
+      </Box>
+    </Flex>
+  );
+};
+
+type Strategy = {
+  __typename: string;
+  network: string;
+  params: {
+    symbol: string;
+    address: string;
+    decimals: number;
+    delegationSpace: string;
+  };
+};
+
+type StrategySummaryProps = {
+  strategies: Strategy[];
+};
+
+const StrategySummary: React.FC<StrategySummaryProps> = ({ strategies }) => {
+  return (
+    <Flex justify="flex-start" gap="4px">
+      <Box width="50%">
+        <Text variant="small" color="content.default.default">
+          Strategies
+        </Text>
+      </Box>
+      <Box width="50%">
+        <Flex>
+          {strategies.map((strategy, index) => (
+            <Tooltip
+              key={index}
+              label={`Address: ${strategy.params.address}\nDecimals: ${strategy.params.decimals}\nDelegation: ${strategy.params.delegationSpace}`}
+              fontSize="md"
+              placement="top"
+              hasArrow
+            >
+              <Text variant="small" color="content.accent.default" mr={2}>
+                {strategy.params.symbol}
+              </Text>
+            </Tooltip>
+          ))}
+        </Flex>
+      </Box>
+    </Flex>
+  );
+};
+
+export {
+  Root,
+  Item,
+  Title,
+  Socials,
+  Tags,
+  CustomDate,
+  LinkItem,
+  StrategySummary,
+};
