@@ -500,8 +500,8 @@ export function Page() {
         ) : (
           <AvatarWithText
             src={
-              delegate?.author?.ensAvatar ||
               delegate?.author?.profileImage ||
+              delegate?.author?.ensAvatar ||
               null
             }
             headerText={
