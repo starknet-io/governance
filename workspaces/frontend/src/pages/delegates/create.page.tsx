@@ -15,6 +15,7 @@ import {
   MarkdownEditor,
   Text,
   Divider,
+  Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -250,7 +251,9 @@ export function Page() {
                   Submit delegate profile
                 </Button>
               </Flex>
-              {error.length ? <Text color="red">{error}</Text> : null}
+              {error.length ? (
+                <Banner label={error} variant="error" type="error" />
+              ) : null}
             </Stack>
           </form>
         </Box>
