@@ -12,6 +12,7 @@ import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import TurndownService from 'turndown';
 import { pages } from '../db/schema/pages';
 import { learnPageSections } from './learnPageContent';
+import { delegateVotes } from '../db/schema/delegatesVotes';
 
 const turndownService = new TurndownService();
 
@@ -82,6 +83,13 @@ async function createAdminUsers() {
           role: 'admin',
           createdAt: new Date(),
           updatedAt: new Date(),
+        })
+        .returning();
+    } else {
+      await db
+        .update(users)
+        .set({
+          role: 'admin',
         })
         .returning();
     }
@@ -181,18 +189,23 @@ async function createCouncils() {
 }
 
 async function seedData() {
-  // First, create admin users if they don't exist
-  console.log('Creating Admins');
-  await createAdminUsers();
-  console.log('Admins Created');
-
-  // Second, create councils and add admin users if not exist
-  await createCouncils();
-
   // Delegates seeding
   console.log('Creating delegates');
+  /*
+  c0 - address
+  c1 - twitter
+  c2 - ens name
+  c3 - profile image
+  c4 - voting power
+  c5 - interests
+  c6 - forum handle
+  c7 - statements
+   */
   for (const entry of dataDump) {
-    const interestsStatements = entry.c4 ? JSON.parse(entry.c4) : [];
+
+    // INTERESTS and STATEMENT - C5
+    // -- - -- - -- - - - -- - - - - - -
+    const interestsStatements = entry.c5 ? JSON.parse(entry.c5) : [];
     const interests =
       interestsStatements
         ?.find((item: any) => item.label === 'Interests')
@@ -211,7 +224,8 @@ async function seedData() {
       interestsStatements?.find((item: any) => item.label === 'statement')
         ?.value || '';
     const statementMarkdown = turndownService.turndown(statement);
-
+    // -- - -- - -- - - - -- - - - - - -
+    console.log('existing user query')
     // Step 1: Check if the user exists
     const existingUser = await db.query.users.findFirst({
       where: eq(users.address, entry.c0),
@@ -220,12 +234,16 @@ async function seedData() {
     let userId;
     if (!existingUser) {
       // Step 2: Insert new user if not exists
+      console.log('try to insert user query')
+
       const insertedUser = await db
         .insert(users)
         .values({
           publicIdentifier: entry.c0,
           address: entry.c0,
-          ensName: entry.c1,
+          ensName: entry.c2,
+          profileImage: entry.c3,
+          twitter: entry.c1,
           role: 'user',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -237,19 +255,23 @@ async function seedData() {
     }
 
     // Step 3: Check if the delegate exists
+    console.log('existing delegate query')
+
     const existingDelegate = await db.query.delegates.findFirst({
       where: eq(delegates.userId, userId),
     });
 
     if (!existingDelegate) {
       // Step 4: Insert new delegate if not exists
+      console.log('new delegate query')
+
       const newDelegate = {
         userId: userId,
         interests,
         statement: statementMarkdown,
-        twitter: entry.c5 === '@' + entry.c5 ? entry.c5 : null,
+        twitter: entry.c1 ? `@${entry.c1}` : null,
         discord: null,
-        discourse: null,
+        discourse: entry.c6,
         confirmDelegateAgreement: null,
         agreeTerms: true,
         understandRole: true,
@@ -263,8 +285,19 @@ async function seedData() {
         .returning();
       const delegateId = insertedDelegate[0].id;
 
-      if (entry.c6) {
-        const customAgreement = entry.c6.replace(/\\/g, '');
+      if (entry.c4) {
+        console.log('Adding voting power for delegate ', entry.c0 || entry.c2);
+        await db.insert(delegateVotes).values({
+          delegateId: delegateId,
+          address: entry.c0,
+          votingPower: parseInt(entry.c4),
+          totalVotes: 0,
+          updatedAt: new Date(),
+        });
+      }
+
+      if (entry.c7) {
+        const customAgreement = entry.c7.replace(/\\/g, '');
 
         // Step 5: Insert the custom delegate agreement
         const newCustomAgreement = {
@@ -282,6 +315,14 @@ async function seedData() {
     }
   }
   console.log('Delegates created');
+  // Create admin users if they don't exist
+  console.log('Creating Admins');
+  await createAdminUsers();
+  console.log('Admins Created');
+
+  // Second, create councils and add admin users if not exist
+  await createCouncils();
+
   // Find one admin user to pass to createLearnSections
   const oneAdminUser = await db.query.users.findFirst({
     where: eq(users.role, 'admin'),
