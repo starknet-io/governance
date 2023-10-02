@@ -368,6 +368,8 @@ export function Page() {
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched && delegation.data === delegateAddress;
 
+  const delegateOwnProfile = delegateAddress === address;
+
   return (
     <Box
       display="flex"
@@ -516,7 +518,8 @@ export function Page() {
             dropdownChildren={<ActionButtons />}
           />
         )}
-        {user ? (
+
+        {user && !delegateOwnProfile ? (
           <Button
             mt="standard.2xl"
             mb="0"
@@ -529,9 +532,7 @@ export function Page() {
               }
             }}
           >
-            {hasUserDelegatedTokensToThisDelegate
-              ? "Undelegate your votes"
-              : "Delegate your votes"}
+            <ActionButtons />
           </Button>
         ) : (
           <></>
