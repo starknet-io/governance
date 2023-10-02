@@ -474,24 +474,46 @@ export function Page() {
         onClose={() => setIsInfoOpen(false)}
       >
         <SummaryItems.Root>
-          <SummaryItems.Item label="Stategies" value="Type" />
-          <SummaryItems.Item
-            isTruncated
-            label="IPFS"
-            value={data?.proposal?.ipfs}
+          <SummaryItems.StrategySummary
+            strategies={
+              (data?.proposal?.strategies || []).filter((s) => s) as any[]
+            }
+          />
+          <SummaryItems.LinkItem
+            label="IPFS #"
+            link={`https://snapshot.4everland.link/ipfs//${data?.proposal?.ipfs}`}
+            linkLabel={data?.proposal?.ipfs?.slice(0, 7) || ""}
+            isExternal={true}
           />
           <SummaryItems.Item
             label="Voting system"
-            value={data?.proposal?.type}
+            value={`${data?.proposal?.type} voting`}
           />
-          {/* <SummaryItems.Date label="Start date" value={data.proposal?.start} />
-          <SummaryItems.Date label="End date" value={data?.proposal?.end} /> */}
-          <SummaryItems.Item
-            label="Snapshot"
-            value={data?.proposal?.snapshot}
+          <SummaryItems.CustomDate
+            label="Start date"
+            value={data?.proposal?.start || null}
+          />
+          <SummaryItems.CustomDate
+            label="End date"
+            value={data?.proposal?.end || null}
+          />
+
+          <SummaryItems.LinkItem
+            label="Snapshot block #"
+            link={`https://etherscan.io/block/${data?.proposal?.snapshot}`}
+            linkLabel={
+              data?.proposal?.snapshot
+                ? parseInt(data.proposal.snapshot, 10).toLocaleString()
+                : ""
+            }
+            isExternal={true}
           />
         </SummaryItems.Root>
-        <Button variant="primary" onClick={() => setIsInfoOpen(false)}>
+        <Button
+          size="standard"
+          variant="primary"
+          onClick={() => setIsInfoOpen(false)}
+        >
           Close
         </Button>
       </InfoModal>
