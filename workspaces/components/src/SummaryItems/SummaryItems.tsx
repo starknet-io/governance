@@ -78,7 +78,55 @@ const Item = (props: ItemProps) => {
           {label}
         </Text>
       </Box>
-      {value ? renderValue() : children}
+      <Box width="50%">{value ? renderValue() : children}</Box>
+    </Flex>
+  );
+};
+
+type LinkItemProps = {
+  label: string;
+  link?: string;
+  linkLabel?: string | React.ReactNode;
+  isExternal?: boolean;
+  isLoading?: boolean;
+};
+
+const LinkItem = (props: LinkItemProps) => {
+  const { label, isLoading, link, linkLabel, isExternal } = props;
+
+  if (isLoading) {
+    return (
+      <Flex justify="flex-start" gap="4px">
+        <Box width="50%">
+          <Text variant="small" color="content.default.default">
+            {label}
+          </Text>
+        </Box>
+        <Skeleton height="14px" position="relative" top="4px" width="50%" />
+      </Flex>
+    );
+  }
+
+  return (
+    <Flex justify="flex-start" gap="4px" alignItems="center">
+      <Box width="50%">
+        <Text variant="small" color="content.default.default">
+          {label}
+        </Text>
+      </Box>
+      <Box width="50%" height="20px">
+        <Link
+          variant="primary"
+          size="small"
+          href={link}
+          isExternal={isExternal}
+          padding="0"
+          top="-4px"
+          position="relative"
+        >
+          {linkLabel}
+        </Link>
+      </Box>
     </Flex>
   );
 };
@@ -198,54 +246,10 @@ const CustomDate = (props: DateProps) => {
           {label}
         </Text>
       </Box>
-      <Text variant="small" color="content.accent.default">
-        {displayValue}
-      </Text>
-    </Flex>
-  );
-};
-
-type LinkItemProps = {
-  label: string;
-  link?: string;
-  linkLabel?: string | React.ReactNode;
-  isExternal?: boolean;
-  isLoading?: boolean;
-};
-
-const LinkItem = (props: LinkItemProps) => {
-  const { label, isLoading, link, linkLabel, isExternal } = props;
-
-  if (isLoading) {
-    return (
-      <Flex justify="flex-start" gap="4px">
-        <Box width="50%">
-          <Text variant="small" color="content.default.default">
-            {label}
-          </Text>
-        </Box>
-        <Skeleton height="14px" position="relative" top="4px" width="50%" />
-      </Flex>
-    );
-  }
-
-  return (
-    <Flex justify="flex-start" gap="4px" alignItems="center">
       <Box width="50%">
-        <Text variant="small" color="content.default.default">
-          {label}
+        <Text variant="small" color="content.accent.default">
+          {displayValue}
         </Text>
-      </Box>
-      <Box width="50%">
-        <Link
-          variant="primary"
-          lineHeight={"12px"}
-          size="small"
-          href={link}
-          isExternal={isExternal}
-        >
-          {linkLabel}
-        </Link>
       </Box>
     </Flex>
   );
