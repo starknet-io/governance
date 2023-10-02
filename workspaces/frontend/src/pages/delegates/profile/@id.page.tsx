@@ -366,7 +366,8 @@ export function Page() {
   const isLoadingSocials = !delegateResponse.isFetched;
   const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
   const hasUserDelegatedTokensToThisDelegate =
-    delegation.isFetched && delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
+    delegation.isFetched &&
+    delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
 
   const delegateOwnProfile =
     delegateAddress &&
@@ -543,19 +544,21 @@ export function Page() {
           <></>
         )}
 
-        {delegation.isFetched && delegation.data?.toLowerCase() === delegateAddress?.toLowerCase() && (
-          <Box mt="standard.md">
-            <Banner
-              label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
-            />
-          </Box>
-        )}
+        {delegation.isFetched &&
+          delegation.data?.toLowerCase() === delegateAddress?.toLowerCase() && (
+            <Box mt="standard.md">
+              <Banner
+                label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
+              />
+            </Box>
+          )}
 
-        {delegateResponse.isFetched && address?.toLowerCase() === delegateAddress?.toLowerCase() && (
-          <Box mt="standard.md">
-            <Banner label="You can’t delegate votes to your own account." />
-          </Box>
-        )}
+        {delegateResponse.isFetched &&
+          address?.toLowerCase() === delegateAddress?.toLowerCase() && (
+            <Box mt="standard.md">
+              <Banner label="You can’t delegate votes to your own account." />
+            </Box>
+          )}
 
         <Box mt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
@@ -663,20 +666,32 @@ export function Page() {
           </Heading>
           <Box mt="standard.2xl">
             {isLoadingProfile ? (
+              // Skeleton representation for loading state
               <Box display="flex" flexDirection="column" gap="20px">
                 <Skeleton height="40px" width="100%" />
                 <Skeleton height="300px" width="90%" />
                 <Skeleton height="100px" width="80%" />
               </Box>
+            ) : delegate?.statement ? (
+              // Display the actual content if it's available
+              <MarkdownRenderer content={delegate?.statement} />
             ) : (
-              <MarkdownRenderer content={delegate?.statement || ""} />
+              // Empty state if the data is available but contains no content
+              <Text variant="body">No delegate pitch added</Text>
             )}
           </Box>
           <Box mt="24px">
             <Heading mb="24px" color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
-            {gqlResponse.data?.votes?.length ? (
+            {isLoadingGqlResponse ? (
+              // Skeleton representation for loading state
+              <Box display="flex" flexDirection="column" gap="20px">
+                <Skeleton height="60px" width="100%" />
+                <Skeleton height="60px" width="90%" />
+                <Skeleton height="60px" width="80%" />
+              </Box>
+            ) : gqlResponse.data?.votes?.length ? (
               <ListRow.Container>
                 {gqlResponse.data?.votes.map((vote) => (
                   <Link
@@ -703,40 +718,48 @@ export function Page() {
               <EmptyState type="votesCast" title="No votes yet" />
             )}
           </Box>
+
           <Box mt="24px" mb={10}>
             <Heading mb="24px" color="content.accent.default" variant="h3">
               Comments
             </Heading>
-            <ListRow.Container>
-              {comments.map((comment) => {
-                return (
-                  <Link
-                    key={comment!.id as string}
-                    href={
-                      comment?.proposalId
-                        ? `/voting-proposals/${comment!.proposalId}`
-                        : `/snips/${comment!.snipId}`
-                    }
-                    _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
-                  >
-                    <ListRow.Root>
-                      <ListRow.CommentSummary
-                        comment={(comment?.content as string) || ""}
-                        postTitle={
-                          (comment?.title as string) ||
-                          (comment?.snipTitle as string) ||
-                          ""
-                        }
-                      />
-                    </ListRow.Root>
-                  </Link>
-                );
-              })}
-            </ListRow.Container>
-
-            {!delegateCommentsResponse?.data?.length ? (
+            {isLoadingGqlResponse ? (
+              // Skeleton representation for loading state
+              <Box display="flex" flexDirection="column" gap="20px">
+                <Skeleton height="60px" width="100%" />
+                <Skeleton height="60px" width="90%" />
+                <Skeleton height="60px" width="80%" />
+              </Box>
+            ) : comments.length ? (
+              <ListRow.Container>
+                {comments.map((comment) => {
+                  return (
+                    <Link
+                      key={comment!.id as string}
+                      href={
+                        comment?.proposalId
+                          ? `/voting-proposals/${comment!.proposalId}`
+                          : `/snips/${comment!.snipId}`
+                      }
+                      _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
+                    >
+                      <ListRow.Root>
+                        <ListRow.CommentSummary
+                          comment={(comment?.content as string) || ""}
+                          postTitle={
+                            (comment?.title as string) ||
+                            (comment?.snipTitle as string) ||
+                            ""
+                          }
+                        />
+                      </ListRow.Root>
+                    </Link>
+                  );
+                })}
+              </ListRow.Container>
+            ) : (
               <EmptyState type="comments" title="No comments yet" />
-            ) : null}
+            )}
           </Box>
         </Stack>
       </ContentContainer>
