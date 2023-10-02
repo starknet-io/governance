@@ -5,7 +5,7 @@ import { ThemeProvider } from "../ThemeProvider";
 import { formatVotesAmount, truncateAddress } from "src/utils";
 import { Button } from "src/Button";
 import { Banner } from "src/Banner/Banner";
-import { SummaryItems } from "index";
+import * as SummaryItems from "src/SummaryItems/SummaryItems";
 
 export default {
   title: "governance-ui/AvatarWithText",
