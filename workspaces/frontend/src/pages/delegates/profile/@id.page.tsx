@@ -519,6 +519,7 @@ export function Page() {
         {user ? (
           <Button
             mt="standard.2xl"
+            mb="0"
             variant="primary"
             size="standard"
             onClick={() => {
@@ -535,18 +536,22 @@ export function Page() {
         ) : (
           <></>
         )}
-        <Box mt="standard.md">
-          {delegation.isFetched && delegation.data === delegateAddress && (
+
+        {delegation.isFetched && delegation.data === delegateAddress && (
+          <Box mt="standard.md">
             <Banner
               label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
             />
-          )}
+          </Box>
+        )}
 
-          {delegateResponse.isFetched && address === delegateAddress && (
+        {delegateResponse.isFetched && address === delegateAddress && (
+          <Box mt="standard.md">
             <Banner label="You can’t delegate votes to your own account." />
-          )}
-        </Box>
-        <Box pt="standard.2xl" pb="standard.2xl">
+          </Box>
+        )}
+
+        <Box mt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
