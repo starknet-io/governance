@@ -600,13 +600,13 @@ export function Page() {
               value={delegate?.author?.starknetAddress || "None"}
             />
           </SummaryItems.Root>
+          <Divider mt="standard.2xl" />
         </Box>
         {isLoadingSocials ||
         delegate?.twitter ||
         delegate?.discourse ||
         delegate?.discord ? (
           <>
-            <Divider mb="standard.2xl" />
             <SummaryItems.Root direction="row">
               {(isLoadingSocials || delegate?.twitter) && (
                 <SummaryItems.Socials
@@ -630,9 +630,10 @@ export function Page() {
                 />
               )}
             </SummaryItems.Root>
+            <Divider mt="standard.2xl" mb="standard.2xl" />
           </>
         ) : null}
-        <Divider mt="standard.2xl" mb="standard.2xl" />
+
         <SummaryItems.Root>
           {isLoadingProfile ? (
             // Skeleton representation for interests tags
