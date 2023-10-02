@@ -337,6 +337,7 @@ export function Page() {
       proposalId: comment.proposalId,
       snipId: comment.snipId,
       snipTitle: comment.snipTitle,
+      createdAt: comment.createdAt,
     };
   });
 
@@ -680,19 +681,19 @@ export function Page() {
               <Text variant="body">No delegate pitch added</Text>
             )}
           </Box>
-          <Box mt="24px">
-            <Heading mb="24px" color="content.accent.default" variant="h3">
+          <Box mt="standard.2xl">
+            <Heading color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
             {isLoadingGqlResponse ? (
               // Skeleton representation for loading state
-              <Box display="flex" flexDirection="column" gap="20px">
+              <Box display="flex" flexDirection="column" gap="20px" mt="16px">
                 <Skeleton height="60px" width="100%" />
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
             ) : gqlResponse.data?.votes?.length ? (
-              <ListRow.Container>
+              <ListRow.Container mt="0">
                 {gqlResponse.data?.votes.map((vote) => (
                   <Link
                     href={`/voting-proposals/${vote!.proposal!.id}`}
@@ -708,7 +709,8 @@ export function Page() {
                           ]?.toLowerCase() as "for" | "against" | "abstain"
                         }
                         voteCount={vote!.vp}
-                        body={vote?.proposal?.body}
+                        // body={vote?.proposal?.body}
+                        body={vote?.reason}
                       />
                     </ListRow.Root>
                   </Link>
@@ -731,7 +733,7 @@ export function Page() {
                 <Skeleton height="60px" width="80%" />
               </Box>
             ) : comments.length ? (
-              <ListRow.Container>
+              <ListRow.Container mt="-20px">
                 {comments.map((comment) => {
                   return (
                     <Link
@@ -751,6 +753,7 @@ export function Page() {
                             (comment?.snipTitle as string) ||
                             ""
                           }
+                          date={comment?.createdAt as string}
                         />
                       </ListRow.Root>
                     </Link>
