@@ -330,6 +330,8 @@ export function Page() {
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched && delegation.data === delegateAddress;
 
+  const delegateOwnProfile = delegateAddress === address
+
   return (
     <Box
       display="flex"
@@ -465,7 +467,7 @@ export function Page() {
             >
               <ActionButtons />
             </ProfileSummaryCard.Profile>
-            {user ? (
+            {user && !delegateOwnProfile ? (
               <ProfileSummaryCard.PrimaryButton
                 label={
                   hasUserDelegatedTokensToThisDelegate
