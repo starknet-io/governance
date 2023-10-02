@@ -2,12 +2,14 @@ import { Badge, Box, BoxProps, Flex, Icon, Tooltip } from "@chakra-ui/react";
 
 import { Text } from "../Text";
 import {
+  format,
   differenceInDays,
   differenceInHours,
   differenceInWeeks,
   differenceInMonths,
   differenceInYears,
 } from "date-fns";
+
 import {
   CommentIcon,
   VoteAbstainIcon,
@@ -16,6 +18,7 @@ import {
 } from "src/Icons";
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import "./styles.css";
+import { formatVotesAmount } from "src/utils";
 
 type Props = BoxProps & {
   children?: React.ReactNode;
@@ -160,82 +163,102 @@ type PastVotesProps = {
 };
 
 const PastVotes = ({
-  title = "Support for scoped storage variables",
-  voteCount = 7,
+  title = "",
+  voteCount,
   votePreference,
-  body = "",
+  body,
 }: PastVotesProps) => {
+  const iconProps = {
+    mr: "4px",
+    ml: "4px",
+    boxSize: "16px",
+    mt: "-2px",
+  };
   const renderIconBasedOnVotePreference = () => {
     switch (votePreference) {
       case "for":
-        return VoteForIcon;
+        return <VoteForIcon {...iconProps} color="green" />;
       case "against":
-        return VoteAgainstIcon;
+        return <VoteAgainstIcon {...iconProps} color="red" />;
       case "abstain":
-        return VoteAbstainIcon;
+        return <VoteAbstainIcon {...iconProps} color="black" />;
       default:
-        return VoteForIcon;
+        return <VoteForIcon {...iconProps} color="green" />;
     }
   };
+  const formatedVotes = formatVotesAmount(voteCount);
   return (
-    <Flex flexDirection="column" flex={1} gap="6px" {...cellPadding}>
+    <Flex
+      pt="standard.base"
+      flexDirection="column"
+      flex={1}
+      gap="standard.base"
+
+      //       const cellPadding = {
+      //   px: "standard.sm",
+      //   py: "standard.base",
+      // };
+    >
       <Text
         variant="breadcrumbs"
         fontSize="12px"
         noOfLines={1}
         fontWeight="500"
-        color="#292932"
+        color="content.default.default"
       >
         {title}
       </Text>
-      <Text variant="breadcrumbs" noOfLines={1} fontWeight="500">
-        Voted
-        <Icon
-          fontSize="16px"
-          position="relative"
-          top="3px"
-          mx="4px"
-          as={renderIconBasedOnVotePreference()}
-          color="#20AC70"
-        />{" "}
-        with {voteCount} votes <MarkdownRenderer content={body ?? ""} />
-      </Text>
+      <Flex gap="standard.xs">
+        <Text variant="small" fontWeight="500" color="content.support.default">
+          Voted
+          {renderIconBasedOnVotePreference()} with {formatedVotes} votes{" "}
+        </Text>
+        {body && (
+          <Text color="content.default.default" variant="small">
+            &quot;{body}&quot;
+          </Text>
+        )}
+      </Flex>
     </Flex>
   );
 };
 
 type CommentSummaryProps = {
-  type?: string;
-  id?: number;
   postTitle: string;
   comment: string;
+  date: string;
 };
 
-const CommentSummary = ({
-  type,
-  id,
-  postTitle,
-  comment,
-}: CommentSummaryProps) => {
+const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
+  console.log("Raw Date:", date);
+  const formattedDate = date
+    ? format(new Date(date), "d MMM yyyy")
+    : "Unknown date";
+
   return (
-    <Flex flexDirection="column" flex={1} gap="6px" {...cellPadding}>
+    <Flex flexDirection="column" flex={1} gap="standard.base">
       <Text
-        variant="breadcrumbs"
-        fontSize="12px"
+        variant="mediumStrong"
         noOfLines={1}
-        fontWeight="500"
-        color="#292932"
+        color="content.default.default"
+        sx={{
+          _firstLetter: {
+            textTransform: "uppercase",
+          },
+        }}
       >
-        {postTitle}
+        {postTitle} on {formattedDate ?? ""}
       </Text>
-      <Text
-        color="#6C6C75"
-        variant="breadcrumbs"
-        noOfLines={1}
-        fontWeight="500"
-      >
-        <MarkdownRenderer content={comment ?? ""} />
-      </Text>
+
+      <MarkdownRenderer
+        textProps={{
+          fontSize: "12px",
+          noOfLines: 1,
+          color: "content.default.default",
+          fontWeight: "500",
+        }}
+        content={`&quot;${comment}&quot;` ?? ""}
+      />
     </Flex>
   );
 };

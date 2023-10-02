@@ -14,8 +14,9 @@ export const Indenticon = ({ address, size = 60 }: Props) => {
         width={size}
         position="absolute"
         inset="0"
-        top="14px"
-        left="-4px"
+        // top="14px"
+        top="28%"
+        left="-8%"
         src={img}
         zIndex={"1"}
         opacity="1"
