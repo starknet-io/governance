@@ -189,14 +189,21 @@ const Socials = (props: SocialsProps) => {
             ? DiscourseIcon
             : TwitterIcon
         }
-        w={"16px"}
-        h={"16px"}
-        color="gray.600"
+        w={"20px"}
+        h={"20px"}
+        color="#4A4A4F"
       />
       {isLoading ? (
         <Skeleton height="20px" width="80%" />
       ) : value ? (
-        <Link href={link} isExternal fontSize="sm" fontWeight="medium">
+        <Link
+          href={link}
+          isExternal
+          fontWeight="500"
+          fontSize="12px"
+          letterSpacing={"0.12px"}
+          hasArrow={false}
+        >
           {value}
         </Link>
       ) : (
