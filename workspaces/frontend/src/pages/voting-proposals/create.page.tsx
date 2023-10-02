@@ -10,12 +10,12 @@ import {
   Stack,
   Select,
   InputGroup,
-  Text,
   ChakraDatePicker,
   ContentContainer,
   EditorTemplate,
   useMarkdownEditor,
   MarkdownEditor,
+  Banner,
 } from "@yukilabs/governance-components";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
@@ -44,7 +44,7 @@ export function Page() {
   const { data: walletClient } = useWalletClient();
   const { convertSlateToMarkdown } = useMarkdownEditor("");
   const { handleUpload } = useFileUpload();
-  const [error, setError] = useState("");
+  const [error, setError] = useState("asdasd");
 
   const createProposal = trpc.proposals.createProposal.useMutation();
 
@@ -266,11 +266,7 @@ export function Page() {
                 </Button>
               </Box>
               {error && error.length && (
-                <Box>
-                  <Text variant="mediumStrong" color="content.danger.default">
-                    {error}
-                  </Text>
-                </Box>
+                <Banner label={error} variant="error" type="error" />
               )}
             </Stack>
           </form>

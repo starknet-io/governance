@@ -850,3 +850,31 @@ export const WalletIcon = ({ color, ...rest }: UiIconProps) => (
     />
   </Icon>
 );
+
+export const DocumentFileWarning = ({ color, ...rest }) => (
+  <Icon width="24" height="24" viewBox="0 0 24 24" fill="none" {...rest}>
+    <path
+      d="M12.0002 12.6583V10.7085"
+      stroke="#323232"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M18.4167 6.41176L15.5875 3.58258C15.2123 3.20733 14.7035 2.99634 14.1729 2.99634H6.9979C5.89287 2.99634 4.99707 3.89214 4.99707 4.99717V19.003C4.99707 20.108 5.89287 21.0038 6.9979 21.0038H17.0021C18.1071 21.0038 19.0029 20.108 19.0029 19.003V7.82635C19.0029 7.29574 18.7919 6.7869 18.4167 6.41176Z"
+      stroke="#323232"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M12.0001 14.8084C11.9449 14.8084 11.9001 14.8532 11.9001 14.9084C11.9001 14.9637 11.9449 15.0085 12.0001 15.0085C12.0437 14.9966 12.0739 14.9571 12.0739 14.9119C12.0739 14.8668 12.0437 14.8272 12.0001 14.8154"
+      stroke="#323232"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Icon>
+);
