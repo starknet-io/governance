@@ -476,9 +476,10 @@ export function Page() {
         flexDirection="column"
         flexBasis={{ base: "100%", md: "372px" }}
         position={{ base: "unset", lg: "sticky" }}
-        height="calc(100vh - 80px)"
+        height="100vh"
         top="0"
-        overflow="auto"
+        overflowY="auto"
+        overflowX="hidden"
       >
         {isLoadingProfile ? (
           <Box display="flex" flexDirection="column" gap="12px" mb="18px">
