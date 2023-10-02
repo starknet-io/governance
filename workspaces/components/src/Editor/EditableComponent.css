@@ -1,3 +1,12 @@
 .editableComponent:focus-visible {
-  outline: 1px solid #86848d;
+  outline: 1px solid #86848d !important;
+}
+
+.editableComponent p:first-child:not(.fake-placeholder) {
+  margin-top: -2px !important;
+}
+
+.editableComponent h3:first-child,
+.editableComponent h4:first-child {
+  margin-top: 0 !important;
 }

@@ -27,6 +27,7 @@ const baseStyle = definePartsStyle({
     bg: "surface.forms.default",
     boxShadow:
       "0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)",
+    zIndex: "10000",
   },
 
   item: {

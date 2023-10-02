@@ -28,7 +28,9 @@ export const Banner = ({
       {type === "pending" && <Spinner size="sm" />}
       {type === "error" && <Icon as={DocumentFileWarning} />}
 
-      <AlertDescription pr={onClose && "standard.sm"}>{label}</AlertDescription>
+      <AlertDescription pr={onClose && "standard.2xl"}>
+        {label}
+      </AlertDescription>
       {onClose && (
         <Box position="absolute" right="0" top="0">
           <IconButton

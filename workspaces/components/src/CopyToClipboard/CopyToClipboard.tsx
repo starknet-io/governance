@@ -5,11 +5,13 @@ import { CopyIcon } from "src/Icons";
 interface CopyToClipboardProps {
   text: string;
   children?: React.ReactNode;
+  iconSize?: string;
 }
 
 export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
   text,
   children,
+  iconSize = "13px",
 }) => {
   const { onCopy } = useClipboard(text);
   const toast = useToast();
@@ -30,7 +32,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
       {children}
       <IconButton
         aria-label="Copy to clipboard"
-        icon={<CopyIcon />}
+        icon={<CopyIcon boxSize={iconSize} />}
         variant="ghost"
         size="xs"
         borderRadius={0}

@@ -154,7 +154,7 @@ export function Page() {
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-type">
-                <FormLabel>Delegate type</FormLabel>
+                <FormLabel>Delegate interests</FormLabel>
                 <Controller
                   name="interests"
                   control={control}

@@ -51,7 +51,7 @@ const Profile = ({
     <Box
       display="flex"
       alignItems="center"
-      gap={size === "lg" ? "16px" : size === "xs" ? "8px" : "16px"}
+      gap={size === "lg" ? "16px" : size === "xs" ? "standard.sm" : "16px"}
     >
       {imgUrl ? (
         // debug next line
@@ -67,12 +67,12 @@ const Profile = ({
           address={avatarString}
         />
       )}
-      <Stack spacing="4px">
+      <Stack spacing={size === "lg" ? "4px" : "2px"}>
         <Heading
           variant="h3"
           fontSize={size === "lg" ? "20px" : "16px"}
           color="content.accent.default"
-          lineHeight={size === "sm" ? "16px" : "24px"}
+          lineHeight={size === "lg" ? "24px" : "16px"}
         >
           {formattedAddress}
         </Heading>
@@ -80,6 +80,7 @@ const Profile = ({
           variant="captionSmallUppercase"
           color="content.support.default"
           fontWeight="600"
+          letterSpacing="0.5px"
         >
           {address && subtitle === null ? formattedAddress : subtitle}
         </Text>

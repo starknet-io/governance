@@ -1,0 +1,8 @@
+.markdown-body p:first-child {
+  margin-top: 0;
+}
+
+.markdown-body h3:first-child,
+.markdown-body h4:first-child {
+  margin-top: 0;
+}

@@ -39,6 +39,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Username,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -473,24 +474,46 @@ export function Page() {
         onClose={() => setIsInfoOpen(false)}
       >
         <SummaryItems.Root>
-          <SummaryItems.Item label="Stategies" value="Type" />
-          <SummaryItems.Item
-            isTruncated
-            label="IPFS"
-            value={data?.proposal?.ipfs}
+          <SummaryItems.StrategySummary
+            strategies={
+              (data?.proposal?.strategies || []).filter((s) => s) as any[]
+            }
+          />
+          <SummaryItems.LinkItem
+            label="IPFS #"
+            link={`https://snapshot.4everland.link/ipfs//${data?.proposal?.ipfs}`}
+            linkLabel={data?.proposal?.ipfs?.slice(0, 7) || ""}
+            isExternal={true}
           />
           <SummaryItems.Item
             label="Voting system"
-            value={data?.proposal?.type}
+            value={`${data?.proposal?.type} voting`}
           />
-          {/* <SummaryItems.Date label="Start date" value={data.proposal?.start} />
-          <SummaryItems.Date label="End date" value={data?.proposal?.end} /> */}
-          <SummaryItems.Item
-            label="Snapshot"
-            value={data?.proposal?.snapshot}
+          <SummaryItems.CustomDate
+            label="Start date"
+            value={data?.proposal?.start || null}
+          />
+          <SummaryItems.CustomDate
+            label="End date"
+            value={data?.proposal?.end || null}
+          />
+
+          <SummaryItems.LinkItem
+            label="Snapshot block #"
+            link={`https://etherscan.io/block/${data?.proposal?.snapshot}`}
+            linkLabel={
+              data?.proposal?.snapshot
+                ? parseInt(data.proposal.snapshot, 10).toLocaleString()
+                : ""
+            }
+            isExternal={true}
           />
         </SummaryItems.Root>
-        <Button variant="primary" onClick={() => setIsInfoOpen(false)}>
+        <Button
+          size="standard"
+          variant="primary"
+          onClick={() => setIsInfoOpen(false)}
+        >
           Close
         </Button>
       </InfoModal>
@@ -553,9 +576,12 @@ export function Page() {
                 <Text variant="small" color="content.default.default">
                   •
                 </Text>
-                <Stat.Root>
-                  <Stat.Text label={`By ${data?.proposal?.author}`} />
-                </Stat.Root>
+                {/* toDo get user images / display names */}
+                <Username
+                  src={null}
+                  displayName={truncateAddress(`${data?.proposal?.author}`)}
+                  address={`${data?.proposal?.author}`}
+                />
               </Flex>
               <Flex gap="standard.xs" paddingTop="0" alignItems="center">
                 <Text
@@ -612,8 +638,9 @@ export function Page() {
               <></>
             )}
 
-            <MarkdownRenderer content={data?.proposal?.body || ""} />
-
+            <Box mt="standard.2xl">
+              <MarkdownRenderer content={data?.proposal?.body || ""} />
+            </Box>
             <Divider my="standard.2xl" />
             <Heading
               color="content.accent.default"

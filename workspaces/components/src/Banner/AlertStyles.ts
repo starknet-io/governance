@@ -10,7 +10,7 @@ const info = definePartsStyle({
     borderRadius: "standard.base",
     py: "standard.sm",
     pl: "standard.sm",
-    pr: "standard.2xl",
+    pr: "standard.sm",
     background: "surface.info.default",
   },
   icon: {

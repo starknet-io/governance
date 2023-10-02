@@ -25,6 +25,7 @@ import "./members-list.css";
 import { Button } from "src/Button";
 import { TrashIcon } from "src/Icons";
 import { truncateAddress } from "src/utils";
+import { Username } from "src/Username";
 
 export type MemberType = {
   address: string;
@@ -149,11 +150,18 @@ export const MembersList: React.FC<MembersListProps> = ({
         ) : (
           <UnorderedList styleType="none">
             {members.map((member, index) => (
-              <ListItem className="list-item" key={index}>
+              <ListItem key={index} className="list-item">
                 <Flex justify="space-between" align="center">
                   <VStack align="start">
-                    <Flex height="20px">
-                      {member.name ? (
+                    <Box p="standard.sm">
+                      <Username
+                        size="standard"
+                        address={member.address}
+                        displayName={
+                          member.name ?? truncateAddress(member.address)
+                        }
+                      />
+                      {/* {member.name ? (
                         <Text fontSize="14px" lineHeight="22px">
                           {member.name}
                         </Text>
@@ -161,7 +169,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                         <Text fontSize="14px" lineHeight="22px">
                           {truncateAddress(member.address)}
                         </Text>
-                      )}
+                      )} */}
                       {member.twitterHandle ? (
                         <>
                           <Text>
@@ -179,11 +187,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                           </Text>
                         </>
                       ) : null}
-                    </Flex>
+                    </Box>
                     <Flex>
-                      <Text fontSize="12px" lineHeight="18px" color="#6F6E77">
-                        {member.miniBio}
-                      </Text>
+                      <Text variant="small">{member.miniBio}</Text>
                     </Flex>
                   </VStack>
                   {readonly ? null : (

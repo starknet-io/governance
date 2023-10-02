@@ -14,6 +14,7 @@ import {
   MarkdownRenderer,
   Skeleton,
   Text,
+  Username,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useMemo, useState } from "react";
@@ -26,6 +27,7 @@ import {
   PlusIcon,
   ReOrderIcon,
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export interface PageWithUserInterface extends PageInterface {
   author: User | null;
@@ -63,6 +65,8 @@ export function Page() {
     window.history.pushState(null, "", `/learn/${page.slug}`);
   };
 
+  const formattedAddress = truncateAddress(`${selectedPage?.author?.address}`);
+  // console.log(selectedPage?.author?.)
   return (
     <Box
       display="flex"
@@ -147,7 +151,7 @@ export function Page() {
               </Box>
             </Box>
             <Flex gap="standard.sm">
-              <Stat.Root>
+              {/* <Stat.Root>
                 <Stat.Text
                   label={
                     selectedPage?.author?.username ??
@@ -157,7 +161,21 @@ export function Page() {
                       selectedPage?.author?.address.slice(-3)
                   }
                 />
-              </Stat.Root>
+              </Stat.Root> */}
+              <Username
+                address={selectedPage?.author?.address}
+                size="condensed"
+                src={
+                  selectedPage?.author?.profileImage ??
+                  selectedPage?.author?.ensAvatar ??
+                  null
+                }
+                displayName={
+                  selectedPage?.author?.username ??
+                  selectedPage?.author?.ensName ??
+                  formattedAddress
+                }
+              />
               <Text variant="small" color="content.default.default">
                 •
               </Text>
@@ -167,7 +185,9 @@ export function Page() {
               </Stat.Root>
             </Flex>
             <Divider mt="standard.xl" />
-            <MarkdownRenderer content={selectedPage?.content ?? ""} />
+            <Box mt="standard.2xl">
+              <MarkdownRenderer content={selectedPage?.content ?? ""} />
+            </Box>
           </Stack>
         ) : (
           <Box
