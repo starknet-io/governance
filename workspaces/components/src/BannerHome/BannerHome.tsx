@@ -5,7 +5,6 @@ import { Text } from "src/Text";
 import { HomePageCard } from "src/Card/HomePageCard";
 import { HomeContainer } from "src/ContentContainer";
 
-
 type Props = {
   title?: string;
   tagline?: string;
@@ -40,10 +39,7 @@ export const BannerHome = ({
     <>
       <Box
         width="100%"
-        height={{
-          base: "420px",
-          md: "373px",
-        }}
+        height="356px"
         position="relative"
         borderBottom="1px solid #DCDBDD"
         overflow="hidden"
@@ -52,7 +48,12 @@ export const BannerHome = ({
         <Box position="absolute" inset="0">
           <Pattern />
         </Box>
-        <HomeContainer pt="72px">
+        <HomeContainer
+          pt={{
+            base: "48px",
+            md: "64px",
+          }}
+        >
           <Box pos="relative">
             <Heading
               letterSpacing="-0.48px"
@@ -62,11 +63,13 @@ export const BannerHome = ({
               lineHeight="48px"
               display="flex"
               flexDirection="column"
+              color="brand.primary.cosmicBlue.solid.12"
             >
               <span>{strapline}</span>
               <Box
                 bgGradient="linear(270deg, #F09280 1.91%, #E87888 38.19%, #D672EF 73.51%, #BCA1F3 95.51%)"
                 bgClip="text"
+                w="fit-content"
               >
                 {title}
               </Box>
@@ -95,35 +98,43 @@ export const BannerHome = ({
           </Box>
         </HomeContainer>
       </Box>
-      <HomeContainer
-        zIndex="2"
-        transform="translateY(-50%)"
-        px="0px"
-        mb="-60px"
-      >
-        <SimpleGrid
-          columns={3}
-          // gap="standard.md" // gap causing overflow on tablet
-          overflowX="scroll"
-          gridTemplateColumns="repeat(3, minmax(246px, 1fr))"
-          py="16px"
-          px="32px"
-          sx={{
-            "> *:not(:last-child)": {
-              marginRight: "standard.md",
-            },
+      <Box pos="relative">
+        <HomeContainer
+          zIndex="2"
+          transform={{
+            base: "translateY(-70px)",
+            md: "translateY(-50%)",
+          }}
+          px="0px"
+          mb={{
+            base: "-50px",
+            md: "-80px",
           }}
         >
-          {homeLinks.map((link) => (
-            <HomePageCard
-              key={link.title}
-              title={link.title}
-              description={link.description}
-              link={link.link}
-            />
-          ))}
-        </SimpleGrid>
-      </HomeContainer>
+          <SimpleGrid
+            columns={3}
+            // gap="standard.md" // gap causing overflow on tablet
+            overflowX="scroll"
+            gridTemplateColumns="repeat(3, minmax(246px, 1fr))"
+            py="16px"
+            px="32px"
+            sx={{
+              "> *:not(:last-child)": {
+                marginRight: "standard.md",
+              },
+            }}
+          >
+            {homeLinks.map((link) => (
+              <HomePageCard
+                key={link.title}
+                title={link.title}
+                description={link.description}
+                link={link.link}
+              />
+            ))}
+          </SimpleGrid>
+        </HomeContainer>
+      </Box>
     </>
   );
 };

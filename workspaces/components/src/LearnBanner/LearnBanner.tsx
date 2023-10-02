@@ -7,7 +7,6 @@ import { Button } from "src/Button";
 import avatar from "./avatar.jpg";
 import { ArrowRightIcon } from "src/Icons";
 
-
 const data = {
   title: "Governance for dummies",
   author: {
@@ -35,7 +34,13 @@ export const LearnBanner = () => {
         md: "row",
       }}
     >
-      <Box display="grid" gap="standard.xl" maxW="320px">
+      <Box
+        display="grid"
+        gap="standard.xl"
+        minW={{
+          md: "320px",
+        }}
+      >
         <Heading
           display="flex"
           alignItems="center"
@@ -61,16 +66,19 @@ export const LearnBanner = () => {
           alignItems="center"
         >
           <Flex gap="standard.base" alignItems="center">
-
-            <Avatar width="22px" height="22px" title={data.author.username} src={data.author.avatar}/>
-
-            <Text>{data.author.username} </Text>
+            <Avatar
+              width="22px"
+              height="22px"
+              title={data.author.username}
+              src={data.author.avatar}
+            />
+            <Text>{data.author.username}</Text>
           </Flex>
           <Text>•</Text>
           <Text>{data.author.date}</Text>
         </Flex>
       </Box>
-      <Box flexBasis="50%">
+      <Box>
         <Heading
           variant="h3"
           color="content.accent.default"
@@ -84,11 +92,13 @@ export const LearnBanner = () => {
             base: 6,
             md: 4,
           }}
+          fontSize="15px"
+          lineHeight="24px"
         >
           {data.overview}
         </Text>
         <Button
-          as={Link}
+          as="a"
           href={data.link}
           variant="primary"
           display="flex"
@@ -98,9 +108,7 @@ export const LearnBanner = () => {
           mt="standard.md"
         >
           Read more
-
           <ArrowRightIcon />
-
         </Button>
       </Box>
     </Box>

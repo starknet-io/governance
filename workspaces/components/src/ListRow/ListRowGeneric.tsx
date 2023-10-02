@@ -21,6 +21,10 @@ type Props = BoxProps & {
   children?: React.ReactNode;
 };
 
+const cellPadding = {
+  px: "standard.sm",
+  py: "standard.base",
+};
 const Container = ({ children, ...rest }: Props) => {
   return (
     <Box mt="24px" display="flex" flexDirection="column" {...rest}>
@@ -32,24 +36,27 @@ const Container = ({ children, ...rest }: Props) => {
 type RootProps = {
   children: React.ReactNode;
   href?: string;
-};
+} & BoxProps;
 
-const Root = ({ children, href }: RootProps) => {
+const Root = ({ children, href, sx, ...rest }: RootProps) => {
   return (
     <Box
       as="a"
       href={href}
       display="flex"
       flexDirection="row"
-      gap="32px"
-      borderBottom="1px solid #ECEDEE"
-      minHeight="68px"
+      // gap="32px"
+      borderBottom="1px solid"
+      borderColor="border.forms"
+      // minHeight="68px"
+      py="standard.sm"
       alignItems="center"
       _hover={{
         textDecoration: "none",
-        backgroundColor: "#F9FAFB",
+        backgroundColor: "surface.forms.hover",
       }}
       width={"100%"}
+      {...rest}
     >
       {children}
     </Box>
@@ -59,11 +66,17 @@ const Root = ({ children, href }: RootProps) => {
 type StatusProps = {
   status: string | null | undefined;
   width?: string | null;
-};
+} & BoxProps;
 
-const Status = ({ status, width = "80" }: StatusProps) => {
+const Status = ({ status, width = "80", ...rest }: StatusProps) => {
   return (
-    <Box minWidth={`${width}px`} justifyContent="flex-end" display="flex">
+    <Box
+      minWidth={`${width}px`}
+      justifyContent="flex-end"
+      display="flex"
+      {...cellPadding}
+      {...rest}
+    >
       <Badge variant={status ?? "outline"}>{status}</Badge>
     </Box>
   );
@@ -71,11 +84,11 @@ const Status = ({ status, width = "80" }: StatusProps) => {
 
 type TitleProps = {
   label: string | null | undefined;
-};
+} & BoxProps;
 
-const Title = ({ label = "" }: TitleProps) => {
+const Title = ({ label = "", ...rest }: TitleProps) => {
   return (
-    <Box flex="1">
+    <Box flex="1" {...cellPadding} {...rest}>
       <Text variant="cardBody" noOfLines={1} fontWeight="500">
         {label}
       </Text>
@@ -89,7 +102,7 @@ const Title = ({ label = "" }: TitleProps) => {
 
 const CustomDate = () => {
   return (
-    <Box>
+    <Box {...cellPadding}>
       <Text variant="breadcrumbs" noOfLines={1} fontWeight="500">
         Ending in - days
       </Text>
@@ -104,7 +117,7 @@ type MutedTextProps = {
 
 const MutedText = ({ type, id }: MutedTextProps) => {
   return (
-    <Box textTransform={"uppercase"} minWidth="60px">
+    <Box textTransform={"uppercase"} minWidth="60px" {...cellPadding}>
       <Text variant="breadcrumbs" color="#6B7280">
         {type === "snip" ? "SNIP" : "Vote"} {id.toString().padStart(3, "0")}
       </Text>
@@ -114,11 +127,11 @@ const MutedText = ({ type, id }: MutedTextProps) => {
 
 type CategoryProps = {
   category: string;
-};
+} & BoxProps;
 
-const CategoryText = ({ category }: CategoryProps) => {
+const CategoryText = ({ category, ...rest }: CategoryProps) => {
   return (
-    <Box textTransform={"capitalize"}>
+    <Box textTransform={"capitalize"} {...cellPadding} {...rest}>
       <Text variant="breadcrumbs" color="#6B7280">
         {category}
       </Text>
@@ -133,7 +146,7 @@ type VoteProps = {
 
 const Vote = ({ type, id }: VoteProps) => {
   return (
-    <Box textTransform={"uppercase"} minWidth="60px">
+    <Box textTransform={"uppercase"} minWidth="60px" {...cellPadding}>
       Vote status
     </Box>
   );
@@ -165,7 +178,7 @@ const PastVotes = ({
     }
   };
   return (
-    <Flex flexDirection="column" flex={1} gap="6px">
+    <Flex flexDirection="column" flex={1} gap="6px" {...cellPadding}>
       <Text
         variant="breadcrumbs"
         fontSize="12px"
@@ -205,7 +218,7 @@ const CommentSummary = ({
   comment,
 }: CommentSummaryProps) => {
   return (
-    <Flex flexDirection="column" flex={1} gap="6px">
+    <Flex flexDirection="column" flex={1} gap="6px" {...cellPadding}>
       <Text
         variant="breadcrumbs"
         fontSize="12px"
@@ -230,9 +243,9 @@ const CommentSummary = ({
 type CommentsProps = {
   count: number | null;
   width?: string | null;
-};
+} & BoxProps;
 
-const Comments = ({ count, width }: CommentsProps) => {
+const Comments = ({ count, width, ...rest }: CommentsProps) => {
   return (
     <Box
       minWidth={`${width}px`}
@@ -240,6 +253,8 @@ const Comments = ({ count, width }: CommentsProps) => {
       flexDirection="row"
       gap="4px"
       alignItems="center"
+      {...cellPadding}
+      {...rest}
     >
       <Icon as={CommentIcon} />
       <Text variant="breadcrumbs" color="#6B7280">
@@ -275,9 +290,9 @@ type DateRangeProps = {
   start?: number;
   end?: number;
   state: string | null | undefined;
-};
+} & BoxProps;
 
-const DateRange = ({ start, end, state }: DateRangeProps) => {
+const DateRange = ({ start, end, state, ...rest }: DateRangeProps) => {
   const now = new Date();
 
   const startDate = start ? new Date(start * 1000) : new Date();
@@ -292,7 +307,7 @@ const DateRange = ({ start, end, state }: DateRangeProps) => {
     dateText = "Ended " + dateDiff(endDate, now) + " ago";
   }
   return (
-    <Box width="120px">
+    <Box width="calc(120px + 24px)" {...cellPadding} {...rest}>
       <Text
         variant="breadcrumbs"
         fontSize="12px"
@@ -307,29 +322,36 @@ const DateRange = ({ start, end, state }: DateRangeProps) => {
 };
 
 const colors: { [key: string]: string } = {
-  For: "#29AB87",
-  Against: "#E54D66",
-  Abstain: "#6C6C7A",
-  Yes: "#29AB87",
-  No: " #6C6C7A",
+  For: "surface.success.default",
+  Against: "surface.danger.default",
+  Abstain: "surface.accentSecondary.default",
+  Yes: "surface.success.default",
+  No: " surface.accentSecondary.default",
 };
 
-interface VoteResultsProps {
+interface VoteResultsProps extends BoxProps {
   choices: string[];
   scores: number[];
 }
 
-const VoteResults: React.FC<VoteResultsProps> = ({ choices, scores }) => {
+const VoteResults: React.FC<VoteResultsProps> = ({
+  choices,
+  scores,
+  ...rest
+}) => {
   const total = scores.reduce((a, b) => a + b, 0);
   const noVotes = total === 0;
   const onlyOneVote = total === Math.max(...scores);
   return (
     <Box
       display="flex"
-      width="100%"
-      maxWidth="74px"
+      flex="100%"
+      maxWidth="108px"
+      width="108px"
       gap="2px"
       overflow="hidden"
+      {...cellPadding}
+      {...rest}
     >
       {choices.map((choice, i) => {
         const rawVotePercentage = (scores[i] / total) * 100;
@@ -348,7 +370,7 @@ const VoteResults: React.FC<VoteResultsProps> = ({ choices, scores }) => {
               borderRadius="2px"
               backgroundColor={
                 noVotes || (onlyOneVote && isNoVote)
-                  ? "#D7D7DB"
+                  ? "surface.onBg.default"
                   : colors[choice]
               }
               width={
@@ -368,7 +390,13 @@ const VoteResults: React.FC<VoteResultsProps> = ({ choices, scores }) => {
 
 const Post = ({ post }: any) => {
   return (
-    <Flex flexDirection="column" flex={1} gap="6px" width={"100%"}>
+    <Flex
+      flexDirection="column"
+      flex={1}
+      gap="6px"
+      width={"100%"}
+      {...cellPadding}
+    >
       <Text
         variant="breadcrumbs"
         fontSize="12px"

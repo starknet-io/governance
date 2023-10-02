@@ -38,7 +38,10 @@ const variants = {
       lineHeight: "20px",
       letterSpacing: "0.12px",
       fontWeight: 500,
-      // minW: "246px",
+      border: '1px solid transparent',
+      _hover: { 
+        borderColor: 'content.default.disabled',
+      }
     },
     header: {
       padding: 0,

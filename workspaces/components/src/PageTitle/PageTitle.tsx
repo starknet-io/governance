@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, BoxProps } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 import { Text } from "src/Text";
 import { Link } from "src/Link";
@@ -7,11 +7,11 @@ type Props = {
   title: string;
   description?: string;
   learnMoreLink?: string;
-};
+} & BoxProps;
 
-export const PageTitle = ({ title, description, learnMoreLink }: Props) => {
+export const PageTitle = ({ title, description, learnMoreLink, ...rest }: Props) => {
   return (
-    <Box mb="24px">
+    <Box mb="24px" {...rest}>
       <Heading fontSize="28px" as="h2" variant="h3" mb="12px" color="#1A1523">
         {title}
       </Heading>

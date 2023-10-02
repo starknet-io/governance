@@ -39,6 +39,7 @@ export function Page() {
         display="grid"
         gap="standard.3xl"
         mb="standard.3xl"
+        mt="16px"
       >
         <Box>
           <Flex justifyContent="space-between" alignItems="flex-start">
@@ -126,6 +127,7 @@ export function Page() {
         <Delegates
           showFilers={false}
           transformData={(data) => data.slice(0, 6)}
+          showAllDeligatesLink={true}
         />
       </HomeContainer>
     </Box>
