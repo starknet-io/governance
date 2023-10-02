@@ -130,7 +130,7 @@ export function DynamicContextProviderPage(props: Props) {
   const onSubmit = () => {
     editUserProfile.mutateAsync(
       {
-        address: authUser?.user?.verifiedCredentials[0]?.address ?? "",
+        address: authUser?.user?.verifiedCredentials[0]?.address?.toLowerCase() ?? "",
         username,
         starknetAddress,
       },
@@ -190,6 +190,8 @@ export function DynamicContextProviderPage(props: Props) {
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {
               // Guard against setting the state if authUser data hasn't changed
+              console.log(authUser)
+              console.log(params)
               if (JSON.stringify(authUser) !== JSON.stringify(params)) {
                 setAuthUser(params);
               }

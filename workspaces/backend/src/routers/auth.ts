@@ -49,16 +49,16 @@ export const authRouter = router({
           },
         );
         if (decodedToken.verified_credentials?.[0].address) {
+          const lowerCaseAddress =
+            decodedToken.verified_credentials[0].address.toLowerCase();
+
           const user = await db.query.users.findFirst({
-            where: eq(
-              users.address,
-              decodedToken.verified_credentials?.[0].address,
-            ),
+            where: eq(users.address, lowerCaseAddress),
           });
 
           if (!user) {
             await db.insert(users).values({
-              address: decodedToken.verified_credentials?.[0].address,
+              address: lowerCaseAddress, // save address as lowercase
               walletName: decodedToken.verified_credentials?.[0].wallet_name,
               walletProvider:
                 decodedToken.verified_credentials?.[0].wallet_provider,
@@ -86,7 +86,7 @@ export const authRouter = router({
               .where(
                 eq(
                   users.address,
-                  decodedToken.verified_credentials?.[0].address,
+                  lowerCaseAddress, // save address as lowercase,
                 ),
               );
           }
@@ -110,6 +110,7 @@ export const authRouter = router({
 
   currentUser: publicProcedure.query(async (opts) => {
     try {
+      console.log(opts.ctx.user)
       if (opts.ctx.user) {
         return opts.ctx.user;
       }

@@ -35,6 +35,6 @@ export const getUserByJWT = async (token: string): Promise<User | undefined> => 
   if (!walletAddress) {
     return undefined;
   }
-  const user = await db.select().from(users).where(eq(users.address, walletAddress));
+  const user = await db.select().from(users).where(eq(users.address, walletAddress.toLowerCase()));
   return user[0];
 }
