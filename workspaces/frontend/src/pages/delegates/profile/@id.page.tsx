@@ -717,7 +717,9 @@ export function Page() {
                 ))}
               </ListRow.Container>
             ) : (
-              <EmptyState type="votesCast" title="No votes yet" />
+              <Box mt="standard.md">
+                <EmptyState type="votesCast" title="No votes yet" />
+              </Box>
             )}
           </Box>
 
