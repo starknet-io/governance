@@ -14,6 +14,7 @@ import {
   Multiselect,
   useMarkdownEditor,
   MarkdownEditor,
+  Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { Controller, useForm, FieldErrors } from "react-hook-form";
@@ -53,6 +54,7 @@ export function Page() {
 
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
     useMarkdownEditor("");
+  const [error, setError] = useState("");
 
   const {
     editorValue: editorCustomAgreementValue,
@@ -105,9 +107,15 @@ export function Page() {
       if (showCustomAgreementEditor || agreementType === "custom") {
         data.customDelegateAgreementContent = editorCustomAgreementValue;
       }
-      await editDelegate.mutateAsync(data).then(() => {
-        navigate(`/delegates/profile/${pageContext.routeParams!.id}`);
-      });
+      await editDelegate
+        .mutateAsync(data)
+        .then(() => {
+          navigate(`/delegates/profile/${pageContext.routeParams!.id}`);
+        })
+        .catch((err) => {
+          console.log(err);
+          setError(err?.message ? err.message : JSON.stringify(err));
+        });
     } catch (error) {
       // Handle error
       console.log(error);
@@ -131,7 +139,7 @@ export function Page() {
       <ContentContainer>
         <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
-            Edit post
+            Edit Delegate
           </Heading>
           <form onSubmit={onSubmit}>
             <Stack spacing="32px" direction={{ base: "column" }}>
@@ -287,6 +295,9 @@ export function Page() {
                   Save
                 </Button>
               </Flex>
+              {error.length ? (
+                <Banner label={error} variant="error" type="error" />
+              ) : null}
             </Stack>
           </form>
         </Box>

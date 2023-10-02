@@ -169,6 +169,16 @@ export const delegateRouter = router({
       }),
     )
     .mutation(async (opts) => {
+      const userId = opts.ctx.user?.id;
+      if (!userId) throw new Error('User not found');
+
+      // Ensure that the user is trying to edit their own delegate profile
+      const delegate = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+      });
+
+      if (!delegate) throw new Error('Delegate not found');
+      if (delegate.userId !== userId) throw new Error('Unauthorized: Insufficient permissions');
       // Determine the agreement value
       const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
         ? null

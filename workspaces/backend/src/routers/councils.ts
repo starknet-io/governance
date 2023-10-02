@@ -78,7 +78,12 @@ export const councilsRouter = router({
   editCouncil: protectedProcedure
     .input(councilInsertSchema.required({ id: true }))
     .mutation(async (opts) => {
-      // Extract duplicate code into helper functions.
+      const userRole = opts.ctx.user?.role;
+      if (!userRole) throw new Error('User not found');
+
+      if (userRole !== 'admin' && userRole !== 'moderator')
+        throw new Error('Unauthorized: Insufficient permissions');
+
       const insertUser = async (member: MemberType) => {
         return await db.insert(users).values({
           address: member.address,
