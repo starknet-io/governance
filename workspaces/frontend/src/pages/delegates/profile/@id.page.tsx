@@ -206,8 +206,8 @@ export function Page() {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
-          ? "Tokens delegated successfully"
-          : "Tokens undelegated successfully",
+          ? "Tokens undelegated successfully"
+          : "Tokens delegated successfully",
       );
       setStatusDescription("");
     }
@@ -366,9 +366,11 @@ export function Page() {
   const isLoadingSocials = !delegateResponse.isFetched;
   const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
   const hasUserDelegatedTokensToThisDelegate =
-    delegation.isFetched && delegation.data === delegateAddress;
+    delegation.isFetched && delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
 
-  const delegateOwnProfile = delegateAddress === address;
+  const delegateOwnProfile =
+    delegateAddress &&
+    delegateAddress?.toLowerCase() === address?.toLowerCase();
 
   return (
     <Box
@@ -540,7 +542,7 @@ export function Page() {
           <></>
         )}
 
-        {delegation.isFetched && delegation.data === delegateAddress && (
+        {delegation.isFetched && delegation.data?.toLowerCase() === delegateAddress?.toLowerCase() && (
           <Box mt="standard.md">
             <Banner
               label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
@@ -548,15 +550,7 @@ export function Page() {
           </Box>
         )}
 
-        {delegation.isFetched && delegation.data === delegateAddress && (
-          <Box mt="standard.md">
-            <Banner
-              label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
-            />
-          </Box>
-        )}
-
-        {delegateResponse.isFetched && address === delegateAddress && (
+        {delegateResponse.isFetched && address?.toLowerCase() === delegateAddress?.toLowerCase() && (
           <Box mt="standard.md">
             <Banner label="You can’t delegate votes to your own account." />
           </Box>

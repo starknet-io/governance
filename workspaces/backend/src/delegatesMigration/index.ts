@@ -64,21 +64,21 @@ const adminUsers = [
   '0x68Be7aDe3b4cF6CF8063f92882265a6492b6B33D',
   '0xb9A677edf29C080A80076dB94fbb4CbBF99bEf24',
   '0x77A653A468ded01fDfA4D78C0C23B35D1060A350',
-  '0x106b1F88867D99840CaaCAC2dA91265BA6E93e2B',
+  '0x106b1f88867d99840caacac2da91265ba6e93e2b',
 ];
 
 async function createAdminUsers() {
   for (const address of adminUsers) {
     const existingUser = await db.query.users.findFirst({
-      where: eq(users.address, address),
+      where: eq(users.address, address.toLowerCase()),
     });
 
     if (!existingUser) {
       await db
         .insert(users)
         .values({
-          publicIdentifier: address,
-          address: address,
+          publicIdentifier: address.toLowerCase(),
+          address: address.toLowerCase(),
           ensName: null, // Set to a suitable value
           role: 'admin',
           createdAt: new Date(),
@@ -91,6 +91,7 @@ async function createAdminUsers() {
         .set({
           role: 'admin',
         })
+        .where(eq(users.address, address.toLowerCase()))
         .returning();
     }
   }
@@ -202,7 +203,6 @@ async function seedData() {
   c7 - statements
    */
   for (const entry of dataDump) {
-
     // INTERESTS and STATEMENT - C5
     // -- - -- - -- - - - -- - - - - - -
     const interestsStatements = entry.c5 ? JSON.parse(entry.c5) : [];
@@ -225,7 +225,7 @@ async function seedData() {
         ?.value || '';
     const statementMarkdown = turndownService.turndown(statement);
     // -- - -- - -- - - - -- - - - - - -
-    console.log('existing user query')
+    console.log('existing user query');
     // Step 1: Check if the user exists
     const existingUser = await db.query.users.findFirst({
       where: eq(users.address, entry.c0),
@@ -234,7 +234,7 @@ async function seedData() {
     let userId;
     if (!existingUser) {
       // Step 2: Insert new user if not exists
-      console.log('try to insert user query')
+      console.log('try to insert user query');
 
       const insertedUser = await db
         .insert(users)
@@ -255,7 +255,7 @@ async function seedData() {
     }
 
     // Step 3: Check if the delegate exists
-    console.log('existing delegate query')
+    console.log('existing delegate query');
 
     const existingDelegate = await db.query.delegates.findFirst({
       where: eq(delegates.userId, userId),
@@ -263,7 +263,7 @@ async function seedData() {
 
     if (!existingDelegate) {
       // Step 4: Insert new delegate if not exists
-      console.log('new delegate query')
+      console.log('new delegate query');
 
       const newDelegate = {
         userId: userId,

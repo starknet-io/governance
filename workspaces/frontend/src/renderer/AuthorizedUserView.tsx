@@ -76,7 +76,7 @@ const AuthorizedUserView = () => {
   });
 
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegationData ? delegationData : "",
+    address: delegationData ? delegationData.toLowerCase() : "",
   });
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
