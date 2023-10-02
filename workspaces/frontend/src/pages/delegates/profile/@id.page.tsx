@@ -368,9 +368,7 @@ export function Page() {
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched && delegation.data === delegateAddress;
 
-
-  const delegateOwnProfile = delegateAddress === address
-
+  const delegateOwnProfile = delegateAddress === address;
 
   return (
     <Box
@@ -574,7 +572,7 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Delegated votes"
-              value={(gqlResponse.data?.vp?.vp || 0).toString()}
+              value={(gqlResponse.data?.vp?.vp || 0).toLocaleString()}
             />
             <SummaryItems.Item
               isLoading={!delegateCommentsResponse.isFetched}
