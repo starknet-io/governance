@@ -49,7 +49,9 @@ export const delegateRouter = router({
       });
 
       if (existingDelegate) {
-        throw new Error('A delegate with the address of the user already exists');
+        throw new Error(
+          'A delegate with the address of the user already exists',
+        );
       }
 
       const user = await db.query.users.findFirst({
@@ -169,6 +171,19 @@ export const delegateRouter = router({
       }),
     )
     .mutation(async (opts) => {
+      const userId = opts.ctx.user?.id;
+      const userRole = opts.ctx.user?.role;
+      if (!userId) throw new Error('User not found');
+
+      // Ensure that the user is trying to edit their own delegate profile
+      const delegate = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+      });
+
+      if (!delegate) throw new Error('Delegate not found');
+      if (userRole !== 'admin' && userRole !== 'moderator') {
+        if (delegate.userId !== userId) throw new Error('Unauthorizeds');
+      }
       // Determine the agreement value
       const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
         ? null
@@ -299,7 +314,6 @@ export const delegateRouter = router({
 
         // Since we are using joins instead of with: [field]: true, we need to map to corresponding data format
         if (foundDelegates && foundDelegates.length) {
-
           let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
             ...foundDelegates.delegates,
             author: { ...foundDelegates.users },
@@ -346,18 +360,20 @@ export const delegateRouter = router({
     }),
 
   deleteDelegate: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
+    .input(z.object({ id: z.string() }))
     .mutation(async (opts) => {
+      const userId = opts.ctx.user?.id;
+      const userRole = opts.ctx.user?.role;
+      if (!userId) throw new Error('User not found');
+
       const delegate = await db.query.delegates.findFirst({
         where: eq(delegates.id, opts.input.id),
       });
 
-      if (!delegate) {
-        throw new Error('Delegate not found');
+      if (!delegate) throw new Error('Delegate not found');
+
+      if (userRole !== 'admin' && userRole !== 'moderator') {
+        if (delegate.userId !== userId) throw new Error('Unauthorized');
       }
 
       await db

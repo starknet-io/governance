@@ -13,6 +13,7 @@ import {
   useMarkdownEditor,
   MarkdownEditor,
   MultiLevelReOrderableList,
+  Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -33,6 +34,7 @@ export function Page() {
   const pagesTree = trpc.pages.getPagesTree.useQuery();
 
   const [treeItems, setTreeItems] = useState<TreeItems>([]);
+  const [error, setError] = useState("");
   const { handleUpload } = useFileUpload();
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
@@ -73,6 +75,9 @@ export function Page() {
     savePagesTree.mutate(newItems, {
       onSuccess: () => {
         navigate(`/learn`);
+      },
+      onError: (err) => {
+        setError(err?.message || "An Error Occurred");
       },
     });
   });
@@ -121,7 +126,7 @@ export function Page() {
             </Box>
           )}
 
-          <Flex justifyContent="flex-end">
+          <Flex justifyContent="flex-end" mb={4}>
             <Button
               size="condensed"
               variant="primary"
@@ -132,6 +137,9 @@ export function Page() {
               Save Changes
             </Button>
           </Flex>
+          {error.length ? (
+            <Banner label={error} variant="error" type="error" />
+          ) : null}
         </Box>
       </ContentContainer>
     </>

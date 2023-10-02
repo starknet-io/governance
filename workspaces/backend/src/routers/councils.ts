@@ -15,7 +15,7 @@ const councilInsertSchema = createInsertSchema(councils).extend({
       name: z.string().optional().nullable(),
       twitterHandle: z.string().optional().nullable(),
       miniBio: z.string().optional().nullable(),
-    })
+    }),
   ),
 });
 
@@ -26,6 +26,11 @@ type MemberType = {
   miniBio?: string | null | undefined;
 };
 
+function checkUserRole(userRole: string | undefined) {
+  if (!userRole) throw new Error('User not found');
+  if (userRole !== 'admin' && userRole !== 'moderator')
+    throw new Error('Unauthorized');
+}
 
 export const councilsRouter = router({
   getAll: publicProcedure.query(() => db.select().from(councils)),
@@ -33,42 +38,61 @@ export const councilsRouter = router({
   saveCouncil: protectedProcedure
     .input(councilInsertSchema.omit({ id: true }))
     .mutation(async (opts) => {
+      // Check User Role
+      checkUserRole(opts.ctx.user?.role);
+
       const insertedCouncil = await db
         .insert(councils)
         .values({
           name: opts.input.name,
           description: opts.input.description,
           statement: opts.input.statement,
-          slug: slugify(opts.input.name ?? '', { replacement: "_", lower: true },),
+          slug: slugify(opts.input.name ?? '', {
+            replacement: '_',
+            lower: true,
+          }),
           address: opts.input.address,
         })
         .returning();
 
       for (const member of opts.input.members) {
         const user = await db.query.users.findFirst({
-          where: eq(users.address, member.address)
+          where: eq(users.address, member.address),
         });
         if (!user) {
-          const newUser = await db.insert(users).values({
-            address: member.address,
-            name: member.name,
-            twitter: member.twitterHandle,
-            miniBio: member.miniBio,
-          }).returning();
-          await db.insert(usersToCouncils).values({
-            userId: newUser[0].id,
-            councilId: insertedCouncil[0].id
-          }).execute();
+          const newUser = await db
+            .insert(users)
+            .values({
+              address: member.address,
+              name: member.name,
+              twitter: member.twitterHandle,
+              miniBio: member.miniBio,
+            })
+            .returning();
+          await db
+            .insert(usersToCouncils)
+            .values({
+              userId: newUser[0].id,
+              councilId: insertedCouncil[0].id,
+            })
+            .execute();
         } else {
-          await db.update(users).set({
-            name: member.name,
-            twitter: member.twitterHandle,
-            miniBio: member.miniBio,
-          }).where(eq(users.id, user.id)).execute();
-          await db.insert(usersToCouncils).values({
-            userId: user.id,
-            councilId: insertedCouncil[0].id
-          }).execute();
+          await db
+            .update(users)
+            .set({
+              name: member.name,
+              twitter: member.twitterHandle,
+              miniBio: member.miniBio,
+            })
+            .where(eq(users.id, user.id))
+            .execute();
+          await db
+            .insert(usersToCouncils)
+            .values({
+              userId: user.id,
+              councilId: insertedCouncil[0].id,
+            })
+            .execute();
         }
       }
 
@@ -78,29 +102,41 @@ export const councilsRouter = router({
   editCouncil: protectedProcedure
     .input(councilInsertSchema.required({ id: true }))
     .mutation(async (opts) => {
-      // Extract duplicate code into helper functions.
+      const userRole = opts.ctx.user?.role;
+      checkUserRole(userRole);
+
       const insertUser = async (member: MemberType) => {
-        return await db.insert(users).values({
-          address: member.address,
-          name: member.name,
-          twitter: member.twitterHandle,
-          miniBio: member.miniBio,
-        }).returning();
+        return await db
+          .insert(users)
+          .values({
+            address: member.address,
+            name: member.name,
+            twitter: member.twitterHandle,
+            miniBio: member.miniBio,
+          })
+          .returning();
       };
 
       const insertUserToCouncil = async (userId: string, councilId: number) => {
-        return await db.insert(usersToCouncils).values({
-          userId: userId,
-          councilId: councilId
-        }).execute();
+        return await db
+          .insert(usersToCouncils)
+          .values({
+            userId: userId,
+            councilId: councilId,
+          })
+          .execute();
       };
 
       const updateUser = async (userId: string, member: MemberType) => {
-        return await db.update(users).set({
-          name: member.name,
-          twitter: member.twitterHandle,
-          miniBio: member.miniBio,
-        }).where(eq(users.id, userId)).execute();
+        return await db
+          .update(users)
+          .set({
+            name: member.name,
+            twitter: member.twitterHandle,
+            miniBio: member.miniBio,
+          })
+          .where(eq(users.id, userId))
+          .execute();
       };
 
       // Update council.
@@ -110,7 +146,10 @@ export const councilsRouter = router({
           name: opts.input.name,
           description: opts.input.description,
           statement: opts.input.statement,
-          slug: slugify(opts.input.name ?? '', { replacement: "_", lower: true },),
+          slug: slugify(opts.input.name ?? '', {
+            replacement: '_',
+            lower: true,
+          }),
           address: opts.input.address,
         })
         .where(eq(councils.id, opts.input.id))
@@ -119,7 +158,7 @@ export const councilsRouter = router({
       // Process members.
       for (const member of opts.input.members) {
         const user = await db.query.users.findFirst({
-          where: eq(users.address, member.address)
+          where: eq(users.address, member.address),
         });
 
         if (!user) {
@@ -131,7 +170,10 @@ export const councilsRouter = router({
 
         // User exists, check if they're connected to the council.
         const userToCouncil = await db.query.usersToCouncils.findFirst({
-          where: (and(eq(usersToCouncils.userId, user.id), eq(usersToCouncils.councilId, opts.input.id)))
+          where: and(
+            eq(usersToCouncils.userId, user.id),
+            eq(usersToCouncils.councilId, opts.input.id),
+          ),
         });
 
         if (!userToCouncil) {
@@ -146,31 +188,32 @@ export const councilsRouter = router({
       return updatedCouncil[0];
     }),
 
-
   deleteCouncil: publicProcedure
     .input(councilInsertSchema.required({ id: true }).pick({ id: true }))
     .mutation(async (opts) => {
+      const userRole = opts.ctx.user?.role;
+      checkUserRole(userRole);
       await db.delete(councils).where(eq(councils.id, opts.input.id)).execute();
     }),
 
-  getCouncilById: publicProcedure.
-    input(z.object({ councilId: z.number() }))
+  getCouncilById: publicProcedure
+    .input(z.object({ councilId: z.number() }))
     .query(async (opts) => {
       const data = await db.query.councils.findFirst({
         where: eq(councils.id, opts.input.councilId),
         with: {
           members: {
             with: {
-              user: true
-            }
-          }
-        }
-      })
+              user: true,
+            },
+          },
+        },
+      });
       return data;
     }),
 
-  getCouncilBySlug: publicProcedure.
-    input(z.object({ slug: z.string() }))
+  getCouncilBySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
     .query(async (opts) => {
       return await db.query.councils.findFirst({
         where: eq(councils.slug, opts.input.slug),
@@ -179,26 +222,33 @@ export const councilsRouter = router({
             with: {
               comments: true,
             },
-            orderBy: [desc(councils.createdAt)]
+            orderBy: [desc(councils.createdAt)],
           },
           members: {
             with: {
               user: true,
-            }
-          }
-        }
-      })
+            },
+          },
+        },
+      });
     }),
-
 
   deleteUserFromCouncil: protectedProcedure
     .input(z.object({ userAddress: z.string(), councilId: z.number() }))
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.userAddress)
+        where: eq(users.address, opts.input.userAddress),
       });
       if (!user) return;
-      await db.delete(usersToCouncils).where(and(eq(usersToCouncils.userId, user.id), eq(usersToCouncils.councilId, opts.input.councilId))).execute();
+      await db
+        .delete(usersToCouncils)
+        .where(
+          and(
+            eq(usersToCouncils.userId, user.id),
+            eq(usersToCouncils.councilId, opts.input.councilId),
+          ),
+        )
+        .execute();
     }),
 
   getCouncilSlug: publicProcedure
@@ -206,8 +256,7 @@ export const councilsRouter = router({
     .query(async (opts) => {
       const data = await db.query.councils.findFirst({
         where: eq(councils.id, opts.input.councilId),
-      })
+      });
       return data?.slug;
     }),
-
 });

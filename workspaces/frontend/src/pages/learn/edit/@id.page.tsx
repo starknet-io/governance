@@ -15,6 +15,7 @@ import {
   Divider,
   Flex,
   DeletionDialog,
+  Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -38,6 +39,7 @@ export function Page() {
   const pageId = pageContext.routeParams!.id;
   const cancelRef = useRef(null);
 
+  const [error, setError] = useState("");
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
   const [treeItems, setTreeItems] = useState<TreeItems>([]);
   const { data: pagesTree, isSuccess } = trpc.pages.getPagesTree.useQuery();
@@ -79,6 +81,9 @@ export function Page() {
         onSuccess: () => {
           navigate(`/learn`);
         },
+        onError: (err) => {
+          setError(err?.message || "An error occurred");
+        },
       });
     } catch (error) {
       // Handle error
@@ -93,6 +98,9 @@ export function Page() {
       {
         onSuccess: () => {
           navigate(`/learn`);
+        },
+        onError: (err) => {
+          setError(err?.message || "An error occurred");
         },
       },
     );
@@ -145,7 +153,7 @@ export function Page() {
               </Box>
             )}
             <Divider mt="14" mb="6" />
-            <Flex justifyContent="space-between">
+            <Flex justifyContent="space-between" mb={4}>
               <Button
                 onClick={() => setIsDeleteDialogVisible(true)}
                 size="condensed"
@@ -174,6 +182,9 @@ export function Page() {
                 </Button>
               </Flex>
             </Flex>
+            {error.length ? (
+              <Banner label={error} variant="error" type="error" />
+            ) : null}
           </form>
         </Box>
 

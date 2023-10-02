@@ -15,6 +15,7 @@ import {
   MarkdownEditor,
   useMarkdownEditor,
   Textarea,
+  Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -31,6 +32,7 @@ export function Page() {
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
 
   const [members, setMembers] = useState<MemberType[]>([]);
+  const [error, setError] = useState<string>("");
   const createCouncil = trpc.councils.saveCouncil.useMutation();
   const { handleUpload } = useFileUpload();
   const utils = trpc.useContext();
@@ -42,6 +44,7 @@ export function Page() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      setError("");
       data.statement = editorValue;
       data.description = shortDescValue;
       data.slug = "";
@@ -54,7 +57,7 @@ export function Page() {
       });
     } catch (error) {
       // Handle error
-      console.log(error);
+      setError(`Error: ${error?.message}` || "An Error occurred");
     }
   });
 
@@ -125,6 +128,9 @@ export function Page() {
                   Create council
                 </Button>
               </Flex>
+              {error && error.length && (
+                <Banner label={error} variant="error" type="error" />
+              )}
             </Stack>
           </form>
         </Box>

@@ -7,18 +7,26 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { IconButton } from "src/IconButton";
-import { InfoIcon, XIcon } from "src/Icons";
+import { InfoIcon, XIcon, DocumentFileWarning } from "src/Icons";
 type Props = {
-  type?: "info" | "pending";
+  type?: "info" | "pending" | "error";
+  variant?: "info" | "error";
   label: string;
   onClose?: () => void;
 } & AlertProps;
 
-export const Banner = ({ label, onClose, type = "info", ...rest }: Props) => {
+export const Banner = ({
+  label,
+  onClose,
+  type = "info",
+  variant = "info",
+  ...rest
+}: Props) => {
   return (
-    <Alert variant="info" flexDirection="row" gap="standard.sm" {...rest}>
+    <Alert variant={variant} flexDirection="row" gap="standard.sm" {...rest}>
       {type === "info" && <Icon color="#1A1523" as={InfoIcon} />}
       {type === "pending" && <Spinner size="sm" />}
+      {type === "error" && <Icon as={DocumentFileWarning} />}
 
       <AlertDescription pr={onClose && "standard.sm"}>{label}</AlertDescription>
       {onClose && (
