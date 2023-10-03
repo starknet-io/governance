@@ -145,11 +145,21 @@ export function Page() {
             <Stack spacing="32px" direction={{ base: "column" }}>
               <FormControl id="delegate-statement">
                 <FormLabel>Delegate pitch</FormLabel>
-                <MarkdownEditor
-                  onChange={handleEditorChange}
-                  value={editorValue}
-                  customEditor={editor}
-                  handleUpload={handleUpload}
+                <Controller
+                  name="statement"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <MarkdownEditor
+                      onChange={(value) => {
+                        handleEditorChange(value);
+                        field.onChange(value); // Update the form state
+                      }}
+                      value={editorValue}
+                      customEditor={editor}
+                      handleUpload={handleUpload}
+                    />
+                  )}
                 />
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>
@@ -256,15 +266,25 @@ export function Page() {
               >
                 <FormControl id="custom-agreement-editor">
                   <FormLabel>Custom Delegate Agreement</FormLabel>
-                  <MarkdownEditor
-                    onChange={handleCustomAgreement}
-                    value={editorCustomAgreementValue}
-                    customEditor={
-                      delegate?.customAgreement
-                        ? editorCustomAgreement
-                        : undefined
-                    }
-                    handleUpload={handleUpload}
+                  <Controller
+                    name="customDelegateAgreementContent"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <MarkdownEditor
+                        onChange={(value) => {
+                          handleCustomAgreement(value);
+                          field.onChange(value); // Update the form state
+                        }}
+                        value={editorCustomAgreementValue}
+                        customEditor={
+                          delegate?.customAgreement
+                            ? editorCustomAgreement
+                            : undefined
+                        }
+                        handleUpload={handleUpload}
+                      />
+                    )}
                   />
                 </FormControl>
               </div>
