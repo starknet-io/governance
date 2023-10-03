@@ -446,7 +446,10 @@ export function Page() {
         isOpen={isStatusModalOpen}
         isPending={isDelegationLoading}
         isSuccess={isDelegationSuccess}
-        isFail={isDelegationError}
+        isFail={
+          isDelegationError ||
+          !!((!txHash || !txHash.length) && statusDescription.length)
+        }
         onClose={() => {
           setIsStatusModalOpen(false);
         }}
