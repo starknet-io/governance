@@ -395,7 +395,7 @@ export const delegateRouter = router({
 
           if (
             !opts.input.sortBy &&
-            !opts.input.sortBy.length &&
+            !opts.input.sortBy?.length &&
             !opts.input.filters?.length
           ) {
             const quarterLength = Math.floor(filteredDelegates.length / 4);
