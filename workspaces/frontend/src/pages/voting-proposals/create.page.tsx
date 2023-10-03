@@ -44,7 +44,7 @@ export function Page() {
   const { data: walletClient } = useWalletClient();
   const { convertSlateToMarkdown } = useMarkdownEditor("");
   const { handleUpload } = useFileUpload();
-  const [error, setError] = useState("asdasd");
+  const [error, setError] = useState("");
 
   const createProposal = trpc.proposals.createProposal.useMutation();
 
