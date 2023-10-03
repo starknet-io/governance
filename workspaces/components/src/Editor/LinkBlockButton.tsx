@@ -2,7 +2,7 @@ import { MouseEvent } from "react";
 import { isBlockActive } from "./hotkeys";
 import { LinkIcon } from "src/Icons";
 import { IconButton, useToken } from "@chakra-ui/react";
-import { Transforms } from "slate";
+import { Editor, Transforms } from "slate";
 
 const LinkBlockButton = ({ editor, format }: any) => {
   const [activeColor, inactiveColor] = useToken("colors", [
@@ -34,9 +34,14 @@ const LinkBlockButton = ({ editor, format }: any) => {
     event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
   ) => {
     event.preventDefault();
-    const linkName = prompt("Please enter link name");
-    const imgURL = prompt("Please enter a valid URL");
-    imgURL && linkName && insertLinkBlock(imgURL, linkName);
+
+    const selectedText = Editor.string(editor, editor.selection);
+
+    console.log({ selection: editor.selection, selectedText });
+    // const linkName = prompt("Please enter link name");
+    // const imgURL = prompt("Please enter a valid URL");
+    const imgURL = "https://google.com";
+    imgURL && selectedText && insertLinkBlock(imgURL, selectedText);
   };
 
   return (
