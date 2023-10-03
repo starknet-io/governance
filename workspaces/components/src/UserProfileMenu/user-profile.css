@@ -14,7 +14,7 @@
 }
 .edit-user-profile-menu {
   width: 484px;
-  height: 328px;
+  height: 'auto';
   border-radius: 16px;
   background-color: #fff;
   position: absolute;

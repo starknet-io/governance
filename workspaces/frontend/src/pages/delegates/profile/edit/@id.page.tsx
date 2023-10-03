@@ -23,6 +23,7 @@ import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
+import { validateStarknetAddress } from "src/utils/helpers";
 
 const interestsValues = interestsEnum.enumValues;
 
@@ -33,6 +34,7 @@ export function Page() {
     setValue,
     control,
     formState: { errors, isValid },
+    setError,
   } = useForm<RouterInput["delegates"]["editDelegate"]>();
 
   const formErrors = errors as FieldErrors<
@@ -54,7 +56,7 @@ export function Page() {
 
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
     useMarkdownEditor("");
-  const [error, setError] = useState("");
+  const [error, setErrors] = useState("");
 
   const {
     editorValue: editorCustomAgreementValue,
@@ -85,6 +87,12 @@ export function Page() {
       "confirmDelegateAgreement",
       delegateData.confirmDelegateAgreement as boolean,
     );
+    if (!validateStarknetAddress(delegateData?.author?.starknetAddress)) {
+      setError("starknetAddress", {
+        type: "manual",
+        message: "Invalid Starknet address.",
+      });
+    }
     if (delegate?.confirmDelegateAgreement) {
       setAgreementType("standard");
     } else if (delegate?.customAgreement) {
@@ -114,7 +122,7 @@ export function Page() {
         })
         .catch((err) => {
           console.log(err);
-          setError(err?.message ? err.message : JSON.stringify(err));
+          setErrors(err?.message ? err.message : JSON.stringify(err));
         });
     } catch (error) {
       // Handle error
@@ -189,9 +197,14 @@ export function Page() {
                   placeholder="0x..."
                   {...register("starknetAddress", {
                     required: true,
+                    validate: (value) =>
+                      validateStarknetAddress(value) ||
+                      "Invalid Starknet address",
                   })}
                 />
-                {errors.starknetAddress && <span>This field is required.</span>}
+                {errors.starknetAddress && (
+                  <span>{errors.starknetAddress.message}</span>
+                )}
               </FormControl>
               <FormControl id="twitter">
                 <FormLabel>Twitter</FormLabel>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   ModalBody,
@@ -16,6 +16,7 @@ import { Button } from "src/Button";
 import { Heading } from "src/Heading";
 import * as Swap from "../Swap/Swap";
 import { Text } from "../Text";
+import { ethers } from "ethers";
 
 type Props = {
   isOpen: boolean;
@@ -57,6 +58,26 @@ export const DelegateModal = ({
       ? receiverData.vp.toString()
       : receiverData?.balance?.toString() || "0";
   };
+
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    if (isValidAddress(customAddress)) {
+      setIsError(false);
+    } else {
+      setIsError(true);
+    }
+  }, [customAddress]);
+
+  const isValidAddress = (address: string) => {
+    try {
+      const checksumAddress = ethers.utils.getAddress(address);
+      return ethers.utils.isAddress(checksumAddress);
+    } catch (error) {
+      return false;
+    }
+  };
+
   return (
     <Modal
       motionPreset="slideInBottom"
@@ -108,7 +129,7 @@ export const DelegateModal = ({
                       display="flex"
                       justifyContent="space-between"
                     >
-                      <FormControl isInvalid={isValidCustomAddress === false}>
+                      <FormControl isInvalid={true}>
                         <FormLabel>
                           <Text color="#6C6C75" as="span">
                             Receiver
@@ -119,7 +140,7 @@ export const DelegateModal = ({
                           value={customAddress}
                           onChange={(e) => setCustomAddress(e.target.value)}
                         />
-                        {isValidCustomAddress === false && (
+                        {isError && customAddress !== "" && (
                           <FormErrorMessage>
                             Not a valid ethereum address
                           </FormErrorMessage>
@@ -146,7 +167,7 @@ export const DelegateModal = ({
                 <Button
                   variant="primary"
                   type="submit"
-                  isDisabled={!customAddress}
+                  isDisabled={!customAddress || isError}
                   onClick={() => {
                     if (onContinue) {
                       onContinue(customAddress);
