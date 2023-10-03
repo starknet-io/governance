@@ -158,7 +158,7 @@ export function Page() {
                 )}
               </FormControl>
               <FormControl id="twitter">
-                <FormLabel>Twitter</FormLabel>
+                <FormLabel>Twitter (optional)</FormLabel>
                 <Input
                   size="standard"
                   variant="primary"
@@ -168,7 +168,7 @@ export function Page() {
                 {errors.twitter && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="discord">
-                <FormLabel>Discord</FormLabel>
+                <FormLabel>Discord (optional)</FormLabel>
                 <Input
                   variant="primary"
                   size="standard"
@@ -178,7 +178,7 @@ export function Page() {
                 {errors.discord && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="discourse">
-                <FormLabel>Discourse</FormLabel>
+                <FormLabel>Discourse (optional)</FormLabel>
                 <Input
                   variant="primary"
                   size="standard"
@@ -189,7 +189,9 @@ export function Page() {
               </FormControl>
               <Divider />
               <Box>
-                <Heading variant="h3">Delegate agreement</Heading>
+                <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
+                  Delegate agreement <Text variant="largeStrong">(optional)</Text>
+                </Heading>
                 <Text variant="medium">Briefly explain what this means.</Text>
               </Box>
               <FormControl id="confirmDelegateAgreement">
