@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import { eq, and, isNotNull, or, desc, asc } from 'drizzle-orm';
+import {eq, and, isNotNull, or, desc, asc, sql} from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -340,6 +340,31 @@ export const delegateRouter = router({
           if (appliedSpecialFilters.includes('delegate_agreement')) {
             filteredDelegates = filteredDelegates.filter(
               (delegate: any) => delegate.delegateAgreement,
+            );
+          }
+
+          // Filter out the delegates based on the comment count
+          if (appliedSpecialFilters.includes('1_or_more_comments')) {
+            // Fetch the count of comments for each delegate
+            const commentCounts: any = await db
+              .select({
+                delegateId: delegates.id,
+                count: sql<number>`count(${comments.id})`,
+              })
+              .from(delegates)
+              .leftJoin(comments, eq(comments.userId, delegates.userId))
+              .groupBy(delegates.id);
+
+            // Convert this to a dictionary/map for easier lookup
+            const commentCountMap = commentCounts.reduce(
+              (acc: { [key: string]: number }, cur: any) => {
+                acc[cur.delegateId] = cur.count;
+                return acc;
+              },
+              {},
+            );
+            filteredDelegates = filteredDelegates.filter(
+              (delegate: any) => commentCountMap[delegate.id] >= 1,
             );
           }
 
