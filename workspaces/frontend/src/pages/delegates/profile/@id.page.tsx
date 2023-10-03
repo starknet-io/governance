@@ -168,8 +168,8 @@ export function Page() {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
-          ? "Tokens pending to undelegate"
-          : "Tokens pending to delegate",
+          ? "Undelegating your votes"
+          : "Delegating your votes",
       );
       setStatusDescription("");
     }
@@ -377,26 +377,7 @@ export function Page() {
           vp: gqlResponse?.data?.vp?.vp,
         }}
         delegateTokens={() => {
-          if (hasUserDelegatedTokensToThisDelegate) {
-            writeAsyncUndelegation?.({
-              args: [
-                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                  size: 32,
-                }),
-              ],
-            })
-              .then((tx) => {
-                setTxHash(tx.hash);
-              })
-              .catch((err) => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Tokens undelegation failed");
-                setStatusDescription(err.shortMessage);
-              });
-            setIsOpen(false);
-          } else if (
-            parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION
-          ) {
+          if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
@@ -522,10 +503,30 @@ export function Page() {
               setIsOpen(true);
               if (hasUserDelegatedTokensToThisDelegate) {
                 setIsUndelegation(true);
+                writeAsyncUndelegation?.({
+                  args: [
+                    stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                      size: 32,
+                    }),
+                  ],
+                })
+                  .then((tx) => {
+                    setTxHash(tx.hash);
+                  })
+                  .catch((err) => {
+                    setIsStatusModalOpen(true);
+                    setStatusTitle("Tokens undelegation failed");
+                    setStatusDescription(err.shortMessage);
+                  });
+                setIsOpen(false);
+              } else {
+                setIsUndelegation(false);
               }
             }}
           >
-            {hasUserDelegatedTokensToThisDelegate
+            {hasUserDelegatedTokensToThisDelegate &&
+            delegation?.data &&
+            delegation.data !== "0x0000000000000000000000000000000000000000"
               ? "Undelegate your votes"
               : "Delegate your votes"}
           </Button>

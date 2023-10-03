@@ -213,7 +213,7 @@ export function Delegates({
   useEffect(() => {
     if (isDelegationLoading) {
       setIsStatusModalOpen(true);
-      setStatusTitle("Tokens pending to delegate");
+      setStatusTitle("Delegating your votes");
       setStatusDescription("");
     }
 
