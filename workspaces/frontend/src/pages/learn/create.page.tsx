@@ -27,6 +27,7 @@ export function Page() {
   const {
     handleSubmit,
     register,
+    watch,
     formState: { errors, isValid },
   } = useForm<RouterInput["pages"]["savePage"]>();
 
@@ -38,8 +39,10 @@ export function Page() {
   const { handleUpload } = useFileUpload();
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
+  const title = watch('title');
+  const NEW_ITEM_ID = Date.now();
   const NEW_ITEM = {
-    id: Date.now(),
+    id: NEW_ITEM_ID,
     title: "This is the new page",
     content: editorValue,
     author: null,

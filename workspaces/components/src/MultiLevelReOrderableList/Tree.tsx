@@ -222,7 +222,7 @@ export function MultiLevelReOrderableList({
           items={sortedIds}
           strategy={verticalListSortingStrategy}
         >
-          {flattenedItems.map(({ id, depth, data, isNew, children }, index) => (
+          {flattenedItems.map(({ id, depth, data, isNew }, index) => (
             <SortableTreeItem
               key={id}
               id={id}

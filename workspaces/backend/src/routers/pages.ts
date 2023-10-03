@@ -117,6 +117,7 @@ export const pagesRouter = router({
               title: newItem.title,
               content: newItem.content,
               orderNumber: newItem.orderNumber,
+              parentId: newItem.parentId,
               userId: opts.ctx?.user.id,
               slug: slugify(newItem.title ?? '', {
                 replacement: '_',
@@ -131,7 +132,12 @@ export const pagesRouter = router({
         }),
       );
 
-      const finalItems = existingItems.map((existingItem) => {
+      const allItems = [
+        ...existingItems,
+        ...newCreatedItems.map((item) => item.createdItem),
+      ];
+
+      const updatedItems = allItems.map((existingItem) => {
         const isLinkedToNew = newCreatedItems.find(
           (item) => item.oldId === existingItem.parentId,
         );
@@ -139,20 +145,15 @@ export const pagesRouter = router({
         if (isLinkedToNew) {
           return {
             ...existingItem,
-            parentId: isLinkedToNew.createdItem.parentId,
+            parentId: isLinkedToNew.createdItem.id,
           };
         }
 
         return existingItem;
       });
 
-      const mapThrough = [
-        ...finalItems,
-        ...newCreatedItems.map((i) => i.createdItem),
-      ];
-
       await Promise.all(
-        mapThrough.map(async (m) => {
+        updatedItems.map(async (m) => {
           return await db
             .update(pages)
             .set({

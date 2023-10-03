@@ -43,7 +43,7 @@ import {
   Link,
   PlusIcon,
 } from "@yukilabs/governance-components";
-import { Box } from "@chakra-ui/react";
+import { Box, Show } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { IUser, PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
@@ -404,14 +404,17 @@ function PageLayout(props: Props) {
                 pageContext={pageContext}
               />
             </Box>
-            <Box
-              display={{ base: "flex", lg: "none" }}
-              flex="1"
-              alignItems={"center"}
-              justifyContent={"center"}
-            >
-              <Logo href="/" />
-            </Box>
+            <Show breakpoint="(min-width: 834px)">
+              <Box
+                display={{ base: "flex", lg: "none" }}
+                flex="1"
+                alignItems={"center"}
+                justifyContent={"center"}
+              >
+                <Logo href="/" />
+              </Box>
+            </Show>
+
             <Box display="flex" marginLeft="auto">
               <ShareDialog />
             </Box>
@@ -454,6 +457,14 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
     <>
       <Box mt="-20px">
         <NavGroup>
+          <Show breakpoint="(max-width: 834px)">
+            <Box
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
+              <Logo href="/" />
+            </Box>
+          </Show>
           {[
             {
               href: "/",
