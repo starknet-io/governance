@@ -408,7 +408,7 @@ export function Delegates({
         isSuccess={isDelegationSuccess}
         isFail={
           isDelegationError ||
-          !!((!txHash || !txHash.length) && statusDescription.length)
+          !!((!txHash || !txHash.length) && statusDescription?.length)
         }
         onClose={() => {
           setIsStatusModalOpen(false);
