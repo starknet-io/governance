@@ -345,7 +345,7 @@ export const delegateRouter = router({
 
           if (appliedInterests.length) {
             filteredDelegates = filteredDelegates.filter((delegate: any) =>
-              appliedInterests.some((interest) =>
+              appliedInterests.every((interest) =>
                 delegate.interests.includes(interest),
               ),
             );
