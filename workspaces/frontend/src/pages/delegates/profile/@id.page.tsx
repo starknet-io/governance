@@ -359,8 +359,6 @@ export function Page() {
     delegateAddress &&
     delegateAddress?.toLowerCase() === address?.toLowerCase();
 
-  console.log(delegation?.data, delegateAddress);
-
   return (
     <Box
       display="flex"
