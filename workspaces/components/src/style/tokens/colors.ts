@@ -4,11 +4,11 @@ export const baseColors = {
       cosmicBlue: {
         solid: {
           "12": "#0B0B4C",
-        }
-      }
-    }
-  }
-}
+        },
+      },
+    },
+  },
+};
 export const colors = {
   content: {
     support: {
@@ -75,6 +75,7 @@ export const colors = {
     link: "#3f8cff",
     accent: "#1a1523",
     forms: "rgba(35, 25, 45, 0.1000)",
+    formsHover: "#C8C7CB",
     danger: "#e4442f",
     light: "#fbfbfb",
     dividers: "#dcdbdd",
