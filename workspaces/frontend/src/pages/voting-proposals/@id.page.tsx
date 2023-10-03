@@ -410,6 +410,10 @@ export function Page() {
     );
   };
 
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
+    address: delegation.data ? delegation.data.toLowerCase() : "",
+  });
+
   if (data == null) return null;
   return (
     <Box
@@ -738,12 +742,21 @@ export function Page() {
                   Your vote
                 </Heading>
                 <Banner
-                  label={`Your voting power of ${userBalance.balance} ${
-                    userBalance.symbol
-                  } is currently assigned to delegate ${truncateAddress(
-                    delegation.data!,
-                  )}`}
+                  label={
+                    <>
+                      Your voting power of {userBalance.balance}{" "}
+                      {userBalance.symbol} is currently assigned to delegate{" "}
+                      <Link
+                        fontSize="small"
+                        fontWeight="normal"
+                        href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
+                      >
+                        {truncateAddress(delegation.data! || "")}
+                      </Link>
+                    </>
+                  }
                 />
+
                 <Divider mb="standard.2xl" />
               </>
             )}
