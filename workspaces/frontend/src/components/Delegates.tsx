@@ -335,11 +335,11 @@ export function Delegates({
           <Button
             width={{ base: "100%", md: "auto" }}
             as="a"
-            href={`/delegates/profile/edit/${delegateId!}`}
+            href={`/delegates/profile/${delegateId!}`}
             size="condensed"
             variant="primary"
           >
-            Edit delegate profile
+            View delegate profile
           </Button>
         )}
       </>
