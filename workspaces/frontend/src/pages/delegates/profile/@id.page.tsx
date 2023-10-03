@@ -82,45 +82,30 @@ const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
 
 // This is just for now
 const mockAgreement = `
-    <h1>Agreement Understanding</h1>
-    <p>
-      This agreement pertains to the role and responsibilities within StarkNet.
-      Please review the following documents to ensure a complete understanding
-      of the expectations and guidelines.
-    </p>
+ # Agreement Understanding
 
-    <h2>StarkNet Delegates</h2>
-    <p>
-      <a href="url_to_delegate_expectations_328">Delegate Expectations 328</a>
-    </p>
+  This agreement pertains to the role and responsibilities within StarkNet. Please review the following documents to ensure a complete understanding of the expectations and guidelines.
 
-    <h2>Starknet Governance Announcements</h2>
-    <p>
-      <a href="url_to_part_1_98">Part 1 98</a>
-      <br />
-      <a href="url_to_part_2_44">Part 2 44</a>
-      <br />
-      <a href="url_to_part_3_34">Part 3 34</a>
-    </p>
+  ## StarkNet Delegates
 
-    <h2>The Foundation Post</h2>
-    <p>
-      <a href="url_to_foundation_post_60">Foundation Post 60</a>
-    </p>
+  [Delegate Expectations 328](url_to_delegate_expectations_328)
 
-    <h2>Delegate Onboarding</h2>
-    <p>
-      <a href="url_to_onboarding_announcement_539">
-        Delegate Onboarding Announcement 539
-      </a>
-    </p>
+  ## Starknet Governance Announcements
 
-    <p>
-      By proceeding further, you acknowledge that you understand the role of
-      StarkNet delegates and have read all the required documents mentioned
-      above.
-    </p>
-  `;
+  [Part 1 98](url_to_part_1_98)
+  [Part 2 44](url_to_part_2_44)
+  [Part 3 34](url_to_part_3_34)
+
+  ## The Foundation Post
+
+  [Foundation Post 60](url_to_foundation_post_60)
+
+  ## Delegate Onboarding
+
+  [Delegate Onboarding Announcement 539](url_to_onboarding_announcement_539)
+
+  By proceeding further, you acknowledge that you understand the role of StarkNet delegates and have read all the required documents mentioned above.
+`;
 
 const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   query DelegateProfilePageQuery(
