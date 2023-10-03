@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import {eq, and, isNotNull, or, desc, asc, sql} from 'drizzle-orm';
+import { eq, and, isNotNull, or, desc, sql } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -92,6 +92,15 @@ export const delegateRouter = router({
             starknetAddress: opts.input.starknetAddress,
           })
           .where(eq(users.id, insertedDelegate[0].userId));
+      }
+      if (insertedDelegateRecord?.id) {
+        await db.insert(delegateVotes).values({
+          delegateId: insertedDelegateRecord.id,
+          address: user?.address || '',
+          votingPower: 0,
+          totalVotes: 0,
+          updatedAt: new Date(),
+        });
       }
       // If customDelegateAgreementContent is provided, insert into customDelegateAgreement table
       if (opts.input.customDelegateAgreementContent) {
@@ -282,7 +291,7 @@ export const delegateRouter = router({
           ? opts.input.sortBy === 'votingPower'
             ? desc(delegateVotes.votingPower)
             : desc(delegateVotes.totalVotes)
-          : asc(delegateVotes.updatedAt);
+          : desc(delegateVotes.votingPower); // Default to sort by voting power
 
       const specialFilters = [
         'delegate_agreement',
@@ -374,6 +383,30 @@ export const delegateRouter = router({
                 delegate.interests.includes(interest),
               ),
             );
+          }
+
+          const shuffleArray = (array: any[]) => {
+            for (let i = array.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+          };
+
+          if (
+            !opts.input.sortBy &&
+            !opts.input.sortBy.length &&
+            !opts.input.filters?.length
+          ) {
+            const quarterLength = Math.floor(filteredDelegates.length / 4);
+            const firstQuarter = shuffleArray(
+              filteredDelegates.slice(0, quarterLength),
+            );
+            const remaining = shuffleArray(
+              filteredDelegates.slice(quarterLength),
+            );
+
+            filteredDelegates = firstQuarter.concat(remaining);
           }
 
           return filteredDelegates;
