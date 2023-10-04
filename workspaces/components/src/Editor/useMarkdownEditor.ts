@@ -13,6 +13,7 @@ export function useMarkdownEditor(
   initialSlateData?: ParagraphElement[],
 ) {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
     initialSlateData && editor.insertNodes(initialSlateData);
@@ -23,6 +24,11 @@ export function useMarkdownEditor(
   const handleEditorChange = (value: any[]) => {
     setEditorValue(convertSlateToMarkdown(value));
   };
+  const handleEditorFocus = () => {
+    console.log("focussed");
+    setHasInteracted(true);
+    console.log("hasInteracted", hasInteracted);
+  };
 
   const clearEditor = () => {
     Transforms.delete(editor, {
@@ -31,7 +37,7 @@ export function useMarkdownEditor(
         focus: Editor.end(editor, []),
       },
     });
-  }
+  };
 
   const resetEditorValue = () => {
     setEditorValue(initialValue);
@@ -73,5 +79,7 @@ export function useMarkdownEditor(
     setMarkdownValue,
     editor,
     clearEditor,
+    hasInteracted,
+    handleEditorFocus,
   };
 }

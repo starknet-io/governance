@@ -2,11 +2,8 @@ import { Controller, useForm } from "react-hook-form";
 import {
   Button,
   Heading,
-  FormControl,
-  FormLabel,
   Input,
   Stack,
-  Checkbox,
   ContentContainer,
   Flex,
   Box,
@@ -16,6 +13,11 @@ import {
   Text,
   Divider,
   Banner,
+  FormControlled,
+  RadioGroup,
+  Radio,
+  FormControl,
+  Checkbox,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -24,6 +26,13 @@ import { useState, useEffect } from "react";
 import { delegateNames } from "../../components/Delegates";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { validateStarknetAddress } from "src/utils/helpers";
+
+import {
+  validateDiscordHandle,
+  validateDiscourseUsername,
+  validateTelegramHandle,
+  validateTwitterHandle,
+} from "src/utils/forms";
 
 const interestsValues = interestsEnum.enumValues;
 
@@ -54,6 +63,8 @@ export function Page() {
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
   const [error, setErrorField] = useState("");
   const {
+    handleEditorFocus,
+    hasInteracted,
     editorValue: customAgreementEditorValue,
     handleEditorChange: handleCustomAgreementEditorChange,
   } = useMarkdownEditor("");
@@ -112,18 +123,26 @@ export function Page() {
           </Heading>
 
           <form onSubmit={onSubmit}>
-            <Stack spacing="24px" direction={{ base: "column" }}>
-              <FormControl id="delegate-statement">
-                <FormLabel>Delegate pitch</FormLabel>
+            <Stack spacing="standard.xl" direction={{ base: "column" }}>
+              <FormControlled
+                label="Delegate pitch"
+                isError={editorValue.length === 0}
+                isRequired
+                errorMessage="This field is required."
+              >
                 <MarkdownEditor
+                  onFocus={handleEditorFocus}
                   onChange={handleEditorChange}
                   value={editorValue}
                   handleUpload={handleUpload}
                 />
-                {errors.statement && <span>This field is required.</span>}
-              </FormControl>
-              <FormControl id="starknet-type">
-                <FormLabel>Delegate interests</FormLabel>
+              </FormControlled>
+              <FormControlled
+                label="Delegate interests"
+                isError={!!errors.interests}
+                isRequired
+                errorMessage="This field is required."
+              >
                 <Controller
                   name="interests"
                   control={control}
@@ -139,10 +158,16 @@ export function Page() {
                     />
                   )}
                 />
-                {errors.interests && <span>This field is required.</span>}
-              </FormControl>
-              <FormControl id="starknet-wallet-address">
-                <FormLabel>Starknet wallet address</FormLabel>
+              </FormControlled>
+
+              <FormControlled
+                label="Starknet wallet address"
+                isError={
+                  !!errors.starknetAddress && !!errors.starknetAddress.message
+                }
+                isRequired
+                errorMessage="This field is required."
+              >
                 <Input
                   size="standard"
                   variant="primary"
@@ -154,97 +179,131 @@ export function Page() {
                       "Invalid Starknet address",
                   })}
                 />
-                {errors.starknetAddress && (
-                  <Text>{errors.starknetAddress.message || "This field is required."}</Text>
-                )}
-              </FormControl>
-              <FormControl id="twitter">
-                <FormLabel>Twitter (optional)</FormLabel>
+              </FormControlled>
+
+              <FormControlled
+                label="Twitter"
+                isError={!!errors.twitter && !!errors.twitter.message}
+                errorMessage="Invalid Twitter handle."
+              >
                 <Input
                   size="standard"
                   variant="primary"
                   placeholder="@yourhandle"
-                  {...register("twitter")}
+                  {...register("twitter", {
+                    validate: (value) => validateTwitterHandle(value),
+                  })}
                 />
-              </FormControl>
-              <FormControl id="telegram">
-                <FormLabel>Telegram (optional)</FormLabel>
+              </FormControlled>
+
+              <FormControlled
+                label="Telegram"
+                isError={!!errors.telegram && !!errors.telegram.message}
+                errorMessage="Invalid Telegram handle."
+              >
                 <Input
                   size="standard"
                   variant="primary"
                   placeholder="@yourhandle"
-                  {...register("telegram")}
+                  {...register("telegram", {
+                    validate: (value) => validateTelegramHandle(value),
+                  })}
                 />
-              </FormControl>
-              <FormControl id="discord">
-                <FormLabel>Discord (optional)</FormLabel>
+              </FormControlled>
+
+              <FormControlled
+                label="Discord"
+                isError={!!errors.discord && !!errors.discord.message}
+                errorMessage="Invalid Discord handle."
+              >
                 <Input
-                  variant="primary"
                   size="standard"
+                  variant="primary"
                   placeholder="name#1234"
-                  {...register("discord")}
+                  {...register("discord", {
+                    validate: (value) => validateDiscordHandle(value),
+                  })}
                 />
-              </FormControl>
-              <FormControl id="discourse">
-                <FormLabel>Discourse (optional)</FormLabel>
+              </FormControlled>
+
+              <FormControlled
+                label="Discourse"
+                isError={!!errors.discourse && !!errors.discourse.message}
+                errorMessage="Invalid Discourse username."
+              >
                 <Input
-                  variant="primary"
                   size="standard"
-                  placeholder="yourusername"
-                  {...register("discourse")}
+                  variant="primary"
+                  placeholder="your_username"
+                  {...register("discourse", {
+                    validate: (value) => validateDiscourseUsername(value),
+                  })}
                 />
-              </FormControl>
+              </FormControlled>
+
               <Divider />
               <Box>
-                <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
-                  Delegate agreement <Text variant="largeStrong">(optional)</Text>
+                <Heading
+                  variant="h3"
+                  display="flex"
+                  alignItems="center"
+                  gap={1.5}
+                  color="content.accent.default"
+                >
+                  Delegate agreement
                 </Heading>
-                <Text variant="medium">Briefly explain what this means.</Text>
+                <Text color="content.default.default" variant="medium">
+                  Add a delegate agreement for the people who delegate to you
+                </Text>
               </Box>
-              <FormControl id="confirmDelegateAgreement">
-                <Checkbox
-                  isChecked={agreementType === "standard"}
-                  onChange={(e) => {
-                    if (e.target.checked) {
+              <FormControlled
+                isError={
+                  !!errors.confirmDelegateAgreement &&
+                  !!errors.confirmDelegateAgreement.message
+                }
+                errorMessage="Please select an agreement type."
+              >
+                <RadioGroup
+                  value={agreementType}
+                  onChange={(value) => {
+                    if (value === "standard") {
                       setAgreementType("standard");
                       setShowCustomAgreementEditor(false);
                       setValue("confirmDelegateAgreement", true);
-                    } else {
-                      setAgreementType(null);
-                      setValue("confirmDelegateAgreement", false);
-                    }
-                  }}
-                >
-                  I agree with the Starknet foundation suggested delegate
-                  agreement View.
-                </Checkbox>
-              </FormControl>
-              <FormControl id="customDelegateAgreement">
-                <Checkbox
-                  isChecked={agreementType === "custom"}
-                  onChange={(e) => {
-                    if (e.target.checked) {
+                    } else if (value === "custom") {
                       setAgreementType("custom");
                       setShowCustomAgreementEditor(true);
                       setValue("confirmDelegateAgreement", false);
-                    } else {
-                      setAgreementType(null);
-                      setShowCustomAgreementEditor(false);
                     }
                   }}
                 >
-                  I want to provide a custom delegate agreement.
-                </Checkbox>
-              </FormControl>
+                  <Stack spacing={5} direction="column">
+                    <Radio value="standard">
+                      I agree with the Starknet foundation suggested delegate
+                      agreement View.
+                    </Radio>
+                    <Radio value="custom">
+                      I want to provide a custom delegate agreement.
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              </FormControlled>
+
               {agreementType === "custom" && (
-                <FormControl id="custom-agreement-editor">
-                  <FormLabel>Custom Delegate Agreement</FormLabel>
+                <FormControlled
+                  label="Custom Delegate Agreement"
+                  isError={
+                    !!errors.customAgreementEditor &&
+                    !!errors.customAgreementEditor.message
+                  }
+                  errorMessage="Please provide a custom delegate agreement."
+                >
                   <MarkdownEditor
                     onChange={handleCustomAgreementEditorChange}
                     value={customAgreementEditorValue}
                     handleUpload={handleUpload}
                   />
-                </FormControl>
+                </FormControlled>
               )}
               <FormControl id="understandRole" display="none">
                 <Controller

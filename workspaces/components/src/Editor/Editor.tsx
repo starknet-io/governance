@@ -17,6 +17,7 @@ import { MoreButton } from "./MoreButton";
 export const MarkdownEditor: React.FC<
   MarkdownEditorProps & {
     handleUpload?: (file: File) => Promise<string | void> | void;
+    onFocus?: () => void;
   }
 > = ({
   onChange,
@@ -24,6 +25,7 @@ export const MarkdownEditor: React.FC<
   customEditor,
   hideTabBar = false,
   handleUpload,
+  onFocus,
   placeholder,
   basicEditor = false,
 }) => {
@@ -50,6 +52,7 @@ export const MarkdownEditor: React.FC<
         editor={mainEditor}
         initialValue={initialValue}
         onChange={onChange}
+        onFocus={onFocus}
       >
         {!hideTabBar && (
           <Toolbar>
