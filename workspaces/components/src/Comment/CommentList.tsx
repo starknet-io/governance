@@ -26,6 +26,7 @@ import {
   MinusCircleIcon,
   PlusCircleIcon,
   ReplyIcon,
+  TrashIcon,
   WalletIcon,
 } from "../Icons/UiIcons";
 import { CommentInput } from "./CommentInput";
@@ -304,18 +305,40 @@ const CommentItem: React.FC<CommentProps> = ({
 
   const numberOfReplies = comment?.replies?.length || 0;
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
+  const [isDeleteModalActive, setIsDeleteModalActive] =
+    useState<boolean>(false);
   const { setShowAuthFlow } = useDynamicContext();
 
   return (
     <>
       <InfoModal
-        title="Connect wallet to vote for comment"
+        title="Connect wallet to vote"
         isOpen={isConnectedModal}
         onClose={() => setIsConnectedModal(false)}
       >
         <WalletIcon />
         <Button variant="primary" onClick={() => setShowAuthFlow(true)}>
           Connect your wallet
+        </Button>
+      </InfoModal>
+      <InfoModal
+        title="Are you sure your want to delete your comment?"
+        isOpen={isDeleteModalActive}
+        onClose={() => setIsDeleteModalActive(false)}
+      >
+        <Flex alignItems="center" justifyContent="center">
+          <TrashIcon width="104px" height="104px" color="#e4442f" />
+        </Flex>
+        <Button
+          variant="primary"
+          onClick={() => {
+            if (onDelete) {
+              onDelete({ commentId: comment.id });
+            }
+            setIsDeleteModalActive(false)
+          }}
+        >
+          Delete
         </Button>
       </InfoModal>
       <Stack pl={depth * 8}>
@@ -451,9 +474,7 @@ const CommentItem: React.FC<CommentProps> = ({
                     {canDelete && (
                       <MenuItem
                         onClick={() => {
-                          if (onDelete) {
-                            onDelete({ commentId: comment.id });
-                          }
+                          setIsDeleteModalActive(true);
                         }}
                       >
                         Delete
