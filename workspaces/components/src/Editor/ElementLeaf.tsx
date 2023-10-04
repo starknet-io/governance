@@ -131,8 +131,6 @@ export const Element = (props: RenderElementProps) => {
           style={{
             fontSize: "0.938rem",
             lineHeight: "1.5rem",
-            marginTop: "8px",
-            marginBottom: "16px",
             ...style,
           }}
           {...attributes}
