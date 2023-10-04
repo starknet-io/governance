@@ -208,7 +208,7 @@ export function Page() {
                   })}
                 />
                 {errors.starknetAddress && (
-                  <span>{errors.starknetAddress.message}</span>
+                  <span>{errors.starknetAddress.message || "This field is required."}</span>
                 )}
               </FormControl>
               <FormControl id="twitter">

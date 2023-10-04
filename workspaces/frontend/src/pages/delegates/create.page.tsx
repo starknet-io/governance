@@ -154,7 +154,7 @@ export function Page() {
                   })}
                 />
                 {errors.starknetAddress && (
-                  <Text>{errors.starknetAddress.message}</Text>
+                  <Text>{errors.starknetAddress.message || "This field is required."}</Text>
                 )}
               </FormControl>
               <FormControl id="twitter">
@@ -267,7 +267,7 @@ export function Page() {
                 {errors.understandRole && <span>This field is required.</span>}
               </FormControl>
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant="primary" disabled={!isValid}>
+                <Button type="submit" variant="primary">
                   Submit delegate profile
                 </Button>
               </Flex>
