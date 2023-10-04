@@ -8,9 +8,13 @@ interface CommentInputProps {
   onSend: (value: string) => void;
   defaultValue?: string;
   placeholder?: string;
+  onCancel?: () => void;
+  withCancel?: boolean;
 }
 export const CommentInput = ({
   defaultValue,
+  withCancel,
+  onCancel,
   placeholder = "Type your comment",
   onSend,
 }: CommentInputProps) => {
@@ -23,7 +27,7 @@ export const CommentInput = ({
   } = useMarkdownEditor(defaultValue);
 
   const processData = async () => {
-    await setMarkdownValue(defaultValue ?? '');
+    await setMarkdownValue(defaultValue ?? "");
   };
 
   useEffect(() => {
@@ -44,7 +48,20 @@ export const CommentInput = ({
         onChange={handleEditorChange}
         value={editorValue}
       />
-
+      {withCancel && (
+        <Button
+          className="cancel-button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            if (onCancel) {
+              onCancel();
+            }
+          }}
+        >
+          Cancel
+        </Button>
+      )}
       <Button
         className="submit-button"
         variant="primary"

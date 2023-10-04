@@ -245,7 +245,11 @@ const CommentItem: React.FC<CommentProps> = ({
               position="absolute"
               top="48px"
               bottom={
-                hasReplies ? (numberOfReplies < 3 ? "26px" : "8px") : "-10px"
+                hasReplies && depth < 3
+                  ? numberOfReplies < 3
+                    ? "26px"
+                    : "8px"
+                  : "-10px"
               }
               width="1px"
               backgroundColor="#DCDBDD"
@@ -260,7 +264,7 @@ const CommentItem: React.FC<CommentProps> = ({
             ) : (
               <Indenticon size={40} address={author?.address || ""} />
             )}
-            {hasReplies && numberOfReplies <= 2 ? (
+            {hasReplies && numberOfReplies <= 2 && depth < 3 ? (
               <CommentShowMoreReplies
                 nestedReplies={numberOfReplies}
                 toggleReplies={() => changeIsThreadOpen(!isThreadOpen)}
@@ -282,6 +286,8 @@ const CommentItem: React.FC<CommentProps> = ({
             <Box>
               {isEditMode ? (
                 <CommentInput
+                  withCancel
+                  onCancel={() => setIsEditMode(false)}
                   defaultValue={content}
                   onSend={(content) => {
                     if (onEdit) {
@@ -350,13 +356,15 @@ const CommentItem: React.FC<CommentProps> = ({
             {showReplyMarkdownEditor && (
               <form>
                 <CommentInput
+                  withCancel
+                  onCancel={() => setShowReplyMarkdownEditor(false)}
                   onSend={(content: string) => {
                     onSubmit(content);
                   }}
                 />
               </form>
             )}
-            {numberOfReplies > 2 && (
+            {numberOfReplies > 2 && depth < 3 && (
               <CommentShowMoreReplies
                 nestedReplies={numberOfReplies}
                 toggleReplies={() => changeIsThreadOpen(!isThreadOpen)}
@@ -376,7 +384,7 @@ const CommentItem: React.FC<CommentProps> = ({
             onVote={onVote}
             onDelete={onDelete}
             onEdit={onEdit}
-            depth={depth + 1}
+            depth={depth < 3 ? depth + 1 : depth}
           />
         ))}
     </>
