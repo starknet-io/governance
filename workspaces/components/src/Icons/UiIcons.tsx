@@ -153,7 +153,7 @@ export const CommentIcon = ({ color, ...rest }: UiIconProps) => (
 );
 
 export const ReplyIcon = ({ color, ...rest }: UiIconProps) => (
-  <Icon viewBox="0 0 20 20" {...rest}>
+  <Icon viewBox="0 0 18 18" {...rest}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"

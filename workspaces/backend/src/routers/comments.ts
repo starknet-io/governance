@@ -19,7 +19,7 @@ export const commentsRouter = router({
     .input(
       z.object({
         proposalId: z.string(),
-        sort: z.enum(['upvotes', 'date']).optional(),
+        sort: z.enum(['upvotes', 'date', ""]).optional(),
       }),
     )
     .query(async (opts) => {
