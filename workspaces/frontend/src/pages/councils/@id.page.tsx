@@ -184,7 +184,7 @@ export function Page() {
 
       <ContentContainer center maxWidth="800px">
         <Stack width="100%" spacing="0" direction={{ base: "column" }}>
-          <Collapse startingHeight={100}>
+          <Collapse startingHeight={300} threshold={140}>
             <Stack spacing="0" direction={{ base: "column" }}>
               <Heading
                 lineHeight="32px"
@@ -219,23 +219,19 @@ export function Page() {
               {council?.posts && council.posts.length > 0 ? (
                 council.posts.map((post) => {
                   return (
-                    <Box
-                      key={post.id}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <ListRow.Root href={`/councils/posts/${post.id}`}>
-                        <Box width={"100%"}>
-                          <ListRow.Post post={post} />
-                        </Box>
+                    <>
+                      <ListRow.Root
+                        href={`/councils/posts/${post.id}`}
+                        key={post.id}
+                      >
+                        <ListRow.CommentSummary
+                          count={post?.comments?.length}
+                          comment={(post?.content as string) || ""}
+                          postTitle={post?.title as string}
+                          date={post?.createdAt as string}
+                        />
                       </ListRow.Root>
-                      <div style={{ marginLeft: "auto" }}>
-                        <ListRow.Comments count={post.comments.length} />
-                      </div>
-                    </Box>
+                    </>
                   );
                 })
               ) : (
