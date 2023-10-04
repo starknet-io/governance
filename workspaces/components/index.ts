@@ -36,6 +36,7 @@ export { Input } from "./src/Input";
 export { Banner } from "./src/Banner/Banner";
 export { AvatarWithText } from "./src/AvatarWithText";
 export { Dropdown } from "./src/Dropdown";
+export { FormControlled } from "./src/FormControlled";
 
 export {
   BoldIcon,

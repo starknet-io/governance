@@ -8,7 +8,6 @@ import {
   Stack,
   Heading,
   ListRow,
-  ProfileSummaryCard,
   Collapse,
   MarkdownRenderer,
   MembersList,
@@ -16,6 +15,7 @@ import {
   MenuItem,
   EmptyState,
   Link,
+  AvatarWithText,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -117,33 +117,32 @@ export function Page() {
       height="100%"
     >
       <Box
-        pt="40px"
-        px="32px"
-        borderRight="1px solid #E7E8E9"
+        pt="standard.3xl"
+        pb="standard.2xl"
+        px={{ base: "standard.md", md: "standard.2xl", lg: "standard.xl" }}
+        borderRight="1px solid"
+        borderColor="border.dividers"
         display="flex"
         flexDirection="column"
-        flexBasis={{ base: "100%", md: "391px" }}
+        flexBasis={{ base: "100%", md: "372px" }}
         position={{ base: "unset", lg: "sticky" }}
-        height="calc(100vh - 80px)"
+        height="100vh"
         top="0"
+        overflowY="auto"
+        overflowX="hidden"
       >
-        <ProfileSummaryCard.Root>
-          <ProfileSummaryCard.Profile
-            address={council?.address ?? ""}
-            ensName={council?.name ?? "Council"}
-          >
-            {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-              <ProfileSummaryCard.MoreActions>
-                <MenuItem as="a" href={`/councils/edit/${council?.slug}`}>
-                  Edit
-                </MenuItem>
-                {/* <MenuItem>Delete</MenuItem> */}
-              </ProfileSummaryCard.MoreActions>
-            ) : (
-              <></>
-            )}
-          </ProfileSummaryCard.Profile>
-        </ProfileSummaryCard.Root>
+        <AvatarWithText
+          src={null}
+          headerText={council?.name ?? "Council"}
+          address={council?.address?.toLowerCase() ?? ""}
+          dropdownChildren={
+            hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+              <MenuItem as="a" href={`/councils/edit/${council?.slug}`}>
+                Edit
+              </MenuItem>
+            ) : null
+          }
+        />
 
         <Divider my="standard.xl" />
         <Box>
@@ -162,7 +161,7 @@ export function Page() {
             <></>
           )}
         </Box>
-        <Divider my="24px" />
+        <Divider my="standard.xl" />
         <SummaryItems.Root>
           <SummaryItems.Item
             label="Proposals voted on"

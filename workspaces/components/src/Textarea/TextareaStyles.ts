@@ -10,6 +10,9 @@ const primary = defineStyle({
   _placeholder: {
     color: "#93939F",
   },
+  _invalid: {
+    borderColor: "border.danger",
+  },
 });
 const comment = defineStyle({
   borderRadius: "6px",
