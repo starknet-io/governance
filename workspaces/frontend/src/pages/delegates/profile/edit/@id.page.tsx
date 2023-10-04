@@ -336,7 +336,6 @@ export function Page() {
                   type="submit"
                   size="condensed"
                   variant="primary"
-                  isDisabled={!isValid}
                 >
                   Save
                 </Button>
