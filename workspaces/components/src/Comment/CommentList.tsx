@@ -135,15 +135,20 @@ const CommentVotes = ({
 }) => {
   const [isUpvoteHovered, setUpvoteIsHovered] = useState(false);
   const [isDownvoteHovered, setDownvoteIsHovered] = useState(false);
+  const [isUpvoteFocused, setUpvoteIsFocused] = useState(false);
+  const [isDownvoteFocused, setDownvoteIsFocused] = useState(false);
 
   return (
     <Flex direction="row" alignItems="flex-end" gap={2.5}>
-      {isUpvote || isUpvoteHovered ? (
+      {isUpvote || isUpvoteHovered || isUpvoteFocused ? (
         <IconButton
           variant="simple"
           _hover={hoverStyles}
           onMouseLeave={() => setUpvoteIsHovered(false)}
-          _focus={focusStyles}
+          _focus={{ ...focusStyles }}
+          size="small"
+          onFocus={() => setUpvoteIsFocused(true)}
+          onBlur={() => setUpvoteIsFocused(false)}
           onClick={() => {
             if (!isUser && onSignedOutVote) {
               onSignedOutVote();
@@ -151,19 +156,25 @@ const CommentVotes = ({
               onVote({ commentId, voteType: "upvote" });
             }
           }}
-          aria-label="More comment actions"
-          size="small"
+          aria-label="Upvote comment"
           icon={
-            <ArrowUpCircleFillIcon zIndex={1} color="#30B37C" boxSize="20px" />
+            <ArrowUpCircleFillIcon
+              zIndex={1}
+              color={isUpvoteFocused ? "#216348" : "#30B37C"}
+              boxSize="20px"
+            />
           }
         />
       ) : (
         <IconButton
           variant="simple"
           _hover={hoverStyles}
+          size="small"
           _focus={focusStyles}
           onMouseEnter={() => setUpvoteIsHovered(true)}
           onMouseLeave={() => setUpvoteIsHovered(false)}
+          onFocus={() => setUpvoteIsFocused(true)}
+          onBlur={() => setUpvoteIsFocused(false)}
           onClick={() => {
             if (!isUser && onSignedOutVote) {
               onSignedOutVote();
@@ -171,8 +182,7 @@ const CommentVotes = ({
               onVote({ commentId, voteType: "upvote" });
             }
           }}
-          aria-label="More comment actions"
-          size="small"
+          aria-label="Upvote comment"
           icon={<ArrowUpCircleIcon zIndex={1} boxSize="20px" />}
         />
       )}
@@ -185,11 +195,15 @@ const CommentVotes = ({
       >
         {netVotes}
       </Text>
-      {isDownvote || isDownvoteHovered ? (
+      {isDownvote || isDownvoteHovered || isDownvoteFocused ? (
         <IconButton
           _hover={hoverStyles}
-          _focus={focusStyles}
+          _focus={{ ...focusStyles }}
+          size="small"
           variant="simple"
+          onFocus={() => setDownvoteIsFocused(true)}
+          onBlur={() => setDownvoteIsFocused(false)}
+          onMouseLeave={() => setDownvoteIsHovered(false)}
           onClick={() => {
             if (!isUser && onSignedOutVote) {
               onSignedOutVote();
@@ -197,13 +211,11 @@ const CommentVotes = ({
               onVote({ commentId, voteType: "downvote" });
             }
           }}
-          onMouseLeave={() => setDownvoteIsHovered(false)}
-          aria-label="More comment actions"
-          size="small"
+          aria-label="Downvote comment"
           icon={
             <ArrowDownCircleFillIcon
               zIndex={1}
-              color="#E4442F"
+              color={isDownvoteFocused ? "#C42D1A" : "#E4442F"}
               boxSize="20px"
             />
           }
@@ -213,8 +225,7 @@ const CommentVotes = ({
           variant="simple"
           _hover={hoverStyles}
           _focus={focusStyles}
-          onMouseEnter={() => setDownvoteIsHovered(true)}
-          onMouseLeave={() => setDownvoteIsHovered(false)}
+          size="small"
           onClick={() => {
             if (!isUser && onSignedOutVote) {
               onSignedOutVote();
@@ -222,8 +233,12 @@ const CommentVotes = ({
               onVote({ commentId, voteType: "downvote" });
             }
           }}
-          aria-label="More comment actions"
-          size="small"
+          aria-label="Downvote comment"
+          onMouseEnter={() => setDownvoteIsHovered(true)}
+          onMouseLeave={() => setDownvoteIsHovered(false)}
+          onFocus={() => setDownvoteIsFocused(true)}
+          onBlur={() => setDownvoteIsFocused(false)}
+          //... other props and handlers
           icon={<ArrowDownCircleIcon zIndex={1} boxSize="20px" />}
         />
       )}
@@ -335,7 +350,7 @@ const CommentItem: React.FC<CommentProps> = ({
             if (onDelete) {
               onDelete({ commentId: comment.id });
             }
-            setIsDeleteModalActive(false)
+            setIsDeleteModalActive(false);
           }}
         >
           Delete
