@@ -237,14 +237,42 @@ const PastVotes = ({
   );
 };
 
+type CommentsProps = {
+  count?: number;
+  width?: string | null;
+} & BoxProps;
+
+const Comments = ({ count, width, ...rest }: CommentsProps) => {
+  return (
+    <Box
+      minWidth={`${width}px`}
+      display="flex"
+      flexDirection="row"
+      gap="4px"
+      alignItems="center"
+      {...cellPadding}
+      {...rest}
+    >
+      <Icon as={CommentIcon} />
+      <Text variant="small" color="content.support.default">
+        {count}
+      </Text>
+    </Box>
+  );
+};
+
 type CommentSummaryProps = {
   postTitle: string;
   comment: string;
   date: string;
-};
+} & CommentsProps;
 
-const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
-  console.log("Raw Date:", date);
+const CommentSummary = ({
+  postTitle,
+  comment,
+  date,
+  count,
+}: CommentSummaryProps) => {
   const formattedDate = date
     ? format(new Date(date), "d MMM yyyy")
     : "Unknown date";
@@ -266,7 +294,7 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
         </Text>
       </Box>
 
-      <Box flex={1}>
+      <Flex flex={1}>
         <MarkdownRenderer
           textProps={{
             fontSize: "12px",
@@ -276,32 +304,13 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
           }}
           content={`&quot;${comment}&quot;` ?? ""}
         />
-      </Box>
+        {count ? (
+          <Box ml="auto">
+            <Comments width={"52"} count={count} />
+          </Box>
+        ) : null}
+      </Flex>
     </Flex>
-  );
-};
-
-type CommentsProps = {
-  count: number | null;
-  width?: string | null;
-} & BoxProps;
-
-const Comments = ({ count, width, ...rest }: CommentsProps) => {
-  return (
-    <Box
-      minWidth={`${width}px`}
-      display="flex"
-      flexDirection="row"
-      gap="4px"
-      alignItems="center"
-      {...cellPadding}
-      {...rest}
-    >
-      <Icon as={CommentIcon} />
-      <Text variant="breadcrumbs" color="#6B7280">
-        {count}
-      </Text>
-    </Box>
   );
 };
 
