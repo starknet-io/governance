@@ -72,7 +72,6 @@ const DelegateTags = ({ type }: { type: string[] }) => {
 
   const renderTooltip = (startIndex: number) => (
     <Tooltip
-      defaultIsOpen
       hasArrow
       arrowShadowColor="transparent"
       bg="surface.accent.default"
