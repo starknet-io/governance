@@ -168,6 +168,9 @@ export function Page() {
                   rows={4}
                   focusBorderColor={"#292932"}
                   resize="none"
+                  {...register("description", {
+                    required: true,
+                  })}
                   value={shortDescValue}
                   onChange={(e) => setShortDescValue(e.target.value)}
                 />
@@ -195,7 +198,7 @@ export function Page() {
               </FormControl>
 
               <FormControl id="council-name">
-                <FormLabel>Multisig address</FormLabel>
+                <FormLabel>Multisig address (optional)</FormLabel>
                 <Input
                   variant="primary"
                   placeholder="0x..."
@@ -224,7 +227,6 @@ export function Page() {
                   type="submit"
                   size="condensed"
                   variant="primary"
-                  isDisabled={!isValid}
                 >
                   Save
                 </Button>
