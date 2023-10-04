@@ -7,7 +7,7 @@ import {
   WalletConnector,
   useDynamicContext,
 } from "@dynamic-labs/sdk-react";
-
+import { Button as ChakraButton } from "@chakra-ui/react";
 import {
   Logo,
   NavGroup,
@@ -53,6 +53,7 @@ import { HelpMessageProvider, useHelpMessage } from "src/hooks/HelpMessage";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
 import AuthorizedUserView from "./AuthorizedUserView";
+import TallyScript from "src/components/TallyScript";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -130,7 +131,8 @@ export function DynamicContextProviderPage(props: Props) {
   const onSubmit = () => {
     editUserProfile.mutateAsync(
       {
-        address: authUser?.user?.verifiedCredentials[0]?.address?.toLowerCase() ?? "",
+        address:
+          authUser?.user?.verifiedCredentials[0]?.address?.toLowerCase() ?? "",
         username,
         starknetAddress,
       },
@@ -286,9 +288,6 @@ function PageLayout(props: Props) {
     setRenderDone(true);
   }, []);
 
-  console.log(JSON.stringify(pageContext.urlOriginal, null, 2));
-  console.log(JSON.stringify(pageContext.urlPathname, null, 2));
-
   useEffect(() => {
     let timer: string | number | NodeJS.Timeout | undefined;
     if (helpMessage === "connectWalletMessage") {
@@ -307,6 +306,7 @@ function PageLayout(props: Props) {
 
   return (
     <>
+      <TallyScript />
       <SupportModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -458,10 +458,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
       <Box mt="-20px">
         <NavGroup>
           <Show breakpoint="(max-width: 834px)">
-            <Box
-              alignItems={"center"}
-              justifyContent={"center"}
-            >
+            <Box alignItems={"center"} justifyContent={"center"}>
               <Logo href="/" />
             </Box>
           </Show>
@@ -545,12 +542,18 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
         />
 
         <Box as="span" display={{ base: "none", lg: "flex" }}>
-          <NavItem
-            href="https://www.starknet.io"
-            icon={<FeedbackIcon />}
-            label="Feedback"
+          <ChakraButton
             variant="feedback"
-          />
+            leftIcon={<FeedbackIcon />}
+            data-tally-open="3xMJly"
+            data-tally-emoji-text="👋"
+            data-tally-emoji-animation="wave"
+            padding={"12px"}
+            width={"100%"}
+            justifyContent={"flex-start"}
+          >
+            Feedback
+          </ChakraButton>
         </Box>
       </NavGroup>
     </>
