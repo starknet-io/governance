@@ -177,22 +177,27 @@ const PastVotes = ({
   const renderIconBasedOnVotePreference = () => {
     switch (votePreference) {
       case "for":
-        return <VoteForIcon {...iconProps} color="green" />;
+        return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
       case "against":
-        return <VoteAgainstIcon {...iconProps} color="red" />;
+        return (
+          <VoteAgainstIcon {...iconProps} boxSize="18px" color="#EC796B" />
+        );
       case "abstain":
-        return <VoteAbstainIcon {...iconProps} color="black" />;
+        return (
+          <VoteAbstainIcon {...iconProps} boxSize="18px" color="#4A4A4F" />
+        );
       default:
-        return <VoteForIcon {...iconProps} color="green" />;
+        return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
     }
   };
   const formatedVotes = formatVotesAmount(voteCount);
   return (
     <Flex
-      pt="standard.base"
+      // pt="standard.base"
       flexDirection="column"
       flex={1}
       gap="standard.base"
+      {...cellPadding}
 
       //       const cellPadding = {
       //   px: "standard.sm",
@@ -200,8 +205,7 @@ const PastVotes = ({
       // };
     >
       <Text
-        variant="breadcrumbs"
-        fontSize="12px"
+        variant="mediumStrong"
         noOfLines={1}
         fontWeight="500"
         color="content.default.default"
@@ -209,14 +213,24 @@ const PastVotes = ({
         {title}
       </Text>
       <Flex gap="standard.xs">
-        <Text variant="small" fontWeight="500" color="content.support.default">
-          Voted
-          {renderIconBasedOnVotePreference()} with {formatedVotes} votes{" "}
-        </Text>
-        {body && (
-          <Text color="content.default.default" variant="small">
-            &quot;{body}&quot;
+        <Flex flexShrink={0}>
+          <Text
+            variant="small"
+            fontWeight="500"
+            color="content.support.default"
+            display="flex"
+            alignItems={"center"}
+            gap={"standard.xxs"}
+          >
+            Voted{renderIconBasedOnVotePreference()}with {formatedVotes} votes
           </Text>
+        </Flex>
+        {body && (
+          <Box>
+            <Text color="content.support.default" variant="small" noOfLines={1}>
+              &quot;{body}&quot;
+            </Text>
+          </Box>
         )}
       </Flex>
     </Flex>
@@ -236,29 +250,33 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
     : "Unknown date";
 
   return (
-    <Flex flexDirection="column" flex={1} gap="standard.base">
-      <Text
-        variant="mediumStrong"
-        noOfLines={1}
-        color="content.default.default"
-        sx={{
-          _firstLetter: {
-            textTransform: "uppercase",
-          },
-        }}
-      >
-        {postTitle} on {formattedDate ?? ""}
-      </Text>
+    <Flex flexDirection="column" flex={1} gap="standard.base" {...cellPadding}>
+      <Box flex="1">
+        <Text
+          variant="mediumStrong"
+          noOfLines={1}
+          color="content.default.default"
+          sx={{
+            _firstLetter: {
+              textTransform: "uppercase",
+            },
+          }}
+        >
+          {postTitle} on {formattedDate ?? ""}
+        </Text>
+      </Box>
 
-      <MarkdownRenderer
-        textProps={{
-          fontSize: "12px",
-          noOfLines: 1,
-          color: "content.default.default",
-          fontWeight: "500",
-        }}
-        content={`&quot;${comment}&quot;` ?? ""}
-      />
+      <Box flex={1}>
+        <MarkdownRenderer
+          textProps={{
+            fontSize: "12px",
+            noOfLines: 1,
+            color: "content.support.default",
+            fontWeight: "500",
+          }}
+          content={`&quot;${comment}&quot;` ?? ""}
+        />
+      </Box>
     </Flex>
   );
 };
@@ -365,30 +383,40 @@ const VoteResults: React.FC<VoteResultsProps> = ({
   const total = scores.reduce((a, b) => a + b, 0);
   const noVotes = total === 0;
   const onlyOneVote = total === Math.max(...scores);
+
+  const toolTipContent = choices
+    .map((choice, i) => {
+      const rawVotePercentage = (scores[i] / total) * 100;
+      const votePercentage = isNaN(rawVotePercentage)
+        ? 0
+        : rawVotePercentage.toFixed(2);
+      const voteCount = scores[i] || 0;
+      return `${choice}: ${voteCount} votes (${votePercentage}%)`;
+    })
+    .join("\n");
+
   return (
-    <Box
-      display="flex"
-      flex="100%"
-      maxWidth="108px"
-      width="108px"
-      gap="2px"
-      overflow="hidden"
-      {...cellPadding}
-      {...rest}
-    >
-      {choices.map((choice, i) => {
-        const rawVotePercentage = (scores[i] / total) * 100;
-        const votePercentage = isNaN(rawVotePercentage)
-          ? 0
-          : rawVotePercentage.toFixed(2);
-        const voteCount = scores[i] || 0;
-        const isNoVote = voteCount === 0;
-        return (
-          <Tooltip
-            label={`${choice}: ${voteCount} votes (${votePercentage}%)`}
-            key={choice}
-          >
+    <Tooltip label={toolTipContent}>
+      <Box
+        display="flex"
+        flex="100%"
+        maxWidth="108px"
+        width="108px"
+        gap="2px"
+        overflow="hidden"
+        {...cellPadding}
+        {...rest}
+      >
+        {choices.map((choice, i) => {
+          const rawVotePercentage = (scores[i] / total) * 100;
+          const votePercentage = isNaN(rawVotePercentage)
+            ? 0
+            : rawVotePercentage.toFixed(2);
+          const voteCount = scores[i] || 0;
+          const isNoVote = voteCount === 0;
+          return (
             <Box
+              key={choice}
               height="4px"
               borderRadius="2px"
               backgroundColor={
@@ -404,10 +432,10 @@ const VoteResults: React.FC<VoteResultsProps> = ({
                   : `${votePercentage}%`
               }
             />
-          </Tooltip>
-        );
-      })}
-    </Box>
+          );
+        })}
+      </Box>
+    </Tooltip>
   );
 };
 

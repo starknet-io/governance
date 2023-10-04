@@ -467,6 +467,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
               href: "/",
               label: "Home",
               icon: <HomeIcon />,
+              exact: true,
             },
             {
               href: "/voting-proposals",
@@ -480,7 +481,11 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
             },
           ].map((item) => (
             <NavItem
-              active={item.href === pageContext.urlOriginal}
+              active={
+                item.exact
+                  ? pageContext.urlOriginal === item.href
+                  : pageContext.urlOriginal.startsWith(item.href)
+              }
               icon={item.icon}
               label={item.label}
               key={item.href}
@@ -496,7 +501,9 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
             icon={<SecurityIcon />}
             label={council.name ?? "Unknown"}
             href={council.slug ? `/councils/${council.slug}` : "/councils"}
-            active={council.slug === pageContext.urlOriginal}
+            active={pageContext.urlOriginal.startsWith(
+              `/councils/${council.slug}`,
+            )}
           />
         ))}
         {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (

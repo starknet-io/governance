@@ -97,9 +97,11 @@ export const AvatarWithText = ({
           </Box>
         </Flex>
         <Flex width="44px" height="64px">
-          <Dropdown buttonIcon={<EllipsisIcon boxSize="20px" />}>
-            {dropdownChildren}
-          </Dropdown>
+          {dropdownChildren === null ? null : (
+            <Dropdown buttonIcon={<EllipsisIcon boxSize="20px" />}>
+              {dropdownChildren}
+            </Dropdown>
+          )}
         </Flex>
       </Flex>
     </Box>

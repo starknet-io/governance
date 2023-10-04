@@ -38,7 +38,7 @@ export const ContentContainer = ({
         lg: "standard.3xl",
       }}
       maxWidth={maxWidth === "auto" ? "auto" : `${maxWidth}`}
-      mx={center ? "auto" : "0"}
+      mx={{ base: center ? "0" : "0", md: center ? "auto" : "0" }}
     >
       {children}
     </Box>
