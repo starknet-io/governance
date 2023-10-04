@@ -1,4 +1,4 @@
-import React, { ReactNode, InputHTMLAttributes } from "react";
+import React, { ReactNode } from "react";
 import {
   FormControl,
   FormLabel,
@@ -82,63 +82,3 @@ export const FormControlled: React.FC<CustomFormControlProps> = ({
     </FormControl>
   );
 };
-
-// import React, { Ref } from "react";
-// import {
-//   FormControl,
-//   FormLabel,
-//   FormHelperText,
-//   FormErrorMessage,
-//   FormControlProps,
-//   FormLabelProps,
-// } from "@chakra-ui/react";
-
-// interface FormControlledProps extends FormControlProps {
-//   component: React.ElementType;
-//   name: string;
-//   label?: string;
-//   helperText?: string;
-//   isError?: boolean;
-//   errorMessage?: string;
-//   formLabelProps?: FormLabelProps;
-//   ref?: Ref<any>;
-// }
-
-// export const FormControlled: React.FC<FormControlledProps> = ({
-//   component: Component,
-//   name,
-//   label,
-//   helperText,
-//   isError,
-//   errorMessage,
-//   formLabelProps,
-//   ...restProps
-// }) => {
-//   const { onChange, onBlur, ref, placeholder, variant, ...otherRest } =
-//     restProps;
-//   console.log("Props to be passed to Component:", {
-//     name,
-//     onChange,
-//     onBlur,
-//     ref,
-//   });
-//   return (
-//     <FormControl isInvalid={isError} {...otherRest}>
-//       {label && <FormLabel {...formLabelProps}>{label}</FormLabel>}
-
-//       <Component
-//         name={name}
-//         onChange={onChange}
-//         onBlur={onBlur}
-//         ref={ref}
-//         placeholder={placeholder}
-//         variant={variant}
-//         {...otherRest}
-//       />
-
-//       {!isError
-//         ? helperText && <FormHelperText>{helperText}</FormHelperText>
-//         : errorMessage && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
-//     </FormControl>
-//   );
-// };
