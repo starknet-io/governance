@@ -43,6 +43,7 @@ export const Element = (props: RenderElementProps) => {
             color: "grey",
             ...style,
             borderLeft: "3px solid grey",
+            marginTop: 8,
             paddingLeft: 8,
           }}
           {...attributes}
