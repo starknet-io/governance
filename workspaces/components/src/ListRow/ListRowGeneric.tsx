@@ -177,22 +177,27 @@ const PastVotes = ({
   const renderIconBasedOnVotePreference = () => {
     switch (votePreference) {
       case "for":
-        return <VoteForIcon {...iconProps} color="green" />;
+        return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
       case "against":
-        return <VoteAgainstIcon {...iconProps} color="red" />;
+        return (
+          <VoteAgainstIcon {...iconProps} boxSize="18px" color="#EC796B" />
+        );
       case "abstain":
-        return <VoteAbstainIcon {...iconProps} color="black" />;
+        return (
+          <VoteAbstainIcon {...iconProps} boxSize="18px" color="#4A4A4F" />
+        );
       default:
-        return <VoteForIcon {...iconProps} color="green" />;
+        return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
     }
   };
   const formatedVotes = formatVotesAmount(voteCount);
   return (
     <Flex
-      pt="standard.base"
+      // pt="standard.base"
       flexDirection="column"
       flex={1}
       gap="standard.base"
+      {...cellPadding}
 
       //       const cellPadding = {
       //   px: "standard.sm",
@@ -200,8 +205,7 @@ const PastVotes = ({
       // };
     >
       <Text
-        variant="breadcrumbs"
-        fontSize="12px"
+        variant="mediumStrong"
         noOfLines={1}
         fontWeight="500"
         color="content.default.default"
@@ -214,7 +218,7 @@ const PastVotes = ({
           {renderIconBasedOnVotePreference()} with {formatedVotes} votes{" "}
         </Text>
         {body && (
-          <Text color="content.default.default" variant="small">
+          <Text color="content.support.default" variant="small">
             &quot;{body}&quot;
           </Text>
         )}
@@ -236,7 +240,7 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
     : "Unknown date";
 
   return (
-    <Flex flexDirection="column" flex={1} gap="standard.base">
+    <Flex flexDirection="column" flex={1} gap="standard.base" {...cellPadding}>
       <Text
         variant="mediumStrong"
         noOfLines={1}
@@ -254,7 +258,7 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
         textProps={{
           fontSize: "12px",
           noOfLines: 1,
-          color: "content.default.default",
+          color: "content.support.default",
           fontWeight: "500",
         }}
         content={`&quot;${comment}&quot;` ?? ""}
