@@ -14,7 +14,7 @@ import {
   Multiselect,
   useMarkdownEditor,
   MarkdownEditor,
-  Banner,
+  Banner, Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { Controller, useForm, FieldErrors } from "react-hook-form";
@@ -35,6 +35,7 @@ export function Page() {
     control,
     formState: { errors, isValid },
     setError,
+    trigger,
   } = useForm<RouterInput["delegates"]["editDelegate"]>();
 
   const formErrors = errors as FieldErrors<
@@ -80,6 +81,7 @@ export function Page() {
     setValue("interests", delegateData.interests as string[]);
     setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
     setValue("twitter", delegateData.twitter as string);
+    setValue("telegram", delegateData.telegram as string);
     setValue("discord", delegateData.discord as string);
     setValue("discourse", delegateData.discourse as string);
     setValue("understandRole", delegateData.understandRole as boolean);
@@ -100,12 +102,15 @@ export function Page() {
     } else {
       setAgreementType(null);
     }
+    trigger(); // to validate and not have to wait for edit button
   };
 
   const deleteDelegate = trpc.delegates.deleteDelegate.useMutation();
   const { handleUpload } = useFileUpload();
   useEffect(() => {
-    if (delegate && isSuccess) processData();
+    if (delegate && isSuccess) {
+      processData();
+    }
   }, [isSuccess]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -188,7 +193,7 @@ export function Page() {
                     />
                   )}
                 />
-                {formErrors.interests && <span>This field is required.</span>}
+                {errors.interests && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Starknet wallet address</FormLabel>
@@ -207,32 +212,43 @@ export function Page() {
                 )}
               </FormControl>
               <FormControl id="twitter">
-                <FormLabel>Twitter</FormLabel>
+                <FormLabel>Twitter (optional)</FormLabel>
                 <Input
                   variant="primary"
                   placeholder="@yourhandle"
                   {...register("twitter")}
                 />
-                {errors.twitter && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="telegram">
+                <FormLabel>Telegram (optional)</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="@yourhandle"
+                  {...register("telegram")}
+                />
               </FormControl>
               <FormControl id="discord">
-                <FormLabel>Discord</FormLabel>
+                <FormLabel>Discord (optional)</FormLabel>
                 <Input
                   variant="primary"
                   placeholder="name#1234"
                   {...register("discord")}
                 />
-                {errors.discord && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="discourse">
-                <FormLabel>Discourse</FormLabel>
+                <FormLabel>Discourse (optional)</FormLabel>
                 <Input
                   variant="primary"
                   placeholder="yourusername"
                   {...register("discourse")}
                 />
-                {errors.discourse && <span>This field is required.</span>}
               </FormControl>
+              <Box>
+                <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
+                  Delegate agreement <Text variant="largeStrong">(optional)</Text>
+                </Heading>
+                <Text variant="medium">Briefly explain what this means.</Text>
+              </Box>
               <FormControl id="confirmDelegateAgreement">
                 <Checkbox
                   isChecked={agreementType === "standard"}
@@ -250,9 +266,6 @@ export function Page() {
                   I agree with the Starknet foundation suggested delegate
                   agreement View.
                 </Checkbox>
-                {errors.confirmDelegateAgreement && (
-                  <span>This field is required.</span>
-                )}
               </FormControl>
               <FormControl id="customDelegateAgreement">
                 <Checkbox

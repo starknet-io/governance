@@ -165,7 +165,15 @@ export function Page() {
                   placeholder="@yourhandle"
                   {...register("twitter")}
                 />
-                {errors.twitter && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="telegram">
+                <FormLabel>Telegram (optional)</FormLabel>
+                <Input
+                  size="standard"
+                  variant="primary"
+                  placeholder="@yourhandle"
+                  {...register("telegram")}
+                />
               </FormControl>
               <FormControl id="discord">
                 <FormLabel>Discord (optional)</FormLabel>
@@ -175,7 +183,6 @@ export function Page() {
                   placeholder="name#1234"
                   {...register("discord")}
                 />
-                {errors.discord && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="discourse">
                 <FormLabel>Discourse (optional)</FormLabel>
@@ -185,7 +192,6 @@ export function Page() {
                   placeholder="yourusername"
                   {...register("discourse")}
                 />
-                {errors.discourse && <span>This field is required.</span>}
               </FormControl>
               <Divider />
               <Box>
@@ -211,9 +217,6 @@ export function Page() {
                   I agree with the Starknet foundation suggested delegate
                   agreement View.
                 </Checkbox>
-                {errors.confirmDelegateAgreement && (
-                  <span>This field is required.</span>
-                )}
               </FormControl>
               <FormControl id="customDelegateAgreement">
                 <Checkbox
