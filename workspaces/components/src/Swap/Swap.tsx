@@ -23,9 +23,13 @@ type UserSummaryProps = {
   balance?: string | null;
   text?: string | null;
   symbol?: string;
+  isSender?: boolean;
+  isReceiver?: boolean;
 };
 const UserSummary = ({
   address = "0x23423423423423423423423432",
+  isSender,
+  isReceiver,
   ethAddress,
   balance = "100,000",
   text = "From",
@@ -57,7 +61,8 @@ const UserSummary = ({
       </Flex>
       <Flex flexDirection={"column"} alignItems="flex-end" gap="10px">
         <Text color="#6C6C75" as="span">
-          Available Balance
+          {isSender && "Available votes"}
+          {isReceiver && !isSender && "Delegated votes"}
         </Text>
         <Text color="#292932" fontSize="16px">
           {balance} {symbol}
