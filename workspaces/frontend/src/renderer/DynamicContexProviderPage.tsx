@@ -130,7 +130,8 @@ export function DynamicContextProviderPage(props: Props) {
   const onSubmit = () => {
     editUserProfile.mutateAsync(
       {
-        address: authUser?.user?.verifiedCredentials[0]?.address?.toLowerCase() ?? "",
+        address:
+          authUser?.user?.verifiedCredentials[0]?.address?.toLowerCase() ?? "",
         username,
         starknetAddress,
       },
@@ -458,10 +459,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
       <Box mt="-20px">
         <NavGroup>
           <Show breakpoint="(max-width: 834px)">
-            <Box
-              alignItems={"center"}
-              justifyContent={"center"}
-            >
+            <Box alignItems={"center"} justifyContent={"center"}>
               <Logo href="/" />
             </Box>
           </Show>
@@ -470,6 +468,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
               href: "/",
               label: "Home",
               icon: <HomeIcon />,
+              exact: true,
             },
             {
               href: "/voting-proposals",
@@ -483,7 +482,11 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
             },
           ].map((item) => (
             <NavItem
-              active={item.href === pageContext.urlOriginal}
+              active={
+                item.exact
+                  ? pageContext.urlOriginal === item.href
+                  : pageContext.urlOriginal.startsWith(item.href)
+              }
               icon={item.icon}
               label={item.label}
               key={item.href}
@@ -499,7 +502,9 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
             icon={<SecurityIcon />}
             label={council.name ?? "Unknown"}
             href={council.slug ? `/councils/${council.slug}` : "/councils"}
-            active={council.slug === pageContext.urlOriginal}
+            active={pageContext.urlOriginal.startsWith(
+              `/councils/${council.slug}`,
+            )}
           />
         ))}
         {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
