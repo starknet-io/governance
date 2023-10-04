@@ -197,6 +197,13 @@
       "when": 1695380245847,
       "tag": "0027_talented_chamber",
       "breakpoints": false
+    },
+    {
+      "idx": 28,
+      "version": "5",
+      "when": 1696406708250,
+      "tag": "0028_condemned_callisto",
+      "breakpoints": false
     }
   ]
 }

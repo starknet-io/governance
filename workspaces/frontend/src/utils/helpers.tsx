@@ -3,6 +3,11 @@ import {
   TreeItem,
   TreeItems,
 } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
+import {
+  getChecksumAddress,
+  validateAndParseAddress,
+  validateChecksumAddress,
+} from "starknet";
 
 export type PageDnD = {
   id: number;
@@ -75,3 +80,15 @@ export function adaptTreeForFrontend(
       : [],
   }));
 }
+
+export const validateStarknetAddress = (address: string) => {
+  if (!address) return false;
+  try {
+    const parsedAddress = validateAndParseAddress(address);
+    const checksumAddress = getChecksumAddress(parsedAddress);
+    const isChecksumValid = validateChecksumAddress(checksumAddress);
+    return isChecksumValid;
+  } catch (error) {
+    return false;
+  }
+};

@@ -28,7 +28,7 @@ export const usersRouter = router({
       const insertedUser = await db
         .insert(users)
         .values({
-          address: opts.input.address,
+          address: opts.input.address.toLowerCase(),
           walletName: opts.input.walletName,
           walletProvider: opts.input.walletProvider,
           publicIdentifier: opts.input.publicIdentifier,
@@ -55,7 +55,7 @@ export const usersRouter = router({
       const updatedUser = await db
         .update(users)
         .set({
-          address: opts.input.address,
+          address: opts.input.address ? opts.input.address.toLowerCase() : opts.input.address,
           walletName: opts.input.walletName,
           walletProvider: opts.input.walletProvider,
           publicIdentifier: opts.input.publicIdentifier,
@@ -87,7 +87,7 @@ export const usersRouter = router({
     )
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.address)
+        where: eq(users.address, opts.input.address.toLowerCase())
       });
       if (user) {
         const updatedUser = await db
@@ -95,14 +95,14 @@ export const usersRouter = router({
           .set({
             role: opts.input.role,
           })
-          .where(eq(users.address, opts.input.address))
+          .where(eq(users.address, opts.input.address.toLowerCase()))
           .returning();
         return updatedUser[0];
       } else {
         const createdUser = await db
           .insert(users)
           .values({
-            address: opts.input.address,
+            address: opts.input.address.toLowerCase(),
             role: opts.input.role,
             createdAt: new Date(),
           })
@@ -120,7 +120,7 @@ export const usersRouter = router({
     )
     .query(async (opts) => {
       const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.address),
+        where: eq(users.address, opts.input.address.toLowerCase()),
         with: {
           delegationStatement: true
         }
@@ -173,7 +173,7 @@ export const usersRouter = router({
       }))
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.address)
+        where: eq(users.address, opts.input.address.toLowerCase())
       })
 
       if (!user) {
@@ -186,7 +186,7 @@ export const usersRouter = router({
           starknetAddress: opts.input.starknetAddress,
           updatedAt: new Date(),
         })
-        .where(eq(users.address, opts.input.address))
+        .where(eq(users.address, opts.input.address.toLowerCase()))
 
       return
     }),

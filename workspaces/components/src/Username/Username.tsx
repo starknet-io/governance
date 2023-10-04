@@ -23,7 +23,7 @@ export const Username = ({
           {src !== null ? (
             <Avatar variant="withBorder" size="xs" src={src} />
           ) : (
-            <Indenticon size={22} address={address} />
+            <Indenticon size={22} address={address?.toLowerCase()} />
           )}
         </Box>
 
@@ -43,7 +43,7 @@ export const Username = ({
       {src !== null ? (
         <Avatar size="sm" src={src} />
       ) : (
-        <Indenticon size={24} address={address} />
+        <Indenticon size={24} address={address?.toLowerCase()} />
       )}
 
       <Heading color="content.default.default" variant="h5">

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import { eq, and, isNotNull, or, desc, asc } from 'drizzle-orm';
+import { eq, and, isNotNull, or, desc, sql } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -29,6 +29,7 @@ export const delegateRouter = router({
         interests: z.any(),
         twitter: z.string(),
         discord: z.string(),
+        telegram: z.string(),
         discourse: z.string(),
         understandRole: z.boolean(),
         starknetAddress: z.string(),
@@ -75,6 +76,7 @@ export const delegateRouter = router({
           statement: opts.input.statement,
           interests: opts.input.interests,
           twitter: opts.input.twitter,
+          telegram: opts.input.telegram,
           discord: opts.input.discord,
           discourse: opts.input.discourse,
           understandRole: opts.input.understandRole,
@@ -92,6 +94,15 @@ export const delegateRouter = router({
             starknetAddress: opts.input.starknetAddress,
           })
           .where(eq(users.id, insertedDelegate[0].userId));
+      }
+      if (insertedDelegateRecord?.id) {
+        await db.insert(delegateVotes).values({
+          delegateId: insertedDelegateRecord.id,
+          address: user?.address || '',
+          votingPower: 0,
+          totalVotes: 0,
+          updatedAt: new Date(),
+        });
       }
       // If customDelegateAgreementContent is provided, insert into customDelegateAgreement table
       if (opts.input.customDelegateAgreementContent) {
@@ -195,6 +206,7 @@ export const delegateRouter = router({
           interests: opts.input.interests,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
+          telegram: opts.input.telegram,
           discourse: opts.input.discourse,
           understandRole: !!opts.input.understandRole,
           confirmDelegateAgreement: !!opts.input.confirmDelegateAgreement, // Use the determined value
@@ -282,7 +294,7 @@ export const delegateRouter = router({
           ? opts.input.sortBy === 'votingPower'
             ? desc(delegateVotes.votingPower)
             : desc(delegateVotes.totalVotes)
-          : asc(delegateVotes.updatedAt);
+          : desc(delegateVotes.votingPower); // Default to sort by voting power
 
       const specialFilters = [
         'delegate_agreement',
@@ -343,12 +355,61 @@ export const delegateRouter = router({
             );
           }
 
+          // Filter out the delegates based on the comment count
+          if (appliedSpecialFilters.includes('1_or_more_comments')) {
+            // Fetch the count of comments for each delegate
+            const commentCounts: any = await db
+              .select({
+                delegateId: delegates.id,
+                count: sql<number>`count(${comments.id})`,
+              })
+              .from(delegates)
+              .leftJoin(comments, eq(comments.userId, delegates.userId))
+              .groupBy(delegates.id);
+
+            // Convert this to a dictionary/map for easier lookup
+            const commentCountMap = commentCounts.reduce(
+              (acc: { [key: string]: number }, cur: any) => {
+                acc[cur.delegateId] = cur.count;
+                return acc;
+              },
+              {},
+            );
+            filteredDelegates = filteredDelegates.filter(
+              (delegate: any) => commentCountMap[delegate.id] >= 1,
+            );
+          }
+
           if (appliedInterests.length) {
             filteredDelegates = filteredDelegates.filter((delegate: any) =>
-              appliedInterests.some((interest) =>
+              appliedInterests.every((interest) =>
                 delegate.interests.includes(interest),
               ),
             );
+          }
+
+          const shuffleArray = (array: any[]) => {
+            for (let i = array.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+          };
+
+          if (
+            !opts.input.sortBy &&
+            !opts.input.sortBy?.length &&
+            !opts.input.filters?.length
+          ) {
+            const quarterLength = Math.floor(filteredDelegates.length / 4);
+            const firstQuarter = shuffleArray(
+              filteredDelegates.slice(0, quarterLength),
+            );
+            const remaining = shuffleArray(
+              filteredDelegates.slice(quarterLength),
+            );
+
+            filteredDelegates = firstQuarter.concat(remaining);
           }
 
           return filteredDelegates;

@@ -28,24 +28,30 @@ export function Page() {
     onClose: onCloseDelete,
   } = useDisclosure();
   const cancelRef = useRef(null);
-  const {
-    handleSubmit,
-    register,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm<RouterInput["posts"]["editPost"]>();
   const editPost = trpc.posts.editPost.useMutation();
   const pageContext = usePageContext();
   const postResp = trpc.posts.getPostById.useQuery({
     id: Number(pageContext.routeParams!.id),
   });
-
   const { data: post } = postResp;
+
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    formState: { errors, isValid },
+    trigger,
+  } = useForm<RouterInput["posts"]["editPost"]>();
 
   const deletePost = trpc.posts.deletePost.useMutation();
 
-  const { editorValue, handleEditorChange, editor, convertMarkdownToSlate } =
-    useMarkdownEditor("");
+  const {
+    editorValue,
+    handleEditorChange,
+    editor,
+    convertMarkdownToSlate,
+    clearEditor,
+  } = useMarkdownEditor("");
 
   const handleDeletePost = async () => {
     if (!post?.id) return;
@@ -64,8 +70,10 @@ export function Page() {
   }, [post]);
 
   const processData = async () => {
+    clearEditor();
     setValue("title", post?.title ?? "");
     editor.insertNodes(await convertMarkdownToSlate(post?.content || ""));
+    trigger();
   };
 
   const onSubmit = handleSubmit(async (data) => {

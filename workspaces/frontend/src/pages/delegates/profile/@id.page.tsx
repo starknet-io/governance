@@ -82,45 +82,30 @@ const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
 
 // This is just for now
 const mockAgreement = `
-    <h1>Agreement Understanding</h1>
-    <p>
-      This agreement pertains to the role and responsibilities within StarkNet.
-      Please review the following documents to ensure a complete understanding
-      of the expectations and guidelines.
-    </p>
+ # Agreement Understanding
 
-    <h2>StarkNet Delegates</h2>
-    <p>
-      <a href="url_to_delegate_expectations_328">Delegate Expectations 328</a>
-    </p>
+  This agreement pertains to the role and responsibilities within StarkNet. Please review the following documents to ensure a complete understanding of the expectations and guidelines.
 
-    <h2>Starknet Governance Announcements</h2>
-    <p>
-      <a href="url_to_part_1_98">Part 1 98</a>
-      <br />
-      <a href="url_to_part_2_44">Part 2 44</a>
-      <br />
-      <a href="url_to_part_3_34">Part 3 34</a>
-    </p>
+  ## StarkNet Delegates
 
-    <h2>The Foundation Post</h2>
-    <p>
-      <a href="url_to_foundation_post_60">Foundation Post 60</a>
-    </p>
+  [Delegate Expectations 328](url_to_delegate_expectations_328)
 
-    <h2>Delegate Onboarding</h2>
-    <p>
-      <a href="url_to_onboarding_announcement_539">
-        Delegate Onboarding Announcement 539
-      </a>
-    </p>
+  ## Starknet Governance Announcements
 
-    <p>
-      By proceeding further, you acknowledge that you understand the role of
-      StarkNet delegates and have read all the required documents mentioned
-      above.
-    </p>
-  `;
+  [Part 1 98](url_to_part_1_98)
+  [Part 2 44](url_to_part_2_44)
+  [Part 3 34](url_to_part_3_34)
+
+  ## The Foundation Post
+
+  [Foundation Post 60](url_to_foundation_post_60)
+
+  ## Delegate Onboarding
+
+  [Delegate Onboarding Announcement 539](url_to_onboarding_announcement_539)
+
+  By proceeding further, you acknowledge that you understand the role of StarkNet delegates and have read all the required documents mentioned above.
+`;
 
 const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   query DelegateProfilePageQuery(
@@ -183,8 +168,8 @@ export function Page() {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
-          ? "Tokens pending to undelegate"
-          : "Tokens pending to delegate",
+          ? "Undelegating your votes"
+          : "Delegating your votes",
       );
       setStatusDescription("");
     }
@@ -206,8 +191,8 @@ export function Page() {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
-          ? "Tokens delegated successfully"
-          : "Tokens undelegated successfully",
+          ? "Votes undelegated successfully"
+          : "Votes delegated successfully",
       );
       setStatusDescription("");
     }
@@ -337,6 +322,7 @@ export function Page() {
       proposalId: comment.proposalId,
       snipId: comment.snipId,
       snipTitle: comment.snipTitle,
+      createdAt: comment.createdAt,
     };
   });
 
@@ -366,9 +352,12 @@ export function Page() {
   const isLoadingSocials = !delegateResponse.isFetched;
   const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
   const hasUserDelegatedTokensToThisDelegate =
-    delegation.isFetched && delegation.data === delegateAddress;
+    delegation.isFetched &&
+    delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
 
-  const delegateOwnProfile = delegateAddress === address;
+  const delegateOwnProfile =
+    delegateAddress &&
+    delegateAddress?.toLowerCase() === address?.toLowerCase();
 
   return (
     <Box
@@ -388,26 +377,7 @@ export function Page() {
           vp: gqlResponse?.data?.vp?.vp,
         }}
         delegateTokens={() => {
-          if (hasUserDelegatedTokensToThisDelegate) {
-            writeAsyncUndelegation?.({
-              args: [
-                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                  size: 32,
-                }),
-              ],
-            })
-              .then((tx) => {
-                setTxHash(tx.hash);
-              })
-              .catch((err) => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Tokens undelegation failed");
-                setStatusDescription(err.shortMessage);
-              });
-            setIsOpen(false);
-          } else if (
-            parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION
-          ) {
+          if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
@@ -457,7 +427,10 @@ export function Page() {
         isOpen={isStatusModalOpen}
         isPending={isDelegationLoading}
         isSuccess={isDelegationSuccess}
-        isFail={isDelegationError}
+        isFail={
+          isDelegationError ||
+          !!((!txHash || !txHash.length) && statusDescription?.length)
+        }
         onClose={() => {
           setIsStatusModalOpen(false);
         }}
@@ -474,9 +447,10 @@ export function Page() {
         flexDirection="column"
         flexBasis={{ base: "100%", md: "372px" }}
         position={{ base: "unset", lg: "sticky" }}
-        height="calc(100vh - 80px)"
+        height="100vh"
         top="0"
-        overflow="auto"
+        overflowY="auto"
+        overflowX="hidden"
       >
         {isLoadingProfile ? (
           <Box display="flex" flexDirection="column" gap="12px" mb="18px">
@@ -500,8 +474,8 @@ export function Page() {
         ) : (
           <AvatarWithText
             src={
-              delegate?.author?.ensAvatar ||
               delegate?.author?.profileImage ||
+              delegate?.author?.ensAvatar ||
               null
             }
             headerText={
@@ -529,10 +503,30 @@ export function Page() {
               setIsOpen(true);
               if (hasUserDelegatedTokensToThisDelegate) {
                 setIsUndelegation(true);
+                writeAsyncUndelegation?.({
+                  args: [
+                    stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
+                      size: 32,
+                    }),
+                  ],
+                })
+                  .then((tx) => {
+                    setTxHash(tx.hash);
+                  })
+                  .catch((err) => {
+                    setIsStatusModalOpen(true);
+                    setStatusTitle("Tokens undelegation failed");
+                    setStatusDescription(err.shortMessage);
+                  });
+                setIsOpen(false);
+              } else {
+                setIsUndelegation(false);
               }
             }}
           >
-            {hasUserDelegatedTokensToThisDelegate
+            {hasUserDelegatedTokensToThisDelegate &&
+            delegation?.data &&
+            delegation.data !== "0x0000000000000000000000000000000000000000"
               ? "Undelegate your votes"
               : "Delegate your votes"}
           </Button>
@@ -540,27 +534,21 @@ export function Page() {
           <></>
         )}
 
-        {delegation.isFetched && delegation.data === delegateAddress && (
-          <Box mt="standard.md">
-            <Banner
-              label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
-            />
-          </Box>
-        )}
+        {delegation.isFetched &&
+          delegation.data?.toLowerCase() === delegateAddress?.toLowerCase() && (
+            <Box mt="standard.md">
+              <Banner
+                label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
+              />
+            </Box>
+          )}
 
-        {delegation.isFetched && delegation.data === delegateAddress && (
-          <Box mt="standard.md">
-            <Banner
-              label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
-            />
-          </Box>
-        )}
-
-        {delegateResponse.isFetched && address === delegateAddress && (
-          <Box mt="standard.md">
-            <Banner label="You can’t delegate votes to your own account." />
-          </Box>
-        )}
+        {delegateResponse.isFetched &&
+          address?.toLowerCase() === delegateAddress?.toLowerCase() && (
+            <Box mt="standard.md">
+              <Banner label="You can’t delegate votes to your own account." />
+            </Box>
+          )}
 
         <Box mt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
@@ -605,6 +593,7 @@ export function Page() {
         {isLoadingSocials ||
         delegate?.twitter ||
         delegate?.discourse ||
+        delegate?.telegram ||
         delegate?.discord ? (
           <>
             <SummaryItems.Root direction="row">
@@ -626,6 +615,13 @@ export function Page() {
                 <SummaryItems.Socials
                   label="discord"
                   value={delegate?.discord}
+                  isLoading={isLoadingSocials}
+                />
+              )}
+              {(isLoadingSocials || delegate?.telegram) && (
+                <SummaryItems.Socials
+                  label="telegram"
+                  value={delegate?.telegram}
                   isLoading={isLoadingSocials}
                 />
               )}
@@ -668,21 +664,33 @@ export function Page() {
           </Heading>
           <Box mt="standard.2xl">
             {isLoadingProfile ? (
+              // Skeleton representation for loading state
               <Box display="flex" flexDirection="column" gap="20px">
                 <Skeleton height="40px" width="100%" />
                 <Skeleton height="300px" width="90%" />
                 <Skeleton height="100px" width="80%" />
               </Box>
+            ) : delegate?.statement ? (
+              // Display the actual content if it's available
+              <MarkdownRenderer content={delegate?.statement} />
             ) : (
-              <MarkdownRenderer content={delegate?.statement || ""} />
+              // Empty state if the data is available but contains no content
+              <Text variant="body">No delegate pitch added</Text>
             )}
           </Box>
-          <Box mt="24px">
-            <Heading mb="24px" color="content.accent.default" variant="h3">
+          <Box mt="standard.2xl">
+            <Heading color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
-            {gqlResponse.data?.votes?.length ? (
-              <ListRow.Container>
+            {isLoadingGqlResponse ? (
+              // Skeleton representation for loading state
+              <Box display="flex" flexDirection="column" gap="20px" mt="16px">
+                <Skeleton height="60px" width="100%" />
+                <Skeleton height="60px" width="90%" />
+                <Skeleton height="60px" width="80%" />
+              </Box>
+            ) : gqlResponse.data?.votes?.length ? (
+              <ListRow.Container mt="0">
                 {gqlResponse.data?.votes.map((vote) => (
                   <Link
                     href={`/voting-proposals/${vote!.proposal!.id}`}
@@ -698,50 +706,62 @@ export function Page() {
                           ]?.toLowerCase() as "for" | "against" | "abstain"
                         }
                         voteCount={vote!.vp}
-                        body={vote?.proposal?.body}
+                        // body={vote?.proposal?.body}
+                        body={vote?.reason}
                       />
                     </ListRow.Root>
                   </Link>
                 ))}
               </ListRow.Container>
             ) : (
-              <EmptyState type="votesCast" title="No votes yet" />
+              <Box mt="standard.md">
+                <EmptyState type="votesCast" title="No votes yet" />
+              </Box>
             )}
           </Box>
+
           <Box mt="24px" mb={10}>
             <Heading mb="24px" color="content.accent.default" variant="h3">
               Comments
             </Heading>
-            <ListRow.Container>
-              {comments.map((comment) => {
-                return (
-                  <Link
-                    key={comment!.id as string}
-                    href={
-                      comment?.proposalId
-                        ? `/voting-proposals/${comment!.proposalId}`
-                        : `/snips/${comment!.snipId}`
-                    }
-                    _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
-                  >
-                    <ListRow.Root>
-                      <ListRow.CommentSummary
-                        comment={(comment?.content as string) || ""}
-                        postTitle={
-                          (comment?.title as string) ||
-                          (comment?.snipTitle as string) ||
-                          ""
-                        }
-                      />
-                    </ListRow.Root>
-                  </Link>
-                );
-              })}
-            </ListRow.Container>
-
-            {!delegateCommentsResponse?.data?.length ? (
+            {isLoadingGqlResponse ? (
+              // Skeleton representation for loading state
+              <Box display="flex" flexDirection="column" gap="20px">
+                <Skeleton height="60px" width="100%" />
+                <Skeleton height="60px" width="90%" />
+                <Skeleton height="60px" width="80%" />
+              </Box>
+            ) : comments.length ? (
+              <ListRow.Container mt="-20px">
+                {comments.map((comment) => {
+                  return (
+                    <Link
+                      key={comment!.id as string}
+                      href={
+                        comment?.proposalId
+                          ? `/voting-proposals/${comment!.proposalId}`
+                          : `/snips/${comment!.snipId}`
+                      }
+                      _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
+                    >
+                      <ListRow.Root>
+                        <ListRow.CommentSummary
+                          comment={(comment?.content as string) || ""}
+                          postTitle={
+                            (comment?.title as string) ||
+                            (comment?.snipTitle as string) ||
+                            ""
+                          }
+                          date={comment?.createdAt as string}
+                        />
+                      </ListRow.Root>
+                    </Link>
+                  );
+                })}
+              </ListRow.Container>
+            ) : (
               <EmptyState type="comments" title="No comments yet" />
-            ) : null}
+            )}
           </Box>
         </Stack>
       </ContentContainer>

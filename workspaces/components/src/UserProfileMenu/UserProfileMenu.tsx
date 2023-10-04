@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Flex,
   FormControl,
@@ -13,14 +12,13 @@ import {
 } from "@chakra-ui/react";
 import "./user-profile.css";
 import { Button } from "src/Button";
-import { Indenticon } from "../Indenticon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { XIcon } from "../Icons";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
 import { CopyToClipboard } from "src/CopyToClipboard";
-import { ProfileImage } from "src/ProfileImage";
+import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
 import { AvatarWithText } from "src/AvatarWithText";
 
 interface IUser extends User {
@@ -49,6 +47,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
   const [starknetAddress, setStarknetAddress] = useState<any>(
     user?.starknetAddress,
   );
+  const [error, setError] = useState<boolean>(false);
 
   const handleSave = () => {
     onSave(username, starknetAddress);
@@ -59,6 +58,14 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
     // Exit edit mode without saving
     setEditUserProfile(false);
   };
+
+  useEffect(() => {
+    if (!validateStarknetAddress(starknetAddress)) {
+      setError(true);
+    } else {
+      setError(false);
+    }
+  }, [starknetAddress]);
 
   return (
     <>
@@ -105,9 +112,19 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                     value={starknetAddress}
                     onChange={(e) => setStarknetAddress(e.target.value)}
                   />
+                  {error && (
+                    <Text fontSize="12px" color="red">
+                      Invalid Starknet address
+                    </Text>
+                  )}
                 </FormControl>
                 <Box width="100%" mt={6}>
-                  <Button width="100%" variant="primary" onClick={handleSave}>
+                  <Button
+                    width="100%"
+                    variant="primary"
+                    onClick={handleSave}
+                    isDisabled={error}
+                  >
                     Save
                   </Button>
                 </Box>
@@ -193,7 +210,9 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                           fontWeight="normal"
                           href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
                         >
-                          {truncateAddress(delegatedTo?.address || "")}
+                          {delegatedTo.username ??
+                            delegatedTo.ensName ??
+                            truncateAddress(delegatedTo?.address || "")}
                         </Link>
 
                         <CopyToClipboard text={delegatedTo?.address} />

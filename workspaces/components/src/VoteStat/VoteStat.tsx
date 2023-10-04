@@ -1,5 +1,4 @@
-import { Box, Flex, Progress, Stack, Tooltip } from "@chakra-ui/react";
-
+import { Box, Flex, Progress, Stack } from "@chakra-ui/react";
 import { Text } from "../Text";
 import { formatVotesAmount } from "src/utils";
 
@@ -23,59 +22,41 @@ const formatPercentage = (num: number) => {
   return num % 1 === 0 ? num.toFixed(0) : num.toFixed(2);
 };
 
-const formatVoteCount = (num: number) => {
-  return num % 1 === 0 ? num.toFixed(0) : num.toFixed(2);
-};
-
 export const VoteStat = (props: Props) => {
   const votePercentage =
     props.totalVotes > 0
       ? ((props.voteCount || 0) / props.totalVotes) * 100
       : 0;
-  // const voteCountFormatted = formatVoteCount(props.voteCount || 0);
   const voteCountFormatted = formatVotesAmount(props.voteCount || 0);
+
   return (
-    <Tooltip
-      label={props.strategies.map((strategy, index) => (
-        <Box key={strategy.network}>
-          <Text>Symbol: {strategy.params.symbol}</Text>
-          <Text>
-            Score:{" "}
-            {props.scoresByStrategy ? props.scoresByStrategy[index] : "N/A"}
+    <Stack mb="condensed.sm" spacing="0" textTransform="uppercase">
+      <Flex
+        flexDirection="row"
+        gap="standard.base"
+        justifyContent="space-between"
+        mb="1px"
+      >
+        <Box>
+          <Text variant="captionSmallStrong" color="content.default.default">
+            {formatPercentage(votePercentage)} % {props.userVote ? "✓" : ""}
           </Text>
         </Box>
-      ))}
-      placement="top"
-      hasArrow
-    >
-      <Stack mb="condensed.sm" spacing="0" textTransform="uppercase">
-        <Flex
-          flexDirection="row"
-          gap="standard.base"
-          justifyContent="space-between"
-          mb="1px"
+        <Text
+          textTransform="lowercase"
+          variant="captionSmallStrong"
+          color="content.default.default"
         >
-          <Box>
-            <Text variant="captionSmallStrong" color="content.default.default">
-              {formatPercentage(votePercentage)} % {props.userVote ? "✓" : ""}
-            </Text>
-          </Box>
-          <Text
-            textTransform="lowercase"
-            variant="captionSmallStrong"
-            color="content.default.default"
-          >
-            {voteCountFormatted} votes
-          </Text>
-        </Flex>
-        <Box bg="purple" width="100%">
-          <Progress
-            variant={variant[props.type]}
-            height="4px"
-            value={votePercentage}
-          />
-        </Box>
-      </Stack>
-    </Tooltip>
+          {voteCountFormatted} votes
+        </Text>
+      </Flex>
+      <Box bg="purple" width="100%">
+        <Progress
+          variant={variant[props.type]}
+          height="4px"
+          value={votePercentage}
+        />
+      </Box>
+    </Stack>
   );
 };

@@ -40,7 +40,7 @@ export const InfoModal = ({
         />
         <ModalBody>
           <Stack spacing="standard.xl">
-            <Heading textAlign={"center"} variant="h3" mb="0">
+            <Heading textAlign={"center"} pl={8} pr={8} variant="h3" mb="0">
               {title}
             </Heading>
             {children}

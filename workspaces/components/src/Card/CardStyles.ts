@@ -38,10 +38,10 @@ const variants = {
       lineHeight: "20px",
       letterSpacing: "0.12px",
       fontWeight: 500,
-      border: '1px solid transparent',
-      _hover: { 
-        borderColor: 'content.default.disabled',
-      }
+      border: "1px solid rgba(35, 25, 45, 0.10)",
+      _hover: {
+        borderColor: "border.formsHover",
+      },
     },
     header: {
       padding: 0,

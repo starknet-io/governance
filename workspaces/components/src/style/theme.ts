@@ -21,6 +21,7 @@ import { switchTheme } from "src/Switch/SwitchStyles";
 import { alertTheme } from "src/Banner/AlertStyles";
 import { dividerTheme } from "src/Divider/DividerStyles";
 import { avatarTheme } from "src/Avatar/AvatarStyles";
+import { FormTheme } from "src/FormControlled/Form";
 
 const config = {
   initialColorMode: "light",
@@ -58,6 +59,7 @@ export const theme = extendTheme({
     Modal,
     Spinner,
     Divider: dividerTheme,
+    ...FormTheme,
 
     fonts: {
       heading: `'Poppins', sans-serif`,

@@ -7,15 +7,16 @@ type Props = {
 };
 
 export const Indenticon = ({ address, size = 60 }: Props) => {
-  const { svg } = useColorGenerator(`${address}`, size);
+  const { svg } = useColorGenerator(`${address?.toLowerCase()}`, size);
   return (
     <Box borderRadius="full" overflow="hidden" position="relative">
       <Image
         width={size}
         position="absolute"
         inset="0"
-        top="14px"
-        left="-4px"
+        // top="14px"
+        top="28%"
+        left="-8%"
         src={img}
         zIndex={"1"}
         opacity="1"

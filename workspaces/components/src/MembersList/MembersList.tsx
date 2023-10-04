@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import {
   Box,
   Input,
-  VStack,
-  ListItem,
-  UnorderedList,
   Center,
   Text,
   Flex,
@@ -23,9 +20,10 @@ import {
 } from "@chakra-ui/react";
 import "./members-list.css";
 import { Button } from "src/Button";
-import { TrashIcon } from "src/Icons";
+import { TrashIcon, TwitterIcon } from "src/Icons";
 import { truncateAddress } from "src/utils";
 import { Username } from "src/Username";
+import * as ListRow from "src/ListRow/ListRowGeneric";
 
 export type MemberType = {
   address: string;
@@ -57,6 +55,27 @@ export const MembersList: React.FC<MembersListProps> = ({
     miniBio: "",
   });
 
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    address: "",
+    twitterHandle: "",
+    miniBio: "",
+  });
+
+  const validateForm = () => {
+    let errors = {
+      name: member.name ? "" : "Member name is required.",
+      address: member.address ? "" : "Ethereum address is required.",
+      twitterHandle: member.twitterHandle ? "" : "Twitter handle is required.",
+      miniBio: member.miniBio ? "" : "Mini Bio is required.",
+    };
+
+    setFormErrors(errors);
+
+    // Only proceed if there are no errors
+    return !Object.values(errors).some((error) => error);
+  };
+
   const handleInputChange = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
@@ -64,10 +83,11 @@ export const MembersList: React.FC<MembersListProps> = ({
   };
 
   const handleAddMember = () => {
-    if (!member.address && !member.name && !member.twitterHandle) return;
-    setMembers([...members, member]);
-    setMember({ address: "", name: "", twitterHandle: "", miniBio: "" });
-    onClose();
+    if (validateForm()) {
+      setMembers([...members, member]);
+      setMember({ address: "", name: "", twitterHandle: "", miniBio: "" });
+      onClose();
+    }
   };
 
   const handleRemoveMember = (indexToRemove: number) => {
@@ -97,6 +117,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                   value={member.name ?? ""}
                   onChange={handleInputChange}
                 />
+                {formErrors.name && (
+                  <Text color="red.500">{formErrors.name}</Text>
+                )}
               </FormControl>
               <FormControl id="address" paddingBottom={2}>
                 <FormLabel>Ethereum address</FormLabel>
@@ -106,6 +129,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                   value={member.address ?? ""}
                   onChange={handleInputChange}
                 />
+                {formErrors.address && (
+                  <Text color="red.500">{formErrors.address}</Text>
+                )}
               </FormControl>
               <FormControl id="member-twitter-handle" paddingBottom={2}>
                 <FormLabel>Twitter handle</FormLabel>
@@ -115,6 +141,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                   value={member.twitterHandle ?? ""}
                   onChange={handleInputChange}
                 />
+                {formErrors.twitterHandle && (
+                  <Text color="red.500">{formErrors.twitterHandle}</Text>
+                )}
               </FormControl>
               <FormControl id="member-mini-bio" paddingBottom={2}>
                 <FormLabel>Mini Bio</FormLabel>
@@ -124,6 +153,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                   value={member.miniBio ?? ""}
                   onChange={handleInputChange}
                 />
+                {formErrors.miniBio && (
+                  <Text color="red.500">{formErrors.miniBio}</Text>
+                )}
               </FormControl>
             </form>
           </ModalBody>
@@ -142,68 +174,64 @@ export const MembersList: React.FC<MembersListProps> = ({
         </ModalContent>
       </Modal>
 
-      <Box className="members-list" mt={4} borderRadius="md" p={4}>
+      <Box p={4}>
         {members.length === 0 ? (
           <Center>
             <Text className="empty-state">No members added </Text>
           </Center>
         ) : (
-          <UnorderedList styleType="none">
+          <ListRow.Container>
             {members.map((member, index) => (
-              <ListItem key={index} className="list-item">
-                <Flex justify="space-between" align="center">
-                  <VStack align="start">
-                    <Box p="standard.sm">
+              <ListRow.Root key={member.address}>
+                <Flex flexDirection="column" width="100%">
+                  <Flex ml="standard.sm" flex="1" alignItems="center" mb="6px">
+                    <Box>
                       <Username
+                        src={null}
                         size="standard"
-                        address={member.address}
+                        address={`${member.address}`}
                         displayName={
                           member.name ?? truncateAddress(member.address)
                         }
                       />
-                      {/* {member.name ? (
-                        <Text fontSize="14px" lineHeight="22px">
-                          {member.name}
-                        </Text>
-                      ) : (
-                        <Text fontSize="14px" lineHeight="22px">
-                          {truncateAddress(member.address)}
-                        </Text>
-                      )} */}
+                    </Box>
+                    <Box ml="auto">
                       {member.twitterHandle ? (
-                        <>
-                          <Text>
-                            <span>&nbsp;</span>
-                            <span style={{ fontWeight: "bold" }}>&bull;</span>
-                            <span>&nbsp;</span>
-                          </Text>
-
+                        <Flex alignItems="center" gap="standard.base">
+                          <TwitterIcon />
                           <Text
-                            fontSize="14px"
-                            lineHeight="22px"
-                            textDecoration="underline"
+                            color="content.support.default"
+                            variant="smallStrong"
                           >
-                            @{member.twitterHandle}
+                            {member.twitterHandle}
                           </Text>
-                        </>
+                        </Flex>
                       ) : null}
                     </Box>
-                    <Flex>
-                      <Text variant="small">{member.miniBio}</Text>
-                    </Flex>
-                  </VStack>
-                  {readonly ? null : (
-                    <IconButton
-                      aria-label="Delete member"
-                      icon={<TrashIcon cursor={"pointer"} />}
-                      variant="simple"
-                      onClick={() => handleRemoveMember(index)}
-                    />
-                  )}
+                    {readonly ? null : (
+                      <Box ml="auto">
+                        <IconButton
+                          aria-label="Delete member"
+                          icon={<TrashIcon cursor={"pointer"} />}
+                          variant="simple"
+                          onClick={() => handleRemoveMember(index)}
+                        />
+                      </Box>
+                    )}
+                  </Flex>
+                  <Flex ml="standard.2xl">
+                    <Text
+                      ml="standard.sm"
+                      color="content.support.default"
+                      variant="small"
+                    >
+                      {member.miniBio}
+                    </Text>
+                  </Flex>
                 </Flex>
-              </ListItem>
+              </ListRow.Root>
             ))}
-          </UnorderedList>
+          </ListRow.Container>
         )}
       </Box>
       {readonly ? null : (
