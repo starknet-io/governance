@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DocumentProps, ROLES } from "src/renderer/types";
-
+import { Button as ChakraButton } from "@chakra-ui/react";
 import {
   Box,
   ConfirmModal,
@@ -343,9 +343,24 @@ export function Page() {
             Edit
           </MenuItem>
         )}
-        <MenuItem as="a" href="/delegate/edit/">
+        <ChakraButton
+          variant="ghost"
+          data-tally-open="mDpzpE"
+          data-tally-emoji-text="👋"
+          data-tally-emoji-animation="wave"
+          data-profile={
+            typeof window !== "undefined" ? window.location.href : ""
+          }
+          width={"100%"}
+          justifyContent={"flex-start"}
+          padding={0}
+          minHeight={"33px"}
+          paddingLeft={"10px"}
+          fontWeight={"400"}
+          textColor={"#1a1523"}
+        >
           Report
-        </MenuItem>
+        </ChakraButton>
       </>
     );
   }

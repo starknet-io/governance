@@ -11,6 +11,7 @@ import {
   MenuList,
   Stack,
   Text,
+  Button as ChakraButton,
 } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
@@ -325,6 +326,13 @@ const CommentItem: React.FC<CommentProps> = ({
     useState<boolean>(false);
   const { setShowAuthFlow } = useDynamicContext();
 
+  function stripHtmlTagsAndTrim(input: string): string {
+    const stripped = input.replace(/[\r\n]+/g, "");
+    console.log("stripped: ", stripped);
+
+    return stripped.length > 40 ? stripped.substring(0, 40) : stripped;
+  }
+
   return (
     <>
       <InfoModal
@@ -511,7 +519,31 @@ const CommentItem: React.FC<CommentProps> = ({
                         Delete
                       </MenuItem>
                     )}
-                    <MenuItem>Report</MenuItem>
+                    <ChakraButton
+                      variant="ghost"
+                      data-tally-open="woRGRN"
+                      data-tally-emoji-text="👋"
+                      data-tally-emoji-animation="wave"
+                      data-comment={comment.id}
+                      data-url={
+                        typeof window !== "undefined"
+                          ? window.location.href
+                          : ""
+                      }
+                      data-user={
+                        author?.username || author?.ensName || author?.address
+                      }
+                      data-content={stripHtmlTagsAndTrim(content)}
+                      width={"100%"}
+                      justifyContent={"flex-start"}
+                      padding={0}
+                      minHeight={"33px"}
+                      paddingLeft={"10px"}
+                      fontWeight={"400"}
+                      textColor={"#1a1523"}
+                    >
+                      Report
+                    </ChakraButton>
                   </CommentMoreActions>
                 </Flex>
               </Flex>
