@@ -298,8 +298,10 @@ const StrategySummary: React.FC<StrategySummaryProps> = ({ strategies }) => {
               key={index}
               label={`Address: ${strategy.params.address}\nDecimals: ${strategy.params.decimals}\nDelegation: ${strategy.params.delegationSpace}`}
               fontSize="md"
-              placement="top"
               hasArrow
+              arrowShadowColor="transparent"
+              bg="surface.accent.default"
+              placement="top"
             >
               <Text variant="small" color="content.accent.default" mr={2}>
                 {strategy.params.symbol}

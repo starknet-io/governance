@@ -396,7 +396,13 @@ const VoteResults: React.FC<VoteResultsProps> = ({
     .join("\n");
 
   return (
-    <Tooltip label={toolTipContent}>
+    <Tooltip
+      hasArrow
+      arrowShadowColor="transparent"
+      bg="surface.accent.default"
+      placement="top"
+      label={toolTipContent}
+    >
       <Box
         display="flex"
         flex="100%"
