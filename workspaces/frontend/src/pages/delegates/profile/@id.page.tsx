@@ -191,8 +191,8 @@ export function Page() {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
-          ? "Tokens undelegated successfully"
-          : "Tokens delegated successfully",
+          ? "Votes undelegated successfully"
+          : "Votes delegated successfully",
       );
       setStatusDescription("");
     }

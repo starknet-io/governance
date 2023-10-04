@@ -228,7 +228,7 @@ export function Delegates({
 
     if (isDelegationSuccess) {
       setIsStatusModalOpen(true);
-      setStatusTitle("Tokens delegated successfully");
+      setStatusTitle("Votes delegated successfully");
       setStatusDescription("");
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);

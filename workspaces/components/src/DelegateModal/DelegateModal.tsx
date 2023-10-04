@@ -105,6 +105,7 @@ export const DelegateModal = ({
                   address={senderData.address}
                   balance={senderData.balance}
                   symbol={senderData.symbol}
+                  isSender
                 />
                 {receiverData ? (
                   <>
@@ -113,6 +114,7 @@ export const DelegateModal = ({
                       address={receiverData.address}
                       balance={getTotalVotingPower()}
                       symbol={receiverData.symbol}
+                      isReceiver
                       text={"To"}
                     />
                   </>
