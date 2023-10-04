@@ -45,6 +45,31 @@ type CommentListProps = {
   commentsList: CommentWithAuthor[];
 };
 
+const hoverStyles = {
+  position: "relative",
+  "::before": {
+    content: '""',
+    display: "block",
+    position: "absolute",
+    width: "32px",
+    height: "32px",
+    borderRadius: "50%", // to make it a circle
+    backgroundColor: "#37163708",
+    zIndex: 0,
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
+const focusStyles = {
+  ...hoverStyles, // Using the same style for hover and focus
+  "::before": {
+    ...hoverStyles["::before"],
+    backgroundColor: "#2B1E3714",
+    // Any additional styles for focus state can be added here
+  },
+};
+
 function daysAgo(date: Date): string {
   const now = new Date();
   const differenceInMs = now.getTime() - date.getTime();
@@ -107,11 +132,17 @@ const CommentVotes = ({
   isDownvote: boolean;
   commentId: number;
 }) => {
+  const [isUpvoteHovered, setUpvoteIsHovered] = useState(false);
+  const [isDownvoteHovered, setDownvoteIsHovered] = useState(false);
+
   return (
     <Flex direction="row" alignItems="flex-end" gap={2.5}>
-      {isUpvote ? (
+      {isUpvote || isUpvoteHovered ? (
         <IconButton
           variant="simple"
+          _hover={hoverStyles}
+          onMouseLeave={() => setUpvoteIsHovered(false)}
+          _focus={focusStyles}
           onClick={() => {
             if (!isUser && onSignedOutVote) {
               onSignedOutVote();
@@ -121,11 +152,17 @@ const CommentVotes = ({
           }}
           aria-label="More comment actions"
           size="small"
-          icon={<ArrowUpCircleFillIcon color="#30B37C" boxSize="20px" />}
+          icon={
+            <ArrowUpCircleFillIcon zIndex={1} color="#30B37C" boxSize="20px" />
+          }
         />
       ) : (
         <IconButton
           variant="simple"
+          _hover={hoverStyles}
+          _focus={focusStyles}
+          onMouseEnter={() => setUpvoteIsHovered(true)}
+          onMouseLeave={() => setUpvoteIsHovered(false)}
           onClick={() => {
             if (!isUser && onSignedOutVote) {
               onSignedOutVote();
@@ -135,7 +172,7 @@ const CommentVotes = ({
           }}
           aria-label="More comment actions"
           size="small"
-          icon={<ArrowUpCircleIcon boxSize="20px" />}
+          icon={<ArrowUpCircleIcon zIndex={1} boxSize="20px" />}
         />
       )}
 
@@ -147,8 +184,10 @@ const CommentVotes = ({
       >
         {netVotes}
       </Text>
-      {isDownvote ? (
+      {isDownvote || isDownvoteHovered ? (
         <IconButton
+          _hover={hoverStyles}
+          _focus={focusStyles}
           variant="simple"
           onClick={() => {
             if (!isUser && onSignedOutVote) {
@@ -157,13 +196,24 @@ const CommentVotes = ({
               onVote({ commentId, voteType: "downvote" });
             }
           }}
+          onMouseLeave={() => setDownvoteIsHovered(false)}
           aria-label="More comment actions"
           size="small"
-          icon={<ArrowDownCircleFillIcon color="#E4442F" boxSize="20px" />}
+          icon={
+            <ArrowDownCircleFillIcon
+              zIndex={1}
+              color="#E4442F"
+              boxSize="20px"
+            />
+          }
         />
       ) : (
         <IconButton
           variant="simple"
+          _hover={hoverStyles}
+          _focus={focusStyles}
+          onMouseEnter={() => setDownvoteIsHovered(true)}
+          onMouseLeave={() => setDownvoteIsHovered(false)}
           onClick={() => {
             if (!isUser && onSignedOutVote) {
               onSignedOutVote();
@@ -173,7 +223,7 @@ const CommentVotes = ({
           }}
           aria-label="More comment actions"
           size="small"
-          icon={<ArrowDownCircleIcon boxSize="20px" />}
+          icon={<ArrowDownCircleIcon zIndex={1} boxSize="20px" />}
         />
       )}
     </Flex>
@@ -207,9 +257,13 @@ type CommentProps = {
     voteType: "upvote" | "downvote";
   }) => void;
   depth?: number;
+  activeCommentEditor: number | null;
+  setActiveCommentEditor: (val: number | null) => void;
 };
 
 const CommentItem: React.FC<CommentProps> = ({
+  activeCommentEditor,
+  setActiveCommentEditor,
   comment,
   onReply,
   onVote,
@@ -227,8 +281,7 @@ const CommentItem: React.FC<CommentProps> = ({
   const isUpvote = votes?.voteType === "upvote";
   const isDownvote = votes?.voteType === "downvote";
 
-  const [showReplyMarkdownEditor, setShowReplyMarkdownEditor] =
-    useState<boolean>(false);
+  const showReplyMarkdownEditor = activeCommentEditor === comment.id;
   const [isThreadOpen, changeIsThreadOpen] = useState<boolean>(true);
   const hasReplies = comment.replies && comment.replies.length;
 
@@ -245,7 +298,7 @@ const CommentItem: React.FC<CommentProps> = ({
     };
     if (onReply) {
       onReply(data);
-      setShowReplyMarkdownEditor(false);
+      setActiveCommentEditor(null);
     }
   };
 
@@ -318,16 +371,20 @@ const CommentItem: React.FC<CommentProps> = ({
               </Text>
             </Flex>
             <Box>
-              {isEditMode ? (
+              {isEditMode && showReplyMarkdownEditor ? (
                 <CommentInput
                   withCancel
-                  onCancel={() => setIsEditMode(false)}
+                  onCancel={() => {
+                    setIsEditMode(false);
+                    setActiveCommentEditor(null);
+                  }}
                   defaultValue={content}
                   onSend={(content) => {
                     if (onEdit) {
                       onEdit({ commentId: comment.id, content });
                     }
                     setIsEditMode(false);
+                    setActiveCommentEditor(null);
                   }}
                 />
               ) : (
@@ -351,17 +408,30 @@ const CommentItem: React.FC<CommentProps> = ({
                     role="button"
                     gap={1}
                     onClick={() =>
-                      setShowReplyMarkdownEditor(!showReplyMarkdownEditor)
+                      setActiveCommentEditor(
+                        activeCommentEditor === comment.id ? null : comment.id,
+                      )
                     }
                   >
                     <IconButton
                       variant="simple"
                       onClick={() => {
-                        setShowReplyMarkdownEditor(!showReplyMarkdownEditor);
+                        if (isEditMode) {
+                          setIsEditMode(false);
+                          setActiveCommentEditor(comment.id);
+                        } else {
+                          setActiveCommentEditor(
+                            activeCommentEditor === comment.id
+                              ? null
+                              : comment.id,
+                          );
+                        }
                       }}
                       aria-label="Reply"
                       size="small"
-                      icon={<ReplyIcon width="20px" height="20px" />}
+                      icon={
+                        <ReplyIcon width="20px" height="20px" color="#4a4a4f" />
+                      }
                     />
                     <Text variant="mediumStrong">Reply</Text>
                   </Flex>
@@ -369,7 +439,12 @@ const CommentItem: React.FC<CommentProps> = ({
                 <Flex alignItems="flex-end">
                   <CommentMoreActions>
                     {canEdit && (
-                      <MenuItem onClick={() => setIsEditMode(true)}>
+                      <MenuItem
+                        onClick={() => {
+                          setIsEditMode(true);
+                          setActiveCommentEditor(comment.id);
+                        }}
+                      >
                         Edit
                       </MenuItem>
                     )}
@@ -389,11 +464,11 @@ const CommentItem: React.FC<CommentProps> = ({
                 </Flex>
               </Flex>
             </Flex>
-            {showReplyMarkdownEditor && (
+            {showReplyMarkdownEditor && !isEditMode && (
               <form>
                 <CommentInput
                   withCancel
-                  onCancel={() => setShowReplyMarkdownEditor(false)}
+                  onCancel={() => setActiveCommentEditor(null)}
                   onSend={(content: string) => {
                     onSubmit(content);
                   }}
@@ -416,6 +491,8 @@ const CommentItem: React.FC<CommentProps> = ({
           <CommentItem
             key={reply.id}
             comment={reply}
+            activeCommentEditor={activeCommentEditor}
+            setActiveCommentEditor={setActiveCommentEditor}
             onReply={onReply}
             onVote={onVote}
             onDelete={onDelete}
@@ -443,11 +520,17 @@ export const CommentList: React.FC<CommentListProps> = ({
   onEdit?: (data: { commentId: number; content: string }) => void;
   onDelete?: (data: { commentId: number }) => void;
 }) => {
+  const [activeCommentEditor, setActiveCommentEditor] = useState<number | null>(
+    null,
+  );
+
   return (
     <Flex flexDirection="column" gap="20px">
       {commentsList.map((comment, index) => (
         <CommentItem
           key={index}
+          activeCommentEditor={activeCommentEditor}
+          setActiveCommentEditor={setActiveCommentEditor}
           comment={comment}
           onReply={onReply}
           onVote={onVote}
