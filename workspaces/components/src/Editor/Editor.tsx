@@ -13,6 +13,7 @@ import ImageBlockButton from "./ImageBlockButton";
 import LinkBlockButton from "./LinkBlockButton";
 import { TextTypeButton } from "./TextTypeButton";
 import { MoreButton } from "./MoreButton";
+import { withInlines } from "./hotkeys";
 
 export const MarkdownEditor: React.FC<
   MarkdownEditorProps & {
@@ -28,7 +29,7 @@ export const MarkdownEditor: React.FC<
   basicEditor = false,
 }) => {
   const { convertMarkdownToSlate } = useMarkdownEditor("");
-  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+  const editor = useMemo(() => withInlines(withHistory(withReact(createEditor()))), []);
 
   const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
