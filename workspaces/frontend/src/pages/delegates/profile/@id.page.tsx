@@ -593,6 +593,7 @@ export function Page() {
         {isLoadingSocials ||
         delegate?.twitter ||
         delegate?.discourse ||
+        delegate?.telegram ||
         delegate?.discord ? (
           <>
             <SummaryItems.Root direction="row">
@@ -614,6 +615,13 @@ export function Page() {
                 <SummaryItems.Socials
                   label="discord"
                   value={delegate?.discord}
+                  isLoading={isLoadingSocials}
+                />
+              )}
+              {(isLoadingSocials || delegate?.telegram) && (
+                <SummaryItems.Socials
+                  label="telegram"
+                  value={delegate?.telegram}
                   isLoading={isLoadingSocials}
                 />
               )}

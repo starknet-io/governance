@@ -29,6 +29,7 @@ export const delegateRouter = router({
         interests: z.any(),
         twitter: z.string(),
         discord: z.string(),
+        telegram: z.string(),
         discourse: z.string(),
         understandRole: z.boolean(),
         starknetAddress: z.string(),
@@ -75,6 +76,7 @@ export const delegateRouter = router({
           statement: opts.input.statement,
           interests: opts.input.interests,
           twitter: opts.input.twitter,
+          telegram: opts.input.telegram,
           discord: opts.input.discord,
           discourse: opts.input.discourse,
           understandRole: opts.input.understandRole,
@@ -204,6 +206,7 @@ export const delegateRouter = router({
           interests: opts.input.interests,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
+          telegram: opts.input.telegram,
           discourse: opts.input.discourse,
           understandRole: !!opts.input.understandRole,
           confirmDelegateAgreement: !!opts.input.confirmDelegateAgreement, // Use the determined value

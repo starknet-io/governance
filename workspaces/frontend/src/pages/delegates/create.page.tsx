@@ -34,6 +34,7 @@ type FormValues = {
   customDelegateAgreementContent?: string;
   starknetAddress: string;
   twitter: string;
+  telegram: string;
   discord: string;
   discourse: string;
   understandRole: boolean;

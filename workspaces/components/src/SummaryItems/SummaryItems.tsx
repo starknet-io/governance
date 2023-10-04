@@ -8,7 +8,13 @@ import { truncateAddress } from "src/utils";
 import { Heading } from "src/Heading";
 import { format } from "date-fns";
 import { CopyToClipboard } from "src/CopyToClipboard";
-import { DiscordIcon, DiscourseIcon, GithubIcon, TwitterIcon } from "src/Icons";
+import {
+  DiscordIcon,
+  DiscourseIcon,
+  GithubIcon,
+  TwitterIcon,
+  TelegramIcon,
+} from "src/Icons";
 // import type { delegateTypeEnum } from '@yukilabs/governance-backend/src/db/schema/delegates';
 
 type RootProps = {
@@ -186,7 +192,7 @@ const Socials = (props: SocialsProps) => {
             : label === "discord"
             ? DiscordIcon
             : label === "telegram"
-            ? DiscourseIcon
+            ? TelegramIcon
             : TwitterIcon
         }
         w={"20px"}
