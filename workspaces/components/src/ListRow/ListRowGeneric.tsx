@@ -402,6 +402,7 @@ const VoteResults: React.FC<VoteResultsProps> = ({
       bg="surface.accent.default"
       placement="top"
       label={toolTipContent}
+      shouldWrapChildren
     >
       <Box
         display="flex"
