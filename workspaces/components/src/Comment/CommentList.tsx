@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Comment } from "@yukilabs/governance-backend/src/db/schema/comments";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import {
@@ -25,6 +26,7 @@ import {
   MinusCircleIcon,
   PlusCircleIcon,
   ReplyIcon,
+  WalletIcon,
 } from "../Icons/UiIcons";
 import { CommentInput } from "./CommentInput";
 import { IconButton } from "../IconButton";
@@ -32,6 +34,8 @@ import { IconButton } from "../IconButton";
 import { usePageContext } from "@yukilabs/governance-frontend/src/renderer/PageContextProvider";
 import { hasPermission } from "@yukilabs/governance-frontend/src/utils/helpers";
 import { ROLES } from "@yukilabs/governance-frontend/src/renderer/types";
+import { Button } from "../Button";
+import { InfoModal } from "../InfoModal";
 
 type CommentWithAuthor = Comment & {
   author: User | null;
@@ -88,6 +92,8 @@ const CommentVotes = ({
   netVotes,
   isUpvote,
   isDownvote,
+  onSignedOutVote,
+  isUser,
   commentId,
 }: {
   onVote?: (data: {
@@ -96,6 +102,8 @@ const CommentVotes = ({
   }) => void;
   netVotes: number | null;
   isUpvote: boolean;
+  isUser?: boolean;
+  onSignedOutVote?: () => void;
   isDownvote: boolean;
   commentId: number;
 }) => {
@@ -105,7 +113,9 @@ const CommentVotes = ({
         <IconButton
           variant="simple"
           onClick={() => {
-            if (onVote) {
+            if (!isUser && onSignedOutVote) {
+              onSignedOutVote();
+            } else if (onVote) {
               onVote({ commentId, voteType: "upvote" });
             }
           }}
@@ -117,7 +127,9 @@ const CommentVotes = ({
         <IconButton
           variant="simple"
           onClick={() => {
-            if (onVote) {
+            if (!isUser && onSignedOutVote) {
+              onSignedOutVote();
+            } else if (onVote) {
               onVote({ commentId, voteType: "upvote" });
             }
           }}
@@ -139,7 +151,9 @@ const CommentVotes = ({
         <IconButton
           variant="simple"
           onClick={() => {
-            if (onVote) {
+            if (!isUser && onSignedOutVote) {
+              onSignedOutVote();
+            } else if (onVote) {
               onVote({ commentId, voteType: "downvote" });
             }
           }}
@@ -151,7 +165,9 @@ const CommentVotes = ({
         <IconButton
           variant="simple"
           onClick={() => {
-            if (onVote) {
+            if (!isUser && onSignedOutVote) {
+              onSignedOutVote();
+            } else if (onVote) {
               onVote({ commentId, voteType: "downvote" });
             }
           }}
@@ -216,6 +232,12 @@ const CommentItem: React.FC<CommentProps> = ({
   const [isThreadOpen, changeIsThreadOpen] = useState<boolean>(true);
   const hasReplies = comment.replies && comment.replies.length;
 
+  useEffect(() => {
+    if (user) {
+      setIsConnectedModal(false);
+    }
+  }, [user]);
+
   const onSubmit = (content: string) => {
     const data = {
       parentId: id,
@@ -228,9 +250,21 @@ const CommentItem: React.FC<CommentProps> = ({
   };
 
   const numberOfReplies = comment?.replies?.length || 0;
+  const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
+  const { setShowAuthFlow } = useDynamicContext();
 
   return (
     <>
+      <InfoModal
+        title="Connect wallet to vote for comment"
+        isOpen={isConnectedModal}
+        onClose={() => setIsConnectedModal(false)}
+      >
+        <WalletIcon />
+        <Button variant="primary" onClick={() => setShowAuthFlow(true)}>
+          Connect your wallet
+        </Button>
+      </InfoModal>
       <Stack pl={depth * 8}>
         <Flex gap={3}>
           <Box
@@ -303,10 +337,12 @@ const CommentItem: React.FC<CommentProps> = ({
             <Flex alignItems="center">
               <Flex gap={5}>
                 <CommentVotes
+                  isUser={!!user}
                   isDownvote={isDownvote}
                   isUpvote={isUpvote}
                   commentId={comment.id}
                   onVote={onVote}
+                  onSignedOutVote={() => setIsConnectedModal(true)}
                   netVotes={comment.netVotes}
                 />
                 {user && (
