@@ -178,10 +178,11 @@ export function Page() {
       console.log(delegationError);
       setIsStatusModalOpen(true);
       setStatusTitle(
-        hasUserDelegatedTokensToThisDelegate
-          ? "Tokens undelegation failed"
-          : "Tokens delegation failed",
+        isUndelegation
+          ? "Undelegating votes failed"
+          : "Delegating votes failed",
       );
+      setIsUndelegation(false);
       setStatusDescription(
         "An error occurred while processing your transaction.",
       );
@@ -190,11 +191,12 @@ export function Page() {
     if (isDelegationSuccess) {
       setIsStatusModalOpen(true);
       setStatusTitle(
-        hasUserDelegatedTokensToThisDelegate
+        isUndelegation
           ? "Votes undelegated successfully"
           : "Votes delegated successfully",
       );
       setStatusDescription("");
+      setIsUndelegation(false);
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
@@ -398,7 +400,7 @@ export function Page() {
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
-                setStatusTitle("Tokens delegation failed");
+                setStatusTitle("Delegating votes failed");
                 setStatusDescription(
                   err.shortMessage ||
                     err.message ||
@@ -515,7 +517,7 @@ export function Page() {
                   })
                   .catch((err) => {
                     setIsStatusModalOpen(true);
-                    setStatusTitle("Tokens undelegation failed");
+                    setStatusTitle("Undelegating votes failed");
                     setStatusDescription(err.shortMessage);
                   });
                 setIsOpen(false);

@@ -220,7 +220,7 @@ export function Delegates({
     if (isDelegationError) {
       console.log(delegationError);
       setIsStatusModalOpen(true);
-      setStatusTitle("Tokens delegation failed");
+      setStatusTitle("Delegating votes failed");
       setStatusDescription(
         "An error occurred while processing your transaction.",
       );
@@ -310,6 +310,7 @@ export function Delegates({
           delegate?.author?.address?.toLowerCase() ===
           user?.address?.toLowerCase(),
       )?.id;
+
     return (
       <>
         <Button
@@ -321,7 +322,7 @@ export function Delegates({
           Delegate to address
         </Button>
 
-        {!user.delegationStatement && !delegateId ? (
+        {!delegateId ? (
           <Button
             width={{ base: "100%", md: "auto" }}
             as="a"
@@ -389,7 +390,7 @@ export function Delegates({
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
-                setStatusTitle("Tokens delegation failed");
+                setStatusTitle("Delegating votes failed");
                 setStatusDescription(
                   err.shortMessage ||
                     err.message ||
