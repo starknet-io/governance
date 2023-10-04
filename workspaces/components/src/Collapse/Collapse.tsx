@@ -9,30 +9,67 @@ import { Button } from "src/Button";
 
 type Props = {
   startingHeight?: number;
+  threshold?: number;
   children?: React.ReactNode;
 };
 
-export const Collapse = ({ startingHeight = 20, children }: Props) => {
+export const Collapse = ({
+  startingHeight = 20,
+  threshold = 50,
+  children,
+}: Props) => {
   const [show, setShow] = React.useState(false);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const [shouldRenderCollapse, setShouldRenderCollapse] = React.useState(false);
 
   const handleToggle = () => setShow(!show);
+
+  React.useEffect(() => {
+    if (
+      contentRef.current &&
+      contentRef.current.clientHeight - startingHeight > threshold
+    ) {
+      setShouldRenderCollapse(true);
+    } else {
+      setShouldRenderCollapse(false);
+    }
+  }, [startingHeight, children, threshold]);
+
+  const effectiveStartingHeight = shouldRenderCollapse
+    ? startingHeight
+    : "100%";
+
   return (
     <>
-      <ChakraCollapse startingHeight={"285px"} in={show} animateOpacity>
-        <Box pb="32px">{children}</Box>
+      <ChakraCollapse
+        startingHeight={effectiveStartingHeight}
+        in={show}
+        animateOpacity
+      >
+        <Box pb="32px" ref={contentRef}>
+          {children}
+        </Box>
       </ChakraCollapse>
-      <HStack position="relative" mt="-24px" spacing="0">
-        <Divider />
-        <Button
-          minWidth="85px"
-          variant="secondary"
-          size="condensed"
-          onClick={handleToggle}
+      {shouldRenderCollapse && (
+        <HStack
+          position="relative"
+          mt="-24px"
+          spacing="0"
+          h="80px"
+          bgGradient="linear-gradient(to top,  #F9F8F9 55px, transparent)"
         >
-          View {show ? "Less" : "all"}
-        </Button>
-        <Divider />
-      </HStack>
+          <Divider />
+          <Button
+            minWidth="85px"
+            variant="secondary"
+            size="condensed"
+            onClick={handleToggle}
+          >
+            View {show ? "Less" : "all"}
+          </Button>
+          <Divider />
+        </HStack>
+      )}
     </>
   );
 };
