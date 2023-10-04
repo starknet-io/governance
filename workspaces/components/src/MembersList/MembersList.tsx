@@ -57,6 +57,27 @@ export const MembersList: React.FC<MembersListProps> = ({
     miniBio: "",
   });
 
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    address: "",
+    twitterHandle: "",
+    miniBio: "",
+  });
+
+  const validateForm = () => {
+    let errors = {
+      name: member.name ? "" : "Member name is required.",
+      address: member.address ? "" : "Ethereum address is required.",
+      twitterHandle: member.twitterHandle ? "" : "Twitter handle is required.",
+      miniBio: member.miniBio ? "" : "Mini Bio is required.",
+    };
+
+    setFormErrors(errors);
+
+    // Only proceed if there are no errors
+    return !Object.values(errors).some((error) => error);
+  };
+
   const handleInputChange = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
@@ -64,10 +85,11 @@ export const MembersList: React.FC<MembersListProps> = ({
   };
 
   const handleAddMember = () => {
-    if (!member.address && !member.name && !member.twitterHandle) return;
-    setMembers([...members, member]);
-    setMember({ address: "", name: "", twitterHandle: "", miniBio: "" });
-    onClose();
+    if (validateForm()) {
+      setMembers([...members, member]);
+      setMember({ address: "", name: "", twitterHandle: "", miniBio: "" });
+      onClose();
+    }
   };
 
   const handleRemoveMember = (indexToRemove: number) => {
@@ -97,6 +119,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                   value={member.name ?? ""}
                   onChange={handleInputChange}
                 />
+                {formErrors.name && (
+                  <Text color="red.500">{formErrors.name}</Text>
+                )}
               </FormControl>
               <FormControl id="address" paddingBottom={2}>
                 <FormLabel>Ethereum address</FormLabel>
@@ -106,6 +131,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                   value={member.address ?? ""}
                   onChange={handleInputChange}
                 />
+                {formErrors.address && (
+                  <Text color="red.500">{formErrors.address}</Text>
+                )}
               </FormControl>
               <FormControl id="member-twitter-handle" paddingBottom={2}>
                 <FormLabel>Twitter handle</FormLabel>
@@ -115,6 +143,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                   value={member.twitterHandle ?? ""}
                   onChange={handleInputChange}
                 />
+                {formErrors.twitterHandle && (
+                  <Text color="red.500">{formErrors.twitterHandle}</Text>
+                )}
               </FormControl>
               <FormControl id="member-mini-bio" paddingBottom={2}>
                 <FormLabel>Mini Bio</FormLabel>
@@ -124,6 +155,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                   value={member.miniBio ?? ""}
                   onChange={handleInputChange}
                 />
+                {formErrors.miniBio && (
+                  <Text color="red.500">{formErrors.miniBio}</Text>
+                )}
               </FormControl>
             </form>
           </ModalBody>
