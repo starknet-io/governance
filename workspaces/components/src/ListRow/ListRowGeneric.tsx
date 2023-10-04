@@ -213,14 +213,24 @@ const PastVotes = ({
         {title}
       </Text>
       <Flex gap="standard.xs">
-        <Text variant="small" fontWeight="500" color="content.support.default">
-          Voted
-          {renderIconBasedOnVotePreference()} with {formatedVotes} votes{" "}
-        </Text>
-        {body && (
-          <Text color="content.support.default" variant="small">
-            &quot;{body}&quot;
+        <Flex flexShrink={0}>
+          <Text
+            variant="small"
+            fontWeight="500"
+            color="content.support.default"
+            display="flex"
+            alignItems={"center"}
+            gap={"standard.xxs"}
+          >
+            Voted{renderIconBasedOnVotePreference()}with {formatedVotes} votes
           </Text>
+        </Flex>
+        {body && (
+          <Box>
+            <Text color="content.support.default" variant="small" noOfLines={1}>
+              &quot;{body}&quot;
+            </Text>
+          </Box>
         )}
       </Flex>
     </Flex>
@@ -241,28 +251,32 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
 
   return (
     <Flex flexDirection="column" flex={1} gap="standard.base" {...cellPadding}>
-      <Text
-        variant="mediumStrong"
-        noOfLines={1}
-        color="content.default.default"
-        sx={{
-          _firstLetter: {
-            textTransform: "uppercase",
-          },
-        }}
-      >
-        {postTitle} on {formattedDate ?? ""}
-      </Text>
+      <Box flex="1">
+        <Text
+          variant="mediumStrong"
+          noOfLines={1}
+          color="content.default.default"
+          sx={{
+            _firstLetter: {
+              textTransform: "uppercase",
+            },
+          }}
+        >
+          {postTitle} on {formattedDate ?? ""}
+        </Text>
+      </Box>
 
-      <MarkdownRenderer
-        textProps={{
-          fontSize: "12px",
-          noOfLines: 1,
-          color: "content.support.default",
-          fontWeight: "500",
-        }}
-        content={`&quot;${comment}&quot;` ?? ""}
-      />
+      <Box flex={1}>
+        <MarkdownRenderer
+          textProps={{
+            fontSize: "12px",
+            noOfLines: 1,
+            color: "content.support.default",
+            fontWeight: "500",
+          }}
+          content={`&quot;${comment}&quot;` ?? ""}
+        />
+      </Box>
     </Flex>
   );
 };
