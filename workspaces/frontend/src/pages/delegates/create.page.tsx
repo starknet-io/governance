@@ -34,6 +34,7 @@ type FormValues = {
   customDelegateAgreementContent?: string;
   starknetAddress: string;
   twitter: string;
+  telegram: string;
   discord: string;
   discourse: string;
   understandRole: boolean;
@@ -154,42 +155,50 @@ export function Page() {
                   })}
                 />
                 {errors.starknetAddress && (
-                  <Text>{errors.starknetAddress.message}</Text>
+                  <Text>{errors.starknetAddress.message || "This field is required."}</Text>
                 )}
               </FormControl>
               <FormControl id="twitter">
-                <FormLabel>Twitter</FormLabel>
+                <FormLabel>Twitter (optional)</FormLabel>
                 <Input
                   size="standard"
                   variant="primary"
                   placeholder="@yourhandle"
                   {...register("twitter")}
                 />
-                {errors.twitter && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="telegram">
+                <FormLabel>Telegram (optional)</FormLabel>
+                <Input
+                  size="standard"
+                  variant="primary"
+                  placeholder="@yourhandle"
+                  {...register("telegram")}
+                />
               </FormControl>
               <FormControl id="discord">
-                <FormLabel>Discord</FormLabel>
+                <FormLabel>Discord (optional)</FormLabel>
                 <Input
                   variant="primary"
                   size="standard"
                   placeholder="name#1234"
                   {...register("discord")}
                 />
-                {errors.discord && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="discourse">
-                <FormLabel>Discourse</FormLabel>
+                <FormLabel>Discourse (optional)</FormLabel>
                 <Input
                   variant="primary"
                   size="standard"
                   placeholder="yourusername"
                   {...register("discourse")}
                 />
-                {errors.discourse && <span>This field is required.</span>}
               </FormControl>
               <Divider />
               <Box>
-                <Heading variant="h3">Delegate agreement</Heading>
+                <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
+                  Delegate agreement <Text variant="largeStrong">(optional)</Text>
+                </Heading>
                 <Text variant="medium">Briefly explain what this means.</Text>
               </Box>
               <FormControl id="confirmDelegateAgreement">
@@ -209,9 +218,6 @@ export function Page() {
                   I agree with the Starknet foundation suggested delegate
                   agreement View.
                 </Checkbox>
-                {errors.confirmDelegateAgreement && (
-                  <span>This field is required.</span>
-                )}
               </FormControl>
               <FormControl id="customDelegateAgreement">
                 <Checkbox
@@ -262,7 +268,7 @@ export function Page() {
                 {errors.understandRole && <span>This field is required.</span>}
               </FormControl>
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant="primary" disabled={!isValid}>
+                <Button type="submit" variant="primary">
                   Submit delegate profile
                 </Button>
               </Flex>
