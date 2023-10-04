@@ -17,7 +17,6 @@ import {
   IconButton,
   InfoModal,
   PlaceholderImage,
-  Stack,
   Stat,
   SummaryItems,
   Text,
@@ -689,13 +688,15 @@ export function Page() {
                 </AppBar.Root>
               </>
             )}
-            <CommentList
-              commentsList={comments.data || []}
-              onVote={handleCommentVote}
-              onDelete={handleCommentDelete}
-              onReply={handleReplySend}
-              onEdit={handleCommentEdit}
-            />
+            <Box mt="standard.xs">
+              <CommentList
+                commentsList={comments.data || []}
+                onVote={handleCommentVote}
+                onDelete={handleCommentDelete}
+                onReply={handleReplySend}
+                onEdit={handleCommentEdit}
+              />
+            </Box>
           </Flex>
         </Box>
       </ContentContainer>
