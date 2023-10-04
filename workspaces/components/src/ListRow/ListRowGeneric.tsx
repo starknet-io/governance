@@ -369,30 +369,40 @@ const VoteResults: React.FC<VoteResultsProps> = ({
   const total = scores.reduce((a, b) => a + b, 0);
   const noVotes = total === 0;
   const onlyOneVote = total === Math.max(...scores);
+
+  const toolTipContent = choices
+    .map((choice, i) => {
+      const rawVotePercentage = (scores[i] / total) * 100;
+      const votePercentage = isNaN(rawVotePercentage)
+        ? 0
+        : rawVotePercentage.toFixed(2);
+      const voteCount = scores[i] || 0;
+      return `${choice}: ${voteCount} votes (${votePercentage}%)`;
+    })
+    .join("\n");
+
   return (
-    <Box
-      display="flex"
-      flex="100%"
-      maxWidth="108px"
-      width="108px"
-      gap="2px"
-      overflow="hidden"
-      {...cellPadding}
-      {...rest}
-    >
-      {choices.map((choice, i) => {
-        const rawVotePercentage = (scores[i] / total) * 100;
-        const votePercentage = isNaN(rawVotePercentage)
-          ? 0
-          : rawVotePercentage.toFixed(2);
-        const voteCount = scores[i] || 0;
-        const isNoVote = voteCount === 0;
-        return (
-          <Tooltip
-            label={`${choice}: ${voteCount} votes (${votePercentage}%)`}
-            key={choice}
-          >
+    <Tooltip label={toolTipContent}>
+      <Box
+        display="flex"
+        flex="100%"
+        maxWidth="108px"
+        width="108px"
+        gap="2px"
+        overflow="hidden"
+        {...cellPadding}
+        {...rest}
+      >
+        {choices.map((choice, i) => {
+          const rawVotePercentage = (scores[i] / total) * 100;
+          const votePercentage = isNaN(rawVotePercentage)
+            ? 0
+            : rawVotePercentage.toFixed(2);
+          const voteCount = scores[i] || 0;
+          const isNoVote = voteCount === 0;
+          return (
             <Box
+              key={choice}
               height="4px"
               borderRadius="2px"
               backgroundColor={
@@ -408,10 +418,10 @@ const VoteResults: React.FC<VoteResultsProps> = ({
                   : `${votePercentage}%`
               }
             />
-          </Tooltip>
-        );
-      })}
-    </Box>
+          );
+        })}
+      </Box>
+    </Tooltip>
   );
 };
 
