@@ -27,6 +27,7 @@ import { navigate } from "vite-plugin-ssr/client/router";
 import { useForm, Controller } from "react-hook-form";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { useState } from "react";
+import { isArray } from "@apollo/client/utilities";
 
 interface FieldValues {
   // type: ProposalType;
@@ -52,7 +53,7 @@ export function Page() {
     handleSubmit,
     control,
     register,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<FieldValues>({
     async defaultValues() {
       return {
@@ -152,6 +153,7 @@ export function Page() {
                     required: true,
                   })}
                 />
+                {errors.title && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="delegate-statement">
                 <FormLabel>Proposal Body</FormLabel>{" "}
@@ -159,11 +161,13 @@ export function Page() {
                   control={control}
                   name="body"
                   render={({ field: { onChange, value } }) => (
-                    <MarkdownEditor
-                      onChange={onChange}
-                      value={value}
-                      handleUpload={handleUpload}
-                    />
+                    <>
+                      <MarkdownEditor
+                        onChange={onChange}
+                        value={value}
+                        handleUpload={handleUpload}
+                      />
+                    </>
                   )}
                 />
               </FormControl>
@@ -242,26 +246,33 @@ export function Page() {
                     <Controller
                       control={control}
                       name="votingPeriod"
-                      render={({ field: { onChange, value } }) => (
+                      rules={{
+                        required: "Voting period is required.",
+                        validate: (value) => {
+                          if (value[0] >= value[1]) {
+                            return "Start date/time must be before the end date/time.";
+                          }
+                          return true;
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
                         <ChakraDatePicker
                           single={false}
                           showTimePicker={true}
                           range={true}
-                          date={value}
-                          onDateChange={onChange}
+                          date={field.value}
+                          onDateChange={field.onChange}
+                          isInvalid={fieldState.invalid}
+                          errorMessage={fieldState?.error?.message}
                         />
                       )}
                     />
+                    {errors.votingPeriod && <span>This field is required</span>}
                   </Box>
                 </Stack>
               </FormControl>
               <Box display="flex" justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  size="condensed"
-                  variant="primary"
-                  isDisabled={!isValid}
-                >
+                <Button type="submit" size="condensed" variant="primary">
                   Create voting proposal
                 </Button>
               </Box>
