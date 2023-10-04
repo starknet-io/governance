@@ -130,7 +130,8 @@ export function DynamicContextProviderPage(props: Props) {
   const onSubmit = () => {
     editUserProfile.mutateAsync(
       {
-        address: authUser?.user?.verifiedCredentials[0]?.address?.toLowerCase() ?? "",
+        address:
+          authUser?.user?.verifiedCredentials[0]?.address?.toLowerCase() ?? "",
         username,
         starknetAddress,
       },
@@ -189,10 +190,7 @@ export function DynamicContextProviderPage(props: Props) {
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {
-              // Guard against setting the state if authUser data hasn't changed
-              if (JSON.stringify(authUser) !== JSON.stringify(params)) {
-                setAuthUser(params);
-              }
+              setAuthUser(params);
             },
             onLogout: () => handleDynamicLogout(),
           },
@@ -458,10 +456,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
       <Box mt="-20px">
         <NavGroup>
           <Show breakpoint="(max-width: 834px)">
-            <Box
-              alignItems={"center"}
-              justifyContent={"center"}
-            >
+            <Box alignItems={"center"} justifyContent={"center"}>
               <Logo href="/" />
             </Box>
           </Show>
