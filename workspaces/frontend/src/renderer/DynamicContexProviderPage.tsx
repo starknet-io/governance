@@ -191,10 +191,7 @@ export function DynamicContextProviderPage(props: Props) {
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {
-              // Guard against setting the state if authUser data hasn't changed
-              if (JSON.stringify(authUser) !== JSON.stringify(params)) {
-                setAuthUser(params);
-              }
+              setAuthUser(params);
             },
             onLogout: () => handleDynamicLogout(),
           },
