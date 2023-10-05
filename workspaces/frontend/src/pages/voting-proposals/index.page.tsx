@@ -117,36 +117,102 @@ export function Proposal({ data }: any) {
   const count = comments ? comments.length : 0;
 
   return (
-    <ListRow.Root key={data.id} href={`/voting-proposals/${data.id}`}>
-      <Box display={{ base: "none", md: "none" }}>
-        <ListRow.MutedText id={1} type="vote" />
-      </Box>
-      <ListRow.Title label={data.title} />
-      <Box display={{ base: "none", md: "flex" }}>
-        <ListRow.CategoryText category={data?.category || ""} />
-      </Box>
-      <ListRow.VoteResults
-        choices={
-          data.choices?.map((choice: any) => choice || "")?.filter(Boolean) ||
-          []
-        }
-        scores={
-          data.scores
-            ?.map((score: any) => score || 0)
-            ?.filter(Number.isFinite) || []
-        }
-      />
-      <Box display={{ base: "none", md: "flex" }}>
-        <ListRow.DateRange
-          start={data.start}
-          end={data.end}
-          state={data.state}
+    <ListRow.Root
+      key={data.id}
+      href={`/voting-proposals/${data.id}`}
+      flexDir={{
+        base: "column",
+        xl: "row",
+      }}
+      alignItems="flex-start"
+    >
+      <Flex
+        flex={{
+          base: 1,
+          md: "auto",
+        }}
+        flexDir={{
+          base: "column",
+          md: "row",
+        }}
+        alignItems={{
+          base: "baseline",
+          md: "center",
+        }}
+        width="100%"
+      >
+        <ListRow.Title label={data.title} flex={1} />
+        <Flex
+          display={{ base: "flex" }}
+          justifyContent={{
+            base: "space-between",
+          }}
+          width={{
+            base: "100%",
+            md: "auto",
+          }}
+          alignItems="center"
+        >
+          <ListRow.CategoryText category={data?.category || "Engineering"} />
+          <ListRow.VoteResults
+            choices={
+              data.choices
+                ?.map((choice: any) => choice || "")
+                ?.filter(Boolean) || []
+            }
+            scores={
+              data.scores
+                ?.map((score: any) => score || 0)
+                ?.filter(Number.isFinite) || []
+            }
+            w={{
+              base: "auto",
+              md: "108px",
+            }}
+            maxW={{
+              base: "200px",
+              md: "108px",
+            }}
+          />
+          <ListRow.Status
+            status={data.state}
+            display={{
+              base: "none",
+              md: "flex",
+            }}
+          />
+        </Flex>
+      </Flex>
+      <Flex
+        width={{
+          base: "100%",
+          xl: "auto",
+        }}
+        alignItems="center"
+      >
+        <ListRow.Status
+          status={data.state}
+          display={{
+            md: "none",
+          }}
         />
-      </Box>
-      <ListRow.Status status={data.state} />
-      <Box display={{ base: "none", md: "flex" }}>
-        <ListRow.Comments count={count} />
-      </Box>
+        <Box display={{ base: "flex", md: "flex" }}>
+          <ListRow.DateRange
+            start={data.start}
+            end={data.end}
+            state={data.state}
+          />
+        </Box>
+        <Box
+          display={{ base: "flex", md: "flex" }}
+          ml={{
+            base: "auto",
+            md: "0px",
+          }}
+        >
+          <ListRow.Comments count={count} />
+        </Box>
+      </Flex>
     </ListRow.Root>
   );
 }

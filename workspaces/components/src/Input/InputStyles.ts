@@ -14,6 +14,9 @@ const primary = definePartsStyle({
     border: "1px solid",
     borderColor: "border.forms",
     boxShadow: "0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
+    _invalid: {
+      borderColor: "border.danger",
+    },
     _hover: {
       borderColor: "#C8C7CB",
 

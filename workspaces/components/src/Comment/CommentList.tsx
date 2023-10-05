@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Comment } from "@yukilabs/governance-backend/src/db/schema/comments";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import {
@@ -11,9 +11,11 @@ import {
   MenuList,
   Stack,
   Text,
+  Button as ChakraButton,
 } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import {
@@ -25,6 +27,8 @@ import {
   MinusCircleIcon,
   PlusCircleIcon,
   ReplyIcon,
+  TrashIcon,
+  WalletIcon,
 } from "../Icons/UiIcons";
 import { CommentInput } from "./CommentInput";
 import { IconButton } from "../IconButton";
@@ -32,6 +36,8 @@ import { IconButton } from "../IconButton";
 import { usePageContext } from "@yukilabs/governance-frontend/src/renderer/PageContextProvider";
 import { hasPermission } from "@yukilabs/governance-frontend/src/utils/helpers";
 import { ROLES } from "@yukilabs/governance-frontend/src/renderer/types";
+import { Button } from "../Button";
+import { InfoModal } from "../InfoModal";
 
 type CommentWithAuthor = Comment & {
   author: User | null;
@@ -39,6 +45,31 @@ type CommentWithAuthor = Comment & {
 
 type CommentListProps = {
   commentsList: CommentWithAuthor[];
+};
+
+const hoverStyles = {
+  position: "relative",
+  "::before": {
+    content: '""',
+    display: "block",
+    position: "absolute",
+    width: "32px",
+    height: "32px",
+    borderRadius: "50%", // to make it a circle
+    backgroundColor: "#37163708",
+    zIndex: 0,
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
+const focusStyles = {
+  ...hoverStyles, // Using the same style for hover and focus
+  "::before": {
+    ...hoverStyles["::before"],
+    backgroundColor: "#2B1E3714",
+    // Any additional styles for focus state can be added here
+  },
 };
 
 function daysAgo(date: Date): string {
@@ -68,7 +99,8 @@ const CommentShowMoreReplies = ({
     role="button"
     gap={1}
     onClick={toggleReplies}
-    mt={3}
+    mt={0}
+    height="36px"
   >
     {isThreadOpen ? (
       <MinusCircleIcon boxSize="22px" />
@@ -88,6 +120,8 @@ const CommentVotes = ({
   netVotes,
   isUpvote,
   isDownvote,
+  onSignedOutVote,
+  isUser,
   commentId,
 }: {
   onVote?: (data: {
@@ -96,34 +130,62 @@ const CommentVotes = ({
   }) => void;
   netVotes: number | null;
   isUpvote: boolean;
+  isUser?: boolean;
+  onSignedOutVote?: () => void;
   isDownvote: boolean;
   commentId: number;
 }) => {
+  const [isUpvoteHovered, setUpvoteIsHovered] = useState(false);
+  const [isDownvoteHovered, setDownvoteIsHovered] = useState(false);
+  const [isUpvoteFocused, setUpvoteIsFocused] = useState(false);
+  const [isDownvoteFocused, setDownvoteIsFocused] = useState(false);
+
   return (
     <Flex direction="row" alignItems="flex-end" gap={2.5}>
-      {isUpvote ? (
+      {isUpvote || isUpvoteHovered || isUpvoteFocused ? (
         <IconButton
           variant="simple"
+          _hover={hoverStyles}
+          onMouseLeave={() => setUpvoteIsHovered(false)}
+          _focus={{ ...focusStyles }}
+          size="small"
+          onFocus={() => setUpvoteIsFocused(true)}
+          onBlur={() => setUpvoteIsFocused(false)}
           onClick={() => {
-            if (onVote) {
+            if (!isUser && onSignedOutVote) {
+              onSignedOutVote();
+            } else if (onVote) {
               onVote({ commentId, voteType: "upvote" });
             }
           }}
-          aria-label="More comment actions"
-          size="small"
-          icon={<ArrowUpCircleFillIcon color="#30B37C" boxSize="20px" />}
+          aria-label="Upvote comment"
+          icon={
+            <ArrowUpCircleFillIcon
+              zIndex={1}
+              color={isUpvoteFocused ? "#216348" : "#30B37C"}
+              boxSize="20px"
+            />
+          }
         />
       ) : (
         <IconButton
           variant="simple"
+          _hover={hoverStyles}
+          size="small"
+          _focus={focusStyles}
+          onMouseEnter={() => setUpvoteIsHovered(true)}
+          onMouseLeave={() => setUpvoteIsHovered(false)}
+          onFocus={() => setUpvoteIsFocused(true)}
+          onBlur={() => setUpvoteIsFocused(false)}
           onClick={() => {
-            if (onVote) {
+            if (!isUser && onSignedOutVote) {
+              onSignedOutVote();
+            } else if (onVote) {
               onVote({ commentId, voteType: "upvote" });
             }
           }}
-          aria-label="More comment actions"
-          size="small"
-          icon={<ArrowUpCircleIcon boxSize="20px" />}
+          aria-label="Upvote comment"
+          icon={<ArrowUpCircleIcon zIndex={1} boxSize="20px" />}
         />
       )}
 
@@ -135,29 +197,51 @@ const CommentVotes = ({
       >
         {netVotes}
       </Text>
-      {isDownvote ? (
+      {isDownvote || isDownvoteHovered || isDownvoteFocused ? (
         <IconButton
+          _hover={hoverStyles}
+          _focus={{ ...focusStyles }}
+          size="small"
           variant="simple"
+          onFocus={() => setDownvoteIsFocused(true)}
+          onBlur={() => setDownvoteIsFocused(false)}
+          onMouseLeave={() => setDownvoteIsHovered(false)}
           onClick={() => {
-            if (onVote) {
+            if (!isUser && onSignedOutVote) {
+              onSignedOutVote();
+            } else if (onVote) {
               onVote({ commentId, voteType: "downvote" });
             }
           }}
-          aria-label="More comment actions"
-          size="small"
-          icon={<ArrowDownCircleFillIcon color="#E4442F" boxSize="20px" />}
+          aria-label="Downvote comment"
+          icon={
+            <ArrowDownCircleFillIcon
+              zIndex={1}
+              color={isDownvoteFocused ? "#C42D1A" : "#E4442F"}
+              boxSize="20px"
+            />
+          }
         />
       ) : (
         <IconButton
           variant="simple"
+          _hover={hoverStyles}
+          _focus={focusStyles}
+          size="small"
           onClick={() => {
-            if (onVote) {
+            if (!isUser && onSignedOutVote) {
+              onSignedOutVote();
+            } else if (onVote) {
               onVote({ commentId, voteType: "downvote" });
             }
           }}
-          aria-label="More comment actions"
-          size="small"
-          icon={<ArrowDownCircleIcon boxSize="20px" />}
+          aria-label="Downvote comment"
+          onMouseEnter={() => setDownvoteIsHovered(true)}
+          onMouseLeave={() => setDownvoteIsHovered(false)}
+          onFocus={() => setDownvoteIsFocused(true)}
+          onBlur={() => setDownvoteIsFocused(false)}
+          //... other props and handlers
+          icon={<ArrowDownCircleIcon zIndex={1} boxSize="20px" />}
         />
       )}
     </Flex>
@@ -191,9 +275,13 @@ type CommentProps = {
     voteType: "upvote" | "downvote";
   }) => void;
   depth?: number;
+  activeCommentEditor: number | null;
+  setActiveCommentEditor: (val: number | null) => void;
 };
 
 const CommentItem: React.FC<CommentProps> = ({
+  activeCommentEditor,
+  setActiveCommentEditor,
   comment,
   onReply,
   onVote,
@@ -211,10 +299,15 @@ const CommentItem: React.FC<CommentProps> = ({
   const isUpvote = votes?.voteType === "upvote";
   const isDownvote = votes?.voteType === "downvote";
 
-  const [showReplyMarkdownEditor, setShowReplyMarkdownEditor] =
-    useState<boolean>(false);
+  const showReplyMarkdownEditor = activeCommentEditor === comment.id;
   const [isThreadOpen, changeIsThreadOpen] = useState<boolean>(true);
   const hasReplies = comment.replies && comment.replies.length;
+
+  useEffect(() => {
+    if (user) {
+      setIsConnectedModal(false);
+    }
+  }, [user]);
 
   const onSubmit = (content: string) => {
     const data = {
@@ -223,16 +316,57 @@ const CommentItem: React.FC<CommentProps> = ({
     };
     if (onReply) {
       onReply(data);
-      setShowReplyMarkdownEditor(false);
+      setActiveCommentEditor(null);
     }
   };
 
   const numberOfReplies = comment?.replies?.length || 0;
+  const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
+  const [isDeleteModalActive, setIsDeleteModalActive] =
+    useState<boolean>(false);
+  const { setShowAuthFlow } = useDynamicContext();
+
+  function stripHtmlTagsAndTrim(input: string): string {
+    const stripped = input.replace(/[\r\n]+/g, "");
+    console.log("stripped: ", stripped);
+
+    return stripped.length > 40 ? stripped.substring(0, 40) : stripped;
+  }
 
   return (
     <>
-      <Stack pl={depth * 8}>
-        <Flex gap={3}>
+      <InfoModal
+        title="Connect wallet to vote"
+        isOpen={isConnectedModal}
+        onClose={() => setIsConnectedModal(false)}
+      >
+        <WalletIcon />
+        <Button variant="primary" onClick={() => setShowAuthFlow(true)}>
+          Connect your wallet
+        </Button>
+      </InfoModal>
+      <InfoModal
+        title="Are you sure your want to delete your comment?"
+        isOpen={isDeleteModalActive}
+        onClose={() => setIsDeleteModalActive(false)}
+      >
+        <Flex alignItems="center" justifyContent="center">
+          <TrashIcon width="104px" height="104px" color="#e4442f" />
+        </Flex>
+        <Button
+          variant="primary"
+          onClick={() => {
+            if (onDelete) {
+              onDelete({ commentId: comment.id });
+            }
+            setIsDeleteModalActive(false);
+          }}
+        >
+          Delete
+        </Button>
+      </InfoModal>
+      <Stack pl={depth * 8} spacing="0">
+        <Flex gap="standard.base" pt="standard.sm">
           <Box
             display="flex"
             flexDirection="column"
@@ -245,22 +379,26 @@ const CommentItem: React.FC<CommentProps> = ({
               position="absolute"
               top="48px"
               bottom={
-                hasReplies ? (numberOfReplies < 3 ? "26px" : "8px") : "-10px"
+                hasReplies && depth < 3
+                  ? numberOfReplies < 3
+                    ? "40px"
+                    : "6px"
+                  : "8px"
               }
               width="1px"
-              backgroundColor="#DCDBDD"
+              backgroundColor="border.dividers"
               left="50%"
               zIndex="0"
             />
             {author?.profileImage || author?.ensAvatar ? (
               <Avatar
-                size={"sm"}
+                size={"md"}
                 src={author?.profileImage || (author?.ensAvatar as string)}
               />
             ) : (
-              <Indenticon size={40} address={author?.address || ""} />
+              <Indenticon size={32} address={author?.address || ""} />
             )}
-            {hasReplies && numberOfReplies <= 2 ? (
+            {hasReplies && numberOfReplies <= 2 && depth < 3 ? (
               <CommentShowMoreReplies
                 nestedReplies={numberOfReplies}
                 toggleReplies={() => changeIsThreadOpen(!isThreadOpen)}
@@ -268,39 +406,62 @@ const CommentItem: React.FC<CommentProps> = ({
               />
             ) : null}
           </Box>
-          <Box display="flex" flexDirection="column" gap={3} w="full">
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap={"standard.xs"}
+            w="full"
+          >
             <Flex direction="column">
-              <Text fontWeight="bold" fontSize="12px">
+              <Text variant="smallStrong" color="content.accent.default">
                 {author?.username ||
                   author?.ensName ||
                   truncateAddress(author ? author.address : "")}
               </Text>
-              <Text fontSize="12px" color="#6C6C75">
+              <Text variant="small" color="content.support.default" mt="-2px">
                 {daysAgo(createdAt)}
               </Text>
             </Flex>
             <Box>
-              {isEditMode ? (
+              {isEditMode && showReplyMarkdownEditor ? (
                 <CommentInput
+                  withCancel
+                  onCancel={() => {
+                    setIsEditMode(false);
+                    setActiveCommentEditor(null);
+                  }}
                   defaultValue={content}
                   onSend={(content) => {
                     if (onEdit) {
                       onEdit({ commentId: comment.id, content });
                     }
                     setIsEditMode(false);
+                    setActiveCommentEditor(null);
                   }}
                 />
               ) : (
-                <MarkdownRenderer content={content || ""} />
+                <Box>
+                  <MarkdownRenderer
+                    textProps={{
+                      fontSize: "14px",
+                      color: "content.accent.default",
+                      letterSpacing: "0.07px",
+                      marginBottom: "-4px",
+                    }}
+                    content={content || ""}
+                  />
+                </Box>
               )}
             </Box>
             <Flex alignItems="center">
-              <Flex gap={5}>
+              <Flex alignItems="center" gap={"standard.xs"} height="36px">
                 <CommentVotes
+                  isUser={!!user}
                   isDownvote={isDownvote}
                   isUpvote={isUpvote}
                   commentId={comment.id}
                   onVote={onVote}
+                  onSignedOutVote={() => setIsConnectedModal(true)}
                   netVotes={comment.netVotes}
                 />
                 {user && (
@@ -309,17 +470,30 @@ const CommentItem: React.FC<CommentProps> = ({
                     role="button"
                     gap={1}
                     onClick={() =>
-                      setShowReplyMarkdownEditor(!showReplyMarkdownEditor)
+                      setActiveCommentEditor(
+                        activeCommentEditor === comment.id ? null : comment.id,
+                      )
                     }
                   >
                     <IconButton
-                      variant="simple"
+                      variant="ghost"
                       onClick={() => {
-                        setShowReplyMarkdownEditor(!showReplyMarkdownEditor);
+                        if (isEditMode) {
+                          setIsEditMode(false);
+                          setActiveCommentEditor(comment.id);
+                        } else {
+                          setActiveCommentEditor(
+                            activeCommentEditor === comment.id
+                              ? null
+                              : comment.id,
+                          );
+                        }
                       }}
                       aria-label="Reply"
-                      size="small"
-                      icon={<ReplyIcon width="20px" height="20px" />}
+                      size="condensed"
+                      icon={
+                        <ReplyIcon width="20px" height="20px" color="#4a4a4f" />
+                      }
                     />
                     <Text variant="mediumStrong">Reply</Text>
                   </Flex>
@@ -327,36 +501,65 @@ const CommentItem: React.FC<CommentProps> = ({
                 <Flex alignItems="flex-end">
                   <CommentMoreActions>
                     {canEdit && (
-                      <MenuItem onClick={() => setIsEditMode(true)}>
+                      <MenuItem
+                        onClick={() => {
+                          setIsEditMode(true);
+                          setActiveCommentEditor(comment.id);
+                        }}
+                      >
                         Edit
                       </MenuItem>
                     )}
                     {canDelete && (
                       <MenuItem
                         onClick={() => {
-                          if (onDelete) {
-                            onDelete({ commentId: comment.id });
-                          }
+                          setIsDeleteModalActive(true);
                         }}
                       >
                         Delete
                       </MenuItem>
                     )}
-                    <MenuItem>Report</MenuItem>
+                    <ChakraButton
+                      variant="ghost"
+                      data-tally-open="woRGRN"
+                      data-tally-emoji-text="👋"
+                      data-tally-emoji-animation="wave"
+                      data-comment={comment.id}
+                      data-url={
+                        typeof window !== "undefined"
+                          ? window.location.href
+                          : ""
+                      }
+                      data-user={
+                        author?.username || author?.ensName || author?.address
+                      }
+                      data-content={stripHtmlTagsAndTrim(content)}
+                      width={"100%"}
+                      justifyContent={"flex-start"}
+                      padding={0}
+                      minHeight={"33px"}
+                      paddingLeft={"10px"}
+                      fontWeight={"400"}
+                      textColor={"#1a1523"}
+                    >
+                      Report
+                    </ChakraButton>
                   </CommentMoreActions>
                 </Flex>
               </Flex>
             </Flex>
-            {showReplyMarkdownEditor && (
+            {showReplyMarkdownEditor && !isEditMode && (
               <form>
                 <CommentInput
+                  withCancel
+                  onCancel={() => setActiveCommentEditor(null)}
                   onSend={(content: string) => {
                     onSubmit(content);
                   }}
                 />
               </form>
             )}
-            {numberOfReplies > 2 && (
+            {numberOfReplies > 2 && depth < 3 && (
               <CommentShowMoreReplies
                 nestedReplies={numberOfReplies}
                 toggleReplies={() => changeIsThreadOpen(!isThreadOpen)}
@@ -372,11 +575,13 @@ const CommentItem: React.FC<CommentProps> = ({
           <CommentItem
             key={reply.id}
             comment={reply}
+            activeCommentEditor={activeCommentEditor}
+            setActiveCommentEditor={setActiveCommentEditor}
             onReply={onReply}
             onVote={onVote}
             onDelete={onDelete}
             onEdit={onEdit}
-            depth={depth + 1}
+            depth={depth < 3 ? depth + 1 : depth}
           />
         ))}
     </>
@@ -399,11 +604,17 @@ export const CommentList: React.FC<CommentListProps> = ({
   onEdit?: (data: { commentId: number; content: string }) => void;
   onDelete?: (data: { commentId: number }) => void;
 }) => {
+  const [activeCommentEditor, setActiveCommentEditor] = useState<number | null>(
+    null,
+  );
+
   return (
-    <Flex flexDirection="column" gap="20px">
+    <Flex flexDirection="column">
       {commentsList.map((comment, index) => (
         <CommentItem
           key={index}
+          activeCommentEditor={activeCommentEditor}
+          setActiveCommentEditor={setActiveCommentEditor}
           comment={comment}
           onReply={onReply}
           onVote={onVote}

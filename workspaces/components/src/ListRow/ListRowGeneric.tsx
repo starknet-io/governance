@@ -2,12 +2,14 @@ import { Badge, Box, BoxProps, Flex, Icon, Tooltip } from "@chakra-ui/react";
 
 import { Text } from "../Text";
 import {
+  format,
   differenceInDays,
   differenceInHours,
   differenceInWeeks,
   differenceInMonths,
   differenceInYears,
 } from "date-fns";
+
 import {
   CommentIcon,
   VoteAbstainIcon,
@@ -16,11 +18,16 @@ import {
 } from "src/Icons";
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import "./styles.css";
+import { formatVotesAmount } from "src/utils";
 
 type Props = BoxProps & {
   children?: React.ReactNode;
 };
 
+const cellPadding = {
+  px: "standard.sm",
+  py: "standard.base",
+};
 const Container = ({ children, ...rest }: Props) => {
   return (
     <Box mt="24px" display="flex" flexDirection="column" {...rest}>
@@ -32,24 +39,27 @@ const Container = ({ children, ...rest }: Props) => {
 type RootProps = {
   children: React.ReactNode;
   href?: string;
-};
+} & BoxProps;
 
-const Root = ({ children, href }: RootProps) => {
+const Root = ({ children, href, sx, ...rest }: RootProps) => {
   return (
     <Box
       as="a"
       href={href}
       display="flex"
       flexDirection="row"
-      gap="32px"
-      borderBottom="1px solid #ECEDEE"
-      minHeight="68px"
+      // gap="32px"
+      borderBottom="1px solid"
+      borderColor="border.forms"
+      // minHeight="68px"
+      py="standard.sm"
       alignItems="center"
       _hover={{
         textDecoration: "none",
-        backgroundColor: "#F9FAFB",
+        backgroundColor: "surface.forms.hover",
       }}
       width={"100%"}
+      {...rest}
     >
       {children}
     </Box>
@@ -59,11 +69,17 @@ const Root = ({ children, href }: RootProps) => {
 type StatusProps = {
   status: string | null | undefined;
   width?: string | null;
-};
+} & BoxProps;
 
-const Status = ({ status, width = "80" }: StatusProps) => {
+const Status = ({ status, width = "80", ...rest }: StatusProps) => {
   return (
-    <Box minWidth={`${width}px`} justifyContent="flex-end" display="flex">
+    <Box
+      minWidth={`${width}px`}
+      justifyContent="flex-end"
+      display="flex"
+      {...cellPadding}
+      {...rest}
+    >
       <Badge variant={status ?? "outline"}>{status}</Badge>
     </Box>
   );
@@ -71,11 +87,11 @@ const Status = ({ status, width = "80" }: StatusProps) => {
 
 type TitleProps = {
   label: string | null | undefined;
-};
+} & BoxProps;
 
-const Title = ({ label = "" }: TitleProps) => {
+const Title = ({ label = "", ...rest }: TitleProps) => {
   return (
-    <Box flex="1">
+    <Box flex="1" {...cellPadding} {...rest}>
       <Text variant="cardBody" noOfLines={1} fontWeight="500">
         {label}
       </Text>
@@ -89,7 +105,7 @@ const Title = ({ label = "" }: TitleProps) => {
 
 const CustomDate = () => {
   return (
-    <Box>
+    <Box {...cellPadding}>
       <Text variant="breadcrumbs" noOfLines={1} fontWeight="500">
         Ending in - days
       </Text>
@@ -104,7 +120,7 @@ type MutedTextProps = {
 
 const MutedText = ({ type, id }: MutedTextProps) => {
   return (
-    <Box textTransform={"uppercase"} minWidth="60px">
+    <Box textTransform={"uppercase"} minWidth="60px" {...cellPadding}>
       <Text variant="breadcrumbs" color="#6B7280">
         {type === "snip" ? "SNIP" : "Vote"} {id.toString().padStart(3, "0")}
       </Text>
@@ -114,11 +130,11 @@ const MutedText = ({ type, id }: MutedTextProps) => {
 
 type CategoryProps = {
   category: string;
-};
+} & BoxProps;
 
-const CategoryText = ({ category }: CategoryProps) => {
+const CategoryText = ({ category, ...rest }: CategoryProps) => {
   return (
-    <Box textTransform={"capitalize"}>
+    <Box textTransform={"capitalize"} {...cellPadding} {...rest}>
       <Text variant="breadcrumbs" color="#6B7280">
         {category}
       </Text>
@@ -133,7 +149,7 @@ type VoteProps = {
 
 const Vote = ({ type, id }: VoteProps) => {
   return (
-    <Box textTransform={"uppercase"} minWidth="60px">
+    <Box textTransform={"uppercase"} minWidth="60px" {...cellPadding}>
       Vote status
     </Box>
   );
@@ -147,82 +163,120 @@ type PastVotesProps = {
 };
 
 const PastVotes = ({
-  title = "Support for scoped storage variables",
-  voteCount = 7,
+  title = "",
+  voteCount,
   votePreference,
-  body = "",
+  body,
 }: PastVotesProps) => {
+  const iconProps = {
+    mr: "4px",
+    ml: "4px",
+    boxSize: "16px",
+    mt: "-2px",
+  };
   const renderIconBasedOnVotePreference = () => {
     switch (votePreference) {
       case "for":
-        return VoteForIcon;
+        return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
       case "against":
-        return VoteAgainstIcon;
+        return (
+          <VoteAgainstIcon {...iconProps} boxSize="18px" color="#EC796B" />
+        );
       case "abstain":
-        return VoteAbstainIcon;
+        return (
+          <VoteAbstainIcon {...iconProps} boxSize="18px" color="#4A4A4F" />
+        );
       default:
-        return VoteForIcon;
+        return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
     }
   };
+  const formatedVotes = formatVotesAmount(voteCount);
   return (
-    <Flex flexDirection="column" flex={1} gap="6px">
+    <Flex
+      // pt="standard.base"
+      flexDirection="column"
+      flex={1}
+      gap="standard.base"
+      {...cellPadding}
+
+      //       const cellPadding = {
+      //   px: "standard.sm",
+      //   py: "standard.base",
+      // };
+    >
       <Text
-        variant="breadcrumbs"
-        fontSize="12px"
+        variant="mediumStrong"
         noOfLines={1}
         fontWeight="500"
-        color="#292932"
+        color="content.default.default"
       >
         {title}
       </Text>
-      <Text variant="breadcrumbs" noOfLines={1} fontWeight="500">
-        Voted
-        <Icon
-          fontSize="16px"
-          position="relative"
-          top="3px"
-          mx="4px"
-          as={renderIconBasedOnVotePreference()}
-          color="#20AC70"
-        />{" "}
-        with {voteCount} votes <MarkdownRenderer content={body ?? ""} />
-      </Text>
+      <Flex gap="standard.xs">
+        <Flex flexShrink={0}>
+          <Text
+            variant="small"
+            fontWeight="500"
+            color="content.support.default"
+            display="flex"
+            alignItems={"center"}
+            gap={"standard.xxs"}
+          >
+            Voted{renderIconBasedOnVotePreference()}with {formatedVotes} votes
+          </Text>
+        </Flex>
+        {body && (
+          <Box>
+            <Text color="content.support.default" variant="small" noOfLines={1}>
+              &quot;{body}&quot;
+            </Text>
+          </Box>
+        )}
+      </Flex>
     </Flex>
   );
 };
 
 type CommentSummaryProps = {
-  type?: string;
-  id?: number;
   postTitle: string;
   comment: string;
+  date: string;
 };
 
-const CommentSummary = ({
-  type,
-  id,
-  postTitle,
-  comment,
-}: CommentSummaryProps) => {
+const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
+  console.log("Raw Date:", date);
+  const formattedDate = date
+    ? format(new Date(date), "d MMM yyyy")
+    : "Unknown date";
+
   return (
-    <Flex flexDirection="column" flex={1} gap="6px">
-      <Text
-        variant="breadcrumbs"
-        fontSize="12px"
-        noOfLines={1}
-        fontWeight="500"
-        color="#292932"
-      >
-        {postTitle}
-      </Text>
-      <Text
-        color="#6C6C75"
-        variant="breadcrumbs"
-        noOfLines={1}
-        fontWeight="500"
-      >
-        <MarkdownRenderer content={comment ?? ""} />
-      </Text>
+    <Flex flexDirection="column" flex={1} gap="standard.base" {...cellPadding}>
+      <Box flex="1">
+        <Text
+          variant="mediumStrong"
+          noOfLines={1}
+          color="content.default.default"
+          sx={{
+            _firstLetter: {
+              textTransform: "uppercase",
+            },
+          }}
+        >
+          {postTitle} on {formattedDate ?? ""}
+        </Text>
+      </Box>
+
+      <Box flex={1}>
+        <MarkdownRenderer
+          textProps={{
+            fontSize: "12px",
+            noOfLines: 1,
+            color: "content.support.default",
+            fontWeight: "500",
+          }}
+          content={`&quot;${comment}&quot;` ?? ""}
+        />
+      </Box>
     </Flex>
   );
 };
@@ -230,9 +284,9 @@ const CommentSummary = ({
 type CommentsProps = {
   count: number | null;
   width?: string | null;
-};
+} & BoxProps;
 
-const Comments = ({ count, width }: CommentsProps) => {
+const Comments = ({ count, width, ...rest }: CommentsProps) => {
   return (
     <Box
       minWidth={`${width}px`}
@@ -240,6 +294,8 @@ const Comments = ({ count, width }: CommentsProps) => {
       flexDirection="row"
       gap="4px"
       alignItems="center"
+      {...cellPadding}
+      {...rest}
     >
       <Icon as={CommentIcon} />
       <Text variant="breadcrumbs" color="#6B7280">
@@ -275,9 +331,9 @@ type DateRangeProps = {
   start?: number;
   end?: number;
   state: string | null | undefined;
-};
+} & BoxProps;
 
-const DateRange = ({ start, end, state }: DateRangeProps) => {
+const DateRange = ({ start, end, state, ...rest }: DateRangeProps) => {
   const now = new Date();
 
   const startDate = start ? new Date(start * 1000) : new Date();
@@ -292,7 +348,7 @@ const DateRange = ({ start, end, state }: DateRangeProps) => {
     dateText = "Ended " + dateDiff(endDate, now) + " ago";
   }
   return (
-    <Box width="120px">
+    <Box width="calc(120px + 24px)" {...cellPadding} {...rest}>
       <Text
         variant="breadcrumbs"
         fontSize="12px"
@@ -307,48 +363,65 @@ const DateRange = ({ start, end, state }: DateRangeProps) => {
 };
 
 const colors: { [key: string]: string } = {
-  For: "#29AB87",
-  Against: "#E54D66",
-  Abstain: "#6C6C7A",
-  Yes: "#29AB87",
-  No: " #6C6C7A",
+  For: "surface.success.default",
+  Against: "surface.danger.default",
+  Abstain: "surface.accentSecondary.default",
+  Yes: "surface.success.default",
+  No: " surface.accentSecondary.default",
 };
 
-interface VoteResultsProps {
+interface VoteResultsProps extends BoxProps {
   choices: string[];
   scores: number[];
 }
 
-const VoteResults: React.FC<VoteResultsProps> = ({ choices, scores }) => {
+const VoteResults: React.FC<VoteResultsProps> = ({
+  choices,
+  scores,
+  ...rest
+}) => {
   const total = scores.reduce((a, b) => a + b, 0);
   const noVotes = total === 0;
   const onlyOneVote = total === Math.max(...scores);
+
+  const toolTipContent = choices
+    .map((choice, i) => {
+      const rawVotePercentage = (scores[i] / total) * 100;
+      const votePercentage = isNaN(rawVotePercentage)
+        ? 0
+        : rawVotePercentage.toFixed(2);
+      const voteCount = scores[i] || 0;
+      return `${choice}: ${voteCount} votes (${votePercentage}%)`;
+    })
+    .join("\n");
+
   return (
-    <Box
-      display="flex"
-      width="100%"
-      maxWidth="74px"
-      gap="2px"
-      overflow="hidden"
-    >
-      {choices.map((choice, i) => {
-        const rawVotePercentage = (scores[i] / total) * 100;
-        const votePercentage = isNaN(rawVotePercentage)
-          ? 0
-          : rawVotePercentage.toFixed(2);
-        const voteCount = scores[i] || 0;
-        const isNoVote = voteCount === 0;
-        return (
-          <Tooltip
-            label={`${choice}: ${voteCount} votes (${votePercentage}%)`}
-            key={choice}
-          >
+    <Tooltip label={toolTipContent}>
+      <Box
+        display="flex"
+        flex="100%"
+        maxWidth="108px"
+        width="108px"
+        gap="2px"
+        overflow="hidden"
+        {...cellPadding}
+        {...rest}
+      >
+        {choices.map((choice, i) => {
+          const rawVotePercentage = (scores[i] / total) * 100;
+          const votePercentage = isNaN(rawVotePercentage)
+            ? 0
+            : rawVotePercentage.toFixed(2);
+          const voteCount = scores[i] || 0;
+          const isNoVote = voteCount === 0;
+          return (
             <Box
+              key={choice}
               height="4px"
               borderRadius="2px"
               backgroundColor={
                 noVotes || (onlyOneVote && isNoVote)
-                  ? "#D7D7DB"
+                  ? "surface.onBg.default"
                   : colors[choice]
               }
               width={
@@ -359,16 +432,22 @@ const VoteResults: React.FC<VoteResultsProps> = ({ choices, scores }) => {
                   : `${votePercentage}%`
               }
             />
-          </Tooltip>
-        );
-      })}
-    </Box>
+          );
+        })}
+      </Box>
+    </Tooltip>
   );
 };
 
 const Post = ({ post }: any) => {
   return (
-    <Flex flexDirection="column" flex={1} gap="6px" width={"100%"}>
+    <Flex
+      flexDirection="column"
+      flex={1}
+      gap="6px"
+      width={"100%"}
+      {...cellPadding}
+    >
       <Text
         variant="breadcrumbs"
         fontSize="12px"

@@ -357,6 +357,7 @@ export const buttonTheme = {
 
       _hover: {
         color: "content.default.hover",
+        backgroundColor: "surface.forms.hover",
       },
       _active: {
         bg: "surface.forms.selected",
@@ -372,6 +373,19 @@ export const buttonTheme = {
       },
       _focusVisible: {
         boxShadow: "0px 0px 0px 4px #3F8CFF, 0px 0px 0px 1px #F9F9FB",
+      },
+    },
+    textSmall: {
+      padding: 0,
+      margin: 0,
+      bg: "transparent",
+      fontSize: "0.75rem",
+      lineHeight: "1.25rem",
+      fontWeight: "500",
+      letterSpacing: "0.12px",
+      minHeight: "10px",
+      _hover: {
+        opacity: 0.8,
       },
     },
   },

@@ -47,6 +47,7 @@ export const delegates = pgTable('delegates', {
   statement: text('statement').notNull(),
   interests: json('interests').default('[]'),
   twitter: text('twitter'),
+  telegram: text('telegram'),
   discord: text('discord'),
   discourse: text('discourse'),
   confirmDelegateAgreement: boolean('confirmDelegateAgreement'),

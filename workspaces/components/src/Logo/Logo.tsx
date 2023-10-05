@@ -71,7 +71,7 @@ export const Logo = ({ href }: Props) => {
       </svg>
 
       <Heading
-        display={{ base: "none", lg: "block" }}
+        display={{ lg: "block" }}
         fontSize="16px"
         fontWeight="300!important"
         variant="h1"

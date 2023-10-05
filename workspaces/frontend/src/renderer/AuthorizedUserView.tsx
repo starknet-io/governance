@@ -43,6 +43,7 @@ const AuthorizedUserView = () => {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         voter: user?.address as string,
       },
+      skip: !user?.address, // Skip the query if the user address is not available
     },
   );
 
@@ -70,13 +71,12 @@ const AuthorizedUserView = () => {
       stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
     watch: true,
-    suspense: true,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: user?.address != null,
   });
 
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegationData ? delegationData : "",
+    address: delegationData ? delegationData.toLowerCase() : "",
   });
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
@@ -154,7 +154,9 @@ const AuthorizedUserView = () => {
         {isMenuOpen ? (
           <>
             <UserProfileMenu
-              delegatedTo={delegatedTo?.data ? delegatedTo?.data : null}
+              delegatedTo={
+                delegatedTo?.data ? delegatedTo?.data : delegationData
+              }
               onDisconnect={handleDisconnect}
               user={user}
               onSave={handleSave}

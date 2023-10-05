@@ -15,9 +15,9 @@ type Props = {
   onClick?: () => void;
 };
 const currentVariation = {
-  For: "surface.success.default",
-  Against: "surface.danger.default",
-  Abstain: "surface.accentSecondary.default",
+  For: "content.success.default",
+  Against: "content.danger.default",
+  Abstain: "content.default.selected",
 };
 //todo: add some kind of animation for voting
 export const VoteButton = ({
@@ -33,7 +33,7 @@ export const VoteButton = ({
       width="100%"
       isDisabled={active}
       color={active ? currentVariation[type] : "content.default.default"}
-      borderColor={active ? "#86848D" : "border.forms"}
+      borderColor={active ? currentVariation[type] : "border.forms"}
       sx={{
         "&:hover": {
           color: active ? currentVariation[type] : "content.default.default",

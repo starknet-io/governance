@@ -34,6 +34,9 @@ export { BannerHome } from "./src/BannerHome";
 export { LearnBanner } from "./src/LearnBanner";
 export { Input } from "./src/Input";
 export { Banner } from "./src/Banner/Banner";
+export { AvatarWithText } from "./src/AvatarWithText";
+export { Dropdown } from "./src/Dropdown";
+export { FormControlled } from "./src/FormControlled";
 
 export {
   BoldIcon,
@@ -120,6 +123,7 @@ export { MarkdownRenderer } from "./src/MarkdownRenderer";
 export { Iframely } from "./src/Iframely";
 export { Status } from "./src/Status";
 export { Link } from "./src/Link";
+export { Username } from "./src/Username";
 export { GlobalSearch } from "./src/GlobalSearch";
 
 import * as Layout from "./src/RootLayout/RootLayout";

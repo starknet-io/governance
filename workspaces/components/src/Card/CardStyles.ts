@@ -17,16 +17,18 @@ const variants = {
   delegate: definePartsStyle({
     container: {
       minWidth: "316px",
+      gap: "standard.lg",
     },
     header: {
-      paddingBottom: "standard.lg",
+      pb: "0",
+      px: "standard.md",
     },
     body: {
       px: "standard.md",
       py: "0px",
     },
     footer: {
-      paddingTop: "standard.lg",
+      paddingTop: "0",
     },
   }),
   homePage: definePartsStyle({
@@ -36,7 +38,10 @@ const variants = {
       lineHeight: "20px",
       letterSpacing: "0.12px",
       fontWeight: 500,
-      // minW: "246px",
+      border: "1px solid rgba(35, 25, 45, 0.10)",
+      _hover: {
+        borderColor: "border.formsHover",
+      },
     },
     header: {
       padding: 0,

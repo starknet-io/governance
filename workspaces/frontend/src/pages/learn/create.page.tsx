@@ -13,6 +13,7 @@ import {
   useMarkdownEditor,
   MarkdownEditor,
   MultiLevelReOrderableList,
+  Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
@@ -26,6 +27,7 @@ export function Page() {
   const {
     handleSubmit,
     register,
+    watch,
     formState: { errors, isValid },
   } = useForm<RouterInput["pages"]["savePage"]>();
 
@@ -33,11 +35,14 @@ export function Page() {
   const pagesTree = trpc.pages.getPagesTree.useQuery();
 
   const [treeItems, setTreeItems] = useState<TreeItems>([]);
+  const [error, setError] = useState("");
   const { handleUpload } = useFileUpload();
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
+  const title = watch('title');
+  const NEW_ITEM_ID = Date.now();
   const NEW_ITEM = {
-    id: Date.now(),
+    id: NEW_ITEM_ID,
     title: "This is the new page",
     content: editorValue,
     author: null,
@@ -73,6 +78,9 @@ export function Page() {
     savePagesTree.mutate(newItems, {
       onSuccess: () => {
         navigate(`/learn`);
+      },
+      onError: (err) => {
+        setError(err?.message || "An Error Occurred");
       },
     });
   });
@@ -121,7 +129,7 @@ export function Page() {
             </Box>
           )}
 
-          <Flex justifyContent="flex-end">
+          <Flex justifyContent="flex-end" mb={4}>
             <Button
               size="condensed"
               variant="primary"
@@ -132,6 +140,9 @@ export function Page() {
               Save Changes
             </Button>
           </Flex>
+          {error.length ? (
+            <Banner label={error} variant="error" type="error" />
+          ) : null}
         </Box>
       </ContentContainer>
     </>

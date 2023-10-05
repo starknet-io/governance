@@ -53,6 +53,7 @@ import {
   ImageWarningIcon,
   WalletIcon,
   TwitterIcon,
+  TelegramIcon,
   DiscourseIcon,
   GithubIcon,
   MinusIcon,
@@ -64,6 +65,7 @@ import {
   PlusCircleIcon,
   MinusCircleIcon,
   ArrowRightIcon,
+  DocumentFileWarning,
 } from "./UiIcons";
 
 export {
@@ -119,6 +121,7 @@ export {
   CloseIcon,
   WalletIcon,
   TwitterIcon,
+  TelegramIcon,
   DiscourseIcon,
   GithubIcon,
   MinusIcon,
@@ -130,4 +133,5 @@ export {
   PlusCircleIcon,
   MinusCircleIcon,
   ArrowRightIcon,
+  DocumentFileWarning,
 };

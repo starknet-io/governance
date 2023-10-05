@@ -15,6 +15,7 @@ import {
   EditorTemplate,
   useMarkdownEditor,
   MarkdownEditor,
+  Banner,
 } from "@yukilabs/governance-components";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
@@ -25,6 +26,8 @@ import { Proposal } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useForm, Controller } from "react-hook-form";
 import { useFileUpload } from "src/hooks/useFileUpload";
+import { useState } from "react";
+import { isArray } from "@apollo/client/utilities";
 
 interface FieldValues {
   // type: ProposalType;
@@ -42,6 +45,7 @@ export function Page() {
   const { data: walletClient } = useWalletClient();
   const { convertSlateToMarkdown } = useMarkdownEditor("");
   const { handleUpload } = useFileUpload();
+  const [error, setError] = useState("");
 
   const createProposal = trpc.proposals.createProposal.useMutation();
 
@@ -49,7 +53,7 @@ export function Page() {
     handleSubmit,
     control,
     register,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<FieldValues>({
     async defaultValues() {
       return {
@@ -110,6 +114,7 @@ export function Page() {
         await createProposal
           .mutateAsync(proposalData)
           .then(() => {
+            setError("");
             navigate(`/voting-proposals/${receipt.id}`);
           })
           .catch((err) => {
@@ -118,11 +123,13 @@ export function Page() {
       } catch (error) {
         // Handle error
         console.log(error);
+        // error.description is actual error from snapshot
       }
 
       console.log(receipt);
-    } catch (error) {
+    } catch (error: any) {
       // Handle error
+      setError(`Error: ${error?.error_description}`);
       console.log(error);
     }
   });
@@ -146,6 +153,7 @@ export function Page() {
                     required: true,
                   })}
                 />
+                {errors.title && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="delegate-statement">
                 <FormLabel>Proposal Body</FormLabel>{" "}
@@ -153,11 +161,13 @@ export function Page() {
                   control={control}
                   name="body"
                   render={({ field: { onChange, value } }) => (
-                    <MarkdownEditor
-                      onChange={onChange}
-                      value={value}
-                      handleUpload={handleUpload}
-                    />
+                    <>
+                      <MarkdownEditor
+                        onChange={onChange}
+                        value={value}
+                        handleUpload={handleUpload}
+                      />
+                    </>
                   )}
                 />
               </FormControl>
@@ -236,29 +246,39 @@ export function Page() {
                     <Controller
                       control={control}
                       name="votingPeriod"
-                      render={({ field: { onChange, value } }) => (
+                      rules={{
+                        required: "Voting period is required.",
+                        validate: (value) => {
+                          if (value[0] >= value[1]) {
+                            return "Start date/time must be before the end date/time.";
+                          }
+                          return true;
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
                         <ChakraDatePicker
                           single={false}
                           showTimePicker={true}
                           range={true}
-                          date={value}
-                          onDateChange={onChange}
+                          date={field.value}
+                          onDateChange={field.onChange}
+                          isInvalid={fieldState.invalid}
+                          errorMessage={fieldState?.error?.message}
                         />
                       )}
                     />
+                    {errors.votingPeriod && <span>This field is required</span>}
                   </Box>
                 </Stack>
               </FormControl>
               <Box display="flex" justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  size="condensed"
-                  variant="primary"
-                  isDisabled={!isValid}
-                >
+                <Button type="submit" size="condensed" variant="primary">
                   Create voting proposal
                 </Button>
               </Box>
+              {error && error.length && (
+                <Banner label={error} variant="error" type="error" />
+              )}
             </Stack>
           </form>
         </Box>

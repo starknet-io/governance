@@ -13,6 +13,8 @@ import {
   Divider,
   MarkdownRenderer,
   Skeleton,
+  Text,
+  Username,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useMemo, useState } from "react";
@@ -25,6 +27,7 @@ import {
   PlusIcon,
   ReOrderIcon,
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export interface PageWithUserInterface extends PageInterface {
   author: User | null;
@@ -62,6 +65,8 @@ export function Page() {
     window.history.pushState(null, "", `/learn/${page.slug}`);
   };
 
+  const formattedAddress = truncateAddress(`${selectedPage?.author?.address}`);
+  // console.log(selectedPage?.author?.)
   return (
     <Box
       display="flex"
@@ -118,25 +123,16 @@ export function Page() {
       </Box>
       <ContentContainer maxWidth="800px" center>
         {!isLoading ? (
-          <Stack
-            width="100%"
-            spacing="24px"
-            direction={{ base: "column" }}
-            color="#545464"
-          >
+          <Stack width="100%" spacing="0" direction={{ base: "column" }}>
             <Box display="flex" alignItems="center" width="100%">
               <Box
                 display="flex"
                 alignItems="center"
                 width="100%"
                 justifyContent="space-between"
+                mb="standard.md"
               >
-                <Heading
-                  color="#33333E"
-                  variant="h3"
-                  maxWidth="90%"
-                  lineHeight="1.4em"
-                >
+                <Heading variant="h2" maxWidth="90%">
                   {selectedPage?.title ?? "Select a page"}
                 </Heading>
 
@@ -154,8 +150,8 @@ export function Page() {
                 )}
               </Box>
             </Box>
-            <Flex gap="16px" paddingTop="24px">
-              <Stat.Root>
+            <Flex gap="standard.sm">
+              {/* <Stat.Root>
                 <Stat.Text
                   label={
                     selectedPage?.author?.username ??
@@ -165,13 +161,33 @@ export function Page() {
                       selectedPage?.author?.address.slice(-3)
                   }
                 />
-              </Stat.Root>
+              </Stat.Root> */}
+              <Username
+                address={selectedPage?.author?.address}
+                size="condensed"
+                src={
+                  selectedPage?.author?.profileImage ??
+                  selectedPage?.author?.ensAvatar ??
+                  null
+                }
+                displayName={
+                  selectedPage?.author?.username ??
+                  selectedPage?.author?.ensName ??
+                  formattedAddress
+                }
+              />
+              <Text variant="small" color="content.default.default">
+                •
+              </Text>
+
               <Stat.Root>
                 <Stat.Date date={selectedPage?.createdAt} />
               </Stat.Root>
             </Flex>
-            <Divider mb="24px" />
-            <MarkdownRenderer content={selectedPage?.content ?? ""} />
+            <Divider mt="standard.xl" />
+            <Box mt="standard.2xl">
+              <MarkdownRenderer content={selectedPage?.content ?? ""} />
+            </Box>
           </Stack>
         ) : (
           <Box

@@ -1,37 +1,41 @@
 // /workspaces/components/MarkdownRenderer.tsx
-
+// todo use chakra components for list and list items
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Code } from "@chakra-ui/react";
 import { Heading } from "../Heading";
 import { Text, LocalTextProps } from "../Text";
+import "./bodyText.css";
 
 export interface MarkdownRendererProps {
   content: string;
   textProps?: LocalTextProps;
+  className?: string;
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   content,
   textProps,
+  className = "markdown-body",
 }) => {
   return (
     <ReactMarkdown
+      className={className}
       components={{
         h1: ({ ...props }) => (
           <Heading
             variant="h3"
             {...props}
-            mt="standard.2xl"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             color="content.accent.default"
           />
         ),
         h2: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -39,8 +43,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h3: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -48,8 +52,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h4: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -57,8 +61,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h5: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -66,8 +70,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h6: ({ ...props }) => (
           <Heading
             variant="h4"
-            mt="20px"
-            mb="4px"
+            mt="standard.lg"
+            mb="standard.base"
             {...props}
             color="content.accent.default"
           />
@@ -75,11 +79,11 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         p: ({ ...props }) => (
           <Text
             variant="large"
-            {...textProps}
             {...props}
-            mb="16px"
-            mt="8px"
+            mb="standard.md"
+            mt="standard.xs"
             color="content.default.default"
+            {...textProps}
           />
         ),
         code: ({ ...props }) => (
@@ -87,16 +91,38 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         ),
         ol: ({ ...props }) => (
           <ol
-            style={{ paddingLeft: 16, marginBottom: 18 }}
+            style={{
+              fontFamily: `'Inter Variable', sans-serif`,
+              fontSize: "15px",
+              lineHeight: "24px",
+              paddingLeft: 17,
+              marginBottom: 16,
+              marginTop: "8px",
+            }}
             {...props}
             color="content.default.default"
           />
         ),
         ul: ({ ...props }) => (
           <ul
-            style={{ paddingLeft: 16, marginBottom: 18 }}
+            style={{
+              fontFamily: `'Inter Variable', sans-serif`,
+              fontSize: "15px",
+              lineHeight: "24px",
+              paddingLeft: 17,
+              marginBottom: 16,
+              marginTop: "8px",
+            }}
             {...props}
-            color="content.default.default"
+            color="#4A4A4F"
+          />
+        ),
+        li: ({ ...props }) => (
+          <li
+            style={{
+              marginBottom: "8px",
+            }}
+            {...props}
           />
         ),
         blockquote: ({ ...props }) => (
@@ -106,6 +132,11 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
               paddingLeft: "12px",
               marginBottom: 18,
               color: "content.default.default",
+              fontFamily: `'Inter Variable', sans-serif`,
+              fontSize: "15px",
+              lineHeight: "24px",
+
+              marginTop: "8px",
             }}
             {...props}
           />

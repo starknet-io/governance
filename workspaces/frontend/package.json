@@ -16,8 +16,8 @@
   "dependencies": {
     "@apollo/client": "^3.7.17",
     "@chakra-ui/react": "^2.7.0",
-    "@dynamic-labs/sdk-react": "0.16.17-viem.0",
-    "@dynamic-labs/wagmi-connector": "0.16.17-viem.0",
+    "@dynamic-labs/sdk-react": "0.18.100-viem.24",
+    "@dynamic-labs/wagmi-connector": "0.18.100-viem.24",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@graphql-codegen/cli": "^4.0.1",

@@ -27,12 +27,21 @@ type MemberType = {
   miniBio?: string | null | undefined;
 };
 
+function checkUserRole(userRole: string | undefined) {
+  if (!userRole) throw new Error('User not found');
+  if (userRole !== 'admin' && userRole !== 'moderator')
+    throw new Error('Unauthorized');
+}
+
 export const councilsRouter = router({
   getAll: publicProcedure.query(() => db.select().from(councils)),
 
   saveCouncil: protectedProcedure
     .input(councilInsertSchema.omit({ id: true }))
     .mutation(async (opts) => {
+      // Check User Role
+      checkUserRole(opts.ctx.user?.role);
+
       const insertedCouncil = await db
         .insert(councils)
         .values({
@@ -102,7 +111,9 @@ export const councilsRouter = router({
   editCouncil: protectedProcedure
     .input(councilInsertSchema.required({ id: true }))
     .mutation(async (opts) => {
-      // Extract duplicate code into helper functions.
+      const userRole = opts.ctx.user?.role;
+      checkUserRole(userRole);
+
       const insertUser = async (member: MemberType) => {
         return await db
           .insert(users)
@@ -147,7 +158,10 @@ export const councilsRouter = router({
           name: opts.input.name,
           description: opts.input.description,
           statement: opts.input.statement,
-          slug: slug,
+          slug: slugify(opts.input.name ?? '', {
+            replacement: '_',
+            lower: true,
+          }),
           address: opts.input.address,
         })
         .where(eq(councils.id, opts.input.id))
@@ -196,6 +210,8 @@ export const councilsRouter = router({
   deleteCouncil: publicProcedure
     .input(councilInsertSchema.required({ id: true }).pick({ id: true }))
     .mutation(async (opts) => {
+      const userRole = opts.ctx.user?.role;
+      checkUserRole(userRole);
       await db.delete(councils).where(eq(councils.id, opts.input.id)).execute();
       await Algolia.deleteObjectFromIndex({
         refID: opts.input.id,

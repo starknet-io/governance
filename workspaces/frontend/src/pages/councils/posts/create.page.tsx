@@ -14,7 +14,7 @@ import {
   useMarkdownEditor,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
@@ -24,6 +24,7 @@ export function Page() {
     handleSubmit,
     register,
     formState: { errors, isValid },
+    control,
   } = useForm<RouterInput["posts"]["savePost"]>();
 
   const [councilId, setCouncilId] = useState<string>("");
@@ -77,10 +78,21 @@ export function Page() {
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Content</FormLabel>
-                <MarkdownEditor
-                  onChange={handleEditorChange}
-                  value={editorValue}
-                  handleUpload={handleUpload}
+                <Controller
+                  name="content"
+                  control={control} // Use control from useForm
+                  defaultValue=""
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <MarkdownEditor
+                      onChange={(e) => {
+                        handleEditorChange(e);
+                        field.onChange(e);
+                      }}
+                      value={editorValue}
+                      handleUpload={handleUpload}
+                    />
+                  )}
                 />
                 {errors.content && <span>This field is required.</span>}
               </FormControl>

@@ -14,9 +14,9 @@ export function truncateAddress(
   return `${start}...${end}`;
 }
 
-export function formatVotesAmount(number: number | undefined) {
-  if (number === undefined) {
-    return "0"
+export function formatVotesAmount(number: number | null | undefined): string {
+  if (number === undefined || number === null) {
+    return "0";
   }
   if (number >= 1e9) {
     return `${(number / 1e9).toFixed(1).replace(".0", "")}b`;

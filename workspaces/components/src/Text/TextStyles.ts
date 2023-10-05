@@ -82,6 +82,7 @@ export const textTheme = defineStyleConfig({
       lineHeight: "1rem",
       fontWeight: "600",
       letterSpacing: "0.2px",
+      textTransform: "uppercase",
     },
   },
 });

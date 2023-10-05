@@ -15,9 +15,10 @@ import {
   MarkdownEditor,
   useMarkdownEditor,
   Textarea,
+  Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
@@ -27,10 +28,12 @@ export function Page() {
   const {
     handleSubmit,
     register,
+    control,
     formState: { errors, isValid },
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
 
   const [members, setMembers] = useState<MemberType[]>([]);
+  const [error, setError] = useState<string>("");
   const createCouncil = trpc.councils.saveCouncil.useMutation();
   const { handleUpload } = useFileUpload();
   const utils = trpc.useContext();
@@ -42,6 +45,7 @@ export function Page() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      setError("");
       data.statement = editorValue;
       data.description = shortDescValue;
       data.slug = "";
@@ -54,7 +58,7 @@ export function Page() {
       });
     } catch (error) {
       // Handle error
-      console.log(error);
+      setError(`Error: ${error?.message}` || "An Error occurred");
     }
   });
 
@@ -91,6 +95,9 @@ export function Page() {
                   focusBorderColor={"#292932"}
                   resize="none"
                   value={shortDescValue}
+                  {...register("description", {
+                    required: true,
+                  })}
                   onChange={(e) => setShortDescValue(e.target.value)}
                 />
                 {errors.description && <span>This field is required.</span>}
@@ -98,20 +105,32 @@ export function Page() {
 
               <FormControl id="statement">
                 <FormLabel>Council statement</FormLabel>
-                <MarkdownEditor
-                  value={editorValue}
-                  onChange={handleEditorChange}
-                  customEditor={editor}
-                  handleUpload={handleUpload}
+                <Controller
+                  name="statement"
+                  control={control} // control comes from useForm()
+                  defaultValue=""
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <MarkdownEditor
+                      value={editorValue}
+                      onChange={(val) => {
+                        handleEditorChange(val);
+                        field.onChange(val);
+                      }}
+                      customEditor={editor}
+                      handleUpload={handleUpload}
+                    />
+                  )}
                 />
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>
+
               <FormControl id="council-members">
                 <MembersList members={members} setMembers={setMembers} />
               </FormControl>
 
               <FormControl id="council-name">
-                <FormLabel>Multisig address</FormLabel>
+                <FormLabel>Multisig address (optional)</FormLabel>
                 <Input
                   size="standard"
                   variant="primary"
@@ -121,10 +140,13 @@ export function Page() {
               </FormControl>
 
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant="primary" isDisabled={!isValid}>
+                <Button type="submit" variant="primary">
                   Create council
                 </Button>
               </Flex>
+              {error && error.length && (
+                <Banner label={error} variant="error" type="error" />
+              )}
             </Stack>
           </form>
         </Box>

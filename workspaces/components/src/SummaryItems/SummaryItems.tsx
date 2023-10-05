@@ -1,13 +1,20 @@
-import { Box, Flex, Icon, Link } from "@chakra-ui/react";
+import { Box, Flex, Icon, Skeleton, Tooltip } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 
 import { Text } from "../Text";
 import { Tag } from "../Tag";
+import { Link } from "../Link";
 import { truncateAddress } from "src/utils";
 import { Heading } from "src/Heading";
 import { format } from "date-fns";
 import { CopyToClipboard } from "src/CopyToClipboard";
-import { DiscordIcon, DiscourseIcon, GithubIcon, TwitterIcon } from "src/Icons";
+import {
+  DiscordIcon,
+  DiscourseIcon,
+  GithubIcon,
+  TwitterIcon,
+  TelegramIcon,
+} from "src/Icons";
 // import type { delegateTypeEnum } from '@yukilabs/governance-backend/src/db/schema/delegates';
 
 type RootProps = {
@@ -19,7 +26,7 @@ const Root = ({ children, direction = "column" }: RootProps) => {
     <Box
       display="flex"
       position="relative"
-      rowGap={{ base: "16px" }}
+      rowGap={{ base: "12px" }}
       flexDirection={direction}
       flexWrap={direction === "row" ? "wrap" : "nowrap"}
       justifyContent="flex-start"
@@ -35,21 +42,33 @@ type ItemProps = {
   children?: React.ReactNode;
   isTruncated?: boolean;
   isCopiable?: boolean;
+  isLoading?: boolean;
 };
 
 const Item = (props: ItemProps) => {
-  const { label, value, children, isTruncated, isCopiable } = props;
-
+  const { label, isLoading, value, children, isTruncated, isCopiable } = props;
+  if (isLoading) {
+    return (
+      <Flex justify="flex-start" gap="4px" alignItems="center">
+        <Box width="50%">
+          <Text variant="small" color="content.default.default">
+            {label}
+          </Text>
+        </Box>
+        <Skeleton height="14px" position="relative" top="4px" width="50%" />
+      </Flex>
+    );
+  }
   const renderValue = () => {
     if (typeof value === "string") {
       return isCopiable ? (
-        <CopyToClipboard text={value}>
-          <Text variant="small" color="content.accent.default" title={value}>
+        <CopyToClipboard text={value} iconSize="13px">
+          <Text variant="small" color="content.accent.default">
             {isTruncated ? truncateAddress(value) : value}
           </Text>
         </CopyToClipboard>
       ) : (
-        <Text variant="small" color="content.accent.default" title={value}>
+        <Text variant="small" color="content.accent.default">
           {isTruncated ? truncateAddress(value) : value}
         </Text>
       );
@@ -65,7 +84,55 @@ const Item = (props: ItemProps) => {
           {label}
         </Text>
       </Box>
-      {value ? renderValue() : children}
+      <Box width="50%">{value ? renderValue() : children}</Box>
+    </Flex>
+  );
+};
+
+type LinkItemProps = {
+  label: string;
+  link?: string;
+  linkLabel?: string | React.ReactNode;
+  isExternal?: boolean;
+  isLoading?: boolean;
+};
+
+const LinkItem = (props: LinkItemProps) => {
+  const { label, isLoading, link, linkLabel, isExternal } = props;
+
+  if (isLoading) {
+    return (
+      <Flex justify="flex-start" gap="4px">
+        <Box width="50%">
+          <Text variant="small" color="content.default.default">
+            {label}
+          </Text>
+        </Box>
+        <Skeleton height="14px" position="relative" top="4px" width="50%" />
+      </Flex>
+    );
+  }
+
+  return (
+    <Flex justify="flex-start" gap="4px" alignItems="center">
+      <Box width="50%">
+        <Text variant="small" color="content.default.default">
+          {label}
+        </Text>
+      </Box>
+      <Box width="50%" height="20px">
+        <Link
+          variant="primary"
+          size="small"
+          href={link}
+          isExternal={isExternal}
+          padding="0"
+          top="-4px"
+          position="relative"
+        >
+          {linkLabel}
+        </Link>
+      </Box>
     </Flex>
   );
 };
@@ -97,6 +164,7 @@ type SocialsProps = {
   label?: "twitter" | "telegram" | "discord" | "discourse" | "github";
   value?: string | null;
   children?: React.ReactNode;
+  isLoading?: boolean;
 };
 
 const platformBaseUrl = {
@@ -108,7 +176,7 @@ const platformBaseUrl = {
 };
 
 const Socials = (props: SocialsProps) => {
-  const { label = "twitter", value, children } = props;
+  const { label = "twitter", isLoading, value, children } = props;
   const link = value ? `${platformBaseUrl[label]}${value}` : "";
 
   return (
@@ -124,15 +192,24 @@ const Socials = (props: SocialsProps) => {
             : label === "discord"
             ? DiscordIcon
             : label === "telegram"
-            ? DiscourseIcon
+            ? TelegramIcon
             : TwitterIcon
         }
-        w={"16px"}
-        h={"16px"}
-        color="gray.600"
+        w={"20px"}
+        h={"20px"}
+        color="#4A4A4F"
       />
-      {value ? (
-        <Link href={link} isExternal fontSize="sm" fontWeight="medium">
+      {isLoading ? (
+        <Skeleton height="20px" width="80%" />
+      ) : value ? (
+        <Link
+          href={link}
+          isExternal
+          fontWeight="500"
+          fontSize="12px"
+          letterSpacing={"0.12px"}
+          hasArrow={false}
+        >
           {value}
         </Link>
       ) : (
@@ -141,21 +218,7 @@ const Socials = (props: SocialsProps) => {
     </Flex>
   );
 };
-// can't seem to use the exported DelegateTypeEnum from the governance-backend package
-// export enum DelegateTypeEnum {
-//   CairoDev = 'Cairo Dev',
-//   DAOs = 'DAOs',
-//   Governance = 'Governance',
-//   Identity = 'Identity',
-//   InfrastructureStarknetDev = 'Infrastructure Starknet Dev',
-//   Legal = 'Legal',
-//   NFT = 'NFT',
-//   ProfessionalDelegates = 'Professional Delegates',
-//   Security = 'Security',
-//   StarknetCommunity = 'Starknet Community',
-//   Web3Community = 'Web3 Community',
-//   Web3Developer = 'Web3 Developer',
-// }
+
 type TagsProps = {
   type?: string | null;
 };
@@ -180,22 +243,82 @@ const CustomDate = (props: DateProps) => {
   let displayValue = "N/A";
 
   if (value !== null) {
-    const timestamp: number = value < 10000000000 ? value * 1000 : value;
-    //ts-expect-error
-    const dateObject: Date = new Date(timestamp);
-    displayValue = format(dateObject, "MMM dd, yyyy");
+    try {
+      const timestamp: number = value < 10000000000 ? value * 1000 : value;
+      const dateObject: Date = new Date(timestamp);
+      displayValue = format(dateObject, "MMM dd, yyyy");
+    } catch (error) {
+      console.error("Error formatting date:", error);
+    }
   }
 
   return (
-    <Flex justify="space-between" fontSize="sm">
-      <Text fontWeight="medium" color="#6C6C75">
-        {label}
-      </Text>
-      <Text color="#292932" fontWeight="medium">
-        {displayValue}
-      </Text>
+    <Flex justify="flex-start" gap="4px" alignItems="center">
+      <Box width="50%">
+        <Text variant="small" color="content.default.default">
+          {label}
+        </Text>
+      </Box>
+      <Box width="50%">
+        <Text variant="small" color="content.accent.default">
+          {displayValue}
+        </Text>
+      </Box>
     </Flex>
   );
 };
 
-export { Root, Item, Title, Socials, Tags, CustomDate };
+type Strategy = {
+  __typename: string;
+  network: string;
+  params: {
+    symbol: string;
+    address: string;
+    decimals: number;
+    delegationSpace: string;
+  };
+};
+
+type StrategySummaryProps = {
+  strategies: Strategy[];
+};
+
+const StrategySummary: React.FC<StrategySummaryProps> = ({ strategies }) => {
+  return (
+    <Flex justify="flex-start" gap="4px">
+      <Box width="50%">
+        <Text variant="small" color="content.default.default">
+          Strategies
+        </Text>
+      </Box>
+      <Box width="50%">
+        <Flex>
+          {strategies.map((strategy, index) => (
+            <Tooltip
+              key={index}
+              label={`Address: ${strategy.params.address}\nDecimals: ${strategy.params.decimals}\nDelegation: ${strategy.params.delegationSpace}`}
+              fontSize="md"
+              placement="top"
+              hasArrow
+            >
+              <Text variant="small" color="content.accent.default" mr={2}>
+                {strategy.params.symbol}
+              </Text>
+            </Tooltip>
+          ))}
+        </Flex>
+      </Box>
+    </Flex>
+  );
+};
+
+export {
+  Root,
+  Item,
+  Title,
+  Socials,
+  Tags,
+  CustomDate,
+  LinkItem,
+  StrategySummary,
+};

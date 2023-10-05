@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import { eq, and, isNotNull, or, desc, asc } from 'drizzle-orm';
+import { eq, and, isNotNull, or, desc, sql } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -30,6 +30,7 @@ export const delegateRouter = router({
         interests: z.any(),
         twitter: z.string(),
         discord: z.string(),
+        telegram: z.string(),
         discourse: z.string(),
         understandRole: z.boolean(),
         starknetAddress: z.string(),
@@ -39,9 +40,22 @@ export const delegateRouter = router({
     )
     .mutation(async (opts) => {
       const userAddress = opts.ctx.user?.address;
+      const userId = opts.ctx.user?.id;
       if (!userAddress) {
         throw new Error('User not found');
       }
+
+      // Check if a delegate with the user’s address already exists.
+      const existingDelegate = await db.query.delegates.findFirst({
+        where: eq(delegates.userId, userId),
+      });
+
+      if (existingDelegate) {
+        throw new Error(
+          'A delegate with the address of the user already exists',
+        );
+      }
+
       const user = await db.query.users.findFirst({
         where: eq(users.address, userAddress),
         with: {
@@ -63,6 +77,7 @@ export const delegateRouter = router({
           statement: opts.input.statement,
           interests: opts.input.interests,
           twitter: opts.input.twitter,
+          telegram: opts.input.telegram,
           discord: opts.input.discord,
           discourse: opts.input.discourse,
           understandRole: opts.input.understandRole,
@@ -87,6 +102,15 @@ export const delegateRouter = router({
             starknetAddress: opts.input.starknetAddress,
           })
           .where(eq(users.id, insertedDelegate[0].userId));
+      }
+      if (insertedDelegateRecord?.id) {
+        await db.insert(delegateVotes).values({
+          delegateId: insertedDelegateRecord.id,
+          address: user?.address || '',
+          votingPower: 0,
+          totalVotes: 0,
+          updatedAt: new Date(),
+        });
       }
       // If customDelegateAgreementContent is provided, insert into customDelegateAgreement table
       if (opts.input.customDelegateAgreementContent) {
@@ -166,6 +190,19 @@ export const delegateRouter = router({
       }),
     )
     .mutation(async (opts) => {
+      const userId = opts.ctx.user?.id;
+      const userRole = opts.ctx.user?.role;
+      if (!userId) throw new Error('User not found');
+
+      // Ensure that the user is trying to edit their own delegate profile
+      const delegate = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+      });
+
+      if (!delegate) throw new Error('Delegate not found');
+      if (userRole !== 'admin' && userRole !== 'moderator') {
+        if (delegate.userId !== userId) throw new Error('Unauthorizeds');
+      }
       // Determine the agreement value
       const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
         ? null
@@ -177,6 +214,7 @@ export const delegateRouter = router({
           interests: opts.input.interests,
           twitter: opts.input.twitter,
           discord: opts.input.discord,
+          telegram: opts.input.telegram,
           discourse: opts.input.discourse,
           understandRole: !!opts.input.understandRole,
           confirmDelegateAgreement: !!opts.input.confirmDelegateAgreement, // Use the determined value
@@ -281,7 +319,7 @@ export const delegateRouter = router({
           ? opts.input.sortBy === 'votingPower'
             ? desc(delegateVotes.votingPower)
             : desc(delegateVotes.totalVotes)
-          : asc(delegateVotes.updatedAt);
+          : desc(delegateVotes.votingPower); // Default to sort by voting power
 
       const specialFilters = [
         'delegate_agreement',
@@ -313,7 +351,6 @@ export const delegateRouter = router({
 
         // Since we are using joins instead of with: [field]: true, we need to map to corresponding data format
         if (foundDelegates && foundDelegates.length) {
-
           let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
             ...foundDelegates.delegates,
             author: { ...foundDelegates.users },
@@ -343,12 +380,61 @@ export const delegateRouter = router({
             );
           }
 
+          // Filter out the delegates based on the comment count
+          if (appliedSpecialFilters.includes('1_or_more_comments')) {
+            // Fetch the count of comments for each delegate
+            const commentCounts: any = await db
+              .select({
+                delegateId: delegates.id,
+                count: sql<number>`count(${comments.id})`,
+              })
+              .from(delegates)
+              .leftJoin(comments, eq(comments.userId, delegates.userId))
+              .groupBy(delegates.id);
+
+            // Convert this to a dictionary/map for easier lookup
+            const commentCountMap = commentCounts.reduce(
+              (acc: { [key: string]: number }, cur: any) => {
+                acc[cur.delegateId] = cur.count;
+                return acc;
+              },
+              {},
+            );
+            filteredDelegates = filteredDelegates.filter(
+              (delegate: any) => commentCountMap[delegate.id] >= 1,
+            );
+          }
+
           if (appliedInterests.length) {
             filteredDelegates = filteredDelegates.filter((delegate: any) =>
-              appliedInterests.some((interest) =>
+              appliedInterests.every((interest) =>
                 delegate.interests.includes(interest),
               ),
             );
+          }
+
+          const shuffleArray = (array: any[]) => {
+            for (let i = array.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+          };
+
+          if (
+            !opts.input.sortBy &&
+            !opts.input.sortBy?.length &&
+            !opts.input.filters?.length
+          ) {
+            const quarterLength = Math.floor(filteredDelegates.length / 4);
+            const firstQuarter = shuffleArray(
+              filteredDelegates.slice(0, quarterLength),
+            );
+            const remaining = shuffleArray(
+              filteredDelegates.slice(quarterLength),
+            );
+
+            filteredDelegates = firstQuarter.concat(remaining);
           }
 
           return filteredDelegates;
@@ -360,18 +446,20 @@ export const delegateRouter = router({
     }),
 
   deleteDelegate: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
+    .input(z.object({ id: z.string() }))
     .mutation(async (opts) => {
+      const userId = opts.ctx.user?.id;
+      const userRole = opts.ctx.user?.role;
+      if (!userId) throw new Error('User not found');
+
       const delegate = await db.query.delegates.findFirst({
         where: eq(delegates.id, opts.input.id),
       });
 
-      if (!delegate) {
-        throw new Error('Delegate not found');
+      if (!delegate) throw new Error('Delegate not found');
+
+      if (userRole !== 'admin' && userRole !== 'moderator') {
+        if (delegate.userId !== userId) throw new Error('Unauthorized');
       }
 
       await db

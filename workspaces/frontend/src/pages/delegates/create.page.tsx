@@ -15,6 +15,7 @@ import {
   MarkdownEditor,
   Text,
   Divider,
+  Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -22,6 +23,7 @@ import { DocumentProps } from "src/renderer/types";
 import { useState, useEffect } from "react";
 import { delegateNames } from "../../components/Delegates";
 import { useFileUpload } from "src/hooks/useFileUpload";
+import { validateStarknetAddress } from "src/utils/helpers";
 
 const interestsValues = interestsEnum.enumValues;
 
@@ -32,6 +34,7 @@ type FormValues = {
   customDelegateAgreementContent?: string;
   starknetAddress: string;
   twitter: string;
+  telegram: string;
   discord: string;
   discourse: string;
   understandRole: boolean;
@@ -44,8 +47,12 @@ export function Page() {
     control,
     setValue,
     formState: { errors, isValid },
-  } = useForm<FormValues>();
+    setError,
+  } = useForm<FormValues>({
+    mode: "onChange",
+  });
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
+  const [error, setErrorField] = useState("");
   const {
     editorValue: customAgreementEditorValue,
     handleEditorChange: handleCustomAgreementEditorChange,
@@ -65,6 +72,12 @@ export function Page() {
   useEffect(() => {
     if (user?.starknetAddress) {
       setValue("starknetAddress", user.starknetAddress);
+      if (!validateStarknetAddress(user.starknetAddress)) {
+        setError("starknetAddress", {
+          type: "manual",
+          message: "Invalid Starknet address.",
+        });
+      }
     }
   }, [user]);
 
@@ -78,9 +91,11 @@ export function Page() {
         .mutateAsync(data as FormValues)
         .then((res) => {
           window.location.href = `/delegates/profile/${res.id}`;
+          setErrorField("");
         })
         .catch((err) => {
           console.log(err);
+          setErrorField(err?.message ? err.message : JSON.stringify(err));
         });
     } catch (error) {
       // Handle error
@@ -108,7 +123,7 @@ export function Page() {
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-type">
-                <FormLabel>Delegate type</FormLabel>
+                <FormLabel>Delegate interests</FormLabel>
                 <Controller
                   name="interests"
                   control={control}
@@ -134,43 +149,56 @@ export function Page() {
                   placeholder="0x..."
                   {...register("starknetAddress", {
                     required: true,
+                    validate: (value) =>
+                      validateStarknetAddress(value) ||
+                      "Invalid Starknet address",
                   })}
                 />
-                {errors.starknetAddress && <span>This field is required.</span>}
+                {errors.starknetAddress && (
+                  <Text>{errors.starknetAddress.message || "This field is required."}</Text>
+                )}
               </FormControl>
               <FormControl id="twitter">
-                <FormLabel>Twitter</FormLabel>
+                <FormLabel>Twitter (optional)</FormLabel>
                 <Input
                   size="standard"
                   variant="primary"
                   placeholder="@yourhandle"
                   {...register("twitter")}
                 />
-                {errors.twitter && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="telegram">
+                <FormLabel>Telegram (optional)</FormLabel>
+                <Input
+                  size="standard"
+                  variant="primary"
+                  placeholder="@yourhandle"
+                  {...register("telegram")}
+                />
               </FormControl>
               <FormControl id="discord">
-                <FormLabel>Discord</FormLabel>
+                <FormLabel>Discord (optional)</FormLabel>
                 <Input
                   variant="primary"
                   size="standard"
                   placeholder="name#1234"
                   {...register("discord")}
                 />
-                {errors.discord && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="discourse">
-                <FormLabel>Discourse</FormLabel>
+                <FormLabel>Discourse (optional)</FormLabel>
                 <Input
                   variant="primary"
                   size="standard"
                   placeholder="yourusername"
                   {...register("discourse")}
                 />
-                {errors.discourse && <span>This field is required.</span>}
               </FormControl>
               <Divider />
               <Box>
-                <Heading variant="h3">Delegate agreement</Heading>
+                <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
+                  Delegate agreement <Text variant="largeStrong">(optional)</Text>
+                </Heading>
                 <Text variant="medium">Briefly explain what this means.</Text>
               </Box>
               <FormControl id="confirmDelegateAgreement">
@@ -190,9 +218,6 @@ export function Page() {
                   I agree with the Starknet foundation suggested delegate
                   agreement View.
                 </Checkbox>
-                {errors.confirmDelegateAgreement && (
-                  <span>This field is required.</span>
-                )}
               </FormControl>
               <FormControl id="customDelegateAgreement">
                 <Checkbox
@@ -243,10 +268,13 @@ export function Page() {
                 {errors.understandRole && <span>This field is required.</span>}
               </FormControl>
               <Flex justifyContent="flex-end">
-                <Button type="submit" variant="primary" disabled={!isValid}>
+                <Button type="submit" variant="primary">
                   Submit delegate profile
                 </Button>
               </Flex>
+              {error.length ? (
+                <Banner label={error} variant="error" type="error" />
+              ) : null}
             </Stack>
           </form>
         </Box>

@@ -19,19 +19,22 @@ import {
   DelegateModal,
   ConfirmModal,
   StatusModal,
+  Flex,
+  ArrowRightIcon,
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
 import { ethers } from "ethers";
-import { useAccount } from "wagmi";
+import { useAccount, useWaitForTransaction } from "wagmi";
 import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -169,6 +172,7 @@ const sortByOptions = {
 export type DelegatesProps = {
   showFilers?: boolean;
   transformData?: (data: any) => any;
+  showAllDeligatesLink?: boolean;
 };
 
 const transformDataDefault = (data: any) => {
@@ -177,6 +181,7 @@ const transformDataDefault = (data: any) => {
 
 export function Delegates({
   showFilers = true,
+  showAllDeligatesLink = false,
   transformData = transformDataDefault,
 }: DelegatesProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -194,6 +199,39 @@ export function Delegates({
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const [txHash, setTxHash] = useState("");
+  // listen to txn with delegation hash
+  const {
+    isLoading: isDelegationLoading,
+    isError: isDelegationError,
+    isSuccess: isDelegationSuccess,
+    error: delegationError,
+  } = useWaitForTransaction({ hash: txHash as `0x${string}` });
+  // handle delegation cases
+
+  // handle delegation cases
+  useEffect(() => {
+    if (isDelegationLoading) {
+      setIsStatusModalOpen(true);
+      setStatusTitle("Delegating your votes");
+      setStatusDescription("");
+    }
+
+    if (isDelegationError) {
+      console.log(delegationError);
+      setIsStatusModalOpen(true);
+      setStatusTitle("Delegating votes failed");
+      setStatusDescription(
+        "An error occurred while processing your transaction.",
+      );
+    }
+
+    if (isDelegationSuccess) {
+      setIsStatusModalOpen(true);
+      setStatusTitle("Votes delegated successfully");
+      setStatusDescription("");
+    }
+  }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
   const { data: votingPower } = useQuery(
     gql(`
@@ -264,6 +302,14 @@ export function Delegates({
     if (!user) {
       return null;
     }
+    const delegateId =
+      user &&
+      delegates.data &&
+      delegates.data.find(
+        (delegate) =>
+          delegate?.author?.address?.toLowerCase() ===
+          user?.address?.toLowerCase(),
+      )?.id;
 
     return (
       <>
@@ -276,7 +322,7 @@ export function Delegates({
           Delegate to address
         </Button>
 
-        {!user.delegationStatement && (
+        {!delegateId ? (
           <Button
             width={{ base: "100%", md: "auto" }}
             as="a"
@@ -285,6 +331,16 @@ export function Delegates({
             variant="primary"
           >
             Create delegate profile
+          </Button>
+        ) : (
+          <Button
+            width={{ base: "100%", md: "auto" }}
+            as="a"
+            href={`/delegates/profile/${delegateId!}`}
+            size="condensed"
+            variant="primary"
+          >
+            View delegate profile
           </Button>
         )}
       </>
@@ -329,14 +385,12 @@ export function Delegates({
                 inputAddress as `0x${string}`,
               ],
             })
-              .then(() => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Tokens delegated successfully");
-                setStatusDescription("");
+              .then((tx) => {
+                setTxHash(tx.hash);
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
-                setStatusTitle("Tokens delegation failed");
+                setStatusTitle("Delegating votes failed");
                 setStatusDescription(
                   err.shortMessage ||
                     err.message ||
@@ -351,8 +405,12 @@ export function Delegates({
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
       <StatusModal
         isOpen={isStatusModalOpen}
-        isSuccess={!statusDescription?.length}
-        isFail={!!statusDescription?.length}
+        isPending={isDelegationLoading}
+        isSuccess={isDelegationSuccess}
+        isFail={
+          isDelegationError ||
+          !!((!txHash || !txHash.length) && statusDescription?.length)
+        }
         onClose={() => {
           setIsStatusModalOpen(false);
         }}
@@ -360,11 +418,42 @@ export function Delegates({
         description={statusDescription}
       />
       <Box width="100%">
-        <PageTitle
-          learnMoreLink="/learn"
-          title="Delegates"
-          description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol."
-        />
+        <Flex
+          alignItems="flex-start"
+          justifyContent="space-between"
+          gap="standard.xl"
+        >
+          <PageTitle
+            learnMoreLink={showAllDeligatesLink ? undefined : "/learn"}
+            title="Delegates"
+            description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol."
+            maxW={showAllDeligatesLink ? "580px" : undefined}
+            mb={0}
+          />
+          {showAllDeligatesLink && (
+            <Button
+              variant="outline"
+              display="flex"
+              gap="standard.xs"
+              as="a"
+              href="/delegates"
+              px={{
+                base: "standard.sm",
+                lg: "standard.lg",
+              }}
+            >
+              <Box
+                display={{
+                  base: "none",
+                  lg: "block",
+                }}
+              >
+                All delegates
+              </Box>
+              <ArrowRightIcon />
+            </Button>
+          )}
+        </Flex>
         {delegates.isLoading ? (
           <DelegatesSkeleton />
         ) : delegates.isError ? (
@@ -467,12 +556,15 @@ export function Delegates({
                     address={delegate?.author?.address}
                     statement={delegate?.statement}
                     type={delegate?.interests as string[]}
-                    ensAvatar={
+                    src={
                       delegate?.author?.profileImage ??
-                      delegate?.author?.ensAvatar
+                      delegate?.author?.ensAvatar ??
+                      null
                     }
-                    ensName={
-                      delegate.author?.username ?? delegate.author?.ensName
+                    user={
+                      delegate.author?.username ??
+                      delegate.author?.ensName ??
+                      truncateAddress(delegate.author?.address)
                     }
                     key={delegate?.id}
                   />

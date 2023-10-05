@@ -1,3 +1,3 @@
 export { radii } from "./radii";
 export { spacing } from "./spacing";
-export { colors } from "./colors";
+export { colors, baseColors } from "./colors";

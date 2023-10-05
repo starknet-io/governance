@@ -31,21 +31,16 @@ export const InfoModal = ({
       <ModalOverlay />
       <ModalContent borderRadius="xl" overflow="hidden">
         <ModalCloseButton
-          top="0"
-          right="0"
+          top="standard.xl"
+          right="standard.xl"
           size="lg"
           borderRadius="none"
           borderBottomLeftRadius="md"
+          color="#4A4A4F"
         />
         <ModalBody>
-          <Stack spacing="32px">
-            <Heading
-              textAlign={"center"}
-              fontSize="21px"
-              fontWeight="600"
-              variant="h3"
-              mb="0"
-            >
+          <Stack spacing="standard.xl">
+            <Heading textAlign={"center"} pl={8} pr={8} variant="h3" mb="0">
               {title}
             </Heading>
             {children}

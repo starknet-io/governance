@@ -1,15 +1,14 @@
 .members-list {
-  border: 1px solid #E4E5E7;
-  background-color: #fff;
+  border: 1px solid rgba(35, 25, 45, 0.1);
+
   padding: 0px;
 }
 .members-list ul {
-  margin-inline-start: 0 !important
+  margin-inline-start: 0 !important;
 }
 
 .members-list .list-item {
-  padding: 10px;
-  border-bottom: 1px solid #E4E5E7;
+  border-bottom: 1px solid rgba(35, 25, 45, 0.1);
 }
 
 .members-list .list-item:last-child {
@@ -17,6 +16,6 @@
 }
 
 .empty-state {
-  color: #6C6C75;
+  color: #6c6c75;
   padding: 16px;
 }

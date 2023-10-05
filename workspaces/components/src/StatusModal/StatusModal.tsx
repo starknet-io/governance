@@ -67,13 +67,22 @@ export const StatusModal = ({
               position="relative"
             >
               {isPending && <Spinner size="xxl" />}
-              {isFail && !isPending && <WarningIcon color="#E54D66" />}
-              {isSuccess && !isPending && <SuccessIcon color="#29AB87" />}
+              {isFail && !isPending && (
+                <WarningIcon boxSize="104px" color="#E54D66" />
+              )}
+              {isSuccess && !isPending && (
+                <SuccessIcon boxSize="104px" color="#29AB87" />
+              )}
             </Flex>
-            <Text align="center" variant="mediuStrong">
+            <Text align="center" variant="mediumStrong">
               {description}
             </Text>
-            <Button type="button" variant="primary" size="lg" onClick={onClose}>
+            <Button
+              type="button"
+              variant="primary"
+              size="standard"
+              onClick={onClose}
+            >
               Close
             </Button>
           </Stack>

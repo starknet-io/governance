@@ -9,7 +9,8 @@ export type props = {
     | "outline"
     | "ghost"
     | "danger"
-    | "special";
+    | "special"
+    | "textSmall";
   children: React.ReactNode;
   toId?: string;
   href?: string;

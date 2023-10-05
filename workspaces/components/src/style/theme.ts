@@ -14,12 +14,14 @@ import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
 import { menuTheme } from "src/Menu/MenuStyles";
 import { linkTheme } from "src/Link/LinkStyles";
 import { skeletonTheme } from "src/Skeleton/SkeletonStyles";
-import { colors, spacing, radii } from "./tokens";
+import { colors, spacing, radii, baseColors } from "./tokens";
 import { checkboxTheme } from "src/Checkbox/CheckboxStyles";
 import { radioTheme } from "src/Radio/RadioStyles";
 import { switchTheme } from "src/Switch/SwitchStyles";
 import { alertTheme } from "src/Banner/AlertStyles";
 import { dividerTheme } from "src/Divider/DividerStyles";
+import { avatarTheme } from "src/Avatar/AvatarStyles";
+import { FormTheme } from "src/FormControlled/Form";
 
 const config = {
   initialColorMode: "light",
@@ -28,6 +30,7 @@ const config = {
 export const theme = extendTheme({
   config,
   colors: {
+    ...baseColors,
     ...colors,
   },
 
@@ -42,6 +45,7 @@ export const theme = extendTheme({
   },
 
   components: {
+    Avatar: avatarTheme,
     Skeleton: skeletonTheme,
     Alert: alertTheme,
     Button,
@@ -55,6 +59,7 @@ export const theme = extendTheme({
     Modal,
     Spinner,
     Divider: dividerTheme,
+    ...FormTheme,
 
     fonts: {
       heading: `'Poppins', sans-serif`,

@@ -14,6 +14,7 @@ import {
   Multiselect,
   useMarkdownEditor,
   MarkdownEditor,
+  Banner, Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { Controller, useForm, FieldErrors } from "react-hook-form";
@@ -22,6 +23,7 @@ import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
+import { validateStarknetAddress } from "src/utils/helpers";
 
 const interestsValues = interestsEnum.enumValues;
 
@@ -32,6 +34,8 @@ export function Page() {
     setValue,
     control,
     formState: { errors, isValid },
+    setError,
+    trigger,
   } = useForm<RouterInput["delegates"]["editDelegate"]>();
 
   const formErrors = errors as FieldErrors<
@@ -53,6 +57,7 @@ export function Page() {
 
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
     useMarkdownEditor("");
+  const [error, setErrors] = useState("");
 
   const {
     editorValue: editorCustomAgreementValue,
@@ -76,6 +81,7 @@ export function Page() {
     setValue("interests", delegateData.interests as string[]);
     setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
     setValue("twitter", delegateData.twitter as string);
+    setValue("telegram", delegateData.telegram as string);
     setValue("discord", delegateData.discord as string);
     setValue("discourse", delegateData.discourse as string);
     setValue("understandRole", delegateData.understandRole as boolean);
@@ -83,6 +89,12 @@ export function Page() {
       "confirmDelegateAgreement",
       delegateData.confirmDelegateAgreement as boolean,
     );
+    if (!validateStarknetAddress(delegateData?.author?.starknetAddress)) {
+      setError("starknetAddress", {
+        type: "manual",
+        message: "Invalid Starknet address.",
+      });
+    }
     if (delegate?.confirmDelegateAgreement) {
       setAgreementType("standard");
     } else if (delegate?.customAgreement) {
@@ -90,12 +102,15 @@ export function Page() {
     } else {
       setAgreementType(null);
     }
+    trigger(); // to validate and not have to wait for edit button
   };
 
   const deleteDelegate = trpc.delegates.deleteDelegate.useMutation();
   const { handleUpload } = useFileUpload();
   useEffect(() => {
-    if (delegate && isSuccess) processData();
+    if (delegate && isSuccess) {
+      processData();
+    }
   }, [isSuccess]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -105,9 +120,15 @@ export function Page() {
       if (showCustomAgreementEditor || agreementType === "custom") {
         data.customDelegateAgreementContent = editorCustomAgreementValue;
       }
-      await editDelegate.mutateAsync(data).then(() => {
-        navigate(`/delegates/profile/${pageContext.routeParams!.id}`);
-      });
+      await editDelegate
+        .mutateAsync(data)
+        .then(() => {
+          navigate(`/delegates/profile/${pageContext.routeParams!.id}`);
+        })
+        .catch((err) => {
+          console.log(err);
+          setErrors(err?.message ? err.message : JSON.stringify(err));
+        });
     } catch (error) {
       // Handle error
       console.log(error);
@@ -131,22 +152,32 @@ export function Page() {
       <ContentContainer>
         <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
           <Heading variant="h3" mb="24px">
-            Edit post
+            Edit Delegate
           </Heading>
           <form onSubmit={onSubmit}>
             <Stack spacing="32px" direction={{ base: "column" }}>
               <FormControl id="delegate-statement">
                 <FormLabel>Delegate pitch</FormLabel>
-                <MarkdownEditor
-                  onChange={handleEditorChange}
-                  value={editorValue}
-                  customEditor={editor}
-                  handleUpload={handleUpload}
+                <Controller
+                  name="statement"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <MarkdownEditor
+                      onChange={(value) => {
+                        handleEditorChange(value);
+                        field.onChange(value); // Update the form state
+                      }}
+                      value={editorValue}
+                      customEditor={editor}
+                      handleUpload={handleUpload}
+                    />
+                  )}
                 />
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-type">
-                <FormLabel>Delegate type</FormLabel>
+                <FormLabel>Delegate interests</FormLabel>
                 <Controller
                   name="interests"
                   control={control}
@@ -162,7 +193,7 @@ export function Page() {
                     />
                   )}
                 />
-                {formErrors.interests && <span>This field is required.</span>}
+                {errors.interests && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Starknet wallet address</FormLabel>
@@ -171,37 +202,53 @@ export function Page() {
                   placeholder="0x..."
                   {...register("starknetAddress", {
                     required: true,
+                    validate: (value) =>
+                      validateStarknetAddress(value) ||
+                      "Invalid Starknet address",
                   })}
                 />
-                {errors.starknetAddress && <span>This field is required.</span>}
+                {errors.starknetAddress && (
+                  <span>{errors.starknetAddress.message || "This field is required."}</span>
+                )}
               </FormControl>
               <FormControl id="twitter">
-                <FormLabel>Twitter</FormLabel>
+                <FormLabel>Twitter (optional)</FormLabel>
                 <Input
                   variant="primary"
                   placeholder="@yourhandle"
                   {...register("twitter")}
                 />
-                {errors.twitter && <span>This field is required.</span>}
+              </FormControl>
+              <FormControl id="telegram">
+                <FormLabel>Telegram (optional)</FormLabel>
+                <Input
+                  variant="primary"
+                  placeholder="@yourhandle"
+                  {...register("telegram")}
+                />
               </FormControl>
               <FormControl id="discord">
-                <FormLabel>Discord</FormLabel>
+                <FormLabel>Discord (optional)</FormLabel>
                 <Input
                   variant="primary"
                   placeholder="name#1234"
                   {...register("discord")}
                 />
-                {errors.discord && <span>This field is required.</span>}
               </FormControl>
               <FormControl id="discourse">
-                <FormLabel>Discourse</FormLabel>
+                <FormLabel>Discourse (optional)</FormLabel>
                 <Input
                   variant="primary"
                   placeholder="yourusername"
                   {...register("discourse")}
                 />
-                {errors.discourse && <span>This field is required.</span>}
               </FormControl>
+              <Box>
+                <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
+                  Delegate agreement <Text variant="largeStrong">(optional)</Text>
+                </Heading>
+                <Text variant="medium">Briefly explain what this means.</Text>
+              </Box>
               <FormControl id="confirmDelegateAgreement">
                 <Checkbox
                   isChecked={agreementType === "standard"}
@@ -219,9 +266,6 @@ export function Page() {
                   I agree with the Starknet foundation suggested delegate
                   agreement View.
                 </Checkbox>
-                {errors.confirmDelegateAgreement && (
-                  <span>This field is required.</span>
-                )}
               </FormControl>
               <FormControl id="customDelegateAgreement">
                 <Checkbox
@@ -248,15 +292,25 @@ export function Page() {
               >
                 <FormControl id="custom-agreement-editor">
                   <FormLabel>Custom Delegate Agreement</FormLabel>
-                  <MarkdownEditor
-                    onChange={handleCustomAgreement}
-                    value={editorCustomAgreementValue}
-                    customEditor={
-                      delegate?.customAgreement
-                        ? editorCustomAgreement
-                        : undefined
-                    }
-                    handleUpload={handleUpload}
+                  <Controller
+                    name="customDelegateAgreementContent"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <MarkdownEditor
+                        onChange={(value) => {
+                          handleCustomAgreement(value);
+                          field.onChange(value); // Update the form state
+                        }}
+                        value={editorCustomAgreementValue}
+                        customEditor={
+                          delegate?.customAgreement
+                            ? editorCustomAgreement
+                            : undefined
+                        }
+                        handleUpload={handleUpload}
+                      />
+                    )}
                   />
                 </FormControl>
               </div>
@@ -282,11 +336,13 @@ export function Page() {
                   type="submit"
                   size="condensed"
                   variant="primary"
-                  isDisabled={!isValid}
                 >
                   Save
                 </Button>
               </Flex>
+              {error.length ? (
+                <Banner label={error} variant="error" type="error" />
+              ) : null}
             </Stack>
           </form>
         </Box>

@@ -17,7 +17,6 @@ import {
   IconButton,
   InfoModal,
   PlaceholderImage,
-  Stack,
   Stat,
   SummaryItems,
   Text,
@@ -39,6 +38,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Username,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -55,7 +55,11 @@ import { useBalanceData } from "src/utils/hooks";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { stringToHex } from "viem";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "../delegates/profile/@id.page";
-import { WalletIcon } from "@yukilabs/governance-components/src/Icons";
+import {
+  SuccessIcon,
+  WalletIcon,
+} from "@yukilabs/governance-components/src/Icons";
+import { Button as ChakraButton } from "@chakra-ui/react";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -406,6 +410,10 @@ export function Page() {
     );
   };
 
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
+    address: delegation.data ? delegation.data.toLowerCase() : "",
+  });
+
   if (data == null) return null;
   return (
     <Box
@@ -417,12 +425,17 @@ export function Page() {
       <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <VoteReview choice={currentChoice} voteCount={vp?.vp?.vp as number} />
         <FormControl id="comment">
-          <FormLabel color={"#292932"}>Reason for vote (optional)</FormLabel>
+          <FormLabel fontSize="14px" color={"content.default.default"}>
+            Reason{" "}
+            <Text color="content.support.default" as="span">
+              (optional)
+            </Text>
+          </FormLabel>
           <Textarea
             variant="primary"
             name="comment"
             maxLength={140}
-            placeholder="I voted X because Y"
+            placeholder="Type your message..."
             rows={4}
             focusBorderColor={"#292932"}
             resize="none"
@@ -433,7 +446,7 @@ export function Page() {
         <Button
           type="submit"
           variant="primary"
-          size="lg"
+          size="standard"
           onClick={() => handleVote(currentChoice, comment)}
         >
           Submit vote
@@ -465,24 +478,46 @@ export function Page() {
         onClose={() => setIsInfoOpen(false)}
       >
         <SummaryItems.Root>
-          <SummaryItems.Item label="Stategies" value="Type" />
-          <SummaryItems.Item
-            isTruncated
-            label="IPFS"
-            value={data?.proposal?.ipfs}
+          <SummaryItems.StrategySummary
+            strategies={
+              (data?.proposal?.strategies || []).filter((s) => s) as any[]
+            }
+          />
+          <SummaryItems.LinkItem
+            label="IPFS #"
+            link={`https://snapshot.4everland.link/ipfs//${data?.proposal?.ipfs}`}
+            linkLabel={data?.proposal?.ipfs?.slice(0, 7) || ""}
+            isExternal={true}
           />
           <SummaryItems.Item
             label="Voting system"
-            value={data?.proposal?.type}
+            value={`${data?.proposal?.type} voting`}
           />
-          {/* <SummaryItems.Date label="Start date" value={data.proposal?.start} />
-          <SummaryItems.Date label="End date" value={data?.proposal?.end} /> */}
-          <SummaryItems.Item
-            label="Snapshot"
-            value={data?.proposal?.snapshot}
+          <SummaryItems.CustomDate
+            label="Start date"
+            value={data?.proposal?.start || null}
+          />
+          <SummaryItems.CustomDate
+            label="End date"
+            value={data?.proposal?.end || null}
+          />
+
+          <SummaryItems.LinkItem
+            label="Snapshot block #"
+            link={`https://etherscan.io/block/${data?.proposal?.snapshot}`}
+            linkLabel={
+              data?.proposal?.snapshot
+                ? parseInt(data.proposal.snapshot, 10).toLocaleString()
+                : ""
+            }
+            isExternal={true}
           />
         </SummaryItems.Root>
-        <Button variant="primary" onClick={() => setIsInfoOpen(false)}>
+        <Button
+          size="standard"
+          variant="primary"
+          onClick={() => setIsInfoOpen(false)}
+        >
           Close
         </Button>
       </InfoModal>
@@ -495,7 +530,10 @@ export function Page() {
         isOpen={isSuccessModalOpen}
         onClose={() => setisSuccessModalOpen(false)}
       >
-        Success!!
+        <Flex alignItems="center" justifyContent="center">
+          <SuccessIcon boxSize="104px" />
+        </Flex>
+
         <Button variant="primary" onClick={() => setisSuccessModalOpen(false)}>
           Close
         </Button>
@@ -523,9 +561,24 @@ export function Page() {
                   <MenuItem as="a" href="#">
                     Share
                   </MenuItem>
-                  <MenuItem as="a" href="#">
+                  <ChakraButton
+                    variant="ghost"
+                    data-tally-open="mKx1xD"
+                    data-tally-emoji-text="👋"
+                    data-tally-emoji-animation="wave"
+                    data-proposal={
+                      typeof window !== "undefined" ? window.location.href : ""
+                    }
+                    width={"100%"}
+                    justifyContent={"flex-start"}
+                    padding={0}
+                    minHeight={"33px"}
+                    paddingLeft={"10px"}
+                    fontWeight={"400"}
+                    textColor={"#1a1523"}
+                  >
                     Report
-                  </MenuItem>
+                  </ChakraButton>
                 </MoreActions>
               </Box>
             </Flex>
@@ -542,9 +595,12 @@ export function Page() {
                 <Text variant="small" color="content.default.default">
                   •
                 </Text>
-                <Stat.Root>
-                  <Stat.Text label={`By ${data?.proposal?.author}`} />
-                </Stat.Root>
+                {/* toDo get user images / display names */}
+                <Username
+                  src={null}
+                  displayName={truncateAddress(`${data?.proposal?.author}`)}
+                  address={`${data?.proposal?.author}`}
+                />
               </Flex>
               <Flex gap="standard.xs" paddingTop="0" alignItems="center">
                 <Text
@@ -601,8 +657,9 @@ export function Page() {
               <></>
             )}
 
-            <MarkdownRenderer content={data?.proposal?.body || ""} />
-
+            <Box mt="standard.2xl">
+              <MarkdownRenderer content={data?.proposal?.body || ""} />
+            </Box>
             <Divider my="standard.2xl" />
             <Heading
               color="content.accent.default"
@@ -647,13 +704,15 @@ export function Page() {
                 </AppBar.Root>
               </>
             )}
-            <CommentList
-              commentsList={comments.data || []}
-              onVote={handleCommentVote}
-              onDelete={handleCommentDelete}
-              onReply={handleReplySend}
-              onEdit={handleCommentEdit}
-            />
+            <Box mt="standard.xs">
+              <CommentList
+                commentsList={comments.data || []}
+                onVote={handleCommentVote}
+                onDelete={handleCommentDelete}
+                onReply={handleReplySend}
+                onEdit={handleCommentEdit}
+              />
+            </Box>
           </Flex>
         </Box>
       </ContentContainer>
@@ -700,12 +759,21 @@ export function Page() {
                   Your vote
                 </Heading>
                 <Banner
-                  label={`Your voting power of ${userBalance.balance} ${
-                    userBalance.symbol
-                  } is currently assigned to delegate ${truncateAddress(
-                    delegation.data!,
-                  )}`}
+                  label={
+                    <>
+                      Your voting power of {userBalance.balance}{" "}
+                      {userBalance.symbol} is currently assigned to delegate{" "}
+                      <Link
+                        fontSize="small"
+                        fontWeight="normal"
+                        href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
+                      >
+                        {truncateAddress(delegation.data! || "")}
+                      </Link>
+                    </>
+                  }
                 />
+
                 <Divider mb="standard.2xl" />
               </>
             )}

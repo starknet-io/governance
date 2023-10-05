@@ -25,15 +25,17 @@ export const headingTheme = {
     fontFamily: "Poppins, sans-serif",
   },
   h5: {
-    fontSize: "1rem",
+    fontSize: "0.875rem",
     lineHeight: "1.25rem",
     fontWeight: 600,
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: "Inter, sans-serif",
+    letterSpacing: "-0.07px",
   },
   h6: {
     fontSize: "0.875rem",
     lineHeight: "1.25rem",
     fontWeight: 600,
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: "Inter, sans-serif",
+    letterSpacing: "-0.07px",
   },
 };

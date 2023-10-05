@@ -14,10 +14,13 @@ import {
   MenuItem,
   MarkdownRenderer,
   Text,
+  Username,
+  AvatarWithText,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -136,7 +139,7 @@ export function Page() {
       console.log(error);
     }
   };
-
+  const formattedAddress = truncateAddress(`${post?.author?.address}`);
   return (
     <>
       <Box
@@ -148,7 +151,7 @@ export function Page() {
         <ContentContainer>
           <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
             <Stack
-              spacing="24px"
+              spacing="0"
               direction={{ base: "column" }}
               color="content.default.default"
             >
@@ -158,6 +161,7 @@ export function Page() {
                     color="content.accent.default"
                     variant="h2"
                     maxWidth="90%"
+                    mb="16px"
                   >
                     {post?.title}
                   </Heading>
@@ -173,16 +177,26 @@ export function Page() {
                 )}
               </Box>
 
-              <Flex gap="standard.xs" paddingTop="0" alignItems="center">
-                <Stat.Root>
-                  <Stat.Text
-                    label={
-                      post?.author?.username ??
-                      post?.author?.ensName ??
-                      post?.author?.address
-                    }
-                  />
-                </Stat.Root>
+              <Flex
+                mb="24px"
+                gap="standard.xs"
+                paddingTop="0"
+                alignItems="center"
+              >
+                <Username
+                  address={post?.author?.address}
+                  displayName={
+                    post?.author?.username ??
+                    post?.author?.ensName ??
+                    formattedAddress
+                  }
+                  src={
+                    post?.author?.profileImage ??
+                    post?.author?.ensAvatar ??
+                    null
+                  }
+                />
+
                 <Text variant="small" color="content.default.default">
                   •
                 </Text>
@@ -201,12 +215,15 @@ export function Page() {
               </Flex>
               <Divider />
 
-              <MarkdownRenderer content={post?.content || ""} />
+              <Box mt="standard.2xl">
+                <MarkdownRenderer content={post?.content || ""} />
+              </Box>
               <Divider my="32px" />
               <Heading
-                id="#discussion"
+                id="discussion"
                 color="content.accent.default"
                 variant="h3"
+                mb="standard.lg"
               >
                 Discussion
               </Heading>

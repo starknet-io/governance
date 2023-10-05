@@ -7,7 +7,7 @@ import {
   WalletConnector,
   useDynamicContext,
 } from "@dynamic-labs/sdk-react";
-
+import { Button as ChakraButton } from "@chakra-ui/react";
 import {
   Logo,
   NavGroup,
@@ -47,7 +47,7 @@ import {
   SearchIcon,
   Flex,
 } from "@yukilabs/governance-components";
-import { Box } from "@chakra-ui/react";
+import { Box, Show } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { IUser, PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
@@ -58,6 +58,7 @@ import { useGlobalSearch } from "src/hooks/GlobalSearch";
 import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
 import AuthorizedUserView from "./AuthorizedUserView";
+import TallyScript from "src/components/TallyScript";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -135,13 +136,15 @@ export function DynamicContextProviderPage(props: Props) {
   const onSubmit = () => {
     editUserProfile.mutateAsync(
       {
-        address: authUser?.user?.verifiedCredentials[0]?.address ?? "",
+        address:
+          authUser?.user?.verifiedCredentials[0]?.address?.toLowerCase() ?? "",
         username,
         starknetAddress,
       },
       {
         onSuccess: () => {
           setModalOpen(false);
+          utils.auth.currentUser.invalidate();
         },
       },
     );
@@ -194,10 +197,7 @@ export function DynamicContextProviderPage(props: Props) {
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {
-              // Guard against setting the state if authUser data hasn't changed
-              if (JSON.stringify(authUser) !== JSON.stringify(params)) {
-                setAuthUser(params);
-              }
+              setAuthUser(params);
             },
             onLogout: () => handleDynamicLogout(),
           },
@@ -294,9 +294,6 @@ function PageLayout(props: Props) {
     setRenderDone(true);
   }, []);
 
-  console.log(JSON.stringify(pageContext.urlOriginal, null, 2));
-  console.log(JSON.stringify(pageContext.urlPathname, null, 2));
-
   useEffect(() => {
     let timer: string | number | NodeJS.Timeout | undefined;
     if (helpMessage === "connectWalletMessage") {
@@ -315,6 +312,7 @@ function PageLayout(props: Props) {
 
   return (
     <>
+      <TallyScript />
       <SupportModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -412,7 +410,16 @@ function PageLayout(props: Props) {
                 pageContext={pageContext}
               />
             </Box>
-
+            <Show breakpoint="(min-width: 834px)">
+              <Box
+                display={{ base: "flex", lg: "none" }}
+                flex="1"
+                alignItems={"center"}
+                justifyContent={"center"}
+              >
+                <Logo href="/" />
+              </Box>
+            </Show>
             <Show breakpoint="(max-width: 567px)">
               <Flex
                 w="5"
@@ -430,14 +437,6 @@ function PageLayout(props: Props) {
               </Flex>
             </Show>
 
-            <Box
-              display={{ base: "flex", lg: "none" }}
-              flex="1"
-              alignItems={"center"}
-              justifyContent={"center"}
-            >
-              <Logo href="/" />
-            </Box>
             <Box display="flex" marginLeft="auto">
               <ShareDialog />
             </Box>
@@ -486,11 +485,17 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
     <>
       <Box mt="-20px">
         <NavGroup>
+          <Show breakpoint="(max-width: 834px)">
+            <Box alignItems={"center"} justifyContent={"center"}>
+              <Logo href="/" />
+            </Box>
+          </Show>
           {[
             {
               href: "/",
               label: "Home",
               icon: <HomeIcon />,
+              exact: true,
             },
             {
               href: "/voting-proposals",
@@ -504,7 +509,11 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
             },
           ].map((item) => (
             <NavItem
-              active={item.href === pageContext.urlOriginal}
+              active={
+                item.exact
+                  ? pageContext.urlOriginal === item.href
+                  : pageContext.urlOriginal.startsWith(item.href)
+              }
               icon={item.icon}
               label={item.label}
               key={item.href}
@@ -520,7 +529,9 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
             icon={<SecurityIcon />}
             label={council.name ?? "Unknown"}
             href={council.slug ? `/councils/${council.slug}` : "/councils"}
-            active={council.slug === pageContext.urlOriginal}
+            active={pageContext.urlOriginal.startsWith(
+              `/councils/${council.slug}`,
+            )}
           />
         ))}
         {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
@@ -566,12 +577,18 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
         />
 
         <Box as="span" display={{ base: "none", lg: "flex" }}>
-          <NavItem
-            href="https://www.starknet.io"
-            icon={<FeedbackIcon />}
-            label="Feedback"
+          <ChakraButton
             variant="feedback"
-          />
+            leftIcon={<FeedbackIcon />}
+            data-tally-open="3xMJly"
+            data-tally-emoji-text="👋"
+            data-tally-emoji-animation="wave"
+            padding={"12px"}
+            width={"100%"}
+            justifyContent={"flex-start"}
+          >
+            Feedback
+          </ChakraButton>
         </Box>
       </NavGroup>
     </>
