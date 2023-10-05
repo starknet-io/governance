@@ -44,7 +44,7 @@ export function useMarkdownEditor(
   };
 
   const convertSlateToMarkdown = (value: any[]) => {
-    return value.map((v) => serialize(v)?.replaceAll("<br>", "")).join("");
+    return value.map((v) => serialize(v)?.replaceAll("<br>", "")).join("\n");
   };
 
   const convertMarkdownToSlate = (
