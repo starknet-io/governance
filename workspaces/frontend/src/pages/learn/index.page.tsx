@@ -65,6 +65,8 @@ export function Page() {
     window.history.pushState(null, "", `/learn/${page.slug}`);
   };
 
+  console.log({ role: loggedUser?.role });
+
   const formattedAddress = truncateAddress(`${selectedPage?.author?.address}`);
   // console.log(selectedPage?.author?.)
   return (
