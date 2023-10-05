@@ -174,7 +174,7 @@ export const MembersList: React.FC<MembersListProps> = ({
         </ModalContent>
       </Modal>
 
-      <Box p={4}>
+      <Box>
         {members.length === 0 ? (
           <Center>
             <Text className="empty-state">No members added </Text>
