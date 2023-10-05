@@ -1,4 +1,4 @@
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-* * * * * cd /app/workspaces/backend && /usr/local/bin/yarn fetch-voting-power >/proc/1/fd/1 2>/proc/1/fd/2
+*/5 * * * * cd /app/workspaces/backend && /usr/local/bin/yarn fetch-voting-power >/proc/1/fd/1 2>/proc/1/fd/2
 
 # An empty line is required at the end of this file for a valid cron file.
