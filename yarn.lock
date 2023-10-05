@@ -1987,6 +1987,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@blocto/sdk@npm:0.5.4":
+  version: 0.5.4
+  resolution: "@blocto/sdk@npm:0.5.4"
+  dependencies:
+    bs58: ^5.0.0
+    buffer: ^6.0.3
+    eip1193-provider: ^1.0.1
+    js-sha3: ^0.8.0
+  peerDependencies:
+    "@solana/web3.js": ^1.30.2
+    aptos: ^1.3.14
+  peerDependenciesMeta:
+    "@solana/web3.js":
+      optional: true
+    aptos:
+      optional: true
+  checksum: ecd2a80f46ea94de6d870a56d2b164624d305d482e7f5245c439545fd558c1b3a025593b370c26f27469129673ba0e7572bb068ef1bc04f69342b7d807819c94
+  languageName: node
+  linkType: hard
+
 "@brillout/import@npm:0.2.3, @brillout/import@npm:^0.2.3":
   version: 0.2.3
   resolution: "@brillout/import@npm:0.2.3"
@@ -3362,59 +3382,75 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dynamic-labs/algorand-all@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/algorand-all@npm:0.17.100-viem.9"
+"@dynamic-labs/algorand-all@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/algorand-all@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/myalgo": 0.17.100-viem.9
-  checksum: 36aa2364d79aefb620120d9246ea5e27521ba5374f06344b9feeaee05ba3e2b2dd9883632f642387effaa70c6b414c2f9fcfa16f63dbc5bc80e625b88c3a18c6
+    "@dynamic-labs/myalgo": 0.18.100-viem.24
+  checksum: f1526d906061ad12e56bfd43de744c886c3ee115d162b267e825d95fff1e57cc1412c3f0dd103b38a1d0100681b69f0c59207be483731355a022fed880b4236a
   languageName: node
   linkType: hard
 
-"@dynamic-labs/coinbase@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/coinbase@npm:0.17.100-viem.9"
+"@dynamic-labs/blocto@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/blocto@npm:0.18.100-viem.24"
   dependencies:
-    "@coinbase/wallet-sdk": 3.6.4
-    "@dynamic-labs/ethereum": 0.17.100-viem.9
-    "@dynamic-labs/types": 0.17.100-viem.9
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
+    "@blocto/sdk": 0.5.4
+    "@dynamic-labs/ethereum": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
   peerDependencies:
     viem: ^1.1.0
-  checksum: 4546ec08f9ff1bd425158f219121f92f9aee9613b7ad6dcca75b2853255d6e2a6ad873c4e4392c4f57ec1abdbba5baffb55942304243ba47df83305504208a99
+  checksum: f998a668bb5a08dcac080466cbd06d9e48efe572d458519c7a23bafa33900c75f8aa7e772ff46b01778f0c80d9c27c0e484964dc70aa7fa15ffc33984b878d31
   languageName: node
   linkType: hard
 
-"@dynamic-labs/cosmos-all@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/cosmos-all@npm:0.17.100-viem.9"
+"@dynamic-labs/coinbase@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/coinbase@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/keplr": 0.17.100-viem.9
-  checksum: beda3e9b8603d4f751f86123df9d58a944a1ee7f7c6c7fdb3914b329ef7dca6840e8909785fcbb6ff9af011cb93f9d310b0fb8199df94ccfa0b73c851d3bdf7d
+    "@coinbase/wallet-sdk": 3.6.4
+    "@dynamic-labs/ethereum": 0.18.100-viem.24
+    "@dynamic-labs/rpc-providers": 0.18.100-viem.24
+    "@dynamic-labs/types": 0.18.100-viem.24
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
+  peerDependencies:
+    viem: ^1.1.0
+  checksum: d1393ee5446f53e52f1aeef4c296acaacec1b6c10c9146d924754894de8f277835e9f8e7212b5bc5ed044ab849525fd40c8a08ed8b122afb40ca60bed50ca234
   languageName: node
   linkType: hard
 
-"@dynamic-labs/ethereum-all@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/ethereum-all@npm:0.17.100-viem.9"
+"@dynamic-labs/cosmos-all@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/cosmos-all@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/coinbase": 0.17.100-viem.9
-    "@dynamic-labs/ethereum": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
-  checksum: c13a7a272876b334d4b8d56b5e607378bb1d961dab54794c56798d399677e33a9f1804daedc13d01f02a3bcadfa3cd92b49e50b4d6349f3d5793cfb728819f95
+    "@dynamic-labs/keplr": 0.18.100-viem.24
+  checksum: 43c520fa37cea53b0e2e962b93889a320171878a79b047bf4e61b2c37137d001e5edc63a62ca451b24f24e7703e2d75c224071ca615f60b2ec0c4572aadd5c41
   languageName: node
   linkType: hard
 
-"@dynamic-labs/ethereum@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/ethereum@npm:0.17.100-viem.9"
+"@dynamic-labs/ethereum-all@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/ethereum-all@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/rpc-providers": 0.17.100-viem.9
-    "@dynamic-labs/types": 0.17.100-viem.9
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-book": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
+    "@dynamic-labs/blocto": 0.18.100-viem.24
+    "@dynamic-labs/coinbase": 0.18.100-viem.24
+    "@dynamic-labs/ethereum": 0.18.100-viem.24
+    "@dynamic-labs/magic": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
+  checksum: 087b1f06d1d17e9a09bc54e02eaa85431edbb8cd87d6ff85a88ad18d085e0409189c514d604c084a70aff98e20f6c230cf9e6f6c8d3b743f5261a0cf3d3799b9
+  languageName: node
+  linkType: hard
+
+"@dynamic-labs/ethereum@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/ethereum@npm:0.18.100-viem.24"
+  dependencies:
+    "@dynamic-labs/rpc-providers": 0.18.100-viem.24
+    "@dynamic-labs/types": 0.18.100-viem.24
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-book": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
     "@walletconnect/client": 1.8.0
     "@walletconnect/ethereum-provider": 1.8.0
     "@walletconnect/universal-provider": 2.8.3
@@ -3423,143 +3459,147 @@ __metadata:
     stream: 0.0.2
   peerDependencies:
     viem: ^1.1.0
-  checksum: c17d2d0b06dffc9b0c4573c09b22fbaae44bd5e5a955f9bd5a1ea4c8b37d05036e81faa0ea25d090cc5d8ec752fd0e12d33f80ef8631a75b7de632af8dd9b3bb
+  checksum: fb567c811dcde877756fcb117ec911af0886bfc6f1d2cf59d95892af4b64d8f50e3793397e21e48816c9cd90bf76123432167d27180463ce48eb2bf2e05e7a0e
   languageName: node
   linkType: hard
 
-"@dynamic-labs/flow-all@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/flow-all@npm:0.17.100-viem.9"
+"@dynamic-labs/flow-all@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/flow-all@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/flow": 0.17.100-viem.9
-  checksum: d7f981a099941be87f868af4d46427ea7d4c5199d6f90c53cf238fad1493d1d1e0568b1566d1e3d7ad8d2c3da2c8dca5a32becbc7a55cbaf769174981cbd6082
+    "@dynamic-labs/flow": 0.18.100-viem.24
+  checksum: 3f910d9d30c10107d08560c3e7b086cfd5820437d1fca364684c92443a0dfb5dacb5fdd0f08f4339b5aa4380d9a5c09d17b5a82a1d23cdd95243a971b9770b71
   languageName: node
   linkType: hard
 
-"@dynamic-labs/flow@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/flow@npm:0.17.100-viem.9"
+"@dynamic-labs/flow@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/flow@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
-    "@onflow/fcl": 1.3.2
-  checksum: 78b89ece143af37a337ba6b10c99c8d775d671c2034d56996d85a5a11c2f434de832adeca084865c9c1c66e8d6f42f3784513365e408a78f7516f53c904bec22
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-book": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
+    "@onflow/fcl": 1.4.1
+  checksum: 7a4b874793687570b3c4e98b95b03cf80cf9ecbea26fae403f781de762c46d3dc27b5662627df102280fdd88b6351e4c5a7811b604fd903d3ff5a2d786e42d78
   languageName: node
   linkType: hard
 
-"@dynamic-labs/iconic@npm:0.1.23":
-  version: 0.1.23
-  resolution: "@dynamic-labs/iconic@npm:0.1.23"
+"@dynamic-labs/iconic@npm:0.1.32":
+  version: 0.1.32
+  resolution: "@dynamic-labs/iconic@npm:0.1.32"
   peerDependencies:
     react: ^17.0.2 || ^18.0.0
-  checksum: f1f6d1ac81310d076e63edf7153b5f44f7355bed56ca9b35d991a9edca483c1321fe9dca03f40d307cf718b5dca318e3f69b5fa1c2192c89cee7fa23e2d840e3
+  checksum: f7e3ab485d7cd590cce8cf7e4c04e9512e248d245bf0ba686ed2fce991a24f4ee74fdca6337b853528ae1fde6b94f30a5c152f36920b2b0ba0e708e583639e2d
   languageName: node
   linkType: hard
 
-"@dynamic-labs/keplr@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/keplr@npm:0.17.100-viem.9"
+"@dynamic-labs/keplr@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/keplr@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/types": 0.17.100-viem.9
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-book": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
+    "@dynamic-labs/types": 0.18.100-viem.24
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-book": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
     "@keplr-wallet/provider": 0.11.56
     "@keplr-wallet/types": 0.11.56
     "@walletconnect/client": 1.8.0
     "@walletconnect/utils": 1.8.0
     buffer: 6.0.3
     deepmerge: 4.3.1
-  checksum: 723b9e47fb47a572220ac1f333ef8a91ff53ac983191c90698a8072b95d31f7f5525a6ac7d5484d497d8b9f598586ca76990f35ccc12f5b0266e232a8e2e5cc2
+  checksum: 79428617c0450850cc7af4b3f20494e7bc0c6c156d119d018c2cc560b356db52ebeebf821c3d83d1fef170063ce5d0518c169ebd372ff0dec6509d896ffec825
   languageName: node
   linkType: hard
 
-"@dynamic-labs/logger@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/logger@npm:0.17.100-viem.9"
-  checksum: b62935f23f35b9270a1de6415ed98226706ac5e22e50eaeeb0a1f79dc87b685250eda19851526686da7c6aece9f95d6c30dc2530935556be9dbaa8616072367a
+"@dynamic-labs/logger@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/logger@npm:0.18.100-viem.24"
+  checksum: d4fb6ef7c09171c41ac10e7131f792041869876327e6b4d35d90146c64da68d461dae5668338ea1c14da3370d0579f75175347efd77ab4808ba4d54555b1c565
   languageName: node
   linkType: hard
 
-"@dynamic-labs/magic@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/magic@npm:0.17.100-viem.9"
+"@dynamic-labs/magic@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/magic@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/logger": 0.17.100-viem.9
-    "@dynamic-labs/sdk-api": 0.0.198
-    "@dynamic-labs/types": 0.17.100-viem.9
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
+    "@dynamic-labs/logger": 0.18.100-viem.24
+    "@dynamic-labs/rpc-providers": 0.18.100-viem.24
+    "@dynamic-labs/sdk-api": 0.0.270
+    "@dynamic-labs/types": 0.18.100-viem.24
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-book": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
     "@magic-ext/oauth": 12.4.1
     magic-sdk: 18.4.1
   peerDependencies:
     viem: ^1.1.0
-  checksum: 81c478eb0cd167154c668045a3590e985cde7467354b53458efaf899ce9685b2c3852d409bc5dbd18f45675ccba006f3cf4503ca500eb2292b6c97a57767868f
+  checksum: 24d19d731d41bcf6dc7defa0c8252749f4cb0f9ff98f128aca01931916ad5281ad0e916c35002daa7de5386f8f2ef1714a09a7cca2f80669f41c647755bd4dc3
   languageName: node
   linkType: hard
 
-"@dynamic-labs/multi-wallet@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/multi-wallet@npm:0.17.100-viem.9"
+"@dynamic-labs/multi-wallet@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/multi-wallet@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/rpc-providers": 0.17.100-viem.9
-    "@dynamic-labs/sdk-api": 0.0.198
-    "@dynamic-labs/types": 0.17.100-viem.9
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-book": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
+    "@dynamic-labs/rpc-providers": 0.18.100-viem.24
+    "@dynamic-labs/sdk-api": 0.0.270
+    "@dynamic-labs/types": 0.18.100-viem.24
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-book": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
     tslib: 2.4.1
   peerDependencies:
     viem: ^1.1.0
-  checksum: e4c593e59d1097207ec5a38ebbe40b1cd6d27b71069df9e0d13b42f87f8a440f7516b761415df7c74c33fe76d402a2c38349268027d3c5609e1424b542775ee1
+  checksum: 693aebfcc06e00026c60fc46a5e983264b4ff8a8c7e876e7d28ae407ae0bc149cf2f3e01c07e8eaad00921051cde688d607a7c16cdf3d61a376c22d93a3869de
   languageName: node
   linkType: hard
 
-"@dynamic-labs/myalgo@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/myalgo@npm:0.17.100-viem.9"
+"@dynamic-labs/myalgo@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/myalgo@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
     "@randlabs/myalgo-connect": 1.4.2
-  checksum: 276622cd375f7d0994491f058e2df23b57afae1af5e9759899e4c4a460e0ae2c468cbd6b8599d4f5afe4333083ed42dc4cc6ce2d863b264b79e0a1f997e9dbd8
+  checksum: 122ecfba5edf0dfec3c56758473375e0ec6de65eacaf00ff53a1b4996d77919d4624a5a05708e9d7eaf8107665408c9e51fb4b7c5cbd683c2c80e37065fb6846
   languageName: node
   linkType: hard
 
-"@dynamic-labs/rpc-providers@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/rpc-providers@npm:0.17.100-viem.9"
+"@dynamic-labs/rpc-providers@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/rpc-providers@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/types": 0.17.100-viem.9
+    "@dynamic-labs/types": 0.18.100-viem.24
     "@solana/web3.js": 1.70.1
   peerDependencies:
     viem: ^1.1.0
-  checksum: 3366fbb23247eba5caebf48a784f8c4f0d02060ba4a74424b26ab6ee4a690df5a915efb39d957ce59c0a05f973c9426193fc22a0ce29d37cc3d573cef4ba58ba
+  checksum: 7deddbfe1ed11845819b6decc3263f9ef312920f461879fa474ba64891923f8728de9336d1fccff0bc442c0b793d1b34c9b4d105dff79214be394fce2f80e5fc
   languageName: node
   linkType: hard
 
-"@dynamic-labs/sdk-api@npm:0.0.198":
-  version: 0.0.198
-  resolution: "@dynamic-labs/sdk-api@npm:0.0.198"
-  checksum: 25f6c9daeecb283f188477440bfa4d559a1a9d016833fe6249b14b9094eeabed535d1ab21dca7ca6eaa53b5b1fda95b802ebdb5ac4b7b7f1477c0c396511435c
+"@dynamic-labs/sdk-api@npm:0.0.270":
+  version: 0.0.270
+  resolution: "@dynamic-labs/sdk-api@npm:0.0.270"
+  checksum: 602d0a8197ca7b698ab4f757ace1f039dcfbc8d2ca6a812d77e59e867321e7983b6e7e3b9d264a941498ee135412c2138775f24b26896907e3b016259085ccf2
   languageName: node
   linkType: hard
 
-"@dynamic-labs/sdk-react-core@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/sdk-react-core@npm:0.17.100-viem.9"
+"@dynamic-labs/sdk-react-core@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/sdk-react-core@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/iconic": 0.1.23
-    "@dynamic-labs/logger": 0.17.100-viem.9
-    "@dynamic-labs/multi-wallet": 0.17.100-viem.9
-    "@dynamic-labs/rpc-providers": 0.17.100-viem.9
-    "@dynamic-labs/sdk-api": 0.0.198
-    "@dynamic-labs/types": 0.17.100-viem.9
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-book": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
+    "@dynamic-labs/iconic": 0.1.32
+    "@dynamic-labs/logger": 0.18.100-viem.24
+    "@dynamic-labs/multi-wallet": 0.18.100-viem.24
+    "@dynamic-labs/rpc-providers": 0.18.100-viem.24
+    "@dynamic-labs/sdk-api": 0.0.270
+    "@dynamic-labs/types": 0.18.100-viem.24
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-book": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
     "@hcaptcha/react-hcaptcha": 1.4.4
     country-list: 2.3.0
+    eventemitter3: 5.0.1
     formik: 2.2.9
     qrcode: 1.5.1
     react-focus-lock: 2.9.2
@@ -3568,127 +3608,133 @@ __metadata:
     react: ^17.0.2 || ^18.0.0
     react-dom: ^17.0.2 || ^18.0.0
     viem: ^1.1.0
-  checksum: 1b57be617dade161af509bcb1ffd7f6d583f175495953243478c303f83bb0eaf348249eaf279d45efb97a3ce2f5e1dd431ff793d01585eaf0113817e5a0a5c36
+  checksum: 0a17d0e0f3ec12f678834f6ce9689c333e534a6713eaff13d06e45f3a965e95ee0db8817424a907f0c03f4f9c68cc60bdc67b8cb653036d7844417a5c4be553b
   languageName: node
   linkType: hard
 
-"@dynamic-labs/sdk-react@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/sdk-react@npm:0.17.100-viem.9"
+"@dynamic-labs/sdk-react@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/sdk-react@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/algorand-all": 0.17.100-viem.9
-    "@dynamic-labs/cosmos-all": 0.17.100-viem.9
-    "@dynamic-labs/ethereum-all": 0.17.100-viem.9
-    "@dynamic-labs/flow-all": 0.17.100-viem.9
-    "@dynamic-labs/magic": 0.17.100-viem.9
-    "@dynamic-labs/sdk-react-core": 0.17.100-viem.9
-    "@dynamic-labs/solana-all": 0.17.100-viem.9
-    "@dynamic-labs/starknet-all": 0.17.100-viem.9
-  checksum: c8e2ed9d4a27c0afc518e923e2d636a85a1d50e8cd723d37a54fd030d269c5387bc01f27d85beb71243630ee98f8239f87439596b2f95cd4a6839addb028f870
+    "@dynamic-labs/algorand-all": 0.18.100-viem.24
+    "@dynamic-labs/cosmos-all": 0.18.100-viem.24
+    "@dynamic-labs/ethereum-all": 0.18.100-viem.24
+    "@dynamic-labs/flow-all": 0.18.100-viem.24
+    "@dynamic-labs/sdk-react-core": 0.18.100-viem.24
+    "@dynamic-labs/solana-all": 0.18.100-viem.24
+    "@dynamic-labs/starknet-all": 0.18.100-viem.24
+  checksum: d0d4d495bf6b98880b11306f388230f772eb06d2a9d41bd4d3c1d651524505ddfee47c8ee7419073791132442f34e5b1fcd316e2a820fb438ef5df3df13dc643
   languageName: node
   linkType: hard
 
-"@dynamic-labs/solana-all@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/solana-all@npm:0.17.100-viem.9"
+"@dynamic-labs/solana-all@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/solana-all@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/solana": 0.17.100-viem.9
-  checksum: 12b8a9bcf28aacbd06cc39365c22740a5963f6eabbd1f58671adecab1f878d71193e213cda15e1f50a2eab936cbe5b03f3e028a04a8f16618c0ef5c418641a58
+    "@dynamic-labs/solana": 0.18.100-viem.24
+  checksum: 2062b3ad773b1314324a924db992fbfebe32cea6309f84740863042cafe69cf23b8ccaaa76e39c12224e383491e1bbf6915fddac8f4b40e51c4491c76fc1c88e
   languageName: node
   linkType: hard
 
-"@dynamic-labs/solana@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/solana@npm:0.17.100-viem.9"
+"@dynamic-labs/solana@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/solana@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/rpc-providers": 0.17.100-viem.9
-    "@dynamic-labs/types": 0.17.100-viem.9
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
+    "@dynamic-labs/rpc-providers": 0.18.100-viem.24
+    "@dynamic-labs/types": 0.18.100-viem.24
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-book": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
     "@solana/web3.js": 1.70.1
-  checksum: 75aab8f86765371b511cc5f8deed5711fea8e6a7ca81945bfc03d4690cfd654ead35a99cb2ad0c8d7df3fa37d4e3f8f53d61c56e9bd2954135b7085144ecf7f3
+  checksum: 57bf10d3d5c0fb5721ef3b12473954568158d1c620e310cf5c3d4f83e94a37f651138b9bc6fb817002c885547a6ed32a50d0c206859e1a543674a0370b84f37d
   languageName: node
   linkType: hard
 
-"@dynamic-labs/starknet-all@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/starknet-all@npm:0.17.100-viem.9"
+"@dynamic-labs/starknet-all@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/starknet-all@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/starknet": 0.17.100-viem.9
-  checksum: ab024650fa3fe0ab66d6be8f510cd8d7c01dbc5d1a1c3e2e44511a2385863894f4381bdd3fd443bfd7212853ae7991286620e8c19cdab1468f12b4f0d126b8d6
+    "@dynamic-labs/starknet": 0.18.100-viem.24
+  checksum: a5191a13c053bc11493a9471a7537a69f82aea2159e274359123afbb4360d62f171bdb1ddd591fb4f8f4ed79467cb8035679e4515bbd8ae1d8a9b9640ba32d57
   languageName: node
   linkType: hard
 
-"@dynamic-labs/starknet@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/starknet@npm:0.17.100-viem.9"
+"@dynamic-labs/starknet@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/starknet@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
-    get-starknet: 1.5.0
-    starknet: 3.19.0
-  checksum: 4e0a3fce67f00fd58d39eb21f2d57ecaf146c52b209c072befa678510c32cb8308bfcdd33b6387fdd981a7735705fc6f3d14b6411def3146ac8369711ad92db2
+    "@dynamic-labs/sdk-api": 0.0.270
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-book": 0.18.100-viem.24
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.24
+    get-starknet-core: ^3.2.0
+    starknet: ^5.19.5
+    text-encoding: 0.7.0
+  checksum: b22a5a72249ea8a63112cad93327148e0b1d2856969bca75dc00588fb2f320293e400907e365fd8fec40e123df4bb551f64e4099d0b77855d8dc6765d6b3db87
   languageName: node
   linkType: hard
 
-"@dynamic-labs/types@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/types@npm:0.17.100-viem.9"
+"@dynamic-labs/types@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/types@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/sdk-api": 0.0.198
+    "@dynamic-labs/sdk-api": 0.0.270
   peerDependencies:
     viem: ^1.1.0
-  checksum: cfbc33474e785db166c9f1825682b43ee8485c430fb78661f11b8a99c2d9f906958fbbed41b95f3b9c820751f78da038c9cd9c4bf495debc2ae996ff1d0bf149
+  checksum: 81116495926c74f64927ba585ffe8d42f4bdab8130df148c91aca06e3bbc7887303971d74382500ae92dbb98d1d86c365c05d95e533227518b7ccea23c7ea570
   languageName: node
   linkType: hard
 
-"@dynamic-labs/utils@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/utils@npm:0.17.100-viem.9"
+"@dynamic-labs/utils@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/utils@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/types": 0.17.100-viem.9
+    "@dynamic-labs/logger": 0.18.100-viem.24
+    "@dynamic-labs/types": 0.18.100-viem.24
   peerDependencies:
-    viem: ^1.1.7
-  checksum: 1488641e58aa77a8b28409ea4bbfc5d9ebc4e100f452cb13303647c25f44daa0a0725d89c7eafe3b9e82c14e69429c81919d2b07975bdef35a09fb269de34910
+    viem: ^1.5.3
+  checksum: 56170746ee4282ff9011e9c0ef20f77d4ba39739df41cf39af11e838194c127a69141aaf4777804307c7a9bdf81cb1833188608b9b8acd90a7218e4d5afad4dd
   languageName: node
   linkType: hard
 
-"@dynamic-labs/wagmi-connector@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/wagmi-connector@npm:0.17.100-viem.9"
+"@dynamic-labs/wagmi-connector@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/wagmi-connector@npm:0.18.100-viem.24"
   peerDependencies:
-    "@dynamic-labs/sdk-react-core": 0.17.100-viem.9
-    "@dynamic-labs/types": 0.17.100-viem.9
-    "@dynamic-labs/wallet-connector-core": 0.17.100-viem.9
+    "@dynamic-labs/sdk-react-core": 0.18.100-viem.24
+    "@dynamic-labs/types": 0.18.100-viem.24
     "@wagmi/core": ^1.3.0
+    eventemitter3: 5.0.1
     react: ^17.0.2 || ^18.0.0
     viem: ^1.1.0
     wagmi: ^1.2.0
-  checksum: 2ffad4df7ca41daaff94e758a46f089f071518b01e4651cb0b527f1b7e5ee70d777e76c599473e5ba7e9309ff81117ae398f4174ff0023d265e14d7c90c208b3
+  checksum: dcb94717c997263575bf18d25c8bcb484026408178ee87918fba6593ce5bf592ea0b65d550dfa98d3cb506feecc5ca220da55e4a7af46f7a1017cd5eb41683b6
   languageName: node
   linkType: hard
 
-"@dynamic-labs/wallet-book@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/wallet-book@npm:0.17.100-viem.9"
+"@dynamic-labs/wallet-book@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/wallet-book@npm:0.18.100-viem.24"
   dependencies:
-    "@dynamic-labs/logger": 0.17.100-viem.9
+    "@dynamic-labs/logger": 0.18.100-viem.24
+    zod: 3.21.4
   peerDependencies:
     react: ^17.0.2 || ^18.0.0
     react-dom: ^17.0.2 || ^18.0.0
-  checksum: 845ec0735fcfeeb2c27567efea17ef402aade00f366ab62b069d8422155d73e0e5da169773710aafd95ab81a2c5a98a9d8f382e6fc97457a703b91f25f30ba1b
+  checksum: 02d55373823237bff54234de831a4216ffa61378784614ca931cf209a58cd17c05beae4a93cc6ac8140420be0d999b1f8beabcdf24ec25d8769c2272dccfc05f
   languageName: node
   linkType: hard
 
-"@dynamic-labs/wallet-connector-core@npm:0.17.100-viem.9":
-  version: 0.17.100-viem.9
-  resolution: "@dynamic-labs/wallet-connector-core@npm:0.17.100-viem.9"
+"@dynamic-labs/wallet-connector-core@npm:0.18.100-viem.24":
+  version: 0.18.100-viem.24
+  resolution: "@dynamic-labs/wallet-connector-core@npm:0.18.100-viem.24"
   peerDependencies:
-    "@dynamic-labs/logger": 0.17.100-viem.9
-    "@dynamic-labs/rpc-providers": 0.17.100-viem.9
-    "@dynamic-labs/utils": 0.17.100-viem.9
-    "@dynamic-labs/wallet-book": 0.17.100-viem.9
-  checksum: 5f4062c6dc8850a6681fe9f6845f182fe2e06b653f39556f6ff73a1f0ac43acacb570900b486a065b082ddcf2fa6b0c13a756e80efb7d3b8ac7fc156bf397139
+    "@dynamic-labs/logger": 0.18.100-viem.24
+    "@dynamic-labs/rpc-providers": 0.18.100-viem.24
+    "@dynamic-labs/utils": 0.18.100-viem.24
+    "@dynamic-labs/wallet-book": 0.18.100-viem.24
+    eventemitter3: 5.0.1
+  checksum: 7d703a12d2317f6f11458ae1b77662ec9301baba3f296ad12cb005abedb044b0dad4c6c205a770fb119b8f1ba7b02b651e0f8e0ce86fe26529f3c55c26973371
   languageName: node
   linkType: hard
 
@@ -6282,13 +6328,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:1.2.0, @noble/hashes@npm:~1.2.0":
-  version: 1.2.0
-  resolution: "@noble/hashes@npm:1.2.0"
-  checksum: 8ca080ce557b8f40fb2f78d3aedffd95825a415ac8e13d7ffe3643f8626a8c2d99a3e5975b555027ac24316d8b3c02a35b8358567c0c23af681e6573602aa434
-  languageName: node
-  linkType: hard
-
 "@noble/hashes@npm:1.3.0":
   version: 1.3.0
   resolution: "@noble/hashes@npm:1.3.0"
@@ -6310,7 +6349,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/secp256k1@npm:1.7.1, @noble/secp256k1@npm:^1.6.3, @noble/secp256k1@npm:~1.7.0":
+"@noble/secp256k1@npm:^1.6.3":
   version: 1.7.1
   resolution: "@noble/secp256k1@npm:1.7.1"
   checksum: d2301f1f7690368d8409a3152450458f27e54df47e3f917292de3de82c298770890c2de7c967d237eff9c95b70af485389a9695f73eb05a43e2bd562d18b18cb
@@ -6353,7 +6392,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/config@npm:^1.0.5, @onflow/config@npm:^1.1.1":
+"@onflow/config@npm:^1.1.0, @onflow/config@npm:^1.1.1":
   version: 1.1.2
   resolution: "@onflow/config@npm:1.1.2"
   dependencies:
@@ -6365,24 +6404,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/fcl@npm:1.3.2":
-  version: 1.3.2
-  resolution: "@onflow/fcl@npm:1.3.2"
+"@onflow/fcl@npm:1.4.1":
+  version: 1.4.1
+  resolution: "@onflow/fcl@npm:1.4.1"
   dependencies:
     "@babel/runtime": ^7.18.6
-    "@onflow/config": ^1.0.5
+    "@onflow/config": ^1.1.0
     "@onflow/interaction": 0.0.11
-    "@onflow/rlp": ^1.0.2
-    "@onflow/sdk": ^1.1.2
-    "@onflow/types": ^1.0.5
-    "@onflow/util-actor": ^1.1.1
-    "@onflow/util-address": ^1.0.2
-    "@onflow/util-invariant": ^1.0.2
-    "@onflow/util-logger": ^1.1.1
-    "@onflow/util-template": ^1.0.3
-    "@onflow/util-uid": ^1.0.2
-    node-fetch: ^2.6.7
-  checksum: 73cf9958449045dfabff85936d3b7ab042283b3d445084229552e60cad26f6074913f714e03b7c09643379d5127e35b7839aa0b179fb4c2283dfdb96ac3f6bcf
+    "@onflow/rlp": ^1.1.0
+    "@onflow/sdk": ^1.2.0
+    "@onflow/types": ^1.1.0
+    "@onflow/util-actor": ^1.2.0
+    "@onflow/util-address": ^1.1.0
+    "@onflow/util-invariant": ^1.1.0
+    "@onflow/util-logger": ^1.2.0
+    "@onflow/util-template": ^1.1.0
+    "@onflow/util-uid": ^1.1.0
+    cross-fetch: ^3.1.6
+  checksum: 1b434f60c4c5774d2225c4af1694f1457a8ce07789313f8663b6f4ff1410e2e14f7d8fcdb616d85a645fdd9748228472af2083347936d1ce8bdd9024e45ed428
   languageName: node
   linkType: hard
 
@@ -6393,7 +6432,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/rlp@npm:^1.0.2, @onflow/rlp@npm:^1.1.0":
+"@onflow/rlp@npm:^1.1.0":
   version: 1.1.0
   resolution: "@onflow/rlp@npm:1.1.0"
   dependencies:
@@ -6403,7 +6442,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/sdk@npm:^1.1.2":
+"@onflow/sdk@npm:^1.2.0":
   version: 1.2.2
   resolution: "@onflow/sdk@npm:1.2.2"
   dependencies:
@@ -6437,7 +6476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/types@npm:^1.0.5":
+"@onflow/types@npm:^1.1.0":
   version: 1.1.0
   resolution: "@onflow/types@npm:1.1.0"
   dependencies:
@@ -6446,7 +6485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/util-actor@npm:^1.1.1, @onflow/util-actor@npm:^1.2.0":
+"@onflow/util-actor@npm:^1.2.0":
   version: 1.2.0
   resolution: "@onflow/util-actor@npm:1.2.0"
   dependencies:
@@ -6456,7 +6495,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/util-address@npm:^1.0.2, @onflow/util-address@npm:^1.1.0":
+"@onflow/util-address@npm:^1.1.0":
   version: 1.1.0
   resolution: "@onflow/util-address@npm:1.1.0"
   dependencies:
@@ -6465,7 +6504,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/util-invariant@npm:^1.0.2, @onflow/util-invariant@npm:^1.1.0":
+"@onflow/util-invariant@npm:^1.1.0":
   version: 1.1.0
   resolution: "@onflow/util-invariant@npm:1.1.0"
   dependencies:
@@ -6474,7 +6513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/util-logger@npm:^1.1.1, @onflow/util-logger@npm:^1.2.1":
+"@onflow/util-logger@npm:^1.2.0, @onflow/util-logger@npm:^1.2.1":
   version: 1.2.2
   resolution: "@onflow/util-logger@npm:1.2.2"
   dependencies:
@@ -6488,7 +6527,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/util-template@npm:^1.0.3, @onflow/util-template@npm:^1.1.0":
+"@onflow/util-template@npm:^1.1.0":
   version: 1.1.0
   resolution: "@onflow/util-template@npm:1.1.0"
   dependencies:
@@ -6497,7 +6536,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@onflow/util-uid@npm:^1.0.2":
+"@onflow/util-uid@npm:^1.1.0":
   version: 1.1.0
   resolution: "@onflow/util-uid@npm:1.1.0"
   dependencies:
@@ -6713,17 +6752,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/bip32@npm:1.1.5":
-  version: 1.1.5
-  resolution: "@scure/bip32@npm:1.1.5"
-  dependencies:
-    "@noble/hashes": ~1.2.0
-    "@noble/secp256k1": ~1.7.0
-    "@scure/base": ~1.1.0
-  checksum: b08494ab0d2b1efee7226d1b5100db5157ebea22a78bb87126982a76a186cb3048413e8be0ba2622d00d048a20acbba527af730de86c132a77de616eb9907a3b
-  languageName: node
-  linkType: hard
-
 "@scure/bip32@npm:1.3.0":
   version: 1.3.0
   resolution: "@scure/bip32@npm:1.3.0"
@@ -6732,16 +6760,6 @@ __metadata:
     "@noble/hashes": ~1.3.0
     "@scure/base": ~1.1.0
   checksum: 6eae997f9bdf41fe848134898960ac48e645fa10e63d579be965ca331afd0b7c1b8ebac170770d237ab4099dafc35e5a82995384510025ccf2abe669f85e8918
-  languageName: node
-  linkType: hard
-
-"@scure/bip39@npm:1.1.1":
-  version: 1.1.1
-  resolution: "@scure/bip39@npm:1.1.1"
-  dependencies:
-    "@noble/hashes": ~1.2.0
-    "@scure/base": ~1.1.0
-  checksum: fbb594c50696fa9c14e891d872f382e50a3f919b6c96c55ef2fb10c7102c546dafb8f099a62bd114c12a00525b595dcf7381846f383f0ddcedeaa6e210747d2f
   languageName: node
   linkType: hard
 
@@ -10007,8 +10025,8 @@ __metadata:
   dependencies:
     "@apollo/client": ^3.7.17
     "@chakra-ui/react": ^2.7.0
-    "@dynamic-labs/sdk-react": 0.17.100-viem.9
-    "@dynamic-labs/wagmi-connector": 0.17.100-viem.9
+    "@dynamic-labs/sdk-react": 0.18.100-viem.24
+    "@dynamic-labs/wagmi-connector": 0.18.100-viem.24
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
     "@graphql-codegen/cli": 4.0.1
@@ -10929,6 +10947,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base-x@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "base-x@npm:4.0.0"
+  checksum: b25db9e07eb1998472a20557c7f00c797dc0595f79df95155ab74274e7fa98b9f2659b3ee547ac8773666b7f69540656793aeb97ad2b1ceccdb6fa5faaf69ac0
+  languageName: node
+  linkType: hard
+
 "base64-js@npm:^1.0.2, base64-js@npm:^1.3.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
@@ -11104,13 +11129,6 @@ __metadata:
     bs58: ^4.0.0
     text-encoding-utf-8: ^1.0.2
   checksum: e98bfb5f7cfb820819c2870b884dac58dd4b4ce6a86c286c8fbf5c9ca582e73a8c6094df67e81a28c418ff07a309c6b118b2e27fdfea83fd92b8100c741da0b5
-  languageName: node
-  linkType: hard
-
-"bowser@npm:^2.11.0":
-  version: 2.11.0
-  resolution: "bowser@npm:2.11.0"
-  checksum: 29c3f01f22e703fa6644fc3b684307442df4240b6e10f6cfe1b61c6ca5721073189ca97cdeedb376081148c8518e33b1d818a57f781d70b0b70e1f31fb48814f
   languageName: node
   linkType: hard
 
@@ -11313,6 +11331,15 @@ __metadata:
   dependencies:
     base-x: ^3.0.2
   checksum: b3c5365bb9e0c561e1a82f1a2d809a1a692059fae016be233a6127ad2f50a6b986467c3a50669ce4c18929dcccb297c5909314dd347a25a68c21b68eb3e95ac2
+  languageName: node
+  linkType: hard
+
+"bs58@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "bs58@npm:5.0.0"
+  dependencies:
+    base-x: ^4.0.0
+  checksum: 2475cb0684e07077521aac718e604a13e0f891d58cff923d437a2f7e9e28703ab39fce9f84c7c703ab369815a675f11e3bd394d38643bfe8969fbe42e6833d45
   languageName: node
   linkType: hard
 
@@ -13249,7 +13276,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eip1193-provider@npm:1.0.1":
+"eip1193-provider@npm:1.0.1, eip1193-provider@npm:^1.0.1":
   version: 1.0.1
   resolution: "eip1193-provider@npm:1.0.1"
   dependencies:
@@ -14484,18 +14511,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethereum-cryptography@npm:^1.0.3":
-  version: 1.2.0
-  resolution: "ethereum-cryptography@npm:1.2.0"
-  dependencies:
-    "@noble/hashes": 1.2.0
-    "@noble/secp256k1": 1.7.1
-    "@scure/bip32": 1.1.5
-    "@scure/bip39": 1.1.1
-  checksum: 97e8e8253cb9f5a9271bd0201c37609c451c890eb85883b9c564f14743c3d7c673287406c93bf5604307593ee298ad9a03983388b85c11ca61461b9fc1a4f2c7
-  languageName: node
-  linkType: hard
-
 "ethereumjs-util@npm:^7.1.5":
   version: 7.1.5
   resolution: "ethereumjs-util@npm:7.1.5"
@@ -15450,14 +15465,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-starknet@npm:1.5.0":
-  version: 1.5.0
-  resolution: "get-starknet@npm:1.5.0"
-  dependencies:
-    bowser: ^2.11.0
+"get-starknet-core@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "get-starknet-core@npm:3.2.0"
   peerDependencies:
-    starknet: ^3.12.3
-  checksum: 64164229cb98633b11dfd0cbda681ef423e0d69e6ade3a693e825d139a42cfe9030d1167f9e11b84eb119237b92835b88405641caa3cf01745f388bf39940280
+    starknet: ^5.18.0
+  peerDependenciesMeta:
+    starknet:
+      optional: false
+  checksum: 9bb3ddea6634a40b951c0f01366444beffe8c6785809a2404ad0ff60ec925420e9a4e846b809ddb40ecb5e9dbb73213359b0a051b8426a6d46974f5cd78ccf93
   languageName: node
   linkType: hard
 
@@ -17617,15 +17633,6 @@ __metadata:
   bin:
     jsesc: bin/jsesc
   checksum: b8b44cbfc92f198ad972fba706ee6a1dfa7485321ee8c0b25f5cedd538dcb20cde3197de16a7265430fce8277a12db066219369e3d51055038946039f6e20e17
-  languageName: node
-  linkType: hard
-
-"json-bigint@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "json-bigint@npm:1.0.0"
-  dependencies:
-    bignumber.js: ^9.0.0
-  checksum: c67bb93ccb3c291e60eb4b62931403e378906aab113ec1c2a8dd0f9a7f065ad6fd9713d627b732abefae2e244ac9ce1721c7a3142b2979532f12b258634ce6f6
   languageName: node
   linkType: hard
 
@@ -22695,25 +22702,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet@npm:3.19.0":
-  version: 3.19.0
-  resolution: "starknet@npm:3.19.0"
-  dependencies:
-    "@ethersproject/bytes": ^5.6.1
-    bn.js: ^5.2.1
-    cross-fetch: ^3.1.5
-    elliptic: ^6.5.4
-    ethereum-cryptography: ^1.0.3
-    hash.js: ^1.1.7
-    json-bigint: ^1.0.0
-    minimalistic-assert: ^1.0.1
-    pako: ^2.0.4
-    ts-custom-error: ^3.2.0
-    url-join: ^4.0.1
-  checksum: 1eff55d5476e5c0515f1fd5398797aa630ee0c0ce496eabfa05312e7e7dcd0ac503a99337b7e59143a77bb461a63b7966f37099e7366ee4c4c1fb903e0befa66
-  languageName: node
-  linkType: hard
-
 "starknet@npm:^5.19.5":
   version: 5.20.0
   resolution: "starknet@npm:5.20.0"
@@ -23245,6 +23233,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"text-encoding@npm:0.7.0":
+  version: 0.7.0
+  resolution: "text-encoding@npm:0.7.0"
+  checksum: b6109a843fb1b8748b32e1ecd6df74d370f46c13ac136bcb6ca15db70209bb0b8ec1f296ebb4b0dd9961150e205dcc044b89f8cf7657f6faef78c7569a2a81bc
+  languageName: node
+  linkType: hard
+
 "text-table@npm:^0.2.0":
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
@@ -23462,13 +23457,6 @@ __metadata:
   dependencies:
     axios: ^0.19.2
   checksum: c67d2883e21ca711c51e963edae27b1e9246d2fb296afdb3f9f32cb3a9432f545754911811bca67095282ccc4ab9c4a7458d1576c40c1a42dd114eb4b0e34465
-  languageName: node
-  linkType: hard
-
-"ts-custom-error@npm:^3.2.0":
-  version: 3.3.1
-  resolution: "ts-custom-error@npm:3.3.1"
-  checksum: 50a1e825fced68d70049bd8d282379a635e43aa023a370fa8e736b12a6edba7f18a2d731fa194ac35303a8b625be56e121bdb31d8a0318250d1a8b277059fce3
   languageName: node
   linkType: hard
 
@@ -25337,7 +25325,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.2, zod@npm:^3.21.4":
+"zod@npm:3.21.4, zod@npm:^3.20.2, zod@npm:^3.21.4":
   version: 3.21.4
   resolution: "zod@npm:3.21.4"
   checksum: f185ba87342ff16f7a06686767c2b2a7af41110c7edf7c1974095d8db7a73792696bcb4a00853de0d2edeb34a5b2ea6a55871bc864227dace682a0a28de33e1f

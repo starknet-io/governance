@@ -13,7 +13,7 @@ const client = algoliasearch(
   process.env.ALGOLIA_API_KEY ?? '',
 );
 
-const INDEX = 'test_GOVERNANCE_APP';
+const INDEX = process.env.ALOGLIA_INDEX ?? '';
 const index = client.initIndex(INDEX);
 
 async function saveObjectToIndex(data: RecordData) {

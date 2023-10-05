@@ -47,7 +47,7 @@ import {
   SearchIcon,
   Flex,
 } from "@yukilabs/governance-components";
-import { Box, Show } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { IUser, PageContext, ROLES } from "./types";
 import { trpc } from "src/utils/trpc";
