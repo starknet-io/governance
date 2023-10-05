@@ -238,19 +238,45 @@ const PastVotes = ({
   );
 };
 
+type CommentsProps = {
+  count?: number;
+  width?: string | null;
+} & BoxProps;
+
+const Comments = ({ count, width, ...rest }: CommentsProps) => {
+  return (
+    <Box
+      minWidth={`${width}px`}
+      display="flex"
+      flexDirection="row"
+      gap="4px"
+      alignItems="center"
+      {...cellPadding}
+      {...rest}
+    >
+      <Icon as={CommentIcon} />
+      <Text variant="small" color="content.support.default">
+        {count}
+      </Text>
+    </Box>
+  );
+};
+
 type CommentSummaryProps = {
   postTitle: string;
   comment: string;
   date: string;
-};
+} & CommentsProps;
 
-const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
-  console.log("Raw Date:", date);
+const CommentSummary = ({
+  postTitle,
+  comment,
+  date,
+  count,
+}: CommentSummaryProps) => {
   const formattedDate = date
     ? format(new Date(date), "d MMM yyyy")
     : "Unknown date";
-
-  const formattedComment = extractParagraph(comment ?? "");
 
   return (
     <Flex flexDirection="column" flex={1} gap="standard.base" {...cellPadding}>
@@ -269,8 +295,8 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
         </Text>
       </Box>
 
-      <Box flex={1}>
-        <Box height="20px!important" overflow="hidden">
+      <Flex flex={1}>
+        <Box height="20px" overflow="hidden">
           <MarkdownRenderer
             textProps={{
               fontSize: "12px",
@@ -278,35 +304,16 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
               color: "content.support.default",
               fontWeight: "500",
             }}
-            content={`&quot;${formattedComment}&quot;` ?? ""}
+            content={`&quot;${comment}&quot;` ?? ""}
           />
         </Box>
-      </Box>
+        {count ? (
+          <Box ml="auto">
+            <Comments width={"52"} count={count} />
+          </Box>
+        ) : null}
+      </Flex>
     </Flex>
-  );
-};
-
-type CommentsProps = {
-  count: number | null;
-  width?: string | null;
-} & BoxProps;
-
-const Comments = ({ count, width, ...rest }: CommentsProps) => {
-  return (
-    <Box
-      minWidth={`${width}px`}
-      display="flex"
-      flexDirection="row"
-      gap="4px"
-      alignItems="center"
-      {...cellPadding}
-      {...rest}
-    >
-      <Icon as={CommentIcon} />
-      <Text variant="breadcrumbs" color="#6B7280">
-        {count}
-      </Text>
-    </Box>
   );
 };
 
