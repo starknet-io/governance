@@ -40,6 +40,7 @@ import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
 import { hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -153,6 +154,7 @@ export function Page() {
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address } = useAccount();
   const { user } = usePageContext();
+  const { user: dynamicUser } = useDynamicContext();
   // get delegation hash
   const [txHash, setTxHash] = useState("");
   // listen to txn with delegation hash
@@ -164,7 +166,7 @@ export function Page() {
   } = useWaitForTransaction({ hash: txHash as `0x${string}` });
   // handle delegation cases
   useEffect(() => {
-    if (isDelegationLoading) {
+    if (isDelegationLoading && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
@@ -174,7 +176,7 @@ export function Page() {
       setStatusDescription("");
     }
 
-    if (isDelegationError) {
+    if (isDelegationError && dynamicUser) {
       console.log(delegationError);
       setIsStatusModalOpen(true);
       setStatusTitle(
@@ -188,7 +190,7 @@ export function Page() {
       );
     }
 
-    if (isDelegationSuccess) {
+    if (isDelegationSuccess && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
