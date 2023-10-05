@@ -478,8 +478,8 @@ export function Delegates({
                   <Select
                     size="sm"
                     height="36px"
-                    aria-label="Sort by"
-                    placeholder="Sort by"
+                    aria-label="Random"
+                    placeholder="Random"
                     focusBorderColor={"red"}
                     rounded="md"
                     value={sortBy}
