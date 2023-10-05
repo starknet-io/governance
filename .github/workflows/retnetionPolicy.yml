@@ -79,10 +79,9 @@ jobs:
           [[ -n $TAGS ]] && doctl registry repository dt cron-prod $TAGS --force
           echo Tags removed: $TAGS
 
-
   garbage-collection:
     runs-on: ubuntu-latest
-    needs: [cron_cleanup, backend_cleanup, frontend_cleanup]
+    needs: [cron_cleanup, backend_cleanup, frontend_cleanup, backend_prod_cleanup, cron_cleanup, cron_prod_cleanup]
     steps:
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
