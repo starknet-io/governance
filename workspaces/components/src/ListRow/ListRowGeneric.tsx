@@ -19,6 +19,7 @@ import {
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import "./styles.css";
 import { formatVotesAmount } from "src/utils";
+import { extractParagraph } from "src/Card/DelegateCard";
 
 type Props = BoxProps & {
   children?: React.ReactNode;
@@ -249,6 +250,8 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
     ? format(new Date(date), "d MMM yyyy")
     : "Unknown date";
 
+  const formattedComment = extractParagraph(comment ?? "");
+
   return (
     <Flex flexDirection="column" flex={1} gap="standard.base" {...cellPadding}>
       <Box flex="1">
@@ -267,15 +270,17 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
       </Box>
 
       <Box flex={1}>
-        <MarkdownRenderer
-          textProps={{
-            fontSize: "12px",
-            noOfLines: 1,
-            color: "content.support.default",
-            fontWeight: "500",
-          }}
-          content={`&quot;${comment}&quot;` ?? ""}
-        />
+        <Box height="20px!important" overflow="hidden">
+          <MarkdownRenderer
+            textProps={{
+              fontSize: "12px",
+              noOfLines: 1,
+              color: "content.support.default",
+              fontWeight: "500",
+            }}
+            content={`&quot;${formattedComment}&quot;` ?? ""}
+          />
+        </Box>
       </Box>
     </Flex>
   );
