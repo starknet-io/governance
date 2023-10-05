@@ -12,7 +12,8 @@ COPY workspaces/cron/entrypoint.sh /entrypoint.sh
 WORKDIR /app
 COPY . .
 RUN yarn install
-
+RUN --mount=type=secret,id=certificate \
+          cat /run/secrets/certificate >> /app/workspaces/backend/ca-certificate.crt
 RUN crontab /cron
 RUN chmod +x /entrypoint.sh
 
