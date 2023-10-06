@@ -22,6 +22,7 @@ import { alertTheme } from "src/Banner/AlertStyles";
 import { dividerTheme } from "src/Divider/DividerStyles";
 import { avatarTheme } from "src/Avatar/AvatarStyles";
 import { FormTheme } from "src/FormControlled/Form";
+import { tooltipTheme } from "src/Tooltip/TooltipStyles";
 
 const config = {
   initialColorMode: "light",
@@ -73,5 +74,6 @@ export const theme = extendTheme({
     Checkbox: checkboxTheme,
     Radio: radioTheme,
     Switch: switchTheme,
+    Tooltip: tooltipTheme,
   },
 });

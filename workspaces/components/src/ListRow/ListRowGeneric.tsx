@@ -1,4 +1,4 @@
-import { Badge, Box, BoxProps, Flex, Icon, Tooltip } from "@chakra-ui/react";
+import { Badge, Box, BoxProps, Flex, Icon } from "@chakra-ui/react";
 
 import { Text } from "../Text";
 import {
@@ -19,7 +19,7 @@ import {
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import "./styles.css";
 import { formatVotesAmount } from "src/utils";
-import { extractParagraph } from "src/Card/DelegateCard";
+import { Tooltip } from "src/Tooltip";
 
 type Props = BoxProps & {
   children?: React.ReactNode;

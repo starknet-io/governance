@@ -37,6 +37,7 @@ export { Banner } from "./src/Banner/Banner";
 export { AvatarWithText } from "./src/AvatarWithText";
 export { Dropdown } from "./src/Dropdown";
 export { FormControlled } from "./src/FormControlled";
+export { Tooltip } from "./src/Tooltip";
 
 export {
   BoldIcon,
