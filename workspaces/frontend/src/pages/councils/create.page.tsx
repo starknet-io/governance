@@ -109,7 +109,6 @@ export function Page() {
                   rules={{ required: true }}
                   render={({ field }) => (
                     <MarkdownEditor
-                      offsetPlaceholder={"-8px"}
                       value={editorValue}
                       onChange={(val) => {
                         handleEditorChange(val);
@@ -117,6 +116,7 @@ export function Page() {
                       }}
                       customEditor={editor}
                       handleUpload={handleUpload}
+                      offsetPlaceholder={"-8px"}
                       placeholder={`
 Role of the [Name] council
 How the [Name] council works
