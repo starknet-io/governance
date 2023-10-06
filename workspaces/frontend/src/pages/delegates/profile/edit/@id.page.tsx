@@ -14,7 +14,8 @@ import {
   Multiselect,
   useMarkdownEditor,
   MarkdownEditor,
-  Banner, Text,
+  Banner,
+  Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { Controller, useForm, FieldErrors } from "react-hook-form";
@@ -171,6 +172,13 @@ export function Page() {
                       value={editorValue}
                       customEditor={editor}
                       handleUpload={handleUpload}
+                      offsetPlaceholder={"-8px"}
+                      placeholder={`
+Overview
+Core values
+Why me?
+Conflicts of interest
+                      `}
                     />
                   )}
                 />
@@ -208,7 +216,10 @@ export function Page() {
                   })}
                 />
                 {errors.starknetAddress && (
-                  <span>{errors.starknetAddress.message || "This field is required."}</span>
+                  <span>
+                    {errors.starknetAddress.message ||
+                      "This field is required."}
+                  </span>
                 )}
               </FormControl>
               <FormControl id="twitter">
@@ -244,8 +255,14 @@ export function Page() {
                 />
               </FormControl>
               <Box>
-                <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
-                  Delegate agreement <Text variant="largeStrong">(optional)</Text>
+                <Heading
+                  variant="h3"
+                  display="flex"
+                  alignItems="center"
+                  gap={1.5}
+                >
+                  Delegate agreement{" "}
+                  <Text variant="largeStrong">(optional)</Text>
                 </Heading>
                 <Text variant="medium">Briefly explain what this means.</Text>
               </Box>
@@ -332,11 +349,7 @@ export function Page() {
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  size="condensed"
-                  variant="primary"
-                >
+                <Button type="submit" size="condensed" variant="primary">
                   Save
                 </Button>
               </Flex>

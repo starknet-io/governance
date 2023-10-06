@@ -162,6 +162,7 @@ export function Page() {
                   name="body"
                   render={() => (
                     <MarkdownEditor
+                      offsetPlaceholder={"-8px"}
                       placeholder={`
 Overview
 Motivation

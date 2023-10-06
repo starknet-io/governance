@@ -81,7 +81,6 @@ export function Page() {
                 <Controller
                   name="content"
                   control={control} // Use control from useForm
-                  defaultValue=""
                   rules={{ required: true }}
                   render={({ field }) => (
                     <MarkdownEditor
@@ -91,6 +90,7 @@ export function Page() {
                       }}
                       value={editorValue}
                       handleUpload={handleUpload}
+                      placeholder={`Type here...`}
                     />
                   )}
                 />

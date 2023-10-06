@@ -14,6 +14,7 @@ interface EditableComponentProps {
   placeholder?: string;
   minHeight?: string;
   autoFocus?: boolean;
+  offsetPlaceholder?: string;
   onPaste?: (event: ClipboardEvent<HTMLDivElement>) => void;
 }
 
@@ -21,6 +22,7 @@ export const EditableComponent = ({
   minHeight,
   autoFocus = false,
   onPaste,
+  offsetPlaceholder = "12px",
   placeholder,
 }: EditableComponentProps) => {
   const renderElement = useCallback(
@@ -45,6 +47,7 @@ export const EditableComponent = ({
     border: "1px solid rgba(35, 25, 45, 0.10)",
     fontSize: "14px",
     minHeight: `${minHeight}px`,
+
     // Adjust outline based on focus state
   };
   return (
@@ -58,7 +61,8 @@ export const EditableComponent = ({
           variant="mediumStrong"
           opacity={1}
           {...attributes}
-          mt="-8px"
+          // mt="-8px"
+          mt={offsetPlaceholder}
           position="relative"
           className="fake-placeholder"
           color="content.support.default"

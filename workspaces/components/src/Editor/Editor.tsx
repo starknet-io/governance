@@ -18,6 +18,7 @@ import { withInlines } from "./hotkeys";
 export const MarkdownEditor: React.FC<
   MarkdownEditorProps & {
     handleUpload?: (file: File) => Promise<string | void> | void;
+    offsetPlaceholder?: string;
   }
 > = ({
   onChange,
@@ -26,10 +27,14 @@ export const MarkdownEditor: React.FC<
   hideTabBar = false,
   handleUpload,
   placeholder,
+  offsetPlaceholder,
   basicEditor = false,
 }) => {
   const { convertMarkdownToSlate } = useMarkdownEditor("");
-  const editor = useMemo(() => withInlines(withHistory(withReact(createEditor()))), []);
+  const editor = useMemo(
+    () => withInlines(withHistory(withReact(createEditor()))),
+    [],
+  );
 
   const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -71,6 +76,7 @@ export const MarkdownEditor: React.FC<
           </Toolbar>
         )}
         <EditableComponent
+          offsetPlaceholder={offsetPlaceholder}
           placeholder={placeholder}
           onPaste={handlePaste}
           minHeight={minHeight}

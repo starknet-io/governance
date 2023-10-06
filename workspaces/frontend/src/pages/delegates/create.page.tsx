@@ -119,6 +119,7 @@ export function Page() {
                   onChange={handleEditorChange}
                   value={editorValue}
                   handleUpload={handleUpload}
+                  offsetPlaceholder={"-8px"}
                   placeholder={`
 Overview
 Core values

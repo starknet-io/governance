@@ -109,6 +109,7 @@ export function Page() {
                   rules={{ required: true }}
                   render={({ field }) => (
                     <MarkdownEditor
+                      offsetPlaceholder={"-8px"}
                       value={editorValue}
                       onChange={(val) => {
                         handleEditorChange(val);

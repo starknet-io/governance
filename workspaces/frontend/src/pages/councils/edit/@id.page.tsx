@@ -184,6 +184,13 @@ export function Page() {
                   value={editorValue}
                   customEditor={editor}
                   handleUpload={handleUpload}
+                  offsetPlaceholder={"-8px"}
+                  placeholder={`
+Role of the [Name] council
+How the [Name] council works
+FAQs
+Links
+                        `}
                 />
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>
@@ -223,11 +230,7 @@ export function Page() {
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  size="condensed"
-                  variant="primary"
-                >
+                <Button type="submit" size="condensed" variant="primary">
                   Save
                 </Button>
               </Flex>
