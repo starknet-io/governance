@@ -30,8 +30,8 @@ export function Page() {
   const cancelRef = useRef(null);
   const editPost = trpc.posts.editPost.useMutation();
   const pageContext = usePageContext();
-  const postResp = trpc.posts.getPostById.useQuery({
-    id: Number(pageContext.routeParams!.id),
+  const postResp = trpc.posts.getPostBySlug.useQuery({
+    slug: pageContext.routeParams!.postSlug,
   });
   const { data: post } = postResp;
 
@@ -79,9 +79,11 @@ export function Page() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       data.content = editorValue;
-      data.id = Number(pageContext.routeParams!.id);
-      await editPost.mutateAsync(data).then(() => {
-        navigate(`/councils/posts/${pageContext.routeParams!.id}`);
+      data.id = post?.id as number;
+      await editPost.mutateAsync(data).then((res) => {
+        navigate(
+          `/councils/${pageContext.routeParams!.slug}/posts/${res?.slug}`,
+        );
       });
     } catch (error) {
       // Handle error
