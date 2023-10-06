@@ -104,7 +104,6 @@ export function Page() {
           console.log(err);
           setError(err?.message ? err.message : JSON.stringify(err));
         });
-      trigger()
     } catch (error) {
       // Handle error
       console.log(error);
@@ -168,26 +167,37 @@ export function Page() {
                   })}
                   defaultValue={council?.name ?? ""}
                 />
-                {errors.name && <span>This field is required.</span>}
+                {errors.name && <span>Add council name</span>}
               </FormControl>
 
               <FormControl id="description">
                 <FormLabel>Short description</FormLabel>
-                <Textarea
-                  variant="primary"
-                  name="comment"
-                  maxLength={280}
-                  placeholder="Short description"
-                  rows={4}
-                  focusBorderColor={"#292932"}
-                  resize="none"
-                  {...register("description", {
-                    required: true,
-                  })}
-                  value={shortDescValue}
-                  onChange={(e) => setShortDescValue(e.target.value)}
+                <Controller
+                  name="description"
+                  control={control}
+                  rules={{
+                    validate: {
+                      required: (value) => {
+                        if (!shortDescValue || !shortDescValue)
+                          return "Add council description";
+                      },
+                    },
+                  }}
+                  render={({ field }) => (
+                    <Textarea
+                      variant="primary"
+                      name="description"
+                      maxLength={280}
+                      placeholder="Short description"
+                      rows={4}
+                      focusBorderColor={"#292932"}
+                      resize="none"
+                      value={shortDescValue}
+                      onChange={(e) => setShortDescValue(e.target.value)}
+                    />
+                  )}
                 />
-                {errors.description && <span>This field is required.</span>}
+                {errors.description && <span>Add council description</span>}
               </FormControl>
 
               <FormControl id="statement">
