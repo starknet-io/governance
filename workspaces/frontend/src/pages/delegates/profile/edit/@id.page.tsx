@@ -103,7 +103,9 @@ export function Page() {
     } else {
       setAgreementType(null);
     }
-    trigger(); // to validate and not have to wait for edit button
+    setTimeout(() => {
+      trigger(); // to validate after editor is loaded
+    }, 10);
   };
 
   const deleteDelegate = trpc.delegates.deleteDelegate.useMutation();
@@ -163,11 +165,24 @@ export function Page() {
                   name="statement"
                   control={control}
                   defaultValue=""
+                  rules={{
+                    validate: {
+                      required: (value) => {
+                        // Trim the editorValue to remove spaces and new lines
+                        const trimmedValue = editorValue?.trim();
+
+                        if (!trimmedValue?.length || !trimmedValue) {
+                          return "Describe why a community member should delegate to you";
+                        }
+                      },
+                    },
+                  }}
                   render={({ field }) => (
                     <MarkdownEditor
                       onChange={(value) => {
                         handleEditorChange(value);
                         field.onChange(value); // Update the form state
+                        trigger("statement");
                       }}
                       value={editorValue}
                       customEditor={editor}
@@ -182,7 +197,7 @@ Conflicts of interest
                     />
                   )}
                 />
-                {errors.statement && <span>This field is required.</span>}
+                {errors.statement && <span>{errors.statement.message}</span>}
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Delegate interests</FormLabel>
@@ -201,7 +216,7 @@ Conflicts of interest
                     />
                   )}
                 />
-                {errors.interests && <span>This field is required.</span>}
+                {errors.interests && <span>Choose your interests</span>}
               </FormControl>
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Starknet wallet address</FormLabel>

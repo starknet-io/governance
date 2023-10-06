@@ -47,6 +47,8 @@ export function Page() {
     control,
     setValue,
     formState: { errors, isValid },
+    trigger,
+    clearErrors,
     setError,
   } = useForm<FormValues>({
     mode: "onChange",
@@ -57,6 +59,13 @@ export function Page() {
     editorValue: customAgreementEditorValue,
     handleEditorChange: handleCustomAgreementEditorChange,
   } = useMarkdownEditor("");
+
+  const handleEditorChangeWrapper = (value) => {
+    handleEditorChange(value);
+    if (errors.statement) {
+      trigger("statement");
+    }
+  };
 
   const { handleUpload } = useFileUpload();
 
@@ -115,19 +124,37 @@ export function Page() {
             <Stack spacing="24px" direction={{ base: "column" }}>
               <FormControl id="delegate-statement">
                 <FormLabel>Delegate pitch</FormLabel>
-                <MarkdownEditor
-                  onChange={handleEditorChange}
-                  value={editorValue}
-                  handleUpload={handleUpload}
-                  offsetPlaceholder={"-8px"}
-                  placeholder={`
+                <Controller
+                  name="statement"
+                  control={control}
+                  rules={{
+                    validate: {
+                      required: (value) => {
+                        // Trim the editorValue to remove spaces and new lines
+                        const trimmedValue = editorValue?.trim();
+
+                        if (!trimmedValue?.length || !trimmedValue) {
+                          return "Describe why a community member should delegate to you";
+                        }
+                      },
+                    },
+                  }}
+                  render={({ field }) => (
+                    <MarkdownEditor
+                      onChange={handleEditorChangeWrapper}
+                      value={editorValue}
+                      handleUpload={handleUpload}
+                      offsetPlaceholder={"-8px"}
+                      placeholder={`
 Overview
 Core values
 Why me?
 Conflicts of interest
                       `}
+                    />
+                  )}
                 />
-                {errors.statement && <span>This field is required.</span>}
+                {errors.statement && <span>{errors.statement.message}</span>}
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Delegate interests</FormLabel>
@@ -146,7 +173,7 @@ Conflicts of interest
                     />
                   )}
                 />
-                {errors.interests && <span>This field is required.</span>}
+                {errors.interests && <span>Choose your interests</span>}
               </FormControl>
               <FormControl id="starknet-wallet-address">
                 <FormLabel>Starknet wallet address</FormLabel>
