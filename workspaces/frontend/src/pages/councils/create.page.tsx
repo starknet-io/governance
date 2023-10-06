@@ -37,10 +37,7 @@ export function Page() {
   const createCouncil = trpc.councils.saveCouncil.useMutation();
   const { handleUpload } = useFileUpload();
   const utils = trpc.useContext();
-  const { editorValue, handleEditorChange, editor } = useMarkdownEditor(
-    "",
-    EditorTemplate.proposalMarkDown,
-  );
+  const { editorValue, handleEditorChange, editor } = useMarkdownEditor("");
   const [shortDescValue, setShortDescValue] = useState("");
 
   const onSubmit = handleSubmit(async (data) => {
@@ -119,6 +116,13 @@ export function Page() {
                       }}
                       customEditor={editor}
                       handleUpload={handleUpload}
+                      offsetPlaceholder={"-8px"}
+                      placeholder={`
+Role of the [Name] council
+How the [Name] council works
+FAQs
+Links
+                        `}
                     />
                   )}
                 />

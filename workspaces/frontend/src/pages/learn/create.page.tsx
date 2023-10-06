@@ -39,7 +39,7 @@ export function Page() {
   const { handleUpload } = useFileUpload();
   const { editorValue, handleEditorChange } = useMarkdownEditor("");
 
-  const title = watch('title');
+  const title = watch("title");
   const NEW_ITEM_ID = Date.now();
   const NEW_ITEM = {
     id: NEW_ITEM_ID,
@@ -108,6 +108,7 @@ export function Page() {
               <FormControl id="proposal-body">
                 <FormLabel>Body</FormLabel>
                 <MarkdownEditor
+                  placeholder="Type here..."
                   value={editorValue}
                   onChange={handleEditorChange}
                   handleUpload={handleUpload}
