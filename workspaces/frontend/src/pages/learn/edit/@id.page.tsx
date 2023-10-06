@@ -18,7 +18,7 @@ import {
   Banner,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -30,6 +30,8 @@ export function Page() {
   const {
     handleSubmit,
     register,
+    control,
+    trigger,
     setValue,
     formState: { errors, isValid },
   } = useForm<RouterInput["pages"]["editPage"]>();
@@ -128,17 +130,45 @@ export function Page() {
                     required: true,
                   })}
                 />
-                {errors.title && <span>This field is required.</span>}
+                {errors.title && <span>Add article name</span>}
               </FormControl>
               <FormControl id="proposal-body">
-                <FormLabel>Body</FormLabel>
-                <MarkdownEditor
-                  customEditor={editor}
-                  value={editorValue}
-                  onChange={handleEditorChange}
-                  handleUpload={handleUpload}
+                <FormLabel>Council statement</FormLabel>
+                <Controller
+                  name="content"
+                  control={control} // control comes from useForm()
+                  defaultValue=""
+                  rules={{
+                    validate: {
+                      required: (value) => {
+                        // Trim the editorValue to remove spaces and new lines
+                        const trimmedValue = editorValue?.trim();
+
+                        if (!trimmedValue?.length || !trimmedValue) {
+                          return "Add article text";
+                        }
+                      },
+                    },
+                  }}
+                  render={({ field }) => (
+                    <MarkdownEditor
+                      value={editorValue}
+                      onChange={(val) => {
+                        handleEditorChange(val);
+                        field.onChange(val);
+                        if (errors.content) {
+                          trigger("content");
+                        }
+                      }}
+                      customEditor={editor}
+                      handleUpload={handleUpload}
+                      offsetPlaceholder={"-8px"}
+                      placeholder={`
+Type here...`}
+                    />
+                  )}
                 />
-                {errors.content && <span>This field is required.</span>}
+                {errors.content && <span>{errors.content.message}</span>}
               </FormControl>
             </Stack>
             {!!treeItems.length && (

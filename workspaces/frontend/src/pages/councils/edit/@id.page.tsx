@@ -20,12 +20,13 @@ import {
 } from "@yukilabs/governance-components";
 
 import { trpc } from "src/utils/trpc";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { useFileUpload } from "src/hooks/useFileUpload";
+import { ethers } from "ethers";
 
 export function Page() {
   const {
@@ -38,6 +39,8 @@ export function Page() {
     handleSubmit,
     register,
     setValue,
+    control,
+    trigger,
     formState: { errors, isValid },
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
   const { handleUpload } = useFileUpload();
@@ -129,6 +132,15 @@ export function Page() {
     }
   };
 
+  const isValidAddress = (address: string) => {
+    try {
+      const checksumAddress = ethers.utils.getAddress(address);
+      return ethers.utils.isAddress(checksumAddress);
+    } catch (error) {
+      return false;
+    }
+  };
+
   return (
     <>
       <ContentContainer>
@@ -155,44 +167,80 @@ export function Page() {
                   })}
                   defaultValue={council?.name ?? ""}
                 />
-                {errors.name && <span>This field is required.</span>}
+                {errors.name && <span>Add council name</span>}
               </FormControl>
 
               <FormControl id="description">
                 <FormLabel>Short description</FormLabel>
-                <Textarea
-                  variant="primary"
-                  name="comment"
-                  maxLength={280}
-                  placeholder="Short description"
-                  rows={4}
-                  focusBorderColor={"#292932"}
-                  resize="none"
-                  {...register("description", {
-                    required: true,
-                  })}
-                  value={shortDescValue}
-                  onChange={(e) => setShortDescValue(e.target.value)}
+                <Controller
+                  name="description"
+                  control={control}
+                  rules={{
+                    validate: {
+                      required: (value) => {
+                        if (!shortDescValue || !shortDescValue)
+                          return "Add council description";
+                      },
+                    },
+                  }}
+                  render={({ field }) => (
+                    <Textarea
+                      variant="primary"
+                      name="description"
+                      maxLength={280}
+                      placeholder="Short description"
+                      rows={4}
+                      focusBorderColor={"#292932"}
+                      resize="none"
+                      value={shortDescValue}
+                      onChange={(e) => setShortDescValue(e.target.value)}
+                    />
+                  )}
                 />
-                {errors.description && <span>This field is required.</span>}
+                {errors.description && <span>Add council description</span>}
               </FormControl>
 
               <FormControl id="statement">
                 <FormLabel>Council statement</FormLabel>
-                <MarkdownEditor
-                  onChange={handleEditorChange}
-                  value={editorValue}
-                  customEditor={editor}
-                  handleUpload={handleUpload}
-                  offsetPlaceholder={"-8px"}
-                  placeholder={`
+                <Controller
+                  name="statement"
+                  control={control} // control comes from useForm()
+                  defaultValue=""
+                  rules={{
+                    validate: {
+                      required: (value) => {
+                        // Trim the editorValue to remove spaces and new lines
+                        const trimmedValue = editorValue?.trim();
+
+                        if (!trimmedValue?.length || !trimmedValue) {
+                          return "Add council statement";
+                        }
+                      },
+                    },
+                  }}
+                  render={({ field }) => (
+                    <MarkdownEditor
+                      value={editorValue}
+                      onChange={(val) => {
+                        handleEditorChange(val);
+                        field.onChange(val);
+                        if (errors.statement) {
+                          trigger("statement");
+                        }
+                      }}
+                      customEditor={editor}
+                      handleUpload={handleUpload}
+                      offsetPlaceholder={"-8px"}
+                      placeholder={`
 Role of the [Name] council
 How the [Name] council works
 FAQs
 Links
                         `}
+                    />
+                  )}
                 />
-                {errors.statement && <span>This field is required.</span>}
+                {errors.statement && <span>{errors.statement.message}</span>}
               </FormControl>
 
               <FormControl id="council-members">
@@ -207,10 +255,20 @@ Links
               <FormControl id="council-name">
                 <FormLabel>Multisig address (optional)</FormLabel>
                 <Input
+                  size="standard"
                   variant="primary"
                   placeholder="0x..."
-                  {...register("address")}
+                  {...register("address", {
+                    validate: {
+                      isValidEthereumAddress: (value) =>
+                        !value ||
+                        !value.length ||
+                        isValidAddress(value) ||
+                        "Invalid Ethereum address.",
+                    },
+                  })}
                 />
+                {errors.address && <span>{errors.address.message}</span>}
               </FormControl>
 
               <Flex justifyContent="flex-end" gap="16px">

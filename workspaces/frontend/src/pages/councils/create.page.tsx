@@ -23,6 +23,7 @@ import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
+import { ethers } from "ethers";
 
 export function Page() {
   const {
@@ -30,6 +31,7 @@ export function Page() {
     register,
     control,
     formState: { errors, isValid },
+    trigger,
   } = useForm<RouterInput["councils"]["saveCouncil"]>();
 
   const [members, setMembers] = useState<MemberType[]>([]);
@@ -39,6 +41,15 @@ export function Page() {
   const utils = trpc.useContext();
   const { editorValue, handleEditorChange, editor } = useMarkdownEditor("");
   const [shortDescValue, setShortDescValue] = useState("");
+
+  const isValidAddress = (address: string) => {
+    try {
+      const checksumAddress = ethers.utils.getAddress(address);
+      return ethers.utils.isAddress(checksumAddress);
+    } catch (error) {
+      return false;
+    }
+  };
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -78,7 +89,7 @@ export function Page() {
                     required: true,
                   })}
                 />
-                {errors.name && <span>This field is required.</span>}
+                {errors.name && <span>Add council name</span>}
               </FormControl>
 
               <FormControl id="description">
@@ -97,7 +108,7 @@ export function Page() {
                   })}
                   onChange={(e) => setShortDescValue(e.target.value)}
                 />
-                {errors.description && <span>This field is required.</span>}
+                {errors.description && <span>Add council description</span>}
               </FormControl>
 
               <FormControl id="statement">
@@ -106,13 +117,27 @@ export function Page() {
                   name="statement"
                   control={control} // control comes from useForm()
                   defaultValue=""
-                  rules={{ required: true }}
+                  rules={{
+                    validate: {
+                      required: (value) => {
+                        // Trim the editorValue to remove spaces and new lines
+                        const trimmedValue = editorValue?.trim();
+
+                        if (!trimmedValue?.length || !trimmedValue) {
+                          return "Add council statement";
+                        }
+                      },
+                    },
+                  }}
                   render={({ field }) => (
                     <MarkdownEditor
                       value={editorValue}
                       onChange={(val) => {
                         handleEditorChange(val);
                         field.onChange(val);
+                        if (errors.statement) {
+                          trigger("statement");
+                        }
                       }}
                       customEditor={editor}
                       handleUpload={handleUpload}
@@ -126,7 +151,7 @@ Links
                     />
                   )}
                 />
-                {errors.statement && <span>This field is required.</span>}
+                {errors.statement && <span>{errors.statement.message}</span>}
               </FormControl>
 
               <FormControl id="council-members">
@@ -139,8 +164,17 @@ Links
                   size="standard"
                   variant="primary"
                   placeholder="0x..."
-                  {...register("address")}
+                  {...register("address", {
+                    validate: {
+                      isValidEthereumAddress: (value) =>
+                        !value ||
+                        !value.length ||
+                        isValidAddress(value) ||
+                        "Invalid Ethereum address.",
+                    },
+                  })}
                 />
+                {errors.address && <span>{errors.address.message}</span>}
               </FormControl>
 
               <Flex justifyContent="flex-end">

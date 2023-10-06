@@ -117,7 +117,7 @@ export function Page() {
                     required: true,
                   })}
                 />
-                {errors.title && <span>This field is required.</span>}
+                {errors.title && <span>Add a title to your post</span>}
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Content</FormLabel>

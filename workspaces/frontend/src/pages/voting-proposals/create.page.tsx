@@ -53,6 +53,7 @@ export function Page() {
     handleSubmit,
     control,
     register,
+    trigger,
     formState: { isValid, errors },
   } = useForm<FieldValues>({
     async defaultValues() {
@@ -65,6 +66,13 @@ export function Page() {
       };
     },
   });
+
+  const handleEditorChangeWrapper = (value) => {
+    handleEditorChange(value);
+    if (errors.body) {
+      trigger("body");
+    }
+  };
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -134,6 +142,15 @@ export function Page() {
     }
   });
 
+  const isValidURL = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   return (
     <>
       <ContentContainer>
@@ -153,13 +170,25 @@ export function Page() {
                     required: true,
                   })}
                 />
-                {errors.title && <span>This field is required.</span>}
+                {errors.title && <span>Add proposal name</span>}
               </FormControl>
               <FormControl id="delegate-statement">
                 <FormLabel>Proposal Body</FormLabel>{" "}
                 <Controller
                   control={control}
                   name="body"
+                  rules={{
+                    validate: {
+                      required: (value) => {
+                        // Trim the editorValue to remove spaces and new lines
+                        const trimmedValue = editorValue?.trim();
+
+                        if (!trimmedValue?.length || !trimmedValue) {
+                          return "Describe your proposal";
+                        }
+                      },
+                    },
+                  }}
                   render={() => (
                     <MarkdownEditor
                       offsetPlaceholder={"-8px"}
@@ -171,12 +200,13 @@ Implementation
 Links
                       `}
                       customEditor={editor}
-                      onChange={handleEditorChange}
+                      onChange={handleEditorChangeWrapper}
                       value={editorValue}
                       handleUpload={handleUpload}
                     />
                   )}
                 />
+                {errors.body && <span>{errors.body.message}</span>}
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Forum discussion (optional) </FormLabel>
@@ -187,9 +217,18 @@ Links
                     size="standard"
                     variant="primary"
                     defaultValue=""
-                    {...register("discussion", {})}
+                    {...register("discussion", {
+                      validate: (value) => {
+                        if (!value || !value.length || isValidURL(value)) {
+                          return true;
+                        } else {
+                          return "Please enter a valid URL.";
+                        }
+                      },
+                    })}
                   />
                 </InputGroup>
+                {errors.discussion && <span>{errors.discussion.message}</span>}
               </FormControl>
 
               {/* // disabled for basic voting */}
@@ -256,7 +295,14 @@ Links
                       rules={{
                         required: "Voting period is required.",
                         validate: (value) => {
-                          if (value[0] >= value[1]) {
+                          if (
+                            !value ||
+                            value.length !== 2 ||
+                            !value[0] ||
+                            !value[1]
+                          ) {
+                            return "Both start and end dates are required.";
+                          } else if (value[0] >= value[1]) {
                             return "Start date/time must be before the end date/time.";
                           }
                           return true;
@@ -274,7 +320,9 @@ Links
                         />
                       )}
                     />
-                    {errors.votingPeriod && <span>This field is required</span>}
+                    {errors.votingPeriod && (
+                      <span>{errors.votingPeriod.message}</span>
+                    )}
                   </Box>
                 </Stack>
               </FormControl>
