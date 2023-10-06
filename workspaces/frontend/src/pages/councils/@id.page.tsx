@@ -221,7 +221,7 @@ export function Page() {
                   return (
                     <>
                       <ListRow.Root
-                        href={`/councils/posts/${post.id}`}
+                        href={`/councils/${council.slug}/posts/${post.slug}`}
                         key={post.id}
                       >
                         <ListRow.CommentSummary

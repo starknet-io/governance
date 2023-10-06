@@ -11,6 +11,7 @@ export const posts = pgTable('posts', {
   content: text('content'),
   councilId: integer('councilId').references(() => councils.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   userId: uuid('userId').references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  slug: text('slug').unique(),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),

@@ -15,7 +15,6 @@ import {
   MarkdownRenderer,
   Text,
   Username,
-  AvatarWithText,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -24,16 +23,21 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export function Page() {
   const pageContext = usePageContext();
-  const postResp = trpc.posts.getPostById.useQuery({
-    id: Number(pageContext.routeParams!.id),
+  const postResp = trpc.posts.getPostBySlug.useQuery({
+    slug: pageContext.routeParams!.postSlug,
   });
 
   const { data: post } = postResp;
   const { user } = usePageContext();
 
-  const comments = trpc.posts.getPostComments.useQuery({
-    postId: pageContext.routeParams!.id,
-  });
+  const comments = trpc.posts.getPostComments.useQuery(
+    {
+      postId: post?.id as number,
+    },
+    {
+      enabled: !!post?.id,
+    },
+  );
 
   const saveComment = trpc.comments.saveComment.useMutation({
     onSuccess: () => {
@@ -45,7 +49,7 @@ export function Page() {
     try {
       await saveComment.mutateAsync({
         content: value,
-        postId: parseInt(pageContext.routeParams!.id),
+        postId: post?.id,
       });
     } catch (error) {
       // Handle error
@@ -113,7 +117,7 @@ export function Page() {
       await saveComment.mutateAsync({
         content,
         parentId,
-        postId: parseInt(pageContext.routeParams!.id),
+        postId: post?.id,
       });
     } catch (error) {
       // Handle error
@@ -168,7 +172,12 @@ export function Page() {
                 </Box>
                 {hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
                   <ProfileSummaryCard.MoreActions>
-                    <MenuItem as="a" href={`/councils/posts/edit/${post?.id}`}>
+                    <MenuItem
+                      as="a"
+                      href={`/councils/${
+                        pageContext.routeParams!.slug
+                      }/posts/${post?.slug}/edit`}
+                    >
                       Edit
                     </MenuItem>
                   </ProfileSummaryCard.MoreActions>
@@ -238,7 +247,7 @@ export function Page() {
                 <></>
               )}
               <CommentList
-                commentsList={comments?.data || []}
+                commentsList={comments.data || []}
                 onVote={handleCommentVote}
                 onReply={handleReplySend}
                 onDelete={handleCommentDelete}
