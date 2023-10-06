@@ -1,5 +1,5 @@
 import { useSlate } from "slate-react";
-import { IconButton, useToken } from "@chakra-ui/react";
+import { IconButton } from "@chakra-ui/react";
 import {
   BoldIcon,
   ItalicIcon,
@@ -24,22 +24,13 @@ const ICONS: Record<Partial<MarkButtonTypes>, any> = {
 const MarkButton = ({ format }: MarkButtonProps) => {
   const editor = useSlate();
   const Icon = ICONS?.[format] ?? UnderlineIcon;
-  const [activeColor, inactiveColor] = useToken("colors", [
-    "content.default.selectedInverted",
-    "content.default.default",
-  ]);
   return (
     <IconButton
       aria-label={format}
       variant="ghost"
       isActive={isMarkActive(editor, format)}
       size="condensed"
-      icon={
-        <Icon
-          boxSize="20px"
-          color={isMarkActive(editor, format) ? activeColor : inactiveColor}
-        />
-      }
+      icon={<Icon boxSize="20px" />}
       onMouseDown={(event) => {
         event.preventDefault();
         toggleMark(editor, format);

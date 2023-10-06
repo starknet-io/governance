@@ -35,6 +35,8 @@ export const EditableComponent = ({
   const editor = useSlate();
   const [isFocused, setIsFocused] = useState(false);
   const styleObj = {
+    overflowY: 'scroll',
+    maxHeight: '500px',
     backgroundColor: "#FBFBFB",
     padding: "12px",
     paddingBottom: "44px",

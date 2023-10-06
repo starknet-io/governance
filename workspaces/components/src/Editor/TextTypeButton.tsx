@@ -5,7 +5,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  useToken,
   Text,
 } from "@chakra-ui/react";
 import { useSlate } from "slate-react";
@@ -15,11 +14,6 @@ import { CustomParagraphTypes } from "./ElementLeaf";
 
 export function TextTypeButton({ format = "heading_one" }) {
   const editor = useSlate();
-  const [activeColor, inactiveColor] = useToken("colors", [
-    "content.default.selectedInverted",
-    "content.default.default",
-  ]);
-
   return (
     <Menu placement="top-start">
       {({ isOpen }) => (
@@ -34,16 +28,10 @@ export function TextTypeButton({ format = "heading_one" }) {
               variant="ghost"
               size="condensed"
               isActive={isBlockActive(editor, format)}
+              pl="1"
               icon={
                 <Flex alignItems="center">
-                  <TextTypeIcon
-                    boxSize="20px"
-                    color={
-                      isBlockActive(editor, format)
-                        ? activeColor
-                        : inactiveColor
-                    }
-                  />
+                  <TextTypeIcon boxSize="20px" />
                   <ExpandIcon
                     transform={`rotate(${isOpen ? "180deg" : "0"})`}
                   />

@@ -1,23 +1,27 @@
+import { Text } from "@chakra-ui/react";
+
 const LinkBlock = ({ attributes, element, children }: any) => {
   const handleOnClick = () => {
     element.link && window.open(element.link, element.target);
   };
 
   return (
-    <div
-      onClick={handleOnClick}
-      style={{ display: "inline"}}
+    <a
+      href={element.link}
+      {...attributes}
+      {...element.attr}
+      target={element.target}
+      style={{ textDecoration: "none", cursor: "pointer" }}
     >
-      <a
-        href={element.link}
-        {...attributes}
-        {...element.attr}
-        target={element.target}
-        style={{ color: "blue", textDecoration: "underline" }}
+      <Text
+        onClick={handleOnClick}
+        as="span"
+        fontWeight="medium"
+        color="content.links.default"
       >
         {children}
-      </a>
-    </div>
+      </Text>
+    </a>
   );
 };
 

@@ -43,7 +43,8 @@ const categories = ["category1", "category2", "category3"];
 
 export function Page() {
   const { data: walletClient } = useWalletClient();
-  const { convertSlateToMarkdown } = useMarkdownEditor("");
+  const { editor, handleEditorChange, editorValue } =
+    useMarkdownEditor("", EditorTemplate.createProposalMarkDown);
   const { handleUpload } = useFileUpload();
   const [error, setError] = useState("");
 
@@ -87,7 +88,7 @@ export function Page() {
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
         type: "basic",
         title: data.title,
-        body: convertSlateToMarkdown(data.body),
+        body: editorValue,
         choices: ["For", "Against", "Abstain"],
         start: Math.floor(data!.votingPeriod[0].getTime() / 1000),
         end: Math.floor(data!.votingPeriod[1].getTime() / 1000),
@@ -160,14 +161,13 @@ export function Page() {
                 <Controller
                   control={control}
                   name="body"
-                  render={({ field: { onChange, value } }) => (
-                    <>
-                      <MarkdownEditor
-                        onChange={onChange}
-                        value={value}
-                        handleUpload={handleUpload}
-                      />
-                    </>
+                  render={() => (
+                    <MarkdownEditor
+                      customEditor={editor}
+                      onChange={handleEditorChange}
+                      value={editorValue}
+                      handleUpload={handleUpload}
+                    />
                   )}
                 />
               </FormControl>

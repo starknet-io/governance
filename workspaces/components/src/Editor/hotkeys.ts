@@ -3,8 +3,10 @@ import {
   Transforms,
   Element as SlateElement,
   BaseElement,
+  Path,
 } from "slate";
 import { CustomParagraphTypes } from "./ElementLeaf";
+import { ReactEditor } from "slate-react";
 
 export const HOTKEYS: { [key: string]: string } = {
   "mod+b": "bold",
@@ -83,3 +85,10 @@ export const toggleBlock = (editor: Editor, format: CustomParagraphTypes) => {
     Transforms.wrapNodes(editor, block);
   }
 };
+
+export const withInlines = (editor: ReactEditor) => {
+  const { isInline } = editor;
+  editor.isInline = (element: any) =>
+    ['link'].includes(element.type) || isInline(element);
+  return editor
+}

@@ -141,6 +141,16 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
             {...props}
           />
         ),
+        a: ({ ...props }) => (
+          <Text
+            as="a"
+            display="inline-block"
+            fontWeight="medium"
+            color="content.links.default"
+            cursor="pointer"
+            {...props}
+          />
+        ),
       }}
     >
       {content}
