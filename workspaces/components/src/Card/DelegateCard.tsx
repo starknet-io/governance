@@ -5,7 +5,6 @@ import {
   CardFooter,
   Box,
   Text,
-  Tooltip,
   LinkBox,
   LinkOverlay,
   Spinner,
@@ -17,6 +16,7 @@ import { formatVotesAmount } from "src/utils";
 import "./karma.css";
 
 import { AvatarWithText } from "src/AvatarWithText";
+import { Tooltip } from "src/Tooltip";
 
 export type DelegateCardProps = {
   statement: string | null;
