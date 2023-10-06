@@ -9,9 +9,9 @@ import {
 } from "@chakra-ui/react";
 
 type CustomFormControlProps = {
-  label: string;
-  isRequired?: boolean;
-  isError?: boolean;
+  label?: string;
+  isRequired?: boolean | undefined;
+  isInvalid?: boolean | undefined;
   helperText?: string;
   errorMessage?: string | null;
   children: ReactNode;
@@ -20,15 +20,14 @@ type CustomFormControlProps = {
 export const FormControlled: React.FC<CustomFormControlProps> = ({
   label,
   isRequired = false,
-  isError = false,
+  isInvalid = false,
   helperText = "",
   errorMessage = "",
   children,
   ...otherProps
 }) => {
-  console.log("Is there an error?", isError);
   return (
-    <FormControl isInvalid={isError} isRequired={isRequired}>
+    <FormControl isInvalid={isInvalid} isRequired={isRequired}>
       <FormLabel
         sx={{
           fontSize: "14px",
@@ -41,12 +40,14 @@ export const FormControlled: React.FC<CustomFormControlProps> = ({
         }}
       >
         {label}
-        {isRequired && <Text color="content.support.default">(required)</Text>}
+        {!isRequired && label && (
+          <Text color="content.support.default">(optional)</Text>
+        )}
       </FormLabel>
       {children
         ? React.cloneElement(children as React.ReactElement, otherProps)
         : null}
-      {!isError ? (
+      {!isInvalid ? (
         <FormHelperText
           sx={{
             mt: "standard.xs",
