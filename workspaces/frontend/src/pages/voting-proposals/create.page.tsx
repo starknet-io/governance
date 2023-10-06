@@ -170,7 +170,7 @@ export function Page() {
                     required: true,
                   })}
                 />
-                {errors.title && <span>This field is required.</span>}
+                {errors.title && <span>Add proposal name</span>}
               </FormControl>
               <FormControl id="delegate-statement">
                 <FormLabel>Proposal Body</FormLabel>{" "}

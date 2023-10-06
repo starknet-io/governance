@@ -24,6 +24,7 @@ import { TrashIcon, TwitterIcon } from "src/Icons";
 import { truncateAddress } from "src/utils";
 import { Username } from "src/Username";
 import * as ListRow from "src/ListRow/ListRowGeneric";
+import { ethers } from "ethers";
 
 export type MemberType = {
   address: string;
@@ -62,12 +63,25 @@ export const MembersList: React.FC<MembersListProps> = ({
     miniBio: "",
   });
 
+  const isValidAddress = (address: string) => {
+    try {
+      const checksumAddress = ethers.utils.getAddress(address);
+      return ethers.utils.isAddress(checksumAddress);
+    } catch (error) {
+      return false;
+    }
+  };
+
   const validateForm = () => {
     let errors = {
-      name: member.name ? "" : "Member name is required.",
-      address: member.address ? "" : "Ethereum address is required.",
+      name: member.name ? "" : "Add member name",
+      address: member.address
+        ? isValidAddress(member.address)
+          ? ""
+          : "Not a valid Ethereum address"
+        : "Add Ethereum address",
       twitterHandle: member.twitterHandle ? "" : "Twitter handle is required.",
-      miniBio: member.miniBio ? "" : "Mini Bio is required.",
+      miniBio: member.miniBio ? "" : "Add a mini bio for council member",
     };
 
     setFormErrors(errors);

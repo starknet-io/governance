@@ -191,7 +191,7 @@ Conflicts of interest
                 {errors.starknetAddress && (
                   <Text>
                     {errors.starknetAddress.message ||
-                      "This field is required."}
+                      "Not a valid Starknet address"}
                   </Text>
                 )}
               </FormControl>
