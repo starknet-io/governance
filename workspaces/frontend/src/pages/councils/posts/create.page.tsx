@@ -23,6 +23,7 @@ export function Page() {
   const {
     handleSubmit,
     register,
+    trigger,
     formState: { errors, isValid },
     control,
   } = useForm<RouterInput["posts"]["savePost"]>();
@@ -74,19 +75,33 @@ export function Page() {
                     required: true,
                   })}
                 />
-                {errors.title && <span>This field is required.</span>}
+                {errors.title && <span>Add a title to your post</span>}
               </FormControl>
               <FormControl id="proposal-body">
                 <FormLabel>Content</FormLabel>
                 <Controller
                   name="content"
                   control={control} // Use control from useForm
-                  rules={{ required: true }}
+                  rules={{
+                    validate: {
+                      required: (value) => {
+                        // Trim the editorValue to remove spaces and new lines
+                        const trimmedValue = editorValue?.trim();
+
+                        if (!trimmedValue?.length || !trimmedValue) {
+                          return "Add text to your post";
+                        }
+                      },
+                    },
+                  }}
                   render={({ field }) => (
                     <MarkdownEditor
                       onChange={(e) => {
                         handleEditorChange(e);
                         field.onChange(e);
+                        if (errors.content) {
+                          trigger("statement");
+                        }
                       }}
                       value={editorValue}
                       handleUpload={handleUpload}
@@ -94,16 +109,11 @@ export function Page() {
                     />
                   )}
                 />
-                {errors.content && <span>This field is required.</span>}
+                {errors.content && <span>{errors.content.message}</span>}
               </FormControl>
 
               <Flex justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  size="condensed"
-                  variant="primary"
-                  isDisabled={!isValid}
-                >
+                <Button type="submit" size="condensed" variant="primary">
                   Create post
                 </Button>
               </Flex>
