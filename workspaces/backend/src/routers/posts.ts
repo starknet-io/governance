@@ -1,13 +1,12 @@
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { posts } from '../db/schema/posts';
 import { db } from '../db/db';
-import { desc, eq, and } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
 import { commentVotes } from "../db/schema/commentVotes";
 import { z } from "zod";
 import slugify from 'slugify';
-import { councils } from '../db/schema/councils';
 
 const postInsertSchema = createInsertSchema(posts);
 
