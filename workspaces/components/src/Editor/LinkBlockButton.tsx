@@ -25,7 +25,7 @@ const defaultValues = {
 };
 
 const validationSchema = z.object({
-  url: z.string().url(),
+  url: z.string(),
 });
 
 const LinkBlockButton = ({ editor, format }: any) => {
