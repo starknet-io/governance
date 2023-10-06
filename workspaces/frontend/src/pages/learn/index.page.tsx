@@ -66,7 +66,7 @@ export function Page() {
   };
 
   const formattedAddress = truncateAddress(`${selectedPage?.author?.address}`);
-  // console.log(selectedPage?.author?.)
+
   return (
     <Box
       display="flex"
