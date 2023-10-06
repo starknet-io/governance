@@ -11,6 +11,7 @@ import {
   MenuList,
   Stack,
   Text,
+  Button as ChakraButton,
 } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
@@ -98,7 +99,8 @@ const CommentShowMoreReplies = ({
     role="button"
     gap={1}
     onClick={toggleReplies}
-    mt={3}
+    mt={0}
+    height="36px"
   >
     {isThreadOpen ? (
       <MinusCircleIcon boxSize="22px" />
@@ -324,6 +326,13 @@ const CommentItem: React.FC<CommentProps> = ({
     useState<boolean>(false);
   const { setShowAuthFlow } = useDynamicContext();
 
+  function stripHtmlTagsAndTrim(input: string): string {
+    const stripped = input.replace(/[\r\n]+/g, "");
+    console.log("stripped: ", stripped);
+
+    return stripped.length > 40 ? stripped.substring(0, 40) : stripped;
+  }
+
   return (
     <>
       <InfoModal
@@ -356,8 +365,8 @@ const CommentItem: React.FC<CommentProps> = ({
           Delete
         </Button>
       </InfoModal>
-      <Stack pl={depth * 8}>
-        <Flex gap={3}>
+      <Stack pl={depth * 8} spacing="0">
+        <Flex gap="standard.base" pt="standard.sm">
           <Box
             display="flex"
             flexDirection="column"
@@ -372,22 +381,22 @@ const CommentItem: React.FC<CommentProps> = ({
               bottom={
                 hasReplies && depth < 3
                   ? numberOfReplies < 3
-                    ? "26px"
-                    : "8px"
-                  : "-10px"
+                    ? "40px"
+                    : "6px"
+                  : "8px"
               }
               width="1px"
-              backgroundColor="#DCDBDD"
+              backgroundColor="border.dividers"
               left="50%"
               zIndex="0"
             />
             {author?.profileImage || author?.ensAvatar ? (
               <Avatar
-                size={"sm"}
+                size={"md"}
                 src={author?.profileImage || (author?.ensAvatar as string)}
               />
             ) : (
-              <Indenticon size={40} address={author?.address || ""} />
+              <Indenticon size={32} address={author?.address || ""} />
             )}
             {hasReplies && numberOfReplies <= 2 && depth < 3 ? (
               <CommentShowMoreReplies
@@ -397,14 +406,19 @@ const CommentItem: React.FC<CommentProps> = ({
               />
             ) : null}
           </Box>
-          <Box display="flex" flexDirection="column" gap={3} w="full">
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap={"standard.xs"}
+            w="full"
+          >
             <Flex direction="column">
-              <Text fontWeight="bold" fontSize="12px">
+              <Text variant="smallStrong" color="content.accent.default">
                 {author?.username ||
                   author?.ensName ||
                   truncateAddress(author ? author.address : "")}
               </Text>
-              <Text fontSize="12px" color="#6C6C75">
+              <Text variant="small" color="content.support.default" mt="-2px">
                 {daysAgo(createdAt)}
               </Text>
             </Flex>
@@ -426,11 +440,21 @@ const CommentItem: React.FC<CommentProps> = ({
                   }}
                 />
               ) : (
-                <MarkdownRenderer content={content || ""} />
+                <Box>
+                  <MarkdownRenderer
+                    textProps={{
+                      fontSize: "14px",
+                      color: "content.accent.default",
+                      letterSpacing: "0.07px",
+                      marginBottom: "-4px",
+                    }}
+                    content={content || ""}
+                  />
+                </Box>
               )}
             </Box>
             <Flex alignItems="center">
-              <Flex gap={5}>
+              <Flex alignItems="center" gap={"standard.xs"} height="36px">
                 <CommentVotes
                   isUser={!!user}
                   isDownvote={isDownvote}
@@ -452,7 +476,7 @@ const CommentItem: React.FC<CommentProps> = ({
                     }
                   >
                     <IconButton
-                      variant="simple"
+                      variant="ghost"
                       onClick={() => {
                         if (isEditMode) {
                           setIsEditMode(false);
@@ -466,7 +490,7 @@ const CommentItem: React.FC<CommentProps> = ({
                         }
                       }}
                       aria-label="Reply"
-                      size="small"
+                      size="condensed"
                       icon={
                         <ReplyIcon width="20px" height="20px" color="#4a4a4f" />
                       }
@@ -495,7 +519,31 @@ const CommentItem: React.FC<CommentProps> = ({
                         Delete
                       </MenuItem>
                     )}
-                    <MenuItem>Report</MenuItem>
+                    <ChakraButton
+                      variant="ghost"
+                      data-tally-open="woRGRN"
+                      data-tally-emoji-text="👋"
+                      data-tally-emoji-animation="wave"
+                      data-comment={comment.id}
+                      data-url={
+                        typeof window !== "undefined"
+                          ? window.location.href
+                          : ""
+                      }
+                      data-user={
+                        author?.username || author?.ensName || author?.address
+                      }
+                      data-content={stripHtmlTagsAndTrim(content)}
+                      width={"100%"}
+                      justifyContent={"flex-start"}
+                      padding={0}
+                      minHeight={"33px"}
+                      paddingLeft={"10px"}
+                      fontWeight={"400"}
+                      textColor={"#1a1523"}
+                    >
+                      Report
+                    </ChakraButton>
                   </CommentMoreActions>
                 </Flex>
               </Flex>
@@ -561,7 +609,7 @@ export const CommentList: React.FC<CommentListProps> = ({
   );
 
   return (
-    <Flex flexDirection="column" gap="20px">
+    <Flex flexDirection="column">
       {commentsList.map((comment, index) => (
         <CommentItem
           key={index}

@@ -139,6 +139,7 @@ export function DynamicContextProviderPage(props: Props) {
       {
         onSuccess: () => {
           setModalOpen(false);
+          utils.auth.currentUser.invalidate();
         },
       },
     );

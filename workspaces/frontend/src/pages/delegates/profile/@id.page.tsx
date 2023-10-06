@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DocumentProps, ROLES } from "src/renderer/types";
-
+import { Button as ChakraButton } from "@chakra-ui/react";
 import {
   Box,
   ConfirmModal,
@@ -40,6 +40,7 @@ import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
 import { hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -153,6 +154,7 @@ export function Page() {
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address } = useAccount();
   const { user } = usePageContext();
+  const { user: dynamicUser } = useDynamicContext();
   // get delegation hash
   const [txHash, setTxHash] = useState("");
   // listen to txn with delegation hash
@@ -164,7 +166,7 @@ export function Page() {
   } = useWaitForTransaction({ hash: txHash as `0x${string}` });
   // handle delegation cases
   useEffect(() => {
-    if (isDelegationLoading) {
+    if (isDelegationLoading && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
@@ -174,27 +176,29 @@ export function Page() {
       setStatusDescription("");
     }
 
-    if (isDelegationError) {
+    if (isDelegationError && dynamicUser) {
       console.log(delegationError);
       setIsStatusModalOpen(true);
       setStatusTitle(
-        hasUserDelegatedTokensToThisDelegate
-          ? "Tokens undelegation failed"
-          : "Tokens delegation failed",
+        isUndelegation
+          ? "Undelegating votes failed"
+          : "Delegating votes failed",
       );
+      setIsUndelegation(false);
       setStatusDescription(
         "An error occurred while processing your transaction.",
       );
     }
 
-    if (isDelegationSuccess) {
+    if (isDelegationSuccess && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
-        hasUserDelegatedTokensToThisDelegate
+        isUndelegation
           ? "Votes undelegated successfully"
           : "Votes delegated successfully",
       );
       setStatusDescription("");
+      setIsUndelegation(false);
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
@@ -341,9 +345,24 @@ export function Page() {
             Edit
           </MenuItem>
         )}
-        <MenuItem as="a" href="/delegate/edit/">
+        <ChakraButton
+          variant="ghost"
+          data-tally-open="mDpzpE"
+          data-tally-emoji-text="👋"
+          data-tally-emoji-animation="wave"
+          data-profile={
+            typeof window !== "undefined" ? window.location.href : ""
+          }
+          width={"100%"}
+          justifyContent={"flex-start"}
+          padding={0}
+          minHeight={"33px"}
+          paddingLeft={"10px"}
+          fontWeight={"400"}
+          textColor={"#1a1523"}
+        >
           Report
-        </MenuItem>
+        </ChakraButton>
       </>
     );
   }
@@ -398,7 +417,7 @@ export function Page() {
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
-                setStatusTitle("Tokens delegation failed");
+                setStatusTitle("Delegating votes failed");
                 setStatusDescription(
                   err.shortMessage ||
                     err.message ||
@@ -515,7 +534,7 @@ export function Page() {
                   })
                   .catch((err) => {
                     setIsStatusModalOpen(true);
-                    setStatusTitle("Tokens undelegation failed");
+                    setStatusTitle("Undelegating votes failed");
                     setStatusDescription(err.shortMessage);
                   });
                 setIsOpen(false);

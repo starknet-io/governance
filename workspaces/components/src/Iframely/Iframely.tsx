@@ -62,6 +62,10 @@ export function Iframely(props: IframelyProps) {
   } else if (!isLoaded) {
     return <Skeleton height="110px" />;
   } else {
-    return <div dangerouslySetInnerHTML={html} />;
+    return (
+      <a href={props.url} target="_blank" rel="noopener noreferrer">
+        <div dangerouslySetInnerHTML={html} style={{ pointerEvents: "none" }} />
+      </a>
+    );
   }
 }

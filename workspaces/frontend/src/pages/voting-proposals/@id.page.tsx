@@ -17,7 +17,6 @@ import {
   IconButton,
   InfoModal,
   PlaceholderImage,
-  Stack,
   Stat,
   SummaryItems,
   Text,
@@ -60,6 +59,7 @@ import {
   SuccessIcon,
   WalletIcon,
 } from "@yukilabs/governance-components/src/Icons";
+import { Button as ChakraButton } from "@chakra-ui/react";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -561,9 +561,24 @@ export function Page() {
                   <MenuItem as="a" href="#">
                     Share
                   </MenuItem>
-                  <MenuItem as="a" href="#">
+                  <ChakraButton
+                    variant="ghost"
+                    data-tally-open="mKx1xD"
+                    data-tally-emoji-text="👋"
+                    data-tally-emoji-animation="wave"
+                    data-proposal={
+                      typeof window !== "undefined" ? window.location.href : ""
+                    }
+                    width={"100%"}
+                    justifyContent={"flex-start"}
+                    padding={0}
+                    minHeight={"33px"}
+                    paddingLeft={"10px"}
+                    fontWeight={"400"}
+                    textColor={"#1a1523"}
+                  >
                     Report
-                  </MenuItem>
+                  </ChakraButton>
                 </MoreActions>
               </Box>
             </Flex>
@@ -689,13 +704,15 @@ export function Page() {
                 </AppBar.Root>
               </>
             )}
-            <CommentList
-              commentsList={comments.data || []}
-              onVote={handleCommentVote}
-              onDelete={handleCommentDelete}
-              onReply={handleReplySend}
-              onEdit={handleCommentEdit}
-            />
+            <Box mt="standard.xs">
+              <CommentList
+                commentsList={comments.data || []}
+                onVote={handleCommentVote}
+                onDelete={handleCommentDelete}
+                onReply={handleReplySend}
+                onEdit={handleCommentEdit}
+              />
+            </Box>
           </Flex>
         </Box>
       </ContentContainer>

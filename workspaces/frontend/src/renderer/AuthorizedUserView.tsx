@@ -154,7 +154,9 @@ const AuthorizedUserView = () => {
         {isMenuOpen ? (
           <>
             <UserProfileMenu
-              delegatedTo={delegatedTo?.data ? delegatedTo?.data : null}
+              delegatedTo={
+                delegatedTo?.data ? delegatedTo?.data : delegationData
+              }
               onDisconnect={handleDisconnect}
               user={user}
               onSave={handleSave}

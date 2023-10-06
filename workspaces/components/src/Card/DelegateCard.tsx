@@ -49,7 +49,10 @@ const delegateInterests: Record<string, string> = {
   defi: "DeFi",
 };
 
-function extractParagraph(markdownContent: string, charLimit = 300): string {
+export function extractParagraph(
+  markdownContent: string,
+  charLimit = 300,
+): string {
   // Remove headings
   const noHeadings = markdownContent.replace(/#+ .+\n/g, "").trim();
 

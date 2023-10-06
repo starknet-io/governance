@@ -1,4 +1,4 @@
-FROM node:18.18.0-bullseye-slim as build
+FROM node:18.18.0-bullseye-slim
 
 ARG VITE_APP_GOOGLE_TAG_ID
 ARG VITE_APP_SNAPSHOT_SPACE
