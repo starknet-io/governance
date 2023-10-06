@@ -34,6 +34,7 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
+import {ethers} from "ethers";
 
 const userRoleValues = userRoleEnum.enumValues;
 
@@ -163,6 +164,15 @@ export function Page() {
     );
   };
 
+  const isValidAddress = (address: string) => {
+    try {
+      const checksumAddress = ethers.utils.getAddress(address);
+      return ethers.utils.isAddress(checksumAddress);
+    } catch (error) {
+      return false;
+    }
+  };
+
   return (
     <ContentContainer maxWidth="800" center>
       <Box
@@ -267,10 +277,13 @@ export function Page() {
                       variant="primary"
                       placeholder="Add address..."
                       {...addRegister("address", {
-                        required: true,
+                        required: "This field is required.",
+                        validate: {
+                          isValidEthereumAddress: value => isValidAddress(value) || "Invalid Ethereum address."
+                        }
                       })}
                     />
-                    {addErrors.address && <span>This field is required.</span>}
+                    {addErrors.address && <span>{addErrors.address.message}</span>}
                   </FormControl>
 
                   <FormControl id="role">
@@ -294,7 +307,6 @@ export function Page() {
                     <Button
                       type="submit"
                       variant="primary"
-                      isDisabled={!isAddValid}
                     >
                       Add
                     </Button>
