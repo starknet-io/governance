@@ -35,8 +35,8 @@ export const EditableComponent = ({
   const editor = useSlate();
   const [isFocused, setIsFocused] = useState(false);
   const styleObj = {
-    overflowY: 'scroll',
-    maxHeight: '500px',
+    overflowY: "scroll",
+    maxHeight: "500px",
     backgroundColor: "#FBFBFB",
     padding: "12px",
     paddingBottom: "44px",
@@ -56,10 +56,12 @@ export const EditableComponent = ({
       renderPlaceholder={({ children, attributes }) => (
         <Text
           variant="mediumStrong"
+          opacity={1}
           {...attributes}
-          mt="12px"
+          mt="-8px"
           position="relative"
           className="fake-placeholder"
+          color="content.support.default"
         >
           {children}
         </Text>

@@ -43,8 +43,7 @@ const categories = ["category1", "category2", "category3"];
 
 export function Page() {
   const { data: walletClient } = useWalletClient();
-  const { editor, handleEditorChange, editorValue } =
-    useMarkdownEditor("", EditorTemplate.createProposalMarkDown);
+  const { editor, handleEditorChange, editorValue } = useMarkdownEditor("");
   const { handleUpload } = useFileUpload();
   const [error, setError] = useState("");
 
@@ -163,6 +162,13 @@ export function Page() {
                   name="body"
                   render={() => (
                     <MarkdownEditor
+                      placeholder={`
+Overview
+Motivation
+Specification
+Implementation
+Links
+                      `}
                       customEditor={editor}
                       onChange={handleEditorChange}
                       value={editorValue}

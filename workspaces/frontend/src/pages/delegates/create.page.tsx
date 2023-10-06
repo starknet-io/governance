@@ -119,6 +119,12 @@ export function Page() {
                   onChange={handleEditorChange}
                   value={editorValue}
                   handleUpload={handleUpload}
+                  placeholder={`
+Overview
+Core values
+Why me?
+Conflicts of interest
+                      `}
                 />
                 {errors.statement && <span>This field is required.</span>}
               </FormControl>
@@ -155,7 +161,10 @@ export function Page() {
                   })}
                 />
                 {errors.starknetAddress && (
-                  <Text>{errors.starknetAddress.message || "This field is required."}</Text>
+                  <Text>
+                    {errors.starknetAddress.message ||
+                      "This field is required."}
+                  </Text>
                 )}
               </FormControl>
               <FormControl id="twitter">
@@ -196,8 +205,14 @@ export function Page() {
               </FormControl>
               <Divider />
               <Box>
-                <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
-                  Delegate agreement <Text variant="largeStrong">(optional)</Text>
+                <Heading
+                  variant="h3"
+                  display="flex"
+                  alignItems="center"
+                  gap={1.5}
+                >
+                  Delegate agreement{" "}
+                  <Text variant="largeStrong">(optional)</Text>
                 </Heading>
                 <Text variant="medium">Briefly explain what this means.</Text>
               </Box>
