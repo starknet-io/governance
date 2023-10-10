@@ -2,20 +2,26 @@ import { Flex } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 
 type Props = {
-  href: string;
+  href?: string;
+  height?: string;
+  paddingLeft?: string;
 };
 
-export const Logo = ({ href }: Props) => {
+export const Logo = ({
+  href = "",
+  height = "78px",
+  paddingLeft = "8px",
+}: Props) => {
   return (
     <Flex
       as="a"
       href={href}
       gap="8px"
-      height="78px"
+      height={height}
       // mt="-34px"
       display="flex"
       alignItems="center"
-      paddingLeft="8px"
+      paddingLeft={paddingLeft}
       zIndex={1}
     >
       <svg
