@@ -5,7 +5,7 @@ type ErrorRefs = {
 };
 
 type Errors = {
-  [key: string]: any; // Replace 'any' with the shape of your error if you have one defined
+  [key: string]: any;
 };
 
 export function useFormErrorHandler() {
