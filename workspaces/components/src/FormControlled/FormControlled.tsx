@@ -55,6 +55,7 @@ const FormControlledComponent: ForwardRefRenderFunction<
           letterSpacing: "0.07px",
           display: "flex",
           gap: "standard.base",
+          color: "content.default.default",
         }}
       >
         {label}
