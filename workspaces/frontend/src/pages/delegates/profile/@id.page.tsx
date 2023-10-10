@@ -181,8 +181,8 @@ export function Page() {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
-          ? "Undelegating votes failed"
-          : "Delegating votes failed",
+          ? "Undelegating voting power failed"
+          : "Delegating voting power failed",
       );
       setIsUndelegation(false);
       setStatusDescription(
@@ -417,7 +417,7 @@ export function Page() {
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
-                setStatusTitle("Delegating votes failed");
+                setStatusTitle("Delegating voting power failed");
                 setStatusDescription(
                   err.shortMessage ||
                     err.message ||
@@ -534,7 +534,7 @@ export function Page() {
                   })
                   .catch((err) => {
                     setIsStatusModalOpen(true);
-                    setStatusTitle("Undelegating votes failed");
+                    setStatusTitle("Undelegating voting power failed");
                     setStatusDescription(err.shortMessage);
                   });
                 setIsOpen(false);
@@ -546,8 +546,8 @@ export function Page() {
             {hasUserDelegatedTokensToThisDelegate &&
             delegation?.data &&
             delegation.data !== "0x0000000000000000000000000000000000000000"
-              ? "Undelegate your votes"
-              : "Delegate your votes"}
+              ? "Undelegate voting power"
+              : "Delegate voting power"}
           </Button>
         ) : (
           <></>
@@ -565,7 +565,7 @@ export function Page() {
         {delegateResponse.isFetched &&
           address?.toLowerCase() === delegateAddress?.toLowerCase() && (
             <Box mt="standard.md">
-              <Banner label="You can’t delegate votes to your own account." />
+              <Banner label="You can’t delegate voting power to your own account." />
             </Box>
           )}
 
