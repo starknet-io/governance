@@ -60,7 +60,7 @@ export const AvatarWithText = ({
         // zIndex: "0",
       }}
     >
-      <Flex gap="standard.sm" alignItems="center">
+      <Flex gap="standard.sm" alignItems="center" width="100%">
         <Box>
           {src !== null ? (
             <Avatar size="xlg" src={src} />
@@ -68,33 +68,22 @@ export const AvatarWithText = ({
             <Indenticon size={64} address={address} />
           )}
         </Box>
-        <Flex flex="1">
-          <Box
-
-          // sx={{
-          //   containerType: "inline-size",
-          // }}
-          >
+        <Flex width="100%" overflow="hidden">
+          <Flex flexDirection={"column"} justifyContent={"center"} width="100%">
             <Heading
-              width="100%"
               color="content.accent.default"
               lineHeight="24px"
-              // fontSize="clamp(0.875rem, 5cqi, 1.313rem)"
               variant="h3"
               mb="standard.2xs"
-              isTruncated
-              // sx={{
-              //   "@container (width >= 0)": {
-              //     fontSize: "clamp(0.875rem, 6cqw, 1.313rem)",
-              //   },
-              // }}
+              noOfLines={1}
+              width={"100%"}
             >
               {headerText}
             </Heading>
             <Text color="content.default.default" variant="small">
               {subheaderText}
             </Text>
-          </Box>
+          </Flex>
         </Flex>
         <Flex width="44px" height="64px">
           {dropdownChildren === null ? null : (
