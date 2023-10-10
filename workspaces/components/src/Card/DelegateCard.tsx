@@ -75,8 +75,6 @@ const DelegateTags = ({ type }: { type: string[] }) => {
 
   const renderTooltip = (startIndex: number) => (
     <Tooltip
-      padding={0}
-      margin={0}
       hasArrow
       shouldWrapChildren
       placement="top"
