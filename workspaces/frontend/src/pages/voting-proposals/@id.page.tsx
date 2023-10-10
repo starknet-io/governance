@@ -686,7 +686,6 @@ export function Page() {
                     <Select
                       size="sm"
                       aria-label="Sort by"
-                      placeholder="Sort by"
                       focusBorderColor={"red"}
                       rounded="md"
                       value={sortBy}
@@ -694,6 +693,7 @@ export function Page() {
                         setSortBy(e.target.value as "upvotes" | "date")
                       }
                     >
+                      <option selected hidden disabled value="">Sort by</option>
                       {sortByOptions.options.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}
