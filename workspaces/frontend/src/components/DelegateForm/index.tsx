@@ -1,9 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Banner,
   Box,
   Button,
-  Checkbox, DeletionDialog,
+  Checkbox,
+  DeletionDialog,
   Divider,
   Flex,
   FormControl,
@@ -11,10 +12,13 @@ import {
   Heading,
   Input,
   MarkdownEditor,
-  Multiselect,
   Stack,
-  Text, useDisclosure,
+  Text,
+  useDisclosure,
   useMarkdownEditor,
+  FormControlled,
+  Select,
+  useFormErrorHandler,
 } from "@yukilabs/governance-components";
 import type { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { Controller, useForm } from "react-hook-form";
@@ -76,6 +80,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
     useMarkdownEditor("");
   const [error, setErrorField] = useState("");
+  console.log("errors", errors);
   const {
     editorValue: editorCustomAgreementValue,
     handleEditorChange: handleCustomAgreement,
@@ -154,18 +159,21 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const deleteDelegate = trpc.delegates.deleteDelegate.useMutation();
 
   const pageContext = usePageContext();
+  const { setErrorRef, scrollToError } = useFormErrorHandler();
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmitHandler = async (data) => {
     try {
       data.statement = editorValue;
+
       if (mode === "edit") {
         data.id = pageContext.routeParams!.id;
       }
       if (showCustomAgreementEditor || agreementType === "custom") {
         data.customDelegateAgreementContent = editorCustomAgreementValue;
       } else {
-        delete data.customDelegateAgreementContent
+        delete data.customDelegateAgreementContent;
       }
+
       const mutation = mode === "create" ? createDelegate : editDelegate;
       await mutation
         .mutateAsync(data)
@@ -178,10 +186,15 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
           setErrorField(err?.message ? err.message : JSON.stringify(err));
         });
     } catch (error) {
-      // Handle error
       console.log(error);
     }
-  });
+  };
+
+  const onErrorSubmit = (errors) => {
+    if (Object.keys(errors).length > 0) {
+      scrollToError(errors);
+    }
+  };
 
   useEffect(() => {
     if (user?.starknetAddress) {
@@ -208,7 +221,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleSubmit(onSubmitHandler, onErrorSubmit)}>
       <DeletionDialog
         isOpen={isDeleteOpen}
         onClose={onCloseDelete}
@@ -217,8 +230,15 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
         entityName="Delegate"
       />
       <Stack spacing="24px" direction={{ base: "column" }}>
-        <FormControl id="delegate-statement">
-          <FormLabel>Delegate pitch</FormLabel>
+        <FormControlled
+          name="statement"
+          isRequired
+          id="statement"
+          label="Delegate pitch"
+          isInvalid={!!errors.statement}
+          errorMessage={errors.statement?.message}
+          ref={(ref) => setErrorRef("statement", ref)}
+        >
           <Controller
             name="statement"
             control={control}
@@ -250,16 +270,23 @@ Conflicts of interest
               />
             )}
           />
-          {errors.statement && <span>{errors.statement.message}</span>}
-        </FormControl>
-        <FormControl id="starknet-type">
-          <FormLabel>Delegate interests</FormLabel>
+        </FormControlled>
+        <FormControlled
+          name="interests"
+          ref={(ref) => setErrorRef("interests", ref)}
+          id="starknet-type"
+          isRequired
+          label="Delegate interests"
+          isInvalid={!!errors.interests}
+          errorMessage={errors.interests?.message || "Choose your interests"}
+        >
           <Controller
             name="interests"
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Multiselect
+              <Select
+                isMulti
                 options={interestsValues.map((option) => ({
                   value: option,
                   label: delegateNames?.[option] ?? option,
@@ -269,10 +296,18 @@ Conflicts of interest
               />
             )}
           />
-          {errors.interests && <span>Choose your interests</span>}
-        </FormControl>
-        <FormControl id="starknet-wallet-address">
-          <FormLabel>Starknet wallet address</FormLabel>
+        </FormControlled>
+        <FormControlled
+          name="starknet-wallet-address"
+          ref={(ref) => setErrorRef("starknet-wallet-address", ref)}
+          isRequired
+          id="starknet-wallet-address"
+          label="Starknet wallet address"
+          isInvalid={!!errors.starknetAddress}
+          errorMessage={
+            errors.starknetAddress?.message || "Not a valid Starknet address"
+          }
+        >
           <Input
             size="standard"
             variant="primary"
@@ -283,48 +318,48 @@ Conflicts of interest
                 validateStarknetAddress(value) || "Invalid Starknet address",
             })}
           />
-          {errors.starknetAddress && (
-            <Text>
-              {errors.starknetAddress.message || "Not a valid Starknet address"}
-            </Text>
-          )}
-        </FormControl>
-        <FormControl id="twitter">
-          <FormLabel>Twitter (optional)</FormLabel>
+        </FormControlled>
+
+        <FormControlled
+          name="twitter"
+          label="Twitter"
+          isInvalid={!!errors.twitter}
+          errorMessage={errors.twitter?.message}
+        >
           <Input
             size="standard"
             variant="primary"
             placeholder="@yourhandle"
             {...register("twitter")}
           />
-        </FormControl>
-        <FormControl id="telegram">
-          <FormLabel>Telegram (optional)</FormLabel>
+        </FormControlled>
+        <FormControlled name="telegram" label="Telegram">
           <Input
             size="standard"
             variant="primary"
             placeholder="@yourhandle"
             {...register("telegram")}
           />
-        </FormControl>
-        <FormControl id="discord">
-          <FormLabel>Discord (optional)</FormLabel>
+        </FormControlled>
+
+        <FormControlled name="discord" label="Discord">
           <Input
             variant="primary"
             size="standard"
             placeholder="name#1234"
             {...register("discord")}
           />
-        </FormControl>
-        <FormControl id="discourse">
-          <FormLabel>Discourse (optional)</FormLabel>
+        </FormControlled>
+
+        <FormControlled name="discourse" label="Discourse">
           <Input
             variant="primary"
             size="standard"
             placeholder="yourusername"
             {...register("discourse")}
           />
-        </FormControl>
+        </FormControlled>
+
         <Divider />
         <Box>
           <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
