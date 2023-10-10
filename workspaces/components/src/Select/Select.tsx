@@ -10,7 +10,7 @@ interface Option {
 }
 
 export interface SelectProps extends Props {
-  options: Option[] | Option;
+  options: Option[];
   value?: string[];
   onChange: (values: string[]) => void;
 }
