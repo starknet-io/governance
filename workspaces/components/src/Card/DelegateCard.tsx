@@ -68,7 +68,7 @@ const DelegateTags = ({ type }: { type: string[] }) => {
 
   const renderTags = (startIndex: number, endIndex: number) =>
     type.slice(startIndex, endIndex).map((item: string) => (
-      <Tag style={{ pointerEvents: "none" }} key={item}>
+      <Tag size="condensed" style={{ pointerEvents: "none" }} key={item}>
         {delegateInterests?.[item] ?? item}
       </Tag>
     ));
@@ -83,22 +83,22 @@ const DelegateTags = ({ type }: { type: string[] }) => {
         .map((t) => delegateInterests?.[t] ?? t)
         .join(", ")}
     >
-      <Tag>+{type.length - startIndex}</Tag>
+      <Tag size="condensed">+{type.length - startIndex}</Tag>
     </Tooltip>
   );
 
   return (
-    <Box display="flex" flexDirection="row" gap="8px" mb="standard.xs">
+    <Box>
       {type[0].length > 20 ? (
-        <>
+        <Box display="flex" gap="standard.base">
           {renderTags(0, 1)}
           {type.length > 1 && renderTooltip(1)}
-        </>
+        </Box>
       ) : (
-        <>
+        <Box display="flex" gap="standard.base">
           {renderTags(0, 2)}
           {type.length > 2 && renderTooltip(2)}
-        </>
+        </Box>
       )}
     </Box>
   );
@@ -133,20 +133,22 @@ export const DelegateCard = ({
       </CardHeader>
       <CardBody>
         <DelegateTags type={type} />
-        <MarkdownRenderer
-          className="karma-delegates"
-          textProps={{
-            fontSize: "14px",
-            noOfLines: 3,
-            color: "#4A4A4F",
-            fontStyle: "normal!important",
-            fontWeight: "400!important",
+        <Box>
+          <MarkdownRenderer
+            className="karma-delegates"
+            textProps={{
+              fontSize: "14px",
+              noOfLines: 3,
+              color: "#4A4A4F",
+              fontStyle: "normal!important",
+              fontWeight: "400!important",
 
-            marginTop: "-0px!important",
-            marginBottom: "0px!important",
-          }}
-          content={formattedDelegateStatement || ""}
-        />
+              marginTop: "-0px!important",
+              marginBottom: "0px!important",
+            }}
+            content={formattedDelegateStatement || ""}
+          />
+        </Box>
       </CardBody>
 
       <CardFooter>
