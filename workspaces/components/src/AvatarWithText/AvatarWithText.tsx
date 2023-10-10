@@ -44,6 +44,7 @@ export const AvatarWithText = ({
             lineHeight="10px"
             color="content.support.default"
             variant="captionSmallUppercase"
+            pb="standard.base"
           >
             {subheaderText}
           </Text>
