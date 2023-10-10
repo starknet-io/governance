@@ -15,10 +15,7 @@ export function useFormErrorHandler() {
   }, []);
 
   const scrollToError = useCallback((errors: Errors) => {
-    console.log("scrollToEnter");
     const firstErrorKey = Object.keys(errors)[0];
-    console.log("firstErrorKey:", firstErrorKey);
-    console.log("refs.current:", refs.current);
     refs.current[firstErrorKey]?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
