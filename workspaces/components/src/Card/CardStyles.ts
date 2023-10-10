@@ -10,7 +10,11 @@ const baseStyle = {
     borderWidth: "1px",
     boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.04)",
     bg: "surface.forms.default",
-    borderRadius: "standard.md",
+    borderRadius: "8px",
+    _hover: {
+      borderColor: "border.formsHover",
+      boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.04)",
+    },
   },
 };
 const variants = {
