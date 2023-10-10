@@ -1,4 +1,4 @@
-import { desc, eq, inArray, sql } from 'drizzle-orm';
+import { desc, eq, inArray } from 'drizzle-orm';
 import { db } from '../db/db';
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { gql, GraphQLClient } from 'graphql-request';
@@ -30,38 +30,6 @@ const space = 'robwalsh.eth';
 const graphQLClient = new GraphQLClient(endpoint, {
   method: `GET`,
 });
-
-//GraphQL
-const GET_PROPOSALS_BY_ID = gql`
-  query proposals(
-    $space: String!
-    $searchQuery: String = ""
-    $ids: [String!] = []
-    $first: Int = 20
-    $skip: Int = 0
-  ) {
-    proposals(
-      first: $first
-      skip: $skip
-      where: { space: $space, title_contains: $searchQuery, id_in: $ids }
-    ) {
-      id
-      title
-      choices
-      start
-      end
-      snapshot
-      state
-      scores
-      scores_total
-      author
-      space {
-        id
-        name
-      }
-    }
-  }
-`;
 
 const GET_PROPOSALS = gql`
   query proposals(
@@ -95,15 +63,6 @@ const GET_PROPOSALS = gql`
     }
   }
 `;
-
-const sortProposalsByIDsOrder = (
-  proposals: IProposal[],
-  ids: string[],
-): IProposal[] => {
-  const itemMap = new Map();
-  proposals.forEach((item) => itemMap.set(item.id, item));
-  return ids.map((id) => itemMap.get(id)).filter((i) => !!i);
-};
 
 const populateProposalsWithComments = async (
   proposals: IProposal[],
@@ -153,7 +112,10 @@ export const proposalsRouter = router({
       const limit = 20;
       const offset = 0;
 
-      const orderDirection = opts.input?.sortBy || 'desc';
+      const orderDirection =
+        opts.input?.sortBy && opts.input?.sortBy !== 'most_discussed'
+          ? opts.input?.sortBy
+          : 'desc';
       const searchQuery = opts.input?.searchQuery || undefined;
       const filters = opts.input?.filters;
       const possibleStateFilters = ['active', 'pending', 'closed'];
@@ -166,65 +128,7 @@ export const proposalsRouter = router({
         [];
 
       let mappedProposals: IProposal[];
-      if (opts.input?.sortBy === 'most_discussed') {
-        const mostDiscussedItems = await db.execute(sql`
-          SELECT
-            comments.proposal_id,
-            proposals.category,  -- It will return NULL if the category is not found
-            COUNT(*) AS comment_count
-          FROM
-            comments
-          LEFT JOIN
-            proposals ON comments.proposal_id = proposals.proposal_id  -- Changing to LEFT JOIN to include rows even if there is no matching row in the proposals table
-          GROUP BY
-            comments.proposal_id, proposals.category  -- Group by category as well, it will group by NULL as a separate group if there are null values
-          ORDER BY
-            comment_count DESC
-          LIMIT ${limit} OFFSET ${offset};
-        `);
-
-        const mostDiscussedProposals = mostDiscussedItems.rows
-          .filter((item) => item.proposal_id !== null)
-          .map((item) => item.proposal_id) as string[];
-
-        const { proposals: queriedProposals } = (await graphQLClient.request(
-          GET_PROPOSALS_BY_ID,
-          {
-            searchQuery,
-            ids: mostDiscussedProposals,
-            first: limit,
-            skip: offset,
-            space,
-          },
-        )) as { proposals: IProposal[] };
-
-        mappedProposals = sortProposalsByIDsOrder(
-          queriedProposals,
-          mostDiscussedProposals,
-        );
-
-        if (statesFilter.length > 0) {
-          mappedProposals = mappedProposals.filter((proposal) =>
-            statesFilter.includes(proposal.state),
-          );
-        }
-
-        mappedProposals = mappedProposals.map((proposal, index) => {
-          return {
-            ...proposal,
-            category: mostDiscussedItems.rows[index].category as CategoryEnum,
-          };
-        });
-
-        if (categoriesFilter.length > 0) {
-          mappedProposals = mappedProposals.filter((proposal) => {
-            if (!proposal?.category) {
-              return false;
-            }
-            return categoriesFilter.includes(proposal.category);
-          });
-        }
-      } else {
+      {
         const { proposals: queriedProposals } = (await graphQLClient.request(
           GET_PROPOSALS,
           {
@@ -269,10 +173,17 @@ export const proposalsRouter = router({
         });
       }
 
-      return await populateProposalsWithComments(
+      let proposalsWithComments = await populateProposalsWithComments(
         mappedProposals,
         limit,
         offset,
       );
+
+      if (opts?.input?.sortBy === 'most_discussed') {
+        proposalsWithComments = proposalsWithComments.sort(
+          (a, b) => (b?.comments?.length || 0) - (a?.comments?.length || 0),
+        );
+      }
+      return proposalsWithComments;
     }),
 });
