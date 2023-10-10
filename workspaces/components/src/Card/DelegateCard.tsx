@@ -63,13 +63,25 @@ export function extractParagraph(
   }
   return "";
 }
-const DelegateTags = ({ type }: { type: string[] }) => {
+const DelegateTags = ({
+  type,
+}: {
+  type: (string | { value: string; label: string })[];
+}) => {
   if (!Array.isArray(type) || type.length === 0) return null;
 
+  const getTagValue = (item: string | { value: string; label: string }) => {
+    if (typeof item === "string") {
+      return delegateInterests?.[item] ?? item;
+    } else {
+      return item.label;
+    }
+  };
+
   const renderTags = (startIndex: number, endIndex: number) =>
-    type.slice(startIndex, endIndex).map((item: string) => (
-      <Tag size="condensed" style={{ pointerEvents: "none" }} key={item}>
-        {delegateInterests?.[item] ?? item}
+    type.slice(startIndex, endIndex).map((item, index) => (
+      <Tag size="condensed" style={{ pointerEvents: "none" }} key={index}>
+        {getTagValue(item)}
       </Tag>
     ));
 
@@ -80,7 +92,7 @@ const DelegateTags = ({ type }: { type: string[] }) => {
       placement="top"
       label={type
         .slice(startIndex)
-        .map((t) => delegateInterests?.[t] ?? t)
+        .map((t) => getTagValue(t))
         .join(", ")}
     >
       <Tag size="condensed">+{type.length - startIndex}</Tag>
@@ -89,7 +101,7 @@ const DelegateTags = ({ type }: { type: string[] }) => {
 
   return (
     <Box height="18px" mb="standard.xs">
-      {type[0].length > 20 ? (
+      {getTagValue(type[0]).length > 20 ? (
         <Box display="flex" gap="standard.base" height="18px">
           {renderTags(0, 1)}
           {type.length > 1 && renderTooltip(1)}
