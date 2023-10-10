@@ -156,6 +156,8 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
       }
       if (showCustomAgreementEditor || agreementType === "custom") {
         data.customDelegateAgreementContent = editorCustomAgreementValue;
+      } else {
+        delete data.customDelegateAgreementContent
       }
       const mutation = mode === "create" ? createDelegate : editDelegate;
       await mutation
