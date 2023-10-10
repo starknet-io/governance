@@ -469,25 +469,16 @@ const CommentItem: React.FC<CommentProps> = ({
                     alignItems="center"
                     role="button"
                     gap={1}
-                    onClick={() =>
-                      setActiveCommentEditor(
-                        activeCommentEditor === comment.id ? null : comment.id,
-                      )
-                    }
+                    onClick={() => {
+                      setActiveCommentEditor(comment.id);
+                      setIsEditMode(false);
+                    }}
                   >
                     <IconButton
                       variant="ghost"
                       onClick={() => {
-                        if (isEditMode) {
-                          setIsEditMode(false);
-                          setActiveCommentEditor(comment.id);
-                        } else {
-                          setActiveCommentEditor(
-                            activeCommentEditor === comment.id
-                              ? null
-                              : comment.id,
-                          );
-                        }
+                        setIsEditMode(false);
+                        setActiveCommentEditor(comment.id);
                       }}
                       aria-label="Reply"
                       size="condensed"
@@ -552,8 +543,12 @@ const CommentItem: React.FC<CommentProps> = ({
               <form>
                 <CommentInput
                   withCancel
-                  onCancel={() => setActiveCommentEditor(null)}
+                  onCancel={() => {
+                    setIsEditMode(false);
+                    setActiveCommentEditor(null);
+                  }}
                   onSend={(content: string) => {
+                    setIsEditMode(false);
                     onSubmit(content);
                   }}
                 />
