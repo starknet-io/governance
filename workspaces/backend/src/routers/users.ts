@@ -2,7 +2,7 @@ import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
-import { eq } from 'drizzle-orm';
+import {eq, inArray} from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
 export const usersRouter = router({
@@ -162,6 +162,25 @@ export const usersRouter = router({
   me: protectedProcedure
     .query(async (opts) => {
       return opts.ctx.user
+    }),
+
+  getUsersInfoByAddresses: publicProcedure
+    .input(
+      z.object({
+        addresses: z.array(z.string()),
+      })
+    )
+    .query(async (opts) => {
+      // Lowercase all provided addresses
+      const lowercasedAddresses = opts.input.addresses.map(address => address.toLowerCase());
+
+      // Fetch user info for each address in the provided array
+      return await db.query.users.findMany({
+        where: inArray(users.address, lowercasedAddresses),
+        with: {
+          delegationStatement: true,
+        },
+      });
     }),
 
   editUserProfileByAddress: protectedProcedure
