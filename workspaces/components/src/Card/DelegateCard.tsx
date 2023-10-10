@@ -75,6 +75,8 @@ const DelegateTags = ({ type }: { type: string[] }) => {
 
   const renderTooltip = (startIndex: number) => (
     <Tooltip
+      padding={0}
+      margin={0}
       hasArrow
       shouldWrapChildren
       placement="top"
@@ -88,14 +90,14 @@ const DelegateTags = ({ type }: { type: string[] }) => {
   );
 
   return (
-    <Box>
+    <Box height="18px" mb="standard.xs">
       {type[0].length > 20 ? (
-        <Box display="flex" gap="standard.base">
+        <Box display="flex" gap="standard.base" height="18px">
           {renderTags(0, 1)}
           {type.length > 1 && renderTooltip(1)}
         </Box>
       ) : (
-        <Box display="flex" gap="standard.base">
+        <Box display="flex" gap="standard.base" height="18px">
           {renderTags(0, 2)}
           {type.length > 2 && renderTooltip(2)}
         </Box>
