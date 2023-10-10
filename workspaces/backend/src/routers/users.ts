@@ -2,17 +2,17 @@ import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
-import {eq, inArray} from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
 export const usersRouter = router({
-  getAll: protectedProcedure.query(() => db.query.users.findMany(
-    {
+  getAll: protectedProcedure.query(() =>
+    db.query.users.findMany({
       with: {
         delegationStatement: true,
-      }
-    }
-  )),
+      },
+    }),
+  ),
 
   saveUser: publicProcedure
     .input(
@@ -22,7 +22,7 @@ export const usersRouter = router({
         walletProvider: z.string(),
         publicIdentifier: z.string(),
         dynamicId: z.string(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const insertedUser = await db
@@ -49,18 +49,21 @@ export const usersRouter = router({
         publicIdentifier: z.string().optional(),
         dynamicId: z.string().optional(),
         profileImage: z.string().optional() || z.null(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const updatedUser = await db
         .update(users)
         .set({
-          address: opts.input.address ? opts.input.address.toLowerCase() : opts.input.address,
+          address: opts.input.address
+            ? opts.input.address.toLowerCase()
+            : opts.input.address,
           walletName: opts.input.walletName,
           walletProvider: opts.input.walletProvider,
           publicIdentifier: opts.input.publicIdentifier,
           dynamicId: opts.input.dynamicId,
-          profileImage: opts.input.profileImage === "none" ? null : opts.input.profileImage,
+          profileImage:
+            opts.input.profileImage === 'none' ? null : opts.input.profileImage,
           updatedAt: new Date(),
         })
         .where(eq(users.id, opts.input.id))
@@ -72,7 +75,7 @@ export const usersRouter = router({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       await db.delete(users).where(eq(users.id, opts.input.id)).execute();
@@ -82,12 +85,12 @@ export const usersRouter = router({
     .input(
       z.object({
         address: z.string(),
-        role: z.any()
-      })
+        role: z.any(),
+      }),
     )
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.address.toLowerCase())
+        where: eq(users.address, opts.input.address.toLowerCase()),
       });
       if (user) {
         const updatedUser = await db
@@ -107,23 +110,22 @@ export const usersRouter = router({
             createdAt: new Date(),
           })
           .returning();
-        return createdUser[0]
+        return createdUser[0];
       }
-
     }),
 
   getUser: publicProcedure
     .input(
       z.object({
         address: z.string(),
-      })
+      }),
     )
     .query(async (opts) => {
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),
         with: {
-          delegationStatement: true
-        }
+          delegationStatement: true,
+        },
       });
       return user;
     }),
@@ -134,13 +136,17 @@ export const usersRouter = router({
         id: z.string(),
         username: z.any(),
         starknetAddress: z.any(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { id, username, starknetAddress } = opts.input;
 
-      const updatedUsername = (username !== undefined && username !== "") ? username : null;
-      const updatedAddress = (starknetAddress !== undefined && starknetAddress !== "") ? starknetAddress : null;
+      const updatedUsername =
+        username !== undefined && username !== '' ? username : null;
+      const updatedAddress =
+        starknetAddress !== undefined && starknetAddress !== ''
+          ? starknetAddress
+          : null;
 
       await db
         .update(users)
@@ -154,33 +160,46 @@ export const usersRouter = router({
       return await db.query.users.findFirst({
         where: eq(users.id, id),
         with: {
-          delegationStatement: true
-        }
+          delegationStatement: true,
+        },
       });
     }),
 
-  me: protectedProcedure
-    .query(async (opts) => {
-      return opts.ctx.user
-    }),
+  me: protectedProcedure.query(async (opts) => {
+    return opts.ctx.user;
+  }),
 
   getUsersInfoByAddresses: publicProcedure
     .input(
       z.object({
         addresses: z.array(z.string()),
-      })
+      }),
     )
     .query(async (opts) => {
+      if (!opts.input?.addresses || !opts.input?.addresses?.length) {
+        return {};
+      }
       // Lowercase all provided addresses
-      const lowercasedAddresses = opts.input.addresses.map(address => address.toLowerCase());
+      const lowercasedAddresses = opts.input.addresses.map((address) =>
+        address.toLowerCase(),
+      );
 
       // Fetch user info for each address in the provided array
-      return await db.query.users.findMany({
+      const foundUsers = await db.query.users.findMany({
         where: inArray(users.address, lowercasedAddresses),
         with: {
           delegationStatement: true,
         },
       });
+
+      // Convert the array of users into an object where each key is an address
+      const usersByAddress = foundUsers.reduce((acc: any, user) => {
+        acc[user.address] = user;
+        return acc;
+      }, {});
+
+      console.log(usersByAddress);
+      return usersByAddress;
     }),
 
   editUserProfileByAddress: protectedProcedure
@@ -189,24 +208,26 @@ export const usersRouter = router({
         address: z.string(),
         username: z.string().optional(),
         starknetAddress: z.string().optional(),
-      }))
+      }),
+    )
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.address.toLowerCase())
-      })
+        where: eq(users.address, opts.input.address.toLowerCase()),
+      });
 
       if (!user) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new TRPCError({ code: 'NOT_FOUND' });
       }
 
-      await db.update(users)
+      await db
+        .update(users)
         .set({
           username: opts.input.username,
           starknetAddress: opts.input.starknetAddress,
           updatedAt: new Date(),
         })
-        .where(eq(users.address, opts.input.address.toLowerCase()))
+        .where(eq(users.address, opts.input.address.toLowerCase()));
 
-      return
+      return;
     }),
 });
