@@ -374,8 +374,11 @@ Conflicts of interest
           <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
             Delegate agreement <Text variant="largeStrong">(optional)</Text>
           </Heading>
-          <Text variant="medium">Briefly explain what this means.</Text>
+          <Text variant="medium">
+            Add an agreement between you and the people who delegate to you.
+          </Text>
         </Box>
+        {/* <Heading variant="h1">I don't need a delegate agreement</Heading> */}
         <FormControl id="confirmDelegateAgreement">
           <Checkbox
             isChecked={agreementType === "standard"}
@@ -417,8 +420,12 @@ Conflicts of interest
             display: agreementType === "custom" ? "block" : "none",
           }}
         >
-          <FormControl id="custom-agreement-editor">
-            <FormLabel>Custom Delegate Agreement</FormLabel>
+          <FormControlled
+            name="customDelegateAgreementContent"
+            id="custom-agreement-editor"
+            label="Custom Delegate Agreement"
+            isRequired
+          >
             <Controller
               name="customDelegateAgreementContent"
               control={control}
@@ -439,7 +446,7 @@ Conflicts of interest
                 />
               )}
             />
-          </FormControl>
+          </FormControlled>
         </div>
         <FormControl id="understandRole" display="none">
           <Controller

@@ -290,7 +290,7 @@ Links
               </Heading>
 
               {/* // disabled for basic voting */}
-              <FormControlled name="votingType" label="Voting type">
+              <FormControlled isRequired name="votingType" label="Voting type">
                 <Select
                   size="md"
                   isReadOnly
@@ -302,7 +302,7 @@ Links
               </FormControlled>
 
               {/* // disabled for basic voting */}
-              <FormControlled name="choices" label="Choices">
+              <FormControlled isRequired name="choices" label="Choices">
                 <Select
                   size="md"
                   isReadOnly
@@ -316,6 +316,7 @@ Links
               <FormControlled
                 name="votingPeriod"
                 label="Voting period"
+                isRequired
                 errorMessage={errors?.votingPeriod?.message}
                 isInvalid={!!errors.votingPeriod}
                 ref={(ref) => setErrorRef("votingPeriod", ref)}
