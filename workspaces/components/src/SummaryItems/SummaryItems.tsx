@@ -171,7 +171,7 @@ type SocialsProps = {
 const platformBaseUrl = {
   twitter: "https://twitter.com/",
   github: "https://github.com/",
-  discourse: "https://discourse.org/", // Replace with correct discourse URL
+  discourse: "https://community.starknet.io/u/", // Replace with correct discourse URL
   discord: "https://discord.com/", // Replace with correct discord URL
   telegram: "https://t.me/",
 };
