@@ -12,13 +12,11 @@ import {
   ListRow,
   Text,
   ArrowRightIcon,
-
 } from "@yukilabs/governance-components";
 
 import { Delegates } from "src/components/Delegates";
 import { trpc } from "src/utils/trpc";
 import { Proposal, VotingPropsSkeleton } from "./voting-proposals/index.page";
-
 
 export function Page() {
   const {
@@ -41,7 +39,7 @@ export function Page() {
         mb="standard.3xl"
         mt="16px"
       >
-        <Box>
+        <Box mt="standard.3xl">
           <Flex justifyContent="space-between" alignItems="flex-start">
             <Box>
               <Heading size="lg" variant="h2">
