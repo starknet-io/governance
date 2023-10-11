@@ -19,6 +19,7 @@ export const MarkdownEditor: React.FC<
   MarkdownEditorProps & {
     handleUpload?: (file: File) => Promise<string | void> | void;
     offsetPlaceholder?: string;
+    isInvalid?: boolean;
   }
 > = ({
   onChange,
@@ -29,6 +30,7 @@ export const MarkdownEditor: React.FC<
   placeholder,
   offsetPlaceholder,
   basicEditor = false,
+  isInvalid = false,
 }) => {
   const { convertMarkdownToSlate } = useMarkdownEditor("");
   const editor = useMemo(
@@ -80,6 +82,7 @@ export const MarkdownEditor: React.FC<
           placeholder={placeholder}
           onPaste={handlePaste}
           minHeight={minHeight}
+          isInvalid={isInvalid}
         />
       </Slate>
     </Box>
