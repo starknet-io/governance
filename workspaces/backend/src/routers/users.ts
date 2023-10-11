@@ -152,11 +152,13 @@ export const usersRouter = router({
         throw new TRPCError({ code: "BAD_REQUEST", message: "Username already exists" });
       }
 
-      let updatedUsername = (username !== undefined && username !== "") ? username : null;
+      let updatedUsername = (username !== undefined) ? username : null;
       const updatedAddress = (starknetAddress !== undefined && starknetAddress !== "") ? starknetAddress : null;
 
       if (updatedUsername === null) {
         updatedUsername = userById?.username;
+      } else if (username === "") {
+        updatedUsername = null;
       }
 
       await db

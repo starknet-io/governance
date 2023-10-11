@@ -43,6 +43,7 @@ import {
   Link,
   PlusIcon,
   BuildersIcon,
+  ProfileInfoModal,
 } from "@yukilabs/governance-components";
 import { Box, Show } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
@@ -55,6 +56,7 @@ import { hasPermission } from "src/utils/helpers";
 import { usePageContext } from "./PageContextProvider";
 import AuthorizedUserView from "./AuthorizedUserView";
 import TallyScript from "src/components/TallyScript";
+import { useFileUpload } from "src/hooks/useFileUpload";
 
 // need to move this override to a better place
 const cssOverrides = `
@@ -89,12 +91,17 @@ interface AuthSuccessParams {
 export function DynamicContextProviderPage(props: Props) {
   const { pageContext, children } = props;
   const [authUser, setAuthUser] = useState<AuthSuccessParams | null>(null);
+  const [userExistsError, setUserExistsError] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
   const authMutation = trpc.auth.authUser.useMutation();
   const logoutMutation = trpc.auth.logout.useMutation();
+  const editUserProfile = trpc.users.editUserProfile.useMutation();
+
   const hasCalledAuthenticateUser = useRef(false); // To guard against continuous calls
-  const [modalOpen, setModalOpen] = useState(false);
-  const editUserProfile = trpc.users.editUserProfileByAddress.useMutation();
   const utils = trpc.useContext();
+  const { user } = usePageContext();
+  const { handleUpload } = useFileUpload();
 
   const authenticateUser = useCallback(
     async (params: AuthSuccessParams) => {
@@ -124,27 +131,41 @@ export function DynamicContextProviderPage(props: Props) {
     setModalOpen(false);
   };
 
-  const [username, setUsername] = useState("");
-  const [starknetAddress, setStarknetAddress] = useState("");
-
-  const isFormValid = !!(username && starknetAddress);
-
-  const onSubmit = () => {
-    editUserProfile.mutateAsync(
-      {
-        address:
-          authUser?.user?.verifiedCredentials[0]?.address?.toLowerCase() ?? "",
-        username,
-        starknetAddress,
-      },
-      {
-        onSuccess: () => {
-          setModalOpen(false);
-          utils.auth.currentUser.invalidate();
+  async function handleSave(data: {
+    username: string;
+    starknetAddress: string;
+    profileImage: string | null;
+  }): Promise<any> {
+    if (!user) {
+      return false;
+    }
+    try {
+      const res = await editUserProfile.mutateAsync(
+        {
+          id: user.id,
+          username: data.username !== user?.username ? data.username : null,
+          starknetAddress: data.starknetAddress,
+          profileImage: data.profileImage,
         },
-      },
-    );
-  };
+        {
+          onSuccess: () => {
+            utils.auth.currentUser.invalidate();
+            setModalOpen(false);
+            return true;
+          },
+          onError: (error) => {
+            if (error.message === "Username already exists") {
+              setUserExistsError(true);
+            }
+            return false;
+          },
+        },
+      );
+      return res;
+    } catch (error) {
+      return false;
+    }
+  }
 
   const handleDynamicLogout = () => {
     logoutMutation.mutateAsync(undefined, {
@@ -157,37 +178,16 @@ export function DynamicContextProviderPage(props: Props) {
 
   return (
     <HelpMessageProvider>
-      <FormModal
+      <ProfileInfoModal
         isOpen={modalOpen}
         onClose={handleModalClose}
-        title="Add User Info"
-        onSubmit={onSubmit}
-        isValid={isFormValid}
-        cancelButtonText="Skip"
-      >
-        <FormControl id="member-name" paddingBottom={2}>
-          <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
-            Username
-          </FormLabel>
-          <Input
-            placeholder="Username"
-            name="name"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </FormControl>
-        <FormControl id="address" paddingBottom={2}>
-          <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
-            Starknet address
-          </FormLabel>
-          <Input
-            placeholder="0x..."
-            name="address"
-            value={starknetAddress}
-            onChange={(e) => setStarknetAddress(e.target.value)}
-          />
-        </FormControl>
-      </FormModal>
+        user={user}
+        mode="create"
+        handleUpload={handleUpload}
+        saveData={(data) => handleSave(data)}
+        userExistsError={userExistsError}
+        setUsernameErrorFalse={() => setUserExistsError(false)}
+      />
       <DynamicContextProvider
         settings={{
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
