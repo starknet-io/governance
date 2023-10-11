@@ -2,6 +2,7 @@ import {
   Select as CustomSelect,
   ChakraStylesConfig,
   Props,
+  ActionMeta,
 } from "chakra-react-select";
 
 interface Option {
@@ -12,7 +13,7 @@ interface Option {
 export interface SelectProps extends Props {
   options: Option[];
   value?: string[];
-  onChange: (values: string[]) => void;
+  onChange: (newValue: unknown, actionMeta: ActionMeta<unknown>) => void;
 }
 
 export const Select = ({
