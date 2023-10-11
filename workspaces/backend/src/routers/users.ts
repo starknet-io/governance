@@ -166,6 +166,8 @@ export const usersRouter = router({
 
       if (updatedUsername === null) {
         updatedUsername = userById?.username;
+      } else if (username === '') {
+        updatedUsername = null;
       }
 
       await db

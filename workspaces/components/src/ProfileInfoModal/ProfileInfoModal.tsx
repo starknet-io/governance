@@ -15,10 +15,12 @@ import {
   FormLabel,
   Input,
 } from "@chakra-ui/react";
-import { ProfileImage, ShareIcon, UploadImage } from "index";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
+import { UploadImage } from "src/UploadImage";
+import { ProfileImage } from "src/ProfileImage";
+import { ShareIcon } from "src/Icons";
 
 interface ProfileInfoModalProps {
   isOpen: boolean;
@@ -158,8 +160,8 @@ export const ProfileInfoModal = ({
                   <Input
                     placeholder="0x..."
                     {...register("starknetAddress", {
-                      required: true,
                       validate: (value) =>
+                        value === "" ||
                         validateStarknetAddress(value) ||
                         "Invalid Starknet address",
                     })}
@@ -174,7 +176,7 @@ export const ProfileInfoModal = ({
 
           <ModalFooter>
             <Button width={"50%"} variant={"ghost"} mr={3} onClick={onClose}>
-              Cancel
+              {mode === "create" ? "Skip" : "Cancel"}
             </Button>
             <Button width={"50%"} onClick={handleSave}>
               Save
