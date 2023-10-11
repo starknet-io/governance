@@ -137,6 +137,19 @@ export const ExternalLinkIcon = ({ color, ...rest }: UiIconProps) => (
     />
   </Icon>
 );
+export const ExternalLinkLargeIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 25 24" {...rest}>
+    <g id="wrapper">
+      <path
+        id="Union"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8.9165 3.75L20.1665 3.75C20.3654 3.75 20.5562 3.82902 20.6968 3.96967C20.8375 4.11032 20.9165 4.30109 20.9165 4.5V15.75C20.9165 16.1642 20.5807 16.5 20.1665 16.5C19.7523 16.5 19.4165 16.1642 19.4165 15.75V6.31066L5.69683 20.0303C5.40394 20.3232 4.92907 20.3232 4.63617 20.0303C4.34328 19.7374 4.34328 19.2626 4.63617 18.9697L18.3558 5.25L8.9165 5.25C8.50229 5.25 8.1665 4.91421 8.1665 4.5C8.1665 4.08579 8.50229 3.75 8.9165 3.75Z"
+        fill={color ? color : "#4A4A4F"}
+      />
+    </g>
+  </Icon>
+);
 
 export const CommentIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>

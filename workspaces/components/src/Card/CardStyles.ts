@@ -37,12 +37,12 @@ const variants = {
   }),
   homePage: definePartsStyle({
     container: {
-      padding: "standard.md",
+      padding: "standard.sm",
       fontSize: "12px",
       lineHeight: "20px",
       letterSpacing: "0.12px",
       fontWeight: 500,
-      border: "1px solid rgba(35, 25, 45, 0.10)",
+      border: "1px solid border.forms",
       _hover: {
         borderColor: "border.formsHover",
       },
