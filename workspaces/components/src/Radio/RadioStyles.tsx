@@ -1,17 +1,15 @@
 import { radioAnatomy } from "@chakra-ui/anatomy";
-import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
+import { createMultiStyleConfigHelpers, defineStyle } from "@chakra-ui/react";
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(radioAnatomy.keys);
 
 const baseStyle = definePartsStyle({
   label: {
-    fontSize: "0.875rem",
-    lineHeight: "1.25rem",
-    fontWeight: "500",
     color: "content.accent.default",
     marginLeft: "standard.sm",
   },
+
   control: {
     boxSize: "24px",
     borderColor: "border.forms",
@@ -31,5 +29,24 @@ const baseStyle = definePartsStyle({
     },
   },
 });
+const standardControl = defineStyle({
+  boxSize: "24px",
+});
+const standardLabel = defineStyle({
+  lineHeight: "20px",
+  fontWeight: "500",
+  fontSize: "14px",
+  letterSpacing: "0.07px",
+});
+const sizes = {
+  standard: definePartsStyle({
+    control: standardControl,
+    label: standardLabel,
+  }),
+};
 
-export const radioTheme = defineMultiStyleConfig({ baseStyle });
+export const radioTheme = defineMultiStyleConfig({
+  baseStyle,
+  sizes,
+  defaultProps: { size: "standard" },
+});
