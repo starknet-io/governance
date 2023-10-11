@@ -310,6 +310,19 @@ export const ArrowRightIcon = ({ color, ...rest }: UiIconProps) => (
     </g>
   </Icon>
 );
+export const ArrowRightLargeIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 32 32" {...rest}>
+    <g id="wrapper">
+      <path
+        id="Union"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M18.7116 8.81139C18.9999 8.51402 19.4747 8.50672 19.7721 8.79507L26.6471 15.4617C26.7928 15.603 26.875 15.7972 26.875 16.0002C26.875 16.2031 26.7928 16.3973 26.6471 16.5386L19.7721 23.2053C19.4747 23.4936 18.9999 23.4863 18.7116 23.1889C18.4232 22.8916 18.4305 22.4168 18.7279 22.1284L24.2742 16.7502H6.875C6.46079 16.7502 6.125 16.4144 6.125 16.0002C6.125 15.5859 6.46079 15.2502 6.875 15.2502H24.2742L18.7279 9.87192C18.4305 9.58357 18.4232 9.10875 18.7116 8.81139Z"
+        fill={color ? color : "#4A4A4F"}
+      />
+    </g>
+  </Icon>
+);
 
 export const ArrowDownCircleFillIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
@@ -869,7 +882,7 @@ export const WalletIcon = ({ color, ...rest }: UiIconProps) => (
   </Icon>
 );
 
-export const DocumentFileWarning = ({ color, ...rest }) => (
+export const DocumentFileWarning = ({ ...rest }) => (
   <Icon width="24" height="24" viewBox="0 0 24 24" fill="none" {...rest}>
     <path
       d="M12.0002 12.6583V10.7085"
@@ -897,7 +910,7 @@ export const DocumentFileWarning = ({ color, ...rest }) => (
   </Icon>
 );
 
-export const CommentHidden = ({ color, ...rest }) => (
+export const CommentHidden = ({ ...rest }) => (
   <Icon width="24" height="24" viewBox="0 0 24 24" fill="none" {...rest}>
     <rect width="20" height="20" fill="white" fillOpacity="0.01" />
     <path
