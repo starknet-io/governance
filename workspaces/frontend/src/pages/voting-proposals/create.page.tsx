@@ -79,78 +79,82 @@ export function Page() {
     }
   };
 
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      setIsSubmitting(true);
-      if (walletClient == null) return;
-
-      const client = new snapshot.Client712(
-        import.meta.env.VITE_APP_SNAPSHOT_URL,
-      );
-
-      const block = await fetchBlockNumber({
-        chainId: parseInt(import.meta.env.VITE_APP_SNAPSHOT_CHAIN_ID),
-      });
-
-      console.log(block);
-
-      const params: Proposal & {
-        categories: Array<string>;
-        votingPeriod?: Date[];
-      } = {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        type: "basic",
-        title: data.title,
-        body: editorValue,
-        choices: ["For", "Against", "Abstain"],
-        start: Math.floor(data!.votingPeriod[0].getTime() / 1000),
-        end: Math.floor(data!.votingPeriod[1].getTime() / 1000),
-        categories,
-        snapshot: Number(block),
-        plugins: JSON.stringify({}),
-        discussion: data.discussion,
-      };
-
-      const web3 = new providers.Web3Provider(walletClient.transport);
-
-      const receipt = (await client.proposal(
-        web3,
-        walletClient.account.address,
-        params,
-      )) as any;
-
-      const proposalData = {
-        category: data.category as "category1" | "category2" | "category3",
-        proposalId: receipt.id,
-      };
-
+  const onSubmit = handleSubmit(
+    async (data) => {
       try {
-        await createProposal
-          .mutateAsync(proposalData)
-          .then(() => {
-            setError("");
-            navigate(`/voting-proposals/${receipt.id}`);
-            setIsSubmitting(false);
-          })
-          .catch((err) => {
-            console.log(err);
-            setIsSubmitting(false);
-          });
-      } catch (error) {
-        // Handle error
-        console.log(error);
-        setIsSubmitting(false);
-        // error.description is actual error from snapshot
-      }
+        setIsSubmitting(true);
+        if (walletClient == null) return;
 
-      console.log(receipt);
-    } catch (error: any) {
-      // Handle error
-      setIsSubmitting(false);
-      setError(`Error: ${error?.error_description}`);
-      console.log(error);
-    }
-  });
+        const client = new snapshot.Client712(
+          import.meta.env.VITE_APP_SNAPSHOT_URL,
+        );
+
+        const block = await fetchBlockNumber({
+          chainId: parseInt(import.meta.env.VITE_APP_SNAPSHOT_CHAIN_ID),
+        });
+
+        console.log(block);
+
+        const params: Proposal & {
+          categories: Array<string>;
+          votingPeriod?: Date[];
+        } = {
+          space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+          type: "basic",
+          title: data.title,
+          body: editorValue,
+          choices: ["For", "Against", "Abstain"],
+          start: Math.floor(data!.votingPeriod[0].getTime() / 1000),
+          end: Math.floor(data!.votingPeriod[1].getTime() / 1000),
+          categories,
+          snapshot: Number(block),
+          plugins: JSON.stringify({}),
+          discussion: data.discussion,
+        };
+
+        const web3 = new providers.Web3Provider(walletClient.transport);
+
+        const receipt = (await client.proposal(
+          web3,
+          walletClient.account.address,
+          params,
+        )) as any;
+
+        type CategoryType = "category1" | "category2" | "category3";
+        const proposalData = {
+          category: data.category.value as CategoryType,
+          proposalId: receipt.id,
+        };
+
+        try {
+          await createProposal
+            .mutateAsync(proposalData)
+            .then(() => {
+              setError("");
+              navigate(`/voting-proposals/${receipt.id}`);
+              setIsSubmitting(false);
+            })
+            .catch((err) => {
+              console.log(err);
+              setIsSubmitting(false);
+            });
+        } catch (error) {
+          // Handle error
+          console.log(error);
+          setIsSubmitting(false);
+          // error.description is actual error from snapshot
+        }
+
+        console.log(receipt);
+      } catch (error: any) {
+        // Handle error
+        setIsSubmitting(false);
+        setError(`Error: ${error?.error_description}`);
+        console.log(error);
+      }
+    },
+    () => onErrorSubmit(errors),
+  );
 
   const isValidURL = (url) => {
     try {
