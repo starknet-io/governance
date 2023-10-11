@@ -275,69 +275,69 @@ export function Page() {
           title="Voting Proposals"
           description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol. "
         />
-        {data && data.length > 0 && (
-          <AppBar.Root>
-            <AppBar.Group mobileDirection="row">
-              <Box minWidth={"52px"}>
-                <Text variant="mediumStrong">Sort by</Text>
-              </Box>
-              <Select
-                size="sm"
-                aria-label="All"
-                placeholder="All"
-                rounded="md"
-                value={sortBy}
-                onChange={(e) => {
-                  setSortBy(e.target.value as SortingTypes);
-                  setFiltersState((prevState) => ({
-                    ...prevState,
-                    sortBy: e.target.value as SortingTypes,
-                  }));
-                  refetch();
-                }}
+
+        <AppBar.Root>
+          <AppBar.Group mobileDirection="row">
+            <Box minWidth={"52px"}>
+              <Text variant="mediumStrong">Sort by</Text>
+            </Box>
+            <Select
+              size="sm"
+              aria-label="All"
+              placeholder="All"
+              rounded="md"
+              value={sortBy}
+              onChange={(e) => {
+                setSortBy(e.target.value as SortingTypes);
+                setFiltersState((prevState) => ({
+                  ...prevState,
+                  sortBy: e.target.value as SortingTypes,
+                }));
+                refetch();
+              }}
+            >
+              {SORTING_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
+            <Popover placement="bottom-start">
+              <FilterPopoverIcon
+                label="Filter by"
+                badgeContent={filtersState.filters.length}
+              />
+              <FilterPopoverContent
+                isCancelDisabled={!state.canCancel}
+                onClickApply={state.onSubmit}
+                onClickCancel={handleResetFilters}
               >
-                {SORTING_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
-              <Popover placement="bottom-start">
-                <FilterPopoverIcon
-                  label="Filter by"
-                  badgeContent={filtersState.filters.length}
+                <Text mt="4" mb="2" fontWeight="bold">
+                  Status
+                </Text>
+                <CheckboxFilter
+                  hideLabel
+                  value={state.value}
+                  onChange={(v) => state.onChange(v)}
+                  options={statusFilters.options}
                 />
-                <FilterPopoverContent
-                  isCancelDisabled={!state.canCancel}
-                  onClickApply={state.onSubmit}
-                  onClickCancel={handleResetFilters}
-                >
-                  <Text mt="4" mb="2" fontWeight="bold">
-                    Status
-                  </Text>
-                  <CheckboxFilter
-                    hideLabel
-                    value={state.value}
-                    onChange={(v) => state.onChange(v)}
-                    options={statusFilters.options}
-                  />
-                  <Text mt="4" mb="2" fontWeight="bold">
-                    Categories
-                  </Text>
-                  <CheckboxFilter
-                    hideLabel
-                    value={state.value}
-                    onChange={(v) => state.onChange(v)}
-                    options={categoriesFilters.options}
-                  />
-                </FilterPopoverContent>
-              </Popover>
-            </AppBar.Group>
-            <AppBar.Group alignEnd>
-              <ActionButtons />
-            </AppBar.Group>
-          </AppBar.Root>
-        )}
+                <Text mt="4" mb="2" fontWeight="bold">
+                  Categories
+                </Text>
+                <CheckboxFilter
+                  hideLabel
+                  value={state.value}
+                  onChange={(v) => state.onChange(v)}
+                  options={categoriesFilters.options}
+                />
+              </FilterPopoverContent>
+            </Popover>
+          </AppBar.Group>
+          <AppBar.Group alignEnd>
+            <ActionButtons />
+          </AppBar.Group>
+        </AppBar.Root>
+
         <Box position={"relative"} mb="24px">
           <ListRow.Container>
             {loading ? (
@@ -347,18 +347,16 @@ export function Page() {
                 firstSkeletonWidth="600%"
               />
             ) : error ? (
-              <Box position="absolute" inset="0" top="-25px" bg="#F9F8F9">
-                <EmptyState
-                  type="votes"
-                  title="Something went wrong"
-                  minHeight="300px"
-                  action={
-                    <Button variant="primary" onClick={() => refetch}>
-                      Retry
-                    </Button>
-                  }
-                />
-              </Box>
+              <EmptyState
+                type="votes"
+                title="Something went wrong"
+                minHeight="300px"
+                action={
+                  <Button variant="primary" onClick={() => refetch}>
+                    Retry
+                  </Button>
+                }
+              />
             ) : data.length > 0 ? (
               data.map((item: any) => <Proposal key={item?.id} data={item} />)
             ) : (

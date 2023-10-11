@@ -467,6 +467,72 @@ export function Delegates({
             </Button>
           )}
         </Flex>
+        {showFilers && (
+          <AppBar.Root>
+            <AppBar.Group mobileDirection="row">
+              <Box minWidth={"52px"}>
+                <Text variant="mediumStrong">Sort by</Text>
+              </Box>
+              <Select
+                size="sm"
+                height="36px"
+                aria-label="Random"
+                placeholder="Random"
+                focusBorderColor={"red"}
+                rounded="md"
+                value={sortBy}
+                onChange={(e) => {
+                  setSortBy(e.target.value);
+                  setFiltersState((prevState) => ({
+                    ...prevState,
+                    sortBy: e.target.value,
+                  }));
+                  delegates.refetch();
+                }}
+              >
+                {sortByOptions.options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+              <Popover placement="bottom-start">
+                <FilterPopoverIcon
+                  label="Filter by"
+                  badgeContent={filtersState.filters.length}
+                />
+                <FilterPopoverContent
+                  isCancelDisabled={!state.canCancel}
+                  onClickApply={state.onSubmit}
+                  onClickCancel={handleResetFilters}
+                >
+                  <Text mt="4" mb="2" fontWeight="bold">
+                    Filters
+                  </Text>
+                  <CheckboxFilter
+                    hideLabel
+                    value={state.value}
+                    onChange={(v) => state.onChange(v)}
+                    options={delegateFilters.options}
+                  />
+                  <Text mt="4" mb="2" fontWeight="bold">
+                    Interests
+                  </Text>
+                  <CheckboxFilter
+                    hideLabel
+                    value={state.value}
+                    onChange={(v) => state.onChange(v)}
+                    options={delegateInterests.options}
+                  />
+                </FilterPopoverContent>
+              </Popover>
+            </AppBar.Group>
+
+            <AppBar.Group alignEnd>
+              <ActionButtons />
+            </AppBar.Group>
+          </AppBar.Root>
+        )}
         {delegates.isLoading ? (
           <DelegatesSkeleton />
         ) : delegates.isError ? (
@@ -482,73 +548,6 @@ export function Delegates({
           />
         ) : (
           <>
-            {showFilers && (
-              <AppBar.Root>
-                <AppBar.Group mobileDirection="row">
-                  <Box minWidth={"52px"}>
-                    <Text variant="mediumStrong">Sort by</Text>
-                  </Box>
-                  <Select
-                    size="sm"
-                    height="36px"
-                    aria-label="Random"
-                    placeholder="Random"
-                    focusBorderColor={"red"}
-                    rounded="md"
-                    value={sortBy}
-                    onChange={(e) => {
-                      setSortBy(e.target.value);
-                      setFiltersState((prevState) => ({
-                        ...prevState,
-                        sortBy: e.target.value,
-                      }));
-                      delegates.refetch();
-                    }}
-                  >
-                    {sortByOptions.options.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                  <Popover placement="bottom-start">
-                    <FilterPopoverIcon
-                      label="Filter by"
-                      badgeContent={filtersState.filters.length}
-                    />
-                    <FilterPopoverContent
-                      isCancelDisabled={!state.canCancel}
-                      onClickApply={state.onSubmit}
-                      onClickCancel={handleResetFilters}
-                    >
-                      <Text mt="4" mb="2" fontWeight="bold">
-                        Filters
-                      </Text>
-                      <CheckboxFilter
-                        hideLabel
-                        value={state.value}
-                        onChange={(v) => state.onChange(v)}
-                        options={delegateFilters.options}
-                      />
-                      <Text mt="4" mb="2" fontWeight="bold">
-                        Interests
-                      </Text>
-                      <CheckboxFilter
-                        hideLabel
-                        value={state.value}
-                        onChange={(v) => state.onChange(v)}
-                        options={delegateInterests.options}
-                      />
-                    </FilterPopoverContent>
-                  </Popover>
-                </AppBar.Group>
-
-                <AppBar.Group alignEnd>
-                  <ActionButtons />
-                </AppBar.Group>
-              </AppBar.Root>
-            )}
-
             <SimpleGrid
               position="relative"
               width="100%"
@@ -616,13 +615,6 @@ type DelegatesSkeletonProps = {
 const DelegatesSkeleton = ({ count = 6 }: DelegatesSkeletonProps) => {
   return (
     <Box>
-      <Box display={"flex"} gap="12px" bg="#fff" padding="12px" mb="24px">
-        <Skeleton height="24px" width="40%" />
-        <Skeleton height="24px" width="40%" />
-        <Skeleton height="24px" width="40%" />
-        <Skeleton height="24px" width="100%" />
-      </Box>
-
       <SimpleGrid
         position="relative"
         width="100%"
