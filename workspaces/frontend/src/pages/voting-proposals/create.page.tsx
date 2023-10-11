@@ -274,18 +274,20 @@ Links
                   render={({ field }) => (
                     <Select
                       {...field}
-                      isMulti
                       isInvalid={!!errors.category}
                       options={categories.map((category) => ({
                         value: category,
-                        label: category, // Assuming category is a string. Adjust as needed.
+                        label: category,
                       }))}
                       value={field.value as any}
-                      onChange={(values) => field.onChange(values)}
+                      onChange={(value) => field.onChange(value)}
                     />
                   )}
                 />
               </FormControlled>
+              <Heading color="content.accent.default" variant="h3" mt="20px">
+                Voting
+              </Heading>
 
               {/* // disabled for basic voting */}
               <FormControlled name="votingType" label="Voting type">
