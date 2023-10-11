@@ -35,9 +35,8 @@ export const buttonTheme = {
       },
     },
     withBadgeCondensed: {
-      minWidth: "36px",
       paddingLeft: "condensed.lg!important",
-      paddingRight: "40px!important",
+      paddingRight: "condensed.lg!important",
       borderRadius: "condensed.base",
       py: "condensed.sm",
       minHeight: "36px",
