@@ -165,7 +165,7 @@ export const ProfileInfoModal = ({
                     })}
                   />
                   {errors.starknetAddress && (
-                    <span>Invalid Starknet address</span>
+                    <span>{errors.starknetAddress?.message}</span>
                   )}
                 </FormControl>
               </form>

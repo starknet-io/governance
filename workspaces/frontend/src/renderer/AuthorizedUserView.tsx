@@ -106,35 +106,40 @@ const AuthorizedUserView = () => {
     setIsMenuOpen(false);
   };
 
-  const handleSave = (data: {
+  async function handleSave(data: {
     username: string;
     starknetAddress: string;
     profileImage: string | null;
-  }) => {
+  }): Promise<any> {
     if (!user) {
-      return;
+      return false;
     }
-    editUserProfile.mutateAsync(
-      {
-        id: user.id,
-        username: data.username !== user?.username ? data.username : null,
-        starknetAddress: data.starknetAddress,
-        profileImage: data.profileImage,
-      },
-      {
-        onSuccess: () => {
-          utils.auth.currentUser.invalidate();
-          setIsMenuOpen(false);
+    try {
+      const res = await editUserProfile.mutateAsync(
+        {
+          id: user.id,
+          username: data.username !== user?.username ? data.username : null,
+          starknetAddress: data.starknetAddress,
+          profileImage: data.profileImage,
         },
-        onError: (error) => {
-          console.log(error.message);
-          if (error.message === "Username already exists") {
-            setUserExistsError(true);
-          }
+        {
+          onSuccess: () => {
+            utils.auth.currentUser.invalidate();
+            return true;
+          },
+          onError: (error) => {
+            if (error.message === "Username already exists") {
+              setUserExistsError(true);
+            }
+            return false;
+          },
         },
-      },
-    );
-  };
+      );
+      return res;
+    } catch (error) {
+      return false;
+    }
+  }
 
   return (
     <>

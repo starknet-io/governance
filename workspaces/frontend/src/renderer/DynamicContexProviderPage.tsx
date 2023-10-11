@@ -547,8 +547,12 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
           />
         ))}
 
-        {user ? (
-          <NavItem href="/settings" icon={<SettingsIcon />} label="Settings" />
+        {user && hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+          <NavItem
+            href="/settings"
+            icon={<SettingsIcon />}
+            label="Admin Settings"
+          />
         ) : null}
         <NavItem
           icon={<SupportIcon />}

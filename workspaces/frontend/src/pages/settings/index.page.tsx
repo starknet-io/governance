@@ -215,51 +215,6 @@ export function Page() {
           cancelRef={cancelRef}
           entityName="User Role"
         />
-        <Box>
-          <Box>
-            <Heading variant="h3" mb="24px" fontSize="28px">
-              Profile
-            </Heading>
-            {/* <Box
-              mb="24px"
-              display={"flex"}
-              flexDirection={"row"}
-              alignItems="center"
-            >
-              <ProfileImage imageUrl={imageUrl} />
-              <Box ml="16px">
-                <Box display={"flex"} flexDirection={"row"}>
-                  <FileUploader
-                    handleUpload={handleUpload}
-                    onImageUploaded={(imageUrl) => {
-                      setImageUrl(imageUrl);
-                    }}
-                  />
-                  <Button
-                    variant={"ghost"}
-                    ml="16px"
-                    onClick={() => {
-                      setImageUrl(null);
-                      setImageChanged(true);
-                    }}
-                  >
-                    <Text>Remove</Text>
-                  </Button>
-                </Box>
-                <Box>
-                  <Text variant="small" color={"#86848D"}>
-                    We support PNGs, JPEGs and GIFs under 10MB
-                  </Text>
-                </Box>
-              </Box>
-            </Box> */}
-            {/* <Flex justifyContent="flex-end">
-              <Button onClick={handleSave} variant="primary">
-                Save changes
-              </Button>
-            </Flex> */}
-          </Box>
-        </Box>
         {!hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
           <></>
         ) : (
