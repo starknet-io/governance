@@ -19,6 +19,8 @@ import {
   FormControlled,
   Select,
   useFormErrorHandler,
+  RadioGroup,
+  Radio,
 } from "@yukilabs/governance-components";
 import type { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { Controller, useForm } from "react-hook-form";
@@ -152,8 +154,8 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
     useState(false);
   const [agreementType, setAgreementType] = useState<
-    "standard" | "custom" | null
-  >(null);
+    "standard" | "custom" | ""
+  >("");
 
   const createDelegate = trpc.delegates.saveDelegate.useMutation();
   const editDelegate = trpc.delegates.editDelegate.useMutation();
@@ -224,6 +226,22 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     } catch (error) {
       // Handle error
       console.log(error);
+    }
+  };
+
+  const handleRadioChange = (value: string) => {
+    if (value === "standard") {
+      setAgreementType("standard");
+      setShowCustomAgreementEditor(false);
+      setValue("confirmDelegateAgreement", true);
+    } else if (value === "custom") {
+      setAgreementType("custom");
+      setShowCustomAgreementEditor(true);
+      setValue("confirmDelegateAgreement", false);
+    } else {
+      setAgreementType("");
+      setShowCustomAgreementEditor(false);
+      setValue("confirmDelegateAgreement", false);
     }
   };
 
@@ -371,15 +389,19 @@ Conflicts of interest
 
         <Divider />
         <Box>
-          <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
-            Delegate agreement <Text variant="largeStrong">(optional)</Text>
+          <Heading variant="h3" display="flex" mb="standard.base">
+            Delegate agreement
           </Heading>
-          <Text variant="medium">
+          <Text
+            variant="medium"
+            color="content.default.default"
+            my="standard.base"
+          >
             Add an agreement between you and the people who delegate to you.
           </Text>
         </Box>
         {/* <Heading variant="h1">I don't need a delegate agreement</Heading> */}
-        <FormControl id="confirmDelegateAgreement">
+        {/* <FormControl id="confirmDelegateAgreement">
           <Checkbox
             isChecked={agreementType === "standard"}
             onChange={(e) => {
@@ -413,7 +435,52 @@ Conflicts of interest
           >
             I want to provide a custom delegate agreement.
           </Checkbox>
-        </FormControl>
+        </FormControl> */}
+
+        <Box>
+          <RadioGroup
+            value={agreementType}
+            onChange={(value) => handleRadioChange(value)}
+          >
+            <Stack spacing={"12px"} direction="column">
+              <FormControl id="defaultDelegateAgreement">
+                <Radio
+                  value=""
+                  onChange={() => {
+                    setShowCustomAgreementEditor(false);
+                    setValue("confirmDelegateAgreement", false);
+                  }}
+                >
+                  I don&apos;t need a delegate agreement.
+                </Radio>
+              </FormControl>
+              <FormControl id="confirmDelegateAgreement">
+                <Radio
+                  value="standard"
+                  onChange={() => {
+                    setShowCustomAgreementEditor(false);
+                    setValue("confirmDelegateAgreement", true);
+                  }}
+                >
+                  I agree with the Starknet foundation suggested delegate
+                  agreement.
+                </Radio>
+              </FormControl>
+              <FormControl id="customDelegateAgreement">
+                <Radio
+                  value="custom"
+                  onChange={() => {
+                    setShowCustomAgreementEditor(true);
+                    setValue("confirmDelegateAgreement", false);
+                  }}
+                >
+                  I want to provide a custom delegate agreement.
+                </Radio>
+              </FormControl>
+            </Stack>
+          </RadioGroup>
+        </Box>
+
         {/* For some reason, markdown editor as breaking if I make it conditional render, so using display block/hidden */}
         <div
           style={{
