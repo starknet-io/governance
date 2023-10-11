@@ -64,6 +64,7 @@ import {
   PlusCircleIcon,
   MinusCircleIcon,
   ArrowRightIcon,
+  CommentHidden,
   DocumentFileWarning,
 } from "./UiIcons";
 
@@ -131,5 +132,6 @@ export {
   PlusCircleIcon,
   MinusCircleIcon,
   ArrowRightIcon,
+  CommentHidden,
   DocumentFileWarning,
 };

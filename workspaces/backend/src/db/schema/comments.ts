@@ -2,6 +2,7 @@ import {
   pgTable,
   serial,
   text,
+  boolean,
   timestamp,
   integer,
   uuid,
@@ -40,6 +41,7 @@ export const comments:any = pgTable('comments', {
   }),
   upvotes: integer('upvotes').default(0),
   downvotes: integer('downvotes').default(0),
+  isDeleted: boolean('isDeleted').default(false),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),
