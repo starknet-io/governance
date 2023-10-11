@@ -10,6 +10,8 @@ import {
   useMarkdownEditor,
   DeletionDialog,
   useDisclosure,
+  FormControlled,
+  useFormErrorHandler,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { Controller, useForm } from "react-hook-form";
@@ -33,7 +35,9 @@ export function PostForm({ post, isFetchPostSuccess, mode }: PostFormProps) {
     setValue,
     formState: { errors, isValid },
     control,
-  } = useForm<RouterInput["posts"]["savePost"]>();
+  } = useForm<RouterInput["posts"]["savePost"]>({
+    shouldFocusError: false,
+  });
 
   const [councilId, setCouncilId] = useState<string>("");
   const createPost = trpc.posts.savePost.useMutation();
@@ -73,7 +77,18 @@ export function PostForm({ post, isFetchPostSuccess, mode }: PostFormProps) {
     }, 10);
   };
 
-  const onSubmit = handleSubmit(async (data) => {
+  const { setErrorRef, scrollToError } = useFormErrorHandler([
+    "title",
+    "content",
+  ]);
+
+  const onErrorSubmit = (errors) => {
+    if (Object.keys(errors).length > 0) {
+      scrollToError(errors);
+    }
+  };
+
+  const onSubmitHandler = async (data) => {
     try {
       data.content = editorValue;
       if (mode === "create") {
@@ -96,7 +111,7 @@ export function PostForm({ post, isFetchPostSuccess, mode }: PostFormProps) {
       // Handle error
       console.log(error);
     }
-  });
+  };
 
   const handleDeletePost = async () => {
     if (!post?.id) return;
@@ -127,25 +142,37 @@ export function PostForm({ post, isFetchPostSuccess, mode }: PostFormProps) {
         cancelRef={cancelRef}
         entityName="Post"
       />
-      <form onSubmit={onSubmit}>
-        <Stack spacing="32px" direction={{ base: "column" }}>
-          <FormControl id="delegate-statement">
-            <FormLabel>Title</FormLabel>
+      <form onSubmit={handleSubmit(onSubmitHandler, onErrorSubmit)} noValidate>
+        <Stack spacing="standard.xl" direction={{ base: "column" }}>
+          <FormControlled
+            ref={(ref) => setErrorRef("title", ref)}
+            name="title"
+            label="Title"
+            isRequired
+            isInvalid={!!errors.title}
+            errorMessage={errors.title?.message || "Add a title to your post"}
+          >
             <Input
               variant="primary"
               size="standard"
               placeholder="Post title"
+              isInvalid={!!errors.title}
               {...register("title", {
                 required: true,
               })}
             />
-            {errors.title && <span>Add a title to your post</span>}
-          </FormControl>
-          <FormControl id="proposal-body">
-            <FormLabel>Content</FormLabel>
+          </FormControlled>
+          <FormControlled
+            ref={(ref) => setErrorRef("content", ref)}
+            name="content"
+            label="Content"
+            isRequired
+            isInvalid={!!errors.content}
+            errorMessage={errors.content?.message || "Add text to your post"}
+          >
             <Controller
               name="content"
-              control={control} // Use control from useForm
+              control={control}
               rules={{
                 validate: {
                   required: (value) => {
@@ -153,7 +180,7 @@ export function PostForm({ post, isFetchPostSuccess, mode }: PostFormProps) {
                     console.log(editorValue);
                     const trimmedValue = editorValue?.trim();
 
-                    if (!trimmedValue?.length || !trimmedValue) {
+                    if (!trimmedValue?.length) {
                       return "Add text to your post";
                     }
                   },
@@ -161,6 +188,7 @@ export function PostForm({ post, isFetchPostSuccess, mode }: PostFormProps) {
               }}
               render={({ field }) => (
                 <MarkdownEditor
+                  isInvalid={!!errors.content}
                   onChange={(e) => {
                     handleEditorChange(e);
                     field.onChange(e);
@@ -175,8 +203,7 @@ export function PostForm({ post, isFetchPostSuccess, mode }: PostFormProps) {
                 />
               )}
             />
-            {errors.content && <span>{errors.content.message}</span>}
-          </FormControl>
+          </FormControlled>
           {mode === "create" ? (
             <Flex justifyContent="flex-end">
               <Button type="submit" size="condensed" variant="primary">
