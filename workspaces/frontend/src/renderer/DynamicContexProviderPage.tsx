@@ -42,6 +42,7 @@ import {
   HamburgerIcon,
   Link,
   PlusIcon,
+  BuildersIcon,
 } from "@yukilabs/governance-components";
 import { Box, Show } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
@@ -493,17 +494,26 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
         </NavGroup>
       </Box>
       <NavGroup label="Councils">
-        {councilData?.map((council) => (
-          <NavItem
-            key={council.id}
-            icon={<SecurityIcon />}
-            label={council.name ?? "Unknown"}
-            href={council.slug ? `/councils/${council.slug}` : "/councils"}
-            active={pageContext.urlOriginal.startsWith(
-              `/councils/${council.slug}`,
-            )}
-          />
-        ))}
+        {councilData
+          ?.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""))
+          .map((council) => (
+            <NavItem
+              key={council.id}
+              icon={
+                council.name?.toLowerCase().startsWith("builder") ? (
+                  <BuildersIcon />
+                ) : (
+                  <SecurityIcon />
+                )
+              }
+              label={council.name ?? "Unknown"}
+              href={council.slug ? `/councils/${council.slug}` : "/councils"}
+              active={pageContext.urlOriginal.startsWith(
+                `/councils/${council.slug}`,
+              )}
+            />
+          ))}
+
         {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
           <Link
             href="/councils/create"
