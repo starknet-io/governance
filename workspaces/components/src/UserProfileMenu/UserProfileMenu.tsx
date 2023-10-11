@@ -28,7 +28,7 @@ interface UserProfileMenuProps {
     username: string;
     starknetAddress: string;
     profileImage: string | null;
-  }) => void;
+  }) => Promise<any>;
   vp: number;
   userBalance: any;
   delegatedTo: any;
@@ -60,6 +60,18 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
     onModalStateChange(isModalOpen);
   }, [isModalOpen]);
 
+  async function handleSave(data: {
+    username: string;
+    starknetAddress: string;
+    profileImage: string | null;
+  }) {
+    const result = await onSave(data);
+    if (result) {
+      setEditUserProfile(false);
+      setIsModalOpen(false);
+    }
+  }
+
   return (
     <>
       <ProfileInfoModal
@@ -70,7 +82,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
         }}
         handleUpload={handleUpload}
         user={user}
-        saveData={onSave}
+        saveData={(data) => handleSave(data)}
         userExistsError={userExistsError}
         setUsernameErrorFalse={setUsernameErrorFalse}
       />
