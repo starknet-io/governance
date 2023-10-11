@@ -1,9 +1,6 @@
 import {
   Box,
   Flex,
-  FormControl,
-  FormLabel,
-  Input,
   Link,
   Spacer,
   StackDivider,
@@ -13,13 +10,12 @@ import {
 import "./user-profile.css";
 import { Button } from "src/Button";
 import { useEffect, useState } from "react";
-import { XIcon } from "../Icons";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
 import { CopyToClipboard } from "src/CopyToClipboard";
-import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
 import { AvatarWithText } from "src/AvatarWithText";
+import { ProfileInfoModal } from "index";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -28,10 +24,18 @@ interface IUser extends User {
 interface UserProfileMenuProps {
   onDisconnect: () => void;
   user: IUser | null;
-  onSave: (address: string, starknetAddress: string) => void;
+  onSave: (data: {
+    username: string;
+    starknetAddress: string;
+    profileImage: string | null;
+  }) => void;
   vp: number;
   userBalance: any;
   delegatedTo: any;
+  onModalStateChange: (isOpen: boolean) => void;
+  handleUpload?: (file: File) => Promise<string | void> | void;
+  userExistsError?: boolean;
+  setUsernameErrorFalse?: () => void;
 }
 
 export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
@@ -41,97 +45,37 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
   vp,
   userBalance,
   delegatedTo,
+  onModalStateChange,
+  handleUpload,
+  userExistsError = false,
+  setUsernameErrorFalse,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCloseModal = () => setIsModalOpen(false);
+  const handleOpenModal = () => setIsModalOpen(true);
   const [editUserProfile, setEditUserProfile] = useState(false);
-  const [username, setUsername] = useState<any>(user?.username);
-  const [starknetAddress, setStarknetAddress] = useState<any>(
-    user?.starknetAddress,
-  );
-  const [error, setError] = useState<boolean>(false);
-
-  const handleSave = () => {
-    onSave(username, starknetAddress);
-    setEditUserProfile(false);
-  };
-
-  const handleCancel = () => {
-    // Exit edit mode without saving
-    setEditUserProfile(false);
-  };
 
   useEffect(() => {
-    if (!validateStarknetAddress(starknetAddress)) {
-      setError(true);
-    } else {
-      setError(false);
-    }
-  }, [starknetAddress]);
+    onModalStateChange(isModalOpen);
+  }, [isModalOpen]);
 
   return (
     <>
+      <ProfileInfoModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          handleCloseModal();
+          setEditUserProfile(false);
+        }}
+        handleUpload={handleUpload}
+        user={user}
+        saveData={onSave}
+        userExistsError={userExistsError}
+        setUsernameErrorFalse={setUsernameErrorFalse}
+      />
       {editUserProfile ? (
-        <Box className="edit-user-profile-menu" p={6}>
-          <Flex direction="column" mb={4}>
-            <Box
-              position="absolute"
-              top="10px"
-              right="10px"
-              onClick={handleCancel}
-              cursor="pointer"
-            >
-              <XIcon />
-            </Box>
-            <Flex
-              lineHeight="32px"
-              fontSize="21px"
-              fontWeight="700"
-              justifyContent="center"
-            >
-              Edit User Profile Info
-            </Flex>
-            <Box mt={6}>
-              <form style={{ width: "100%" }}>
-                <FormControl id="member-name" paddingBottom={2}>
-                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
-                    Username
-                  </FormLabel>
-                  <Input
-                    placeholder="Username"
-                    name="name"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl id="address" paddingBottom={2}>
-                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
-                    Starknet address
-                  </FormLabel>
-                  <Input
-                    placeholder="0x..."
-                    name="address"
-                    value={starknetAddress}
-                    onChange={(e) => setStarknetAddress(e.target.value)}
-                  />
-                  {error && (
-                    <Text fontSize="12px" color="red">
-                      Invalid Starknet address
-                    </Text>
-                  )}
-                </FormControl>
-                <Box width="100%" mt={6}>
-                  <Button
-                    width="100%"
-                    variant="primary"
-                    onClick={handleSave}
-                    isDisabled={error}
-                  >
-                    Save
-                  </Button>
-                </Box>
-              </form>
-            </Box>
-          </Flex>
-        </Box>
+        <></>
       ) : (
         <Box className="user-profile-menu" p={6}>
           <VStack
@@ -150,28 +94,6 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               subheaderText={truncateAddress(user?.address || "")}
               src={user?.profileImage ?? user?.ensAvatar ?? null}
             />
-            {/* <Flex direction="row" mb={4}>
-              <Box>
-                {user?.profileImage || user?.ensAvatar ? (
-                  <ProfileImage
-                    imageUrl={user.profileImage ?? user.ensAvatar}
-                    size={"small"}
-                  />
-                ) : (
-                  <Indenticon size={40} address={user?.address} />
-                )}
-              </Box>
-              <Box pl={4}>
-                <Text color="#2A2A32" fontWeight="bold" fontSize="14px">
-                  {user?.username ||
-                    user?.ensName ||
-                    truncateAddress(user?.address || "")}
-                </Text>
-                <Text color="#6C6C75" fontSize="12px">
-                  {truncateAddress(user?.address || "")}
-                </Text>
-              </Box>
-              </Flex> */}
 
             <Flex>
               <Box>
@@ -226,8 +148,9 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                             </Text>
                             <CopyToClipboard text={delegatedTo?.address} />
                           </Flex>
-                        ) : delegatedTo !==
-                          "0x0000000000000000000000000000000000000000" ? (
+                        ) : delegatedTo &&
+                          delegatedTo !==
+                            "0x0000000000000000000000000000000000000000" ? (
                           <Flex>
                             <Text>{truncateAddress(delegatedTo || "")}</Text>
                             <CopyToClipboard text={delegatedTo} />
@@ -253,7 +176,10 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
             <Flex direction="column" mt={4}>
               <Button
                 variant="outline"
-                onClick={() => setEditUserProfile(true)}
+                onClick={() => {
+                  setEditUserProfile(true);
+                  handleOpenModal();
+                }}
               >
                 Edit user profile
               </Button>

@@ -136,23 +136,44 @@ export const usersRouter = router({
         id: z.string(),
         username: z.any(),
         starknetAddress: z.any(),
+        profileImage: z.any(),
       }),
     )
     .mutation(async (opts) => {
-      const { id, username, starknetAddress } = opts.input;
+      const { id, username, starknetAddress, profileImage } = opts.input;
 
-      const updatedUsername =
+      const user = await db.query.users.findFirst({
+        where: eq(users.username, username),
+      });
+
+      const userById = await db.query.users.findFirst({
+        where: eq(users.id, id),
+      });
+
+      if (user) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Username already exists',
+        });
+      }
+
+      let updatedUsername =
         username !== undefined && username !== '' ? username : null;
       const updatedAddress =
         starknetAddress !== undefined && starknetAddress !== ''
           ? starknetAddress
           : null;
 
+      if (updatedUsername === null) {
+        updatedUsername = userById?.username;
+      }
+
       await db
         .update(users)
         .set({
           username: updatedUsername,
           starknetAddress: updatedAddress,
+          profileImage: profileImage,
         })
         .where(eq(users.id, id))
         .returning();

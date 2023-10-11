@@ -10,14 +10,17 @@ import { useQuery } from "@apollo/client";
 import { stringToHex } from "viem";
 import { usePageContext } from "./PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
+import { useFileUpload } from "src/hooks/useFileUpload";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userExistsError, setUserExistsError] = useState(false);
   const utils = trpc.useContext();
 
+  const [isUserModalOpen, setIsModalOpen] = useState(false);
   const { handleLogOut } = useDynamicContext();
-
+  const { handleUpload } = useFileUpload();
   const { user } = usePageContext();
 
   const { data: vp } = useQuery(
@@ -127,7 +130,9 @@ const AuthorizedUserView = () => {
   useOutsideClick({
     ref: navRef,
     handler: () => {
-      setIsMenuOpen(false);
+      if (isMenuOpen && !isUserModalOpen) {
+        setIsMenuOpen(false);
+      }
     },
   });
 
@@ -136,28 +141,39 @@ const AuthorizedUserView = () => {
     setIsMenuOpen(false);
   };
 
-  const handleSave = (username: string, starknetAddress: string) => {
+  const handleSave = (data: {
+    username: string;
+    starknetAddress: string;
+    profileImage: string | null;
+  }) => {
     if (!user) {
       return;
     }
     editUserProfile.mutateAsync(
       {
         id: user.id,
-        username,
-        starknetAddress,
+        username: data.username !== user?.username ? data.username : null,
+        starknetAddress: data.starknetAddress,
+        profileImage: data.profileImage,
       },
       {
         onSuccess: () => {
           utils.auth.currentUser.invalidate();
+          setIsMenuOpen(false);
+        },
+        onError: (error) => {
+          console.log(error.message);
+          if (error.message === "Username already exists") {
+            setUserExistsError(true);
+          }
         },
       },
     );
-    setIsMenuOpen(false);
   };
 
   return (
     <>
-      <div ref={navRef}>
+      <div className="user-menu" ref={navRef}>
         <DynamicNav />
         {isMenuOpen ? (
           <>
@@ -170,6 +186,10 @@ const AuthorizedUserView = () => {
               onSave={handleSave}
               vp={vp?.vp?.vp ?? 0}
               userBalance={userBalance}
+              onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}
+              handleUpload={handleUpload}
+              userExistsError={userExistsError}
+              setUsernameErrorFalse={() => setUserExistsError(false)}
             />
           </>
         ) : (

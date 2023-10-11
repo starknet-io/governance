@@ -150,20 +150,20 @@ export function Page() {
     }
   };
 
-  const handleSave = () => {
-    if (!user) return;
-    editUser.mutateAsync(
-      {
-        id: user.id,
-        profileImage: imageUrl ?? "none",
-      },
-      {
-        onSuccess: () => {
-          utils.auth.currentUser.invalidate();
-        },
-      },
-    );
-  };
+  // const handleSave = () => {
+  //   if (!user) return;
+  //   editUser.mutateAsync(
+  //     {
+  //       id: user.id,
+  //       profileImage: imageUrl ?? "none",
+  //     },
+  //     {
+  //       onSuccess: () => {
+  //         utils.auth.currentUser.invalidate();
+  //       },
+  //     },
+  //   );
+  // };
 
   const isValidAddress = (address: string) => {
     try {
@@ -221,7 +221,7 @@ export function Page() {
             <Heading variant="h3" mb="24px" fontSize="28px">
               Profile
             </Heading>
-            <Box
+            {/* <Box
               mb="24px"
               display={"flex"}
               flexDirection={"row"}
@@ -253,12 +253,12 @@ export function Page() {
                   </Text>
                 </Box>
               </Box>
-            </Box>
-            <Flex justifyContent="flex-end">
+            </Box> */}
+            {/* <Flex justifyContent="flex-end">
               <Button onClick={handleSave} variant="primary">
                 Save changes
               </Button>
-            </Flex>
+            </Flex> */}
           </Box>
         </Box>
         {!hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
