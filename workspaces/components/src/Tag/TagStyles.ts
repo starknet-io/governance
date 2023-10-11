@@ -49,8 +49,9 @@ const neutral = definePartsStyle({
     fontWeight: "600",
     borderRadius: "standard.base",
     position: "relative",
-    lineHeight: "16px",
+    lineHeight: "10px",
     letterSpacing: "0.2px",
+    height: "18px",
   },
 });
 

@@ -97,7 +97,9 @@ export const DelegateModal = ({
         <ModalBody>
           <Stack spacing="6">
             <Heading fontSize="21px" fontWeight="semibold" variant="h3">
-              {isUndelegation ? "Undelegate votes" : "Delegate votes"}
+              {isUndelegation
+                ? "Undelegate voting power"
+                : "Delegate voting power"}
             </Heading>
             <Stack spacing="32px">
               <Swap.Root>
@@ -161,8 +163,8 @@ export const DelegateModal = ({
                     onClick={delegateTokens}
                   >
                     {isUndelegation
-                      ? "Undelegate your votes"
-                      : "Delegate your votes"}
+                      ? "Undelegate voting power"
+                      : "Delegate voting power"}
                   </Button>
                 )
               ) : (

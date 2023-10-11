@@ -213,14 +213,14 @@ export function Delegates({
   useEffect(() => {
     if (isDelegationLoading) {
       setIsStatusModalOpen(true);
-      setStatusTitle("Delegating your votes");
+      setStatusTitle("Delegating voting power");
       setStatusDescription("");
     }
 
     if (isDelegationError) {
       console.log(delegationError);
       setIsStatusModalOpen(true);
-      setStatusTitle("Delegating votes failed");
+      setStatusTitle("Delegating voting power failed");
       setStatusDescription(
         "An error occurred while processing your transaction.",
       );
@@ -228,7 +228,7 @@ export function Delegates({
 
     if (isDelegationSuccess) {
       setIsStatusModalOpen(true);
-      setStatusTitle("Votes delegated successfully");
+      setStatusTitle("Voting power delegated successfully");
       setStatusDescription("");
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
@@ -390,7 +390,7 @@ export function Delegates({
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
-                setStatusTitle("Delegating votes failed");
+                setStatusTitle("Delegating voting power failed");
                 setStatusDescription(
                   err.shortMessage ||
                     err.message ||

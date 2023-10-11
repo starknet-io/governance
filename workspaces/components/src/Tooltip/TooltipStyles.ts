@@ -16,7 +16,7 @@ const primaryVariant = defineStyle(() => {
     border: "0 solid",
     borderColor: "red",
     bg: "surface.accent.default",
-    textAlign: "center",
+    textAlign: "left",
     boxShadow: "none",
   };
 });
@@ -33,7 +33,6 @@ const sizes = {
     padding: "standard.xs",
     letterSpacing: "0.5px",
     maxWidth: "246px",
-
     fontWeight: "600",
   }),
 };
