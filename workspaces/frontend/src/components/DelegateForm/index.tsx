@@ -69,6 +69,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     setError,
   } = useForm<FormValues>({
     mode: "onChange",
+    shouldFocusError: false,
   });
   const {
     isOpen: isDeleteOpen,
@@ -159,7 +160,11 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const deleteDelegate = trpc.delegates.deleteDelegate.useMutation();
 
   const pageContext = usePageContext();
-  const { setErrorRef, scrollToError } = useFormErrorHandler();
+  const { setErrorRef, scrollToError } = useFormErrorHandler([
+    "statement",
+    "interests",
+    "starknetAddress",
+  ]);
 
   const onSubmitHandler = async (data) => {
     try {
@@ -197,6 +202,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   };
 
   useEffect(() => {
+    console.log("User's starknetAddress:", user?.starknetAddress);
     if (user?.starknetAddress) {
       setValue("starknetAddress", user.starknetAddress);
       if (!validateStarknetAddress(user.starknetAddress)) {
@@ -204,6 +210,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
           type: "manual",
           message: "Invalid Starknet address.",
         });
+        console.log("Setting manual error for starknetAddress");
       }
     }
   }, [user]);
@@ -221,7 +228,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitHandler, onErrorSubmit)}>
+    <form onSubmit={handleSubmit(onSubmitHandler, onErrorSubmit)} noValidate>
       <DeletionDialog
         isOpen={isDeleteOpen}
         onClose={onCloseDelete}
@@ -229,7 +236,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
         cancelRef={cancelRef}
         entityName="Delegate"
       />
-      <Stack spacing="24px" direction={{ base: "column" }}>
+      <Stack spacing="standard.xl" direction={{ base: "column" }}>
         <FormControlled
           name="statement"
           isRequired
@@ -256,6 +263,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
             }}
             render={({ field }) => (
               <MarkdownEditor
+                isInvalid={!!errors.statement}
                 onChange={handleEditorChangeWrapper}
                 value={editorValue}
                 customEditor={editor}
@@ -286,6 +294,7 @@ Conflicts of interest
             rules={{ required: true }}
             render={({ field }) => (
               <Select
+                isInvalid={!!errors.interests}
                 isMulti
                 options={interestsValues.map((option) => ({
                   value: option,
@@ -298,8 +307,8 @@ Conflicts of interest
           />
         </FormControlled>
         <FormControlled
-          name="starknet-wallet-address"
-          ref={(ref) => setErrorRef("starknet-wallet-address", ref)}
+          name="starknetAddress"
+          ref={(ref) => setErrorRef("starknetAddress", ref)}
           isRequired
           id="starknet-wallet-address"
           label="Starknet wallet address"
