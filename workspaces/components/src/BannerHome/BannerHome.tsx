@@ -115,9 +115,9 @@ export const BannerHome = ({
             columns={3}
             // gap="standard.md" // gap causing overflow on tablet
             overflowX="scroll"
-            gridTemplateColumns="repeat(3, minmax(246px, 1fr))"
+            gridTemplateColumns="repeat(3, minmax(262px, 1fr))"
             py="16px"
-            px="32px"
+            px="standard.md"
             sx={{
               "> *:not(:last-child)": {
                 marginRight: "standard.md",

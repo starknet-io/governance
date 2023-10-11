@@ -38,6 +38,7 @@ const variants = {
   homePage: definePartsStyle({
     container: {
       padding: "standard.sm",
+
       fontSize: "12px",
       lineHeight: "20px",
       letterSpacing: "0.12px",
