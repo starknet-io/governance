@@ -8,7 +8,6 @@ import {
   ListRow,
   EmptyState,
   Skeleton,
-  Select,
   Text,
   FilterPopoverIcon,
   FilterPopoverContent,
@@ -19,6 +18,7 @@ import {
   Link,
   Flex,
 } from "@yukilabs/governance-components";
+import { Select } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
