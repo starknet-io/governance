@@ -451,34 +451,30 @@ export const VoteIcon = ({ color, ...rest }: UiIconProps) => (
 
 export const WarningIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 104 104" {...rest}>
-    <g id="Group_2">
-      <path
-        id="Path"
-        d="M52.0007 52V32.5"
-        stroke={color ? color : "#E4442F"}
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        id="Path_2"
-        d="M51.9963 67.1666C51.3983 67.1666 50.913 67.6519 50.9173 68.2499C50.9173 68.8479 51.4027 69.3332 52.0007 69.3332C52.5987 69.3332 53.084 68.8479 53.084 68.2499C53.084 67.6519 52.5987 67.1666 51.9963 67.1666"
-        stroke={color ? color : "#E4442F"}
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        id="Path_3"
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M13 62.3176V41.6823C13 34.7403 16.692 28.3226 22.6893 24.8299L42.1893 13.4809C48.2517 9.95362 55.744 9.95362 61.8063 13.4809L81.3063 24.8299C87.308 28.3226 91 34.7403 91 41.6823V62.3176C91 69.2596 87.308 75.6773 81.3107 79.17L61.8107 90.519C55.7483 94.0463 48.256 94.0463 42.1937 90.519L22.6937 79.17C16.692 75.6773 13 69.2596 13 62.3176Z"
-        stroke={color ? color : "#E4442F"}
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </g>
+    <path
+      d="M51.9997 52V32.5"
+      stroke="#E4442F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M51.9954 67.1666C51.3974 67.1666 50.912 67.6519 50.9164 68.2499C50.9164 68.8479 51.4017 69.3332 51.9997 69.3332C52.5977 69.3332 53.083 68.8479 53.083 68.2499C53.083 67.6519 52.5977 67.1666 51.9954 67.1666"
+      stroke="#E4442F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M13 62.3176V41.6823C13 34.7403 16.692 28.3226 22.6893 24.8299L42.1893 13.4809C48.2517 9.95362 55.744 9.95362 61.8063 13.4809L81.3063 24.8299C87.308 28.3226 91 34.7403 91 41.6823V62.3176C91 69.2596 87.308 75.6773 81.3107 79.17L61.8107 90.519C55.7483 94.0463 48.256 94.0463 42.1937 90.519L22.6937 79.17C16.692 75.6773 13 69.2596 13 62.3176Z"
+      stroke="#E4442F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
   </Icon>
 );
 
