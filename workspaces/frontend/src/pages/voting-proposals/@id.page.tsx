@@ -275,6 +275,9 @@ export function Page() {
   const pastVotes = votes?.data?.votes || [];
   const userAddresses =
     pastVotes.map((pastVote) => pastVote?.voter?.toLowerCase() || "") || [];
+  const { data: authorInfo } = trpc.users.getUser.useQuery({
+    address: data?.proposal?.author || "",
+  });
   const { data: usersByAddresses } =
     trpc.users.getUsersInfoByAddresses.useQuery({
       addresses: userAddresses || [],
@@ -616,8 +619,12 @@ export function Page() {
                 </Text>
                 {/* toDo get user images / display names */}
                 <Username
-                  src={null}
-                  displayName={truncateAddress(`${data?.proposal?.author}`)}
+                  src={authorInfo?.profileImage || null}
+                  displayName={
+                    authorInfo?.username ||
+                    authorInfo?.ensName ||
+                    truncateAddress(`${data?.proposal?.author}`)
+                  }
                   address={`${data?.proposal?.author}`}
                 />
               </Flex>

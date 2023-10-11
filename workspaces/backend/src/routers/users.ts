@@ -198,7 +198,6 @@ export const usersRouter = router({
         return acc;
       }, {});
 
-      console.log(usersByAddress);
       return usersByAddress;
     }),
 
