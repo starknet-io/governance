@@ -16,6 +16,8 @@ import {
   useMarkdownEditor,
   MarkdownEditor,
   Banner,
+  FormControlled,
+  useFormErrorHandler,
 } from "@yukilabs/governance-components";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
@@ -28,7 +30,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { useState } from "react";
 import { isArray } from "@apollo/client/utilities";
-import {Flex, Spinner} from "@chakra-ui/react";
+import { Flex, Spinner } from "@chakra-ui/react";
 
 interface FieldValues {
   // type: ProposalType;
@@ -67,6 +69,7 @@ export function Page() {
         votingPeriod: [new Date(), new Date()], // This will hold both start and end dates
       };
     },
+    shouldFocusError: false,
   });
 
   const handleEditorChangeWrapper = (value) => {
@@ -158,6 +161,18 @@ export function Page() {
     }
   };
 
+  const { setErrorRef, scrollToError } = useFormErrorHandler([
+    "title",
+    "body",
+    "votingPeriod",
+  ]);
+
+  const onErrorSubmit = (errors) => {
+    if (Object.keys(errors).length > 0) {
+      scrollToError(errors);
+    }
+  };
+
   return (
     <>
       <ContentContainer>
@@ -165,11 +180,18 @@ export function Page() {
           <Heading variant="h3" mb="24px">
             Create voting proposal
           </Heading>
-          <form onSubmit={onSubmit}>
-            <Stack spacing="32px" direction={{ base: "column" }}>
-              <FormControl id="title">
-                <FormLabel>Title</FormLabel>
+          <form onSubmit={onSubmit} noValidate>
+            <Stack spacing="standard.xl" direction={{ base: "column" }}>
+              <FormControlled
+                name="title"
+                label="Title"
+                isRequired
+                isInvalid={!!errors.title}
+                errorMessage={errors.title?.message || "Add proposal name"}
+                ref={(ref) => setErrorRef("title", ref)}
+              >
                 <Input
+                  isInvalid={!!errors.title}
                   variant="primary"
                   size="standard"
                   placeholder="Briefly describe the proposal"
@@ -177,20 +199,23 @@ export function Page() {
                     required: true,
                   })}
                 />
-                {errors.title && <span>Add proposal name</span>}
-              </FormControl>
-              <FormControl id="delegate-statement">
-                <FormLabel>Proposal Body</FormLabel>{" "}
+              </FormControlled>
+              <FormControlled
+                name="body"
+                label="Proposal Body"
+                isRequired
+                isInvalid={!!errors.body}
+                errorMessage={errors.body?.message || "Describe your proposal"}
+                ref={(ref) => setErrorRef("body", ref)}
+              >
                 <Controller
                   control={control}
                   name="body"
                   rules={{
                     validate: {
                       required: (value) => {
-                        // Trim the editorValue to remove spaces and new lines
                         const trimmedValue = editorValue?.trim();
-
-                        if (!trimmedValue?.length || !trimmedValue) {
+                        if (!trimmedValue?.length) {
                           return "Describe your proposal";
                         }
                       },
@@ -198,6 +223,7 @@ export function Page() {
                   }}
                   render={() => (
                     <MarkdownEditor
+                      isInvalid={!!errors.body}
                       offsetPlaceholder={"-8px"}
                       placeholder={`
 Overview
@@ -205,7 +231,7 @@ Motivation
 Specification
 Implementation
 Links
-                      `}
+                `}
                       customEditor={editor}
                       onChange={handleEditorChangeWrapper}
                       value={editorValue}
@@ -213,11 +239,16 @@ Links
                     />
                   )}
                 />
-                {errors.body && <span>{errors.body.message}</span>}
-              </FormControl>
-              <FormControl id="starknet-type">
-                <FormLabel>Forum discussion (optional) </FormLabel>
+              </FormControlled>
 
+              <FormControlled
+                name="discussion"
+                label="Forum discussion"
+                isInvalid={!!errors.discussion}
+                errorMessage={
+                  errors.discussion?.message || "Please enter a valid URL."
+                }
+              >
                 <InputGroup maxW={{ md: "3xl" }}>
                   <Input
                     placeholder="https://"
@@ -235,65 +266,58 @@ Links
                     })}
                   />
                 </InputGroup>
-                {errors.discussion && <span>{errors.discussion.message}</span>}
-              </FormControl>
-
-              {/* // disabled for basic voting */}
-              <FormControl id="starknet-wallet-address">
-                <FormLabel>Voting type</FormLabel>
-                <Select
-                  placeholder="Select option"
-                  disabled
-                  defaultValue="option1"
-                >
-                  <option value="option1">Basic</option>
-                </Select>
-              </FormControl>
-              <FormControl id="category">
-                <FormLabel>Category</FormLabel>
+              </FormControlled>
+              <FormControlled name="category" label="Category">
                 <Controller
                   control={control}
                   name="category"
                   render={({ field }) => (
-                    <Select {...field}>
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </Select>
+                    <Select
+                      {...field}
+                      isMulti
+                      isInvalid={!!errors.category}
+                      options={categories.map((category) => ({
+                        value: category,
+                        label: category, // Assuming category is a string. Adjust as needed.
+                      }))}
+                      value={field.value as any}
+                      onChange={(values) => field.onChange(values)}
+                    />
                   )}
                 />
-              </FormControl>
+              </FormControlled>
+
               {/* // disabled for basic voting */}
-              <FormControl id="Choices">
-                <FormLabel>Choices</FormLabel>
-                <Stack spacing="12px" direction={{ base: "column" }}>
-                  <Box
-                    border="1px solid #E4E5E7 "
-                    padding="10px 15px"
-                    borderRadius="5px"
-                  >
-                    For
-                  </Box>
-                  <Box
-                    border="1px solid #E4E5E7 "
-                    padding="10px 15px"
-                    borderRadius="5px"
-                  >
-                    Against
-                  </Box>
-                  <Box
-                    border="1px solid #E4E5E7 "
-                    padding="10px 15px"
-                    borderRadius="5px"
-                  >
-                    Abstain
-                  </Box>
-                </Stack>
-              </FormControl>
-              <FormControl id="starknet-wallet-address">
-                <FormLabel>Voting period</FormLabel>
+              <FormControlled name="votingType" label="Voting type">
+                <Select
+                  size="md"
+                  isReadOnly
+                  defaultValue="option1"
+                  options={[{ label: "Basic", value: "desc" }]}
+                  onChange={() => console.log("changed")}
+                  placeholder="Basic"
+                />
+              </FormControlled>
+
+              {/* // disabled for basic voting */}
+              <FormControlled name="choices" label="Choices">
+                <Select
+                  size="md"
+                  isReadOnly
+                  defaultValue="option1"
+                  options={[{ label: "Basic", value: "desc" }]}
+                  onChange={() => console.log("changed")}
+                  placeholder="For"
+                />
+              </FormControlled>
+
+              <FormControlled
+                name="votingPeriod"
+                label="Voting period"
+                errorMessage={errors?.votingPeriod?.message}
+                isInvalid={!!errors.votingPeriod}
+                ref={(ref) => setErrorRef("votingPeriod", ref)}
+              >
                 <Stack spacing="12px" direction={{ base: "row" }}>
                   <Box width="100%">
                     <Controller
@@ -327,12 +351,9 @@ Links
                         />
                       )}
                     />
-                    {errors.votingPeriod && (
-                      <span>{errors.votingPeriod.message}</span>
-                    )}
                   </Box>
                 </Stack>
-              </FormControl>
+              </FormControlled>
               <Box display="flex" justifyContent="flex-end">
                 <Button
                   type="submit"
@@ -341,7 +362,7 @@ Links
                   disabled={isSubmitting}
                 >
                   <Flex alignItems="center" gap={2}>
-                    {isSubmitting && <Spinner size="sm"/>}
+                    {isSubmitting && <Spinner size="sm" />}
                     <div>Create voting proposal</div>
                   </Flex>
                 </Button>
