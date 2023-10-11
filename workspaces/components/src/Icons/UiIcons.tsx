@@ -719,7 +719,14 @@ export const ShareIcon = ({ color, ...rest }: UiIconProps) => (
 );
 
 export const ProfileIcon = ({ color, ...rest }: UiIconProps) => (
-  <Icon viewBox="0 0 20 20" {...rest} height={"20px"} width={"25px"}>
+  <Icon
+    viewBox="0 0 20 20"
+    {...rest}
+    height={"20px"}
+    width={"25px"}
+    position={"relative"}
+    left={"-2px"}
+  >
     <path
       fillRule="evenodd"
       clipRule="evenodd"

@@ -125,6 +125,7 @@ export { Iframely } from "./src/Iframely";
 export { Status } from "./src/Status";
 export { Link } from "./src/Link";
 export { Username } from "./src/Username";
+export { ProfileInfoModal } from "./src/ProfileInfoModal";
 
 import * as Layout from "./src/RootLayout/RootLayout";
 import * as SummaryItems from "./src/SummaryItems/SummaryItems";

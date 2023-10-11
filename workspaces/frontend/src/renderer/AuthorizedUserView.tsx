@@ -9,25 +9,16 @@ import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { stringToHex } from "viem";
 import { usePageContext } from "./PageContextProvider";
+import { useFileUpload } from "src/hooks/useFileUpload";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userExistsError, setUserExistsError] = useState(false);
   const utils = trpc.useContext();
-  // const [userData, setUserData] = useState<any>(null);
-
+  const [isUserModalOpen, setIsModalOpen] = useState(false);
   const { handleLogOut } = useDynamicContext();
-  // const { user } = useDynamicContext();
-  // const address = user?.verifiedCredentials[0]?.address;
-  // trpc.users.getUser.useQuery(
-  //   { address: address ?? "" },
-  //   {
-  //     onSuccess: (data) => {
-  //       setUserData(data);
-  //     },
-  //   },
-  // );
-
+  const { handleUpload } = useFileUpload();
   const { user } = usePageContext();
 
   const { data: vp } = useQuery(
@@ -48,21 +39,6 @@ const AuthorizedUserView = () => {
   );
 
   const userBalance = useBalanceData(user?.address as `0x${string}`);
-
-  // const { data: delegationData } = useDelegateRegistryDelegation({
-  //   address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-  //   args: [
-  //     address! as `0x${string}`,
-  //     "0x0000000000000000000000000000000000000000000000000000000000000000",
-  //   ],
-  //   watch: false,
-  //   chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
-  //   enabled: address != null,
-  //   suspense: true,
-  //   onError: (error) => {
-  //     console.log("error", error);
-  //   },
-  // });
 
   const { data: delegationData } = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
@@ -119,7 +95,9 @@ const AuthorizedUserView = () => {
   useOutsideClick({
     ref: navRef,
     handler: () => {
-      setIsMenuOpen(false);
+      if (isMenuOpen && !isUserModalOpen) {
+        setIsMenuOpen(false);
+      }
     },
   });
 
@@ -128,28 +106,39 @@ const AuthorizedUserView = () => {
     setIsMenuOpen(false);
   };
 
-  const handleSave = (username: string, starknetAddress: string) => {
+  const handleSave = (data: {
+    username: string;
+    starknetAddress: string;
+    profileImage: string | null;
+  }) => {
     if (!user) {
       return;
     }
     editUserProfile.mutateAsync(
       {
         id: user.id,
-        username,
-        starknetAddress,
+        username: data.username !== user?.username ? data.username : null,
+        starknetAddress: data.starknetAddress,
+        profileImage: data.profileImage,
       },
       {
         onSuccess: () => {
           utils.auth.currentUser.invalidate();
+          setIsMenuOpen(false);
+        },
+        onError: (error) => {
+          console.log(error.message);
+          if (error.message === "Username already exists") {
+            setUserExistsError(true);
+          }
         },
       },
     );
-    setIsMenuOpen(false);
   };
 
   return (
     <>
-      <div ref={navRef}>
+      <div className="user-menu" ref={navRef}>
         <DynamicNav />
         {isMenuOpen ? (
           <>
@@ -162,6 +151,10 @@ const AuthorizedUserView = () => {
               onSave={handleSave}
               vp={vp?.vp?.vp ?? 0}
               userBalance={userBalance}
+              onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}
+              handleUpload={handleUpload}
+              userExistsError={userExistsError}
+              setUsernameErrorFalse={() => setUserExistsError(false)}
             />
           </>
         ) : (
