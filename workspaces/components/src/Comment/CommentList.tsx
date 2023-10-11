@@ -38,6 +38,7 @@ import { hasPermission } from "@yukilabs/governance-frontend/src/utils/helpers";
 import { ROLES } from "@yukilabs/governance-frontend/src/renderer/types";
 import { Button } from "../Button";
 import { InfoModal } from "../InfoModal";
+import { Banner } from "../Banner/Banner";
 
 type CommentWithAuthor = Comment & {
   author: User | null;
@@ -75,13 +76,28 @@ const focusStyles = {
 function daysAgo(date: Date): string {
   const now = new Date();
   const differenceInMs = now.getTime() - date.getTime();
-  const differenceInDays = Math.floor(differenceInMs / (1000 * 60 * 60 * 24));
 
-  if (differenceInDays > 0) {
-    return `${differenceInDays}d`;
+  const minutes = Math.floor(differenceInMs / (1000 * 60));
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30); // assuming average month duration
+  const years = Math.floor(days / 365); // assuming non-leap year for simplicity
+
+  if (years > 0) {
+    return `${years}y`;
+  } else if (months > 0) {
+    return `${months}m`;
+  } else if (weeks > 0) {
+    return `${weeks}w`;
+  } else if (days > 0) {
+    return `${days}d`;
+  } else if (hours > 0) {
+    return `${hours}h`;
+  } else if (minutes > 0) {
+    return `${minutes}m`;
   } else {
-    const differenceInHours = Math.floor(differenceInMs / (1000 * 60 * 60));
-    return `${differenceInHours}h`;
+    return "0m";
   }
 }
 
@@ -365,210 +381,220 @@ const CommentItem: React.FC<CommentProps> = ({
           Delete
         </Button>
       </InfoModal>
-      <Stack pl={depth * 8} spacing="0">
-        <Flex gap="standard.base" pt="standard.sm">
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="space-between"
-            minWidth="40px"
-            position="relative"
-          >
+      {!comment.isDeleted ? (
+        <Stack pl={depth * 8} spacing="0">
+          <Flex gap="standard.base" pt="standard.sm">
             <Box
-              position="absolute"
-              top="48px"
-              bottom={
-                hasReplies && depth < 3
-                  ? numberOfReplies < 3
-                    ? "40px"
-                    : "6px"
-                  : "8px"
-              }
-              width="1px"
-              backgroundColor="border.dividers"
-              left="50%"
-              zIndex="0"
-            />
-            {author?.profileImage || author?.ensAvatar ? (
-              <Avatar
-                size={"md"}
-                src={author?.profileImage || (author?.ensAvatar as string)}
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="space-between"
+              minWidth="40px"
+              position="relative"
+            >
+              <Box
+                position="absolute"
+                top="48px"
+                bottom={
+                  hasReplies && depth < 3
+                    ? numberOfReplies < 3
+                      ? "40px"
+                      : "6px"
+                    : "8px"
+                }
+                width="1px"
+                backgroundColor="border.dividers"
+                left="50%"
+                zIndex="0"
               />
-            ) : (
-              <Indenticon size={32} address={author?.address || ""} />
-            )}
-            {hasReplies && numberOfReplies <= 2 && depth < 3 ? (
-              <CommentShowMoreReplies
-                nestedReplies={numberOfReplies}
-                toggleReplies={() => changeIsThreadOpen(!isThreadOpen)}
-                isThreadOpen={isThreadOpen}
-              />
-            ) : null}
-          </Box>
-          <Box
-            display="flex"
-            flexDirection="column"
-            gap={"standard.xs"}
-            w="full"
-          >
-            <Flex direction="column">
-              <Text variant="smallStrong" color="content.accent.default">
-                {author?.username ||
-                  author?.ensName ||
-                  truncateAddress(author ? author.address : "")}
-              </Text>
-              <Text variant="small" color="content.support.default" mt="-2px">
-                {daysAgo(createdAt)}
-              </Text>
-            </Flex>
-            <Box>
-              {isEditMode && showReplyMarkdownEditor ? (
-                <CommentInput
-                  withCancel
-                  onCancel={() => {
-                    setIsEditMode(false);
-                    setActiveCommentEditor(null);
-                  }}
-                  defaultValue={content}
-                  onSend={(content) => {
-                    if (onEdit) {
-                      onEdit({ commentId: comment.id, content });
-                    }
-                    setIsEditMode(false);
-                    setActiveCommentEditor(null);
-                  }}
+              {author?.profileImage || author?.ensAvatar ? (
+                <Avatar
+                  size={"md"}
+                  src={author?.profileImage || (author?.ensAvatar as string)}
                 />
               ) : (
-                <Box>
-                  <MarkdownRenderer
-                    textProps={{
-                      fontSize: "14px",
-                      color: "content.accent.default",
-                      letterSpacing: "0.07px",
-                      marginBottom: "-4px",
-                    }}
-                    content={content || ""}
-                  />
-                </Box>
+                <Indenticon size={32} address={author?.address || ""} />
               )}
-            </Box>
-            <Flex alignItems="center">
-              <Flex alignItems="center" gap={"standard.xs"} height="36px">
-                <CommentVotes
-                  isUser={!!user}
-                  isDownvote={isDownvote}
-                  isUpvote={isUpvote}
-                  commentId={comment.id}
-                  onVote={onVote}
-                  onSignedOutVote={() => setIsConnectedModal(true)}
-                  netVotes={comment.netVotes}
+              {hasReplies && numberOfReplies <= 2 && depth < 3 ? (
+                <CommentShowMoreReplies
+                  nestedReplies={numberOfReplies}
+                  toggleReplies={() => changeIsThreadOpen(!isThreadOpen)}
+                  isThreadOpen={isThreadOpen}
                 />
-                {user && (
-                  <Flex
-                    alignItems="center"
-                    role="button"
-                    gap={1}
-                    onClick={() =>
-                      setActiveCommentEditor(
-                        activeCommentEditor === comment.id ? null : comment.id,
-                      )
-                    }
-                  >
-                    <IconButton
-                      variant="ghost"
+              ) : null}
+            </Box>
+            <Box
+              display="flex"
+              flexDirection="column"
+              gap={"standard.xs"}
+              w="full"
+            >
+              <Flex direction="column">
+                <Text variant="smallStrong" color="content.accent.default">
+                  {author?.username ||
+                    author?.ensName ||
+                    truncateAddress(author ? author.address : "")}
+                </Text>
+                <Text variant="small" color="content.support.default" mt="-2px">
+                  {daysAgo(createdAt)}
+                </Text>
+              </Flex>
+              <Box>
+                {isEditMode && showReplyMarkdownEditor ? (
+                  <CommentInput
+                    isEdit
+                    withCancel
+                    onCancel={() => {
+                      setIsEditMode(false);
+                      setActiveCommentEditor(null);
+                    }}
+                    defaultValue={content}
+                    onSend={(content) => {
+                      if (onEdit) {
+                        onEdit({ commentId: comment.id, content });
+                      }
+                      setIsEditMode(false);
+                      setActiveCommentEditor(null);
+                    }}
+                  />
+                ) : (
+                  <Box>
+                    <MarkdownRenderer
+                      textProps={{
+                        fontSize: "14px",
+                        color: "content.accent.default",
+                        letterSpacing: "0.07px",
+                        marginBottom: "-4px",
+                      }}
+                      content={content || ""}
+                    />
+                  </Box>
+                )}
+              </Box>
+              <Flex alignItems="center">
+                <Flex alignItems="center" gap={"standard.xs"} height="36px">
+                  <CommentVotes
+                    isUser={!!user}
+                    isDownvote={isDownvote}
+                    isUpvote={isUpvote}
+                    commentId={comment.id}
+                    onVote={onVote}
+                    onSignedOutVote={() => setIsConnectedModal(true)}
+                    netVotes={comment.netVotes}
+                  />
+                  {user && (
+                    <Flex
+                      alignItems="center"
+                      role="button"
+                      gap={1}
                       onClick={() => {
-                        if (isEditMode) {
+                        setActiveCommentEditor(comment.id);
+                        setIsEditMode(false);
+                      }}
+                    >
+                      <IconButton
+                        variant="ghost"
+                        onClick={() => {
                           setIsEditMode(false);
                           setActiveCommentEditor(comment.id);
-                        } else {
-                          setActiveCommentEditor(
-                            activeCommentEditor === comment.id
-                              ? null
-                              : comment.id,
-                          );
+                        }}
+                        aria-label="Reply"
+                        size="condensed"
+                        icon={
+                          <ReplyIcon
+                            width="20px"
+                            height="20px"
+                            color="#4a4a4f"
+                          />
                         }
-                      }}
-                      aria-label="Reply"
-                      size="condensed"
-                      icon={
-                        <ReplyIcon width="20px" height="20px" color="#4a4a4f" />
-                      }
-                    />
-                    <Text variant="mediumStrong">Reply</Text>
+                      />
+                      <Text variant="mediumStrong">Reply</Text>
+                    </Flex>
+                  )}
+                  <Flex alignItems="flex-end">
+                    <CommentMoreActions>
+                      {canEdit && (
+                        <MenuItem
+                          onClick={() => {
+                            setIsEditMode(true);
+                            setActiveCommentEditor(comment.id);
+                          }}
+                        >
+                          Edit
+                        </MenuItem>
+                      )}
+                      {canDelete && (
+                        <MenuItem
+                          onClick={() => {
+                            setIsDeleteModalActive(true);
+                          }}
+                        >
+                          Delete
+                        </MenuItem>
+                      )}
+                      <ChakraButton
+                        variant="ghost"
+                        data-tally-open="woRGRN"
+                        data-tally-emoji-text="👋"
+                        data-tally-emoji-animation="wave"
+                        data-comment={comment.id}
+                        data-url={
+                          typeof window !== "undefined"
+                            ? window.location.href
+                            : ""
+                        }
+                        data-user={
+                          author?.username || author?.ensName || author?.address
+                        }
+                        data-content={stripHtmlTagsAndTrim(content)}
+                        width={"100%"}
+                        justifyContent={"flex-start"}
+                        padding={0}
+                        minHeight={"33px"}
+                        paddingLeft={"10px"}
+                        fontWeight={"400"}
+                        textColor={"#1a1523"}
+                      >
+                        Report
+                      </ChakraButton>
+                    </CommentMoreActions>
                   </Flex>
-                )}
-                <Flex alignItems="flex-end">
-                  <CommentMoreActions>
-                    {canEdit && (
-                      <MenuItem
-                        onClick={() => {
-                          setIsEditMode(true);
-                          setActiveCommentEditor(comment.id);
-                        }}
-                      >
-                        Edit
-                      </MenuItem>
-                    )}
-                    {canDelete && (
-                      <MenuItem
-                        onClick={() => {
-                          setIsDeleteModalActive(true);
-                        }}
-                      >
-                        Delete
-                      </MenuItem>
-                    )}
-                    <ChakraButton
-                      variant="ghost"
-                      data-tally-open="woRGRN"
-                      data-tally-emoji-text="👋"
-                      data-tally-emoji-animation="wave"
-                      data-comment={comment.id}
-                      data-url={
-                        typeof window !== "undefined"
-                          ? window.location.href
-                          : ""
-                      }
-                      data-user={
-                        author?.username || author?.ensName || author?.address
-                      }
-                      data-content={stripHtmlTagsAndTrim(content)}
-                      width={"100%"}
-                      justifyContent={"flex-start"}
-                      padding={0}
-                      minHeight={"33px"}
-                      paddingLeft={"10px"}
-                      fontWeight={"400"}
-                      textColor={"#1a1523"}
-                    >
-                      Report
-                    </ChakraButton>
-                  </CommentMoreActions>
                 </Flex>
               </Flex>
-            </Flex>
-            {showReplyMarkdownEditor && !isEditMode && (
-              <form>
-                <CommentInput
-                  withCancel
-                  onCancel={() => setActiveCommentEditor(null)}
-                  onSend={(content: string) => {
-                    onSubmit(content);
-                  }}
+              {showReplyMarkdownEditor && !isEditMode && (
+                <form>
+                  <CommentInput
+                    withCancel
+                    onCancel={() => {
+                      setIsEditMode(false);
+                      setActiveCommentEditor(null);
+                    }}
+                    onSend={(content: string) => {
+                      setIsEditMode(false);
+                      onSubmit(content);
+                    }}
+                  />
+                </form>
+              )}
+              {numberOfReplies > 2 && depth < 3 && (
+                <CommentShowMoreReplies
+                  nestedReplies={numberOfReplies}
+                  toggleReplies={() => changeIsThreadOpen(!isThreadOpen)}
+                  isThreadOpen={isThreadOpen}
                 />
-              </form>
-            )}
-            {numberOfReplies > 2 && depth < 3 && (
-              <CommentShowMoreReplies
-                nestedReplies={numberOfReplies}
-                toggleReplies={() => changeIsThreadOpen(!isThreadOpen)}
-                isThreadOpen={isThreadOpen}
-              />
-            )}
-          </Box>
-        </Flex>
-      </Stack>
+              )}
+            </Box>
+          </Flex>
+        </Stack>
+      ) : (
+        <Box ml={depth * 8 + 4} mt={2} mb={2}>
+          <Banner
+            variant="commentHidden"
+            type="commentHidden"
+            label="This comment was deleted by moderator"
+          />
+        </Box>
+      )}
       {comment.replies &&
         isThreadOpen &&
         comment.replies.map((reply: CommentWithAuthor) => (

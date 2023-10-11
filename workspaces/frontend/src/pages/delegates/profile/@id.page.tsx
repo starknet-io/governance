@@ -519,6 +519,19 @@ export function Page() {
             variant="primary"
             size="standard"
             onClick={() => {
+              if (
+                parseFloat(senderData?.balance) <
+                  MINIMUM_TOKENS_FOR_DELEGATION &&
+                !hasUserDelegatedTokensToThisDelegate
+              ) {
+                setIsStatusModalOpen(true);
+                setStatusTitle("No voting power");
+                setStatusDescription(
+                  `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+                );
+                setIsOpen(false);
+                return;
+              }
               setIsOpen(true);
               if (hasUserDelegatedTokensToThisDelegate) {
                 setIsUndelegation(true);

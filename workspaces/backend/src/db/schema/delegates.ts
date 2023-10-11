@@ -51,6 +51,8 @@ export const delegates = pgTable('delegates', {
   discord: text('discord'),
   discourse: text('discourse'),
   confirmDelegateAgreement: boolean('confirmDelegateAgreement'),
+  isKarmaDelegate: boolean('isKarmaDelegate'),
+  isGovernanceDelegate: boolean('isGovernanceDelegate'),
   agreeTerms: boolean('agreeTerms'),
   understandRole: boolean('understandRole'),
   userId: uuid('userId').references(() => users.id, {

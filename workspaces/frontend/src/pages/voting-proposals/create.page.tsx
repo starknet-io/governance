@@ -28,6 +28,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { useState } from "react";
 import { isArray } from "@apollo/client/utilities";
+import {Flex, Spinner} from "@chakra-ui/react";
 
 interface FieldValues {
   // type: ProposalType;
@@ -48,6 +49,7 @@ export function Page() {
   const [error, setError] = useState("");
 
   const createProposal = trpc.proposals.createProposal.useMutation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     handleSubmit,
@@ -76,6 +78,7 @@ export function Page() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      setIsSubmitting(true);
       if (walletClient == null) return;
 
       const client = new snapshot.Client712(
@@ -124,19 +127,23 @@ export function Page() {
           .then(() => {
             setError("");
             navigate(`/voting-proposals/${receipt.id}`);
+            setIsSubmitting(false);
           })
           .catch((err) => {
             console.log(err);
+            setIsSubmitting(false);
           });
       } catch (error) {
         // Handle error
         console.log(error);
+        setIsSubmitting(false);
         // error.description is actual error from snapshot
       }
 
       console.log(receipt);
     } catch (error: any) {
       // Handle error
+      setIsSubmitting(false);
       setError(`Error: ${error?.error_description}`);
       console.log(error);
     }
@@ -327,8 +334,16 @@ Links
                 </Stack>
               </FormControl>
               <Box display="flex" justifyContent="flex-end">
-                <Button type="submit" size="condensed" variant="primary">
-                  Create voting proposal
+                <Button
+                  type="submit"
+                  size="condensed"
+                  variant="primary"
+                  disabled={isSubmitting}
+                >
+                  <Flex alignItems="center" gap={2}>
+                    {isSubmitting && <Spinner size="sm"/>}
+                    <div>Create voting proposal</div>
+                  </Flex>
                 </Button>
               </Box>
               {error && error.length && (

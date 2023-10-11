@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   Banner,
   Box,
   Button,
-  Checkbox,
+  Checkbox, DeletionDialog,
   Divider,
   Flex,
   FormControl,
@@ -13,7 +13,7 @@ import {
   MarkdownEditor,
   Multiselect,
   Stack,
-  Text,
+  Text, useDisclosure,
   useMarkdownEditor,
 } from "@yukilabs/governance-components";
 import type { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -66,6 +66,13 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   } = useForm<FormValues>({
     mode: "onChange",
   });
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
+  const cancelRef = useRef(null);
+
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
     useMarkdownEditor("");
   const [error, setErrorField] = useState("");
@@ -202,6 +209,13 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
 
   return (
     <form onSubmit={onSubmit}>
+      <DeletionDialog
+        isOpen={isDeleteOpen}
+        onClose={onCloseDelete}
+        onDelete={onDelete}
+        cancelRef={cancelRef}
+        entityName="Delegate"
+      />
       <Stack spacing="24px" direction={{ base: "column" }}>
         <FormControl id="delegate-statement">
           <FormLabel>Delegate pitch</FormLabel>
@@ -407,10 +421,9 @@ Conflicts of interest
         {mode === "edit" ? (
           <Flex justifyContent="flex-end" gap="16px">
             <Button
-              type="submit"
               size="condensed"
               variant="danger"
-              onClick={onDelete}
+              onClick={onOpenDelete}
               mr="auto"
             >
               Delete

@@ -27,6 +27,30 @@ const info = definePartsStyle({
   },
 });
 
+const commentHidden = definePartsStyle({
+  container: {
+    border: "1px solid",
+    borderColor: "border.dividers",
+    borderRadius: "standard.base",
+    py: "standard.sm",
+    pl: "standard.sm",
+    pr: "standard.sm",
+    background: "surface.cards.default",
+  },
+  icon: {
+    svg: {
+      stroke: "content.onSurface.default",
+    },
+  },
+  description: {
+    color: "content.default.default",
+    fontSize: "0.75rem",
+    lineHeight: "1.25rem",
+    fontWeight: "500",
+    letterSpacing: "0.12px",
+  },
+});
+
 const error = definePartsStyle({
   container: {
     border: "0px solid",
@@ -51,7 +75,7 @@ const error = definePartsStyle({
 });
 
 export const alertTheme = defineMultiStyleConfig({
-  variants: { info, error },
+  variants: { info, error, commentHidden },
 
   defaultProps: { variant: "info" },
 });

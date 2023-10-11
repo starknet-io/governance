@@ -317,7 +317,20 @@ export function Delegates({
           width={{ base: "100%", md: "auto" }}
           size="condensed"
           variant="outline"
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            if (
+              parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION
+            ) {
+              setIsStatusModalOpen(true);
+              setStatusTitle("No voting power");
+              setStatusDescription(
+                `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+              );
+              setIsOpen(false);
+            } else {
+              setIsOpen(true);
+            }
+          }}
         >
           Delegate to address
         </Button>
@@ -373,7 +386,7 @@ export function Delegates({
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
-              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
+              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
             );
             setIsOpen(false);
           } else {
@@ -547,8 +560,20 @@ export function Delegates({
                   <DelegateCard
                     onDelegateClick={() => {
                       if (user) {
-                        setIsOpen(true);
-                        setInputAddress(delegate?.author?.address);
+                        if (
+                          parseFloat(senderData?.balance) <
+                          MINIMUM_TOKENS_FOR_DELEGATION
+                        ) {
+                          setIsStatusModalOpen(true);
+                          setStatusTitle("No voting power");
+                          setStatusDescription(
+                            `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+                          );
+                          setIsOpen(false);
+                        } else {
+                          setIsOpen(true);
+                          setInputAddress(delegate?.author?.address);
+                        }
                       }
                     }}
                     votingPower={delegate?.votingInfo?.votingPower}
