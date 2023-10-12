@@ -10,7 +10,6 @@ import {
   CheckboxFilter,
   useFilterState,
   FilterPopoverIcon,
-  Select,
   Text,
   EmptyState,
   Skeleton,
@@ -22,7 +21,7 @@ import {
   Flex,
   ArrowRightIcon,
 } from "@yukilabs/governance-components";
-
+import { Select } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";

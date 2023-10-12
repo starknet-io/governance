@@ -8,7 +8,6 @@ import {
   ListRow,
   EmptyState,
   Skeleton,
-  Select,
   Text,
   FilterPopoverIcon,
   FilterPopoverContent,
@@ -19,6 +18,7 @@ import {
   Link,
   Flex,
 } from "@yukilabs/governance-components";
+import { Select } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -286,6 +286,7 @@ export function Page() {
               aria-label="All"
               placeholder="All"
               rounded="md"
+              height="36px"
               value={sortBy}
               onChange={(e) => {
                 setSortBy(e.target.value as SortingTypes);

@@ -36,8 +36,9 @@ export { Input } from "./src/Input";
 export { Banner } from "./src/Banner/Banner";
 export { AvatarWithText } from "./src/AvatarWithText";
 export { Dropdown } from "./src/Dropdown";
-export { FormControlled } from "./src/FormControlled";
+export { FormControlled, useFormErrorHandler } from "./src/FormControlled";
 export { Tooltip } from "./src/Tooltip";
+export { Select } from "./src/Select";
 
 export {
   BoldIcon,
@@ -100,6 +101,7 @@ export {
   ExternalLinkLargeIcon,
   ArrowRightLargeIcon,
   StarknetOutlineIcon,
+  CalendarIcon,
 } from "../components/src/Icons/index";
 export { FileUploader } from "./src/FileUploader";
 export { MultiLevelReOrderableList } from "./src/MultiLevelReOrderableList";
@@ -162,7 +164,6 @@ import {
   InputLeftAddon,
   StackDivider,
   Textarea,
-  Select,
   Radio,
   RadioGroup,
   Checkbox,
@@ -218,7 +219,6 @@ export {
   InputLeftAddon,
   StackDivider,
   Textarea,
-  Select,
   Radio,
   RadioGroup,
   Checkbox,

@@ -7,6 +7,10 @@ type Props = {
   date?: Date | Date[] | null;
   onDateChange?: (d: Date | Date[]) => void;
   showTimePicker?: boolean;
+  selectedTime: string | string[] | null;
+  setSelectedTime: React.Dispatch<
+    React.SetStateAction<string | string[] | null>
+  >;
 };
 
 const propsConfig = {
@@ -87,6 +91,8 @@ export const ChakraDatePicker = ({
   date,
   onDateChange,
   showTimePicker,
+  selectedTime,
+  setSelectedTime,
 }: Props) => {
   const [selectedDate, setSelectedDate] = useState(date || new Date());
   const [selectedDates, setSelectedDates] = useState<Date[] | [null, null]>([
@@ -96,7 +102,12 @@ export const ChakraDatePicker = ({
 
   useEffect(() => {
     if (date) {
-      setSelectedDate(date);
+      if (Array.isArray(date)) {
+        // Check if date prop is an array
+        setSelectedDates(date as Date[]);
+      } else {
+        setSelectedDate(date as Date);
+      }
     }
   }, [date]);
 
@@ -131,6 +142,8 @@ export const ChakraDatePicker = ({
       )}
       {range && !single && (
         <RangeDatepicker
+          selectedTime={selectedTime}
+          setSelectedTime={setSelectedTime}
           selectedDates={selectedDates as Date[]}
           onDateChange={handleRangeDateChange}
           name="range-input"

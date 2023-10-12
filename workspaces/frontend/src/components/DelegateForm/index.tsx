@@ -1,9 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Banner,
   Box,
   Button,
-  Checkbox, DeletionDialog,
+  Checkbox,
+  DeletionDialog,
   Divider,
   Flex,
   FormControl,
@@ -11,10 +12,15 @@ import {
   Heading,
   Input,
   MarkdownEditor,
-  Multiselect,
   Stack,
-  Text, useDisclosure,
+  Text,
+  useDisclosure,
   useMarkdownEditor,
+  FormControlled,
+  Select,
+  useFormErrorHandler,
+  RadioGroup,
+  Radio,
 } from "@yukilabs/governance-components";
 import type { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { Controller, useForm } from "react-hook-form";
@@ -65,6 +71,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     setError,
   } = useForm<FormValues>({
     mode: "onChange",
+    shouldFocusError: false,
   });
   const {
     isOpen: isDeleteOpen,
@@ -76,6 +83,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
     useMarkdownEditor("");
   const [error, setErrorField] = useState("");
+  console.log("errors", errors);
   const {
     editorValue: editorCustomAgreementValue,
     handleEditorChange: handleCustomAgreement,
@@ -146,26 +154,33 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
     useState(false);
   const [agreementType, setAgreementType] = useState<
-    "standard" | "custom" | null
-  >(null);
+    "standard" | "custom" | ""
+  >("");
 
   const createDelegate = trpc.delegates.saveDelegate.useMutation();
   const editDelegate = trpc.delegates.editDelegate.useMutation();
   const deleteDelegate = trpc.delegates.deleteDelegate.useMutation();
 
   const pageContext = usePageContext();
+  const { setErrorRef, scrollToError } = useFormErrorHandler([
+    "statement",
+    "interests",
+    "starknetAddress",
+  ]);
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmitHandler = async (data) => {
     try {
       data.statement = editorValue;
+
       if (mode === "edit") {
         data.id = pageContext.routeParams!.id;
       }
       if (showCustomAgreementEditor || agreementType === "custom") {
         data.customDelegateAgreementContent = editorCustomAgreementValue;
       } else {
-        delete data.customDelegateAgreementContent
+        delete data.customDelegateAgreementContent;
       }
+
       const mutation = mode === "create" ? createDelegate : editDelegate;
       await mutation
         .mutateAsync(data)
@@ -178,12 +193,18 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
           setErrorField(err?.message ? err.message : JSON.stringify(err));
         });
     } catch (error) {
-      // Handle error
       console.log(error);
     }
-  });
+  };
+
+  const onErrorSubmit = (errors) => {
+    if (Object.keys(errors).length > 0) {
+      scrollToError(errors);
+    }
+  };
 
   useEffect(() => {
+    console.log("User's starknetAddress:", user?.starknetAddress);
     if (user?.starknetAddress) {
       setValue("starknetAddress", user.starknetAddress);
       if (!validateStarknetAddress(user.starknetAddress)) {
@@ -191,6 +212,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
           type: "manual",
           message: "Invalid Starknet address.",
         });
+        console.log("Setting manual error for starknetAddress");
       }
     }
   }, [user]);
@@ -207,8 +229,24 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     }
   };
 
+  const handleRadioChange = (value: string) => {
+    if (value === "standard") {
+      setAgreementType("standard");
+      setShowCustomAgreementEditor(false);
+      setValue("confirmDelegateAgreement", true);
+    } else if (value === "custom") {
+      setAgreementType("custom");
+      setShowCustomAgreementEditor(true);
+      setValue("confirmDelegateAgreement", false);
+    } else {
+      setAgreementType("");
+      setShowCustomAgreementEditor(false);
+      setValue("confirmDelegateAgreement", false);
+    }
+  };
+
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleSubmit(onSubmitHandler, onErrorSubmit)} noValidate>
       <DeletionDialog
         isOpen={isDeleteOpen}
         onClose={onCloseDelete}
@@ -216,9 +254,16 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
         cancelRef={cancelRef}
         entityName="Delegate"
       />
-      <Stack spacing="24px" direction={{ base: "column" }}>
-        <FormControl id="delegate-statement">
-          <FormLabel>Delegate pitch</FormLabel>
+      <Stack spacing="standard.xl" direction={{ base: "column" }}>
+        <FormControlled
+          name="statement"
+          isRequired
+          id="statement"
+          label="Delegate pitch"
+          isInvalid={!!errors.statement}
+          errorMessage={errors.statement?.message}
+          ref={(ref) => setErrorRef("statement", ref)}
+        >
           <Controller
             name="statement"
             control={control}
@@ -236,6 +281,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
             }}
             render={({ field }) => (
               <MarkdownEditor
+                isInvalid={!!errors.statement}
                 onChange={handleEditorChangeWrapper}
                 value={editorValue}
                 customEditor={editor}
@@ -250,16 +296,24 @@ Conflicts of interest
               />
             )}
           />
-          {errors.statement && <span>{errors.statement.message}</span>}
-        </FormControl>
-        <FormControl id="starknet-type">
-          <FormLabel>Delegate interests</FormLabel>
+        </FormControlled>
+        <FormControlled
+          name="interests"
+          ref={(ref) => setErrorRef("interests", ref)}
+          id="starknet-type"
+          isRequired
+          label="Delegate interests"
+          isInvalid={!!errors.interests}
+          errorMessage={errors.interests?.message || "Choose your interests"}
+        >
           <Controller
             name="interests"
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Multiselect
+              <Select
+                isInvalid={!!errors.interests}
+                isMulti
                 options={interestsValues.map((option) => ({
                   value: option,
                   label: delegateNames?.[option] ?? option,
@@ -269,10 +323,18 @@ Conflicts of interest
               />
             )}
           />
-          {errors.interests && <span>Choose your interests</span>}
-        </FormControl>
-        <FormControl id="starknet-wallet-address">
-          <FormLabel>Starknet wallet address</FormLabel>
+        </FormControlled>
+        <FormControlled
+          name="starknetAddress"
+          ref={(ref) => setErrorRef("starknetAddress", ref)}
+          isRequired
+          id="starknet-wallet-address"
+          label="Starknet wallet address"
+          isInvalid={!!errors.starknetAddress}
+          errorMessage={
+            errors.starknetAddress?.message || "Not a valid Starknet address"
+          }
+        >
           <Input
             size="standard"
             variant="primary"
@@ -283,56 +345,63 @@ Conflicts of interest
                 validateStarknetAddress(value) || "Invalid Starknet address",
             })}
           />
-          {errors.starknetAddress && (
-            <Text>
-              {errors.starknetAddress.message || "Not a valid Starknet address"}
-            </Text>
-          )}
-        </FormControl>
-        <FormControl id="twitter">
-          <FormLabel>Twitter (optional)</FormLabel>
+        </FormControlled>
+
+        <FormControlled
+          name="twitter"
+          label="Twitter"
+          isInvalid={!!errors.twitter}
+          errorMessage={errors.twitter?.message}
+        >
           <Input
             size="standard"
             variant="primary"
             placeholder="@yourhandle"
             {...register("twitter")}
           />
-        </FormControl>
-        <FormControl id="telegram">
-          <FormLabel>Telegram (optional)</FormLabel>
+        </FormControlled>
+        <FormControlled name="telegram" label="Telegram">
           <Input
             size="standard"
             variant="primary"
             placeholder="@yourhandle"
             {...register("telegram")}
           />
-        </FormControl>
-        <FormControl id="discord">
-          <FormLabel>Discord (optional)</FormLabel>
+        </FormControlled>
+
+        <FormControlled name="discord" label="Discord">
           <Input
             variant="primary"
             size="standard"
             placeholder="name#1234"
             {...register("discord")}
           />
-        </FormControl>
-        <FormControl id="discourse">
-          <FormLabel>Discourse (optional)</FormLabel>
+        </FormControlled>
+
+        <FormControlled name="discourse" label="Discourse">
           <Input
             variant="primary"
             size="standard"
             placeholder="yourusername"
             {...register("discourse")}
           />
-        </FormControl>
+        </FormControlled>
+
         <Divider />
         <Box>
-          <Heading variant="h3" display="flex" alignItems="center" gap={1.5}>
-            Delegate agreement <Text variant="largeStrong">(optional)</Text>
+          <Heading variant="h3" display="flex" mb="standard.base">
+            Delegate agreement
           </Heading>
-          <Text variant="medium">Briefly explain what this means.</Text>
+          <Text
+            variant="medium"
+            color="content.default.default"
+            my="standard.base"
+          >
+            Add an agreement between you and the people who delegate to you.
+          </Text>
         </Box>
-        <FormControl id="confirmDelegateAgreement">
+        {/* <Heading variant="h1">I don't need a delegate agreement</Heading> */}
+        {/* <FormControl id="confirmDelegateAgreement">
           <Checkbox
             isChecked={agreementType === "standard"}
             onChange={(e) => {
@@ -366,15 +435,64 @@ Conflicts of interest
           >
             I want to provide a custom delegate agreement.
           </Checkbox>
-        </FormControl>
+        </FormControl> */}
+
+        <Box>
+          <RadioGroup
+            value={agreementType}
+            onChange={(value) => handleRadioChange(value)}
+          >
+            <Stack spacing={"12px"} direction="column">
+              <FormControl id="defaultDelegateAgreement">
+                <Radio
+                  value=""
+                  onChange={() => {
+                    setShowCustomAgreementEditor(false);
+                    setValue("confirmDelegateAgreement", false);
+                  }}
+                >
+                  I don&apos;t need a delegate agreement.
+                </Radio>
+              </FormControl>
+              <FormControl id="confirmDelegateAgreement">
+                <Radio
+                  value="standard"
+                  onChange={() => {
+                    setShowCustomAgreementEditor(false);
+                    setValue("confirmDelegateAgreement", true);
+                  }}
+                >
+                  I agree with the Starknet foundation suggested delegate
+                  agreement.
+                </Radio>
+              </FormControl>
+              <FormControl id="customDelegateAgreement">
+                <Radio
+                  value="custom"
+                  onChange={() => {
+                    setShowCustomAgreementEditor(true);
+                    setValue("confirmDelegateAgreement", false);
+                  }}
+                >
+                  I want to provide a custom delegate agreement.
+                </Radio>
+              </FormControl>
+            </Stack>
+          </RadioGroup>
+        </Box>
+
         {/* For some reason, markdown editor as breaking if I make it conditional render, so using display block/hidden */}
         <div
           style={{
             display: agreementType === "custom" ? "block" : "none",
           }}
         >
-          <FormControl id="custom-agreement-editor">
-            <FormLabel>Custom Delegate Agreement</FormLabel>
+          <FormControlled
+            name="customDelegateAgreementContent"
+            id="custom-agreement-editor"
+            label="Custom Delegate Agreement"
+            isRequired
+          >
             <Controller
               name="customDelegateAgreementContent"
               control={control}
@@ -395,7 +513,7 @@ Conflicts of interest
                 />
               )}
             />
-          </FormControl>
+          </FormControlled>
         </div>
         <FormControl id="understandRole" display="none">
           <Controller
