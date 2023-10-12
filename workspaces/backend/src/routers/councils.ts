@@ -57,7 +57,7 @@ export const councilsRouter = router({
         .returning();
 
       await Algolia.saveObjectToIndex({
-        name: insertedCouncil[0].name || "",
+        name: insertedCouncil[0].name || '',
         type: 'council',
         refID: insertedCouncil[0].slug || insertedCouncil[0].id,
         content:
@@ -150,7 +150,7 @@ export const councilsRouter = router({
       const slug = slugify(opts.input.name ?? '', {
         replacement: '_',
         lower: true,
-      })
+      });
       // Update council.
       const updatedCouncil = await db
         .update(councils)
@@ -171,7 +171,7 @@ export const councilsRouter = router({
         name: opts.input.name ?? '',
         type: 'council',
         refID: slug || opts.input.id,
-        content: opts.input.description + " " + opts.input.statement,
+        content: opts.input.description + ' ' + opts.input.statement,
       });
 
       // Process members.
@@ -208,13 +208,17 @@ export const councilsRouter = router({
     }),
 
   deleteCouncil: publicProcedure
-    .input(councilInsertSchema.required({ id: true }).pick({ id: true }))
+    .input(
+      councilInsertSchema
+        .required({ id: true, slug: true })
+        .pick({ id: true, slug: true }),
+    )
     .mutation(async (opts) => {
       const userRole = opts.ctx.user?.role;
       checkUserRole(userRole);
       await db.delete(councils).where(eq(councils.id, opts.input.id)).execute();
       await Algolia.deleteObjectFromIndex({
-        refID: opts.input.id,
+        refID: opts.input.slug || opts.input.id,
         type: 'council',
       });
     }),

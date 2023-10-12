@@ -39,7 +39,7 @@
     "@wagmi/core": "^1.3.8",
     "@yukilabs/governance-backend": "workspace:*",
     "@yukilabs/governance-components": "workspace:*",
-    "algoliasearch": "^4.19.1",
+    "algoliasearch": "^4.20.0",
     "compression": "^1.7.4",
     "cross-env": "^7.0.3",
     "cross-fetch": "^3.1.8",

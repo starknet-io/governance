@@ -120,7 +120,7 @@ export function Page() {
     if (!council?.id) return;
 
     try {
-      await deleteCouncil.mutateAsync({ id: council.id });
+      await deleteCouncil.mutateAsync({ id: council.id, slug: council.slug });
       navigate("/");
       utils.councils.getAll.invalidate();
     } catch (error) {
@@ -223,11 +223,7 @@ export function Page() {
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  size="condensed"
-                  variant="primary"
-                >
+                <Button type="submit" size="condensed" variant="primary">
                   Save
                 </Button>
               </Flex>

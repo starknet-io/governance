@@ -27,7 +27,6 @@ import { navigate } from "vite-plugin-ssr/client/router";
 import { useForm, Controller } from "react-hook-form";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { useState } from "react";
-import { isArray } from "@apollo/client/utilities";
 
 interface FieldValues {
   // type: ProposalType;
@@ -106,6 +105,8 @@ export function Page() {
       )) as any;
 
       const proposalData = {
+        title: data.title,
+        discussion: data.discussion,
         category: data.category as "category1" | "category2" | "category3",
         proposalId: receipt.id,
       };

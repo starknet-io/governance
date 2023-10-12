@@ -6,6 +6,7 @@ import { comments } from '../db/schema/comments';
 import { z } from 'zod';
 import { proposals } from '../db/schema/proposals';
 import { createInsertSchema } from 'drizzle-zod';
+import { Algolia } from '../utils/algolia';
 
 type CategoryEnum = 'category1' | 'category2' | 'category3';
 
@@ -131,14 +132,31 @@ const populateProposalsWithComments = async (
 
 export const proposalsRouter = router({
   createProposal: protectedProcedure
-    .input(createInsertSchema(proposals).omit({ id: true })) // Adjust as needed
+    .input(
+      createInsertSchema(proposals)
+        .extend({
+          title: z.string().optional(),
+          discussion: z.string().optional(),
+        })
+        .omit({ id: true }),
+    ) // Adjust as needed
     .mutation(async (opts) => {
       const insertedProposal = await db
         .insert(proposals)
         .values(opts.input)
         .returning();
-      return insertedProposal[0];
+        
+      const newItem = insertedProposal[0];
+      await Algolia.saveObjectToIndex({
+        name: opts.input.title ?? '',
+        content: opts.input.discussion ?? '',
+        type: 'voting_proposal',
+        refID: opts.input.proposalId,
+      });
+
+      return newItem;
     }),
+
   getProposals: publicProcedure
     .input(
       z

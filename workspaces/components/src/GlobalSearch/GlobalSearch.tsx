@@ -86,6 +86,13 @@ export function GlobalSearch({
     setIsSearchModalOpen(true);
   };
 
+  // Using setTimeout here to remove "/" upon clicking it
+  useEffect(() => {
+    setTimeout(() => {
+      isOpen && setSearchText("");
+    }, 10);
+  }, [isOpen]);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.addEventListener("keydown", handleKeyDown);
@@ -154,7 +161,7 @@ export function GlobalSearch({
                 border="none"
                 height="60px"
                 placeholder="Search"
-                autoFocus={false}
+                autoFocus={true}
                 value={searchText}
                 onChange={handleSearchTextChange}
               />
