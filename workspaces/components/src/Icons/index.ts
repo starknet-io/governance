@@ -69,6 +69,7 @@ import {
   ExternalLinkLargeIcon,
   ArrowRightLargeIcon,
   StarknetOutlineIcon,
+  CalendarIcon,
 } from "./UiIcons";
 
 export {
@@ -140,4 +141,5 @@ export {
   ExternalLinkLargeIcon,
   ArrowRightLargeIcon,
   StarknetOutlineIcon,
+  CalendarIcon,
 };
