@@ -77,8 +77,15 @@ const cssOverrides = `
   font-family: 'Inter Variable', sans-serif;
   border-radius: 4px;
   height:36px;
+  z-index: 2;
+ }
+ .dynamic-widget-inline-controls:hover  {
+  background:rgba(55, 22, 55, 0.03);
+
 
  }
+
+
  .dynamic-widget-inline-controls__network-picker-main > button > svg {
   display:none;
   width:0
@@ -90,19 +97,31 @@ const cssOverrides = `
 
 
   }
+  .dynamic-widget-inline-controls__network-picker-main  > button:hover {
+    background-color: transparent;
+
+}
  .dynamic-widget-inline-controls__network-picker.evm-network-control__container {
-width:45px;
+width:41px;
 height: 34px;
 
 
 
-min-width:45px;
-overflow-x:hidden;
+min-width:41px;
+
 padding-right:0;
 padding-inline-end:0;
  }
  .dynamic-widget-inline-controls__network-picker-main {
-    min-width: 45px;
+    min-width: 25px;
+
+}
+ .dynamic-widget-inline-controls__network-picker-main:hover {
+    background-color: transparent!important;
+
+}
+ .dynamic-widget-inline-controls__network-picker-main:active {
+    background-color: transparent!important;
 
 }
  .dynamic-widget-inline-controls__network-picker.evm-network-control__container::after {
@@ -120,7 +139,11 @@ padding-inline-end:0;
 
   height:31px;
   border-radius:0;
+  // background:green;
  }
+  .account-control__container.account-control__container--multiwallet-disabled.dynamic-widget-inline-controls__account-control:hover {
+    background:transparent;
+  }
 
 `;
 
