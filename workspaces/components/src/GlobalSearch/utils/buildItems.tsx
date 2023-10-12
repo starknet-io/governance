@@ -1,7 +1,9 @@
-import { Box, Flex, Text, Image } from "@chakra-ui/react";
+import { Box, Flex, Text, Image, Skeleton, Badge } from "@chakra-ui/react";
 
 import VotingProposalIcon from "../assets/voting_proposal_icon.svg";
 import LearnIcon from "../assets/learn_icon.svg";
+import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
+import { format } from "date-fns";
 
 export type SearchItemType =
   | "voting_proposal"
@@ -139,6 +141,10 @@ function buildGroupList(
 }
 
 function VotingProposalItem({ data }: { data: ISearchItem }) {
+  const { data: proposalData } = trpc.proposals.getProposalById.useQuery(
+    { id: data.refID! as string },
+  );
+
   return (
     <Flex mb="2">
       <Flex
@@ -158,22 +164,37 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
           alt="voting proposal icon"
         />
       </Flex>
-      <Flex flexDirection="column" justifyContent="center">
+      <Flex flexDirection="column" justifyContent="center" width="100%">
         <Text fontWeight="semibold" fontSize="sm">
           {data.name}
         </Text>
-        <Flex>
-          {/* <Badge
-                  // height="4"
-                  mr="2"
-                  borderRadius="base"
-                  colorScheme="green"
-                >
-                  Active
-                </Badge> */}
-          <Text fontSize="smaller" color="#4A4A4F">
-            8 Feb 2023 • 2 comments • Infrastructure
-          </Text>
+        <Flex height="20px" alignItems="center">
+          {proposalData ? (
+            <>
+              <Badge
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                mr="2"
+                borderRadius="base"
+                backgroundColor={
+                  proposalData.status === "active"
+                    ? "component.tag.active.surface"
+                    : "component.tag.pending.surface"
+                }
+                fontSize="10px"
+                p="1"
+              >
+                {proposalData.status}
+              </Badge>
+              <Text fontSize="smaller" color="#4A4A4F">
+                {format(proposalData.startDate, 'd MMM yyyy')} • {proposalData.comments} 
+                {' '}comments • {proposalData.category}
+              </Text>
+            </>
+          ) : (
+            <Skeleton height="10px" width="40%" />
+          )}
         </Flex>
         <Text fontSize="smaller" fontWeight="medium" color="grey">
           Voting proposals

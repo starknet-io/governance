@@ -143,10 +143,13 @@ export const proposalsRouter = router({
     .mutation(async (opts) => {
       const insertedProposal = await db
         .insert(proposals)
-        .values(opts.input)
+        .values({
+          proposalId: opts.input.proposalId,
+          category: opts.input.category,
+        })
         .returning();
-        
-      const newItem = insertedProposal[0];
+
+      const newItem = insertedProposal?.[0];
       await Algolia.saveObjectToIndex({
         name: opts.input.title ?? '',
         content: opts.input.discussion ?? '',
@@ -155,6 +158,34 @@ export const proposalsRouter = router({
       });
 
       return newItem;
+    }),
+
+  getProposalById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async (opts) => {
+      const ourProposalData = await db.query.proposals.findFirst({
+        where: eq(proposals.proposalId, opts.input.id),
+      });
+      const { proposals: queriedProposals } = (await graphQLClient.request(
+        GET_PROPOSALS_BY_ID,
+        {
+          ids: [opts.input.id],
+          space,
+        },
+      )) as { proposals: IProposal[] };
+      const totalComments = await db.query.comments.findMany({
+        where: eq(proposals.proposalId, opts.input.id),
+      })
+      const proposal = queriedProposals[0];
+
+      return {
+        status: proposal.state,
+        comments: totalComments.length,
+        category: ourProposalData?.category,
+        startDate: proposal.start,
+        backendProposalData: ourProposalData,
+        proposal,
+      };
     }),
 
   getProposals: publicProcedure
