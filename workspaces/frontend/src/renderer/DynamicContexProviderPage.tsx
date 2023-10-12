@@ -76,14 +76,25 @@ const cssOverrides = `
   box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.05);
   font-family: 'Inter Variable', sans-serif;
   border-radius: 4px;
+  height:36px;
+
  }
  .dynamic-widget-inline-controls__network-picker-main > button > svg {
   display:none;
   width:0
 
  }
+
+  .dynamic-widget-inline-controls__network-picker-main > button {
+    border-radius:0;
+
+
+  }
  .dynamic-widget-inline-controls__network-picker.evm-network-control__container {
 width:45px;
+height: 34px;
+
+
 
 min-width:45px;
 overflow-x:hidden;
@@ -92,6 +103,7 @@ padding-inline-end:0;
  }
  .dynamic-widget-inline-controls__network-picker-main {
     min-width: 45px;
+
 }
  .dynamic-widget-inline-controls__network-picker.evm-network-control__container::after {
   content: "";
@@ -100,9 +112,14 @@ padding-inline-end:0;
   height: 20px;
   position: absolute;
   background:#DCDBDD;
-  top: 10px;
-  right: 6px;
+  top: 8px;
+  right: 0px;
   pointer-events: none;
+ }
+ .account-control__container.account-control__container--multiwallet-disabled.dynamic-widget-inline-controls__account-control {
+
+  height:31px;
+  border-radius:0;
  }
 
 `;
