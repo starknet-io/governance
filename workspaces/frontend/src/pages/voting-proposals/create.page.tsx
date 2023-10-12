@@ -4,8 +4,6 @@ import {
   Box,
   Button,
   Heading,
-  FormControl,
-  FormLabel,
   Input,
   Stack,
   Select,
@@ -29,7 +27,6 @@ import { navigate } from "vite-plugin-ssr/client/router";
 import { useForm, Controller } from "react-hook-form";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { useState } from "react";
-import { isArray } from "@apollo/client/utilities";
 import { Flex, Spinner } from "@chakra-ui/react";
 
 interface FieldValues {
@@ -62,7 +59,7 @@ export function Page() {
     control,
     register,
     trigger,
-    formState: { isValid, errors },
+    formState: { errors },
   } = useForm<FieldValues>({
     async defaultValues() {
       return {
