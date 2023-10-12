@@ -14,8 +14,8 @@ import { Button } from "../Button";
 import { MinusIcon, PlusIcon } from "src/Icons";
 
 export const Timepicker: React.FC<{
-  onSelectTime?: (a: string[]) => void;
-  onSingleSelectTime?: (a: string) => void;
+  onSelectTime?: (time: string[] | null) => void;
+  onSingleSelectTime?: (time: string) => void;
   startDate?: Date;
   endDate?: Date;
   onClose: any;

@@ -53,6 +53,10 @@ export function Page() {
   const createProposal = trpc.proposals.createProposal.useMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const now = new Date();
+  const threeDaysFromNow = new Date(now);
+  threeDaysFromNow.setDate(now.getDate() + 3);
+
   const {
     handleSubmit,
     control,
@@ -66,11 +70,27 @@ export function Page() {
         category: categories[0],
         body: EditorTemplate.proposalMarkDown,
         discussion: "",
-        votingPeriod: [new Date(), new Date()], // This will hold both start and end dates
+        votingPeriod: [now, threeDaysFromNow],
       };
     },
     shouldFocusError: false,
   });
+
+  const formatTime = (date: Date) => {
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const strTime =
+      hours + ":" + (minutes < 10 ? "0" : "") + minutes + " " + ampm;
+    return strTime;
+  };
+
+  const [selectedTime, setSelectedTime] = useState<string[] | null>([
+    formatTime(now),
+    formatTime(threeDaysFromNow),
+  ]);
 
   const handleEditorChangeWrapper = (value) => {
     handleEditorChange(value);
@@ -333,6 +353,9 @@ Links
                       rules={{
                         required: "Voting period is required.",
                         validate: (value) => {
+                          console.log("Validating votingPeriod:", value);
+                          console.log("Selected times:", selectedTime);
+                          // Check if both start and end dates are selected
                           if (
                             !value ||
                             value.length !== 2 ||
@@ -340,8 +363,14 @@ Links
                             !value[1]
                           ) {
                             return "Both start and end dates are required.";
-                          } else if (value[0] >= value[1]) {
+                          }
+                          // Check if start date/time is before the end date/time
+                          else if (value[0] >= value[1]) {
                             return "Start date/time must be before the end date/time.";
+                          }
+                          // If user didn't select a time, use default
+                          else if (!selectedTime || selectedTime.length !== 2) {
+                            setSelectedTime(["12:00 AM", "12:00 AM"]);
                           }
                           return true;
                         },
@@ -355,6 +384,8 @@ Links
                           onDateChange={field.onChange}
                           isInvalid={fieldState.invalid}
                           errorMessage={fieldState?.error?.message}
+                          selectedTime={selectedTime}
+                          setSelectedTime={setSelectedTime}
                         />
                       )}
                     />
