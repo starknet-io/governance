@@ -286,6 +286,7 @@ export function Page() {
               aria-label="All"
               placeholder="All"
               rounded="md"
+              height="36px"
               value={sortBy}
               onChange={(e) => {
                 setSortBy(e.target.value as SortingTypes);
