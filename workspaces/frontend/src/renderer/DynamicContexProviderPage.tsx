@@ -70,6 +70,41 @@ const cssOverrides = `
   .account-control__container img {
     display: none
   }
+ .dynamic-widget-inline-controls  {
+  background:#FBFBFB;
+  border:1px solid rgba(35, 25, 45, 0.10);
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter Variable', sans-serif;
+  border-radius: 4px;
+ }
+ .dynamic-widget-inline-controls__network-picker-main > button > svg {
+  display:none;
+  width:0
+
+ }
+ .dynamic-widget-inline-controls__network-picker.evm-network-control__container {
+width:45px;
+
+min-width:45px;
+overflow-x:hidden;
+padding-right:0;
+padding-inline-end:0;
+ }
+ .dynamic-widget-inline-controls__network-picker-main {
+    min-width: 45px;
+}
+ .dynamic-widget-inline-controls__network-picker.evm-network-control__container::after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 20px;
+  position: absolute;
+  background:#DCDBDD;
+  top: 10px;
+  right: 6px;
+  pointer-events: none;
+ }
+
 `;
 
 interface Props {
