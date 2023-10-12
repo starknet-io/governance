@@ -24,7 +24,7 @@ import { format } from "date-fns";
 import FocusLock from "react-focus-lock";
 import { Timepicker } from "../../Timepicker";
 import { Button } from "../../Button";
-import { CalendarIcon, SearchIcon } from "src/Icons";
+import { CalendarIcon } from "src/Icons";
 
 interface RangeCalendarPanelProps {
   dayzedHookProps: DayzedHookProps;
@@ -58,9 +58,9 @@ export const RangeCalendarPanel: React.FC<RangeCalendarPanelProps> = ({
     if (!Array.isArray(selected) || !selected?.length) {
       return false;
     }
-    let firstSelected = selected[0];
+    const firstSelected = selected[0];
     if (selected.length === 2) {
-      let secondSelected = selected[1];
+      const secondSelected = selected[1];
       return firstSelected < date && secondSelected > date;
     } else {
       return (
@@ -170,10 +170,10 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
     if (!selectable) {
       return;
     }
-    let newDates = [...selectedDates];
+    const newDates = [...selectedDates];
     if (selectedDates.length) {
       if (selectedDates.length === 1) {
-        let firstTime = selectedDates[0];
+        const firstTime = selectedDates[0];
         if (firstTime < date) {
           newDates.push(date);
         } else {
@@ -242,6 +242,7 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
               onOpen();
             }
           }}
+          size="standard"
           icon={<CalendarIcon />}
           id={id}
           autoComplete="off"
