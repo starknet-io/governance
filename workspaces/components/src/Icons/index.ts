@@ -68,6 +68,7 @@ import {
   DocumentFileWarning,
   ExternalLinkLargeIcon,
   ArrowRightLargeIcon,
+  StarknetOutlineIcon,
 } from "./UiIcons";
 
 export {
@@ -138,4 +139,5 @@ export {
   DocumentFileWarning,
   ExternalLinkLargeIcon,
   ArrowRightLargeIcon,
+  StarknetOutlineIcon,
 };
