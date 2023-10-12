@@ -66,6 +66,9 @@ import {
   ArrowRightIcon,
   CommentHidden,
   DocumentFileWarning,
+  ExternalLinkLargeIcon,
+  ArrowRightLargeIcon,
+  StarknetOutlineIcon,
 } from "./UiIcons";
 
 export {
@@ -134,4 +137,7 @@ export {
   ArrowRightIcon,
   CommentHidden,
   DocumentFileWarning,
+  ExternalLinkLargeIcon,
+  ArrowRightLargeIcon,
+  StarknetOutlineIcon,
 };

@@ -1,15 +1,19 @@
-import { Skeleton } from "@chakra-ui/react";
+import { Box, Skeleton } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-
-declare global {
-  interface Window {
-    iframely: any;
-  }
-}
+import { LinkCard } from "src/LinkCard";
 
 interface IframelyProps {
   url?: string;
   id?: string;
+}
+
+interface IframelyData {
+  title?: string;
+  description?: string;
+  author?: string;
+  thumbnail_url?: string;
+  provider_name?: string;
+  type?: string;
 }
 
 export function Iframely(props: IframelyProps) {
@@ -18,23 +22,29 @@ export function Iframely(props: IframelyProps) {
     null,
   );
   const [isLoaded, setIsLoaded] = useState(false);
-  const [html, setHtml] = useState({
-    __html: "<div />",
-  });
+  const [data, setData] = useState<IframelyData | null>(null);
 
   useEffect(() => {
     if (props && props.url) {
+      const encodedUrl = encodeURIComponent(props.url);
+      console.log(encodedUrl);
       fetch(
-        `https://cdn.iframe.ly/api/iframely?url=${encodeURIComponent(
-          props.url,
-        )}&key=${KEY}&iframe=1&omit_script=1`,
+        `https://cdn.iframe.ly/api/iframely?url=${encodedUrl}&api_key=${KEY}`,
       )
         .then((res) => res.json())
         .then(
           (res) => {
+            console.log("Raw API Response:", JSON.stringify(res));
             setIsLoaded(true);
             if (res.html) {
-              setHtml({ __html: res.html });
+              setData({
+                title: res.meta.title || "Default Title",
+                description:
+                  res.meta.description || "No description available.",
+                thumbnail_url: res.links.thumbnail[0]?.href || "",
+                provider_name: res.meta.site || "Unknown Provider",
+                type: res.meta.medium,
+              });
             } else if (res.error) {
               setError({ code: res.error, message: res.message });
             }
@@ -49,10 +59,6 @@ export function Iframely(props: IframelyProps) {
     }
   }, [props]);
 
-  useEffect(() => {
-    window.iframely && window.iframely.load();
-  }, []);
-
   if (error) {
     return (
       <div>
@@ -61,11 +67,18 @@ export function Iframely(props: IframelyProps) {
     );
   } else if (!isLoaded) {
     return <Skeleton height="110px" />;
-  } else {
+  } else if (data) {
     return (
-      <a href={props.url} target="_blank" rel="noopener noreferrer">
-        <div dangerouslySetInnerHTML={html} style={{ pointerEvents: "none" }} />
-      </a>
+      <>
+        <LinkCard
+          title={data.title}
+          src={data.thumbnail_url}
+          description={data.description}
+          href={props.url || ""}
+        />
+      </>
     );
+  } else {
+    return null;
   }
 }

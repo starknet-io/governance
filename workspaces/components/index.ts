@@ -97,6 +97,9 @@ export {
   PlusCircleIcon,
   MinusCircleIcon,
   ArrowRightIcon,
+  ExternalLinkLargeIcon,
+  ArrowRightLargeIcon,
+  StarknetOutlineIcon,
 } from "../components/src/Icons/index";
 export { FileUploader } from "./src/FileUploader";
 export { MultiLevelReOrderableList } from "./src/MultiLevelReOrderableList";

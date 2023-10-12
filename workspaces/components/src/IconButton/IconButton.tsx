@@ -23,20 +23,27 @@ export const IconButtonWithBadge = React.forwardRef(
     }: IconButtonProps & { badgeContent: React.ReactNode },
     ref,
   ) => (
-    <Box position="relative">
-      <IconButton ref={ref} {...rest} size={size} />
-      <Badge
-        size="round"
-        position="absolute"
-        top="50%"
-        marginTop="-10px"
-        right="8px"
-        variant="amount"
-        zIndex={1}
-        pointerEvents="none"
-      >
-        {badgeContent}
-      </Badge>
+    <Box position="relative" display="flex">
+      <IconButton
+        paddingRight={`${badgeContent !== 0 ? "40px" : "standard.md"}`}
+        ref={ref}
+        {...rest}
+        size={size}
+        width="36px"
+      />
+      {badgeContent !== 0 && (
+        <Badge
+          position={"absolute"}
+          top="9px"
+          size="iconButtonBadge"
+          right="8px"
+          variant="amount"
+          zIndex={1}
+          pointerEvents="none"
+        >
+          {badgeContent}
+        </Badge>
+      )}
     </Box>
   ),
 );
