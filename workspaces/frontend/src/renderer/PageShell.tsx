@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { PageContextProvider } from "./PageContextProvider";
 import { ChakraProvider } from "@chakra-ui/react";
 import type { PageContext } from "./types";
-import { DynamicContextProviderPage } from "./DynamicContexProviderPage";
 import { ApolloProvider, ApolloClient } from "@apollo/client";
 import { trpc } from "src/utils/trpc";
 import { theme } from "@yukilabs/governance-components";
-
+import { MessagesProvider } from "./providers/MessagesProvider";
+import { DynamicProvider } from "./providers/DynamicProvider";
+import { layouts } from "src/pages/layouts";
 interface Props {
   readonly pageContext: PageContext;
   readonly apolloClient: ApolloClient<any>;
@@ -35,17 +36,27 @@ export function PageShell(props: Props) {
     pageContext.exports.documentProps,
     pageContext.pageProps,
   ]);
+  type LayoutType = keyof typeof layouts;
 
+  const LayoutComponent =
+    layouts[pageContext.layout as LayoutType] || layouts.LayoutDefault;
+
+  console.log("pageContext.layout:", pageContext.layout);
+  console.log("Resolved LayoutComponent:", LayoutComponent.name);
   return (
     // <React.StrictMode>
     <PageContextProvider pageContext={{ ...pageContext, user: user || null }}>
-      <ChakraProvider theme={theme}>
-        <ApolloProvider client={props.apolloClient}>
-          <DynamicContextProviderPage pageContext={pageContext}>
-            {children}
-          </DynamicContextProviderPage>
-        </ApolloProvider>
-      </ChakraProvider>
+      <MessagesProvider>
+        <ChakraProvider theme={theme}>
+          <ApolloProvider client={props.apolloClient}>
+            <DynamicProvider>
+              <LayoutComponent pageContext={pageContext}>
+                {children}
+              </LayoutComponent>
+            </DynamicProvider>
+          </ApolloProvider>
+        </ChakraProvider>
+      </MessagesProvider>
     </PageContextProvider>
     // </React.StrictMode>
   );

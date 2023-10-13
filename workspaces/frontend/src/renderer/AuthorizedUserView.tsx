@@ -9,24 +9,14 @@ import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { stringToHex } from "viem";
 import { usePageContext } from "./PageContextProvider";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const utils = trpc.useContext();
-  // const [userData, setUserData] = useState<any>(null);
 
   const { handleLogOut } = useDynamicContext();
-  // const { user } = useDynamicContext();
-  // const address = user?.verifiedCredentials[0]?.address;
-  // trpc.users.getUser.useQuery(
-  //   { address: address ?? "" },
-  //   {
-  //     onSuccess: (data) => {
-  //       setUserData(data);
-  //     },
-  //   },
-  // );
 
   const { user } = usePageContext();
 
@@ -49,21 +39,6 @@ const AuthorizedUserView = () => {
 
   const userBalance = useBalanceData(user?.address as `0x${string}`);
 
-  // const { data: delegationData } = useDelegateRegistryDelegation({
-  //   address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-  //   args: [
-  //     address! as `0x${string}`,
-  //     "0x0000000000000000000000000000000000000000000000000000000000000000",
-  //   ],
-  //   watch: false,
-  //   chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
-  //   enabled: address != null,
-  //   suspense: true,
-  //   onError: (error) => {
-  //     console.log("error", error);
-  //   },
-  // });
-
   const { data: delegationData } = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
@@ -80,6 +55,26 @@ const AuthorizedUserView = () => {
   });
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
+
+  const isValidAddress = (addr: string) =>
+    addr && addr !== "0x0000000000000000000000000000000000000000";
+
+  const address = user?.address?.toLowerCase() || "";
+
+  const delegate = trpc.delegates.getDelegateByAddress.useQuery({ address });
+
+  const delegationStatement = delegate.data?.delegationStatement;
+  const checkDelegateStatus =
+    delegationStatement?.isKarmaDelegate &&
+    !delegationStatement?.isGovernanceDelegate;
+
+  useEffect(() => {
+    if (isValidAddress(address)) {
+      if (!checkDelegateStatus) return;
+
+      navigate(`/delegates/profile/onboarding/${delegationStatement?.id}`);
+    }
+  }, [address, delegate.data, checkDelegateStatus]);
 
   useEffect(() => {
     function handleClick(event: any) {
