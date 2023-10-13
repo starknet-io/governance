@@ -64,11 +64,13 @@ const AuthorizedUserView = () => {
   const delegate = trpc.delegates.getDelegateByAddress.useQuery({ address });
 
   const delegationStatement = delegate.data?.delegationStatement;
+
   const checkDelegateStatus =
     delegationStatement?.isKarmaDelegate &&
     !delegationStatement?.isGovernanceDelegate;
 
   useEffect(() => {
+    console.log("checkkkkk");
     if (isValidAddress(address)) {
       if (!checkDelegateStatus) return;
 

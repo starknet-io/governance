@@ -43,11 +43,12 @@ export const DelegateOnboarding = ({
             </Text>
           </Box>
         </Flex>
-        <Box mt="standard.3xl">
+        <Box mt="standard.3xl" pb="standard.3xl">
           <DelegateForm
             mode={mode}
             delegate={delegate}
             isFetchingDelegateSuccess={isFetchingDelegateSuccess}
+            isOnboarding={true}
           />
         </Box>
       </Container>
