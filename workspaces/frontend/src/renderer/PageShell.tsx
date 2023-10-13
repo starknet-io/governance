@@ -36,13 +36,23 @@ export function PageShell(props: Props) {
     pageContext.exports.documentProps,
     pageContext.pageProps,
   ]);
+
   type LayoutType = keyof typeof layouts;
 
-  const LayoutComponent =
-    layouts[pageContext.layout as LayoutType] || layouts.LayoutDefault;
+  const urlToLayoutMap: Record<string, LayoutType> = {
+    "/delegates/profile/onboarding/": "LayoutOnboarding",
+  };
 
-  console.log("pageContext.layout:", pageContext.layout);
-  console.log("Resolved LayoutComponent:", LayoutComponent.name);
+  const currentLayoutKey = Object.keys(urlToLayoutMap).find((prefix) =>
+    pageContext.urlOriginal.startsWith(prefix),
+  );
+  const currentLayout: LayoutType =
+    urlToLayoutMap[currentLayoutKey!] || "LayoutDefault";
+  const LayoutComponent = layouts[currentLayout];
+
+  if (!LayoutComponent) {
+    return null;
+  }
   return (
     // <React.StrictMode>
     <PageContextProvider pageContext={{ ...pageContext, user: user || null }}>
