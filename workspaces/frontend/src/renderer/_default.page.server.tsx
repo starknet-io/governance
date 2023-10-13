@@ -16,12 +16,9 @@ export const passToClient = [
   "locale",
   "data",
   "apolloIntialState",
-  "layout",
 ];
 
 export async function onBeforeRender(pageContext: PageContextServer) {
-  console.log("onBeforeRender - layout:", pageContext.layout);
-
   return {
     pageContext: await getDefaultPageContext(pageContext),
   };

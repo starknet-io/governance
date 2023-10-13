@@ -14,8 +14,8 @@ export const LayoutOnboarding = ({ pageContext, children }: Props) => {
     setRenderDone(true);
   }, []);
   return (
-    <Box bg="#fff">
-      <Box display={{ base: "flex" }}>
+    <Box>
+      <Box display={{ base: "flex" }} p="standard.md" justifyContent="flex-end">
         {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
       </Box>
 

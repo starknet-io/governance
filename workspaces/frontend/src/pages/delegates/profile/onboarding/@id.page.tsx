@@ -9,6 +9,7 @@ import {
 import DelegateForm from "../../../../components/DelegateForm";
 import { trpc } from "../../../../utils/trpc";
 import { usePageContext } from "../../../../renderer/PageContextProvider";
+import { DelegateOnboarding } from "src/components/DelegateOnboarding";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -19,18 +20,15 @@ export function Page() {
     },
   );
   return (
-    <ContentContainer>
-      <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
-        <Heading variant="h3" mb="24px">
-          Edit Delegate
-        </Heading>
-        <DelegateForm
+    <Box>
+      <Box width="100%" mx="auto">
+        <DelegateOnboarding
           mode="edit"
           delegate={delegate}
           isFetchingDelegateSuccess={isSuccess}
         />
       </Box>
-    </ContentContainer>
+    </Box>
   );
 }
 
