@@ -13,7 +13,6 @@ import {
   Spinner,
   FormControl,
   FormLabel,
-  Input,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
@@ -21,6 +20,7 @@ import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils
 import { UploadImage } from "src/UploadImage";
 import { ProfileImage } from "src/ProfileImage";
 import { ShareIcon } from "src/Icons";
+import { Input } from "src/Input";
 
 interface ProfileInfoModalProps {
   isOpen: boolean;
@@ -74,6 +74,10 @@ export const ProfileInfoModal = ({
     setValue("username", user?.username);
     setValue("starknetAddress", user?.starknetAddress);
   }, [user]);
+
+  useEffect(() => {
+    console.log("userExistsError", errors);
+  }, [errors]);
 
   const handleSave = () => {
     handleSubmit((data) => {
@@ -167,7 +171,7 @@ export const ProfileInfoModal = ({
                     })}
                   />
                   {errors.starknetAddress && (
-                    <span>{errors.starknetAddress?.message}</span>
+                    <span>{errors?.starknetAddress?.message}</span>
                   )}
                 </FormControl>
               </form>
