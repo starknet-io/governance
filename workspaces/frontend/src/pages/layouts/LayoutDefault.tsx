@@ -64,7 +64,7 @@ function LayoutDefault(props: Props) {
       /* no cleanup to run */
     };
   }, [helpMessage, setHelpMessage]);
-  console.log("Rendering LayoutDefault");
+
   return (
     <>
       <TallyScript />

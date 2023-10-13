@@ -209,8 +209,6 @@ export function Page() {
         import.meta.env.VITE_APP_SNAPSHOT_URL,
       );
 
-      console.log(data);
-
       const params: Vote = {
         // from?: string;
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
@@ -342,7 +340,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(value);
   };
 
   const handleCommentEdit = async ({
@@ -361,7 +358,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(content);
   };
 
   const handleCommentDelete = async ({ commentId }: { commentId: number }) => {
@@ -373,7 +369,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log("Deleted");
   };
 
   const handleReplySend = async ({
@@ -393,7 +388,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(content);
   };
 
   const handleCommentVote = async ({

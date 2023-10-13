@@ -177,7 +177,7 @@ export function PostForm({ post, isFetchPostSuccess, mode }: PostFormProps) {
                 validate: {
                   required: (value) => {
                     // Trim the editorValue to remove spaces and new lines
-                    console.log(editorValue);
+
                     const trimmedValue = editorValue?.trim();
 
                     if (!trimmedValue?.length) {

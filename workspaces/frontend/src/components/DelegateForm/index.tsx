@@ -86,7 +86,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
     useMarkdownEditor("");
   const [error, setErrorField] = useState("");
-  console.log("errors", errors);
   const {
     editorValue: editorCustomAgreementValue,
     handleEditorChange: handleCustomAgreement,
@@ -197,7 +196,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
           setErrorField("");
         })
         .catch((err) => {
-          console.log(err);
           setErrorField(err?.message ? err.message : JSON.stringify(err));
         });
     } catch (error) {
@@ -212,7 +210,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   };
 
   useEffect(() => {
-    console.log("User's starknetAddress:", user?.starknetAddress);
     if (user?.starknetAddress) {
       setValue("starknetAddress", user.starknetAddress);
       if (!validateStarknetAddress(user.starknetAddress)) {
@@ -220,7 +217,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
           type: "manual",
           message: "Invalid Starknet address.",
         });
-        console.log("Setting manual error for starknetAddress");
       }
     }
   }, [user]);
