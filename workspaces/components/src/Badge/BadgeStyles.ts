@@ -78,6 +78,21 @@ const round = defineStyle({
   alignItems: "center",
   justifyContent: "center",
 });
+const iconButtonBadge = defineStyle({
+  px: "standard.base",
+  py: "standard.base",
+  borderRadius: "4px",
+  fontSize: "10px",
+  fontWeight: "600",
+  textTransform: "uppercase",
+  borderWidth: "0px",
+  lineHeight: "10px",
+  letterSpacing: "0.5px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "18px",
+});
 
 export const badgeTheme = defineStyleConfig({
   baseStyle: {
@@ -92,7 +107,7 @@ export const badgeTheme = defineStyleConfig({
     lineHeight: "7px",
     letterSpacing: "0.5px",
   },
-  sizes: { condensed, round },
+  sizes: { condensed, round, iconButtonBadge },
   variants: {
     last_call,
     active,

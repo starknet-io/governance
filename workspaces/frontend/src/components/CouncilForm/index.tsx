@@ -13,6 +13,8 @@ import {
   Banner,
   useDisclosure,
   DeletionDialog,
+  FormControlled,
+  useFormErrorHandler,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useForm, Controller } from "react-hook-form";
@@ -42,7 +44,9 @@ export function CouncilForm({
     formState: { errors, isValid },
     trigger,
     setValue,
-  } = useForm<RouterInput["councils"]["saveCouncil"]>();
+  } = useForm<RouterInput["councils"]["saveCouncil"]>({
+    shouldFocusError: false,
+  });
 
   const {
     isOpen: isDeleteOpen,
@@ -106,7 +110,7 @@ export function CouncilForm({
     }
   };
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmitHandler = async (data) => {
     try {
       setError("");
       data.statement = editorValue;
@@ -131,7 +135,7 @@ export function CouncilForm({
       // Handle error
       setError(`Error: ${error?.message}` || "An Error occurred");
     }
-  });
+  };
 
   const deleteCouncil = trpc.councils.deleteCouncil.useMutation();
   // Delete function
@@ -148,6 +152,18 @@ export function CouncilForm({
     }
   };
 
+  const { setErrorRef, scrollToError } = useFormErrorHandler([
+    "name",
+    "description",
+    "statement",
+  ]);
+
+  const onErrorSubmit = (errors) => {
+    if (Object.keys(errors).length > 0) {
+      scrollToError(errors);
+    }
+  };
+
   return (
     <>
       <DeletionDialog
@@ -157,31 +173,44 @@ export function CouncilForm({
         cancelRef={cancelRef}
         entityName="Council"
       />
-      <form onSubmit={onSubmit}>
-        <Stack spacing="32px" direction={{ base: "column" }}>
-          <FormControl id="council-name">
-            <FormLabel>Council name</FormLabel>
+      <form onSubmit={handleSubmit(onSubmitHandler, onErrorSubmit)} noValidate>
+        <Stack spacing="standard.xl" direction={{ base: "column" }}>
+          <FormControlled
+            name="name"
+            label="Council name"
+            isRequired
+            isInvalid={!!errors.name}
+            errorMessage={errors.name?.message || "Add council name"}
+            ref={(ref) => setErrorRef("name", ref)}
+          >
             <Input
               variant="primary"
+              isInvalid={!!errors.name}
               size="standard"
               placeholder="Name"
               {...register("name", {
                 required: true,
               })}
             />
-            {errors.name && <span>Add council name</span>}
-          </FormControl>
+          </FormControlled>
 
-          <FormControl id="description">
-            <FormLabel>Short description</FormLabel>
+          <FormControlled
+            name="description"
+            ref={(ref) => setErrorRef("description", ref)}
+            label="Short description"
+            isRequired
+            isInvalid={!!errors.description}
+            errorMessage={
+              errors.description?.message || "Add council description"
+            }
+          >
             <Controller
               name="description"
               control={control}
               rules={{
                 validate: {
                   required: (value) => {
-                    if (!shortDescValue || !shortDescValue)
-                      return "Add council description";
+                    if (!shortDescValue) return "Add council description";
                   },
                 },
               }}
@@ -199,22 +228,25 @@ export function CouncilForm({
                 />
               )}
             />
-            {errors.description && <span>Add council description</span>}
-          </FormControl>
+          </FormControlled>
 
-          <FormControl id="statement">
-            <FormLabel>Council statement</FormLabel>
+          <FormControlled
+            ref={(ref) => setErrorRef("statement", ref)}
+            name="statement"
+            label="Council statement"
+            isRequired
+            isInvalid={!!errors.statement}
+            errorMessage={errors.statement?.message || "Add council statement"}
+          >
             <Controller
               name="statement"
-              control={control} // control comes from useForm()
+              control={control}
               defaultValue=""
               rules={{
                 validate: {
                   required: (value) => {
-                    // Trim the editorValue to remove spaces and new lines
                     const trimmedValue = editorValue?.trim();
-
-                    if (!trimmedValue?.length || !trimmedValue) {
+                    if (!trimmedValue?.length) {
                       return "Add council statement";
                     }
                   },
@@ -222,6 +254,7 @@ export function CouncilForm({
               }}
               render={({ field }) => (
                 <MarkdownEditor
+                  isInvalid={!!errors.statement}
                   value={editorValue}
                   onChange={(val) => {
                     handleEditorChange(val);
@@ -238,12 +271,11 @@ Role of the [Name] council
 How the [Name] council works
 FAQs
 Links
-                        `}
+                `}
                 />
               )}
             />
-            {errors.statement && <span>{errors.statement.message}</span>}
-          </FormControl>
+          </FormControlled>
 
           <FormControl id="council-members">
             <MembersList
@@ -254,8 +286,14 @@ Links
             />
           </FormControl>
 
-          <FormControl id="council-name">
-            <FormLabel>Multisig address (optional)</FormLabel>
+          <FormControlled
+            name="address"
+            label="Multisig address"
+            isInvalid={!!errors.address}
+            errorMessage={
+              errors.address?.message || "Invalid Ethereum address."
+            }
+          >
             <Input
               size="standard"
               variant="primary"
@@ -270,8 +308,7 @@ Links
                 },
               })}
             />
-            {errors.address && <span>{errors.address.message}</span>}
-          </FormControl>
+          </FormControlled>
           {mode === "create" ? (
             <Flex justifyContent="flex-end">
               <Button type="submit" variant="primary">

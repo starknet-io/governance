@@ -7,10 +7,8 @@ import {
   LinkOverlay,
 } from "@chakra-ui/react";
 
-
-import { ExternalLinkIcon } from "src/Icons";
-
-
+import { ExternalLinkIcon, ExternalLinkLargeIcon } from "src/Icons";
+import { Text } from "src/Text";
 
 type HomePageCardProps = {
   title: string;
@@ -34,9 +32,17 @@ export const HomePageCard = ({
           justifyContent="space-between"
           alignItems="center"
         >
-          <span>Learn more</span>
-          <ExternalLinkIcon boxSize="24px" color="content.default.default" />
-
+          <Text
+            variant="smallStrong"
+            letterSpacing={"0.12px"}
+            color="content.default.default"
+          >
+            Learn more
+          </Text>
+          <ExternalLinkLargeIcon
+            boxSize="24px"
+            color="content.default.default"
+          />
         </CardFooter>
       </Card>
     </LinkBox>

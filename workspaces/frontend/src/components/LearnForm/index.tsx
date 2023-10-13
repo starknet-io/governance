@@ -14,6 +14,8 @@ import {
   Banner,
   Divider,
   DeletionDialog,
+  FormControlled,
+  useFormErrorHandler,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { Controller, useForm } from "react-hook-form";
@@ -38,7 +40,7 @@ export function LearnForm({ mode }: LearnFormProps) {
     setValue,
     watch,
     formState: { errors, isValid },
-  } = useForm<RouterInput["pages"]["savePage"]>();
+  } = useForm<RouterInput["pages"]["savePage"]>({ shouldFocusError: false });
   const { mutateAsync: deletePage } = trpc.pages.deletePage.useMutation();
   const cancelRef = useRef(null);
 
@@ -81,33 +83,38 @@ export function LearnForm({ mode }: LearnFormProps) {
     }
   }, [pagesTree]);
 
-  const saveChanges = handleSubmit((data) => {
-    const newItems = flattenTreeItems(treeItems).map((item) => {
-      if (item.isNew) {
-        return {
-          ...item,
-          title: data.title,
-          content: editorValue,
-        };
-      } else if (item.id === +pageId) {
-        return {
-          ...item,
-          title: data.title,
-          content: editorValue,
-        };
-      }
-      return item;
-    });
+  const saveChanges = handleSubmit(
+    (data) => {
+      const newItems = flattenTreeItems(treeItems).map((item) => {
+        if (item.isNew) {
+          return {
+            ...item,
+            title: data.title,
+            content: editorValue,
+          };
+        } else if (item.id === +pageId) {
+          return {
+            ...item,
+            title: data.title,
+            content: editorValue,
+          };
+        }
+        return item;
+      });
 
-    savePagesTree.mutate(newItems, {
-      onSuccess: () => {
-        navigate(`/learn`);
-      },
-      onError: (err) => {
-        setError(err?.message || "An Error Occurred");
-      },
-    });
-  });
+      savePagesTree.mutate(newItems, {
+        onSuccess: () => {
+          navigate(`/learn`);
+        },
+        onError: (err) => {
+          setError(err?.message || "An Error Occurred");
+        },
+      });
+    },
+    (errors) => {
+      onErrorSubmit(errors);
+    },
+  );
 
   const handleDeletePage = () => {
     setIsDeleteDialogVisible(true);
@@ -141,6 +148,17 @@ export function LearnForm({ mode }: LearnFormProps) {
     }
   }, [mode, pagesTree?.isSuccess]);
 
+  const { setErrorRef, scrollToError } = useFormErrorHandler([
+    "title",
+    "content",
+  ]);
+
+  const onErrorSubmit = (errors) => {
+    if (Object.keys(errors).length > 0) {
+      scrollToError(errors);
+    }
+  };
+
   return (
     <>
       <DeletionDialog
@@ -153,38 +171,50 @@ export function LearnForm({ mode }: LearnFormProps) {
         entityName="Page"
       />
       <form>
-        <Stack spacing="32px" direction={{ base: "column" }} mb="40px">
-          <FormControl id="delegate-statement">
-            <FormLabel>Title</FormLabel>
+        <Stack spacing="standard.xl" direction={{ base: "column" }} mb="40px">
+          <FormControlled
+            ref={(ref) => setErrorRef("title", ref)}
+            name="title"
+            label="Title"
+            isRequired
+            isInvalid={!!errors.title}
+            errorMessage={errors.title?.message || "Add learn page title"}
+          >
             <Input
+              isInvalid={!!errors.title}
               variant="primary"
               placeholder="Page title"
               {...register("title", {
                 required: true,
               })}
             />
-            {errors.title && <span>Add article name</span>}
-          </FormControl>
-          <FormControl id="proposal-body">
-            <FormLabel>Body</FormLabel>
+          </FormControlled>
+
+          <FormControlled
+            ref={(ref) => setErrorRef("content", ref)}
+            name="content"
+            label="Body"
+            isRequired
+            isInvalid={!!errors.content}
+            errorMessage={errors.content?.message || "Add learn page text"}
+          >
             <Controller
               name="content"
-              control={control} // control comes from useForm()
+              control={control}
               defaultValue=""
               rules={{
                 validate: {
                   required: (value) => {
-                    // Trim the editorValue to remove spaces and new lines
                     const trimmedValue = editorValue?.trim();
-
-                    if (!trimmedValue?.length || !trimmedValue) {
-                      return "Add article text";
+                    if (!trimmedValue?.length) {
+                      return "Add learn page text";
                     }
                   },
                 },
               }}
               render={({ field }) => (
                 <MarkdownEditor
+                  isInvalid={!!errors.title}
                   value={editorValue}
                   customEditor={editor}
                   onChange={(val) => {
@@ -195,14 +225,11 @@ export function LearnForm({ mode }: LearnFormProps) {
                     }
                   }}
                   handleUpload={handleUpload}
-                  offsetPlaceholder={"-8px"}
-                  placeholder={`
-Type here...`}
+                  placeholder={`Type here...`}
                 />
               )}
             />
-            {errors.content && <span>{errors.content.message}</span>}
-          </FormControl>
+          </FormControlled>
         </Stack>
       </form>
 

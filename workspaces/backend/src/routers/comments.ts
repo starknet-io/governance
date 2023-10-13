@@ -199,9 +199,14 @@ export const commentsRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async (opts) => {
       const user = opts.ctx.user;
-      if (user?.role !== 'admin') {
+      if (user?.role !== 'admin' && user?.role !== 'moderator') {
         throw new Error('Permission denied: Only admins can delete comments');
       }
-      await db.delete(comments).where(eq(comments.id, opts.input.id)).execute();
+
+      await db
+        .update(comments)
+        .set({ isDeleted: true })
+        .where(eq(comments.id, opts.input.id))
+        .execute();
     }),
 });

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { useEffect, ReactNode, ForwardRefRenderFunction } from "react";
 import {
   FormControl,
   FormLabel,
@@ -7,28 +7,45 @@ import {
   FormErrorMessage,
   InputProps as ChakraInputProps,
 } from "@chakra-ui/react";
+import { useFormErrorHandler } from "./useFormErrorHandler";
 
 type CustomFormControlProps = {
-  label: string;
-  isRequired?: boolean;
-  isError?: boolean;
+  name: string;
+  label?: string;
+  isRequired?: boolean | undefined;
+  isInvalid?: boolean | undefined;
   helperText?: string;
   errorMessage?: string | null;
   children: ReactNode;
 } & Omit<ChakraInputProps, "children">;
 
-export const FormControlled: React.FC<CustomFormControlProps> = ({
-  label,
-  isRequired = false,
-  isError = false,
-  helperText = "",
-  errorMessage = "",
-  children,
-  ...otherProps
-}) => {
-  console.log("Is there an error?", isError);
+const FormControlledComponent: ForwardRefRenderFunction<
+  HTMLDivElement,
+  CustomFormControlProps
+> = (
+  {
+    label,
+    isRequired = false,
+    isInvalid = false,
+    helperText,
+    errorMessage,
+    children,
+    name,
+    ...otherProps
+  },
+  ref,
+) => {
+  const { setErrorRef } = useFormErrorHandler();
+  const refObj = ref as React.RefObject<HTMLDivElement>;
+
+  useEffect(() => {
+    if (refObj && refObj.current) {
+      setErrorRef(name, refObj.current);
+    }
+  }, [name, refObj]);
+
   return (
-    <FormControl isInvalid={isError} isRequired={isRequired}>
+    <FormControl isInvalid={isInvalid} isRequired={isRequired} ref={ref}>
       <FormLabel
         sx={{
           fontSize: "14px",
@@ -38,15 +55,18 @@ export const FormControlled: React.FC<CustomFormControlProps> = ({
           letterSpacing: "0.07px",
           display: "flex",
           gap: "standard.base",
+          color: "content.default.default",
         }}
       >
         {label}
-        {isRequired && <Text color="content.support.default">(required)</Text>}
+        {!isRequired && label && (
+          <Text color="content.support.default">(optional)</Text>
+        )}
       </FormLabel>
       {children
         ? React.cloneElement(children as React.ReactElement, otherProps)
         : null}
-      {!isError ? (
+      {!isInvalid ? (
         <FormHelperText
           sx={{
             mt: "standard.xs",
@@ -82,3 +102,6 @@ export const FormControlled: React.FC<CustomFormControlProps> = ({
     </FormControl>
   );
 };
+
+const FormControlled = React.forwardRef(FormControlledComponent);
+export { FormControlled };

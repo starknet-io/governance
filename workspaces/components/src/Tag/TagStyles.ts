@@ -55,11 +55,36 @@ const neutral = definePartsStyle({
   },
 });
 
+const select = definePartsStyle({
+  container: {
+    px: "standard.xs",
+    py: "standard.base",
+    background: "#E9E8EA",
+    borderColor: "border.forms",
+    borderWidth: "0px",
+    color: "##4A4A4F",
+    fontSize: "12px",
+    fontWeight: "500",
+    borderRadius: "standard.base",
+    position: "relative",
+    lineHeight: "20px",
+    fontFamily: "Inter Variable",
+    letterSpacing: "0.12px",
+    height: "28px",
+    _hover: {
+      svg: {
+        stroke: "red",
+      },
+    },
+  },
+});
+
 export const tagTheme = defineMultiStyleConfig({
   variants: {
     review,
     amount,
     neutral,
+    select,
   },
   defaultProps: {
     variant: "neutral",

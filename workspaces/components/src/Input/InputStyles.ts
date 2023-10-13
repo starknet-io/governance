@@ -61,7 +61,9 @@ const condensed = defineStyle({
 
 const sizes = {
   standard: definePartsStyle({ field: standard, addon: standard }),
+  md: definePartsStyle({ field: standard, addon: standard }),
   condensed: definePartsStyle({ field: condensed, addon: condensed }),
+  sm: definePartsStyle({ field: condensed, addon: condensed }),
 };
 export const inputTheme = defineMultiStyleConfig({
   variants: { primary },

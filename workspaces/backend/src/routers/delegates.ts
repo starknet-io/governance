@@ -209,6 +209,8 @@ export const delegateRouter = router({
           telegram: opts.input.telegram,
           discourse: opts.input.discourse,
           understandRole: !!opts.input.understandRole,
+          isKarmaDelegate: false,
+          isGovernanceDelegate: true,
           confirmDelegateAgreement: !!opts.input.confirmDelegateAgreement, // Use the determined value
         })
         .where(eq(delegates.id, opts.input.id))

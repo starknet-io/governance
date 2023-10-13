@@ -64,7 +64,12 @@ import {
   PlusCircleIcon,
   MinusCircleIcon,
   ArrowRightIcon,
+  CommentHidden,
   DocumentFileWarning,
+  ExternalLinkLargeIcon,
+  ArrowRightLargeIcon,
+  StarknetOutlineIcon,
+  CalendarIcon,
 } from "./UiIcons";
 
 export {
@@ -131,5 +136,10 @@ export {
   PlusCircleIcon,
   MinusCircleIcon,
   ArrowRightIcon,
+  CommentHidden,
   DocumentFileWarning,
+  ExternalLinkLargeIcon,
+  ArrowRightLargeIcon,
+  StarknetOutlineIcon,
+  CalendarIcon,
 };

@@ -45,7 +45,7 @@ export const BannerHome = ({
         overflow="hidden"
         bgGradient="radial(573.81% 50% at 50% 50%, #F9F3EF 0%, #F5F2FA 82.25%, #F1F6FA 100%)"
       >
-        <Box position="absolute" inset="0">
+        <Box position="absolute" inset="0" zIndex="1">
           <Pattern />
         </Box>
         <HomeContainer
@@ -115,9 +115,9 @@ export const BannerHome = ({
             columns={3}
             // gap="standard.md" // gap causing overflow on tablet
             overflowX="scroll"
-            gridTemplateColumns="repeat(3, minmax(246px, 1fr))"
+            gridTemplateColumns="repeat(3, minmax(262px, 1fr))"
             py="16px"
-            px="32px"
+            px="standard.md"
             sx={{
               "> *:not(:last-child)": {
                 marginRight: "standard.md",
