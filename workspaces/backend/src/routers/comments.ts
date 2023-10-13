@@ -12,6 +12,11 @@ const commentInsertSchema = createInsertSchema(comments);
 // commentOnPost(postId, body)
 // commentOnProposal(proposalId, body)
 
+function containsEthAddress(text: string): boolean {
+  const ethAddressPattern = /0x[a-fA-F0-9]{40}/;
+  return ethAddressPattern.test(text);
+}
+
 export const commentsRouter = router({
   getAll: publicProcedure.query(() => db.select().from(comments)),
 
@@ -158,6 +163,18 @@ export const commentsRouter = router({
   saveComment: protectedProcedure
     .input(commentInsertSchema.omit({ id: true }))
     .mutation(async (opts) => {
+      const commentText = opts.input.content;
+
+      // Check for Ethereum address
+      if (containsEthAddress(commentText)) {
+        throw new Error('Comments cannot contain Ethereum addresses.');
+      }
+
+      // Check for short comments
+      if (commentText.length < 5) {
+        throw new Error('Comments must be at least 15 characters long.');
+      }
+
       const insertedComment = await db
         .insert(comments)
         .values({

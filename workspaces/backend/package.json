@@ -28,6 +28,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@coffeeandfun/google-profanity-words": "^2.1.0",
     "@trpc/server": "^10.36.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
