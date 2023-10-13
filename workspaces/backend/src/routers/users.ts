@@ -134,48 +134,52 @@ export const usersRouter = router({
     .input(
       z.object({
         id: z.string(),
-        username: z.any(),
-        starknetAddress: z.any(),
-        profileImage: z.any(),
+        username: z.optional(z.any()),
+        starknetAddress: z.optional(z.any()),
+        profileImage: z.optional(z.any()),
       }),
     )
     .mutation(async (opts) => {
       const { id, username, starknetAddress, profileImage } = opts.input;
 
-      const user = await db.query.users.findFirst({
-        where: eq(users.username, username),
-      });
-
+      // Fetch the user by ID once instead of twice.
       const userById = await db.query.users.findFirst({
         where: eq(users.id, id),
       });
 
-      if (user) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Username already exists',
-        });
+      // Ensure the user exists by ID.
+      if (!userById) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'User not found' });
       }
 
-      let updatedUsername =
-        username !== undefined && username !== '' ? username : null;
+      // If a username is provided, ensure it's unique.
+      if (username !== undefined) {
+        const existingUser = await db.query.users.findFirst({
+          where: eq(users.username, username),
+        });
+
+        if (existingUser) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Username already exists',
+          });
+        }
+      }
+
+      // Handle potential nulls for updated fields.
+      const updatedUsername =
+        username === '' ? null : username || userById.username;
       const updatedAddress =
         starknetAddress !== undefined && starknetAddress !== ''
           ? starknetAddress
           : null;
-
-      if (updatedUsername === null) {
-        updatedUsername = userById?.username;
-      } else if (username === '') {
-        updatedUsername = null;
-      }
 
       await db
         .update(users)
         .set({
           username: updatedUsername,
           starknetAddress: updatedAddress,
-          profileImage: profileImage,
+          profileImage: profileImage || userById.profileImage,
         })
         .where(eq(users.id, id))
         .returning();
