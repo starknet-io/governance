@@ -68,12 +68,23 @@ const AuthorizedUserView = () => {
   const checkDelegateStatus =
     delegationStatement?.isKarmaDelegate &&
     !delegationStatement?.isGovernanceDelegate;
-
+  // Effect for handling redirection based on address and specific path
   useEffect(() => {
-    console.log("checkkkkk");
-    if (isValidAddress(address)) {
-      if (!checkDelegateStatus) return;
+    const currentPath = window.location.pathname;
+    console.log("Current path", currentPath);
+    console.log("User", user);
+    const isOnSpecificPath =
+      currentPath.startsWith("/delegates/profile/onboarding/") ||
+      currentPath.startsWith("/delegates/profile/edit/");
 
+    if (isOnSpecificPath && !user) {
+      navigate(`/`);
+    }
+  }, [user]);
+
+  // Effect for handling navigation based on delegate status and address validity
+  useEffect(() => {
+    if (isValidAddress(address) && checkDelegateStatus) {
       navigate(`/delegates/profile/onboarding/${delegationStatement?.id}`);
     }
   }, [address, delegate.data, checkDelegateStatus]);
