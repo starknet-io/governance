@@ -82,7 +82,7 @@ export function adaptTreeForFrontend(
 }
 
 export const validateStarknetAddress = (address: string) => {
-  if (!address) return false;
+  if (!address) return true;
   try {
     const parsedAddress = validateAndParseAddress(address);
     const checksumAddress = getChecksumAddress(parsedAddress);

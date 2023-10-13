@@ -164,15 +164,13 @@ export const ProfileInfoModal = ({
                   <Input
                     placeholder="0x..."
                     {...register("starknetAddress", {
-                      validate: (value) =>
-                        value === "" ||
-                        validateStarknetAddress(value) ||
-                        "Invalid Starknet address",
+                      validate: (value) => validateStarknetAddress(value),
                     })}
                   />
-                  {errors.starknetAddress && (
-                    <span>{errors?.starknetAddress?.message}</span>
-                  )}
+                  {errors.starknetAddress &&
+                    errors.starknetAddress.type === "validate" && (
+                      <span>Invalid Starknet address</span>
+                    )}
                 </FormControl>
               </form>
             </Box>
