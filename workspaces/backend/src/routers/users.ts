@@ -86,6 +86,7 @@ export const usersRouter = router({
       z.object({
         address: z.string(),
         role: z.any(),
+        banned: z.boolean(),
       }),
     )
     .mutation(async (opts) => {
@@ -97,6 +98,7 @@ export const usersRouter = router({
           .update(users)
           .set({
             role: opts.input.role,
+            banned: opts.input.banned,
           })
           .where(eq(users.address, opts.input.address.toLowerCase()))
           .returning();
@@ -107,6 +109,7 @@ export const usersRouter = router({
           .values({
             address: opts.input.address.toLowerCase(),
             role: opts.input.role,
+            banned: opts.input.banned,
             createdAt: new Date(),
           })
           .returning();

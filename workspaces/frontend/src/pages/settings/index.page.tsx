@@ -19,22 +19,23 @@ import {
   TrashIcon,
   FileUploader,
   ProfileImage,
+  Checkbox,
 } from "@yukilabs/governance-components";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import {
   User,
   userRoleEnum,
 } from "@yukilabs/governance-backend/src/db/schema/users";
 import { trpc } from "src/utils/trpc";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { DocumentProps, ROLES } from "src/renderer/types";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
-import {ethers} from "ethers";
+import { ethers } from "ethers";
 
 const userRoleValues = userRoleEnum.enumValues;
 
@@ -53,6 +54,7 @@ export function Page() {
   const { user } = usePageContext();
 
   const {
+    control,
     handleSubmit: handleEditSubmit,
     register: editRegister,
     formState: { errors: editErrors, isValid: isEditValid },
@@ -92,11 +94,12 @@ export function Page() {
     }
   });
 
-  const onSubmitEdit = handleEditSubmit(async () => {
+  const onSubmitEdit = handleEditSubmit(async (values) => {
     try {
       const data = {
         address: selectedUser?.address as string,
         role: selectRef.current?.value as string,
+        banned: values.banned as boolean
       };
       await addRoles.mutateAsync(data, {
         onSuccess: () => {
@@ -195,16 +198,30 @@ export function Page() {
               size="sm"
               focusBorderColor={"red"}
               rounded="md"
+              options={userRoleValues.map((option) => ({
+                label: option,
+                value: option,
+              }))}
               {...editRegister("role")}
               defaultValue={selectedUser?.role ?? "user"}
               ref={selectRef}
-            >
-              {userRoleValues.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
+            />
+            <FormControl id="banned" mt={5}>
+              <Controller
+                control={control}
+                name="banned"
+                defaultValue={!!selectedUser?.banned}
+                rules={{ required: false }}
+                render={({ field }) => (
+                  <Checkbox
+                    isChecked={field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                  >
+                    Ban User
+                  </Checkbox>
+                )}
+              />
+            </FormControl>
             {editErrors.role && <span>This field is required.</span>}
           </FormControl>
         </FormModal>
@@ -279,11 +296,15 @@ export function Page() {
                       {...addRegister("address", {
                         required: "This field is required.",
                         validate: {
-                          isValidEthereumAddress: value => isValidAddress(value) || "Invalid Ethereum address."
-                        }
+                          isValidEthereumAddress: (value) =>
+                            isValidAddress(value) ||
+                            "Invalid Ethereum address.",
+                        },
                       })}
                     />
-                    {addErrors.address && <span>{addErrors.address.message}</span>}
+                    {addErrors.address && (
+                      <span>{addErrors.address.message}</span>
+                    )}
                   </FormControl>
 
                   <FormControl id="role">
@@ -304,10 +325,7 @@ export function Page() {
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
                   <Flex justifyContent="flex-end">
-                    <Button
-                      type="submit"
-                      variant="primary"
-                    >
+                    <Button type="submit" variant="primary">
                       Add
                     </Button>
                   </Flex>
