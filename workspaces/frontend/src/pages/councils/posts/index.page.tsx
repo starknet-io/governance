@@ -93,7 +93,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(content);
   };
 
   const handleCommentDelete = async ({ commentId }: { commentId: number }) => {

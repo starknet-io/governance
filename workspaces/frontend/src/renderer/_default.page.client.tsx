@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import { PageShell } from "./PageShell";
 import type { PageContextClient } from "./types";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { TrpcProvider } from "./TrpcProvider";
+import { TrpcProvider } from "./providers/TrpcProvider";
 
 export const clientRouting = true;
 export const hydrationCanBeAborted = true;

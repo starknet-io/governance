@@ -217,7 +217,6 @@ export function Delegates({
     }
 
     if (isDelegationError) {
-      console.log(delegationError);
       setIsStatusModalOpen(true);
       setStatusTitle("Delegating voting power failed");
       setStatusDescription(

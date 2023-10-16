@@ -229,7 +229,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                         ) : delegatedTo !==
                           "0x0000000000000000000000000000000000000000" ? (
                           <Flex>
-                            <Text>{truncateAddress(delegatedTo)}</Text>
+                            <Text>{truncateAddress(delegatedTo || "")}</Text>
                             <CopyToClipboard text={delegatedTo} />
                           </Flex>
                         ) : (

@@ -5,7 +5,7 @@ import { getDefaultPageContext } from "./helpers";
 import { getDataFromTree } from "@apollo/client/react/ssr";
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import fetch from "cross-fetch";
-import { TrpcProvider } from "./TrpcProvider";
+import { TrpcProvider } from "./providers/TrpcProvider";
 
 // See https://vite-plugin-ssr.com/data-fetching
 export const passToClient = [

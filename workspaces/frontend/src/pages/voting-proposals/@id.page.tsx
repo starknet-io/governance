@@ -209,8 +209,6 @@ export function Page() {
         import.meta.env.VITE_APP_SNAPSHOT_URL,
       );
 
-      console.log(data);
-
       const params: Vote = {
         // from?: string;
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
@@ -227,6 +225,11 @@ export function Page() {
       setisConfirmOpen(true);
 
       const web3 = new providers.Web3Provider(walletClient.transport);
+
+      const deeplink = walletConnector?.getDeepLink();
+      if (deeplink) {
+        window.location.href = deeplink;
+      }
 
       const receipt = (await client.vote(
         web3,
@@ -260,7 +263,7 @@ export function Page() {
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
-  const { user, setShowAuthFlow } = useDynamicContext();
+  const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   const hasVoted = vote.data && vote.data.votes?.[0];
   const canVote =
     data?.proposal?.state === "active" && vp?.vp?.vp && vp?.vp?.vp !== 0;
@@ -342,7 +345,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(value);
   };
 
   const handleCommentEdit = async ({
@@ -361,7 +363,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(content);
   };
 
   const handleCommentDelete = async ({ commentId }: { commentId: number }) => {
@@ -373,7 +374,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log("Deleted");
   };
 
   const handleReplySend = async ({
@@ -393,7 +393,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(content);
   };
 
   const handleCommentVote = async ({
