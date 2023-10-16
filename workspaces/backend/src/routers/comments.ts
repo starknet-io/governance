@@ -180,6 +180,25 @@ export const commentsRouter = router({
         throw new Error('Your comment contains unacceptable words.');
       }
 
+      const lastFiveComments = await db.query.comments.findMany({
+        where: eq(comments.userId, opts.ctx.user?.id),
+        orderBy: (comments, { desc }) => [desc(comments.createdAt)],
+        limit: 5,
+      });
+
+      if (lastFiveComments.length >= 5) {
+        const oldestCommentTime = lastFiveComments[4].createdAt; // As it's in descending order
+        const currentTime = new Date();
+        const timeDifference =
+          (currentTime.getTime() - new Date(oldestCommentTime).getTime()) /
+          1000;
+        if (timeDifference < 60) {
+          throw new Error(
+            'Rate Limit Exceeded: You can post only 5 comments per minute.',
+          );
+        }
+      }
+
       const insertedComment = await db
         .insert(comments)
         .values({
