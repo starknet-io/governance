@@ -11,15 +11,14 @@ export const styles = {
     html: {
       fontSize: "16px",
       scrollPaddingTop: "140px",
-      padding: 0,
       margin: 0,
-    },
-    ".dynamic-shadow-dom": {
-      " --dynamic-connect-button-background": "#ffffff",
+      padding: 0,
     },
 
     body: {
-      background: "#FAFAFA",
+      background: "surface.bgPage",
+      // background: ["blue", "green", "yellow", "red"],/
+
       color: "fg-default",
       padding: 0,
       margin: 0,

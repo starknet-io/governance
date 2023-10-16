@@ -21,6 +21,7 @@ import {
   useFormErrorHandler,
   RadioGroup,
   Radio,
+  ArrowRightIcon,
 } from "@yukilabs/governance-components";
 import type { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { useBalanceData } from "src/utils/hooks";
@@ -39,6 +40,7 @@ interface DelegateFormProps {
   id?: string; // Only required in edit mode
   delegate?: Delegate;
   isFetchingDelegateSuccess?: boolean;
+  isOnboarding?: boolean;
 }
 
 type FormValues = {
@@ -61,6 +63,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   mode,
   delegate,
   isFetchingDelegateSuccess,
+  isOnboarding,
 }) => {
   const {
     handleSubmit,
@@ -85,7 +88,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const { editorValue, handleEditorChange, convertMarkdownToSlate, editor } =
     useMarkdownEditor("");
   const [error, setErrorField] = useState("");
-  console.log("errors", errors);
   const {
     editorValue: editorCustomAgreementValue,
     handleEditorChange: handleCustomAgreement,
@@ -193,6 +195,11 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const onSubmitHandler = async (data) => {
     try {
       data.statement = editorValue;
+      // checking if onboarding is true and setting isKarmaDelegate to false and isGovernanceDelegate to true
+      if (isOnboarding) {
+        data.isKarmaDelegate = false;
+        data.isGovernanceDelegate = true;
+      }
 
       if (mode === "edit") {
         data.id = pageContext.routeParams!.id;
@@ -211,7 +218,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
           setErrorField("");
         })
         .catch((err) => {
-          console.log(err);
           setErrorField(err?.message ? err.message : JSON.stringify(err));
         });
     } catch (error) {
@@ -226,7 +232,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   };
 
   useEffect(() => {
-    console.log("User's starknetAddress:", user?.starknetAddress);
     if (user?.starknetAddress) {
       setValue("starknetAddress", user.starknetAddress);
       if (!validateStarknetAddress(user.starknetAddress)) {
@@ -234,7 +239,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
           type: "manual",
           message: "Invalid Starknet address.",
         });
-        console.log("Setting manual error for starknetAddress");
       }
     }
   }, [user]);
@@ -558,7 +562,18 @@ Conflicts of interest
           />
           {errors.understandRole && <span>This field is required.</span>}
         </FormControl>
-        {mode === "edit" ? (
+        {mode === "edit" && isOnboarding ? (
+          <Flex justifyContent="flex-end">
+            <Button
+              type="submit"
+              size="standard"
+              variant="primary"
+              rightIcon={<ArrowRightIcon />}
+            >
+              Continue
+            </Button>
+          </Flex>
+        ) : mode === "edit" ? (
           <Flex justifyContent="flex-end" gap="16px">
             <Button
               size="condensed"
@@ -587,6 +602,7 @@ Conflicts of interest
             </Button>
           </Flex>
         )}
+
         {error.length ? (
           <Banner label={error} variant="error" type="error" />
         ) : null}

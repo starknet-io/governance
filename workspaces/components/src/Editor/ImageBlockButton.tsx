@@ -32,38 +32,18 @@ const ImageBlockButton: React.FC<ImageBlockButtonProps> = ({
     "content.default.default",
   ]);
   const [loading, setLoading] = useState(false);
-  // const insertImageBlock = (link: string) => {
-  //   if (!link) return;
 
-  //   Transforms.insertNodes(
-  //     editor,
-  //     {
-  //       //@ts-expect-error error
-  //       type: "image",
-  //       caption: "image",
-  //       link,
-  //       children: [{ text: "" }],
-  //     },
-  //     { select: true },
-  //   );
-  //   Transforms.insertNodes(editor, {
-  //     //@ts-expect-error error
-  //     type: "paragraph",
-  //     children: [{ text: "" }],
-  //   });
-  // };
-
-  const insertLinkBlock = (link: string) => {
+  const insertImageBlock = (link: string) => {
     if (!link) return;
 
     Transforms.insertNodes(
       editor,
       {
         //@ts-expect-error error
-        type: "link",
+        type: "image",
+        caption: "image",
         link,
-        target: "_blank",
-        children: [{ text: link }],
+        children: [{ text: "" }],
       },
       { select: true },
     );
@@ -82,7 +62,7 @@ const ImageBlockButton: React.FC<ImageBlockButtonProps> = ({
         throw new Error("Invalid image URL returned.");
       }
       setLoading(false);
-      insertLinkBlock(imageUrl);
+      insertImageBlock(imageUrl);
       onClose();
     } catch (error) {
       setLoading(false);

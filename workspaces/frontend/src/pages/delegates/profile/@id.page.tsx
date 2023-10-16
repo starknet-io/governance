@@ -177,7 +177,6 @@ export function Page() {
     }
 
     if (isDelegationError && dynamicUser) {
-      console.log(delegationError);
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation

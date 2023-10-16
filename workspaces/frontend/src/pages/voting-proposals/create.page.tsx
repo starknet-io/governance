@@ -110,8 +110,6 @@ export function Page() {
           chainId: parseInt(import.meta.env.VITE_APP_SNAPSHOT_CHAIN_ID),
         });
 
-        console.log(block);
-
         const params: Proposal & {
           categories: Array<string>;
           votingPeriod?: Date[];
@@ -152,22 +150,18 @@ export function Page() {
               setIsSubmitting(false);
             })
             .catch((err) => {
-              console.log(err);
               setIsSubmitting(false);
             });
         } catch (error) {
           // Handle error
-          console.log(error);
+
           setIsSubmitting(false);
           // error.description is actual error from snapshot
         }
-
-        console.log(receipt);
       } catch (error: any) {
         // Handle error
         setIsSubmitting(false);
         setError(`Error: ${error?.error_description}`);
-        console.log(error);
       }
     },
     () => onErrorSubmit(errors),
@@ -350,8 +344,6 @@ Links
                       rules={{
                         required: "Voting period is required.",
                         validate: (value) => {
-                          console.log("Validating votingPeriod:", value);
-                          console.log("Selected times:", selectedTime);
                           // Check if both start and end dates are selected
                           if (
                             !value ||

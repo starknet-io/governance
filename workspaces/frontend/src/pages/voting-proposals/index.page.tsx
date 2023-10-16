@@ -237,7 +237,6 @@ export function Page() {
     setFiltersState({ ...filtersState, filters: [] });
   };
 
-  console.log("filtersState", filtersState);
   const {
     data,
     isLoading: loading,
