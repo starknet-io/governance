@@ -432,46 +432,13 @@ export const TrashIcon = ({ color, ...rest }: UiIconProps) => (
 );
 
 export const BannedIcon = ({ color, ...rest }: UiIconProps) => (
-  <Icon viewBox="0 0 20 20" {...rest}>
-    <rect
-      width="398"
-      height="104"
-      transform="translate(0 0.5)"
-      fill="white"
-      fillOpacity="0.01"
-    />
-    <circle
-      cx="199"
-      cy="36.2432"
-      r="18.4243"
-      stroke="#E4442F"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M164.319 87.181C164.319 76.4082 173.054 67.6729 183.827 67.6729H195.025"
-      stroke="#E4442F"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M238.016 78.5108C238.016 85.7071 232.207 91.5162 225.011 91.5162C217.814 91.5162 212.005 85.7071 212.005 78.5108C212.005 71.3145 217.814 65.5054 225.011 65.5054C232.207 65.5054 238.016 71.3145 238.016 78.5108Z"
-      stroke="#E4442F"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M215.816 87.7056L234.201 69.3203"
-      stroke="#E4442F"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+  <Icon viewBox="0 0 79 79" {...rest}>
+    <svg width="79" height="79" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="37" cy="21.2432" r="18.4243" stroke="#E4442F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M2.31885 72.181C2.31885 61.4082 11.0542 52.6729 21.827 52.6729H33.0246" stroke="#E4442F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+      <path fillRule="evenodd" clipRule="evenodd" d="M76.0162 63.5108C76.0162 70.7071 70.2071 76.5162 63.0108 76.5162C55.8145 76.5162 50.0054 70.7071 50.0054 63.5108C50.0054 56.3145 55.8145 50.5054 63.0108 50.5054C70.2071 50.5054 76.0162 56.3145 76.0162 63.5108Z" stroke="#E4442F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M53.8159 72.7056L72.2012 54.3203" stroke="#E4442F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
   </Icon>
 );
 
