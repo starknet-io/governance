@@ -229,4 +229,39 @@ export const usersRouter = router({
 
       return;
     }),
+  banUser: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(), // ID of the user to be banned
+      }),
+    )
+    .mutation(async (opts) => {
+      const requester = opts.ctx.user;
+      if (
+        !requester ||
+        (requester.role !== 'admin' && requester.role !== 'moderator')
+      ) {
+        throw new Error('You do not have permission to ban users');
+      }
+
+      const userToBan = await db.query.users.findFirst({
+        where: eq(users.id, opts.input.id),
+      });
+
+      if (!userToBan) {
+        throw new Error('User not found');
+      }
+
+      if (userToBan.banned) {
+        throw new Error('User is already banned');
+      }
+
+      const bannedUser = await db
+        .update(users)
+        .set({ banned: true })
+        .where(eq(users.id, opts.input.id))
+        .returning();
+
+      return bannedUser[0];
+    }),
 });

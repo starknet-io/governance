@@ -430,6 +430,51 @@ export const TrashIcon = ({ color, ...rest }: UiIconProps) => (
     />
   </Icon>
 );
+
+export const BannedIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 20 20" {...rest}>
+    <rect
+      width="398"
+      height="104"
+      transform="translate(0 0.5)"
+      fill="white"
+      fillOpacity="0.01"
+    />
+    <circle
+      cx="199"
+      cy="36.2432"
+      r="18.4243"
+      stroke="#E4442F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M164.319 87.181C164.319 76.4082 173.054 67.6729 183.827 67.6729H195.025"
+      stroke="#E4442F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M238.016 78.5108C238.016 85.7071 232.207 91.5162 225.011 91.5162C217.814 91.5162 212.005 85.7071 212.005 78.5108C212.005 71.3145 217.814 65.5054 225.011 65.5054C232.207 65.5054 238.016 71.3145 238.016 78.5108Z"
+      stroke="#E4442F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M215.816 87.7056L234.201 69.3203"
+      stroke="#E4442F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Icon>
+);
+
 export const SuccessIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 104 104" {...rest}>
     <path
