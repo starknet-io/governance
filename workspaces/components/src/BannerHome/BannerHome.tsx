@@ -100,6 +100,7 @@ export const BannerHome = ({
       </Box>
       <Box pos="relative">
         <HomeContainer
+          position="relative"
           zIndex="2"
           transform={{
             base: "translateY(-70px)",
@@ -115,13 +116,17 @@ export const BannerHome = ({
             columns={3}
             // gap="standard.md" // gap causing overflow on tablet
             overflowX="scroll"
-            gridTemplateColumns="repeat(3, minmax(262px, 1fr))"
-            py="16px"
-            px="standard.md"
+            gridTemplateColumns="repeat(3, minmax(264px, 1fr))"
+            p="standard.md"
             sx={{
               "> *:not(:last-child)": {
                 marginRight: "standard.md",
               },
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+              scrollbarWidth: "none",
+              "-ms-overflow-style": "none",
             }}
           >
             {homeLinks.map((link) => (

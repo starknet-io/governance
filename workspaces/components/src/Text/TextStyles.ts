@@ -16,6 +16,36 @@ export const textTheme = defineStyleConfig({
       lineHeight: "32px",
       fontWeight: 400,
     },
+    bodySmall: {
+      fontSize: "12px",
+      lineHeight: "20px",
+      fontWeight: 400,
+    },
+    bodySmallStrong: {
+      fontSize: "12px",
+      lineHeight: "20px",
+      fontWeight: 600,
+    },
+    bodyMedium: {
+      fontSize: "14px",
+      lineHeight: "20px",
+      fontWeight: 400,
+    },
+    bodyMediumStrong: {
+      fontSize: "14px",
+      lineHeight: "20px",
+      fontWeight: 600,
+    },
+    bodyLargeSoft: {
+      fontSize: "15px",
+      lineHeight: "24px",
+      fontWeight: 400,
+    },
+    bodyLargeStrong: {
+      fontSize: "15px",
+      lineHeight: "24px",
+      fontWeight: 600,
+    },
     breadcrumbs: {
       fontSize: "12px",
 
