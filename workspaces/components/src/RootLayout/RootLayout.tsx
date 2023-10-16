@@ -57,7 +57,6 @@ const Root = ({ children }: LayoutProps) => {
   return (
     <Box
       display="flex"
-      bg="#F9F8F9"
       flexDirection={{ base: "column", md: "row", lg: "row" }}
       minHeight={{ base: "100vh", md: "100vh", lg: "100vh" }}
     >
