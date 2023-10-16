@@ -261,6 +261,7 @@ export function Page() {
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
   const { user, setShowAuthFlow } = useDynamicContext();
+  const [commentError, setCommentError] = useState("");
   const hasVoted = vote.data && vote.data.votes?.[0];
   const canVote =
     data?.proposal?.state === "active" && vp?.vp?.vp && vp?.vp?.vp !== 0;
@@ -340,7 +341,7 @@ export function Page() {
       });
     } catch (error) {
       // Handle error
-      console.log(error);
+      throw error;
     }
     console.log(value);
   };
@@ -359,7 +360,7 @@ export function Page() {
       });
     } catch (error) {
       // Handle error
-      console.log(error);
+      throw error;
     }
     console.log(content);
   };
@@ -391,7 +392,7 @@ export function Page() {
       });
     } catch (error) {
       // Handle error
-      console.log(error);
+      throw error;
     }
     console.log(content);
   };
@@ -697,7 +698,21 @@ export function Page() {
             </Heading>
             {user ? (
               <FormControl id="delegate-statement">
-                <CommentInput onSend={handleCommentSend} />
+                <CommentInput
+                  onSend={async (comment) => {
+                    try {
+                      await handleCommentSend(comment);
+                      setCommentError("");
+                    } catch (err) {
+                      setCommentError(err?.message || "");
+                    }
+                  }}
+                />
+                {commentError && commentError.length && (
+                  <Box mb={6}>
+                    <Banner type="error" variant="error" label={commentError} />
+                  </Box>
+                )}
               </FormControl>
             ) : (
               <Box></Box>

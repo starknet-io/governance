@@ -5,6 +5,7 @@ import { eq, desc, and } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { commentVotes } from '../db/schema/commentVotes';
+import { profanity } from '@2toad/profanity';
 
 const commentInsertSchema = createInsertSchema(comments);
 
@@ -24,7 +25,7 @@ export const commentsRouter = router({
     .input(
       z.object({
         proposalId: z.string(),
-        sort: z.enum(['upvotes', 'date', ""]).optional(),
+        sort: z.enum(['upvotes', 'date', '']).optional(),
       }),
     )
     .query(async (opts) => {
@@ -172,7 +173,11 @@ export const commentsRouter = router({
 
       // Check for short comments
       if (commentText.length < 5) {
-        throw new Error('Comments must be at least 15 characters long.');
+        throw new Error('Comments must be at least 5 characters long.');
+      }
+
+      if (profanity.exists(commentText)) {
+        throw new Error('Your comment contains unacceptable words.');
       }
 
       const insertedComment = await db
@@ -192,6 +197,10 @@ export const commentsRouter = router({
       const user = opts.ctx.user?.id;
       if (!user) {
         throw new Error('User not authenticated');
+      }
+
+      if (profanity.exists(opts.input?.content || '')) {
+        throw new Error('Your comment contains unacceptable words.');
       }
 
       const originalComment = await db
