@@ -4928,17 +4928,17 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/executor-legacy-ws@npm:^1.0.0":
-  version: 1.0.3
-  resolution: "@graphql-tools/executor-legacy-ws@npm:1.0.3"
+  version: 1.0.4
+  resolution: "@graphql-tools/executor-legacy-ws@npm:1.0.4"
   dependencies:
     "@graphql-tools/utils": ^10.0.0
     "@types/ws": ^8.0.0
     isomorphic-ws: 5.0.0
     tslib: ^2.4.0
-    ws: 8.14.1
+    ws: 8.14.2
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 037f488a5e51181557c3e32e702ddf82cebb7d5f50727ba83bfe9930dbfa363ed40ec4d83e9d7778d116bce9b761d0d77862da260788e1bd03601f31541a8efb
+  checksum: d271e7b0860dfa47b29ca56aa761e555c804a3223ed9f42784b2f1dcc872b15976a2c89db9b34ca26143a0b5cf6f45c771ddc23c0c012f5dabf222334c59635e
   languageName: node
   linkType: hard
 
@@ -12886,13 +12886,13 @@ __metadata:
   linkType: hard
 
 "define-data-property@npm:^1.0.1":
-  version: 1.1.0
-  resolution: "define-data-property@npm:1.1.0"
+  version: 1.1.1
+  resolution: "define-data-property@npm:1.1.1"
   dependencies:
     get-intrinsic: ^1.2.1
     gopd: ^1.0.1
     has-property-descriptors: ^1.0.0
-  checksum: 7ad4ee84cca8ad427a4831f5693526804b62ce9dfd4efac77214e95a4382aed930072251d4075dc8dc9fc949a353ed51f19f5285a84a788ba9216cc51472a093
+  checksum: a29855ad3f0630ea82e3c5012c812efa6ca3078d5c2aa8df06b5f597c1cde6f7254692df41945851d903e05a1668607b6d34e778f402b9ff9ffb38111f1a3f0d
   languageName: node
   linkType: hard
 
@@ -20325,9 +20325,9 @@ __metadata:
   linkType: hard
 
 "property-expr@npm:^2.0.4":
-  version: 2.0.5
-  resolution: "property-expr@npm:2.0.5"
-  checksum: 4ebe82ce45aaf1527e96e2ab84d75d25217167ec3ff6378cf83a84fb4abc746e7c65768a79d275881602ae82f168f9a6dfaa7f5e331d0fcc83d692770bcce5f1
+  version: 2.0.6
+  resolution: "property-expr@npm:2.0.6"
+  checksum: 89977f4bb230736c1876f460dd7ca9328034502fd92e738deb40516d16564b850c0bbc4e052c3df88b5b8cd58e51c93b46a94bea049a3f23f4a022c038864cab
   languageName: node
   linkType: hard
 
@@ -24817,9 +24817,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.14.1":
-  version: 8.14.1
-  resolution: "ws@npm:8.14.1"
+"ws@npm:8.14.2, ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.2.3, ws@npm:^8.5.0":
+  version: 8.14.2
+  resolution: "ws@npm:8.14.2"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ">=5.0.2"
@@ -24828,7 +24828,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 9e310be2b0ff69e1f87d8c6d093ecd17a1ed4c37f281d17c35e8c30e2bd116401775b3d503249651374e6e0e1e9905db62fff096b694371c77561aee06bc3466
+  checksum: 3ca0dad26e8cc6515ff392b622a1467430814c463b3368b0258e33696b1d4bed7510bc7030f7b72838b9fdeb8dbd8839cbf808367d6aae2e1d668ce741d4308b
   languageName: node
   linkType: hard
 
@@ -24853,21 +24853,6 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: c3c100a181b731f40b7f2fddf004aa023f79d64f489706a28bc23ff88e87f6a64b3c6651fbec3a84a53960b75159574d7a7385709847a62ddb7ad6af76f49138
-  languageName: node
-  linkType: hard
-
-"ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.2.3, ws@npm:^8.5.0":
-  version: 8.14.2
-  resolution: "ws@npm:8.14.2"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ">=5.0.2"
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 3ca0dad26e8cc6515ff392b622a1467430814c463b3368b0258e33696b1d4bed7510bc7030f7b72838b9fdeb8dbd8839cbf808367d6aae2e1d668ce741d4308b
   languageName: node
   linkType: hard
 
