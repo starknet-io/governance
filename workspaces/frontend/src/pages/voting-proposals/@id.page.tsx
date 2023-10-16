@@ -226,6 +226,11 @@ export function Page() {
 
       const web3 = new providers.Web3Provider(walletClient.transport);
 
+      const deeplink = walletConnector?.getDeepLink();
+      if (deeplink) {
+        window.location.href = deeplink;
+      }
+
       const receipt = (await client.vote(
         web3,
         walletClient.account.address,
@@ -258,7 +263,7 @@ export function Page() {
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
-  const { user, setShowAuthFlow } = useDynamicContext();
+  const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   const hasVoted = vote.data && vote.data.votes?.[0];
   const canVote =
     data?.proposal?.state === "active" && vp?.vp?.vp && vp?.vp?.vp !== 0;
