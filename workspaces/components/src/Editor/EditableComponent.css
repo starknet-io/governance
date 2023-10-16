@@ -2,7 +2,7 @@
   outline: 1px solid #86848d !important;
 }
 
-.editableComponent p:first-child:not(.fake-placeholder) {
+.editableComponent p:first-child {
   margin-top: -2px !important;
 }
 
@@ -10,6 +10,19 @@
 .editableComponent h4:first-child {
   margin-top: 0 !important;
 }
-.editableComponent .fake-placeholder {
+
+.editableComponent span[data-slate-placeholder="true"] {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  margin-top: var(--slate-placeholder-margin-top);
   opacity: 1 !important;
+  font-style: normal;
+  color: var(--chakra-colors-content-support-default);
+}
+
+.editableComponent > ul span[data-slate-placeholder="true"],
+.editableComponent > ol span[data-slate-placeholder="true"],
+.editableComponent > blockquote span[data-slate-placeholder="true"] {
+  display: none !important;
 }
