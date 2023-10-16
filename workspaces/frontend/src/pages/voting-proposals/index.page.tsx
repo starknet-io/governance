@@ -152,8 +152,13 @@ export function Proposal({ data }: any) {
             md: "auto",
           }}
           alignItems="center"
+          sx={{
+            "> span": {
+              flex: 1,
+            },
+          }}
         >
-          <ListRow.CategoryText category={data?.category || "Engineering"} />
+          <ListRow.CategoryText category={data?.category || ""} />
           <ListRow.VoteResults
             choices={
               data.choices
@@ -167,11 +172,15 @@ export function Proposal({ data }: any) {
             }
             w={{
               base: "auto",
-              md: "108px",
+              md: "132px",
             }}
             maxW={{
-              base: "200px",
-              md: "108px",
+              base: "none",
+              md: "132px",
+            }}
+            ml={{
+              base: "auto",
+              md: "0px",
             }}
           />
           <ListRow.Status

@@ -72,10 +72,13 @@ type StatusProps = {
   width?: string | null;
 } & BoxProps;
 
-const Status = ({ status, width = "80", ...rest }: StatusProps) => {
+const Status = ({ status, ...rest }: StatusProps) => {
   return (
     <Box
-      minWidth={`${width}px`}
+      w="100px"
+      mx={{
+        md: "auto",
+      }}
       justifyContent="flex-end"
       display="flex"
       {...cellPadding}
@@ -135,8 +138,8 @@ type CategoryProps = {
 
 const CategoryText = ({ category, ...rest }: CategoryProps) => {
   return (
-    <Box textTransform={"capitalize"} {...cellPadding} {...rest}>
-      <Text variant="breadcrumbs" color="#6B7280">
+    <Box textTransform={"capitalize"} minW="132px" {...cellPadding} {...rest}>
+      <Text variant="bodySmall" fontWeight={500} color="#6B7280">
         {category}
       </Text>
     </Box>
@@ -251,11 +254,15 @@ const Comments = ({ count, width, ...rest }: CommentsProps) => {
       flexDirection="row"
       gap="4px"
       alignItems="center"
+      color="content.support.default"
+      minW={{
+        md: "72px",
+      }}
       {...cellPadding}
       {...rest}
     >
-      <Icon as={CommentIcon} />
-      <Text variant="small" color="content.support.default">
+      <Icon as={() => <CommentIcon color="currentColor" />} />
+      <Text variant="bodySmall" fontWeight={500}>
         {count}
       </Text>
     </Box>
@@ -362,10 +369,10 @@ const DateRange = ({ start, end, state, ...rest }: DateRangeProps) => {
   return (
     <Box width="calc(120px + 24px)" {...cellPadding} {...rest}>
       <Text
-        variant="breadcrumbs"
-        fontSize="12px"
+        variant="bodySmall"
+        fontWeight={500}
+        letterSpacing="0.12px"
         noOfLines={1}
-        fontWeight="500"
         color="#6C6C7A"
       >
         {dateText}

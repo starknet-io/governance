@@ -1,4 +1,6 @@
-export const BookIcon = () => {
+import { SVGProps } from "react";
+
+export const BookIcon = (props: SVGProps<any>) => {
   return (
     <svg
       width="30"
@@ -6,6 +8,7 @@ export const BookIcon = () => {
       viewBox="0 0 30 26"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <g id="Group">
         <path
