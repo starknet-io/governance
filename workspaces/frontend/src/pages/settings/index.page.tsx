@@ -226,7 +226,10 @@ export function Page() {
                   ref={selectRef}
                   value={field.value as any}
                   onChange={(values) => field.onChange(values)}
-                  defaultValue={selectedUser?.role ?? "user"}
+                  defaultValue={{
+                    label: selectedUser?.role || "user",
+                    value: selectedUser?.role,
+                  }}
                 />
               )}
             />
