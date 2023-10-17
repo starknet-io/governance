@@ -125,6 +125,7 @@ export function GlobalSearch({
             width="238px"
             height="44px"
             pointerEvents="none"
+            paddingLeft="2.5rem"
           />
           <InputRightElement height="44px">
             <Box
@@ -153,7 +154,7 @@ export function GlobalSearch({
           <ModalHeader p="0" borderBottom="1px solid #23192D1A">
             <Input placeholder="" hidden />
             <InputGroup>
-              <InputLeftElement height="60px">
+              <InputLeftElement height="60px" pointerEvents='none'>
                 <SearchIcon />
               </InputLeftElement>
               <Input
@@ -164,6 +165,7 @@ export function GlobalSearch({
                 autoFocus={true}
                 value={searchText}
                 onChange={handleSearchTextChange}
+                paddingLeft="2.5rem"
               />
               <Show breakpoint="(max-width: 567px)">
                 <InputRightElement onClick={() => setIsSearchModalOpen(false)}>
