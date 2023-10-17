@@ -59,6 +59,7 @@ import {
   WalletIcon,
 } from "@yukilabs/governance-components/src/Icons";
 import { Button as ChakraButton, Grid } from "@chakra-ui/react";
+import { BackButton } from "src/components/Header/BackButton";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -561,6 +562,14 @@ export function Page() {
             direction={{ base: "column" }}
             color="content.default.default"
           >
+            <Box mb="standard.2xl" display={{ lg: "none" }}>
+              <BackButton
+                buttonText="Voting proposals"
+                urlStart={["/voting-proposals/"]}
+                href="/voting-proposals "
+                pageContext={pageContext}
+              />
+            </Box>
             <Flex alignItems="center" width="100%" overflow="hidden">
               <Flex flex="1">
                 <Heading
@@ -945,7 +954,7 @@ export function Page() {
             >
               <Flex
                 direction="column"
-                height="800px"
+                height={{ base: "auto", lg: "800px" }}
                 alignItems="center"
                 justifyContent="center"
                 position={{ base: "unset", lg: "sticky" }}

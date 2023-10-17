@@ -21,7 +21,6 @@ import { trpc } from "src/utils/trpc";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
 import TallyScript from "src/components/TallyScript";
 import {
-  FeedbackIcon,
   HamburgerIcon,
   InfoModal,
   Logo,
@@ -34,6 +33,7 @@ import {
 import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
 import { NavigationMenu } from "src/components/Navigation";
 import { BackButton } from "src/components/Header/BackButton";
+import { extractAndFormatSlug } from "src/utils/helpers";
 
 export interface Props {
   readonly pageContext: PageContext;
@@ -71,6 +71,9 @@ function LayoutDefault(props: Props) {
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
 
+  const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
+  console.log("pageContext", pageContext.urlOriginal);
+  console.log("formattedSlug", formattedSlug);
   return (
     <>
       <TallyScript />
@@ -189,27 +192,24 @@ function LayoutDefault(props: Props) {
 
               <Box display={{ base: "none", lg: "block" }}>
                 <BackButton
-                  urlStart="/delegates/profile/"
+                  urlStart={["/delegates/profile/"]}
                   href="/delegates"
                   buttonText="Delegates"
                   pageContext={pageContext}
                 />
                 <BackButton
-                  urlStart="/voting-proposals/"
+                  urlStart={["/voting-proposals/"]}
                   href="/voting-proposals"
                   buttonText="Voting proposals"
                   pageContext={pageContext}
                 />
+
                 <BackButton
-                  urlStart="/snips/"
-                  href="/snips"
-                  buttonText="Core snips"
-                  pageContext={pageContext}
-                />
-                <BackButton
-                  urlStart="/councils/"
-                  href="/councils"
-                  buttonText="Back to councils"
+                  urlStart={[
+                    "/councils/security_council/",
+                    "/councils/builder_council/",
+                  ]}
+                  buttonText={formattedSlug}
                   pageContext={pageContext}
                 />
               </Box>

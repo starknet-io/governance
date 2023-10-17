@@ -455,7 +455,7 @@ export function Page() {
         <Box mb="standard.2xl" display={{ lg: "none" }}>
           <BackButton
             buttonText="Delegates"
-            urlStart="/delegates/"
+            urlStart={["/delegates/"]}
             href="/delegates"
             pageContext={pageContext}
           />

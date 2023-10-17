@@ -18,9 +18,10 @@ import {
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { hasPermission } from "src/utils/helpers";
+import { extractAndFormatSlug, hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { Grid } from "@chakra-ui/react";
+import { BackButton } from "src/components/Header/BackButton";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -145,6 +146,9 @@ export function Page() {
     }
   };
   const formattedAddress = truncateAddress(`${post?.author?.address}`);
+
+  const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
+
   return (
     <>
       <Grid
@@ -168,6 +172,16 @@ export function Page() {
           pb={{ base: "standard.2xl", lg: "standard.3xl" }}
         >
           <Box maxWidth={{ base: "100%", lg: "626px" }} mx="auto">
+            <Box mb="standard.2xl" display={{ lg: "none" }}>
+              <BackButton
+                urlStart={[
+                  "/councils/builder_council/",
+                  "/councils/security_council/",
+                ]}
+                buttonText={formattedSlug}
+                pageContext={pageContext}
+              />
+            </Box>
             <Stack
               spacing="0"
               direction={{ base: "column" }}
