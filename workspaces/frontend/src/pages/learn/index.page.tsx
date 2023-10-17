@@ -33,6 +33,41 @@ export interface PageWithUserInterface extends PageInterface {
   author: User | null;
 }
 
+function findPageBySlug(data, slug) {
+  // Base case: if data is undefined or an empty array
+  if (!data || data.length === 0) {
+    return null;
+  }
+
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+
+    // Check if the current item has the matching slug
+    if (item.slug === slug) {
+      return item;
+    }
+
+    // If the current item has children, search through them
+    if (item.children && item.children.length > 0) {
+      const found = findPageBySlug(item.children, slug);
+      if (found) {
+        return found;
+      }
+    }
+  }
+
+  // If no matching item is found, return null
+  return null;
+}
+
+// Example usage:
+const exampleResponse = [
+  /* your data here */
+];
+const slug = "voting_proposals";
+const result = findPageBySlug(exampleResponse, slug);
+console.log(result); // Logs the object with slug 'voting_proposals', or null if not found
+
 export function Page() {
   const [selectedPage, setSelectedPage] = useState<PageWithChildren | null>(
     null,
@@ -47,7 +82,13 @@ export function Page() {
 
   useEffect(() => {
     if (pagesTree && pagesTree?.length > 0) {
-      setSelectedPage(pagesTree[0]);
+      const slug = pageContext?.routeParams?.slug;
+      if (slug && slug.length) {
+        const foundPage = findPageBySlug(pagesTree, slug);
+        setSelectedPage(foundPage || pagesTree[0]);
+      } else {
+        setSelectedPage(pagesTree[0]);
+      }
     }
   }, [pages]);
 
