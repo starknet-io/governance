@@ -94,6 +94,12 @@ export const usersRouter = router({
         where: eq(users.address, opts.input.address.toLowerCase()),
       });
       if (user) {
+        if (user.role === 'moderator' || user.role === 'admin') {
+          throw new Error('Cannot ban moderator or admin');
+        }
+        if (user.address.toLowerCase() === opts.input.address.toLowerCase()) {
+          throw new Error('Cannot ban yourself');
+        }
         const updatedUser = await db
           .update(users)
           .set({
@@ -109,7 +115,6 @@ export const usersRouter = router({
           .values({
             address: opts.input.address.toLowerCase(),
             role: opts.input.role,
-            banned: opts.input.banned,
             createdAt: new Date(),
           })
           .returning();
@@ -253,6 +258,10 @@ export const usersRouter = router({
 
       if (!userToBan) {
         throw new Error('User not found');
+      }
+
+      if (userToBan?.role === 'moderator' || userToBan?.role === 'admin') {
+        throw new Error('Cannot ban moderators or admins');
       }
 
       if (userToBan.banned) {

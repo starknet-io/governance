@@ -20,6 +20,7 @@ import {
   FileUploader,
   ProfileImage,
   Checkbox,
+  Banner,
 } from "@yukilabs/governance-components";
 import { Controller, useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
@@ -48,6 +49,7 @@ export function Page() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageChanged, setImageChanged] = useState<boolean>(false);
   const editUser = trpc.users.editUser.useMutation();
+  const [editError, setEditError] = useState("");
   const utils = trpc.useContext();
   const { handleUpload } = useFileUpload();
 
@@ -99,7 +101,7 @@ export function Page() {
       const data = {
         address: selectedUser?.address as string,
         role: selectRef.current?.value as string,
-        banned: values.banned as boolean
+        banned: values.banned as boolean,
       };
       await addRoles.mutateAsync(data, {
         onSuccess: () => {
@@ -107,8 +109,10 @@ export function Page() {
           onEditClose();
         },
       });
+      setEditError("");
     } catch (error) {
       // Handle error
+      setEditError(error?.message || "An error occurred");
       console.log(error);
     }
   });
@@ -176,6 +180,9 @@ export function Page() {
     }
   };
 
+  const nonBannedUsers = (users?.data || []).filter((user) => !user.banned);
+  const bannedUsers = (users?.data || []).filter((user) => user.banned);
+
   return (
     <ContentContainer maxWidth="800" center>
       <Box
@@ -203,8 +210,8 @@ export function Page() {
                 value: option,
               }))}
               {...editRegister("role")}
-              defaultValue={selectedUser?.role ?? "user"}
               ref={selectRef}
+              defaultValue={selectedUser?.role ?? "user"}
             />
             <FormControl id="banned" mt={5}>
               <Controller
@@ -224,6 +231,11 @@ export function Page() {
             </FormControl>
             {editErrors.role && <span>This field is required.</span>}
           </FormControl>
+          {editError && editError.length && (
+            <Box mt={4}>
+              <Banner label={editError} type="error" variant="error" />
+            </Box>
+          )}
         </FormModal>
         <DeletionDialog
           isOpen={isDeleteOpen}
@@ -314,14 +326,12 @@ export function Page() {
                       placeholder="Select"
                       focusBorderColor={"red"}
                       rounded="md"
+                      options={userRoleValues.map((option) => ({
+                        label: option,
+                        value: option,
+                      }))}
                       {...addRegister("role", { required: true })}
-                    >
-                      {userRoleValues.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </Select>
+                    />
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
                   <Flex justifyContent="flex-end">
@@ -338,7 +348,7 @@ export function Page() {
                 Users
               </Heading>
               <ListRow.Container>
-                {users.data?.map((data) => (
+                {nonBannedUsers.map((data) => (
                   <ListRow.Root key={data.id}>
                     <Box flex="1">
                       <Text variant="cardBody" noOfLines={1}>
@@ -366,6 +376,47 @@ export function Page() {
                     </Box>
                   </ListRow.Root>
                 ))}
+              </ListRow.Container>
+            </Box>
+            <Box mt="24px">
+              <Heading variant="h3" mb="36px" fontSize="28px">
+                Banned Users
+              </Heading>
+              <ListRow.Container>
+                {bannedUsers.length ? (
+                  <>
+                    {bannedUsers.map((data) => (
+                      <ListRow.Root key={data.id}>
+                        <Box flex="1">
+                          <Text variant="cardBody" noOfLines={1}>
+                            {data.ensName || truncateAddress(data.address)}
+                          </Text>
+                        </Box>
+                        <Box flex="1">
+                          <Text variant="cardBody" noOfLines={1}>
+                            {data.role}
+                          </Text>
+                        </Box>
+                        <Box flex="1" justifyContent="flex-end" display="flex">
+                          <IconButton
+                            aria-label="Edit user role"
+                            icon={<PencilIcon />}
+                            variant="ghost"
+                            onClick={() => handleEditOpen(data)}
+                          />
+                          <IconButton
+                            aria-label="Delete user role"
+                            icon={<TrashIcon />}
+                            variant="ghost"
+                            onClick={() => handleDeleteOpen(data)}
+                          />
+                        </Box>
+                      </ListRow.Root>
+                    ))}
+                  </>
+                ) : (
+                  "No Entries"
+                )}
               </ListRow.Container>
             </Box>
           </Box>
