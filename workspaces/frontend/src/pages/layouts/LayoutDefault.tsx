@@ -188,6 +188,15 @@ function LayoutDefault(props: Props) {
                   onClick={onOpen}
                   variant="ghost"
                 />
+                <Show breakpoint="(max-width: 567px)">
+                  <IconButton
+                    aria-label="Open menu"
+                    size="condensed"
+                    icon={<SearchIcon />}
+                    onClick={() => setIsGlobalSearchOpen(true)}
+                    variant="ghost"
+                  />
+                </Show>
               </Box>
 
               <Box display={{ base: "none", lg: "block" }}>
@@ -223,22 +232,7 @@ function LayoutDefault(props: Props) {
                   isOpen={isGlobalSearchOpen}
                   setIsSearchModalOpen={setIsGlobalSearchOpen}
                 />
-                <Show breakpoint="(max-width: 567px)">
-                  <Flex
-                    w="5"
-                    height="5"
-                    onClick={() => setIsGlobalSearchOpen(true)}
-                    ml="2"
-                    alignItems="center"
-                    justifyContent="center"
-                    position="absolute"
-                    top="50%"
-                    left="40px"
-                    transform="translateY(-50%)"
-                  >
-                    <SearchIcon />
-                  </Flex>
-                </Show>
+
                 <Box display={{ base: "flex" }} marginLeft="auto">
                   {renderDone ? (
                     <DynamicCustomWidget />

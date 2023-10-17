@@ -1,7 +1,6 @@
 import {
   Box,
   Text,
-  Input,
   InputGroup,
   InputLeftElement,
   InputRightElement,
@@ -31,6 +30,7 @@ import {
   getSearchItemHref,
 } from "./utils/buildItems";
 import { navigate } from "vite-plugin-ssr/client/router";
+import { Input } from "src/Input";
 
 interface Props {
   isOpen?: boolean;
@@ -107,7 +107,7 @@ export function GlobalSearch({
   const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
 
   return (
-    <Box onClick={handleSearchClick} ml="2">
+    <Box onClick={handleSearchClick} cursor="pointer">
       <Show breakpoint="(min-width: 567px)">
         <InputGroup>
           <InputLeftElement
@@ -117,27 +117,36 @@ export function GlobalSearch({
             pointerEvents="none"
             height="36px"
           >
-            <SearchIcon />
+            <SearchIcon color="#86848D" />
           </InputLeftElement>
           <Input
             placeholder="Search"
-            backgroundColor="white"
-            width="238px"
+            width="237px"
             height="36px"
             pointerEvents="none"
-            paddingLeft="2.5rem"
+            paddingLeft="40px"
+            borderRadius="4px"
           />
-          <InputRightElement height="36px">
+          <InputRightElement
+            width="32px"
+            borderRadius="4px"
+            overflow="hidden"
+            top="2px"
+            height="32px"
+            right="2px"
+          >
             <Box
-              width="28px"
-              height="28px"
-              backgroundColor="#23192D1A"
-              borderRadius="base"
+              position="relative"
+              width="32px"
+              height="32px"
+              backgroundColor="rgba(35, 25, 45, 0.10)"
               display="flex"
               alignItems="center"
               justifyContent="center"
             >
-              <Text fontWeight="500">/</Text>
+              <Text fontSize="16px" color="#4A4A4F" fontWeight="500">
+                /
+              </Text>
             </Box>
           </InputRightElement>
         </InputGroup>
