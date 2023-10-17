@@ -10,7 +10,7 @@ import { Algolia } from '../utils/algolia';
 
 type CategoryEnum = 'category1' | 'category2' | 'category3';
 
-interface IProposal {
+export interface IProposal {
   id: string;
   title: string;
   choices: string[];
