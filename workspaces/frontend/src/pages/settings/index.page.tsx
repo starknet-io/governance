@@ -100,7 +100,7 @@ export function Page() {
     try {
       const data = {
         address: selectedUser?.address as string,
-        role: selectRef.current?.value as string,
+        role: values.role.value as string,
         banned: values.banned as boolean,
       };
       await addRoles.mutateAsync(data, {
@@ -145,14 +145,14 @@ export function Page() {
 
   const handleEditOpen = (user: User) => {
     setSelectedUser(user);
-    setEditError("")
+    setEditError("");
     onEditOpen();
   };
 
   const handleEditClose = () => {
     setSelectedUser(null);
     onEditClose();
-    setEditError("")
+    setEditError("");
     if (selectRef.current) {
       selectRef.current.value = "user";
     }
@@ -209,34 +209,43 @@ export function Page() {
         >
           <FormControl id="editRole">
             <FormLabel>Role</FormLabel>
-            <Select
-              size="sm"
-              focusBorderColor={"red"}
-              rounded="md"
-              options={userRoleValues.map((option) => ({
-                label: option,
-                value: option,
-              }))}
-              {...editRegister("role")}
-              ref={selectRef}
-              defaultValue={selectedUser?.role ?? "user"}
+            <Controller
+              name="role"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select
+                  size="sm"
+                  focusBorderColor={"red"}
+                  rounded="md"
+                  options={userRoleValues.map((option) => ({
+                    label: option,
+                    value: option,
+                  }))}
+                  {...editRegister("role")}
+                  ref={selectRef}
+                  value={field.value as any}
+                  onChange={(values) => field.onChange(values)}
+                  defaultValue={selectedUser?.role ?? "user"}
+                />
+              )}
             />
-            <FormControl id="banned" mt={5}>
-              <Controller
-                control={control}
-                name="banned"
-                defaultValue={!!selectedUser?.banned}
-                rules={{ required: false }}
-                render={({ field }) => (
-                  <Checkbox
-                    isChecked={field.value}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                  >
-                    Ban User
-                  </Checkbox>
-                )}
-              />
-            </FormControl>
+          </FormControl>
+          <FormControl id="banned" mt={5}>
+            <Controller
+              control={control}
+              name="banned"
+              defaultValue={!!selectedUser?.banned}
+              rules={{ required: false }}
+              render={({ field }) => (
+                <Checkbox
+                  isChecked={field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                >
+                  Ban User
+                </Checkbox>
+              )}
+            />
             {editErrors.role && <span>This field is required.</span>}
           </FormControl>
           {editError && editError.length && (
