@@ -30,7 +30,7 @@ export function Page() {
   });
 
   return (
-    <Box>
+    <Box width="100%">
       <BannerHome />
       <HomeContainer
         position={"relative"}

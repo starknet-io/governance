@@ -4,7 +4,6 @@ import {
   Heading,
   FormControl,
   Stack,
-  ContentContainer,
   CommentInput,
   CommentList,
   Flex,
@@ -21,6 +20,7 @@ import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { Grid } from "@chakra-ui/react";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -147,14 +147,27 @@ export function Page() {
   const formattedAddress = truncateAddress(`${post?.author?.address}`);
   return (
     <>
-      <Box
-        display="flex"
-        flexDirection={{ base: "column", md: "row" }}
-        flex="1"
-        height="100%"
+      <Grid
+        bg="surface.bgPage"
+        templateColumns={{
+          base: "1fr",
+        }}
+        templateAreas={{
+          base: `
+          "postcontent"
+        `,
+        }}
       >
-        <ContentContainer>
-          <Box width="100%" maxWidth="710px" pb="200px" mx="auto">
+        <Box
+          gridArea="postcontent"
+          px={{
+            base: "standard.md",
+            md: "standard.2xl",
+          }}
+          pt={{ base: "standard.2xl", lg: "standard.3xl" }}
+          pb={{ base: "standard.2xl", lg: "standard.3xl" }}
+        >
+          <Box maxWidth={{ base: "100%", lg: "626px" }} mx="auto">
             <Stack
               spacing="0"
               direction={{ base: "column" }}
@@ -167,7 +180,7 @@ export function Page() {
                 </Box>
               ) : (
                 <>
-                  <Box display="flex" alignItems="center">
+                  <Box display="flex" alignItems="center" overflow="hidden">
                     <Box flex="1">
                       <Heading
                         color="content.accent.default"
@@ -278,8 +291,8 @@ export function Page() {
               )}
             </Stack>
           </Box>
-        </ContentContainer>
-      </Box>
+        </Box>
+      </Grid>
     </>
   );
 }

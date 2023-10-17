@@ -2,7 +2,6 @@ import { DocumentProps, ROLES } from "src/renderer/types";
 
 import {
   Box,
-  ContentContainer,
   Stack,
   Heading,
   Flex,
@@ -28,6 +27,7 @@ import {
   ReOrderIcon,
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { Grid } from "@chakra-ui/react";
 
 export interface PageWithUserInterface extends PageInterface {
   author: User | null;
@@ -109,90 +109,128 @@ export function Page() {
   const formattedAddress = truncateAddress(`${selectedPage?.author?.address}`);
 
   return (
-    <Box
-      display="flex"
-      flexDirection={{ base: "column", md: "row" }}
-      flex="1"
-      height="100%"
-      justifyContent="center"
+    <Grid
+      bg="surface.bgPage"
+      templateColumns={{
+        base: "1fr",
+        md: "270px 1fr",
+      }}
+      templateAreas={{
+        base: `
+          "profile"
+          "about"
+
+        `,
+        md: `
+          "profile about"
+
+        `,
+      }}
     >
       <Box
-        pt="20px"
-        borderRight="1px solid #E7E8E9"
-        display="flex"
-        flexDirection="column"
-        flexBasis={{ base: "100%", md: "270px" }}
-        position={{ base: "unset", lg: "sticky" }}
-        height="calc(100vh - 80px)"
-        top="0"
+        gridArea="profile"
+        bg="surface.bgPage"
+        borderRight={{ md: "1px solid" }}
+        borderColor={{ md: "border.forms" }}
+        minHeight="100%"
       >
-        <Stack
-          spacing="1px"
-          direction={{ base: "column" }}
-          color="#545464"
-          mb="1"
+        <Box
+          position={{ md: "sticky" }}
+          top={{ lg: "68px" }}
+          bg="surface.bgPage"
+          pt={{ base: "standard.md" }}
+          pb={{ base: "standard.md", lg: "standard.3xl" }}
+          pr={{
+            base: "standard.md",
+          }}
+          pl={{
+            base: "standard.md",
+            md: "0px",
+          }}
+          borderBottom="1px solid"
+          borderColor="border.forms"
         >
-          <LearnPageTree
-            isLoading={isLoading}
-            selectedPage={selectedPage}
-            selectPage={selectPage}
-            pages={pagesTree}
-          />
-        </Stack>
-        {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) && (
-          <Flex pl="2">
-            <Button
-              height="44px"
-              width="44px"
-              variant="ghost"
-              href="/learn/reorder"
-              p="4"
-            >
-              <ReOrderIcon />
-            </Button>
-            <Button
-              height="44px"
-              width="44px"
-              variant="ghost"
-              href="/learn/create"
-              p="0"
-            >
-              <PlusIcon />
-            </Button>
-          </Flex>
-        )}
-      </Box>
-      <ContentContainer maxWidth="800px" center>
-        {!isLoading ? (
-          <Stack width="100%" spacing="0" direction={{ base: "column" }}>
-            <Box display="flex" alignItems="center" width="100%">
-              <Box
-                display="flex"
-                alignItems="center"
-                width="100%"
-                justifyContent="space-between"
-                mb="standard.md"
+          <Stack
+            spacing="1px"
+            direction={{ base: "column" }}
+            color="#545464"
+            mb="1"
+          >
+            <LearnPageTree
+              isLoading={isLoading}
+              selectedPage={selectedPage}
+              selectPage={selectPage}
+              pages={pagesTree}
+            />
+          </Stack>
+          {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) && (
+            <Flex pl="2">
+              <Button
+                height="44px"
+                width="44px"
+                variant="ghost"
+                href="/learn/reorder"
+                p="4"
               >
-                <Heading variant="h2" maxWidth="90%">
-                  {selectedPage?.title ?? "Select a page"}
-                </Heading>
+                <ReOrderIcon />
+              </Button>
+              <Button
+                height="44px"
+                width="44px"
+                variant="ghost"
+                href="/learn/create"
+                p="0"
+              >
+                <PlusIcon />
+              </Button>
+            </Flex>
+          )}
+        </Box>
+      </Box>
+      <Box
+        gridArea="about"
+        px={{
+          base: "standard.md",
+          md: "standard.2xl",
+        }}
+        pt={{ base: "standard.2xl", lg: "standard.3xl" }}
+        pb={{ base: "standard.2xl", lg: "standard.3xl" }}
+      >
+        <Box maxWidth={{ base: "100%", lg: "626px" }} mx="auto">
+          {!isLoading ? (
+            <Stack width="100%" spacing="0" direction={{ base: "column" }}>
+              <Box display="flex" alignItems="center" width="100%">
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  width="100%"
+                  justifyContent="space-between"
+                  mb="standard.md"
+                  overflow={{ base: "hidden", md: "visible" }}
+                >
+                  <Heading variant="h2" maxWidth="90%">
+                    {selectedPage?.title ?? "Select a page"}
+                  </Heading>
 
-                {hasPermission(loggedUser?.role, [
-                  ROLES.ADMIN,
-                  ROLES.MODERATOR,
-                ]) && (
-                  <Box>
-                    <ProfileSummaryCard.MoreActions>
-                      <MenuItem as="a" href={`/learn/edit/${selectedPage?.id}`}>
-                        Edit
-                      </MenuItem>
-                    </ProfileSummaryCard.MoreActions>
-                  </Box>
-                )}
+                  {hasPermission(loggedUser?.role, [
+                    ROLES.ADMIN,
+                    ROLES.MODERATOR,
+                  ]) && (
+                    <Box>
+                      <ProfileSummaryCard.MoreActions>
+                        <MenuItem
+                          as="a"
+                          href={`/learn/edit/${selectedPage?.id}`}
+                        >
+                          Edit
+                        </MenuItem>
+                      </ProfileSummaryCard.MoreActions>
+                    </Box>
+                  )}
+                </Box>
               </Box>
-            </Box>
-            <Flex gap="standard.sm">
-              {/* <Stat.Root>
+              <Flex gap="standard.sm">
+                {/* <Stat.Root>
                 <Stat.Text
                   label={
                     selectedPage?.author?.username ??
@@ -203,51 +241,52 @@ export function Page() {
                   }
                 />
               </Stat.Root> */}
-              <Username
-                address={selectedPage?.author?.address}
-                size="condensed"
-                src={
-                  selectedPage?.author?.profileImage ??
-                  selectedPage?.author?.ensAvatar ??
-                  null
-                }
-                displayName={
-                  selectedPage?.author?.username ??
-                  selectedPage?.author?.ensName ??
-                  formattedAddress
-                }
-              />
-              <Text variant="small" color="content.default.default">
-                •
-              </Text>
+                <Username
+                  address={selectedPage?.author?.address}
+                  size="condensed"
+                  src={
+                    selectedPage?.author?.profileImage ??
+                    selectedPage?.author?.ensAvatar ??
+                    null
+                  }
+                  displayName={
+                    selectedPage?.author?.username ??
+                    selectedPage?.author?.ensName ??
+                    formattedAddress
+                  }
+                />
+                <Text variant="small" color="content.default.default">
+                  •
+                </Text>
 
-              <Stat.Root>
-                <Stat.Date date={selectedPage?.createdAt} />
-              </Stat.Root>
-            </Flex>
-            <Divider mt="standard.xl" />
-            <Box mt="standard.2xl">
-              <MarkdownRenderer content={selectedPage?.content ?? ""} />
+                <Stat.Root>
+                  <Stat.Date date={selectedPage?.createdAt} />
+                </Stat.Root>
+              </Flex>
+              <Divider mt="standard.xl" />
+              <Box mt="standard.2xl">
+                <MarkdownRenderer content={selectedPage?.content ?? ""} />
+              </Box>
+            </Stack>
+          ) : (
+            <Box
+              display={"flex"}
+              flexDirection="column"
+              gap="12px"
+              mb="24px"
+              width="100%"
+              bg="transparent"
+            >
+              <Skeleton height="36px" width="100%" />
+              <Skeleton height="300px" width="100%" />
+              <Skeleton height="36px" width="100%" />
+              <Skeleton height="300px" width="100%" />
+              <Skeleton height="300px" width="100%" />
             </Box>
-          </Stack>
-        ) : (
-          <Box
-            display={"flex"}
-            flexDirection="column"
-            gap="12px"
-            mb="24px"
-            width="100%"
-            bg="transparent"
-          >
-            <Skeleton height="36px" width="100%" />
-            <Skeleton height="300px" width="100%" />
-            <Skeleton height="36px" width="100%" />
-            <Skeleton height="300px" width="100%" />
-            <Skeleton height="300px" width="100%" />
-          </Box>
-        )}
-      </ContentContainer>
-    </Box>
+          )}
+        </Box>
+      </Box>
+    </Grid>
   );
 }
 

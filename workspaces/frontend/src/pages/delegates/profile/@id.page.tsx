@@ -4,7 +4,6 @@ import { Button as ChakraButton } from "@chakra-ui/react";
 import {
   Box,
   ConfirmModal,
-  ContentContainer,
   DelegateModal,
   Divider,
   Flex,
@@ -41,6 +40,8 @@ import { stringToHex } from "viem";
 import { hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import * as ProfilePageLayout from "../../../components/ProfilePageLayout/ProfilePageLayout";
+import { BackButton } from "src/components/Header/BackButton";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -378,12 +379,7 @@ export function Page() {
     delegateAddress?.toLowerCase() === address?.toLowerCase();
 
   return (
-    <Box
-      display="flex"
-      flexDirection={{ base: "column", md: "row" }}
-      flex="1"
-      height="100%"
-    >
+    <ProfilePageLayout.Root>
       <DelegateModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -455,21 +451,15 @@ export function Page() {
         title={statusTitle}
         description={statusDescription}
       />
-      <Box
-        pt="standard.3xl"
-        pb="standard.2xl"
-        px={{ base: "standard.md", md: "standard.2xl", lg: "standard.xl" }}
-        borderRight="1px solid"
-        borderColor="border.dividers"
-        display="flex"
-        flexDirection="column"
-        flexBasis={{ base: "100%", md: "372px" }}
-        position={{ base: "unset", lg: "sticky" }}
-        height="100vh"
-        top="0"
-        overflowY="auto"
-        overflowX="hidden"
-      >
+      <ProfilePageLayout.Profile>
+        <Box mb="standard.2xl" display={{ lg: "none" }}>
+          <BackButton
+            buttonText="Delegates"
+            urlStart="/delegates/"
+            href="/delegates"
+            pageContext={pageContext}
+          />
+        </Box>
         {isLoadingProfile ? (
           <Box display="flex" flexDirection="column" gap="12px" mb="18px">
             <Flex gap="20px" alignItems="center">
@@ -490,31 +480,34 @@ export function Page() {
             <Skeleton height="44px" width="100%" borderRadius="md" />
           </Box>
         ) : (
-          <AvatarWithText
-            src={
-              delegate?.author?.profileImage ||
-              delegate?.author?.ensAvatar ||
-              null
-            }
-            headerText={
-              delegate?.author?.username ||
-              delegate?.author?.ensName ||
-              truncateAddress(delegateAddress)
-            }
-            subheaderText={
-              delegate?.author?.username || delegate?.author?.ensName
-                ? truncateAddress(delegateAddress)
-                : null
-            }
-            address={delegateAddress}
-            dropdownChildren={<ActionButtons />}
-          />
+          <>
+            <AvatarWithText
+              src={
+                delegate?.author?.profileImage ||
+                delegate?.author?.ensAvatar ||
+                null
+              }
+              headerText={
+                delegate?.author?.username ||
+                delegate?.author?.ensName ||
+                truncateAddress(delegateAddress)
+              }
+              subheaderText={
+                delegate?.author?.username || delegate?.author?.ensName
+                  ? truncateAddress(delegateAddress)
+                  : null
+              }
+              address={delegateAddress}
+              dropdownChildren={<ActionButtons />}
+            />
+          </>
         )}
 
         {user && !delegateOwnProfile ? (
           <Button
             mt="standard.2xl"
             mb="0"
+            width="100%"
             variant="primary"
             size="standard"
             onClick={() => {
@@ -683,9 +676,9 @@ export function Page() {
             <></>
           )}
         </SummaryItems.Root>
-      </Box>
+      </ProfilePageLayout.Profile>
 
-      <ContentContainer maxWidth="800px" center>
+      <ProfilePageLayout.About>
         <Stack
           spacing="0"
           direction={{ base: "column" }}
@@ -797,8 +790,8 @@ export function Page() {
             )}
           </Box>
         </Stack>
-      </ContentContainer>
-    </Box>
+      </ProfilePageLayout.About>
+    </ProfilePageLayout.Root>
   );
 }
 

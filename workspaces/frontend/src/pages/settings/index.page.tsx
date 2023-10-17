@@ -34,7 +34,8 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
-import {ethers} from "ethers";
+import { ethers } from "ethers";
+import { FormLayout } from "src/components/FormsCommon/FormLayout";
 
 const userRoleValues = userRoleEnum.enumValues;
 
@@ -174,7 +175,7 @@ export function Page() {
   };
 
   return (
-    <ContentContainer maxWidth="800" center>
+    <FormLayout>
       <Box
         display="flex"
         flexDirection={{ base: "column", md: "column" }}
@@ -279,11 +280,15 @@ export function Page() {
                       {...addRegister("address", {
                         required: "This field is required.",
                         validate: {
-                          isValidEthereumAddress: value => isValidAddress(value) || "Invalid Ethereum address."
-                        }
+                          isValidEthereumAddress: (value) =>
+                            isValidAddress(value) ||
+                            "Invalid Ethereum address.",
+                        },
                       })}
                     />
-                    {addErrors.address && <span>{addErrors.address.message}</span>}
+                    {addErrors.address && (
+                      <span>{addErrors.address.message}</span>
+                    )}
                   </FormControl>
 
                   <FormControl id="role">
@@ -304,10 +309,7 @@ export function Page() {
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
                   <Flex justifyContent="flex-end">
-                    <Button
-                      type="submit"
-                      variant="primary"
-                    >
+                    <Button type="submit" variant="primary">
                       Add
                     </Button>
                   </Flex>
@@ -353,7 +355,7 @@ export function Page() {
           </Box>
         )}
       </Box>
-    </ContentContainer>
+    </FormLayout>
   );
 }
 

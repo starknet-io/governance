@@ -61,7 +61,12 @@ export const AvatarWithText = ({
         // zIndex: "0",
       }}
     >
-      <Flex gap="standard.sm" alignItems="center" width="100%">
+      <Flex
+        gap="standard.sm"
+        alignItems="center"
+        width="100%"
+        overflowX="hidden"
+      >
         <Box>
           {src !== null ? (
             <Avatar size="xlg" src={src} />

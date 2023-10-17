@@ -183,6 +183,7 @@ export function LearnForm({ mode }: LearnFormProps) {
             <Input
               isInvalid={!!errors.title}
               variant="primary"
+              size="standard"
               placeholder="Page title"
               {...register("title", {
                 required: true,

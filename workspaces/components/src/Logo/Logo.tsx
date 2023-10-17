@@ -7,21 +7,15 @@ type Props = {
   paddingLeft?: string;
 };
 
-export const Logo = ({
-  href = "",
-  height = "78px",
-  paddingLeft = "8px",
-}: Props) => {
+export const Logo = ({ href = "" }: Props) => {
   return (
     <Flex
       as="a"
       href={href}
       gap="8px"
-      height={height}
-      // mt="-34px"
       display="flex"
       alignItems="center"
-      paddingLeft={paddingLeft}
+      p="standard.lg"
       zIndex={1}
     >
       <svg

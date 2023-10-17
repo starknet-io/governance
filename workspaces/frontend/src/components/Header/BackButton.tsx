@@ -5,7 +5,7 @@ interface BackButtonProps {
   urlStart: string;
   href: string;
   buttonText: string;
-  pageContext: { urlOriginal: string };
+  pageContext?: { urlOriginal: string };
 }
 
 export const BackButton = ({
@@ -15,8 +15,8 @@ export const BackButton = ({
   pageContext,
 }: BackButtonProps) => {
   if (
-    pageContext.urlOriginal.includes("/councils/") &&
-    pageContext.urlOriginal.startsWith(urlStart)
+    pageContext?.urlOriginal.includes("/councils/") &&
+    pageContext?.urlOriginal.startsWith(urlStart)
   ) {
     const goBack = () => {
       window.history.back();
@@ -34,7 +34,7 @@ export const BackButton = ({
       </Box>
     );
   }
-  if (pageContext.urlOriginal.startsWith(urlStart)) {
+  if (pageContext?.urlOriginal.startsWith(urlStart)) {
     return (
       <Box>
         <Button
@@ -43,6 +43,7 @@ export const BackButton = ({
           as="a"
           href={href}
           variant="ghost"
+          pl={{ base: "0", lg: "standard.sm" }}
         >
           {buttonText}
         </Button>
