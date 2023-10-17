@@ -179,7 +179,7 @@ function LayoutDefault(props: Props) {
             }}
           >
             <Flex gap="standard.xs">
-              <Box display={{ base: "block", md: "none" }}>
+              <Box display={{ base: "block", lg: "none" }}>
                 <IconButton
                   aria-label="Open menu"
                   size="condensed"
