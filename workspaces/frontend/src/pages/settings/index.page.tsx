@@ -151,7 +151,7 @@ export function Page() {
     setSelectedUser(user);
     setEditError("");
     setEditValue("role", {
-      label: user.role || "user",
+      label: user.role,
       value: user.role,
     });
     setEditValue("banned", !!user.banned);
