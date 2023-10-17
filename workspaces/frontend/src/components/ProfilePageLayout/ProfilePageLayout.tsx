@@ -50,10 +50,10 @@ const Profile = ({ children }: ProfileProps) => {
         pb={{ base: "standard.2xl", lg: "standard.3xl" }}
         px={{
           base: "standard.md",
-          md: "standard.2xl",
+          md: "standard.xl",
         }}
-        borderBottom="1px solid"
-        borderColor="border.forms"
+        // borderBottom="1px solid"
+        // borderColor="border.forms"
       >
         {children}
       </Box>
