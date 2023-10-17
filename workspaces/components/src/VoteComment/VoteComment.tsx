@@ -14,6 +14,7 @@ type Props = {
   voteCount: number;
   comment?: string;
   voted: "For" | "Against" | "Abstain";
+  author?: string | null;
 };
 
 const variant = {
@@ -28,8 +29,10 @@ export const VoteComment = ({
   voted,
   voteCount,
   comment,
+  author,
 }: Props) => {
   const formatVotes = formatVotesAmount(voteCount);
+  console.log(author)
   return (
     <Flex
       flexDirection="column"
@@ -59,7 +62,7 @@ export const VoteComment = ({
 
         <Box>
           <Text variant="smallStrong" color="content.accent.default">
-            {ethAddress ? ethAddress : truncateAddress(address)}
+            {author || (ethAddress ? ethAddress : truncateAddress(address))}
           </Text>
         </Box>
         <Flex ml="auto" justifyContent={"center"} gap="standard.xs">

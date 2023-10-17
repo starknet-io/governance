@@ -28,16 +28,15 @@ export const buttonTheme = {
       px: "condensed.lg",
       borderRadius: "condensed.base",
       py: "condensed.sm",
-      minHeight: "36px",
+      height: "36px",
       maxWidth: "100%",
       svg: {
         boxSize: "20px",
       },
     },
     withBadgeCondensed: {
-      minWidth: "36px",
       paddingLeft: "condensed.lg!important",
-      paddingRight: "40px!important",
+      paddingRight: "condensed.lg!important",
       borderRadius: "condensed.base",
       py: "condensed.sm",
       minHeight: "36px",
@@ -108,6 +107,7 @@ export const buttonTheme = {
       },
     },
     secondary: {
+      position: "relative",
       borderWidth: "1px",
       borderColor: "border.forms",
       bg: "surface.forms.default",
@@ -117,7 +117,8 @@ export const buttonTheme = {
       },
       boxShadow: " 0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
       _hover: {
-        bg: "surface.forms.hover",
+        bg: "#E8E6E8",
+        opacity: 1,
         svg: {
           fill: "content.default.default",
         },

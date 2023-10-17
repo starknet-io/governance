@@ -36,6 +36,7 @@ const baseStyle = definePartsStyle({
     fontSize: "14px",
     bg: "transparent",
     borderRadius: "standard.base",
+    fontFamily: "Inter variable",
     fontWeight: "400",
     letterSpacing: "0.07px",
     _hover: {
@@ -43,11 +44,15 @@ const baseStyle = definePartsStyle({
       color: "content-accent-default",
     },
     _selected: {
-      bg: "transparent",
+      bg: "surface.forms.hover",
       color: "content-accent-default",
     },
     _focus: {
-      bg: "transparent",
+      bg: "surface.forms.hover",
+      color: "content-accent-default",
+    },
+    _active: {
+      bg: "surface.forms.hover",
       color: "content-accent-default",
     },
   },

@@ -22,6 +22,7 @@ import { alertTheme } from "src/Banner/AlertStyles";
 import { dividerTheme } from "src/Divider/DividerStyles";
 import { avatarTheme } from "src/Avatar/AvatarStyles";
 import { FormTheme } from "src/FormControlled/Form";
+import { tooltipTheme } from "src/Tooltip/TooltipStyles";
 
 const config = {
   initialColorMode: "light",
@@ -29,6 +30,12 @@ const config = {
 
 export const theme = extendTheme({
   config,
+  breakpoints: {
+    sm: "23.4375rem",
+    md: "52.125rem",
+    lg: "67.5rem",
+    xl: "90.0rem",
+  },
   colors: {
     ...baseColors,
     ...colors,
@@ -42,6 +49,9 @@ export const theme = extendTheme({
   },
   sizes: {
     ...spacing,
+  },
+  styles: {
+    ...styles,
   },
 
   components: {
@@ -67,11 +77,11 @@ export const theme = extendTheme({
     },
     Input,
     Progress,
-    styles,
 
     Heading,
     Checkbox: checkboxTheme,
     Radio: radioTheme,
     Switch: switchTheme,
+    Tooltip: tooltipTheme,
   },
 });

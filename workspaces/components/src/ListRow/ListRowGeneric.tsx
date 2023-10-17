@@ -1,4 +1,4 @@
-import { Badge, Box, BoxProps, Flex, Icon, Tooltip } from "@chakra-ui/react";
+import { Badge, Box, BoxProps, Flex, Icon } from "@chakra-ui/react";
 
 import { Text } from "../Text";
 import {
@@ -19,6 +19,7 @@ import {
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import "./styles.css";
 import { formatVotesAmount } from "src/utils";
+import { Tooltip } from "src/Tooltip";
 
 type Props = BoxProps & {
   children?: React.ReactNode;
@@ -237,14 +238,42 @@ const PastVotes = ({
   );
 };
 
+type CommentsProps = {
+  count?: number;
+  width?: string | null;
+} & BoxProps;
+
+const Comments = ({ count, width, ...rest }: CommentsProps) => {
+  return (
+    <Box
+      minWidth={`${width}px`}
+      display="flex"
+      flexDirection="row"
+      gap="4px"
+      alignItems="center"
+      {...cellPadding}
+      {...rest}
+    >
+      <Icon as={CommentIcon} />
+      <Text variant="small" color="content.support.default">
+        {count}
+      </Text>
+    </Box>
+  );
+};
+
 type CommentSummaryProps = {
   postTitle: string;
   comment: string;
   date: string;
-};
+} & CommentsProps;
 
-const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
-  console.log("Raw Date:", date);
+const CommentSummary = ({
+  postTitle,
+  comment,
+  date,
+  count,
+}: CommentSummaryProps) => {
   const formattedDate = date
     ? format(new Date(date), "d MMM yyyy")
     : "Unknown date";
@@ -266,42 +295,25 @@ const CommentSummary = ({ postTitle, comment, date }: CommentSummaryProps) => {
         </Text>
       </Box>
 
-      <Box flex={1}>
-        <MarkdownRenderer
-          textProps={{
-            fontSize: "12px",
-            noOfLines: 1,
-            color: "content.support.default",
-            fontWeight: "500",
-          }}
-          content={`&quot;${comment}&quot;` ?? ""}
-        />
-      </Box>
+      <Flex flex={1}>
+        <Box height="20px" overflow="hidden">
+          <MarkdownRenderer
+            textProps={{
+              fontSize: "12px",
+              noOfLines: 1,
+              color: "content.support.default",
+              fontWeight: "500",
+            }}
+            content={`&quot;${comment}&quot;` ?? ""}
+          />
+        </Box>
+        {count ? (
+          <Box ml="auto">
+            <Comments width={"52"} count={count} />
+          </Box>
+        ) : null}
+      </Flex>
     </Flex>
-  );
-};
-
-type CommentsProps = {
-  count: number | null;
-  width?: string | null;
-} & BoxProps;
-
-const Comments = ({ count, width, ...rest }: CommentsProps) => {
-  return (
-    <Box
-      minWidth={`${width}px`}
-      display="flex"
-      flexDirection="row"
-      gap="4px"
-      alignItems="center"
-      {...cellPadding}
-      {...rest}
-    >
-      <Icon as={CommentIcon} />
-      <Text variant="breadcrumbs" color="#6B7280">
-        {count}
-      </Text>
-    </Box>
   );
 };
 

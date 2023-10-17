@@ -10,3 +10,6 @@
 .editableComponent h4:first-child {
   margin-top: 0 !important;
 }
+.editableComponent .fake-placeholder {
+  opacity: 1 !important;
+}

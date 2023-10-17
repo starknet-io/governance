@@ -10,18 +10,23 @@ import isHotkey from "is-hotkey";
 import { Text } from "src/Text";
 import "./EditableComponent.css";
 
-interface EditableComponentProps {
+interface EditableComponentProps
+  extends React.TextareaHTMLAttributes<HTMLDivElement> {
   placeholder?: string;
   minHeight?: string;
   autoFocus?: boolean;
+  offsetPlaceholder?: string;
   onPaste?: (event: ClipboardEvent<HTMLDivElement>) => void;
+  isInvalid?: boolean;
 }
 
 export const EditableComponent = ({
   minHeight,
   autoFocus = false,
   onPaste,
+  offsetPlaceholder = "12px",
   placeholder,
+  isInvalid = false,
 }: EditableComponentProps) => {
   const renderElement = useCallback(
     (props: RenderElementProps) => <Element {...props} />,
@@ -35,14 +40,19 @@ export const EditableComponent = ({
   const editor = useSlate();
   const [isFocused, setIsFocused] = useState(false);
   const styleObj = {
+    overflowY: "scroll",
+    maxHeight: "500px",
     backgroundColor: "#FBFBFB",
     padding: "12px",
     paddingBottom: "44px",
     borderRadius: "4px",
     boxShadow: "0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
-    border: "1px solid rgba(35, 25, 45, 0.10)",
+    border: "1px solid ",
+    borderColor: "rgba(35, 25, 45, 0.10)",
     fontSize: "14px",
     minHeight: `${minHeight}px`,
+    outline: `1px solid ${isInvalid ? "#E53E3E" : "transparent"}`,
+
     // Adjust outline based on focus state
   };
   return (
@@ -54,10 +64,13 @@ export const EditableComponent = ({
       renderPlaceholder={({ children, attributes }) => (
         <Text
           variant="mediumStrong"
+          opacity={1}
           {...attributes}
-          mt="12px"
+          // mt="-8px"
+          mt={offsetPlaceholder}
           position="relative"
           className="fake-placeholder"
+          color="content.support.default"
         >
           {children}
         </Text>

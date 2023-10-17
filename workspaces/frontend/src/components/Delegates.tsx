@@ -10,7 +10,6 @@ import {
   CheckboxFilter,
   useFilterState,
   FilterPopoverIcon,
-  Select,
   Text,
   EmptyState,
   Skeleton,
@@ -22,7 +21,7 @@ import {
   Flex,
   ArrowRightIcon,
 } from "@yukilabs/governance-components";
-
+import { Select } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
@@ -213,14 +212,13 @@ export function Delegates({
   useEffect(() => {
     if (isDelegationLoading) {
       setIsStatusModalOpen(true);
-      setStatusTitle("Delegating your votes");
+      setStatusTitle("Delegating voting power");
       setStatusDescription("");
     }
 
     if (isDelegationError) {
-      console.log(delegationError);
       setIsStatusModalOpen(true);
-      setStatusTitle("Delegating votes failed");
+      setStatusTitle("Delegating voting power failed");
       setStatusDescription(
         "An error occurred while processing your transaction.",
       );
@@ -228,7 +226,7 @@ export function Delegates({
 
     if (isDelegationSuccess) {
       setIsStatusModalOpen(true);
-      setStatusTitle("Votes delegated successfully");
+      setStatusTitle("Voting power delegated successfully");
       setStatusDescription("");
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
@@ -317,7 +315,20 @@ export function Delegates({
           width={{ base: "100%", md: "auto" }}
           size="condensed"
           variant="outline"
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            if (
+              parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION
+            ) {
+              setIsStatusModalOpen(true);
+              setStatusTitle("No voting power");
+              setStatusDescription(
+                `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+              );
+              setIsOpen(false);
+            } else {
+              setIsOpen(true);
+            }
+          }}
         >
           Delegate to address
         </Button>
@@ -373,7 +384,7 @@ export function Delegates({
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
-              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
+              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
             );
             setIsOpen(false);
           } else {
@@ -390,7 +401,7 @@ export function Delegates({
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
-                setStatusTitle("Delegating votes failed");
+                setStatusTitle("Delegating voting power failed");
                 setStatusDescription(
                   err.shortMessage ||
                     err.message ||
@@ -454,6 +465,72 @@ export function Delegates({
             </Button>
           )}
         </Flex>
+        {showFilers && (
+          <AppBar.Root>
+            <AppBar.Group mobileDirection="row">
+              <Box minWidth={"52px"}>
+                <Text variant="mediumStrong">Sort by</Text>
+              </Box>
+              <Select
+                size="sm"
+                height="36px"
+                aria-label="Random"
+                placeholder="Random"
+                focusBorderColor={"red"}
+                rounded="md"
+                value={sortBy}
+                onChange={(e) => {
+                  setSortBy(e.target.value);
+                  setFiltersState((prevState) => ({
+                    ...prevState,
+                    sortBy: e.target.value,
+                  }));
+                  delegates.refetch();
+                }}
+              >
+                {sortByOptions.options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+              <Popover placement="bottom-start">
+                <FilterPopoverIcon
+                  label="Filter by"
+                  badgeContent={filtersState.filters.length}
+                />
+                <FilterPopoverContent
+                  isCancelDisabled={!state.canCancel}
+                  onClickApply={state.onSubmit}
+                  onClickCancel={handleResetFilters}
+                >
+                  <Text mt="4" mb="2" fontWeight="bold">
+                    Filters
+                  </Text>
+                  <CheckboxFilter
+                    hideLabel
+                    value={state.value}
+                    onChange={(v) => state.onChange(v)}
+                    options={delegateFilters.options}
+                  />
+                  <Text mt="4" mb="2" fontWeight="bold">
+                    Interests
+                  </Text>
+                  <CheckboxFilter
+                    hideLabel
+                    value={state.value}
+                    onChange={(v) => state.onChange(v)}
+                    options={delegateInterests.options}
+                  />
+                </FilterPopoverContent>
+              </Popover>
+            </AppBar.Group>
+
+            <AppBar.Group alignEnd>
+              <ActionButtons />
+            </AppBar.Group>
+          </AppBar.Root>
+        )}
         {delegates.isLoading ? (
           <DelegatesSkeleton />
         ) : delegates.isError ? (
@@ -469,73 +546,6 @@ export function Delegates({
           />
         ) : (
           <>
-            {showFilers && (
-              <AppBar.Root>
-                <AppBar.Group mobileDirection="row">
-                  <Box minWidth={"52px"}>
-                    <Text variant="mediumStrong">Sort by</Text>
-                  </Box>
-                  <Select
-                    size="sm"
-                    height="36px"
-                    aria-label="Sort by"
-                    placeholder="Sort by"
-                    focusBorderColor={"red"}
-                    rounded="md"
-                    value={sortBy}
-                    onChange={(e) => {
-                      setSortBy(e.target.value);
-                      setFiltersState((prevState) => ({
-                        ...prevState,
-                        sortBy: e.target.value,
-                      }));
-                      delegates.refetch();
-                    }}
-                  >
-                    {sortByOptions.options.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                  <Popover placement="bottom-start">
-                    <FilterPopoverIcon
-                      label="Filter by"
-                      badgeContent={filtersState.filters.length}
-                    />
-                    <FilterPopoverContent
-                      isCancelDisabled={!state.canCancel}
-                      onClickApply={state.onSubmit}
-                      onClickCancel={handleResetFilters}
-                    >
-                      <Text mt="4" mb="2" fontWeight="bold">
-                        Filters
-                      </Text>
-                      <CheckboxFilter
-                        hideLabel
-                        value={state.value}
-                        onChange={(v) => state.onChange(v)}
-                        options={delegateFilters.options}
-                      />
-                      <Text mt="4" mb="2" fontWeight="bold">
-                        Interests
-                      </Text>
-                      <CheckboxFilter
-                        hideLabel
-                        value={state.value}
-                        onChange={(v) => state.onChange(v)}
-                        options={delegateInterests.options}
-                      />
-                    </FilterPopoverContent>
-                  </Popover>
-                </AppBar.Group>
-
-                <AppBar.Group alignEnd>
-                  <ActionButtons />
-                </AppBar.Group>
-              </AppBar.Root>
-            )}
-
             <SimpleGrid
               position="relative"
               width="100%"
@@ -547,8 +557,20 @@ export function Delegates({
                   <DelegateCard
                     onDelegateClick={() => {
                       if (user) {
-                        setIsOpen(true);
-                        setInputAddress(delegate?.author?.address);
+                        if (
+                          parseFloat(senderData?.balance) <
+                          MINIMUM_TOKENS_FOR_DELEGATION
+                        ) {
+                          setIsStatusModalOpen(true);
+                          setStatusTitle("No voting power");
+                          setStatusDescription(
+                            `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+                          );
+                          setIsOpen(false);
+                        } else {
+                          setIsOpen(true);
+                          setInputAddress(delegate?.author?.address);
+                        }
                       }
                     }}
                     votingPower={delegate?.votingInfo?.votingPower}
@@ -591,13 +613,6 @@ type DelegatesSkeletonProps = {
 const DelegatesSkeleton = ({ count = 6 }: DelegatesSkeletonProps) => {
   return (
     <Box>
-      <Box display={"flex"} gap="12px" bg="#fff" padding="12px" mb="24px">
-        <Skeleton height="24px" width="40%" />
-        <Skeleton height="24px" width="40%" />
-        <Skeleton height="24px" width="40%" />
-        <Skeleton height="24px" width="100%" />
-      </Box>
-
       <SimpleGrid
         position="relative"
         width="100%"

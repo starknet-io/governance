@@ -1,43 +1,58 @@
-import { Box, Flex, HStack, Icon, Image, Link } from "@chakra-ui/react";
-import { ExternalLinkIcon } from "src/Icons";
+import { Box, Flex, HStack, Image, Link } from "@chakra-ui/react";
+import { ArrowRightLargeIcon } from "src/Icons";
 import { Text } from "src/Text";
 
 type Props = {
-  iconUrl?: string;
-  subtitle?: string;
+  src?: string;
+  description?: string;
   title?: string;
   href: string;
 };
 
-export const LinkCard = ({
-  iconUrl = "https://starkware.co/wp-content/uploads/2023/02/SN-Symbol-Gradient.png",
-  subtitle = "Forum discussion",
-  title = "[PROPOSAL] Support for scoped storage variables",
-  href,
-}: Props) => {
+export const LinkCard = ({ src, description, title, href }: Props) => {
   return (
     <Link href={href}>
       <HStack
         alignItems="center"
-        border="1px solid #E4E5E7"
-        borderRadius="6px"
-        p="20px"
+        border="1px solid "
+        borderColor="border.forms"
+        borderRadius="8px"
+        p="standard.md"
         spacing="20px"
+        boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.04)"
+        _hover={{
+          borderColor: "#C8C7CB",
+        }}
       >
-        <Box>
-          <Image src={iconUrl} alt="icon" width="32px" height="32px" />
+        <Box width="40px" height="40px" borderRadius="50%" overflow="hidden">
+          <Image
+            src={src}
+            alt="icon"
+            width="100%"
+            height="100%"
+            objectFit={"cover"}
+          />
         </Box>
         <Flex flexDirection="column" gap="2px" flex={1}>
-          <Text fontSize="12px" color="#6C6C75" fontWeight="500">
-            {subtitle}
-          </Text>
-          <Text fontSize="14px" color="#292932" fontWeight="500">
-            {" "}
+          <Text
+            color="content.default.default"
+            lineHeight={"20px"}
+            variant="small"
+            noOfLines={1}
+          >
             {title}
+          </Text>
+          <Text
+            variant="mediumStrong"
+            color="content.accent.default"
+            fontWeight="500"
+            noOfLines={1}
+          >
+            {description}
           </Text>
         </Flex>
         <Box>
-          <Icon as={ExternalLinkIcon} />
+          <ArrowRightLargeIcon boxSize="32px" color="content.default.default" />
         </Box>
       </HStack>
     </Link>

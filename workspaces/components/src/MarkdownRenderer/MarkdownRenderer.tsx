@@ -2,7 +2,7 @@
 // todo use chakra components for list and list items
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import { Code } from "@chakra-ui/react";
+import { Box, Code } from "@chakra-ui/react";
 import { Heading } from "../Heading";
 import { Text, LocalTextProps } from "../Text";
 import "./bodyText.css";
@@ -140,6 +140,21 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
             }}
             {...props}
           />
+        ),
+        a: ({ ...props }) => (
+          <Text
+            as="a"
+            display="inline-block"
+            fontWeight="medium"
+            color="content.links.default"
+            cursor="pointer"
+            {...props}
+          />
+        ),
+        img: ({ ...props }) => (
+          <Box>
+            <img {...props} />
+          </Box>
         ),
       }}
     >

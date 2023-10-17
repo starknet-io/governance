@@ -49,8 +49,33 @@ const neutral = definePartsStyle({
     fontWeight: "600",
     borderRadius: "standard.base",
     position: "relative",
-    lineHeight: "16px",
+    lineHeight: "10px",
     letterSpacing: "0.2px",
+    height: "18px",
+  },
+});
+
+const select = definePartsStyle({
+  container: {
+    px: "standard.xs",
+    py: "standard.base",
+    background: "#E9E8EA",
+    borderColor: "border.forms",
+    borderWidth: "0px",
+    color: "##4A4A4F",
+    fontSize: "12px",
+    fontWeight: "500",
+    borderRadius: "standard.base",
+    position: "relative",
+    lineHeight: "20px",
+    fontFamily: "Inter Variable",
+    letterSpacing: "0.12px",
+    height: "28px",
+    _hover: {
+      svg: {
+        stroke: "red",
+      },
+    },
   },
 });
 
@@ -59,6 +84,7 @@ export const tagTheme = defineMultiStyleConfig({
     review,
     amount,
     neutral,
+    select,
   },
   defaultProps: {
     variant: "neutral",

@@ -3,7 +3,6 @@ import { Props as DayzedHookProps } from "dayzed";
 import { Month_Names_Short, Weekday_Names_Short } from "./utils/calanderUtils";
 import {
   Flex,
-  Input,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -12,6 +11,7 @@ import {
   Portal,
   useDisclosure,
 } from "@chakra-ui/react";
+import { Input } from "src/Input";
 import { CalendarPanel } from "./components/calendarPanel";
 import {
   CalendarConfigs,
@@ -24,6 +24,7 @@ import { format } from "date-fns";
 import FocusLock from "react-focus-lock";
 import { Timepicker } from "../../Timepicker";
 import { Button } from "../../Button";
+import { CalendarIcon } from "src/Icons";
 
 interface RangeCalendarPanelProps {
   dayzedHookProps: DayzedHookProps;
@@ -57,9 +58,9 @@ export const RangeCalendarPanel: React.FC<RangeCalendarPanelProps> = ({
     if (!Array.isArray(selected) || !selected?.length) {
       return false;
     }
-    let firstSelected = selected[0];
+    const firstSelected = selected[0];
     if (selected.length === 2) {
-      let secondSelected = selected[1];
+      const secondSelected = selected[1];
       return firstSelected < date && secondSelected > date;
     } else {
       return (
@@ -95,6 +96,10 @@ export interface RangeDatepickerProps extends DatepickerProps {
   name?: string;
   usePortal?: boolean;
   showTimePicker?: boolean;
+  selectedTime: string | string[] | null;
+  setSelectedTime: React.Dispatch<
+    React.SetStateAction<string | string[] | null>
+  >;
 }
 
 const DefaultConfigs: CalendarConfigs = {
@@ -113,6 +118,8 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
   defaultIsOpen = false,
   closeOnSelect = false,
   showTimePicker = false,
+  setSelectedTime,
+  selectedTime,
   ...props
 }) => {
   const { selectedDates, minDate, maxDate, onDateChange, disabled } = props;
@@ -122,9 +129,9 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
   const [offset, setOffset] = useState(0);
   const { onOpen, onClose, isOpen } = useDisclosure({ defaultIsOpen });
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
-  const [selectedTime, setSelectedTime] = useState<string | string[] | null>(
-    null,
-  );
+  // const [selectedTime, setSelectedTime] = useState<string | string[] | null>(
+  //   null,
+  // );
 
   const handleTimeSelected = (time: string | string[]) => {
     setSelectedTime(time);
@@ -163,10 +170,10 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
     if (!selectable) {
       return;
     }
-    let newDates = [...selectedDates];
+    const newDates = [...selectedDates];
     if (selectedDates.length) {
       if (selectedDates.length === 1) {
-        let firstTime = selectedDates[0];
+        const firstTime = selectedDates[0];
         if (firstTime < date) {
           newDates.push(date);
         } else {
@@ -187,17 +194,34 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
       onDateChange(newDates);
     }
   };
+  const getFormattedDateWithTime = (date: Date, timeString: string) => {
+    // Split the time into hours and minutes
+    const [hourStr, rest] = timeString.split(":");
+    const [minuteStr, ampm] = rest.split(" ");
 
-  let intVal = selectedDates[0]
-    ? `${format(selectedDates[0], calendarConfigs.dateFormat)}${
-        selectedTime && selectedTime[0] ? `- ${selectedTime[0]}` : ``
-      }`
-    : "Start Date - ";
-  intVal += selectedDates[1]
-    ? ` - ${format(selectedDates[1], calendarConfigs.dateFormat)}${
-        selectedTime && selectedTime[1] ? `- ${selectedTime[1]}` : ``
-      }`
+    let hours = parseInt(hourStr, 10);
+    const minutes = parseInt(minuteStr, 10);
+
+    if (ampm === "PM" && hours !== 12) hours += 12;
+    if (ampm === "AM" && hours === 12) hours = 0;
+
+    // Create a new date with the specified time
+    const newDate = new Date(date);
+    newDate.setHours(hours, minutes);
+
+    // Return the formatted string
+    return format(newDate, "MMM d, yyyy, h:mm aa");
+  };
+
+  const startDateString = selectedDates[0]
+    ? getFormattedDateWithTime(selectedDates[0], selectedTime[0])
+    : "Start Date";
+
+  const endDateString = selectedDates[1]
+    ? getFormattedDateWithTime(selectedDates[1], selectedTime[1])
     : "End Date";
+
+  const intVal = `${startDateString} – ${endDateString}`;
 
   const PopoverContentWrapper = usePortal ? Portal : React.Fragment;
 
@@ -218,6 +242,8 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = ({
               onOpen();
             }
           }}
+          size="standard"
+          icon={<CalendarIcon />}
           id={id}
           autoComplete="off"
           isDisabled={disabled}

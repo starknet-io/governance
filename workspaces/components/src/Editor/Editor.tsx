@@ -13,10 +13,13 @@ import ImageBlockButton from "./ImageBlockButton";
 import LinkBlockButton from "./LinkBlockButton";
 import { TextTypeButton } from "./TextTypeButton";
 import { MoreButton } from "./MoreButton";
+import { withInlines } from "./hotkeys";
 
 export const MarkdownEditor: React.FC<
   MarkdownEditorProps & {
     handleUpload?: (file: File) => Promise<string | void> | void;
+    offsetPlaceholder?: string;
+    isInvalid?: boolean;
   }
 > = ({
   onChange,
@@ -25,10 +28,15 @@ export const MarkdownEditor: React.FC<
   hideTabBar = false,
   handleUpload,
   placeholder,
+  offsetPlaceholder,
   basicEditor = false,
+  isInvalid = false,
 }) => {
   const { convertMarkdownToSlate } = useMarkdownEditor("");
-  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+  const editor = useMemo(
+    () => withInlines(withHistory(withReact(createEditor()))),
+    [],
+  );
 
   const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -70,9 +78,11 @@ export const MarkdownEditor: React.FC<
           </Toolbar>
         )}
         <EditableComponent
+          offsetPlaceholder={offsetPlaceholder}
           placeholder={placeholder}
           onPaste={handlePaste}
           minHeight={minHeight}
+          isInvalid={isInvalid}
         />
       </Slate>
     </Box>

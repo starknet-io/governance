@@ -209,8 +209,6 @@ export function Page() {
         import.meta.env.VITE_APP_SNAPSHOT_URL,
       );
 
-      console.log(data);
-
       const params: Vote = {
         // from?: string;
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
@@ -227,6 +225,11 @@ export function Page() {
       setisConfirmOpen(true);
 
       const web3 = new providers.Web3Provider(walletClient.transport);
+
+      const deeplink = walletConnector?.getDeepLink();
+      if (deeplink) {
+        window.location.href = deeplink;
+      }
 
       const receipt = (await client.vote(
         web3,
@@ -260,7 +263,7 @@ export function Page() {
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
-  const { user, setShowAuthFlow } = useDynamicContext();
+  const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   const hasVoted = vote.data && vote.data.votes?.[0];
   const canVote =
     data?.proposal?.state === "active" && vp?.vp?.vp && vp?.vp?.vp !== 0;
@@ -270,6 +273,27 @@ export function Page() {
     delegation.data &&
     delegation.data != "0x0000000000000000000000000000000000000000";
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
+
+  const showPastVotes = votes?.data?.votes && votes?.data?.votes.length > 0;
+  const pastVotes = votes?.data?.votes || [];
+  const userAddresses =
+    pastVotes.map((pastVote) => pastVote?.voter?.toLowerCase() || "") || [];
+  const { data: authorInfo } = trpc.users.getUser.useQuery({
+    address: data?.proposal?.author || "",
+  });
+  const { data: usersByAddresses } =
+    trpc.users.getUsersInfoByAddresses.useQuery({
+      addresses: userAddresses || [],
+    });
+  const pastVotesWithUserInfo = pastVotes.map((pastVote) => {
+    return {
+      ...pastVote,
+      author:
+        pastVote?.voter && usersByAddresses?.[pastVote.voter.toLowerCase()]
+          ? usersByAddresses[pastVote.voter.toLowerCase()]
+          : {},
+    };
+  });
 
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
@@ -321,7 +345,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(value);
   };
 
   const handleCommentEdit = async ({
@@ -340,7 +363,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(content);
   };
 
   const handleCommentDelete = async ({ commentId }: { commentId: number }) => {
@@ -352,7 +374,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log("Deleted");
   };
 
   const handleReplySend = async ({
@@ -372,7 +393,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(content);
   };
 
   const handleCommentVote = async ({
@@ -415,6 +435,7 @@ export function Page() {
   });
 
   if (data == null) return null;
+
   return (
     <Box
       display="flex"
@@ -597,8 +618,12 @@ export function Page() {
                 </Text>
                 {/* toDo get user images / display names */}
                 <Username
-                  src={null}
-                  displayName={truncateAddress(`${data?.proposal?.author}`)}
+                  src={authorInfo?.profileImage || null}
+                  displayName={
+                    authorInfo?.username ||
+                    authorInfo?.ensName ||
+                    truncateAddress(`${data?.proposal?.author}`)
+                  }
                   address={`${data?.proposal?.author}`}
                 />
               </Flex>
@@ -686,7 +711,6 @@ export function Page() {
                     <Select
                       size="sm"
                       aria-label="Sort by"
-                      placeholder="Sort by"
                       focusBorderColor={"red"}
                       rounded="md"
                       value={sortBy}
@@ -694,6 +718,9 @@ export function Page() {
                         setSortBy(e.target.value as "upvotes" | "date")
                       }
                     >
+                      <option selected hidden disabled value="">
+                        Sort by
+                      </option>
                       {sortByOptions.options.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}
@@ -885,10 +912,13 @@ export function Page() {
               >
                 Votes
               </Heading>
-              {votes.data?.votes && votes.data.votes.length > 0 ? (
-                votes.data.votes.map((vote, index) => (
+              {showPastVotes ? (
+                pastVotesWithUserInfo.map((vote, index) => (
                   <VoteComment
                     key={index}
+                    author={
+                      vote?.author?.username || vote?.author?.ensName || null
+                    }
                     address={vote?.voter as string}
                     voted={
                       vote?.choice === 1

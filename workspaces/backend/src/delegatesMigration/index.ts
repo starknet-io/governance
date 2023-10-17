@@ -324,6 +324,8 @@ async function seedData() {
         confirmDelegateAgreement: null,
         agreeTerms: true,
         understandRole: true,
+        isKarmaDelegate: true,
+        isGovernanceDelegate: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       };

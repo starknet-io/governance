@@ -1,5 +1,5 @@
 import { useSlate } from "slate-react";
-import { IconButton, useToken } from "@chakra-ui/react";
+import { IconButton } from "@chakra-ui/react";
 import { Heading2Icon, BulletedListIcon, NumberedListIcon } from "src/Icons";
 import { isBlockActive, toggleBlock } from "./hotkeys";
 import { CustomParagraphTypes } from "./ElementLeaf";
@@ -20,10 +20,6 @@ const ICONS: Partial<Record<CustomParagraphTypes, any>> = {
 const BlockButton = ({ format }: BlockButtonProps) => {
   const editor = useSlate();
   const Icon = ICONS?.[format] ?? NumberedListIcon;
-  const [activeColor, inactiveColor] = useToken("colors", [
-    "content.default.selectedInverted",
-    "content.default.default",
-  ]);
   return (
     <IconButton
       aria-label={format}
@@ -37,7 +33,6 @@ const BlockButton = ({ format }: BlockButtonProps) => {
       icon={
         <Icon
           boxSize="20px"
-          color={isBlockActive(editor, format) ? activeColor : inactiveColor}
         />
       }
     />

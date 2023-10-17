@@ -1,0 +1,1 @@
+ALTER TABLE "comments" ADD COLUMN "isDeleted" boolean DEFAULT false;

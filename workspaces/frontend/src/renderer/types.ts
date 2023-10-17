@@ -8,9 +8,10 @@ import type {
   PageContextBuiltInClientWithServerRouting as PageContextBuiltInClient
   //*/
 } from "vite-plugin-ssr/types";
-import { ApolloClient } from '@apollo/client'
+import { ApolloClient } from "@apollo/client";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
+import { layouts } from "src/pages/layouts";
 
 type Page = (pageProps: PageProps) => React.ReactElement;
 
@@ -23,8 +24,9 @@ export interface DocumentProps {
 }
 
 export interface IUser extends User {
-  delegationStatement: Delegate
+  delegationStatement: Delegate;
 }
+type LayoutType = keyof typeof layouts;
 
 export type PageContextCustom = {
   Page: Page;
@@ -38,9 +40,10 @@ export type PageContextCustom = {
   userAgent: string;
   redirectTo?: string;
   apolloClient?: ApolloClient<any>;
-  apolloIntialState: any,
-  routeParams: any,
-  user: IUser | null,
+  apolloIntialState: any;
+  routeParams: any;
+  user: IUser | null;
+  layout?: LayoutType;
 };
 
 export type PageContextServer = PageContextBuiltIn<Page> & PageContextCustom;
@@ -53,4 +56,4 @@ export const ROLES = {
   ADMIN: "admin",
   MODERATOR: "moderator",
   USER: "user",
-}
+};

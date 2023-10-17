@@ -6,6 +6,7 @@ import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
 import { commentVotes } from "../db/schema/commentVotes";
 import { z } from "zod";
+import slugify from 'slugify';
 
 const postInsertSchema = createInsertSchema(posts);
 
@@ -21,6 +22,10 @@ export const postsRouter = router({
         .insert(posts)
         .values({
           ...opts.input,
+          slug: slugify(opts.input.title ?? '', {
+            replacement: '_',
+            lower: true,
+          }),
           createdAt: new Date(),
           userId: opts.ctx.user?.id
         })
@@ -30,7 +35,7 @@ export const postsRouter = router({
     }),
 
   getPostComments: publicProcedure
-    .input(z.object({ postId: z.string(), sort: z.enum(['upvotes', 'date']).optional() }))
+    .input(z.object({ postId: z.number(), sort: z.enum(['upvotes', 'date']).optional() }))
     .query(async (opts) => {
       const userId = opts.ctx.user?.id || null;
 
@@ -75,7 +80,13 @@ export const postsRouter = router({
     .mutation(async (opts) => {
       const updatedPost = await db
         .update(posts)
-        .set(opts.input)
+        .set({
+          ...opts.input,
+          slug: slugify(opts.input.title ?? '', {
+            replacement: '_',
+            lower: true,
+          }),
+        })
         .where(eq(posts.id, opts.input.id))
         .returning();
       return updatedPost[0];
@@ -103,5 +114,24 @@ export const postsRouter = router({
         }
       });
       return post;
+    }),
+
+  getPostBySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(async (opts) => {
+      const post = await db.query.posts.findMany({
+        where: eq(posts.slug, opts.input.slug),
+        with: {
+          council: true,
+          author: true,
+          comments: {
+            orderBy: [desc(comments.createdAt)],
+            with: {
+              author: true
+            }
+          }
+        }
+      });
+      return post[0];
     })
 });

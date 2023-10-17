@@ -17,6 +17,7 @@ import {
   Textarea,
   FormLabel,
   FormControl,
+  Stack,
 } from "@chakra-ui/react";
 import "./members-list.css";
 import { Button } from "src/Button";
@@ -24,6 +25,8 @@ import { TrashIcon, TwitterIcon } from "src/Icons";
 import { truncateAddress } from "src/utils";
 import { Username } from "src/Username";
 import * as ListRow from "src/ListRow/ListRowGeneric";
+import { ethers } from "ethers";
+import { FormControlled } from "src/FormControlled";
 
 export type MemberType = {
   address: string;
@@ -62,12 +65,25 @@ export const MembersList: React.FC<MembersListProps> = ({
     miniBio: "",
   });
 
+  const isValidAddress = (address: string) => {
+    try {
+      const checksumAddress = ethers.utils.getAddress(address);
+      return ethers.utils.isAddress(checksumAddress);
+    } catch (error) {
+      return false;
+    }
+  };
+
   const validateForm = () => {
     let errors = {
-      name: member.name ? "" : "Member name is required.",
-      address: member.address ? "" : "Ethereum address is required.",
+      name: member.name ? "" : "Add member name",
+      address: member.address
+        ? isValidAddress(member.address)
+          ? ""
+          : "Not a valid Ethereum address"
+        : "Add Ethereum address",
       twitterHandle: member.twitterHandle ? "" : "Twitter handle is required.",
-      miniBio: member.miniBio ? "" : "Mini Bio is required.",
+      miniBio: member.miniBio ? "" : "Add a mini bio for council member",
     };
 
     setFormErrors(errors);
@@ -109,54 +125,65 @@ export const MembersList: React.FC<MembersListProps> = ({
           <ModalCloseButton />
           <ModalBody>
             <form>
-              <FormControl id="member-name" paddingBottom={2}>
-                <FormLabel>Member name</FormLabel>
-                <Input
-                  placeholder="Name"
+              <Stack spacing="standard.xl">
+                <FormControlled
                   name="name"
-                  value={member.name ?? ""}
-                  onChange={handleInputChange}
-                />
-                {formErrors.name && (
-                  <Text color="red.500">{formErrors.name}</Text>
-                )}
-              </FormControl>
-              <FormControl id="address" paddingBottom={2}>
-                <FormLabel>Ethereum address</FormLabel>
-                <Input
-                  placeholder="0x..."
+                  label="Member name"
+                  paddingBottom={2}
+                  isInvalid={!!formErrors.name}
+                  errorMessage={formErrors.name || ""}
+                >
+                  <Input
+                    placeholder="Name"
+                    name="name"
+                    value={member.name ?? ""}
+                    onChange={handleInputChange}
+                  />
+                </FormControlled>
+
+                <FormControlled
                   name="address"
-                  value={member.address ?? ""}
-                  onChange={handleInputChange}
-                />
-                {formErrors.address && (
-                  <Text color="red.500">{formErrors.address}</Text>
-                )}
-              </FormControl>
-              <FormControl id="member-twitter-handle" paddingBottom={2}>
-                <FormLabel>Twitter handle</FormLabel>
-                <Input
-                  placeholder="@name"
+                  label="Ethereum address"
+                  paddingBottom={2}
+                  isInvalid={!!formErrors.address}
+                  errorMessage={formErrors.address || ""}
+                >
+                  <Input
+                    placeholder="0x..."
+                    name="address"
+                    value={member.address ?? ""}
+                    onChange={handleInputChange}
+                  />
+                </FormControlled>
+                <FormControlled
                   name="twitterHandle"
-                  value={member.twitterHandle ?? ""}
-                  onChange={handleInputChange}
-                />
-                {formErrors.twitterHandle && (
-                  <Text color="red.500">{formErrors.twitterHandle}</Text>
-                )}
-              </FormControl>
-              <FormControl id="member-mini-bio" paddingBottom={2}>
-                <FormLabel>Mini Bio</FormLabel>
-                <Textarea
-                  placeholder="Background, company, expertise etc"
+                  label="Twitter handle"
+                  paddingBottom={2}
+                  isInvalid={!!formErrors.twitterHandle}
+                  errorMessage={formErrors.twitterHandle || ""}
+                >
+                  <Input
+                    placeholder="@name"
+                    name="twitterHandle"
+                    value={member.twitterHandle ?? ""}
+                    onChange={handleInputChange}
+                  />
+                </FormControlled>
+                <FormControlled
                   name="miniBio"
-                  value={member.miniBio ?? ""}
-                  onChange={handleInputChange}
-                />
-                {formErrors.miniBio && (
-                  <Text color="red.500">{formErrors.miniBio}</Text>
-                )}
-              </FormControl>
+                  label="Mini Bio"
+                  paddingBottom={2}
+                  isInvalid={!!formErrors.miniBio}
+                  errorMessage={formErrors.miniBio || ""}
+                >
+                  <Textarea
+                    placeholder="Background, company, expertise etc"
+                    name="miniBio"
+                    value={member.miniBio ?? ""}
+                    onChange={handleInputChange}
+                  />
+                </FormControlled>
+              </Stack>
             </form>
           </ModalBody>
 

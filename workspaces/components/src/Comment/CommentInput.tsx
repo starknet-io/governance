@@ -10,6 +10,7 @@ interface CommentInputProps {
   placeholder?: string;
   onCancel?: () => void;
   withCancel?: boolean;
+  isEdit?: boolean;
 }
 export const CommentInput = ({
   defaultValue,
@@ -17,6 +18,7 @@ export const CommentInput = ({
   onCancel,
   placeholder = "Type your comment",
   onSend,
+  isEdit,
 }: CommentInputProps) => {
   const {
     editorValue,
@@ -69,7 +71,7 @@ export const CommentInput = ({
         type="submit"
         onClick={handleSend}
       >
-        Send
+        {isEdit ? "Save" : "Send"}
       </Button>
     </Box>
   );

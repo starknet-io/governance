@@ -5,10 +5,6 @@ on:
     branches: ['dev']
     paths:
       - 'workspaces/cron/**'
-  pull_request:
-    branches: [ 'dev' ]
-    paths:
-      - 'workspaces/cron/**'
   workflow_dispatch:
 
 jobs:
@@ -40,14 +36,15 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: workspaces/cron
-          file: workspaces/cron/Dockerfile
+          file: cron.Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            "certificate=${{ secrets.CERTIFICATE }}"
 
   Deploy-review:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/dev'
     needs: Build
     runs-on: ubuntu-latest
     env:

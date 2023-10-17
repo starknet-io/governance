@@ -5,7 +5,6 @@ import {
   CardFooter,
   Box,
   Text,
-  Tooltip,
   LinkBox,
   LinkOverlay,
   Spinner,
@@ -17,6 +16,7 @@ import { formatVotesAmount } from "src/utils";
 import "./karma.css";
 
 import { AvatarWithText } from "src/AvatarWithText";
+import { Tooltip } from "src/Tooltip";
 
 export type DelegateCardProps = {
   statement: string | null;
@@ -49,7 +49,10 @@ const delegateInterests: Record<string, string> = {
   defi: "DeFi",
 };
 
-function extractParagraph(markdownContent: string, charLimit = 300): string {
+export function extractParagraph(
+  markdownContent: string,
+  charLimit = 300,
+): string {
   // Remove headings
   const noHeadings = markdownContent.replace(/#+ .+\n/g, "").trim();
 
@@ -60,13 +63,25 @@ function extractParagraph(markdownContent: string, charLimit = 300): string {
   }
   return "";
 }
-const DelegateTags = ({ type }: { type: string[] }) => {
+const DelegateTags = ({
+  type,
+}: {
+  type: (string | { value: string; label: string })[];
+}) => {
   if (!Array.isArray(type) || type.length === 0) return null;
 
+  const getTagValue = (item: string | { value: string; label: string }) => {
+    if (typeof item === "string") {
+      return delegateInterests?.[item] ?? item;
+    } else {
+      return item.label;
+    }
+  };
+
   const renderTags = (startIndex: number, endIndex: number) =>
-    type.slice(startIndex, endIndex).map((item: string) => (
-      <Tag style={{ pointerEvents: "none" }} key={item}>
-        {delegateInterests?.[item] ?? item}
+    type.slice(startIndex, endIndex).map((item, index) => (
+      <Tag size="condensed" style={{ pointerEvents: "none" }} key={index}>
+        {getTagValue(item)}
       </Tag>
     ));
 
@@ -77,25 +92,25 @@ const DelegateTags = ({ type }: { type: string[] }) => {
       placement="top"
       label={type
         .slice(startIndex)
-        .map((t) => delegateInterests?.[t] ?? t)
+        .map((t) => getTagValue(t))
         .join(", ")}
     >
-      <Tag>+{type.length - startIndex}</Tag>
+      <Tag size="condensed">+{type.length - startIndex}</Tag>
     </Tooltip>
   );
 
   return (
-    <Box display="flex" flexDirection="row" gap="8px" mb="standard.xs">
-      {type[0].length > 20 ? (
-        <>
+    <Box height="18px" mb="standard.xs">
+      {getTagValue(type[0]).length > 20 ? (
+        <Box display="flex" gap="standard.base" height="18px">
           {renderTags(0, 1)}
           {type.length > 1 && renderTooltip(1)}
-        </>
+        </Box>
       ) : (
-        <>
+        <Box display="flex" gap="standard.base" height="18px">
           {renderTags(0, 2)}
           {type.length > 2 && renderTooltip(2)}
-        </>
+        </Box>
       )}
     </Box>
   );
@@ -130,20 +145,22 @@ export const DelegateCard = ({
       </CardHeader>
       <CardBody>
         <DelegateTags type={type} />
-        <MarkdownRenderer
-          className="karma-delegates"
-          textProps={{
-            fontSize: "14px",
-            noOfLines: 3,
-            color: "#4A4A4F",
-            fontStyle: "normal!important",
-            fontWeight: "400!important",
+        <Box>
+          <MarkdownRenderer
+            className="karma-delegates"
+            textProps={{
+              fontSize: "14px",
+              noOfLines: 3,
+              color: "#4A4A4F",
+              fontStyle: "normal!important",
+              fontWeight: "400!important",
 
-            marginTop: "-0px!important",
-            marginBottom: "0px!important",
-          }}
-          content={formattedDelegateStatement || ""}
-        />
+              marginTop: "-0px!important",
+              marginBottom: "0px!important",
+            }}
+            content={formattedDelegateStatement || ""}
+          />
+        </Box>
       </CardBody>
 
       <CardFooter>

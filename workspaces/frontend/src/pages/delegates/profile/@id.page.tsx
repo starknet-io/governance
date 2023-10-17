@@ -177,12 +177,11 @@ export function Page() {
     }
 
     if (isDelegationError && dynamicUser) {
-      console.log(delegationError);
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
-          ? "Undelegating votes failed"
-          : "Delegating votes failed",
+          ? "Undelegating voting power failed"
+          : "Delegating voting power failed",
       );
       setIsUndelegation(false);
       setStatusDescription(
@@ -417,7 +416,7 @@ export function Page() {
               })
               .catch((err) => {
                 setIsStatusModalOpen(true);
-                setStatusTitle("Delegating votes failed");
+                setStatusTitle("Delegating voting power failed");
                 setStatusDescription(
                   err.shortMessage ||
                     err.message ||
@@ -519,6 +518,19 @@ export function Page() {
             variant="primary"
             size="standard"
             onClick={() => {
+              if (
+                parseFloat(senderData?.balance) <
+                  MINIMUM_TOKENS_FOR_DELEGATION &&
+                !hasUserDelegatedTokensToThisDelegate
+              ) {
+                setIsStatusModalOpen(true);
+                setStatusTitle("No voting power");
+                setStatusDescription(
+                  `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+                );
+                setIsOpen(false);
+                return;
+              }
               setIsOpen(true);
               if (hasUserDelegatedTokensToThisDelegate) {
                 setIsUndelegation(true);
@@ -534,7 +546,7 @@ export function Page() {
                   })
                   .catch((err) => {
                     setIsStatusModalOpen(true);
-                    setStatusTitle("Undelegating votes failed");
+                    setStatusTitle("Undelegating voting power failed");
                     setStatusDescription(err.shortMessage);
                   });
                 setIsOpen(false);
@@ -546,8 +558,8 @@ export function Page() {
             {hasUserDelegatedTokensToThisDelegate &&
             delegation?.data &&
             delegation.data !== "0x0000000000000000000000000000000000000000"
-              ? "Undelegate your votes"
-              : "Delegate your votes"}
+              ? "Undelegate voting power"
+              : "Delegate voting power"}
           </Button>
         ) : (
           <></>
@@ -565,7 +577,7 @@ export function Page() {
         {delegateResponse.isFetched &&
           address?.toLowerCase() === delegateAddress?.toLowerCase() && (
             <Box mt="standard.md">
-              <Banner label="You can’t delegate votes to your own account." />
+              <Banner label="You can’t delegate voting power to your own account." />
             </Box>
           )}
 
@@ -651,20 +663,22 @@ export function Page() {
 
         <SummaryItems.Root>
           {isLoadingProfile ? (
-            // Skeleton representation for interests tags
             <Flex gap="8px">
               <Skeleton height="24px" width="80px" borderRadius="md" />
               <Skeleton height="24px" width="100px" borderRadius="md" />
               <Skeleton height="24px" width="90px" borderRadius="md" />
-              {/* Add or remove skeletons based on expected number of tags */}
             </Flex>
           ) : Array.isArray(delegate?.interests) ? (
-            delegate?.interests?.map((item: any) => (
-              <SummaryItems.Tags
-                key={item}
-                type={delegateInterests[item] || item}
-              />
-            ))
+            delegate?.interests?.map((item: any) => {
+              const interestValue =
+                typeof item === "string" ? item : item.value;
+              return (
+                <SummaryItems.Tags
+                  key={interestValue}
+                  type={delegateInterests[interestValue] || interestValue}
+                />
+              );
+            })
           ) : (
             <></>
           )}

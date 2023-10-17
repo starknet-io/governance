@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Skeleton, Tooltip } from "@chakra-ui/react";
+import { Box, Flex, Icon, Skeleton } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 
 import { Text } from "../Text";
@@ -15,6 +15,7 @@ import {
   TwitterIcon,
   TelegramIcon,
 } from "src/Icons";
+import { Tooltip } from "src/Tooltip";
 // import type { delegateTypeEnum } from '@yukilabs/governance-backend/src/db/schema/delegates';
 
 type RootProps = {
@@ -170,7 +171,7 @@ type SocialsProps = {
 const platformBaseUrl = {
   twitter: "https://twitter.com/",
   github: "https://github.com/",
-  discourse: "https://discourse.org/", // Replace with correct discourse URL
+  discourse: "https://community.starknet.io/u/", // Replace with correct discourse URL
   discord: "https://discord.com/", // Replace with correct discord URL
   telegram: "https://t.me/",
 };

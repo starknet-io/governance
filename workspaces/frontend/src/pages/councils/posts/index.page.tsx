@@ -15,7 +15,7 @@ import {
   MarkdownRenderer,
   Text,
   Username,
-  AvatarWithText,
+  Skeleton,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -24,16 +24,22 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 
 export function Page() {
   const pageContext = usePageContext();
-  const postResp = trpc.posts.getPostById.useQuery({
-    id: Number(pageContext.routeParams!.id),
+  const postResp = trpc.posts.getPostBySlug.useQuery({
+    slug: pageContext.routeParams!.postSlug,
   });
 
-  const { data: post } = postResp;
+  const { data: post, isLoading: postLoading } = postResp;
   const { user } = usePageContext();
 
-  const comments = trpc.posts.getPostComments.useQuery({
-    postId: pageContext.routeParams!.id,
-  });
+  const comments = trpc.posts.getPostComments.useQuery(
+    {
+      postId: post?.id as number,
+    },
+    {
+      enabled: !!post?.id,
+    },
+  );
+  const { data: commentsData, isLoading: commentsLoading } = comments;
 
   const saveComment = trpc.comments.saveComment.useMutation({
     onSuccess: () => {
@@ -45,7 +51,7 @@ export function Page() {
     try {
       await saveComment.mutateAsync({
         content: value,
-        postId: parseInt(pageContext.routeParams!.id),
+        postId: post?.id,
       });
     } catch (error) {
       // Handle error
@@ -87,7 +93,6 @@ export function Page() {
       // Handle error
       console.log(error);
     }
-    console.log(content);
   };
 
   const handleCommentDelete = async ({ commentId }: { commentId: number }) => {
@@ -113,7 +118,7 @@ export function Page() {
       await saveComment.mutateAsync({
         content,
         parentId,
-        postId: parseInt(pageContext.routeParams!.id),
+        postId: post?.id,
       });
     } catch (error) {
       // Handle error
@@ -155,64 +160,81 @@ export function Page() {
               direction={{ base: "column" }}
               color="content.default.default"
             >
-              <Box display="flex" alignItems="center">
-                <Box flex="1">
-                  <Heading
-                    color="content.accent.default"
-                    variant="h2"
-                    maxWidth="90%"
-                    mb="16px"
-                  >
-                    {post?.title}
-                  </Heading>
+              {postLoading ? (
+                <Box display="flex" flexDirection="column" gap="12px">
+                  <Skeleton height="60px" width="100%" />
+                  <Skeleton height="40px" width="100%" />
                 </Box>
-                {hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-                  <ProfileSummaryCard.MoreActions>
-                    <MenuItem as="a" href={`/councils/posts/edit/${post?.id}`}>
-                      Edit
-                    </MenuItem>
-                  </ProfileSummaryCard.MoreActions>
-                ) : (
-                  <></>
-                )}
-              </Box>
+              ) : (
+                <>
+                  <Box display="flex" alignItems="center">
+                    <Box flex="1">
+                      <Heading
+                        color="content.accent.default"
+                        variant="h2"
+                        maxWidth="90%"
+                        mb="16px"
+                      >
+                        {post?.title}
+                      </Heading>
+                    </Box>
+                    {hasPermission(user?.role, [
+                      ROLES.ADMIN,
+                      ROLES.MODERATOR,
+                    ]) ? (
+                      <ProfileSummaryCard.MoreActions>
+                        <MenuItem
+                          as="a"
+                          href={`/councils/${
+                            pageContext.routeParams!.slug
+                          }/posts/${post?.slug}/edit`}
+                        >
+                          Edit
+                        </MenuItem>
+                      </ProfileSummaryCard.MoreActions>
+                    ) : (
+                      <></>
+                    )}
+                  </Box>
+                  <Flex
+                    mb="24px"
+                    gap="standard.xs"
+                    paddingTop="0"
+                    alignItems="center"
+                  >
+                    <Username
+                      address={post?.author?.address}
+                      displayName={
+                        post?.author?.username ??
+                        post?.author?.ensName ??
+                        formattedAddress
+                      }
+                      src={
+                        post?.author?.profileImage ??
+                        post?.author?.ensAvatar ??
+                        null
+                      }
+                    />
 
-              <Flex
-                mb="24px"
-                gap="standard.xs"
-                paddingTop="0"
-                alignItems="center"
-              >
-                <Username
-                  address={post?.author?.address}
-                  displayName={
-                    post?.author?.username ??
-                    post?.author?.ensName ??
-                    formattedAddress
-                  }
-                  src={
-                    post?.author?.profileImage ??
-                    post?.author?.ensAvatar ??
-                    null
-                  }
-                />
+                    <Text variant="small" color="content.default.default">
+                      •
+                    </Text>
+                    <Stat.Root>
+                      <Stat.Date date={post?.createdAt} />
+                    </Stat.Root>
+                    <Text variant="small" color="content.default.default">
+                      •
+                    </Text>
+                    <Stat.Root>
+                      <Stat.Link
+                        href="#discussion"
+                        label={`${post?.comments.length} comments`}
+                      />
+                    </Stat.Root>
+                  </Flex>
+                </>
+              )}
 
-                <Text variant="small" color="content.default.default">
-                  •
-                </Text>
-                <Stat.Root>
-                  <Stat.Date date={post?.createdAt} />
-                </Stat.Root>
-                <Text variant="small" color="content.default.default">
-                  •
-                </Text>
-                <Stat.Root>
-                  <Stat.Link
-                    href="#discussion"
-                    label={`${post?.comments.length} comments`}
-                  />
-                </Stat.Root>
-              </Flex>
               <Divider />
 
               <Box mt="standard.2xl">
@@ -237,13 +259,23 @@ export function Page() {
               ) : (
                 <></>
               )}
-              <CommentList
-                commentsList={comments?.data || []}
-                onVote={handleCommentVote}
-                onReply={handleReplySend}
-                onDelete={handleCommentDelete}
-                onEdit={handleCommentEdit}
-              />
+              {commentsLoading ? (
+                // Skeleton representation for comments loading state
+                <Box display="flex" flexDirection="column" gap="20px">
+                  <Skeleton height="40px" width="100%" />
+                  <Skeleton height="40px" width="100%" />
+                  <Skeleton height="40px" width="100%" />
+                </Box>
+              ) : (
+                // Actual comments content
+                <CommentList
+                  commentsList={commentsData || []}
+                  onVote={handleCommentVote}
+                  onReply={handleReplySend}
+                  onDelete={handleCommentDelete}
+                  onEdit={handleCommentEdit}
+                />
+              )}
             </Stack>
           </Box>
         </ContentContainer>

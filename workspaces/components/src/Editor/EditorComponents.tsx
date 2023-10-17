@@ -121,15 +121,21 @@ interface ToolbarProps extends BaseProps {
 }
 
 const toolbarStyles: BoxProps = {
+  backgroundColor: 'rgb(251, 251, 251)',
   position: "absolute",
-  bottom: "12px",
-  left: "12px",
-  right: "12px",
-  height: "32px",
+  height: "48px",
   display: "flex",
   alignItems: 'center',
+  padding: '12px',
   gap: "4px",
   zIndex: 1,
+  width: '100%',
+  bottom: 0,
+  left: 0,
+  borderBottom: '1px solid rgba(35, 25, 45, 0.10)',
+  borderLeft: '1px solid rgba(35, 25, 45, 0.10)',
+  borderRight: '1px solid rgba(35, 25, 45, 0.10)',
+  borderRadius: '4px'
 };
 
 export const Toolbar = forwardRef<BoxProps, PropsWithChildren<ToolbarProps>>(
