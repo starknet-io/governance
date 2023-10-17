@@ -239,15 +239,11 @@ function LayoutDefault(props: Props) {
                     <SearchIcon />
                   </Flex>
                 </Show>
-                <Box
-                  display={{ base: "flex" }}
-                  width="161.31px"
-                  marginLeft="auto"
-                >
+                <Box display={{ base: "flex" }} marginLeft="auto">
                   {renderDone ? (
                     <DynamicCustomWidget />
                   ) : (
-                    <Skeleton width="100%" height="36px" />
+                    <Skeleton width="100px" height="36px" />
                   )}
                 </Box>
               </Flex>

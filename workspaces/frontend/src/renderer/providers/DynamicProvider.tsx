@@ -9,7 +9,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { trpc } from "src/utils/trpc";
 import { cssOverrides } from "src/components/style/overrides";
 
-
 interface Props {
   // readonly pageContext: PageContext;
   readonly children: React.ReactNode;
