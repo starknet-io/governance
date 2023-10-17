@@ -12,6 +12,10 @@ const pending = defineStyle({
   background: "component.tag.pending.surface",
   color: "component.tag.pending.content",
 });
+const banned = defineStyle({
+  background: "component.tag.withdrawn.surface",
+  color: "component.tag.withdrawn.content",
+});
 const draft = defineStyle({
   background: "component.tag.draft.surface",
   color: "component.tag.draft.content",
@@ -121,5 +125,6 @@ export const badgeTheme = defineStyleConfig({
     stagnant,
     living,
     amount,
+    banned,
   },
 });

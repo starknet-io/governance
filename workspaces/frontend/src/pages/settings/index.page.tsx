@@ -29,7 +29,7 @@ import {
   userRoleEnum,
 } from "@yukilabs/governance-backend/src/db/schema/users";
 import { trpc } from "src/utils/trpc";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { DocumentProps, ROLES } from "src/renderer/types";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
@@ -145,12 +145,14 @@ export function Page() {
 
   const handleEditOpen = (user: User) => {
     setSelectedUser(user);
+    setEditError("")
     onEditOpen();
   };
 
   const handleEditClose = () => {
     setSelectedUser(null);
     onEditClose();
+    setEditError("")
     if (selectRef.current) {
       selectRef.current.value = "user";
     }
@@ -180,8 +182,14 @@ export function Page() {
     }
   };
 
-  const nonBannedUsers = (users?.data || []).filter((user) => !user.banned);
-  const bannedUsers = (users?.data || []).filter((user) => user.banned);
+  const usersList = users?.data || [];
+  const sortedUsersList = useMemo(() => {
+    return (users?.data || []).sort((a, b) => {
+      const aValue = a.banned ? 1 : 0;
+      const bValue = b.banned ? 1 : 0;
+      return aValue - bValue;
+    });
+  }, [users?.data]);
 
   return (
     <ContentContainer maxWidth="800" center>
@@ -348,7 +356,7 @@ export function Page() {
                 Users
               </Heading>
               <ListRow.Container>
-                {nonBannedUsers.map((data) => (
+                {sortedUsersList.map((data) => (
                   <ListRow.Root key={data.id}>
                     <Box flex="1">
                       <Text variant="cardBody" noOfLines={1}>
@@ -359,6 +367,9 @@ export function Page() {
                       <Text variant="cardBody" noOfLines={1}>
                         {data.role}
                       </Text>
+                    </Box>
+                    <Box flex="1">
+                      {data.banned ? <ListRow.Status status="banned" /> : null}
                     </Box>
                     <Box flex="1" justifyContent="flex-end" display="flex">
                       <IconButton
@@ -376,47 +387,6 @@ export function Page() {
                     </Box>
                   </ListRow.Root>
                 ))}
-              </ListRow.Container>
-            </Box>
-            <Box mt="24px">
-              <Heading variant="h3" mb="36px" fontSize="28px">
-                Banned Users
-              </Heading>
-              <ListRow.Container>
-                {bannedUsers.length ? (
-                  <>
-                    {bannedUsers.map((data) => (
-                      <ListRow.Root key={data.id}>
-                        <Box flex="1">
-                          <Text variant="cardBody" noOfLines={1}>
-                            {data.ensName || truncateAddress(data.address)}
-                          </Text>
-                        </Box>
-                        <Box flex="1">
-                          <Text variant="cardBody" noOfLines={1}>
-                            {data.role}
-                          </Text>
-                        </Box>
-                        <Box flex="1" justifyContent="flex-end" display="flex">
-                          <IconButton
-                            aria-label="Edit user role"
-                            icon={<PencilIcon />}
-                            variant="ghost"
-                            onClick={() => handleEditOpen(data)}
-                          />
-                          <IconButton
-                            aria-label="Delete user role"
-                            icon={<TrashIcon />}
-                            variant="ghost"
-                            onClick={() => handleDeleteOpen(data)}
-                          />
-                        </Box>
-                      </ListRow.Root>
-                    ))}
-                  </>
-                ) : (
-                  "No Entries"
-                )}
               </ListRow.Container>
             </Box>
           </Box>

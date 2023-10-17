@@ -94,11 +94,15 @@ export const usersRouter = router({
         where: eq(users.address, opts.input.address.toLowerCase()),
       });
       if (user) {
-        if (user.role === 'moderator' || user.role === 'admin') {
-          throw new Error('Cannot ban moderator or admin');
-        }
-        if (user.address.toLowerCase() === opts.input.address.toLowerCase()) {
-          throw new Error('Cannot ban yourself');
+        if (opts.input.banned) {
+          if (user.role === 'moderator' || user.role === 'admin') {
+            throw new Error('Cannot ban moderator or admin');
+          }
+          if (
+            user.address.toLowerCase() === opts.ctx.user.address.toLowerCase()
+          ) {
+            throw new Error('Cannot ban yourself');
+          }
         }
         const updatedUser = await db
           .update(users)
