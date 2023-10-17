@@ -253,7 +253,9 @@ function LayoutDefault(props: Props) {
               </Flex>
             </Flex>
           </Box>
-          {children}
+          <Box as="main" role="main" flex={1}>
+            {children}
+          </Box>
         </Flex>
       </Flex>
     </>
