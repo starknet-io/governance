@@ -53,52 +53,47 @@ export const AvatarWithText = ({
     );
   }
   return (
-    <Box
-      sx={{
-        width: "100%",
-
-        // containerType: "inline-size",
-        // zIndex: "0",
-      }}
+    <Flex
+      gap="standard.sm"
+      alignItems="center"
+      position={"relative"}
+      overflow="hidden"
     >
-      <Flex
-        gap="standard.sm"
-        alignItems="center"
-        width="100%"
-        overflowX="hidden"
-      >
-        <Box>
-          {src !== null ? (
-            <Avatar size="xlg" src={src} />
-          ) : (
-            <Indenticon size={64} address={address} />
-          )}
-        </Box>
-        <Flex width="100%" overflow="hidden">
-          <Flex flexDirection={"column"} justifyContent={"center"} width="100%">
-            <Heading
-              color="content.accent.default"
-              lineHeight="24px"
-              variant="h3"
-              mb="standard.2xs"
-              noOfLines={1}
-              width={"100%"}
-            >
-              {headerText}
-            </Heading>
-            <Text color="content.default.default" variant="small">
-              {subheaderText}
-            </Text>
-          </Flex>
-        </Flex>
-        <Flex width="44px" height="64px">
-          {dropdownChildren === null ? null : (
-            <Dropdown buttonIcon={<EllipsisIcon boxSize="20px" />}>
-              {dropdownChildren}
-            </Dropdown>
-          )}
-        </Flex>
+      <Box>
+        {src !== null ? (
+          <Avatar variant="withBorder" size="xlg" src={src} />
+        ) : (
+          <Indenticon size={66} address={address} />
+        )}
+      </Box>
+
+      <Flex flexDirection={"column"} justifyContent={"center"} flex={1}>
+        <Heading
+          color="content.accent.default"
+          lineHeight="24px"
+          variant="h3"
+          mb="standard.2xs"
+          width={{ base: "100%", lg: "80%" }}
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {headerText}
+        </Heading>
+        <Text color="content.default.default" variant="small">
+          {subheaderText}
+        </Text>
       </Flex>
-    </Box>
+
+      <Box width="44px" height="44px" position="absolute" top="0" right="0">
+        {dropdownChildren === null ? null : (
+          <Dropdown buttonIcon={<EllipsisIcon boxSize="20px" />}>
+            {dropdownChildren}
+          </Dropdown>
+        )}
+      </Box>
+    </Flex>
   );
 };
