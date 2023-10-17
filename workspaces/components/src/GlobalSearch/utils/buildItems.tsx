@@ -144,7 +144,6 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
   const { data: proposalData } = trpc.proposals.getProposalById.useQuery(
     { id: data.refID! as string },
   );
-
   return (
     <Flex mb="2">
       <Flex
@@ -188,8 +187,8 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
                 {proposalData.status}
               </Badge>
               <Text fontSize="smaller" color="#4A4A4F">
-                {format(proposalData.startDate, 'd MMM yyyy')} • {proposalData.comments} 
-                {' '}comments • {proposalData.category}
+                {format(new Date(proposalData.startDate * 1000), 'yyyy-MM-dd')} • {proposalData.comments}
+                {' '}comments
               </Text>
             </>
           ) : (

@@ -32,6 +32,38 @@ const graphQLClient = new GraphQLClient(endpoint, {
   method: `GET`,
 });
 
+//GraphQL
+const GET_PROPOSALS_BY_ID = gql`
+  query proposals(
+    $space: String!
+    $searchQuery: String = ""
+    $ids: [String!] = []
+    $first: Int = 20
+    $skip: Int = 0
+  ) {
+    proposals(
+      first: $first
+      skip: $skip
+      where: { space: $space, title_contains: $searchQuery, id_in: $ids }
+    ) {
+      id
+      title
+      choices
+      start
+      end
+      snapshot
+      state
+      scores
+      scores_total
+      author
+      space {
+        id
+        name
+      }
+    }
+  }
+`;
+
 const GET_PROPOSALS = gql`
   query proposals(
     $space: String!

@@ -29,6 +29,19 @@ async function saveObjectToIndex(data: RecordData) {
   }
 }
 
+async function saveObjectsToIndex(data: RecordData[]) {
+  try {
+    const objects = data.map(item => ({
+      ...item,
+      objectID: `${item.type}-${item.refID}`
+    }));
+    await index.saveObjects(objects).wait();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 async function updateObjectFromIndex(data: RecordData) {
   try {
     await index.partialUpdateObject({
@@ -58,4 +71,5 @@ export const Algolia = {
   saveObjectToIndex,
   deleteObjectFromIndex,
   updateObjectFromIndex,
+  saveObjectsToIndex,
 };
