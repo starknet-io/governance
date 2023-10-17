@@ -71,7 +71,7 @@ export async function createLearnSections(userId: string | null) {
     await Algolia.saveObjectToIndex({
       name: page.title || '',
       type: 'learn',
-      refID: slugify(title, { replacement: '_', lower: true }),
+      refID: page.id,
       content: page.content || '',
     });
   }

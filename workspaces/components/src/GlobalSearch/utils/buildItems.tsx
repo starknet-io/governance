@@ -4,6 +4,7 @@ import VotingProposalIcon from "../assets/voting_proposal_icon.svg";
 import LearnIcon from "../assets/learn_icon.svg";
 import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
 import { format } from "date-fns";
+import slugify from "slugify";
 
 export type SearchItemType =
   | "voting_proposal"
@@ -13,7 +14,7 @@ export type SearchItemType =
 type BuildItemsType = "item-list" | "grouped-items";
 
 export interface ISearchItem {
-  name: number;
+  name: string;
   type: SearchItemType;
   objectID: string;
   refID: string | number;
@@ -33,7 +34,18 @@ const HrefItems: Record<SearchItemType, string> = {
   delegate: "/delegates",
 };
 
-export function getSearchItemHref(type: SearchItemType, id: number | string) {
+export function getSearchItemHref(
+  type: SearchItemType,
+  id: number | string,
+  title?: string,
+) {
+  if (type === "learn" && title) {
+    const sluggedTitle = slugify(title ?? "", {
+      replacement: "_",
+      lower: true,
+    });
+    return `${HrefItems[type]}/${sluggedTitle}`;
+  }
   const href = `${HrefItems[type]}/${id}`;
   return href;
 }
@@ -141,9 +153,9 @@ function buildGroupList(
 }
 
 function VotingProposalItem({ data }: { data: ISearchItem }) {
-  const { data: proposalData } = trpc.proposals.getProposalById.useQuery(
-    { id: data.refID! as string },
-  );
+  const { data: proposalData } = trpc.proposals.getProposalById.useQuery({
+    id: data.refID! as string,
+  });
   return (
     <Flex mb="2">
       <Flex
@@ -187,8 +199,8 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
                 {proposalData.status}
               </Badge>
               <Text fontSize="smaller" color="#4A4A4F">
-                {format(new Date(proposalData.startDate * 1000), 'yyyy-MM-dd')} • {proposalData.comments}
-                {' '}comments
+                {format(new Date(proposalData.startDate * 1000), "yyyy-MM-dd")}{" "}
+                • {proposalData.comments} comments
               </Text>
             </>
           ) : (
@@ -297,7 +309,7 @@ function HoverBox({
   data: ISearchItem;
   isHighlightedItem?: boolean;
 }) {
-  let href = getSearchItemHref(data.type, data.refID);
+  let href = getSearchItemHref(data.type, data.refID, data.name);
 
   if (data.type === "delegate") {
     href = href.replace("/delegates/", "/delegates/profile/");
