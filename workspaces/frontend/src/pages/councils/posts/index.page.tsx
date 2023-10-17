@@ -15,6 +15,8 @@ import {
   Text,
   Username,
   Skeleton,
+  Dropdown,
+  EllipsisIcon,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -194,7 +196,7 @@ export function Page() {
                 </Box>
               ) : (
                 <>
-                  <Box display="flex" alignItems="center" overflow="hidden">
+                  <Box display="flex" alignItems="center" position={"relative"}>
                     <Box flex="1">
                       <Heading
                         color="content.accent.default"
@@ -209,16 +211,24 @@ export function Page() {
                       ROLES.ADMIN,
                       ROLES.MODERATOR,
                     ]) ? (
-                      <ProfileSummaryCard.MoreActions>
-                        <MenuItem
-                          as="a"
-                          href={`/councils/${
-                            pageContext.routeParams!.slug
-                          }/posts/${post?.slug}/edit`}
-                        >
-                          Edit
-                        </MenuItem>
-                      </ProfileSummaryCard.MoreActions>
+                      <Box
+                        width="44px"
+                        height="44px"
+                        position="absolute"
+                        top="0"
+                        right="0"
+                      >
+                        <Dropdown buttonIcon={<EllipsisIcon boxSize="20px" />}>
+                          <MenuItem
+                            as="a"
+                            href={`/councils/${
+                              pageContext.routeParams!.slug
+                            }/posts/${post?.slug}/edit`}
+                          >
+                            Edit
+                          </MenuItem>
+                        </Dropdown>
+                      </Box>
                     ) : (
                       <></>
                     )}

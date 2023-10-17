@@ -14,6 +14,7 @@ import {
   Skeleton,
   Text,
   Username,
+  Dropdown,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useMemo, useState } from "react";
@@ -23,6 +24,7 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { PageWithChildren } from "@yukilabs/governance-backend/src/utils/buildLearnHierarchy";
 import {
+  EllipsisIcon,
   PlusIcon,
   ReOrderIcon,
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
@@ -206,7 +208,7 @@ export function Page() {
                   width="100%"
                   justifyContent="space-between"
                   mb="standard.md"
-                  overflow={{ base: "hidden", md: "visible" }}
+                  position={"relative"}
                 >
                   <Heading variant="h2" maxWidth="90%">
                     {selectedPage?.title ?? "Select a page"}
@@ -216,15 +218,21 @@ export function Page() {
                     ROLES.ADMIN,
                     ROLES.MODERATOR,
                   ]) && (
-                    <Box>
-                      <ProfileSummaryCard.MoreActions>
+                    <Box
+                      width="44px"
+                      height="44px"
+                      position="absolute"
+                      top="0"
+                      right="0"
+                    >
+                      <Dropdown buttonIcon={<EllipsisIcon boxSize="20px" />}>
                         <MenuItem
                           as="a"
                           href={`/learn/edit/${selectedPage?.id}`}
                         >
                           Edit
                         </MenuItem>
-                      </ProfileSummaryCard.MoreActions>
+                      </Dropdown>
                     </Box>
                   )}
                 </Box>
