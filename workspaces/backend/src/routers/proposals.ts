@@ -6,6 +6,7 @@ import { comments } from '../db/schema/comments';
 import { z } from 'zod';
 import { proposals } from '../db/schema/proposals';
 import { createInsertSchema } from 'drizzle-zod';
+import { Algolia } from '../utils/algolia';
 
 type CategoryEnum = 'category1' | 'category2' | 'category3';
 
@@ -30,6 +31,38 @@ const space = 'robwalsh.eth';
 const graphQLClient = new GraphQLClient(endpoint, {
   method: `GET`,
 });
+
+//GraphQL
+const GET_PROPOSALS_BY_ID = gql`
+  query proposals(
+    $space: String!
+    $searchQuery: String = ""
+    $ids: [String!] = []
+    $first: Int = 20
+    $skip: Int = 0
+  ) {
+    proposals(
+      first: $first
+      skip: $skip
+      where: { space: $space, title_contains: $searchQuery, id_in: $ids }
+    ) {
+      id
+      title
+      choices
+      start
+      end
+      snapshot
+      state
+      scores
+      scores_total
+      author
+      space {
+        id
+        name
+      }
+    }
+  }
+`;
 
 const GET_PROPOSALS = gql`
   query proposals(
@@ -90,14 +123,62 @@ const populateProposalsWithComments = async (
 
 export const proposalsRouter = router({
   createProposal: protectedProcedure
-    .input(createInsertSchema(proposals).omit({ id: true })) // Adjust as needed
+    .input(
+      createInsertSchema(proposals)
+        .extend({
+          title: z.string().optional(),
+          discussion: z.string().optional(),
+        })
+        .omit({ id: true }),
+    ) // Adjust as needed
     .mutation(async (opts) => {
       const insertedProposal = await db
         .insert(proposals)
-        .values(opts.input)
+        .values({
+          proposalId: opts.input.proposalId,
+          category: opts.input.category,
+        })
         .returning();
-      return insertedProposal[0];
+
+      const newItem = insertedProposal?.[0];
+      await Algolia.saveObjectToIndex({
+        name: opts.input.title ?? '',
+        content: opts.input.discussion ?? '',
+        type: 'voting_proposal',
+        refID: opts.input.proposalId,
+      });
+
+      return newItem;
     }),
+
+  getProposalById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async (opts) => {
+      const ourProposalData = await db.query.proposals.findFirst({
+        where: eq(proposals.proposalId, opts.input.id),
+      });
+      const { proposals: queriedProposals } = (await graphQLClient.request(
+        GET_PROPOSALS_BY_ID,
+        {
+          ids: [opts.input.id],
+          space,
+        },
+      )) as { proposals: IProposal[] };
+      const totalComments = await db.query.comments.findMany({
+        where: eq(proposals.proposalId, opts.input.id),
+      })
+      const proposal = queriedProposals[0];
+
+      return {
+        status: proposal.state,
+        comments: totalComments.length,
+        category: ourProposalData?.category,
+        startDate: proposal.start,
+        backendProposalData: ourProposalData,
+        proposal,
+      };
+    }),
+
   getProposals: publicProcedure
     .input(
       z

@@ -7,6 +7,7 @@ import {
   DrawerContent,
   DrawerOverlay,
   IconButton,
+  Flex,
   Show,
   Spinner,
   useDisclosure,
@@ -16,6 +17,7 @@ import { useHelpMessage } from "src/hooks/HelpMessage";
 import { useEffect, useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { trpc } from "src/utils/trpc";
+import { useGlobalSearch } from "src/hooks/GlobalSearch";
 import TallyScript from "src/components/TallyScript";
 import {
   FeedbackIcon,
@@ -27,6 +29,8 @@ import {
   ShareDialog,
   SupportModal,
   Text,
+  GlobalSearch,
+  SearchIcon,
 } from "@yukilabs/governance-components";
 import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
 import { NavigationMenu } from "src/components/Navigation";
@@ -64,6 +68,9 @@ function LayoutDefault(props: Props) {
       /* no cleanup to run */
     };
   }, [helpMessage, setHelpMessage]);
+
+  const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
+  const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
 
   return (
     <>
@@ -104,7 +111,6 @@ function LayoutDefault(props: Props) {
           <Box display={{ base: "none", lg: "flex" }}>
             {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
-
           <DrawerBody px="12px" py="16px" pt="0" mt="48px">
             <NavigationMenu
               pageContext={pageContext}
@@ -175,10 +181,32 @@ function LayoutDefault(props: Props) {
                 <Logo href="/" />
               </Box>
             </Show>
+            <Show breakpoint="(max-width: 567px)">
+              <Flex
+                w="5"
+                height="5"
+                onClick={() => setIsGlobalSearchOpen(true)}
+                ml="2"
+                alignItems="center"
+                justifyContent="center"
+                position="absolute"
+                top="50%"
+                left="40px"
+                transform="translateY(-50%)"
+              >
+                <SearchIcon />
+              </Flex>
+            </Show>
 
             <Box display="flex" marginLeft="auto">
               <ShareDialog />
             </Box>
+            <GlobalSearch
+              searchResults={globalSearchResults}
+              onSearchItems={handleGlobalSearchItems}
+              isOpen={isGlobalSearchOpen}
+              setIsSearchModalOpen={setIsGlobalSearchOpen}
+            />
             <Box display={{ base: "flex" }}>
               {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
             </Box>
