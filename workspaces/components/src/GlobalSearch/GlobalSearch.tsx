@@ -115,7 +115,7 @@ export function GlobalSearch({
             alignItems="center"
             justifyContent="center"
             pointerEvents="none"
-            height="44px"
+            height="36px"
           >
             <SearchIcon />
           </InputLeftElement>
@@ -123,11 +123,11 @@ export function GlobalSearch({
             placeholder="Search"
             backgroundColor="white"
             width="238px"
-            height="44px"
+            height="36px"
             pointerEvents="none"
             paddingLeft="2.5rem"
           />
-          <InputRightElement height="44px">
+          <InputRightElement height="36px">
             <Box
               width="28px"
               height="28px"
@@ -154,7 +154,7 @@ export function GlobalSearch({
           <ModalHeader p="0" borderBottom="1px solid #23192D1A">
             <Input placeholder="" hidden />
             <InputGroup>
-              <InputLeftElement height="60px" pointerEvents='none'>
+              <InputLeftElement height="60px" pointerEvents="none">
                 <SearchIcon />
               </InputLeftElement>
               <Input
