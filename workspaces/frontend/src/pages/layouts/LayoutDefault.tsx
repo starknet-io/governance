@@ -130,7 +130,7 @@ function LayoutDefault(props: Props) {
           width="234px"
           minWidth="234px"
           height="100vh"
-          display={{ base: "none", md: "flex" }}
+          display={{ base: "none", lg: "flex" }}
           flexDirection={"column"}
           position="sticky"
           top="0"
