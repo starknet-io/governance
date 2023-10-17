@@ -60,6 +60,8 @@ export function Page() {
     handleSubmit: handleEditSubmit,
     register: editRegister,
     formState: { errors: editErrors, isValid: isEditValid },
+    setValue: setEditValue,
+    reset,
   } = useForm<RouterInput["users"]["addRoles"]>();
   const cancelRef = useRef(null);
   const {
@@ -100,15 +102,17 @@ export function Page() {
     try {
       const data = {
         address: selectedUser?.address as string,
-        role: values.role.value as string,
+        role: (values?.role?.value || selectedUser?.role || "user") as string,
         banned: values.banned as boolean,
       };
+      console.log(data);
       await addRoles.mutateAsync(data, {
         onSuccess: () => {
           users.refetch();
           onEditClose();
         },
       });
+      reset();
       setEditError("");
     } catch (error) {
       // Handle error
@@ -146,6 +150,11 @@ export function Page() {
   const handleEditOpen = (user: User) => {
     setSelectedUser(user);
     setEditError("");
+    setEditValue("role", {
+      label: user.role || "user",
+      value: user.role,
+    });
+    setEditValue("banned", !!user.banned);
     onEditOpen();
   };
 
@@ -153,6 +162,7 @@ export function Page() {
     setSelectedUser(null);
     onEditClose();
     setEditError("");
+    reset();
     if (selectRef.current) {
       selectRef.current.value = "user";
     }
@@ -182,7 +192,6 @@ export function Page() {
     }
   };
 
-  const usersList = users?.data || [];
   const sortedUsersList = useMemo(() => {
     return (users?.data || []).sort((a, b) => {
       const aValue = a.banned ? 1 : 0;
@@ -205,14 +214,13 @@ export function Page() {
           onClose={handleEditClose}
           title="Edit User Role"
           onSubmit={onSubmitEdit}
-          isValid={isEditValid}
+          isValid={true}
         >
           <FormControl id="editRole">
             <FormLabel>Role</FormLabel>
             <Controller
               name="role"
               control={control}
-              rules={{ required: true }}
               render={({ field }) => (
                 <Select
                   size="sm"
@@ -249,7 +257,6 @@ export function Page() {
                 </Checkbox>
               )}
             />
-            {editErrors.role && <span>This field is required.</span>}
           </FormControl>
           {editError && editError.length && (
             <Box mt={4}>
