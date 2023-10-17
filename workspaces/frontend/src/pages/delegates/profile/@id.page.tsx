@@ -460,6 +460,7 @@ export function Page() {
             pageContext={pageContext}
           />
         </Box>
+
         {isLoadingProfile ? (
           <Box display="flex" flexDirection="column" gap="12px" mb="18px">
             <Flex gap="20px" alignItems="center">
@@ -505,9 +506,9 @@ export function Page() {
 
         {user && !delegateOwnProfile ? (
           <Button
-            mt="standard.2xl"
+            mt={{ base: "standard.2xl" }}
             mb="0"
-            width="100%"
+            width={{ base: "100%" }}
             variant="primary"
             size="standard"
             onClick={() => {
