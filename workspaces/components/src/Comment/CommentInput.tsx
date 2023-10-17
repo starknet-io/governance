@@ -70,6 +70,7 @@ export const CommentInput = ({
         size="sm"
         type="submit"
         onClick={handleSend}
+        disabled={!editorValue?.trim?.()}
       >
         {isEdit ? "Save" : "Send"}
       </Button>
