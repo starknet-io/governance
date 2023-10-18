@@ -206,12 +206,8 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
                 alignItems="center"
                 justifyContent="center"
                 mr="2"
-                borderRadius="base"
-                backgroundColor={
-                  proposalData.status === "active"
-                    ? "component.tag.active.surface"
-                    : "component.tag.pending.surface"
-                }
+                borderRadius="standard.base"
+                variant={proposalData.status}
                 fontSize="10px"
                 p="1"
               >

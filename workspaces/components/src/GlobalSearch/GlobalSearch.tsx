@@ -23,7 +23,7 @@ import {
   useState,
 } from "react";
 import { CloseIcon, SearchIcon } from "src/Icons/UiIcons";
-import EmptyState from "./assets/img.svg";
+import EmptyState from "./assets/no-data-found.png";
 import {
   ISearchItem,
   buildSearchItems,
@@ -237,15 +237,10 @@ export function GlobalSearch({
               >
                 <Image
                   maxWidth="280px"
-                  maxHeight="280px"
-                  aspectRatio="1/1"
+                  maxHeight="232px"
                   src={EmptyState}
                 />
                 <Text fontWeight="semibold">No data to display</Text>
-                <Text fontSize="xs" fontWeight="medium">
-                  Apply different filters or criteria to find the data
-                  you&apos;re looking for.
-                </Text>
               </Flex>
             </ModalBody>
           )}
