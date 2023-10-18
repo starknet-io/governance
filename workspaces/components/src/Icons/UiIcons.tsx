@@ -430,13 +430,59 @@ export const TrashIcon = ({ color, ...rest }: UiIconProps) => (
   </Icon>
 );
 
+export const RemovedIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 20 20" {...rest}>
+    <rect width="20" height="20" fill="white" fillOpacity="0.01" />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M7.20687 6.87371C7.20687 5.3311 8.45741 4.08057 10 4.08057C11.5426 4.08057 12.7932 5.3311 12.7932 6.87371C12.7932 8.41632 11.5426 9.66685 10 9.66685C8.45741 9.66685 7.20687 8.41632 7.20687 6.87371ZM10 2.58057C7.62898 2.58057 5.70687 4.50267 5.70687 6.87371C5.70687 9.24475 7.62898 11.1669 10 11.1669C12.3711 11.1669 14.2932 9.24475 14.2932 6.87371C14.2932 4.50267 12.3711 2.58057 10 2.58057ZM4.08057 16.6694C4.08057 15.012 5.42465 13.6679 7.08213 13.6679H9.23553C9.64974 13.6679 9.98553 13.3321 9.98553 12.9179C9.98553 12.5037 9.64974 12.1679 9.23553 12.1679H7.08213C4.59622 12.1679 2.58057 14.1835 2.58057 16.6694C2.58057 17.0837 2.91635 17.4194 3.33057 17.4194C3.74478 17.4194 4.08057 17.0837 4.08057 16.6694ZM15.0021 13.2511C14.0324 13.2511 13.2511 14.0324 13.2511 15.0021C13.2511 15.2091 13.2866 15.4074 13.3521 15.5915L15.5915 13.3521C15.4074 13.2866 15.2091 13.2511 15.0021 13.2511ZM16.6521 14.4127L14.4127 16.6521C14.5968 16.7175 14.7951 16.7531 15.0021 16.7531C15.9718 16.7531 16.7531 15.9718 16.7531 15.0021C16.7531 14.7951 16.7176 14.5968 16.6521 14.4127ZM11.7511 15.0021C11.7511 13.204 13.204 11.7511 15.0021 11.7511C16.8002 11.7511 18.2531 13.204 18.2531 15.0021C18.2531 16.8002 16.8002 18.2531 15.0021 18.2531C13.204 18.2531 11.7511 16.8002 11.7511 15.0021Z"
+      fill="#4A4A4F"
+    />
+  </Icon>
+);
+
 export const BannedIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 79 79" {...rest}>
-    <svg width="79" height="79" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="37" cy="21.2432" r="18.4243" stroke="#E4442F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M2.31885 72.181C2.31885 61.4082 11.0542 52.6729 21.827 52.6729H33.0246" stroke="#E4442F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-      <path fillRule="evenodd" clipRule="evenodd" d="M76.0162 63.5108C76.0162 70.7071 70.2071 76.5162 63.0108 76.5162C55.8145 76.5162 50.0054 70.7071 50.0054 63.5108C50.0054 56.3145 55.8145 50.5054 63.0108 50.5054C70.2071 50.5054 76.0162 56.3145 76.0162 63.5108Z" stroke="#E4442F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M53.8159 72.7056L72.2012 54.3203" stroke="#E4442F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+    <svg
+      width="79"
+      height="79"
+      viewBox="0 0 79 79"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="37"
+        cy="21.2432"
+        r="18.4243"
+        stroke="#E4442F"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M2.31885 72.181C2.31885 61.4082 11.0542 52.6729 21.827 52.6729H33.0246"
+        stroke="#E4442F"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M76.0162 63.5108C76.0162 70.7071 70.2071 76.5162 63.0108 76.5162C55.8145 76.5162 50.0054 70.7071 50.0054 63.5108C50.0054 56.3145 55.8145 50.5054 63.0108 50.5054C70.2071 50.5054 76.0162 56.3145 76.0162 63.5108Z"
+        stroke="#E4442F"
+        stroke-width="4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M53.8159 72.7056L72.2012 54.3203"
+        stroke="#E4442F"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   </Icon>
 );

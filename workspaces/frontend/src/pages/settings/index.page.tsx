@@ -40,7 +40,7 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { ethers } from "ethers";
 import { Icon, Spinner } from "@chakra-ui/react";
-import { BannedIcon } from "@yukilabs/governance-components/src/Icons";
+import {BannedIcon, RemovedIcon} from "@yukilabs/governance-components/src/Icons";
 
 const userRoleValues = userRoleEnum.enumValues;
 
@@ -513,22 +513,22 @@ export function Page() {
                       {data.banned ? <ListRow.Status status="banned" /> : null}
                     </Box>
                     <Box flex="1" justifyContent="flex-end" display="flex">
-                      <IconButton
-                        aria-label="Edit user role"
-                        icon={<PencilIcon />}
-                        variant="ghost"
-                        onClick={() => handleEditOpen(data)}
-                      />
                       {data.role !== "moderator" && data.role !== "admin" ? (
                         <IconButton
                           aria-label="Delete user role"
-                          icon={<TrashIcon />}
+                          icon={<RemovedIcon />}
                           variant="ghost"
                           onClick={() => handleBanUser(data)}
                         />
                       ) : (
                         <IconButton variant="ghost" disabled icon={null} />
                       )}
+                      <IconButton
+                        aria-label="Edit user role"
+                        icon={<PencilIcon />}
+                        variant="ghost"
+                        onClick={() => handleEditOpen(data)}
+                      />
                     </Box>
                   </ListRow.Root>
                 ))}
