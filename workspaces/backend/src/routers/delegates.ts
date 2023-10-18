@@ -90,8 +90,9 @@ export const delegateRouter = router({
       await Algolia.saveObjectToIndex({
         name: (user?.ensName || user?.address) ?? '',
         type: 'delegate',
+        avatar: user?.profileImage || user?.ensAvatar || null,
         refID: insertedDelegate[0].id,
-        content: opts.input.statement + " " + opts.input.interests
+        content: opts.input.statement + ' ' + opts.input.interests,
       });
 
       const insertedDelegateRecord = insertedDelegate[0];
@@ -238,7 +239,10 @@ export const delegateRouter = router({
             content: opts.input.statement + ' ' + opts.input?.interests,
           });
         } else {
-          console.error('User not found for delegate with ID:', updatedDelegate[0].id);
+          console.error(
+            'User not found for delegate with ID:',
+            updatedDelegate[0].id,
+          );
         }
       }
 
@@ -470,7 +474,7 @@ export const delegateRouter = router({
       await db.delete(delegates).where(eq(delegates.id, opts.input.id));
       await Algolia.deleteObjectFromIndex({
         type: 'delegate',
-        refID: opts.input.id
-      })
+        refID: opts.input.id,
+      });
     }),
 });

@@ -4,6 +4,8 @@ import { users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq, inArray } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { delegates } from '../db/schema/delegates';
+import { Algolia } from '../utils/algolia';
 
 export const usersRouter = router({
   getAll: protectedProcedure.query(() =>
@@ -68,7 +70,19 @@ export const usersRouter = router({
         })
         .where(eq(users.id, opts.input.id))
         .returning();
-      return updatedUser[0];
+      const user = updatedUser[0];
+      if (opts.input.profileImage) {
+        const delegate = await db.query.delegates.findFirst({
+          where: eq(delegates.userId, user.id),
+        });
+        if (delegate) {
+          await Algolia.updateObjectFromIndex({
+            refID: delegate.id,
+            avatar: opts.input.profileImage,
+          });
+        }
+      }
+      return user;
     }),
 
   deleteUser: publicProcedure
