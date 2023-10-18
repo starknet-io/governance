@@ -39,6 +39,7 @@ import { useFileUpload } from "src/hooks/useFileUpload";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { ethers } from "ethers";
+import { FormLayout } from "src/components/FormsCommon/FormLayout";
 import { Icon, Spinner } from "@chakra-ui/react";
 import {BannedIcon, RemovedIcon} from "@yukilabs/governance-components/src/Icons";
 
@@ -209,20 +210,20 @@ export function Page() {
     }
   };
 
-  const handleSave = () => {
-    if (!user) return;
-    editUser.mutateAsync(
-      {
-        id: user.id,
-        profileImage: imageUrl ?? "none",
-      },
-      {
-        onSuccess: () => {
-          utils.auth.currentUser.invalidate();
-        },
-      },
-    );
-  };
+  // const handleSave = () => {
+  //   if (!user) return;
+  //   editUser.mutateAsync(
+  //     {
+  //       id: user.id,
+  //       profileImage: imageUrl ?? "none",
+  //     },
+  //     {
+  //       onSuccess: () => {
+  //         utils.auth.currentUser.invalidate();
+  //       },
+  //     },
+  //   );
+  // };
 
   const isValidAddress = (address: string) => {
     try {
@@ -537,7 +538,7 @@ export function Page() {
           </Box>
         )}
       </Box>
-    </ContentContainer>
+    </FormLayout>
   );
 }
 

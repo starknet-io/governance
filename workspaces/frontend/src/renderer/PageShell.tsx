@@ -8,6 +8,7 @@ import { theme } from "@yukilabs/governance-components";
 import { MessagesProvider } from "./providers/MessagesProvider";
 import { DynamicProvider } from "./providers/DynamicProvider";
 import { layouts } from "src/pages/layouts";
+
 interface Props {
   readonly pageContext: PageContext;
   readonly apolloClient: ApolloClient<any>;

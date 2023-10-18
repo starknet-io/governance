@@ -14,8 +14,31 @@ export const LayoutOnboarding = ({ pageContext, children }: Props) => {
     setRenderDone(true);
   }, []);
   return (
-    <Box>
-      <Box display={{ base: "flex" }} p="standard.md" justifyContent="flex-end">
+    <Box height="100%">
+      <Box
+        position="sticky"
+        top="0"
+        bg="surface.bgPage"
+        zIndex={100}
+        borderBottom="1px solid"
+        borderColor="border.forms"
+        height={{ base: "60px", md: "68px" }}
+        pl={{
+          base: "standard.xs",
+          md: "standard.md",
+        }}
+        pr={{
+          base: "standard.md",
+          md: "standard.xl",
+        }}
+        py={{
+          base: "standard.sm",
+          md: "standard.sm",
+          lg: "standard.md",
+        }}
+        display={{ base: "flex" }}
+        justifyContent="flex-end"
+      >
         {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
       </Box>
 

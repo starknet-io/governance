@@ -14,7 +14,7 @@ export default defineConfig((env) => {
     },
     ssr: {
       target: "node",
-      noExternal: ["react-icons", "@apollo/client", "color-hash", "react-use"],
+      noExternal: ["@apollo/client", "color-hash", "react-use"],
     },
   } as UserConfig;
 });

@@ -14,11 +14,10 @@ import {
   CheckboxFilter,
   Popover,
   useFilterState,
-  ContentContainer,
   Link,
   Flex,
 } from "@yukilabs/governance-components";
-import { Select } from "@chakra-ui/react";
+import { Grid, Select } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -54,27 +53,6 @@ const statusFilters = {
     {
       value: "closed",
       label: "Closed",
-      count: 9,
-    },
-  ],
-};
-
-const categoriesFilters = {
-  defaultValue: [] as string[],
-  options: [
-    {
-      value: "category1",
-      label: "Category1",
-      count: 9,
-    },
-    {
-      value: "category2",
-      label: "Category2",
-      count: 9,
-    },
-    {
-      value: "category3",
-      label: "Category3",
       count: 9,
     },
   ],
@@ -230,7 +208,6 @@ export function Page() {
   const [sortBy, setSortBy] = useState<SortingTypes>("desc");
   const { user } = usePageContext();
   const state = useFilterState({
-    defaultValue: categoriesFilters.defaultValue,
     onSubmit: (filters) => {
       setFiltersState({ ...filtersState, filters });
     },
@@ -276,128 +253,139 @@ export function Page() {
   }
 
   return (
-    <ContentContainer maxWidth="1240px">
-      <Box width="100%">
-        <PageTitle
-          learnMoreLink="/learn"
-          title="Voting Proposals"
-          description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol. "
-        />
+    <Grid
+      bg="surface.bgPage"
+      templateColumns={{
+        base: "1fr",
+      }}
+      templateAreas={{
+        base: `
+          "listcontent"
+        `,
+      }}
+    >
+      <Box
+        gridArea="listcontent"
+        px={{
+          base: "standard.md",
+          md: "standard.2xl",
+        }}
+        pt={{ base: "standard.2xl", lg: "standard.3xl" }}
+        pb={{ base: "standard.2xl", lg: "standard.3xl" }}
+      >
+        <Box maxWidth={{ base: "100%", lg: "1240px" }} mx="auto">
+          <PageTitle
+            learnMoreLink="/learn"
+            title="Voting Proposals"
+            description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol. "
+          />
 
-        <AppBar.Root>
-          <AppBar.Group mobileDirection="row">
-            <Box minWidth={"52px"}>
-              <Text variant="mediumStrong">Sort by</Text>
-            </Box>
-            <Select
-              size="sm"
-              aria-label="All"
-              placeholder="All"
-              rounded="md"
-              height="36px"
-              value={sortBy}
-              onChange={(e) => {
-                setSortBy(e.target.value as SortingTypes);
-                setFiltersState((prevState) => ({
-                  ...prevState,
-                  sortBy: e.target.value as SortingTypes,
-                }));
-                refetch();
-              }}
-            >
-              {SORTING_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-            <Popover placement="bottom-start">
-              <FilterPopoverIcon
-                label="Filter by"
-                badgeContent={filtersState.filters.length}
-              />
-              <FilterPopoverContent
-                isCancelDisabled={!state.canCancel}
-                onClickApply={state.onSubmit}
-                onClickCancel={handleResetFilters}
+          <AppBar.Root>
+            <AppBar.Group mobileDirection="row">
+              <Box minWidth={"52px"}>
+                <Text variant="mediumStrong">Sort by</Text>
+              </Box>
+              <Select
+                size="sm"
+                aria-label="All"
+                placeholder="All"
+                rounded="md"
+                height="36px"
+                value={sortBy}
+                onChange={(e) => {
+                  setSortBy(e.target.value as SortingTypes);
+                  setFiltersState((prevState) => ({
+                    ...prevState,
+                    sortBy: e.target.value as SortingTypes,
+                  }));
+                  refetch();
+                }}
               >
-                <Text mt="4" mb="2" fontWeight="bold">
-                  Status
-                </Text>
-                <CheckboxFilter
-                  hideLabel
-                  value={state.value}
-                  onChange={(v) => state.onChange(v)}
-                  options={statusFilters.options}
+                {SORTING_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+              <Popover placement="bottom-start">
+                <FilterPopoverIcon
+                  label="Filter by"
+                  badgeContent={filtersState.filters.length}
                 />
-                <Text mt="4" mb="2" fontWeight="bold">
-                  Categories
-                </Text>
-                <CheckboxFilter
-                  hideLabel
-                  value={state.value}
-                  onChange={(v) => state.onChange(v)}
-                  options={categoriesFilters.options}
-                />
-              </FilterPopoverContent>
-            </Popover>
-          </AppBar.Group>
-          <AppBar.Group alignEnd>
-            <ActionButtons />
-          </AppBar.Group>
-        </AppBar.Root>
+                <FilterPopoverContent
+                  isCancelDisabled={!state.canCancel}
+                  onClickApply={state.onSubmit}
+                  onClickCancel={handleResetFilters}
+                >
+                  <Text mt="4" mb="2" fontWeight="bold">
+                    Status
+                  </Text>
+                  <CheckboxFilter
+                    hideLabel
+                    value={state.value}
+                    onChange={(v) => state.onChange(v)}
+                    options={statusFilters.options}
+                  />
+                </FilterPopoverContent>
+              </Popover>
+            </AppBar.Group>
+            <AppBar.Group alignEnd>
+              <ActionButtons />
+            </AppBar.Group>
+          </AppBar.Root>
 
-        <Box position={"relative"} mb="24px">
-          <ListRow.Container>
-            {loading ? (
-              <VotingPropsSkeleton
-                numRows={10}
-                numSkeletonsPerRow={4}
-                firstSkeletonWidth="600%"
-              />
-            ) : error ? (
-              <EmptyState
-                type="votes"
-                title="Something went wrong"
-                minHeight="300px"
-                action={
-                  <Button variant="primary" onClick={() => refetch}>
-                    Retry
-                  </Button>
-                }
-              />
-            ) : data.length > 0 ? (
-              data.map((item: any) => <Proposal key={item?.id} data={item} />)
-            ) : (
-              <Box position="absolute" inset="0">
+          <Box position={"relative"} mb="24px">
+            <ListRow.Container>
+              {loading ? (
+                <VotingPropsSkeleton
+                  numRows={10}
+                  numSkeletonsPerRow={4}
+                  firstSkeletonWidth="600%"
+                />
+              ) : error ? (
                 <EmptyState
                   type="votes"
-                  title="No voting proposals"
+                  title="Something went wrong"
                   minHeight="300px"
                   action={
-                    <Button
-                      variant="primary"
-                      as="a"
-                      href="/voting-proposals/create"
-                    >
-                      Create first voting proposal
+                    <Button variant="primary" onClick={() => refetch}>
+                      Retry
                     </Button>
                   }
                 />
-              </Box>
-            )}
-          </ListRow.Container>
+              ) : data.length > 0 ? (
+                data.map((item: any) => <Proposal key={item?.id} data={item} />)
+              ) : (
+                <Box position="absolute" inset="0">
+                  <EmptyState
+                    type="votes"
+                    title="No voting proposals"
+                    minHeight="300px"
+                    action={
+                      <Button
+                        variant="primary"
+                        as="a"
+                        href="/voting-proposals/create"
+                      >
+                        Create first voting proposal
+                      </Button>
+                    }
+                  />
+                </Box>
+              )}
+            </ListRow.Container>
+          </Box>
+          <Flex justifyContent={"flex-end"} gap="standard.base">
+            <Text pt="1px" color="content.support.default" variant="small">
+              Voting proposals powered by{" "}
+            </Text>
+            <Link size="small" href="https://snapshot.org" isExternal>
+              Snapshot
+            </Link>
+          </Flex>
         </Box>
-        <Flex justifyContent={"flex-end"} gap="standard.base">
-          <Text pt="1px" color="content.support.default" variant="small">
-            Voting proposals powered by{" "}
-          </Text>
-          <Link size="small" href="https://snapshot.org" isExternal>
-            Snapshot
-          </Link>
-        </Flex>
       </Box>
-    </ContentContainer>
+    </Grid>
   );
 }
 

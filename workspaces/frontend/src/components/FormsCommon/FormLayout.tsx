@@ -1,8 +1,20 @@
-import { Box, Grid } from "@chakra-ui/react";
-import { Delegates } from "src/components/Delegates";
-import { DocumentProps } from "src/renderer/types";
+import { ReactNode } from "react";
+import {
+  Box,
+  Flex,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Grid,
+  Heading,
+  Input,
+} from "@chakra-ui/react";
 
-export const Page = () => {
+type Props = {
+  children?: React.ReactNode;
+};
+
+export const FormLayout = ({ children }: Props) => {
   return (
     <Grid
       bg="surface.bgPage"
@@ -11,12 +23,12 @@ export const Page = () => {
       }}
       templateAreas={{
         base: `
-          "listcontent"
+          "form"
         `,
       }}
     >
       <Box
-        gridArea="listcontent"
+        gridArea="form"
         px={{
           base: "standard.md",
           md: "standard.2xl",
@@ -24,14 +36,10 @@ export const Page = () => {
         pt={{ base: "standard.2xl", lg: "standard.3xl" }}
         pb={{ base: "standard.2xl", lg: "standard.3xl" }}
       >
-        <Box maxWidth={{ base: "100%", lg: "1240px" }} mx="auto">
-          <Delegates />
+        <Box maxWidth={{ base: "100%", lg: "670px" }} mx="auto">
+          {children}
         </Box>
       </Box>
     </Grid>
   );
 };
-
-export const documentProps = {
-  title: "Delegates",
-} satisfies DocumentProps;

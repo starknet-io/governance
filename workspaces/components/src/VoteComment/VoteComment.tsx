@@ -32,7 +32,7 @@ export const VoteComment = ({
   author,
 }: Props) => {
   const formatVotes = formatVotesAmount(voteCount);
-  console.log(author)
+
   return (
     <Flex
       flexDirection="column"

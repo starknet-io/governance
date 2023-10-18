@@ -1,0 +1,1 @@
+ALTER TABLE "proposals" ALTER COLUMN "category" DROP NOT NULL;

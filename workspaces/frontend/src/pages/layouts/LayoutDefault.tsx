@@ -11,6 +11,7 @@ import {
   IconButton,
   Show,
   Flex,
+  Skeleton,
   Spinner,
   useDisclosure,
   Icon,
@@ -23,11 +24,8 @@ import { trpc } from "src/utils/trpc";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
 import TallyScript from "src/components/TallyScript";
 import {
-  FeedbackIcon,
   HamburgerIcon,
-  Header,
   InfoModal,
-  Layout,
   Logo,
   ShareDialog,
   SupportModal,
@@ -38,6 +36,8 @@ import {
 import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
 import { NavigationMenu } from "src/components/Navigation";
 import { BackButton } from "src/components/Header/BackButton";
+import { extractAndFormatSlug } from "src/utils/helpers";
+import { CloseIcon } from "@dynamic-labs/sdk-react";
 import { BannedIcon } from "@yukilabs/governance-components/src/Icons/UiIcons";
 
 export interface Props {
@@ -85,6 +85,8 @@ function LayoutDefault(props: Props) {
 
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
+
+  const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
 
   return (
     <>
@@ -134,6 +136,7 @@ function LayoutDefault(props: Props) {
         size={{ base: "full", md: "sm" }}
         placement="left"
         onClose={onClose}
+        isFullHeight
       >
         <DrawerOverlay />
         <DrawerContent>
@@ -144,7 +147,7 @@ function LayoutDefault(props: Props) {
               variant="ghost"
               size="condensed"
               //todo replace with close icon
-              icon={<div>X</div>}
+              icon={<CloseIcon />}
             />
           </Box>
           <Box display={{ base: "none", lg: "flex" }}>
@@ -161,107 +164,130 @@ function LayoutDefault(props: Props) {
         </DrawerContent>
       </Drawer>
 
-      <Layout.Root>
-        <Layout.LeftAside>
+      <Flex width="100vw" minHeight="100vh" direction="row">
+        <Box
+          bg="surface.forms.default"
+          width="234px"
+          minWidth="234px"
+          height="100vh"
+          display={{ base: "none", lg: "flex" }}
+          flexDirection={"column"}
+          position="sticky"
+          top="0"
+          // overflow={"auto"}
+          borderRight="1px solid"
+          borderColor="border.forms"
+        >
           <Logo href="/" />
-          <NavigationMenu
-            pageContext={pageContext}
-            userRole={user?.role}
-            councilData={councilResp.data}
-            openSupportModal={() => setIsModalOpen(!isModalOpen)}
-            user={user}
-          />
-        </Layout.LeftAside>
-        <Layout.Main>
-          <Header>
-            <Box display={{ base: "block", lg: "none" }}>
-              <IconButton
-                aria-label="Open menu"
-                size="condensed"
-                // toDo replace with x icon
-                icon={isOpen ? <HamburgerIcon /> : <HamburgerIcon />}
-                onClick={onOpen}
-                variant="ghost"
-              />
-            </Box>
-            <Box display={{ base: "none", lg: "block" }}>
-              <BackButton
-                urlStart="/delegates/profile/"
-                href="/delegates"
-                buttonText="Delegates"
-                pageContext={pageContext}
-              />
-              <BackButton
-                urlStart="/voting-proposals/"
-                href="/voting-proposals"
-                buttonText="Voting proposals"
-                pageContext={pageContext}
-              />
-              <BackButton
-                urlStart="/snips/"
-                href="/snips"
-                buttonText="Core snips"
-                pageContext={pageContext}
-              />
-              <BackButton
-                urlStart="/councils/"
-                href="/councils"
-                buttonText="Back to councils"
-                pageContext={pageContext}
-              />
-            </Box>
-            <Show breakpoint="(min-width: 834px)">
-              <Box
-                display={{ base: "flex", lg: "none" }}
-                flex="1"
-                alignItems={"center"}
-                justifyContent={"center"}
-              >
-                <Logo href="/" />
-              </Box>
-            </Show>
-            <Show breakpoint="(max-width: 567px)">
-              <Flex
-                w="5"
-                height="5"
-                onClick={() => setIsGlobalSearchOpen(true)}
-                ml="2"
-                alignItems="center"
-                justifyContent="center"
-                position="absolute"
-                top="50%"
-                left="40px"
-                transform="translateY(-50%)"
-              >
-                <SearchIcon />
-              </Flex>
-            </Show>
-
-            <Box display="flex" marginLeft="auto">
-              <ShareDialog />
-            </Box>
-            <GlobalSearch
-              searchResults={globalSearchResults}
-              onSearchItems={handleGlobalSearchItems}
-              isOpen={isGlobalSearchOpen}
-              setIsSearchModalOpen={setIsGlobalSearchOpen}
+          <Flex
+            flexDirection={"column"}
+            px="standard.sm"
+            flex={1}
+            pb="standard.md"
+          >
+            <NavigationMenu
+              pageContext={pageContext}
+              userRole={user?.role}
+              councilData={councilResp.data}
+              openSupportModal={() => setIsModalOpen(!isModalOpen)}
+              user={user}
             />
-            <Box display={{ base: "flex" }}>
-              {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
-            </Box>
-            <Box display={{ base: "none", lg: "none" }} marginLeft="auto">
-              <IconButton
-                aria-label="Open menu"
-                size="condensed"
-                icon={<FeedbackIcon />}
-                onClick={onOpen}
-                variant="feedback"
-              />
-            </Box>
-          </Header>
-          <Layout.Content>{children}</Layout.Content>
-        </Layout.Main>
-      </Layout.Root>
+          </Flex>
+        </Box>
+        <Flex direction="column" flex="1">
+          {/* //Header  */}
+          <Box
+            position="sticky"
+            top="0"
+            bg="surface.bgPage"
+            zIndex={100}
+            borderBottom="1px solid"
+            borderColor="border.forms"
+            height={{ base: "60px", md: "68px" }}
+            pl={{
+              base: "standard.xs",
+              md: "standard.md",
+            }}
+            pr={{
+              base: "standard.md",
+              md: "standard.xl",
+            }}
+            py={{
+              base: "standard.sm",
+              md: "standard.sm",
+              lg: "standard.md",
+            }}
+          >
+            <Flex gap="standard.xs">
+              <Box display={{ base: "block", lg: "none" }}>
+                <IconButton
+                  aria-label="Open menu"
+                  size="condensed"
+                  // toDo replace with x icon
+                  icon={isOpen ? <HamburgerIcon /> : <HamburgerIcon />}
+                  onClick={onOpen}
+                  variant="ghost"
+                />
+                <Show breakpoint="(max-width: 567px)">
+                  <IconButton
+                    aria-label="Open menu"
+                    size="condensed"
+                    icon={<SearchIcon />}
+                    onClick={() => setIsGlobalSearchOpen(true)}
+                    variant="ghost"
+                  />
+                </Show>
+              </Box>
+
+              <Box display={{ base: "none", lg: "block" }}>
+                <BackButton
+                  urlStart={["/delegates/profile/"]}
+                  href="/delegates"
+                  buttonText="Delegates"
+                  pageContext={pageContext}
+                />
+                <BackButton
+                  urlStart={["/voting-proposals/"]}
+                  href="/voting-proposals"
+                  buttonText="Voting proposals"
+                  pageContext={pageContext}
+                />
+
+                <BackButton
+                  urlStart={[
+                    "/councils/security_council/",
+                    "/councils/builder_council/",
+                  ]}
+                  buttonText={formattedSlug}
+                  pageContext={pageContext}
+                />
+              </Box>
+              <Flex gap="standard.xs " marginLeft="auto">
+                <Box display={{ base: "none", md: "flex" }}>
+                  <ShareDialog />
+                </Box>
+                <GlobalSearch
+                  searchResults={globalSearchResults}
+                  onSearchItems={handleGlobalSearchItems}
+                  isOpen={isGlobalSearchOpen}
+                  setIsSearchModalOpen={setIsGlobalSearchOpen}
+                />
+
+                <Box display={{ base: "flex" }} marginLeft="auto">
+                  {renderDone ? (
+                    <DynamicCustomWidget />
+                  ) : (
+                    <Skeleton width="100px" height="36px" />
+                  )}
+                </Box>
+              </Flex>
+            </Flex>
+          </Box>
+          <Box as="main" role="main" flex={1}>
+            {children}
+          </Box>
+        </Flex>
+      </Flex>
     </>
   );
 }

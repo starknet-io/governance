@@ -102,6 +102,7 @@ export {
   ArrowRightLargeIcon,
   StarknetOutlineIcon,
   CalendarIcon,
+  DisconnectWalletIcon,
 } from "../components/src/Icons/index";
 export { FileUploader } from "./src/FileUploader";
 export { MultiLevelReOrderableList } from "./src/MultiLevelReOrderableList";
@@ -131,6 +132,7 @@ export { Status } from "./src/Status";
 export { Link } from "./src/Link";
 export { Username } from "./src/Username";
 export { GlobalSearch } from "./src/GlobalSearch";
+export { ProfileInfoModal } from "./src/ProfileInfoModal";
 
 import * as Layout from "./src/RootLayout/RootLayout";
 import * as SummaryItems from "./src/SummaryItems/SummaryItems";
@@ -205,7 +207,7 @@ import {
   Spinner,
   InputLeftElement,
   InputRightElement,
-  Show
+  Show,
 } from "@chakra-ui/react";
 
 export {
@@ -261,5 +263,5 @@ export {
   Spinner,
   InputLeftElement,
   InputRightElement,
-  Show
+  Show,
 };

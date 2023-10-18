@@ -72,6 +72,7 @@ import {
   ArrowRightLargeIcon,
   StarknetOutlineIcon,
   CalendarIcon,
+  DisconnectWalletIcon,
 } from "./UiIcons";
 
 export {
@@ -146,4 +147,5 @@ export {
   ArrowRightLargeIcon,
   StarknetOutlineIcon,
   CalendarIcon,
+  DisconnectWalletIcon,
 };

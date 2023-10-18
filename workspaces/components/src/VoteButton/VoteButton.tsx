@@ -42,8 +42,9 @@ export const VoteButton = ({
     >
       <Flex
         gap="standard.base"
-        flexDirection="column"
-        justify="center"
+        flex={1}
+        flexDirection={{ base: "row", xl: "column" }}
+        justifyContent={{ base: "flex-start", xl: "center" }}
         alignItems="center"
       >
         {type === "For" && (

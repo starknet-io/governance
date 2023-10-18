@@ -7,7 +7,7 @@ export const categoryEnum = pgEnum('category', ['category1', 'category2', 'categ
 export const proposals = pgTable('proposals', {
   id: serial('id').primaryKey(),
   proposalId: text('proposal_id').notNull(), // Changed from uuid to text
-  category: categoryEnum('category').notNull(),
+  category: categoryEnum('category'),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),

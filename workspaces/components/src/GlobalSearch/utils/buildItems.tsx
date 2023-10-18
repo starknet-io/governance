@@ -21,7 +21,7 @@ export interface ISearchItem {
 }
 
 const GroupNames: Record<SearchItemType, string> = {
-  voting_proposal: "Voting proposal",
+  voting_proposal: "Voting proposals",
   council: "Council",
   learn: "Learn",
   delegate: "Delegate",
@@ -143,7 +143,13 @@ function buildGroupList(
   return groups.map((group) => {
     return (
       <Box key={group.type}>
-        <Text fontSize="small" fontWeight="semibold" color="#86848D" mb="2">
+        <Text
+          variant="bodyMedium"
+          fontWeight="semibold"
+          color="#86848D"
+          p="standard.sm"
+          pb="standard.base"
+        >
           {GroupNames?.[group.type] ?? ""}
         </Text>
         <Box>{buildList(group.items, highlightedItem)}</Box>
@@ -157,16 +163,16 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
     id: data.refID! as string,
   });
   return (
-    <Flex mb="2">
+    <Flex>
       <Flex
-        width="16"
-        height="16"
         borderRadius="md"
-        border="1px solid #23192D1A"
-        backgroundColor="#F4F2F4"
+        border="1px solid rgba(35, 25, 45, 0.10)"
         alignItems="center"
         justifyContent="center"
         mr="4"
+        height="min-content"
+        p="standard.md"
+        bg="surface.onBg.default"
       >
         <Image
           width="8"
@@ -176,7 +182,11 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
         />
       </Flex>
       <Flex flexDirection="column" justifyContent="center" width="100%">
-        <Text fontWeight="semibold" fontSize="sm">
+        <Text
+          fontWeight="semibold"
+          variant="bodyMedium"
+          color="content.accent.default"
+        >
           {data.name}
         </Text>
         <Flex height="20px" alignItems="center">
@@ -217,13 +227,12 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
 
 function CouncilItem({ data }: { data: ISearchItem }) {
   return (
-    <Flex mb="2">
+    <Flex>
       <Flex
         mr="4"
-        width="16"
-        height="16"
         alignItems="center"
         justifyContent="center"
+        p="standard.base"
       >
         <Box
           width="14"
@@ -246,13 +255,12 @@ function CouncilItem({ data }: { data: ISearchItem }) {
 
 function DelegateItem({ data }: { data: ISearchItem }) {
   return (
-    <Flex mb="2">
+    <Flex>
       <Flex
         mr="4"
-        width="16"
-        height="16"
         alignItems="center"
         justifyContent="center"
+        p="standard.base"
       >
         <Box
           width="14"
@@ -275,16 +283,15 @@ function DelegateItem({ data }: { data: ISearchItem }) {
 
 function LearnItem({ data }: { data: ISearchItem }) {
   return (
-    <Flex mb="2">
+    <Flex>
       <Flex
-        width="16"
-        height="16"
         borderRadius="md"
         border="1px solid #23192D1A"
-        backgroundColor="#F4F2F4"
         alignItems="center"
         justifyContent="center"
         mr="4"
+        p="standard.md"
+        bg="surface.onBg.default"
       >
         <Image width="8" height="8" src={LearnIcon} alt="learn icon" />
       </Flex>
@@ -318,11 +325,15 @@ function HoverBox({
     <Box as="a" href={href}>
       <Box
         sx={{
-          backgroundColor: isHighlightedItem ? "#4826480F" : undefined,
+          backgroundColor: isHighlightedItem
+            ? "surface.forms.hover"
+            : undefined,
         }}
         _hover={{
-          backgroundColor: "#4826480F",
+          backgroundColor: "surface.forms.hover",
         }}
+        py="standard.base"
+        px="standard.sm"
       >
         {children}
       </Box>

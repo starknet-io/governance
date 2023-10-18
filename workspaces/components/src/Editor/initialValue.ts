@@ -5,7 +5,7 @@ export interface ParagraphElement {
   children: Descendant[];
 }
 
-export const initialValue: ParagraphElement[] = [
+export const defaultInitialValue: ParagraphElement[] = [
   {
     type: "paragraph",
     children: [{ text: "" }],

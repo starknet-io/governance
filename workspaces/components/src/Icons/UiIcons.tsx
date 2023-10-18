@@ -270,6 +270,48 @@ export const PlusIcon = ({ color, ...rest }: UiIconProps) => (
     />
   </Icon>
 );
+export const DisconnectWalletIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 20 20" {...rest} fill="none">
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M8.16667 15.16V5.25248C8.16667 4.67748 7.87083 4.14332 7.38333 3.83915L4.05 1.75582C2.94 1.06248 1.5 1.85998 1.5 3.16915V13.0758C1.5 13.6508 1.79583 14.185 2.28333 14.4892L5.61667 16.5725C6.72667 17.2667 8.16667 16.4683 8.16667 15.16Z"
+      stroke={color ? color : "#4A4A4F"}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+    <path
+      d="M11.5 8.16667H16.5"
+      stroke={color ? color : "#4A4A4F"}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M14.8335 9.83333L16.5002 8.16667L14.8335 6.5"
+      stroke={color ? color : "#4A4A4F"}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8.1665 14.833H11.4998C12.4207 14.833 13.1665 14.0872 13.1665 13.1663V12.333"
+      stroke={color ? color : "#4A4A4F"}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M13.1665 4V3.16667C13.1665 2.24583 12.4207 1.5 11.4998 1.5H3.1665"
+      stroke={color ? color : "#4A4A4F"}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Icon>
+);
 export const MinusIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <g id="wrapper">
@@ -842,7 +884,14 @@ export const ShareIcon = ({ color, ...rest }: UiIconProps) => (
 );
 
 export const ProfileIcon = ({ color, ...rest }: UiIconProps) => (
-  <Icon viewBox="0 0 20 20" {...rest} height={"20px"} width={"25px"}>
+  <Icon
+    viewBox="0 0 20 20"
+    {...rest}
+    height={"20px"}
+    width={"25px"}
+    position={"relative"}
+    left={"-2px"}
+  >
     <path
       fillRule="evenodd"
       clipRule="evenodd"
