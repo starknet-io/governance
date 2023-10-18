@@ -82,7 +82,7 @@ export function adaptTreeForFrontend(
 }
 
 export const validateStarknetAddress = (address: string) => {
-  if (!address) return false;
+  if (!address) return true;
   try {
     const parsedAddress = validateAndParseAddress(address);
     const checksumAddress = getChecksumAddress(parsedAddress);
@@ -92,3 +92,20 @@ export const validateStarknetAddress = (address: string) => {
     return false;
   }
 };
+export function formatSlug(slug: string): string {
+  return slug
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+export function extractAndFormatSlug(
+  url: string,
+  segment = "councils",
+): string {
+  const segments = url.split("/");
+  const index = segments.indexOf(segment);
+  const slug = segments[index + 1];
+
+  return formatSlug(slug);
+}

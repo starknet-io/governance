@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq, inArray } from 'drizzle-orm';
-import { TRPCError } from '@trpc/server';
 import { delegates } from '../db/schema/delegates';
 import { Algolia } from '../utils/algolia';
 
@@ -148,15 +147,38 @@ export const usersRouter = router({
     .input(
       z.object({
         id: z.string(),
-        username: z.any(),
-        starknetAddress: z.any(),
+        username: z.optional(z.any()),
+        starknetAddress: z.optional(z.any()),
+        profileImage: z.optional(z.any()),
       }),
     )
     .mutation(async (opts) => {
-      const { id, username, starknetAddress } = opts.input;
+      const { id, username, starknetAddress, profileImage } = opts.input;
 
+      // Fetch the user by ID once instead of twice.
+      const userById = await db.query.users.findFirst({
+        where: eq(users.id, id),
+      });
+
+      // Ensure the user exists by ID.
+      if (!userById) {
+        throw new Error('User not found');
+      }
+
+      // If a username is provided, ensure it's unique.
+      if (username !== undefined) {
+        const existingUser = await db.query.users.findFirst({
+          where: eq(users.username, username),
+        });
+
+        if (existingUser) {
+          throw new Error('Username already exists');
+        }
+      }
+
+      // Handle potential nulls for updated fields.
       const updatedUsername =
-        username !== undefined && username !== '' ? username : null;
+        username === '' ? null : username || userById.username;
       const updatedAddress =
         starknetAddress !== undefined && starknetAddress !== ''
           ? starknetAddress
@@ -167,6 +189,7 @@ export const usersRouter = router({
         .set({
           username: updatedUsername,
           starknetAddress: updatedAddress,
+          profileImage: profileImage || userById.profileImage,
         })
         .where(eq(users.id, id))
         .returning();
@@ -229,7 +252,7 @@ export const usersRouter = router({
       });
 
       if (!user) {
-        throw new TRPCError({ code: 'NOT_FOUND' });
+        throw new Error('NOT_FOUND');
       }
 
       await db

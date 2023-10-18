@@ -4,7 +4,6 @@ import {
   Box,
   SummaryItems,
   Divider,
-  ContentContainer,
   Stack,
   Heading,
   ListRow,
@@ -29,6 +28,7 @@ import { useQuery } from "@apollo/client";
 import { hasPermission } from "src/utils/helpers";
 import { Flex, Text } from "@chakra-ui/react";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import * as ProfilePageLayout from "../../components/ProfilePageLayout/ProfilePageLayout";
 
 const DELEGATE_PROFILE_PAGE_QUERY = gql(`
   query DelegateProfilePageQuery(
@@ -119,27 +119,8 @@ export function Page() {
   const councilAddress = council?.address?.toLowerCase() ?? "";
 
   return (
-    <Box
-      display="flex"
-      flexDirection={{ base: "column", md: "row" }}
-      flex="1"
-      height="100%"
-    >
-      <Box
-        pt="standard.3xl"
-        pb="standard.2xl"
-        px={{ base: "standard.md", md: "standard.2xl", lg: "standard.xl" }}
-        borderRight="1px solid"
-        borderColor="border.dividers"
-        display="flex"
-        flexDirection="column"
-        flexBasis={{ base: "100%", md: "372px" }}
-        position={{ base: "unset", lg: "sticky" }}
-        height="100vh"
-        top="0"
-        overflowY="auto"
-        overflowX="hidden"
-      >
+    <ProfilePageLayout.Root>
+      <ProfilePageLayout.Profile>
         {isCouncilLoading ? (
           <Box display="flex" flexDirection="column" gap="12px" mb="18px">
             <Flex gap="20px" alignItems="center">
@@ -221,9 +202,9 @@ export function Page() {
             }
           />
         </SummaryItems.Root>
-      </Box>
+      </ProfilePageLayout.Profile>
 
-      <ContentContainer center maxWidth="800px">
+      <ProfilePageLayout.About>
         <Stack width="100%" spacing="0" direction={{ base: "column" }}>
           <Collapse startingHeight={300}>
             <Stack spacing="0" direction={{ base: "column" }}>
@@ -350,8 +331,8 @@ export function Page() {
             )}
           </Box>
         </Stack>
-      </ContentContainer>
-    </Box>
+      </ProfilePageLayout.About>
+    </ProfilePageLayout.Root>
   );
 }
 

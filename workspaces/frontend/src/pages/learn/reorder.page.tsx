@@ -12,6 +12,7 @@ import {
 } from "@yukilabs/governance-components";
 import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 import { useEffect, useRef, useState } from "react";
+import { FormLayout } from "src/components/FormsCommon/FormLayout";
 import {
   adaptTreeForFrontend,
   flattenPageWithChildren,
@@ -77,31 +78,29 @@ export function Page() {
   };
 
   return (
-    <ContentContainer>
-      <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
-        <Heading variant="h3" mb="24px">
-          Edit pages order
-        </Heading>
-        <Box>
-          <MultiLevelReOrderableList
-            items={treeItems}
-            setItems={setTreeItems}
-            onItemDeleteClick={handlePreConfirmDeleteItem}
-          />
-        </Box>
-        <Divider mt="14" mb="6" />
-        <Flex justifyContent="space-between">
-          <Button onClick={handleCancelClick} variant="ghost">
-            Cancel
-          </Button>
-          <Button isLoading={isLoading} onClick={handleSaveChangesClick}>
-            Save changes
-          </Button>
-        </Flex>
+    <FormLayout>
+      <Heading variant="h3" mb="24px">
+        Edit pages order
+      </Heading>
+      <Box>
+        <MultiLevelReOrderableList
+          items={treeItems}
+          setItems={setTreeItems}
+          onItemDeleteClick={handlePreConfirmDeleteItem}
+        />
       </Box>
+      <Divider mt="14" mb="6" />
+      <Flex justifyContent="space-between">
+        <Button onClick={handleCancelClick} variant="ghost">
+          Cancel
+        </Button>
+        <Button isLoading={isLoading} onClick={handleSaveChangesClick}>
+          Save changes
+        </Button>
+      </Flex>
 
       <DeletionDialog
-        customTitle="This page include these articles inside. 
+        customTitle="This page include these articles inside.
       If you delete it, you also delete following articles:"
         customDeleteTitle="Delete"
         onClose={() => setIsConfirmDeleteModalVisible(false)}
@@ -123,6 +122,6 @@ export function Page() {
           </Text>
         </Box>
       </DeletionDialog>
-    </ContentContainer>
+    </FormLayout>
   );
 }

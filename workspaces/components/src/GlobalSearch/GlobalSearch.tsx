@@ -1,7 +1,6 @@
 import {
   Box,
   Text,
-  Input,
   InputGroup,
   InputLeftElement,
   InputRightElement,
@@ -31,6 +30,7 @@ import {
   getSearchItemHref,
 } from "./utils/buildItems";
 import { navigate } from "vite-plugin-ssr/client/router";
+import { Input } from "src/Input";
 
 interface Props {
   isOpen?: boolean;
@@ -107,37 +107,68 @@ export function GlobalSearch({
   const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
 
   return (
-    <Box onClick={handleSearchClick} ml="2">
+    <Box onClick={handleSearchClick} cursor="pointer">
       <Show breakpoint="(min-width: 567px)">
-        <InputGroup>
+        <InputGroup
+          color="content.support.default"
+          _hover={{
+            color: "content.support.hover",
+          }}
+        >
           <InputLeftElement
             display="flex"
             alignItems="center"
             justifyContent="center"
             pointerEvents="none"
-            height="44px"
+            height="36px"
+            width="auto"
+            pl="standard.sm"
+            color="inherit"
           >
-            <SearchIcon />
+            <SearchIcon color="currentColor" width="20px" height="20px" />
           </InputLeftElement>
           <Input
             placeholder="Search"
-            backgroundColor="white"
-            width="238px"
-            height="44px"
+            width="237px"
+            height="36px"
             pointerEvents="none"
-            paddingLeft="2.5rem"
+            paddingLeft="calc(12px + 20px + 8px)" // icon left p 12px, 20px icon width, 8px gap
+            borderRadius="4px"
+            _groupHover={{
+              _placeholder: {
+                color: "content.support.hover",
+              },
+            }}
           />
-          <InputRightElement height="44px">
+          <InputRightElement
+            width="32px"
+            borderRadius="4px"
+            overflow="hidden"
+            top="2px"
+            height="32px"
+            right="2px"
+            pointerEvents="none"
+          >
             <Box
-              width="28px"
-              height="28px"
-              backgroundColor="#23192D1A"
-              borderRadius="base"
+              position="relative"
+              height="32px"
+              p="standard.xs"
+              backgroundColor="surface.overlay"
               display="flex"
               alignItems="center"
               justifyContent="center"
+              borderRadius="4px"
             >
-              <Text fontWeight="500">/</Text>
+              <Text
+                fontSize="16px"
+                lineHeight={1}
+                color="inherit"
+                fontWeight="500"
+                w="16px"
+                textAlign="center"
+              >
+                /
+              </Text>
             </Box>
           </InputRightElement>
         </InputGroup>
@@ -153,9 +184,20 @@ export function GlobalSearch({
         <ModalContent height="672px" borderRadius="lg">
           <ModalHeader p="0" borderBottom="1px solid #23192D1A">
             <Input placeholder="" hidden />
-            <InputGroup>
-              <InputLeftElement height="60px" pointerEvents='none'>
-                <SearchIcon />
+            <InputGroup
+              color="content.support.default"
+              _hover={{
+                color: "content.support.hover",
+              }}
+              _focus={{
+                color: "content.support.hover",
+              }}
+              _focusWithin={{
+                color: "content.support.hover",
+              }}
+            >
+              <InputLeftElement height="60px" pointerEvents="none">
+                <SearchIcon color="currentColor" />
               </InputLeftElement>
               <Input
                 outline="none"
@@ -176,7 +218,7 @@ export function GlobalSearch({
           </ModalHeader>
 
           {!!searchResults.length && (
-            <ModalBody overflowY="scroll">
+            <ModalBody overflowY="scroll" pb="0" px="0px" pt="standard.xs">
               {buildSearchItems(searchResults, "grouped-items", h)}
             </ModalBody>
           )}
@@ -187,17 +229,20 @@ export function GlobalSearch({
               alignItems="center"
               justifyContent="center"
             >
-              <Flex flexDirection="column" alignItems="center">
+              <Flex
+                flexDirection="column"
+                alignItems="center"
+                gap="standard.xs"
+                color="content.default.default"
+              >
                 <Image
                   maxWidth="280px"
                   maxHeight="280px"
                   aspectRatio="1/1"
                   src={EmptyState}
                 />
-                <Text mt="2" fontWeight="semibold">
-                  No data to display
-                </Text>
-                <Text mt="2" fontSize="small" fontWeight="semibold">
+                <Text fontWeight="semibold">No data to display</Text>
+                <Text fontSize="xs" fontWeight="medium">
                   Apply different filters or criteria to find the data
                   you&apos;re looking for.
                 </Text>
@@ -206,39 +251,33 @@ export function GlobalSearch({
           )}
 
           <Show breakpoint="(min-width: 567px)">
-            <ModalFooter borderTop="1px solid #23192D1A">
-              <Flex>
-                <Flex mr="6">
-                  <Flex mr="2">
-                    <Box
-                      mr="1"
-                      border="1px solid #23192D1A"
-                      borderRadius="base"
-                      width="5"
-                      height="5"
-                    >
-                      <ArrowUpIcon />
+            <ModalFooter
+              borderTop="1px solid #23192D1A"
+              py="standard.sm"
+              px="standard.xl"
+            >
+              <Flex gap="standard.xl">
+                <Flex gap="standard.xs">
+                  <Flex gap="standard.base">
+                    <Box border="1px solid #23192D1A" borderRadius="base">
+                      <ArrowUpIcon width="20px" height="20px" />
                     </Box>
-                    <Box
-                      border="1px solid #23192D1A"
-                      borderRadius="base"
-                      width="5"
-                      height="5"
-                    >
-                      <ArrowDownIcon />
+                    <Box border="1px solid #23192D1A" borderRadius="base">
+                      <ArrowDownIcon width="20px" height="20px" />
                     </Box>
                   </Flex>
                   <Text fontSize="small" fontWeight="medium" color="#86848D">
                     to navigate
                   </Text>
                 </Flex>
-                <Flex>
-                  <Box mr="2" border="1px solid #23192D1A" borderRadius="base">
+                <Flex gap="standard.xs">
+                  <Box border="1px solid #23192D1A" borderRadius="base">
                     <Text
                       fontWeight="semibold"
                       px="1.5"
                       fontSize="xs"
                       lineHeight="20px"
+                      color="content.default.default"
                     >
                       Enter
                     </Text>

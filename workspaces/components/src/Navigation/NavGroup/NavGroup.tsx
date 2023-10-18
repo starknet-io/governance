@@ -4,21 +4,21 @@ import { ReactNode } from "react";
 export interface NavGroupProps {
   label?: string;
   children: ReactNode;
-  alignEnd?: boolean;
+  align?: "end" | "start";
   action?: ReactNode;
 }
 
 export const NavGroup = (props: NavGroupProps) => {
-  const { label, action, children, alignEnd } = props;
+  const { label, action, children, align } = props;
   return (
     <Flex
       flexDirection="column"
       marginTop={[
-        alignEnd ? "20px" : "20px",
-        alignEnd ? "20px" : "20px",
-        alignEnd ? "20px" : "20px",
-        alignEnd ? "auto" : "20px",
-        alignEnd ? "auto" : "20px",
+        align === "start" ? "0" : align === "end" ? "20px" : "20px",
+        align === "start" ? "0" : align === "end" ? "20px" : "20px",
+        align === "start" ? "0" : align === "end" ? "auto" : "20px",
+        align === "start" ? "0" : align === "end" ? "auto" : "20px",
+        align === "start" ? "0" : align === "end" ? "auto" : "20px",
       ]}
       padding="0"
     >
@@ -41,7 +41,7 @@ export const NavGroup = (props: NavGroupProps) => {
           )}
         </Text>
       )}
-      <Stack spacing="4px">{children}</Stack>
+      <Stack spacing="standard.2xs">{children}</Stack>
     </Flex>
   );
 };

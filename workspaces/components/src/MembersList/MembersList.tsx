@@ -201,17 +201,39 @@ export const MembersList: React.FC<MembersListProps> = ({
         </ModalContent>
       </Modal>
 
-      <Box p={4}>
+      <Box mt="24px">
         {members.length === 0 ? (
           <Center>
             <Text className="empty-state">No members added </Text>
           </Center>
         ) : (
-          <ListRow.Container>
+          <Box
+            border="1px solid "
+            borderColor="border.forms"
+            borderRadius="4px"
+            overflow={"hidden"}
+          >
             {members.map((member, index) => (
-              <ListRow.Root key={member.address}>
-                <Flex flexDirection="column" width="100%">
-                  <Flex ml="standard.sm" flex="1" alignItems="center" mb="6px">
+              <Box
+                key={member.address}
+                borderBottom={
+                  index !== members.length - 1 ? "1px solid " : "none"
+                }
+                borderColor="border.forms" //this one here please
+              >
+                <Flex
+                  flexDirection="column"
+                  width="100%"
+                  bg="surface.forms.default"
+                  py="standard.sm"
+                >
+                  <Flex
+                    ml="standard.sm"
+                    flex="1"
+                    alignItems="center"
+                    mb="6px"
+                    pr="standard.sm"
+                  >
                     <Box>
                       <Username
                         src={null}
@@ -246,7 +268,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                       </Box>
                     )}
                   </Flex>
-                  <Flex ml="standard.2xl">
+                  <Flex ml="standard.2xl" pr="standard.sm">
                     <Text
                       ml="standard.sm"
                       color="content.support.default"
@@ -256,9 +278,9 @@ export const MembersList: React.FC<MembersListProps> = ({
                     </Text>
                   </Flex>
                 </Flex>
-              </ListRow.Root>
+              </Box>
             ))}
-          </ListRow.Container>
+          </Box>
         )}
       </Box>
       {readonly ? null : (

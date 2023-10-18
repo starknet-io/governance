@@ -1,12 +1,9 @@
 import { DocumentProps } from "src/renderer/types";
-import {
-  Box,
-  Heading,
-  ContentContainer,
-} from "@yukilabs/governance-components";
+import { Heading } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import PostForm from "../../../../components/PostForm";
+import { FormLayout } from "src/components/FormsCommon/FormLayout";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -15,16 +12,12 @@ export function Page() {
   });
 
   return (
-    <>
-      <ContentContainer>
-        <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
-          <Heading variant="h3" mb="24px">
-            Edit post
-          </Heading>
-          <PostForm mode="edit" post={post} isFetchPostSuccess={isSuccess} />
-        </Box>
-      </ContentContainer>
-    </>
+    <FormLayout>
+      <Heading variant="h3" mb="24px">
+        Edit post
+      </Heading>
+      <PostForm mode="edit" post={post} isFetchPostSuccess={isSuccess} />
+    </FormLayout>
   );
 }
 

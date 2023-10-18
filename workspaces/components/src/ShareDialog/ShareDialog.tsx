@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   Flex,
   Input,
   Modal,
@@ -22,8 +21,10 @@ import {
   DiscordIcon,
   DiscourseIcon,
   ShareIcon,
+  TelegramIcon,
   TwitterIcon,
 } from "src/Icons/UiIcons";
+import { Button } from "src/Button";
 
 export const ShareDialog: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -67,30 +68,15 @@ export const ShareDialog: React.FC = () => {
     );
   };
 
-  const shareDiscord = () => {
-    alert("Discord share is not directly supported. Please copy the link.");
-  };
-
   return (
     <>
       <Button
-        transition="all 0.2s"
-        _hover={{ bg: "#EEEEF1" }}
-        _active={{ bg: "#EEEEF1" }}
         variant={"ghost"}
+        size="condensed"
         leftIcon={<ShareIcon />}
         onClick={onOpen}
       >
-        <Text
-          marginRight="auto"
-          fontSize={"14px"}
-          fontWeight="400"
-          lineHeight="20px"
-          letterSpacing="0.07px"
-          color="#4A4A4F"
-        >
-          Share
-        </Text>
+        Share
       </Button>
 
       <Modal
@@ -153,17 +139,11 @@ export const ShareDialog: React.FC = () => {
                 mr="3"
               />
               <LinkBox
-                icon={<DiscourseIcon />}
+                icon={<TelegramIcon />}
                 label="Telegram"
                 onClick={shareTelegram}
                 flex="1"
                 mr="3"
-              />
-              <LinkBox
-                icon={<DiscordIcon color="#363636" />}
-                label="Discord"
-                onClick={shareDiscord}
-                flex="1"
               />
             </Flex>
           </ModalBody>

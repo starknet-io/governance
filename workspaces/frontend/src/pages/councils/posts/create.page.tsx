@@ -5,19 +5,16 @@ import {
   ContentContainer,
 } from "@yukilabs/governance-components";
 import PostForm from "../../../components/PostForm";
+import { FormLayout } from "src/components/FormsCommon/FormLayout";
 
 export function Page() {
   return (
-    <>
-      <ContentContainer>
-        <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
-          <Heading variant="h3" mb="24px">
-            Create Post
-          </Heading>
-          <PostForm mode="create" />
-        </Box>
-      </ContentContainer>
-    </>
+    <FormLayout>
+      <Heading variant="h3" mb="24px">
+        Create Post
+      </Heading>
+      <PostForm mode="create" />
+    </FormLayout>
   );
 }
 

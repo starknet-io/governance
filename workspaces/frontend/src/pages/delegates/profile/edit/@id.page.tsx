@@ -1,13 +1,9 @@
 import { DocumentProps } from "src/renderer/types";
-import {
-  Box,
-  Heading,
-  ContentContainer,
-} from "@yukilabs/governance-components";
+import { Heading } from "@yukilabs/governance-components";
 import DelegateForm from "../../../../components/DelegateForm";
-import {trpc} from "../../../../utils/trpc";
-import {usePageContext} from "../../../../renderer/PageContextProvider";
-
+import { trpc } from "../../../../utils/trpc";
+import { usePageContext } from "../../../../renderer/PageContextProvider";
+import { FormLayout } from "src/components/FormsCommon/FormLayout";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -18,16 +14,16 @@ export function Page() {
     },
   );
   return (
-    <>
-      <ContentContainer>
-        <Box width="100%" maxWidth="538px" pb="200px" mx="auto">
-          <Heading variant="h3" mb="24px">
-            Edit Delegate
-          </Heading>
-          <DelegateForm mode="edit" delegate={delegate} isFetchingDelegateSuccess={isSuccess}/>
-        </Box>
-      </ContentContainer>
-    </>
+    <FormLayout>
+      <Heading variant="h3" mb="24px">
+        Edit Delegate
+      </Heading>
+      <DelegateForm
+        mode="edit"
+        delegate={delegate}
+        isFetchingDelegateSuccess={isSuccess}
+      />
+    </FormLayout>
   );
 }
 
