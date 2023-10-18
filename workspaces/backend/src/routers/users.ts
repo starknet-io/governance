@@ -194,12 +194,36 @@ export const usersRouter = router({
         .where(eq(users.id, id))
         .returning();
 
-      return await db.query.users.findFirst({
+      const foundUser = await db.query.users.findFirst({
         where: eq(users.id, id),
         with: {
           delegationStatement: true,
         },
       });
+      console.log('enter here');
+
+      if (foundUser?.profileImage) {
+        console.log('but not here??');
+
+        const delegate = await db.query.delegates.findFirst({
+          where: eq(delegates.userId, id),
+        });
+        if (delegate) {
+          console.log('ah, finally found ya!');
+          try {
+            await Algolia.updateObjectFromIndex({
+              refID: delegate.id,
+              type: 'delegate',
+              name: foundUser.ensName || foundUser.address,
+              content: delegate.statement + delegate.interests,
+              avatar: foundUser.profileImage,
+            });
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+      return foundUser;
     }),
 
   me: protectedProcedure.query(async (opts) => {
