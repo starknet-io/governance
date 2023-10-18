@@ -209,7 +209,7 @@ export const ProfileInfoModal = ({
             </form>
           </ModalBody>
 
-          <ModalFooter p={0} px="standard.xl">
+          <ModalFooter p={0} px="standard.xl" mt="standard.xl">
             <Flex flex={1} gap="12px">
               <Button width={"100%"} variant={"ghost"} onClick={onClose}>
                 {mode === "create" ? "Skip" : "Cancel"}

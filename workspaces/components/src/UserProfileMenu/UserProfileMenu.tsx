@@ -7,7 +7,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import "./user-profile.css";
+
 import { Button } from "src/Button";
 import { useEffect, useState } from "react";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
@@ -15,7 +15,8 @@ import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
 import { CopyToClipboard } from "src/CopyToClipboard";
 import { AvatarWithText } from "src/AvatarWithText";
-import { ProfileInfoModal } from "index";
+import { IconButton, ProfileInfoModal } from "index";
+import { DisconnectWalletIcon } from "src/Icons/UiIcons";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -89,12 +90,29 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
       {editUserProfile ? (
         <></>
       ) : (
-        <Box className="user-profile-menu" p={6}>
-          <VStack
-            divider={<StackDivider borderColor="gray.200" />}
-            spacing={3}
-            align="stretch"
-          >
+        <Box
+          p={"standard.xl"}
+          borderRadius={"standard.md"}
+          bg="surface.cards.default"
+          position={"absolute"}
+          width="348px"
+          right="60px"
+          top="55px"
+          border="1px solid #E9E8EA"
+          // borderColor="content.default.default"
+          boxShadow="0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)"
+          fontSize="12px"
+        >
+          <Box position="absolute" right="12px" top="12px">
+            <IconButton
+              aria-label="disconnect"
+              size="condensed"
+              icon={<DisconnectWalletIcon />}
+              variant="outline"
+              onClick={onDisconnect}
+            />
+          </Box>
+          <VStack spacing={"spacing.md"} align="stretch">
             <AvatarWithText
               size="condensed"
               address={user?.address}
@@ -107,97 +125,110 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               src={user?.profileImage ?? user?.ensAvatar ?? null}
             />
 
-            <Flex>
-              <Box>
-                <Text color="#4D4D56">Starknet address</Text>
-              </Box>
-              <Spacer />
-              <Box>
-                <Text color="#2A2A32">
-                  {truncateAddress(user?.starknetAddress || "")}
-                </Text>
-              </Box>
-            </Flex>
-            <Flex direction="column">
-              <Flex mb={5}>
-                <Box>
-                  <Text color="#4D4D56">STRK token balance</Text>
-                </Box>
-                <Spacer />
-                <Box>
-                  <Text color="#2A2A32">
-                    {userBalance?.balance} {userBalance?.symbol}
+            <VStack
+              divider={<StackDivider mb="standard.md" />}
+              align="stretch"
+              mt="standard.md"
+            >
+              <Flex justifyContent="flex-start">
+                <Box width="50%">
+                  <Text variant="smallStrong" color="content.support.default">
+                    Starknet address
                   </Text>
                 </Box>
+
+                <Box width="50%">
+                  <Text variant="smallStrong" color="content.default.default">
+                    {truncateAddress(user?.starknetAddress || "")}
+                  </Text>
+                </Box>
+              </Flex>
+              <Flex direction="column">
+                <Flex mb="standard.sm">
+                  <Box width="50%">
+                    <Text variant="smallStrong" color="content.support.default">
+                      STRK token balance
+                    </Text>
+                  </Box>
+
+                  <Box width="50%">
+                    <Text variant="smallStrong" color="content.default.default">
+                      {userBalance?.balance} {userBalance?.symbol}
+                    </Text>
+                  </Box>
+                </Flex>
+                <Flex>
+                  <Box width="50%">
+                    <Text variant="smallStrong" color="content.support.default">
+                      Delegated to
+                    </Text>
+                  </Box>
+
+                  <Box width="50%">
+                    <Text variant="smallStrong" color="content.default.default">
+                      {delegatedTo?.delegationStatement ? (
+                        <Flex>
+                          <Link
+                            fontSize="small"
+                            fontWeight="normal"
+                            href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
+                          >
+                            {delegatedTo.username ??
+                              delegatedTo.ensName ??
+                              truncateAddress(delegatedTo?.address || "")}
+                          </Link>
+
+                          <CopyToClipboard text={delegatedTo?.address} />
+                        </Flex>
+                      ) : (
+                        <>
+                          {delegatedTo?.address ? (
+                            <Flex>
+                              <Text>
+                                {truncateAddress(delegatedTo?.address || "")}
+                              </Text>
+                              <CopyToClipboard text={delegatedTo?.address} />
+                            </Flex>
+                          ) : delegatedTo &&
+                            delegatedTo !==
+                              "0x0000000000000000000000000000000000000000" ? (
+                            <Flex>
+                              <Text>{truncateAddress(delegatedTo || "")}</Text>
+                              <CopyToClipboard text={delegatedTo} />
+                            </Flex>
+                          ) : (
+                            "-"
+                          )}
+                        </>
+                      )}
+                    </Text>
+                  </Box>
+                </Flex>
               </Flex>
               <Flex>
-                <Box>
-                  <Text color="#4D4D56">Delegated to</Text>
+                <Box width="50%">
+                  <Text variant="smallStrong" color="content.support.default">
+                    My voting power
+                  </Text>
                 </Box>
-                <Spacer />
-                <Box>
-                  <Text color="#2A2A32">
-                    {delegatedTo?.delegationStatement ? (
-                      <Flex>
-                        <Link
-                          fontSize="small"
-                          fontWeight="normal"
-                          href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
-                        >
-                          {delegatedTo.username ??
-                            delegatedTo.ensName ??
-                            truncateAddress(delegatedTo?.address || "")}
-                        </Link>
 
-                        <CopyToClipboard text={delegatedTo?.address} />
-                      </Flex>
-                    ) : (
-                      <>
-                        {delegatedTo?.address ? (
-                          <Flex>
-                            <Text>
-                              {truncateAddress(delegatedTo?.address || "")}
-                            </Text>
-                            <CopyToClipboard text={delegatedTo?.address} />
-                          </Flex>
-                        ) : delegatedTo &&
-                          delegatedTo !==
-                            "0x0000000000000000000000000000000000000000" ? (
-                          <Flex>
-                            <Text>{truncateAddress(delegatedTo || "")}</Text>
-                            <CopyToClipboard text={delegatedTo} />
-                          </Flex>
-                        ) : (
-                          "-"
-                        )}
-                      </>
-                    )}
+                <Box>
+                  <Text variant="smallStrong" color="content.default.default">
+                    {vp}
                   </Text>
                 </Box>
               </Flex>
-            </Flex>
-            <Flex>
-              <Box>
-                <Text color="#4D4D56">My voting power</Text>
-              </Box>
-              <Spacer />
-              <Box>
-                <Text color="#2A2A32">{vp}</Text>
-              </Box>
-            </Flex>
-            <Flex direction="column" mt={4}>
+            </VStack>
+            <Flex direction="column" mt="standard.md">
               <Button
-                variant="outline"
+                variant="secondary"
+                size="condensed"
                 onClick={() => {
                   setEditUserProfile(true);
                   handleOpenModal();
                 }}
               >
                 Edit user profile
-              </Button>
-              <Box height={2} />
-              <Button variant="primary" onClick={onDisconnect}>
-                Disconnect
               </Button>
             </Flex>
           </VStack>

@@ -102,6 +102,7 @@ export {
   ArrowRightLargeIcon,
   StarknetOutlineIcon,
   CalendarIcon,
+  DisconnectWalletIcon,
 } from "../components/src/Icons/index";
 export { FileUploader } from "./src/FileUploader";
 export { MultiLevelReOrderableList } from "./src/MultiLevelReOrderableList";
