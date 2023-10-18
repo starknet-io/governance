@@ -32,14 +32,11 @@ import { Flex, Spinner } from "@chakra-ui/react";
 interface FieldValues {
   // type: ProposalType;
   // choices: string[];
-  category: string;
   title: string;
   body: any[];
   discussion: string;
   votingPeriod: Date[];
 }
-
-const categories = ["category1", "category2", "category3"];
 
 export function Page() {
   const { data: walletClient } = useWalletClient();
@@ -64,7 +61,6 @@ export function Page() {
     async defaultValues() {
       return {
         title: "",
-        category: categories[0],
         body: EditorTemplate.proposalMarkDown,
         discussion: "",
         votingPeriod: [now, threeDaysFromNow],
@@ -111,7 +107,6 @@ export function Page() {
         });
 
         const params: Proposal & {
-          categories: Array<string>;
           votingPeriod?: Date[];
         } = {
           space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
@@ -121,7 +116,6 @@ export function Page() {
           choices: ["For", "Against", "Abstain"],
           start: Math.floor(data!.votingPeriod[0].getTime() / 1000),
           end: Math.floor(data!.votingPeriod[1].getTime() / 1000),
-          categories,
           snapshot: Number(block),
           plugins: JSON.stringify({}),
           discussion: data.discussion,
@@ -135,7 +129,6 @@ export function Page() {
           params,
         )) as any;
 
-        type CategoryType = "category1" | "category2" | "category3";
         const proposalData = {
           title: data.title,
           discussion: data.discussion,
@@ -282,24 +275,6 @@ Links
                     })}
                   />
                 </InputGroup>
-              </FormControlled>
-              <FormControlled name="category" label="Category">
-                <Controller
-                  control={control}
-                  name="category"
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      isInvalid={!!errors.category}
-                      options={categories.map((category) => ({
-                        value: category,
-                        label: category,
-                      }))}
-                      value={field.value as any}
-                      onChange={(value) => field.onChange(value)}
-                    />
-                  )}
-                />
               </FormControlled>
               <Heading color="content.accent.default" variant="h3" mt="20px">
                 Voting

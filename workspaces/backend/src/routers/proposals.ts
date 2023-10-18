@@ -1,4 +1,4 @@
-import { desc, eq, inArray } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { db } from '../db/db';
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { gql, GraphQLClient } from 'graphql-request';
@@ -8,14 +8,12 @@ import { proposals } from '../db/schema/proposals';
 import { createInsertSchema } from 'drizzle-zod';
 import { Algolia } from '../utils/algolia';
 
-type CategoryEnum = 'category1' | 'category2' | 'category3';
 
 export interface IProposal {
   id: string;
   title: string;
   choices: string[];
   start: number;
-  category?: CategoryEnum;
   end: number;
   snapshot: string;
   state: string;
@@ -136,7 +134,6 @@ export const proposalsRouter = router({
         .insert(proposals)
         .values({
           proposalId: opts.input.proposalId,
-          category: opts.input.category,
         })
         .returning();
 
@@ -172,7 +169,6 @@ export const proposalsRouter = router({
       return {
         status: proposal.state,
         comments: totalComments.length,
-        category: ourProposalData?.category,
         startDate: proposal.start,
         backendProposalData: ourProposalData,
         proposal,
@@ -204,9 +200,6 @@ export const proposalsRouter = router({
       const statesFilter =
         filters?.filter((filter) => possibleStateFilters.includes(filter)) ||
         [];
-      const categoriesFilter =
-        filters?.filter((filter) => !possibleStateFilters.includes(filter)) ||
-        [];
 
       let mappedProposals: IProposal[];
       {
@@ -221,21 +214,9 @@ export const proposalsRouter = router({
           },
         )) as { proposals: IProposal[] };
 
-        const proposalIds = queriedProposals.map((proposal) => proposal.id);
-        const categoriesResult = await db
-          .select()
-          .from(proposals)
-          .where(inArray(proposals.proposalId, proposalIds))
-          .execute();
-
-        const categoriesMap = Object.fromEntries(
-          categoriesResult.map((row) => [row.proposalId, row.category]),
-        );
-
         // Merge category data into the proposals array
         mappedProposals = queriedProposals.map((proposal) => ({
           ...proposal,
-          category: categoriesMap[proposal.id] as CategoryEnum,
         }));
       }
 
@@ -243,15 +224,6 @@ export const proposalsRouter = router({
         mappedProposals = mappedProposals.filter((proposal) =>
           statesFilter.includes(proposal.state),
         );
-      }
-
-      if (categoriesFilter.length > 0) {
-        mappedProposals = mappedProposals.filter((proposal) => {
-          if (!proposal.category) {
-            return false;
-          }
-          return categoriesFilter.includes(proposal.category);
-        });
       }
 
       let proposalsWithComments = await populateProposalsWithComments(

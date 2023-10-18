@@ -59,27 +59,6 @@ const statusFilters = {
   ],
 };
 
-const categoriesFilters = {
-  defaultValue: [] as string[],
-  options: [
-    {
-      value: "category1",
-      label: "Category1",
-      count: 9,
-    },
-    {
-      value: "category2",
-      label: "Category2",
-      count: 9,
-    },
-    {
-      value: "category3",
-      label: "Category3",
-      count: 9,
-    },
-  ],
-};
-
 interface VotingPropsSkeletonProps {
   numRows?: number;
   numSkeletonsPerRow?: number;
@@ -230,7 +209,6 @@ export function Page() {
   const [sortBy, setSortBy] = useState<SortingTypes>("desc");
   const { user } = usePageContext();
   const state = useFilterState({
-    defaultValue: categoriesFilters.defaultValue,
     onSubmit: (filters) => {
       setFiltersState({ ...filtersState, filters });
     },
@@ -329,15 +307,6 @@ export function Page() {
                   value={state.value}
                   onChange={(v) => state.onChange(v)}
                   options={statusFilters.options}
-                />
-                <Text mt="4" mb="2" fontWeight="bold">
-                  Categories
-                </Text>
-                <CheckboxFilter
-                  hideLabel
-                  value={state.value}
-                  onChange={(v) => state.onChange(v)}
-                  options={categoriesFilters.options}
                 />
               </FilterPopoverContent>
             </Popover>
