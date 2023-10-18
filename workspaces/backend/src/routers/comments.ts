@@ -5,6 +5,7 @@ import { eq, desc, and } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { commentVotes } from '../db/schema/commentVotes';
+import { profanity } from '@2toad/profanity';
 
 const commentInsertSchema = createInsertSchema(comments);
 
@@ -19,7 +20,7 @@ export const commentsRouter = router({
     .input(
       z.object({
         proposalId: z.string(),
-        sort: z.enum(['upvotes', 'date', ""]).optional(),
+        sort: z.enum(['upvotes', 'date', '']).optional(),
       }),
     )
     .query(async (opts) => {
@@ -158,6 +159,36 @@ export const commentsRouter = router({
   saveComment: protectedProcedure
     .input(commentInsertSchema.omit({ id: true }))
     .mutation(async (opts) => {
+      const commentText = opts.input.content;
+
+      // Check for short comments
+      if (commentText.length < 5) {
+        throw new Error('Comments must be at least 5 characters long.');
+      }
+
+      if (profanity.exists(commentText)) {
+        throw new Error('Your comment contains unacceptable words.');
+      }
+
+      const lastFiveComments = await db.query.comments.findMany({
+        where: eq(comments.userId, opts.ctx.user?.id),
+        orderBy: (comments, { desc }) => [desc(comments.createdAt)],
+        limit: 5,
+      });
+
+      if (lastFiveComments.length >= 5) {
+        const oldestCommentTime = lastFiveComments[4].createdAt; // As it's in descending order
+        const currentTime = new Date();
+        const timeDifference =
+          (currentTime.getTime() - new Date(oldestCommentTime).getTime()) /
+          1000;
+        if (timeDifference < 60) {
+          throw new Error(
+            'Rate Limit Exceeded: You can post only 5 comments per minute.',
+          );
+        }
+      }
+
       const insertedComment = await db
         .insert(comments)
         .values({
@@ -175,6 +206,10 @@ export const commentsRouter = router({
       const user = opts.ctx.user?.id;
       if (!user) {
         throw new Error('User not authenticated');
+      }
+
+      if (profanity.exists(opts.input?.content || '')) {
+        throw new Error('Your comment contains unacceptable words.');
       }
 
       const originalComment = await db

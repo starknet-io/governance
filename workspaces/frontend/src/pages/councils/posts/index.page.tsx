@@ -15,6 +15,7 @@ import {
   Text,
   Username,
   Skeleton,
+  Banner,
   Dropdown,
   EllipsisIcon,
 } from "@yukilabs/governance-components";
@@ -24,6 +25,7 @@ import { extractAndFormatSlug, hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { Grid } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
+import React, { useState } from "react";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -33,6 +35,7 @@ export function Page() {
 
   const { data: post, isLoading: postLoading } = postResp;
   const { user } = usePageContext();
+  const [commentError, setCommentError] = useState("");
 
   const comments = trpc.posts.getPostComments.useQuery(
     {
@@ -58,7 +61,7 @@ export function Page() {
       });
     } catch (error) {
       // Handle error
-      console.log(error);
+      throw error;
     }
   };
 
@@ -94,7 +97,7 @@ export function Page() {
       });
     } catch (error) {
       // Handle error
-      console.log(error);
+      throw error;
     }
   };
 
@@ -125,9 +128,8 @@ export function Page() {
       });
     } catch (error) {
       // Handle error
-      console.log(error);
+      throw error;
     }
-    console.log(content);
   };
 
   const handleCommentVote = async ({
@@ -289,9 +291,24 @@ export function Page() {
               {user ? (
                 <FormControl id="delegate-statement">
                   <CommentInput
-                    placeholder="Type your comment"
-                    onSend={handleCommentSend}
+                    onSend={async (comment) => {
+                      try {
+                        await handleCommentSend(comment);
+                        setCommentError("");
+                      } catch (err) {
+                        setCommentError(err?.message || "");
+                      }
+                    }}
                   />
+                  {commentError && commentError.length && (
+                    <Box mb={6}>
+                      <Banner
+                        type="error"
+                        variant="error"
+                        label={commentError}
+                      />
+                    </Box>
+                  )}
                 </FormControl>
               ) : (
                 <></>

@@ -286,4 +286,44 @@ export const usersRouter = router({
 
       return;
     }),
+  banUser: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(), // ID of the user to be banned
+        banned: z.boolean(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const requester = opts.ctx.user;
+      if (
+        !requester ||
+        (requester.role !== 'admin' && requester.role !== 'moderator')
+      ) {
+        throw new Error('You do not have permission to ban users');
+      }
+
+      const userToBan = await db.query.users.findFirst({
+        where: eq(users.id, opts.input.id),
+      });
+
+      if (!userToBan) {
+        throw new Error('User not found');
+      }
+
+      if (userToBan?.role === 'moderator' || userToBan?.role === 'admin') {
+        throw new Error('Cannot ban moderators or admins');
+      }
+
+      if (userToBan.banned === opts.input.banned) {
+        throw new Error('Banned status of user is the same');
+      }
+
+      const bannedUser = await db
+        .update(users)
+        .set({ banned: opts.input.banned })
+        .where(eq(users.id, opts.input.id))
+        .returning();
+
+      return bannedUser[0];
+    }),
 });

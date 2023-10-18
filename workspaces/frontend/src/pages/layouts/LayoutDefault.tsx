@@ -1,3 +1,5 @@
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
+
 export { LayoutDefault };
 import {
   Box,
@@ -6,12 +8,13 @@ import {
   DrawerBody,
   DrawerContent,
   DrawerOverlay,
-  Flex,
   IconButton,
   Show,
+  Flex,
   Skeleton,
   Spinner,
   useDisclosure,
+  Icon,
 } from "@chakra-ui/react";
 import { PageContext } from "../../renderer/types";
 import { useHelpMessage } from "src/hooks/HelpMessage";
@@ -35,6 +38,7 @@ import { NavigationMenu } from "src/components/Navigation";
 import { BackButton } from "src/components/Header/BackButton";
 import { extractAndFormatSlug } from "src/utils/helpers";
 import { CloseIcon } from "@dynamic-labs/sdk-react";
+import { BannedIcon } from "@yukilabs/governance-components/src/Icons/UiIcons";
 
 export interface Props {
   readonly pageContext: PageContext;
@@ -47,7 +51,17 @@ function LayoutDefault(props: Props) {
   const councilResp = trpc.councils.getAll.useQuery();
   const [renderDone, setRenderDone] = useState(false);
   const { user } = usePageContext();
+  const { handleLogOut } = useDynamicContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBannedModalOpen, setIsBannedModalOpen] = useState(false);
+
+  useEffect(() => {
+    console.log(user)
+    if (user?.banned) {
+      setIsBannedModalOpen(true);
+      handleLogOut();
+    }
+  }, [user?.banned]);
 
   useEffect(() => {
     setRenderDone(true);
@@ -81,6 +95,31 @@ function LayoutDefault(props: Props) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+      <InfoModal
+        isOpen={isBannedModalOpen}
+        onClose={() => setIsBannedModalOpen(false)}
+        title="Your Account Was Banned"
+      >
+        <Flex justifyContent="center">
+          <Icon as={BannedIcon} boxSize="104px" />
+        </Flex>
+        <Text size="small">
+          We're sorry to let you know that your account has been suspended for
+          not following our community guidelines.
+          <br />
+          <br />
+          Rest assured, this was done to
+          ensure a safe and respectful space for everyone. If you have any
+          questions or want to appeal, reach out to us through our support
+          channels.
+          <br />
+          <br />
+          Thank you for your understanding.
+        </Text>
+        <Button variant="outline" onClick={() => setIsBannedModalOpen(false)}>
+          Close
+        </Button>
+      </InfoModal>
       <InfoModal
         title="connect your wallet"
         isOpen={helpMessage === "connectWalletMessage"}

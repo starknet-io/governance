@@ -71,7 +71,6 @@ export const CommentInput = ({
         className="submit-button"
         variant="primary"
         size="sm"
-        type="submit"
         onClick={handleSend}
         disabled={isSendDisabled}
       >

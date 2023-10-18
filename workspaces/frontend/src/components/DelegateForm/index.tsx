@@ -24,6 +24,7 @@ import {
   ArrowRightIcon,
 } from "@yukilabs/governance-components";
 import type { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
+import { useBalanceData } from "src/utils/hooks";
 import { Controller, useForm } from "react-hook-form";
 import { delegateNames } from "../Delegates";
 import { validateStarknetAddress } from "../../utils/helpers";
@@ -32,6 +33,7 @@ import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delega
 import { trpc } from "../../utils/trpc";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
+import { useToast } from "@chakra-ui/react";
 
 interface DelegateFormProps {
   mode: "create" | "edit";
@@ -141,6 +143,27 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     }, 10);
   };
 
+  const { data: user } = trpc.users.me.useQuery();
+  const userBalance = useBalanceData(user?.address as `0x${string}`);
+  const toast = useToast();
+
+  useEffect(() => {
+    if (userBalance.isFetched && mode === "create") {
+      console.log(parseFloat(userBalance?.balance))
+      if (parseFloat(userBalance?.balance) < 1) {
+        toast({
+          position: "top-right",
+          title: `Insufficient Balance`,
+          description: `You must have at least 1 token to create delegate profile`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+        navigate("/delegates");
+      }
+    }
+  }, [userBalance.isFetched]);
+
   useEffect(() => {
     if (mode === "edit" && isFetchingDelegateSuccess) {
       processData();
@@ -151,7 +174,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   }, [isFetchingDelegateSuccess, mode]);
 
   const { handleUpload } = useFileUpload();
-  const { data: user } = trpc.users.me.useQuery();
 
   const [showCustomAgreementEditor, setShowCustomAgreementEditor] =
     useState(false);

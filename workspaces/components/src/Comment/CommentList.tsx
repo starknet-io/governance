@@ -308,6 +308,7 @@ const CommentItem: React.FC<CommentProps> = ({
   const { author, createdAt, content, id, votes } = comment;
   const { user } = usePageContext();
   const canEdit = comment.userId === user?.id;
+  const [error, setError] = useState("");
   const canDelete = hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -325,14 +326,20 @@ const CommentItem: React.FC<CommentProps> = ({
     }
   }, [user]);
 
-  const onSubmit = (content: string) => {
+  const onSubmit = async (content: string) => {
     const data = {
       parentId: id,
       content: content,
     };
-    if (onReply) {
-      onReply(data);
+    if (!onReply) {
       setActiveCommentEditor(null);
+      return;
+    }
+    try {
+      await onReply(data);
+      setActiveCommentEditor(null);
+    } catch (err) {
+      throw err;
     }
   };
 
@@ -441,22 +448,32 @@ const CommentItem: React.FC<CommentProps> = ({
               </Flex>
               <Box>
                 {isEditMode && showReplyMarkdownEditor ? (
-                  <CommentInput
-                    isEdit
-                    withCancel
-                    onCancel={() => {
-                      setIsEditMode(false);
-                      setActiveCommentEditor(null);
-                    }}
-                    defaultValue={content}
-                    onSend={(content) => {
-                      if (onEdit) {
-                        onEdit({ commentId: comment.id, content });
-                      }
-                      setIsEditMode(false);
-                      setActiveCommentEditor(null);
-                    }}
-                  />
+                  <>
+                    <CommentInput
+                      isEdit
+                      withCancel
+                      onCancel={() => {
+                        setIsEditMode(false);
+                        setError("");
+                        setActiveCommentEditor(null);
+                      }}
+                      defaultValue={content}
+                      onSend={async (content) => {
+                        if (onEdit) {
+                          try {
+                            await onEdit({ commentId: comment.id, content });
+                            setIsEditMode(false);
+                            setActiveCommentEditor(null);
+                          } catch (err) {
+                            setError(err?.message || "");
+                          }
+                        }
+                      }}
+                    />
+                    {error && error.length && (
+                      <Banner type="error" variant="error" label={error} />
+                    )}
+                  </>
                 ) : (
                   <Box>
                     <MarkdownRenderer
@@ -496,6 +513,7 @@ const CommentItem: React.FC<CommentProps> = ({
                         variant="ghost"
                         onClick={() => {
                           setIsEditMode(false);
+                          setError("");
                           setActiveCommentEditor(comment.id);
                         }}
                         aria-label="Reply"
@@ -517,6 +535,7 @@ const CommentItem: React.FC<CommentProps> = ({
                         <MenuItem
                           onClick={() => {
                             setIsEditMode(true);
+                            setError("");
                             setActiveCommentEditor(comment.id);
                           }}
                         >
@@ -566,14 +585,23 @@ const CommentItem: React.FC<CommentProps> = ({
                   <CommentInput
                     withCancel
                     onCancel={() => {
+                      setError("");
                       setIsEditMode(false);
                       setActiveCommentEditor(null);
                     }}
-                    onSend={(content: string) => {
-                      setIsEditMode(false);
-                      onSubmit(content);
+                    onSend={async (content: string) => {
+                      try {
+                        await onSubmit(content);
+                        setError("");
+                        setIsEditMode(false);
+                      } catch (err) {
+                        setError(err?.message || "");
+                      }
                     }}
                   />
+                  {error && error.length && (
+                    <Banner type="error" variant="error" label={error} />
+                  )}
                 </form>
               )}
               {numberOfReplies > 2 && depth < 3 && (

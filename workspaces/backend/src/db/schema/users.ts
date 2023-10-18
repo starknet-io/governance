@@ -1,5 +1,6 @@
 import { InferModel, relations } from 'drizzle-orm';
 import {
+  boolean,
   pgEnum,
   pgTable,
   text,
@@ -17,6 +18,7 @@ export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   address: text('address').notNull(),
   walletName: text('walletName'),
+  banned: boolean('banned'),
   walletProvider: text('walletProvider'),
   publicIdentifier: text('publicIdentifier'),
   dynamicId: text('dynamicId'),
