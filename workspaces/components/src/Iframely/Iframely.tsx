@@ -27,14 +27,13 @@ export function Iframely(props: IframelyProps) {
   useEffect(() => {
     if (props && props.url) {
       const encodedUrl = encodeURIComponent(props.url);
-      console.log(encodedUrl);
+
       fetch(
         `https://cdn.iframe.ly/api/iframely?url=${encodedUrl}&api_key=${KEY}`,
       )
         .then((res) => res.json())
         .then(
           (res) => {
-            console.log("Raw API Response:", JSON.stringify(res));
             setIsLoaded(true);
             if (res.html) {
               setData({

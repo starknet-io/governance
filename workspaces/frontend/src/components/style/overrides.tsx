@@ -3,7 +3,9 @@ export const cssOverrides = `
   .button--padding-large {
     padding: 0.74rem 1rem;
     border-radius: 4px;
+    height:36px!important;
   }
+
 
   .evm-network-control__container span {
     display: none

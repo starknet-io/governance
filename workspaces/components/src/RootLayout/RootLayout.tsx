@@ -8,20 +8,15 @@ type LeftAsideProps = {
 const LeftAside = ({ children }: LeftAsideProps) => {
   return (
     <Flex
-      height="100vh"
-      direction="column"
-      as="aside"
-      order={{ base: "0", lg: "0" }}
-      role="complementary"
+      bg="surface.forms.default"
       width="234px"
-      position={{ base: "unset", lg: "sticky" }}
-      bg="#FDFCFD"
+      height="100vh"
+      display={{ base: "none", md: "block" }}
+      position="sticky"
       top="0"
-      paddingLeft="12px"
-      paddingRight="12px"
-      display={{ base: "none", lg: "flex" }}
-      borderRight="1px solid #E4E5E7"
-      paddingBottom="24px"
+      overflow={"auto"}
+      borderRight="1px solid"
+      borderColor="border.forms"
     >
       {children}
     </Flex>
@@ -55,13 +50,9 @@ type LayoutProps = {
 
 const Root = ({ children }: LayoutProps) => {
   return (
-    <Box
-      display="flex"
-      flexDirection={{ base: "column", md: "row", lg: "row" }}
-      minHeight={{ base: "100vh", md: "100vh", lg: "100vh" }}
-    >
+    <Flex width="100vw" minHeight="100vh" direction="row">
       {children}
-    </Box>
+    </Flex>
   );
 };
 

@@ -31,10 +31,10 @@ const config = {
 export const theme = extendTheme({
   config,
   breakpoints: {
-    sm: "23.4375rem",
-    md: "52.125rem",
-    lg: "67.5rem",
-    xl: "90.0rem",
+    sm: "23.4375rem", // 375px
+    md: "52.125rem", // 834px
+    lg: "67.5rem", // 1080px
+    xl: "90.0rem", // 1440px
   },
   colors: {
     ...baseColors,

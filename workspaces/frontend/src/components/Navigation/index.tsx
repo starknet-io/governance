@@ -1,4 +1,4 @@
-import { Box, Show } from "@chakra-ui/react";
+import { Box, Flex, Show } from "@chakra-ui/react";
 import {
   BuildersIcon,
   IconButton,
@@ -37,10 +37,10 @@ export const NavigationMenu = ({
 }: NavigationMenuProps) => {
   return (
     <>
-      <Box mt="-20px">
-        <NavGroup>
+      <Flex flexDirection={"column"} flex={1}>
+        <NavGroup align="start">
           <Show breakpoint="(max-width: 834px)">
-            <Box alignItems={"center"} justifyContent={"center"}>
+            <Box alignItems={"flex-start"} justifyContent={"center"}>
               <Logo href="/" />
             </Box>
           </Show>
@@ -75,85 +75,91 @@ export const NavigationMenu = ({
             />
           ))}
         </NavGroup>
-      </Box>
-      <NavGroup label="Councils">
-        {councilData
-          ?.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""))
-          .map((council) => (
+
+        <NavGroup label="Councils">
+          {councilData
+            ?.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""))
+            .map((council) => (
+              <NavItem
+                key={council.id}
+                icon={
+                  council.name?.toLowerCase().startsWith("builder") ? (
+                    <BuildersIcon />
+                  ) : (
+                    <SecurityIcon />
+                  )
+                }
+                label={council.name ?? "Unknown"}
+                href={council.slug ? `/councils/${council.slug}` : "/councils"}
+                active={pageContext.urlOriginal.startsWith(
+                  `/councils/${council.slug}`,
+                )}
+              />
+            ))}
+
+          {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+            <Link
+              href="/councils/create"
+              style={{ border: "none", marginLeft: "6px" }}
+            >
+              <IconButton
+                aria-label="create"
+                variant="ghost"
+                size="condensed"
+                icon={<PlusIcon />}
+              />
+            </Link>
+          ) : (
+            <></>
+          )}
+        </NavGroup>
+
+        <NavGroup align="end">
+          {[
+            {
+              href: "/learn",
+              label: "Learn",
+              icon: <LearnIcon />,
+            },
+          ].map((item) => (
             <NavItem
-              key={council.id}
-              icon={
-                council.name?.toLowerCase().startsWith("builder") ? (
-                  <BuildersIcon />
-                ) : (
-                  <SecurityIcon />
-                )
-              }
-              label={council.name ?? "Unknown"}
-              href={council.slug ? `/councils/${council.slug}` : "/councils"}
-              active={pageContext.urlOriginal.startsWith(
-                `/councils/${council.slug}`,
-              )}
+              active={pageContext?.urlOriginal?.startsWith(item.href)}
+              icon={item.icon}
+              label={item.label}
+              key={item.href}
+              href={item.href}
             />
           ))}
 
-        {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
-          <Link
-            href="/councils/create"
-            style={{ border: "none", marginLeft: "6px" }}
-          >
-            <IconButton
-              aria-label="create"
-              variant="ghost"
-              size="condensed"
-              icon={<PlusIcon />}
+          {user ? (
+            <NavItem
+              href="/settings"
+              icon={<SettingsIcon />}
+              label="Settings"
             />
-          </Link>
-        ) : (
-          <></>
-        )}
-      </NavGroup>
-      <NavGroup alignEnd>
-        {[
-          {
-            href: "/learn",
-            label: "Learn",
-            icon: <LearnIcon />,
-          },
-        ].map((item) => (
+          ) : null}
           <NavItem
-            active={pageContext?.urlOriginal?.startsWith(item.href)}
-            icon={item.icon}
-            label={item.label}
-            key={item.href}
-            href={item.href}
+            icon={<SupportIcon />}
+            label="Support"
+            onClick={openSupportModal}
           />
-        ))}
 
-        {user ? (
-          <NavItem href="/settings" icon={<SettingsIcon />} label="Settings" />
-        ) : null}
-        <NavItem
-          icon={<SupportIcon />}
-          label="Support"
-          onClick={openSupportModal}
-        />
-
-        <Box as="span" display={{ base: "none", lg: "flex" }}>
-          <Button
-            variant="feedback"
-            leftIcon={<FeedbackIcon />}
-            data-tally-open="3xMJly"
-            data-tally-emoji-text="👋"
-            data-tally-emoji-animation="wave"
-            padding={"12px"}
-            width={"100%"}
-            justifyContent={"flex-start"}
-          >
-            Feedback
-          </Button>
-        </Box>
-      </NavGroup>
+          <Box as="span" display={{ base: "none", md: "flex" }}>
+            <Button
+              variant="feedback"
+              leftIcon={<FeedbackIcon />}
+              data-tally-open="3xMJly"
+              data-tally-emoji-text="👋"
+              data-tally-emoji-animation="wave"
+              padding={"12px"}
+              width={"100%"}
+              justifyContent={"flex-start"}
+            >
+              Feedback
+            </Button>
+          </Box>
+        </NavGroup>
+      </Flex>
     </>
   );
 };

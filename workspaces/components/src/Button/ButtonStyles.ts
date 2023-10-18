@@ -345,8 +345,8 @@ export const buttonTheme = {
     },
     special: {
       borderColor: "border.forms",
-      minHeight: "72px",
-      px: "standard.xl",
+      minHeight: { base: "44px", xl: "72px" },
+      px: { base: "standard.lg", xl: "standard.xl" },
       py: "standard.sm",
       bg: "surface.forms.default",
       color: "content.default.default",

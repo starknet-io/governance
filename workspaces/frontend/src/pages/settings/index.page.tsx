@@ -34,7 +34,8 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
-import {ethers} from "ethers";
+import { ethers } from "ethers";
+import { FormLayout } from "src/components/FormsCommon/FormLayout";
 
 const userRoleValues = userRoleEnum.enumValues;
 
@@ -149,20 +150,20 @@ export function Page() {
     }
   };
 
-  const handleSave = () => {
-    if (!user) return;
-    editUser.mutateAsync(
-      {
-        id: user.id,
-        profileImage: imageUrl ?? "none",
-      },
-      {
-        onSuccess: () => {
-          utils.auth.currentUser.invalidate();
-        },
-      },
-    );
-  };
+  // const handleSave = () => {
+  //   if (!user) return;
+  //   editUser.mutateAsync(
+  //     {
+  //       id: user.id,
+  //       profileImage: imageUrl ?? "none",
+  //     },
+  //     {
+  //       onSuccess: () => {
+  //         utils.auth.currentUser.invalidate();
+  //       },
+  //     },
+  //   );
+  // };
 
   const isValidAddress = (address: string) => {
     try {
@@ -174,7 +175,7 @@ export function Page() {
   };
 
   return (
-    <ContentContainer maxWidth="800" center>
+    <FormLayout>
       <Box
         display="flex"
         flexDirection={{ base: "column", md: "column" }}
@@ -215,51 +216,6 @@ export function Page() {
           cancelRef={cancelRef}
           entityName="User Role"
         />
-        <Box>
-          <Box>
-            <Heading variant="h3" mb="24px" fontSize="28px">
-              Profile
-            </Heading>
-            <Box
-              mb="24px"
-              display={"flex"}
-              flexDirection={"row"}
-              alignItems="center"
-            >
-              <ProfileImage imageUrl={imageUrl} />
-              <Box ml="16px">
-                <Box display={"flex"} flexDirection={"row"}>
-                  <FileUploader
-                    handleUpload={handleUpload}
-                    onImageUploaded={(imageUrl) => {
-                      setImageUrl(imageUrl);
-                    }}
-                  />
-                  <Button
-                    variant={"ghost"}
-                    ml="16px"
-                    onClick={() => {
-                      setImageUrl(null);
-                      setImageChanged(true);
-                    }}
-                  >
-                    <Text>Remove</Text>
-                  </Button>
-                </Box>
-                <Box>
-                  <Text variant="small" color={"#86848D"}>
-                    We support PNGs, JPEGs and GIFs under 10MB
-                  </Text>
-                </Box>
-              </Box>
-            </Box>
-            <Flex justifyContent="flex-end">
-              <Button onClick={handleSave} variant="primary">
-                Save changes
-              </Button>
-            </Flex>
-          </Box>
-        </Box>
         {!hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
           <></>
         ) : (
@@ -279,11 +235,15 @@ export function Page() {
                       {...addRegister("address", {
                         required: "This field is required.",
                         validate: {
-                          isValidEthereumAddress: value => isValidAddress(value) || "Invalid Ethereum address."
-                        }
+                          isValidEthereumAddress: (value) =>
+                            isValidAddress(value) ||
+                            "Invalid Ethereum address.",
+                        },
                       })}
                     />
-                    {addErrors.address && <span>{addErrors.address.message}</span>}
+                    {addErrors.address && (
+                      <span>{addErrors.address.message}</span>
+                    )}
                   </FormControl>
 
                   <FormControl id="role">
@@ -304,10 +264,7 @@ export function Page() {
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
                   <Flex justifyContent="flex-end">
-                    <Button
-                      type="submit"
-                      variant="primary"
-                    >
+                    <Button type="submit" variant="primary">
                       Add
                     </Button>
                   </Flex>
@@ -353,7 +310,7 @@ export function Page() {
           </Box>
         )}
       </Box>
-    </ContentContainer>
+    </FormLayout>
   );
 }
 

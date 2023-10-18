@@ -6,8 +6,9 @@ import {
   MenuButton,
   MenuList,
 } from "@chakra-ui/react";
-import React from "react";
+
 import { EllipsisIcon } from "src/Icons";
+import { Portal } from "@chakra-ui/react";
 
 type DropdownProps = {
   children: React.ReactNode;
@@ -24,7 +25,7 @@ export const Dropdown = ({
   buttonVariant = "ghost",
 }: DropdownProps) => {
   return (
-    <Box style={{ position: "relative" }}>
+    <Box>
       <Menu>
         {buttonType === "icon" ? (
           <MenuButton
@@ -37,11 +38,9 @@ export const Dropdown = ({
             {buttonLabel}
           </MenuButton>
         )}
-        {/* <MenuButton as={IconButton} icon={buttonIcon} variant={buttonVariant} /> */}
-
-        <Box top="0px" position="relative">
+        <Portal>
           <MenuList>{children}</MenuList>
-        </Box>
+        </Portal>
       </Menu>
     </Box>
   );

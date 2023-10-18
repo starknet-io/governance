@@ -1,25 +1,22 @@
 import {
   Box,
   Flex,
-  FormControl,
-  FormLabel,
-  Input,
   Link,
   Spacer,
   StackDivider,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import "./user-profile.css";
+
 import { Button } from "src/Button";
 import { useEffect, useState } from "react";
-import { XIcon } from "../Icons";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
 import { CopyToClipboard } from "src/CopyToClipboard";
-import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
 import { AvatarWithText } from "src/AvatarWithText";
+import { IconButton, ProfileInfoModal } from "index";
+import { DisconnectWalletIcon } from "src/Icons/UiIcons";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -28,10 +25,18 @@ interface IUser extends User {
 interface UserProfileMenuProps {
   onDisconnect: () => void;
   user: IUser | null;
-  onSave: (address: string, starknetAddress: string) => void;
+  onSave: (data: {
+    username: string;
+    starknetAddress: string;
+    profileImage: string | null;
+  }) => Promise<any>;
   vp: number;
   userBalance: any;
   delegatedTo: any;
+  onModalStateChange: (isOpen: boolean) => void;
+  handleUpload?: (file: File) => Promise<string | void> | void;
+  userExistsError?: boolean;
+  setUsernameErrorFalse?: () => void;
 }
 
 export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
@@ -41,104 +46,73 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
   vp,
   userBalance,
   delegatedTo,
+  onModalStateChange,
+  handleUpload,
+  userExistsError = false,
+  setUsernameErrorFalse,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCloseModal = () => setIsModalOpen(false);
+  const handleOpenModal = () => setIsModalOpen(true);
   const [editUserProfile, setEditUserProfile] = useState(false);
-  const [username, setUsername] = useState<any>(user?.username);
-  const [starknetAddress, setStarknetAddress] = useState<any>(
-    user?.starknetAddress,
-  );
-  const [error, setError] = useState<boolean>(false);
-
-  const handleSave = () => {
-    onSave(username, starknetAddress);
-    setEditUserProfile(false);
-  };
-
-  const handleCancel = () => {
-    // Exit edit mode without saving
-    setEditUserProfile(false);
-  };
 
   useEffect(() => {
-    if (!validateStarknetAddress(starknetAddress)) {
-      setError(true);
-    } else {
-      setError(false);
+    onModalStateChange(isModalOpen);
+  }, [isModalOpen]);
+
+  async function handleSave(data: {
+    username: string;
+    starknetAddress: string;
+    profileImage: string | null;
+  }) {
+    const result = await onSave(data);
+    if (result) {
+      setEditUserProfile(false);
+      setIsModalOpen(false);
     }
-  }, [starknetAddress]);
+  }
 
   return (
     <>
+      <ProfileInfoModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          handleCloseModal();
+          setEditUserProfile(false);
+        }}
+        handleUpload={handleUpload}
+        user={user}
+        saveData={(data) => handleSave(data)}
+        userExistsError={userExistsError}
+        setUsernameErrorFalse={setUsernameErrorFalse}
+      />
       {editUserProfile ? (
-        <Box className="edit-user-profile-menu" p={6}>
-          <Flex direction="column" mb={4}>
-            <Box
-              position="absolute"
-              top="10px"
-              right="10px"
-              onClick={handleCancel}
-              cursor="pointer"
-            >
-              <XIcon />
-            </Box>
-            <Flex
-              lineHeight="32px"
-              fontSize="21px"
-              fontWeight="700"
-              justifyContent="center"
-            >
-              Edit User Profile Info
-            </Flex>
-            <Box mt={6}>
-              <form style={{ width: "100%" }}>
-                <FormControl id="member-name" paddingBottom={2}>
-                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
-                    Username
-                  </FormLabel>
-                  <Input
-                    placeholder="Username"
-                    name="name"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl id="address" paddingBottom={2}>
-                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
-                    Starknet address
-                  </FormLabel>
-                  <Input
-                    placeholder="0x..."
-                    name="address"
-                    value={starknetAddress}
-                    onChange={(e) => setStarknetAddress(e.target.value)}
-                  />
-                  {error && (
-                    <Text fontSize="12px" color="red">
-                      Invalid Starknet address
-                    </Text>
-                  )}
-                </FormControl>
-                <Box width="100%" mt={6}>
-                  <Button
-                    width="100%"
-                    variant="primary"
-                    onClick={handleSave}
-                    isDisabled={error}
-                  >
-                    Save
-                  </Button>
-                </Box>
-              </form>
-            </Box>
-          </Flex>
-        </Box>
+        <></>
       ) : (
-        <Box className="user-profile-menu" p={6}>
-          <VStack
-            divider={<StackDivider borderColor="gray.200" />}
-            spacing={3}
-            align="stretch"
-          >
+        <Box
+          p={"standard.xl"}
+          borderRadius={"standard.md"}
+          bg="surface.cards.default"
+          position={"absolute"}
+          width="348px"
+          right={{ base: "16px", md: "60px" }}
+          top="55px"
+          border="1px solid #E9E8EA"
+          // borderColor="content.default.default"
+          boxShadow="0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)"
+          fontSize="12px"
+        >
+          <Box position="absolute" right="12px" top="12px">
+            <IconButton
+              aria-label="disconnect"
+              size="condensed"
+              icon={<DisconnectWalletIcon />}
+              variant="outline"
+              onClick={onDisconnect}
+            />
+          </Box>
+          <VStack spacing={"spacing.md"} align="stretch">
             <AvatarWithText
               size="condensed"
               address={user?.address}
@@ -150,116 +124,111 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               subheaderText={truncateAddress(user?.address || "")}
               src={user?.profileImage ?? user?.ensAvatar ?? null}
             />
-            {/* <Flex direction="row" mb={4}>
-              <Box>
-                {user?.profileImage || user?.ensAvatar ? (
-                  <ProfileImage
-                    imageUrl={user.profileImage ?? user.ensAvatar}
-                    size={"small"}
-                  />
-                ) : (
-                  <Indenticon size={40} address={user?.address} />
-                )}
-              </Box>
-              <Box pl={4}>
-                <Text color="#2A2A32" fontWeight="bold" fontSize="14px">
-                  {user?.username ||
-                    user?.ensName ||
-                    truncateAddress(user?.address || "")}
-                </Text>
-                <Text color="#6C6C75" fontSize="12px">
-                  {truncateAddress(user?.address || "")}
-                </Text>
-              </Box>
-              </Flex> */}
 
-            <Flex>
-              <Box>
-                <Text color="#4D4D56">Starknet address</Text>
-              </Box>
-              <Spacer />
-              <Box>
-                <Text color="#2A2A32">
-                  {truncateAddress(user?.starknetAddress || "")}
-                </Text>
-              </Box>
-            </Flex>
-            <Flex direction="column">
-              <Flex mb={5}>
-                <Box>
-                  <Text color="#4D4D56">STRK token balance</Text>
-                </Box>
-                <Spacer />
-                <Box>
-                  <Text color="#2A2A32">
-                    {userBalance?.balance} {userBalance?.symbol}
+            <VStack
+              divider={<StackDivider mb="standard.md" />}
+              align="stretch"
+              mt="standard.md"
+            >
+              <Flex justifyContent="flex-start">
+                <Box width="50%">
+                  <Text variant="smallStrong" color="content.support.default">
+                    Starknet address
                   </Text>
                 </Box>
+
+                <Box width="50%">
+                  <Text variant="smallStrong" color="content.default.default">
+                    {truncateAddress(user?.starknetAddress || "")}
+                  </Text>
+                </Box>
+              </Flex>
+              <Flex direction="column">
+                <Flex mb="standard.sm">
+                  <Box width="50%">
+                    <Text variant="smallStrong" color="content.support.default">
+                      STRK token balance
+                    </Text>
+                  </Box>
+
+                  <Box width="50%">
+                    <Text variant="smallStrong" color="content.default.default">
+                      {userBalance?.balance} {userBalance?.symbol}
+                    </Text>
+                  </Box>
+                </Flex>
+                <Flex>
+                  <Box width="50%">
+                    <Text variant="smallStrong" color="content.support.default">
+                      Delegated to
+                    </Text>
+                  </Box>
+
+                  <Box width="50%">
+                    <Text variant="smallStrong" color="content.default.default">
+                      {delegatedTo?.delegationStatement ? (
+                        <Flex>
+                          <Link
+                            fontSize="small"
+                            fontWeight="normal"
+                            href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
+                          >
+                            {delegatedTo.username ??
+                              delegatedTo.ensName ??
+                              truncateAddress(delegatedTo?.address || "")}
+                          </Link>
+
+                          <CopyToClipboard text={delegatedTo?.address} />
+                        </Flex>
+                      ) : (
+                        <>
+                          {delegatedTo?.address ? (
+                            <Flex>
+                              <Text>
+                                {truncateAddress(delegatedTo?.address || "")}
+                              </Text>
+                              <CopyToClipboard text={delegatedTo?.address} />
+                            </Flex>
+                          ) : delegatedTo &&
+                            delegatedTo !==
+                              "0x0000000000000000000000000000000000000000" ? (
+                            <Flex>
+                              <Text>{truncateAddress(delegatedTo || "")}</Text>
+                              <CopyToClipboard text={delegatedTo} />
+                            </Flex>
+                          ) : (
+                            "-"
+                          )}
+                        </>
+                      )}
+                    </Text>
+                  </Box>
+                </Flex>
               </Flex>
               <Flex>
-                <Box>
-                  <Text color="#4D4D56">Delegated to</Text>
+                <Box width="50%">
+                  <Text variant="smallStrong" color="content.support.default">
+                    My voting power
+                  </Text>
                 </Box>
-                <Spacer />
-                <Box>
-                  <Text color="#2A2A32">
-                    {delegatedTo?.delegationStatement ? (
-                      <Flex>
-                        <Link
-                          fontSize="small"
-                          fontWeight="normal"
-                          href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
-                        >
-                          {delegatedTo.username ??
-                            delegatedTo.ensName ??
-                            truncateAddress(delegatedTo?.address || "")}
-                        </Link>
 
-                        <CopyToClipboard text={delegatedTo?.address} />
-                      </Flex>
-                    ) : (
-                      <>
-                        {delegatedTo?.address ? (
-                          <Flex>
-                            <Text>
-                              {truncateAddress(delegatedTo?.address || "")}
-                            </Text>
-                            <CopyToClipboard text={delegatedTo?.address} />
-                          </Flex>
-                        ) : delegatedTo !==
-                          "0x0000000000000000000000000000000000000000" ? (
-                          <Flex>
-                            <Text>{truncateAddress(delegatedTo || "")}</Text>
-                            <CopyToClipboard text={delegatedTo} />
-                          </Flex>
-                        ) : (
-                          "-"
-                        )}
-                      </>
-                    )}
+                <Box>
+                  <Text variant="smallStrong" color="content.default.default">
+                    {vp}
                   </Text>
                 </Box>
               </Flex>
-            </Flex>
-            <Flex>
-              <Box>
-                <Text color="#4D4D56">My voting power</Text>
-              </Box>
-              <Spacer />
-              <Box>
-                <Text color="#2A2A32">{vp}</Text>
-              </Box>
-            </Flex>
-            <Flex direction="column" mt={4}>
+            </VStack>
+            <Flex direction="column" mt="standard.md">
               <Button
-                variant="outline"
-                onClick={() => setEditUserProfile(true)}
+                variant="secondary"
+                size="condensed"
+                onClick={() => {
+                  setEditUserProfile(true);
+                  handleOpenModal();
+                }}
               >
                 Edit user profile
-              </Button>
-              <Box height={2} />
-              <Button variant="primary" onClick={onDisconnect}>
-                Disconnect
               </Button>
             </Flex>
           </VStack>
