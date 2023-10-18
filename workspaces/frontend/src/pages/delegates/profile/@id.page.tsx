@@ -155,7 +155,8 @@ export function Page() {
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address } = useAccount();
   const { user } = usePageContext();
-  const { user: dynamicUser } = useDynamicContext();
+  const { user: dynamicUser, walletConnector } = useDynamicContext();
+
   // get delegation hash
   const [txHash, setTxHash] = useState("");
   // listen to txn with delegation hash
@@ -399,6 +400,10 @@ export function Page() {
             );
             setIsOpen(false);
           } else {
+            const deeplink = walletConnector?.getDeepLink();
+            if (deeplink) {
+              window.location.href = deeplink;
+            }
             writeAsync?.({
               args: [
                 stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
