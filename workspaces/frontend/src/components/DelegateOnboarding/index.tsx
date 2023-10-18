@@ -17,40 +17,40 @@ export const DelegateOnboarding = ({
   mode,
 }: Props) => {
   return (
-    <Box
-      bg="radial-gradient(573.81% 50% at 50% 50%, #F9F3EF 0%, #F5F2FA 82.25%, #F1F6FA 100%)"
-      borderBottom="1px solid"
-      borderColor="border.forms"
-      height="206px"
-    >
-      <Container maxWidth="670px">
-        <Flex
-          flexDirection={"column"}
-          justifyContent={"center"}
-          gap="24px"
-          pt="48px"
-        >
-          <Box mt="-18px" height="38px">
-            <Box mt="-19px" ml="-20px">
-              <Logo href="#" height="38px" paddingLeft="0" />
+    <Box>
+      <Box
+        bg="radial-gradient(573.81% 50% at 50% 50%, #F9F3EF 0%, #F5F2FA 82.25%, #F1F6FA 100%)"
+        borderBottom="1px solid"
+        borderColor="border.forms"
+      >
+        <Container maxWidth="670px">
+          <Flex
+            flexDirection={"column"}
+            justifyContent={"center"}
+            py="standard.2xl"
+          >
+            <Box overflow="hidden" mb="24px">
+              <Logo padding="0" href="#" paddingLeft="0" />
             </Box>
-          </Box>
-          <Box>
-            <Heading mb="12px" variant="h2" color="content.accent.default">
-              Review your delegate profile
-            </Heading>
-            <Text
-              variant="large"
-              color="content.default.default"
-              fontWeight={"400"}
-            >
-              Before you jump into the Governence Hub please review your
-              delegate statement, make sure nothing is missing or make any
-              updates.
-            </Text>
-          </Box>
-        </Flex>
-        <Box mt="standard.3xl" pb="standard.3xl">
+            <Box>
+              <Heading mb="12px" variant="h2" color="content.accent.default">
+                Review your delegate profile
+              </Heading>
+              <Text
+                variant="large"
+                color="content.default.default"
+                fontWeight={"400"}
+              >
+                Before you jump into the Governence Hub please review your
+                delegate statement, make sure nothing is missing or make any
+                updates.
+              </Text>
+            </Box>
+          </Flex>
+        </Container>
+      </Box>
+      <Container maxWidth="670px">
+        <Box mt="standard.2xl" pb="standard.3xl">
           <DelegateForm
             mode={mode}
             delegate={delegate}

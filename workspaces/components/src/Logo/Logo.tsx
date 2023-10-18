@@ -5,9 +5,10 @@ type Props = {
   href?: string;
   height?: string;
   paddingLeft?: string;
+  padding?: string;
 };
 
-export const Logo = ({ href = "" }: Props) => {
+export const Logo = ({ padding, href = "" }: Props) => {
   return (
     <Flex
       as="a"
@@ -15,7 +16,7 @@ export const Logo = ({ href = "" }: Props) => {
       gap="8px"
       display="flex"
       alignItems="center"
-      p="standard.lg"
+      p={padding ? padding : "standard.lg"}
       zIndex={1}
     >
       <svg
