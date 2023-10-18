@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq, inArray } from 'drizzle-orm';
-import { TRPCError } from '@trpc/server';
 
 export const usersRouter = router({
   getAll: protectedProcedure.query(() =>
