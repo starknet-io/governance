@@ -60,12 +60,13 @@ export async function createCouncils() {
     });
 
     const councilId = insertedCouncil[0].id;
-
+    let foundUser = null;
     // Add admin users to council
     for (const address of adminUsers) {
       const user = await db.query.users.findFirst({
         where: eq(users.address, address),
       });
+      foundUser = user?.id
       if (user) {
         await db
           .insert(usersToCouncils)
@@ -91,6 +92,7 @@ export async function createCouncils() {
         .values({
           title: post.title,
           content: post.content,
+          userId: foundUser,
           councilId: insertedCouncil[0].id,
           slug: slugify(post.title, { replacement: '_', lower: true }),
           createdAt: new Date(),
