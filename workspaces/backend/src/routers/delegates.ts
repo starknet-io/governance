@@ -90,6 +90,7 @@ export const delegateRouter = router({
       await Algolia.saveObjectToIndex({
         name: (user?.ensName || user?.address) ?? '',
         type: 'delegate',
+        address: user?.address,
         avatar: user?.profileImage || user?.ensAvatar || undefined,
         refID: insertedDelegate[0].id,
         content: opts.input.statement + ' ' + opts.input.interests,
@@ -235,6 +236,7 @@ export const delegateRouter = router({
           await Algolia.updateObjectFromIndex({
             refID: updatedDelegate[0].id,
             type: 'delegate',
+            address: user.address,
             name: user.ensName || user.address,
             content: opts.input.statement + ' ' + opts.input?.interests,
           });

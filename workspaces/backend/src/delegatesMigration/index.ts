@@ -11,7 +11,7 @@ import { delegateVotes } from '../db/schema/delegatesVotes';
 import { createCouncils } from './seeders/councilSeeder';
 import { createLearnSections } from './seeders/learnSeeder';
 import { createAdminUsers } from './seeders/usersSeeder';
-import { seedVotingProposals } from './seeders/votingProposalSeeder';
+import {seedVotingProposals} from "./seeders/votingProposalSeeder";
 
 const turndownService = new TurndownService();
 
@@ -191,7 +191,7 @@ async function seedData() {
       type: 'delegate' as 'voting_proposal' | 'council' | 'learn' | 'delegate',
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      avatar: delegateUser?.profileImage || delegateUser?.ensAvatar || null,
+      address: delegateUser.address,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       name: (delegateUser?.ensName || delegateUser?.address) as string,

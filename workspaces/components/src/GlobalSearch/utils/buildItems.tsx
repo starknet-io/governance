@@ -13,6 +13,7 @@ import LearnIcon from "../assets/learn_icon.svg";
 import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
 import { format } from "date-fns";
 import slugify from "slugify";
+import {Indenticon} from "../../Indenticon";
 
 export type SearchItemType =
   | "voting_proposal"
@@ -24,6 +25,7 @@ type BuildItemsType = "item-list" | "grouped-items";
 export interface ISearchItem {
   name: string;
   type: SearchItemType;
+  address?: string;
   objectID: string;
   refID: string | number;
   avatar?: string;
@@ -274,12 +276,7 @@ function DelegateItem({ data }: { data: ISearchItem }) {
         {data.avatar ? (
           <Avatar width="14" height="14" src={data.avatar} />
         ) : (
-          <Box
-            width="14"
-            height="14"
-            borderRadius="full"
-            background="linear-gradient(#040E56, #6B2EB7, #FA63F8)"
-          />
+          <Indenticon address={data.address} />
         )}
       </Flex>
       <Flex flexDirection="column" justifyContent="center">
