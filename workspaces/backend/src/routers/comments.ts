@@ -167,7 +167,7 @@ export const commentsRouter = router({
       }
 
       if (profanity.exists(commentText)) {
-        throw new Error('Your comment contains unacceptable words.');
+        throw new Error('Your comment contains inappropriate language.');
       }
 
       const lastFiveComments = await db.query.comments.findMany({
@@ -209,7 +209,7 @@ export const commentsRouter = router({
       }
 
       if (profanity.exists(opts.input?.content || '')) {
-        throw new Error('Your comment contains unacceptable words.');
+        throw new Error('Your comment contains inappropriate language.');
       }
 
       const originalComment = await db
