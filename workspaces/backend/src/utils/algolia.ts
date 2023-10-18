@@ -7,6 +7,7 @@ interface RecordData {
   refID: number | string;
   content?: string;
   avatar?: string;
+  address?: string;
 }
 
 const client = algoliasearch(
