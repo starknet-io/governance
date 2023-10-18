@@ -74,8 +74,7 @@ const AuthorizedUserView = () => {
   // Effect for handling redirection based on address and specific path
   useEffect(() => {
     const currentPath = window.location.pathname;
-    console.log("Current path", currentPath);
-    console.log("User", user);
+
     const isOnSpecificPath =
       currentPath.startsWith("/delegates/profile/onboarding/") ||
       currentPath.startsWith("/delegates/profile/edit/");

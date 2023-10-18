@@ -73,8 +73,7 @@ function LayoutDefault(props: Props) {
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
 
   const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
-  console.log("pageContext", pageContext.urlOriginal);
-  console.log("formattedSlug", formattedSlug);
+
   return (
     <>
       <TallyScript />
