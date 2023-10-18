@@ -149,7 +149,7 @@ export const usersRouter = router({
 
       // Ensure the user exists by ID.
       if (!userById) {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: 'User not found' });
+        throw new Error('User not found');
       }
 
       // If a username is provided, ensure it's unique.
@@ -159,10 +159,7 @@ export const usersRouter = router({
         });
 
         if (existingUser) {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'Username already exists',
-          });
+          throw new Error('Username already exists');
         }
       }
 
@@ -242,7 +239,7 @@ export const usersRouter = router({
       });
 
       if (!user) {
-        throw new TRPCError({ code: 'NOT_FOUND' });
+        throw new Error('NOT_FOUND');
       }
 
       await db
