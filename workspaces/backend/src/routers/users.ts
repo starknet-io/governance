@@ -200,16 +200,12 @@ export const usersRouter = router({
           delegationStatement: true,
         },
       });
-      console.log('enter here');
 
       if (foundUser?.profileImage) {
-        console.log('but not here??');
-
         const delegate = await db.query.delegates.findFirst({
           where: eq(delegates.userId, id),
         });
         if (delegate) {
-          console.log('ah, finally found ya!');
           try {
             await Algolia.updateObjectFromIndex({
               refID: delegate.id,
