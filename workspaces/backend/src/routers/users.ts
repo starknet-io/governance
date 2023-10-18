@@ -86,7 +86,6 @@ export const usersRouter = router({
       z.object({
         address: z.string(),
         role: z.any(),
-        banned: z.boolean(),
       }),
     )
     .mutation(async (opts) => {
@@ -94,21 +93,10 @@ export const usersRouter = router({
         where: eq(users.address, opts.input.address.toLowerCase()),
       });
       if (user) {
-        if (opts.input.banned) {
-          if (user.role === 'moderator' || user.role === 'admin') {
-            throw new Error('Cannot ban moderator or admin');
-          }
-          if (
-            user.address.toLowerCase() === opts.ctx.user.address.toLowerCase()
-          ) {
-            throw new Error('Cannot ban yourself');
-          }
-        }
         const updatedUser = await db
           .update(users)
           .set({
             role: opts.input.role,
-            banned: opts.input.banned,
           })
           .where(eq(users.address, opts.input.address.toLowerCase()))
           .returning();
@@ -245,6 +233,7 @@ export const usersRouter = router({
     .input(
       z.object({
         id: z.string(), // ID of the user to be banned
+        banned: z.boolean(),
       }),
     )
     .mutation(async (opts) => {
@@ -268,13 +257,13 @@ export const usersRouter = router({
         throw new Error('Cannot ban moderators or admins');
       }
 
-      if (userToBan.banned) {
-        throw new Error('User is already banned');
+      if (userToBan.banned === opts.input.banned) {
+        throw new Error('Banned status of user is the same');
       }
 
       const bannedUser = await db
         .update(users)
-        .set({ banned: true })
+        .set({ banned: opts.input.banned })
         .where(eq(users.id, opts.input.id))
         .returning();
 
