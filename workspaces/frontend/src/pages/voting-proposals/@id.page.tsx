@@ -735,7 +735,7 @@ export function Page() {
               </FormControl>
             </Box>
           )}
-          {comments.data && comments.data.length > 0 && (
+          {comments.data && comments.data.length > 0 ? (
             <>
               <AppBar.Root>
                 <AppBar.Group mobileDirection="row">
@@ -763,17 +763,23 @@ export function Page() {
                   </Select>
                 </AppBar.Group>
               </AppBar.Root>
+              <Box mt="standard.xs">
+                <CommentList
+                  commentsList={comments.data}
+                  onVote={handleCommentVote}
+                  onDelete={handleCommentDelete}
+                  onReply={handleReplySend}
+                  onEdit={handleCommentEdit}
+                />
+              </Box>
             </>
-          )}
-          <Box mt="standard.xs">
-            <CommentList
-              commentsList={comments.data || []}
-              onVote={handleCommentVote}
-              onDelete={handleCommentDelete}
-              onReply={handleReplySend}
-              onEdit={handleCommentEdit}
+          ) : (
+            <EmptyState
+              border={false}
+              type="comments"
+              title="Add the first comment"
             />
-          </Box>
+          )}
         </VoteLayout.Discussion>
 
         <VoteLayout.VoteWidget>

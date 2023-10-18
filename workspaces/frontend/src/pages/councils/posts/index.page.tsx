@@ -18,6 +18,7 @@ import {
   Banner,
   Dropdown,
   EllipsisIcon,
+  EmptyState,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -26,9 +27,11 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { Grid } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import React, { useState } from "react";
+import { useHelpMessage } from "src/hooks/HelpMessage";
 
 export function Page() {
   const pageContext = usePageContext();
+  const [helpMessage, setHelpMessage] = useHelpMessage();
   const postResp = trpc.posts.getPostBySlug.useQuery({
     slug: pageContext.routeParams!.postSlug,
   });
@@ -311,7 +314,17 @@ export function Page() {
                   )}
                 </FormControl>
               ) : (
-                <></>
+                <Box>
+                  <FormControl>
+                    <Box onClick={() => setHelpMessage("connectWalletMessage")}>
+                      <CommentInput
+                        onSend={async (comment) => {
+                          console.log(comment);
+                        }}
+                      />
+                    </Box>
+                  </FormControl>
+                </Box>
               )}
               {commentsLoading ? (
                 // Skeleton representation for comments loading state
@@ -320,14 +333,21 @@ export function Page() {
                   <Skeleton height="40px" width="100%" />
                   <Skeleton height="40px" width="100%" />
                 </Box>
-              ) : (
+              ) : commentsData && commentsData.length > 0 ? (
                 // Actual comments content
                 <CommentList
-                  commentsList={commentsData || []}
+                  commentsList={commentsData}
                   onVote={handleCommentVote}
                   onReply={handleReplySend}
                   onDelete={handleCommentDelete}
                   onEdit={handleCommentEdit}
+                />
+              ) : (
+                // Display EmptyState when there are no comments
+                <EmptyState
+                  border={false}
+                  type="comments"
+                  title="Add the first comment"
                 />
               )}
             </Stack>
