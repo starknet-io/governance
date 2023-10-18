@@ -13,7 +13,7 @@ import LearnIcon from "../assets/learn_icon.svg";
 import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
 import { format } from "date-fns";
 import slugify from "slugify";
-import {Indenticon} from "../../Indenticon";
+import { Indenticon } from "../../Indenticon";
 
 export type SearchItemType =
   | "voting_proposal"
@@ -265,6 +265,7 @@ function CouncilItem({ data }: { data: ISearchItem }) {
 }
 
 function DelegateItem({ data }: { data: ISearchItem }) {
+  console.log(data);
   return (
     <Flex>
       <Flex
@@ -276,7 +277,7 @@ function DelegateItem({ data }: { data: ISearchItem }) {
         {data.avatar ? (
           <Avatar width="14" height="14" src={data.avatar} />
         ) : (
-          <Indenticon address={data.address} />
+          <Indenticon address={data?.address} />
         )}
       </Flex>
       <Flex flexDirection="column" justifyContent="center">
