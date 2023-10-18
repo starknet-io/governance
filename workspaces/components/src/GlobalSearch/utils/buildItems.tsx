@@ -265,7 +265,6 @@ function CouncilItem({ data }: { data: ISearchItem }) {
 }
 
 function DelegateItem({ data }: { data: ISearchItem }) {
-  console.log(data);
   return (
     <Flex>
       <Flex

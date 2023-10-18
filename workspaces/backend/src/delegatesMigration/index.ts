@@ -194,6 +194,9 @@ async function seedData() {
       address: delegateUser.address,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
+      avatar: delegateUser?.profileImage || delegateUser?.ensAvatar || null,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       name: (delegateUser?.ensName || delegateUser?.address) as string,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

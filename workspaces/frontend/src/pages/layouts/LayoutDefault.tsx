@@ -59,7 +59,6 @@ function LayoutDefault(props: Props) {
   const [isBannedModalOpen, setIsBannedModalOpen] = useState(false);
 
   useEffect(() => {
-    console.log(user);
     if (user?.banned) {
       setIsBannedModalOpen(true);
       handleLogOut();
