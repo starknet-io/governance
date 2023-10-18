@@ -41,9 +41,9 @@ export const DelegateOnboarding = ({
                 color="content.default.default"
                 fontWeight={"400"}
               >
-                Before you jump into the Governence Hub please review your
-                delegate statement, make sure nothing is missing or make any
-                updates.
+                Before you get started in the Governence Hub please review your
+                delegate profile and add any updates you would like to share
+                with the community.
               </Text>
             </Box>
           </Flex>
