@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
 import { eq, inArray } from 'drizzle-orm';
+import { delegates } from '../db/schema/delegates';
+import { Algolia } from '../utils/algolia';
 
 export const usersRouter = router({
   getAll: protectedProcedure.query(() =>
@@ -67,7 +69,19 @@ export const usersRouter = router({
         })
         .where(eq(users.id, opts.input.id))
         .returning();
-      return updatedUser[0];
+      const user = updatedUser[0];
+      if (opts.input.profileImage) {
+        const delegate = await db.query.delegates.findFirst({
+          where: eq(delegates.userId, user.id),
+        });
+        if (delegate) {
+          await Algolia.updateObjectFromIndex({
+            refID: delegate.id,
+            avatar: opts.input.profileImage,
+          });
+        }
+      }
+      return user;
     }),
 
   deleteUser: publicProcedure
@@ -180,12 +194,32 @@ export const usersRouter = router({
         .where(eq(users.id, id))
         .returning();
 
-      return await db.query.users.findFirst({
+      const foundUser = await db.query.users.findFirst({
         where: eq(users.id, id),
         with: {
           delegationStatement: true,
         },
       });
+
+      if (foundUser?.profileImage) {
+        const delegate = await db.query.delegates.findFirst({
+          where: eq(delegates.userId, id),
+        });
+        if (delegate) {
+          try {
+            await Algolia.updateObjectFromIndex({
+              refID: delegate.id,
+              type: 'delegate',
+              name: foundUser.ensName || foundUser.address,
+              content: delegate.statement + delegate.interests,
+              avatar: foundUser.profileImage,
+            });
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+      return foundUser;
     }),
 
   me: protectedProcedure.query(async (opts) => {

@@ -1,4 +1,12 @@
-import { Box, Flex, Text, Image, Skeleton, Badge } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  Image,
+  Skeleton,
+  Badge,
+  Avatar,
+} from "@chakra-ui/react";
 
 import VotingProposalIcon from "../assets/voting_proposal_icon.svg";
 import LearnIcon from "../assets/learn_icon.svg";
@@ -18,6 +26,7 @@ export interface ISearchItem {
   type: SearchItemType;
   objectID: string;
   refID: string | number;
+  avatar?: string;
 }
 
 const GroupNames: Record<SearchItemType, string> = {
@@ -262,12 +271,16 @@ function DelegateItem({ data }: { data: ISearchItem }) {
         justifyContent="center"
         p="standard.base"
       >
-        <Box
-          width="14"
-          height="14"
-          borderRadius="full"
-          background="linear-gradient(#040E56, #6B2EB7, #FA63F8)"
-        />
+        {data.avatar ? (
+          <Avatar width="14" height="14" src={data.avatar} />
+        ) : (
+          <Box
+            width="14"
+            height="14"
+            borderRadius="full"
+            background="linear-gradient(#040E56, #6B2EB7, #FA63F8)"
+          />
+        )}
       </Flex>
       <Flex flexDirection="column" justifyContent="center">
         <Text fontWeight="semibold" fontSize="sm">

@@ -1,4 +1,4 @@
-import {learnPageSections} from "../learnPageContent";
+import {learnPageSections} from "../content/learnPageContent";
 import slugify from "slugify";
 import {db} from "../../db/db";
 import {eq} from "drizzle-orm";
@@ -31,7 +31,7 @@ export async function createLearnSections(userId: string | null) {
     const content = page.content;
     const title = page.title;
     index = index + 1;
-    const orderNumber = index;
+    const orderNumber = page.order;
 
     let newPageContent = {
       title,

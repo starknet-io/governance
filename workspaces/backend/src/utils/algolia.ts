@@ -2,10 +2,11 @@ import algoliasearch from 'algoliasearch';
 
 type RecordType = 'voting_proposal' | 'council' | 'learn' | 'delegate';
 interface RecordData {
-  name: string;
-  type: RecordType;
+  name?: string;
+  type?: RecordType;
   refID: number | string;
   content?: string;
+  avatar?: string;
 }
 
 const client = algoliasearch(
