@@ -5,8 +5,8 @@ import { Toolbar } from "./EditorComponents";
 import { Box, Divider } from "@chakra-ui/react";
 import { EditableComponent } from "./EditableComponent";
 import { MarkdownEditorProps } from "./MarkdownEditorProps";
-import { initialValue } from "./initialValue";
-import { createEditor } from "slate";
+import { defaultInitialValue } from "./initialValue";
+import { Descendant, createEditor } from "slate";
 import MarkButton from "./MarkButton";
 import { useMarkdownEditor } from "./useMarkdownEditor";
 import ImageBlockButton from "./ImageBlockButton";
@@ -20,6 +20,7 @@ export const MarkdownEditor: React.FC<
     handleUpload?: (file: File) => Promise<string | void> | void;
     offsetPlaceholder?: string;
     isInvalid?: boolean;
+    initialValue?: Descendant[];
   }
 > = ({
   onChange,
@@ -31,6 +32,7 @@ export const MarkdownEditor: React.FC<
   offsetPlaceholder,
   basicEditor = false,
   isInvalid = false,
+  initialValue = defaultInitialValue,
 }) => {
   const { convertMarkdownToSlate } = useMarkdownEditor("");
   const editor = useMemo(

@@ -41,6 +41,8 @@ export const CommentInput = ({
     onSend(editorValue);
   };
 
+  const isSendDisabled = !editorValue?.trim?.() || editorValue === defaultValue
+
   return (
     <Box mb="16px" position="relative">
       <MarkdownEditor
@@ -49,6 +51,7 @@ export const CommentInput = ({
         placeholder={placeholder}
         onChange={handleEditorChange}
         value={editorValue}
+        initialValue={defaultValue ? [] : undefined}
       />
       {withCancel && (
         <Button
@@ -70,7 +73,7 @@ export const CommentInput = ({
         size="sm"
         type="submit"
         onClick={handleSend}
-        disabled={!editorValue?.trim?.()}
+        disabled={isSendDisabled}
       >
         {isEdit ? "Save" : "Send"}
       </Button>
