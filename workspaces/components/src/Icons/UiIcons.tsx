@@ -270,6 +270,47 @@ export const PlusIcon = ({ color, ...rest }: UiIconProps) => (
     />
   </Icon>
 );
+
+export const ConnectWalletIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 84 79" {...rest} fill="none">
+    <path
+      d="M2.98389 15.3242H72.3461C77.1346 15.3242 81.0164 19.206 81.0164 23.9945V65.1783C81.0164 71.1639 76.1641 76.0162 70.1785 76.0162H46.3353"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+    <path
+      d="M63.6758 15.3243V10.9891C63.6758 6.20066 59.794 2.31885 55.0056 2.31885H13.8217C7.83616 2.31885 2.98389 7.17112 2.98389 13.1567V50.0054"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M33.3299 67.3459H2.98389"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M24.6597 76.0162L33.3299 67.3459L24.6597 58.6757"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M63.6757 45.6703H55.0054"
+      stroke="#4A4A4F"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Icon>
+);
 export const DisconnectWalletIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest} fill="none">
     <path
