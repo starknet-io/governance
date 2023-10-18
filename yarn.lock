@@ -3065,13 +3065,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coffeeandfun/google-profanity-words@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@coffeeandfun/google-profanity-words@npm:2.1.0"
-  checksum: d02493250ef4f1e660eccce7754dba5f881c14a7b4578f0d009fbcfa95876b6b4aedbf5f5764f6dd0419000cfb20b33dccbb93f163697ca8d97af0c7ecdef90a
-  languageName: node
-  linkType: hard
-
 "@coinbase/wallet-sdk@npm:3.6.4":
   version: 3.6.4
   resolution: "@coinbase/wallet-sdk@npm:3.6.4"
@@ -10235,7 +10228,6 @@ __metadata:
   resolution: "@yukilabs/governance-backend@workspace:workspaces/backend"
   dependencies:
     "@2toad/profanity": ^2.2.0
-    "@coffeeandfun/google-profanity-words": ^2.1.0
     "@trpc/server": ^10.36.0
     "@types/cookie-parser": ^1.4.3
     "@types/cors": ^2.8.13
