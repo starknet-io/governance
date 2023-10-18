@@ -23,10 +23,17 @@ export const DelegateOnboarding = ({
       borderColor="border.forms"
       height="206px"
     >
-      <Container maxWidth="670px" pt="standard.2xl">
-        <Flex flexDirection={"column"} justifyContent={"center"} gap="24px">
-          <Box>
-            <Logo href="#" height="38px" paddingLeft="0" />
+      <Container maxWidth="670px">
+        <Flex
+          flexDirection={"column"}
+          justifyContent={"center"}
+          gap="24px"
+          pt="48px"
+        >
+          <Box mt="-18px" height="38px">
+            <Box mt="-19px" ml="-20px">
+              <Logo href="#" height="38px" paddingLeft="0" />
+            </Box>
           </Box>
           <Box>
             <Heading mb="12px" variant="h2" color="content.accent.default">
