@@ -28,6 +28,7 @@ import { useFileUpload } from "src/hooks/useFileUpload";
 import { useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
+import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 interface FieldValues {
   // type: ProposalType;
@@ -43,7 +44,7 @@ export function Page() {
   const { editor, handleEditorChange, editorValue } = useMarkdownEditor("");
   const { handleUpload } = useFileUpload();
   const [error, setError] = useState("");
-
+  const { walletConnector } = useDynamicContext();
   const createProposal = trpc.proposals.createProposal.useMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -122,6 +123,10 @@ export function Page() {
         };
 
         const web3 = new providers.Web3Provider(walletClient.transport);
+        const deeplink = walletConnector?.getDeepLink();
+        if (deeplink) {
+          window.location.href = deeplink;
+        }
 
         const receipt = (await client.proposal(
           web3,
