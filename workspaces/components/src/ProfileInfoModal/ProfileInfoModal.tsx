@@ -13,6 +13,7 @@ import {
   Spinner,
   FormControl,
   FormLabel,
+  Flex,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
@@ -95,7 +96,7 @@ export const ProfileInfoModal = ({
         <ModalOverlay />
         <ModalContent>
           <ModalHeader display={"flex"} justifyContent={"center"}>
-            Upload Image
+            Upload avatar
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -107,7 +108,7 @@ export const ProfileInfoModal = ({
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpen && !isUploadOpen} onClose={onClose}>
+      <Modal isOpen={isOpen && !isUploadOpen} onClose={onClose} size="standard">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader
@@ -129,39 +130,44 @@ export const ProfileInfoModal = ({
               <Box ml="16px">
                 <Box display={"flex"} flexDirection={"row"}>
                   <Button
-                    variant={"outline"}
+                    variant={"secondary"}
                     onClick={() => setIsUploadOpen(true)}
                     spinner={<Spinner />}
                     leftIcon={<ShareIcon />}
                   >
-                    <Text>Upload image</Text>
+                    Upload Avatar
                   </Button>
                 </Box>
                 <Box>
-                  <Text variant="small" color={"#86848D"}>
+                  <Text variant="small" color={"content.default.default"}>
                     We support PNGs, JPEGs and GIFs under 10MB
                   </Text>
                 </Box>
               </Box>
             </Box>
             <Box mt={6}>
-              <form style={{ width: "100%" }}>
+              <form>
                 <FormControl id="member-name" paddingBottom={2}>
                   <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
                     Username
                   </FormLabel>
                   <Input
+                    variant="primary"
+                    size="standard"
                     placeholder="Username"
                     {...register("username")}
                     onChange={setUsernameErrorFalse}
                   />
                   {userExistsError && <span>Username already exists</span>}
                 </FormControl>
+
                 <FormControl id="address" paddingBottom={2}>
                   <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
                     Starknet address
                   </FormLabel>
                   <Input
+                    variant="primary"
+                    size="standard"
                     placeholder="0x..."
                     {...register("starknetAddress", {
                       validate: (value) => validateStarknetAddress(value),
@@ -177,12 +183,14 @@ export const ProfileInfoModal = ({
           </ModalBody>
 
           <ModalFooter>
-            <Button width={"50%"} variant={"ghost"} mr={3} onClick={onClose}>
-              {mode === "create" ? "Skip" : "Cancel"}
-            </Button>
-            <Button width={"50%"} onClick={handleSave}>
-              Save
-            </Button>
+            <Flex flex={1} gap="12px">
+              <Button width={"100%"} variant={"ghost"} onClick={onClose}>
+                {mode === "create" ? "Skip" : "Cancel"}
+              </Button>
+              <Button width={"100%"} onClick={handleSave}>
+                Save
+              </Button>
+            </Flex>
           </ModalFooter>
         </ModalContent>
       </Modal>
