@@ -22,6 +22,8 @@ import { UploadImage } from "src/UploadImage";
 import { ProfileImage } from "src/ProfileImage";
 import { ShareIcon } from "src/Icons";
 import { Input } from "src/Input";
+import { FormControlled } from "src/FormControlled";
+import { Heading } from "src/Heading";
 
 interface ProfileInfoModalProps {
   isOpen: boolean;
@@ -92,11 +94,17 @@ export const ProfileInfoModal = ({
 
   return (
     <>
-      <Modal isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)}>
+      <Modal
+        isCentered
+        isOpen={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+      >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader display={"flex"} justifyContent={"center"}>
-            Upload avatar
+          <ModalHeader display={"flex"} justifyContent={"center"} p="0">
+            <Heading variant="h4" mb="standard.xl">
+              Upload avatar
+            </Heading>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -108,78 +116,95 @@ export const ProfileInfoModal = ({
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpen && !isUploadOpen} onClose={onClose} size="standard">
+      <Modal
+        isCentered
+        isOpen={isOpen && !isUploadOpen}
+        onClose={onClose}
+        size="standard"
+      >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader
-            fontSize={"xl"}
-            display={"flex"}
-            justifyContent={"center"}
-          >
-            {mode === "create" ? "Add" : "Edit"} your profile info
+          <ModalHeader display={"flex"} justifyContent={"center"} p="0">
+            <Heading variant="h4" mb="standard.xl">
+              {mode === "create" ? "Add" : "Edit"} your profile info
+            </Heading>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Box
-              mb="24px"
+              mb="standard.xl"
               display={"flex"}
               flexDirection={"row"}
               alignItems="center"
+              gap="24px"
             >
               <ProfileImage imageUrl={imageUrl} size="medium" />
-              <Box ml="16px">
-                <Box display={"flex"} flexDirection={"row"}>
+              <Box>
+                <Box
+                  display={"flex"}
+                  flexDirection={"column"}
+                  alignItems="flex-start"
+                  gap="8px"
+                >
                   <Button
                     variant={"secondary"}
                     onClick={() => setIsUploadOpen(true)}
                     spinner={<Spinner />}
                     leftIcon={<ShareIcon />}
+                    size="standard"
                   >
                     Upload Avatar
                   </Button>
-                </Box>
-                <Box>
                   <Text variant="small" color={"content.default.default"}>
                     We support PNGs, JPEGs and GIFs under 10MB
                   </Text>
                 </Box>
+                <Box></Box>
               </Box>
             </Box>
-            <Box mt={6}>
-              <form>
-                <FormControl id="member-name" paddingBottom={2}>
-                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
-                    Username
-                  </FormLabel>
+            <form>
+              <Flex flexDirection="column" gap="standard.xl">
+                <FormControlled
+                  name="username"
+                  isRequired={false}
+                  id="member-name"
+                  label="Username"
+                  isInvalid={!!userExistsError}
+                  errorMessage="Username already exists"
+                >
                   <Input
-                    variant="primary"
                     size="standard"
+                    variant="primary"
                     placeholder="Username"
                     {...register("username")}
                     onChange={setUsernameErrorFalse}
                   />
-                  {userExistsError && <span>Username already exists</span>}
-                </FormControl>
+                </FormControlled>
 
-                <FormControl id="address" paddingBottom={2}>
-                  <FormLabel lineHeight="22px" fontSize="14px" fontWeight="600">
-                    Starknet address
-                  </FormLabel>
+                <FormControlled
+                  name="starknetAddress"
+                  isRequired={false}
+                  id="address"
+                  label="Starknet address"
+                  isInvalid={
+                    !!errors.starknetAddress &&
+                    errors.starknetAddress.type === "validate"
+                  }
+                  errorMessage="Invalid Starknet address"
+                >
                   <Input
-                    variant="primary"
                     size="standard"
+                    variant="primary"
                     placeholder="0x..."
                     {...register("starknetAddress", {
-                      validate: (value) => validateStarknetAddress(value),
+                      validate: (value) =>
+                        validateStarknetAddress(value) ||
+                        "Invalid Starknet address",
                     })}
                   />
-                  {errors.starknetAddress &&
-                    errors.starknetAddress.type === "validate" && (
-                      <span>Invalid Starknet address</span>
-                    )}
-                </FormControl>
-              </form>
-            </Box>
+                </FormControlled>
+              </Flex>
+            </form>
           </ModalBody>
 
           <ModalFooter>
