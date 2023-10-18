@@ -58,8 +58,9 @@ import {
   SuccessIcon,
   WalletIcon,
 } from "@yukilabs/governance-components/src/Icons";
-import { Button as ChakraButton, Grid } from "@chakra-ui/react";
+import { Button as ChakraButton } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
+import { useHelpMessage } from "src/hooks/HelpMessage";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -72,6 +73,7 @@ const sortByOptions = {
 export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
+  const [helpMessage, setHelpMessage] = useHelpMessage();
 
   const { data, refetch } = useQuery(
     gql(`query Proposal($proposal: String) {
@@ -721,9 +723,19 @@ export function Page() {
               )}
             </FormControl>
           ) : (
-            <Box></Box>
+            <Box>
+              <FormControl>
+                <Box onClick={() => setHelpMessage("connectWalletMessage")}>
+                  <CommentInput
+                    onSend={async (comment) => {
+                      console.log(comment);
+                    }}
+                  />
+                </Box>
+              </FormControl>
+            </Box>
           )}
-          {comments.data && comments.data.length > 0 && (
+          {comments.data && comments.data.length > 0 ? (
             <>
               <AppBar.Root>
                 <AppBar.Group mobileDirection="row">
@@ -751,17 +763,23 @@ export function Page() {
                   </Select>
                 </AppBar.Group>
               </AppBar.Root>
+              <Box mt="standard.xs">
+                <CommentList
+                  commentsList={comments.data}
+                  onVote={handleCommentVote}
+                  onDelete={handleCommentDelete}
+                  onReply={handleReplySend}
+                  onEdit={handleCommentEdit}
+                />
+              </Box>
             </>
-          )}
-          <Box mt="standard.xs">
-            <CommentList
-              commentsList={comments.data || []}
-              onVote={handleCommentVote}
-              onDelete={handleCommentDelete}
-              onReply={handleReplySend}
-              onEdit={handleCommentEdit}
+          ) : (
+            <EmptyState
+              border={false}
+              type="comments"
+              title="Add the first comment"
             />
-          </Box>
+          )}
         </VoteLayout.Discussion>
 
         <VoteLayout.VoteWidget>

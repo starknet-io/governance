@@ -38,7 +38,10 @@ import { NavigationMenu } from "src/components/Navigation";
 import { BackButton } from "src/components/Header/BackButton";
 import { extractAndFormatSlug } from "src/utils/helpers";
 import { CloseIcon } from "@dynamic-labs/sdk-react";
-import { BannedIcon } from "@yukilabs/governance-components/src/Icons/UiIcons";
+import {
+  BannedIcon,
+  ConnectWalletIcon,
+} from "@yukilabs/governance-components/src/Icons/UiIcons";
 
 export interface Props {
   readonly pageContext: PageContext;
@@ -51,12 +54,11 @@ function LayoutDefault(props: Props) {
   const councilResp = trpc.councils.getAll.useQuery();
   const [renderDone, setRenderDone] = useState(false);
   const { user } = usePageContext();
-  const { handleLogOut } = useDynamicContext();
+  const { handleLogOut, setShowAuthFlow } = useDynamicContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBannedModalOpen, setIsBannedModalOpen] = useState(false);
 
   useEffect(() => {
-    console.log(user)
     if (user?.banned) {
       setIsBannedModalOpen(true);
       handleLogOut();
@@ -108,10 +110,9 @@ function LayoutDefault(props: Props) {
           not following our community guidelines.
           <br />
           <br />
-          Rest assured, this was done to
-          ensure a safe and respectful space for everyone. If you have any
-          questions or want to appeal, reach out to us through our support
-          channels.
+          Rest assured, this was done to ensure a safe and respectful space for
+          everyone. If you have any questions or want to appeal, reach out to us
+          through our support channels.
           <br />
           <br />
           Thank you for your understanding.
@@ -121,12 +122,20 @@ function LayoutDefault(props: Props) {
         </Button>
       </InfoModal>
       <InfoModal
-        title="connect your wallet"
+        title="Connect wallet"
         isOpen={helpMessage === "connectWalletMessage"}
         onClose={() => setHelpMessage(null)}
       >
-        <Text>To action you need to connect your wallet</Text>
-        <Button variant="primary" onClick={() => console.log("connect wallet")}>
+        <Flex alignItems="center" justifyContent={"center"}>
+          <ConnectWalletIcon boxSize="84" />
+        </Flex>
+        <Button
+          variant="primary"
+          onClick={() => {
+            setShowAuthFlow(true);
+            setHelpMessage(null);
+          }}
+        >
           Connect
         </Button>
       </InfoModal>
