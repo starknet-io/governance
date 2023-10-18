@@ -49,7 +49,7 @@ const Content = ({ children }: ContentProps) => {
         lg: "standard.2xl",
       }}
       pt={{ base: "standard.2xl", lg: "standard.3xl" }}
-      pb={{ base: "standard.2xl" }}
+      pb={{ base: "0" }}
       borderRightWidth={{ base: "none", lg: "1px" }}
       borderColor="border.forms"
     >
@@ -81,7 +81,7 @@ const Discussion = ({ children }: DiscussionProps) => {
       <Box
         maxWidth={{ base: "100%", lg: "558px", xl: "690px" }}
         mx="auto"
-        pt={{ base: "standard.2xl" }}
+        pt={{ base: "standard.md", md: "0" }}
       >
         {children}
       </Box>

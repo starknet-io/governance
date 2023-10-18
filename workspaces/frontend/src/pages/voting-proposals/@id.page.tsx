@@ -58,7 +58,7 @@ import {
   SuccessIcon,
   WalletIcon,
 } from "@yukilabs/governance-components/src/Icons";
-import { Button as ChakraButton, Grid } from "@chakra-ui/react";
+import { Button as ChakraButton } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 
 const sortByOptions = {
