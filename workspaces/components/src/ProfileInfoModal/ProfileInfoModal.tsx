@@ -130,7 +130,7 @@ export const ProfileInfoModal = ({
             </Heading>
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody p="0" px="standard.xl">
             <Box
               mb="standard.xl"
               display={"flex"}
@@ -138,7 +138,9 @@ export const ProfileInfoModal = ({
               alignItems="center"
               gap="24px"
             >
-              <ProfileImage imageUrl={imageUrl} size="medium" />
+              <Box>
+                <ProfileImage imageUrl={imageUrl} size="medium" />
+              </Box>
               <Box>
                 <Box
                   display={"flex"}
@@ -207,7 +209,7 @@ export const ProfileInfoModal = ({
             </form>
           </ModalBody>
 
-          <ModalFooter>
+          <ModalFooter p={0} px="standard.xl">
             <Flex flex={1} gap="12px">
               <Button width={"100%"} variant={"ghost"} onClick={onClose}>
                 {mode === "create" ? "Skip" : "Cancel"}

@@ -34,6 +34,7 @@ import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
 import { NavigationMenu } from "src/components/Navigation";
 import { BackButton } from "src/components/Header/BackButton";
 import { extractAndFormatSlug } from "src/utils/helpers";
+import { CloseIcon } from "@dynamic-labs/sdk-react";
 
 export interface Props {
   readonly pageContext: PageContext;
@@ -97,6 +98,7 @@ function LayoutDefault(props: Props) {
         size={{ base: "full", md: "sm" }}
         placement="left"
         onClose={onClose}
+        isFullHeight
       >
         <DrawerOverlay />
         <DrawerContent>
@@ -107,7 +109,7 @@ function LayoutDefault(props: Props) {
               variant="ghost"
               size="condensed"
               //todo replace with close icon
-              icon={<div>X</div>}
+              icon={<CloseIcon />}
             />
           </Box>
           <Box display={{ base: "none", lg: "flex" }}>
