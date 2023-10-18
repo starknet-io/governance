@@ -137,7 +137,8 @@ export function Page() {
 
         type CategoryType = "category1" | "category2" | "category3";
         const proposalData = {
-          category: data.category.value as CategoryType,
+          title: data.title,
+          discussion: data.discussion,
           proposalId: receipt.id,
         };
 

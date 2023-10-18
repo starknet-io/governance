@@ -7,7 +7,6 @@ import { RenderElementProps, RenderLeafProps } from "slate-react";
 import { Element, Leaf } from "./ElementLeaf";
 import { toggleMark, HOTKEYS } from "./hotkeys";
 import isHotkey from "is-hotkey";
-import { Text } from "src/Text";
 import "./EditableComponent.css";
 
 interface EditableComponentProps
@@ -52,6 +51,7 @@ export const EditableComponent = ({
     fontSize: "14px",
     minHeight: `${minHeight}px`,
     outline: `1px solid ${isInvalid ? "#E53E3E" : "transparent"}`,
+    "--slate-placeholder-margin-top": offsetPlaceholder,
 
     // Adjust outline based on focus state
   };
@@ -61,20 +61,6 @@ export const EditableComponent = ({
       renderElement={renderElement}
       renderLeaf={renderLeaf}
       placeholder={placeholder}
-      renderPlaceholder={({ children, attributes }) => (
-        <Text
-          variant="mediumStrong"
-          opacity={1}
-          {...attributes}
-          // mt="-8px"
-          mt={offsetPlaceholder}
-          position="relative"
-          className="fake-placeholder"
-          color="content.support.default"
-        >
-          {children}
-        </Text>
-      )}
       spellCheck
       autoFocus={autoFocus}
       onPaste={onPaste}

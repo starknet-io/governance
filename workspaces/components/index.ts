@@ -130,6 +130,7 @@ export { Iframely } from "./src/Iframely";
 export { Status } from "./src/Status";
 export { Link } from "./src/Link";
 export { Username } from "./src/Username";
+export { GlobalSearch } from "./src/GlobalSearch";
 
 import * as Layout from "./src/RootLayout/RootLayout";
 import * as SummaryItems from "./src/SummaryItems/SummaryItems";
@@ -202,6 +203,9 @@ import {
   SkeletonCircle,
   SkeletonText,
   Spinner,
+  InputLeftElement,
+  InputRightElement,
+  Show
 } from "@chakra-ui/react";
 
 export {
@@ -255,4 +259,7 @@ export {
   SkeletonCircle,
   SkeletonText,
   Spinner,
+  InputLeftElement,
+  InputRightElement,
+  Show
 };

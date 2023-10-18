@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Link } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Icon, Link } from "@chakra-ui/react";
 import { Heading } from "src/Heading";
 import { BookIcon } from "./BookIcon";
 import { Text } from "src/Text";
@@ -24,7 +24,10 @@ export const LearnBanner = () => {
   return (
     <Box
       display="flex"
-      p="standard.xl"
+      p={{
+        base: "standard.md",
+        md: "standard.xxl",
+      }}
       borderRadius="xl"
       bgColor="#E9E8EA"
       gap="standard.xl"
@@ -36,7 +39,10 @@ export const LearnBanner = () => {
     >
       <Box
         display="grid"
-        gap="standard.xl"
+        gap={{
+          base: "standard.xs",
+          md: "standard.xl",
+        }}
         minW={{
           md: "320px",
         }}
@@ -44,12 +50,30 @@ export const LearnBanner = () => {
         <Heading
           display="flex"
           alignItems="center"
-          gap="12px"
+          gap="standard.sm"
           variant="h2"
           as="h3"
           color="content.support.default"
+          fontSize={{
+            base: "16px",
+            md: "28px",
+          }}
+          lineHeight={{
+            base: "24px",
+            md: "36px",
+          }}
         >
-          <BookIcon />
+          <Icon
+            as={BookIcon}
+            width={{
+              base: "26.667px",
+              md: "30px",
+            }}
+            height={{
+              base: "24px",
+              md: "26px",
+            }}
+          />
           Learn
         </Heading>
         <Heading variant="h2" size="3xl">
@@ -79,12 +103,7 @@ export const LearnBanner = () => {
         </Flex>
       </Box>
       <Box>
-        <Heading
-          variant="h3"
-          color="content.accent.default"
-          pb="standard.base"
-          mb="standard.xs"
-        >
+        <Heading variant="h3" color="content.accent.default" pb="standard.base">
           Overview
         </Heading>
         <Text
@@ -94,6 +113,8 @@ export const LearnBanner = () => {
           }}
           fontSize="15px"
           lineHeight="24px"
+          mt="standard.xs"
+          mb="standard.md"
         >
           {data.overview}
         </Text>
@@ -105,7 +126,6 @@ export const LearnBanner = () => {
           alignItems="center"
           gap="standard.xs"
           width="min-content"
-          mt="standard.md"
         >
           Read more
           <ArrowRightIcon />

@@ -8,6 +8,7 @@ import { comments } from '../db/schema/comments';
 import { customDelegateAgreement } from '../db/schema/customDelegateAgreement';
 import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
+import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
 
 const delegateInsertSchema = createInsertSchema(delegates);
@@ -85,6 +86,13 @@ export const delegateRouter = router({
           confirmDelegateAgreement, // Use the determined value
         })
         .returning();
+
+      await Algolia.saveObjectToIndex({
+        name: (user?.ensName || user?.address) ?? '',
+        type: 'delegate',
+        refID: insertedDelegate[0].id,
+        content: opts.input.statement + " " + opts.input.interests
+      });
 
       const insertedDelegateRecord = insertedDelegate[0];
       if (insertedDelegate[0].userId) {
@@ -216,6 +224,23 @@ export const delegateRouter = router({
         .where(eq(delegates.id, opts.input.id))
         .returning();
       const updatedDelegateRecord = updatedDelegate[0];
+
+      if (updatedDelegate[0].userId) {
+        const user = await db.query.users.findFirst({
+          where: eq(users.id, updatedDelegate[0].userId),
+        });
+
+        if (user) {
+          await Algolia.updateObjectFromIndex({
+            refID: updatedDelegate[0].id,
+            type: 'delegate',
+            name: user.ensName || user.address,
+            content: opts.input.statement + ' ' + opts.input?.interests,
+          });
+        } else {
+          console.error('User not found for delegate with ID:', updatedDelegate[0].id);
+        }
+      }
 
       // Handle customDelegateAgreementContent if provided
       if (opts.input.customDelegateAgreementContent) {
@@ -443,5 +468,9 @@ export const delegateRouter = router({
         .delete(customDelegateAgreement)
         .where(eq(customDelegateAgreement.delegateId, opts.input.id));
       await db.delete(delegates).where(eq(delegates.id, opts.input.id));
+      await Algolia.deleteObjectFromIndex({
+        type: 'delegate',
+        refID: opts.input.id
+      })
     }),
 });

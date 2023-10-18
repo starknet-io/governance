@@ -5,6 +5,12 @@ export interface LocalTextProps extends TextProps {
   variant?:
     | "cardBody"
     | "body"
+    | "bodySmall"
+    | "bodySmallStrong"
+    | "bodyMedium"
+    | "bodyMediumStrong"
+    | "bodyLargeSoft"
+    | "bodyLargeStrong"
     | "breadcrumbs"
     | "footerLink"
     | "small"

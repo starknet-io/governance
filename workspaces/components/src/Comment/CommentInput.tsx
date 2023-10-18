@@ -69,6 +69,7 @@ export const CommentInput = ({
         variant="primary"
         size="sm"
         onClick={handleSend}
+        disabled={!editorValue?.trim?.()}
       >
         {isEdit ? "Save" : "Send"}
       </Button>

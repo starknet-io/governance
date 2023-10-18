@@ -7,6 +7,7 @@ import { z } from 'zod';
 import slugify from 'slugify';
 import { users } from '../db/schema/users';
 import { usersToCouncils } from '../db/schema/usersToCouncils';
+import { Algolia } from '../utils/algolia';
 
 const councilInsertSchema = createInsertSchema(councils).extend({
   members: z.array(
@@ -54,6 +55,14 @@ export const councilsRouter = router({
           address: opts.input.address,
         })
         .returning();
+
+      await Algolia.saveObjectToIndex({
+        name: insertedCouncil[0].name || '',
+        type: 'council',
+        refID: insertedCouncil[0].slug || insertedCouncil[0].id,
+        content:
+          insertedCouncil[0].description + ' ' + insertedCouncil[0].statement,
+      });
 
       for (const member of opts.input.members) {
         const user = await db.query.users.findFirst({
@@ -138,7 +147,10 @@ export const councilsRouter = router({
           .where(eq(users.id, userId))
           .execute();
       };
-
+      const slug = slugify(opts.input.name ?? '', {
+        replacement: '_',
+        lower: true,
+      });
       // Update council.
       const updatedCouncil = await db
         .update(councils)
@@ -154,6 +166,13 @@ export const councilsRouter = router({
         })
         .where(eq(councils.id, opts.input.id))
         .returning();
+
+      await Algolia.updateObjectFromIndex({
+        name: opts.input.name ?? '',
+        type: 'council',
+        refID: slug || opts.input.id,
+        content: opts.input.description + ' ' + opts.input.statement,
+      });
 
       // Process members.
       for (const member of opts.input.members) {
@@ -189,11 +208,19 @@ export const councilsRouter = router({
     }),
 
   deleteCouncil: publicProcedure
-    .input(councilInsertSchema.required({ id: true }).pick({ id: true }))
+    .input(
+      councilInsertSchema
+        .required({ id: true, slug: true })
+        .pick({ id: true, slug: true }),
+    )
     .mutation(async (opts) => {
       const userRole = opts.ctx.user?.role;
       checkUserRole(userRole);
       await db.delete(councils).where(eq(councils.id, opts.input.id)).execute();
+      await Algolia.deleteObjectFromIndex({
+        refID: opts.input.slug || opts.input.id,
+        type: 'council',
+      });
     }),
 
   getCouncilById: publicProcedure
