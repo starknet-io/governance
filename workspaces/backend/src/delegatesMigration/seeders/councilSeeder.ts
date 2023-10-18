@@ -1,26 +1,20 @@
-import {db} from "../../db/db";
-import {eq} from "drizzle-orm";
-import {councils} from "../../db/schema/councils";
-import {Algolia} from "../../utils/algolia";
-import slugify from "slugify";
-import {users} from "../../db/schema/users";
-import {usersToCouncils} from "../../db/schema/usersToCouncils";
-import {posts} from "../../db/schema/posts";
-import {adminUsers} from "../index";
+import { db } from '../../db/db';
+import { eq } from 'drizzle-orm';
+import { councils } from '../../db/schema/councils';
+import { Algolia } from '../../utils/algolia';
+import slugify from 'slugify';
+import { users } from '../../db/schema/users';
+import { usersToCouncils } from '../../db/schema/usersToCouncils';
+import { posts } from '../../db/schema/posts';
+import { adminUsers } from '../index';
+import { councilsPageContent } from '../content/councilsPageContent';
+import {
+  builder_council_posts,
+  security_council_posts,
+} from '../content/postsContent';
 
 export async function createCouncils() {
-  const councilsData = [
-    {
-      name: 'Builder Council',
-      description: 'Description of Builder Council',
-      statement: 'Statement of Builder Council',
-    },
-    {
-      name: 'Security Council',
-      description: 'Description of Security Council',
-      statement: 'Statement of Security Council',
-    },
-  ];
+  const councilsData = councilsPageContent;
 
   console.log('Creating Councils');
 
@@ -50,7 +44,7 @@ export async function createCouncils() {
         description: councilData.description,
         statement: councilData.statement,
         slug: slugify(councilData.name, { replacement: '_', lower: true }),
-        address: 'dummy_address', // Adjust as necessary
+        address: councilData.address, // Adjust as necessary
         createdAt: new Date(),
         updatedAt: new Date(),
       })
@@ -86,26 +80,19 @@ export async function createCouncils() {
     console.log('Creating Posts');
 
     // Create dummy posts
-    const dummyPosts = [
-      {
-        title: 'Dummy Post 1',
-        content: 'Content of dummy post 1',
-        councilId: councilId,
-      },
-      {
-        title: 'Dummy Post 2',
-        content: 'Content of dummy post 2',
-        councilId: councilId,
-      },
-    ];
+    const councilPosts =
+      insertedCouncil[0].slug === 'security_council'
+        ? security_council_posts
+        : builder_council_posts;
 
-    for (const post of dummyPosts) {
+    for (const post of councilPosts) {
       await db
         .insert(posts)
         .values({
           title: post.title,
           content: post.content,
-          councilId: post.councilId,
+          councilId: insertedCouncil[0].id,
+          slug: slugify(post.title, { replacement: '_', lower: true }),
           createdAt: new Date(),
           updatedAt: new Date(),
         })
