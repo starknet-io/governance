@@ -755,11 +755,6 @@ export function Page() {
             <>
               {!hasVoted && canVote ? (
                 <Heading
-                  px={{
-                    base: "standard.md",
-                    md: "standard.2xl",
-                    lg: "standard.xl",
-                  }}
                   color="content.accent.default"
                   variant="h4"
                   mb="standard.md"
