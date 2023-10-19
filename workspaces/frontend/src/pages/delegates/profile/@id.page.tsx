@@ -803,4 +803,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Delegates / profile",
+  image: "src/images/social-delegates.png"
 } satisfies DocumentProps;
