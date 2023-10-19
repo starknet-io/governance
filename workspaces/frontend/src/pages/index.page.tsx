@@ -17,6 +17,7 @@ import {
 import { Delegates } from "src/components/Delegates";
 import { trpc } from "src/utils/trpc";
 import { Proposal, VotingPropsSkeleton } from "./voting-proposals/index.page";
+// import img from '../images/social-home.png'
 
 export function Page() {
   const {
@@ -134,4 +135,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Home",
+  image: "src/images/social-home.png",
 } satisfies DocumentProps;
