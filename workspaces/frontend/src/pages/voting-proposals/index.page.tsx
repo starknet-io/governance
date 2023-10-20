@@ -391,5 +391,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Proposals",
-  image: "src/images/social-proposal.png",
+  image: "/social/social-proposal.png",
 } satisfies DocumentProps;
