@@ -135,5 +135,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Home",
-  image: "src/images/social-home.png",
+  image: "/social/social-home.png",
 } satisfies DocumentProps;
