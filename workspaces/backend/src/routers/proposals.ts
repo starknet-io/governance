@@ -8,7 +8,6 @@ import { proposals } from '../db/schema/proposals';
 import { createInsertSchema } from 'drizzle-zod';
 import { Algolia } from '../utils/algolia';
 
-
 export interface IProposal {
   id: string;
   title: string;
@@ -21,6 +20,12 @@ export interface IProposal {
   scores_total: number;
   author: string;
   space: { id: string; name: string };
+}
+
+export interface IProposalWithComments extends IProposal {
+  comments: {
+    [x: string]: any;
+  }[];
 }
 
 const endpoint = `https://hub.snapshot.org/graphql`;
@@ -100,7 +105,7 @@ const populateProposalsWithComments = async (
   limit: number,
   offset: number,
 ) => {
-  return await Promise.all(
+  return await Promise.all<IProposalWithComments>(
     proposals.map(async (i: IProposal) => {
       const commentList = await db.query.comments.findMany({
         where: eq(comments.proposalId, i.id),
@@ -163,7 +168,7 @@ export const proposalsRouter = router({
       )) as { proposals: IProposal[] };
       const totalComments = await db.query.comments.findMany({
         where: eq(proposals.proposalId, opts.input.id),
-      })
+      });
       const proposal = queriedProposals[0];
 
       return {
@@ -226,11 +231,8 @@ export const proposalsRouter = router({
         );
       }
 
-      let proposalsWithComments = await populateProposalsWithComments(
-        mappedProposals,
-        limit,
-        offset,
-      );
+      let proposalsWithComments: IProposalWithComments[] =
+        await populateProposalsWithComments(mappedProposals, limit, offset);
 
       if (opts?.input?.sortBy === 'most_discussed') {
         proposalsWithComments = proposalsWithComments.sort(

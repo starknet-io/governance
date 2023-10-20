@@ -32,7 +32,7 @@ const primary = definePartsStyle({
   element: {
     _hover: {
       svg: {
-        boxSize: "40px!important",
+        // boxSize: "40px!important",
       },
     },
     height: "100%",
