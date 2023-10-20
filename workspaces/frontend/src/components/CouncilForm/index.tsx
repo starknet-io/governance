@@ -311,7 +311,12 @@ Links
           </FormControlled>
           {mode === "create" ? (
             <Flex justifyContent="flex-end">
-              <Button type="submit" variant="primary">
+              <Button
+                type="submit"
+                variant="primary"
+                width={{ base: "100%", md: "auto" }}
+                size="standard"
+              >
                 Create council
               </Button>
             </Flex>

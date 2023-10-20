@@ -27,7 +27,6 @@ import {
   Iframely,
   VoteComment,
   MarkdownRenderer,
-  Select,
   Banner,
   EllipsisIcon,
   Link,
@@ -58,7 +57,7 @@ import {
   SuccessIcon,
   WalletIcon,
 } from "@yukilabs/governance-components/src/Icons";
-import { Button as ChakraButton } from "@chakra-ui/react";
+import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 
