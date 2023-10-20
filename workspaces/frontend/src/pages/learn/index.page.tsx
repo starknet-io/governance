@@ -418,5 +418,5 @@ function NavItemWrapper({
 
 export const documentProps = {
   title: "Learn / home",
-  image: "src/images/social-learn.png"
+  image: "/social/social-learn.png",
 } satisfies DocumentProps;

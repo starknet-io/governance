@@ -339,5 +339,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Council",
-  image: "src/images/social-councils.png",
+  image: "/social/social-councils.png",
 } satisfies DocumentProps;

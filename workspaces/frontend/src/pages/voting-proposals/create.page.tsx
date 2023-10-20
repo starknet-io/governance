@@ -388,5 +388,5 @@ Links
 
 export const documentProps = {
   title: "Vote / Create",
-  image: "src/images/social-proposal.png",
+  image: "/social/social-proposal.png",
 } satisfies DocumentProps;
