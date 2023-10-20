@@ -206,7 +206,12 @@ export function PostForm({ post, isFetchPostSuccess, mode }: PostFormProps) {
           </FormControlled>
           {mode === "create" ? (
             <Flex justifyContent="flex-end">
-              <Button type="submit" size="condensed" variant="primary">
+              <Button
+                type="submit"
+                variant="primary"
+                width={{ base: "100%", md: "auto" }}
+                size="standard"
+              >
                 Create post
               </Button>
             </Flex>
