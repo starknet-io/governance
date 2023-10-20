@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { PageContext } from "../../renderer/types";
 import { useHelpMessage } from "src/hooks/HelpMessage";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { trpc } from "src/utils/trpc";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
@@ -28,6 +28,8 @@ import {
   InfoModal,
   Logo,
   ShareDialog,
+  Dropdown,
+  MenuItem,
   SupportModal,
   Text,
   GlobalSearch,
@@ -40,8 +42,12 @@ import { extractAndFormatSlug } from "src/utils/helpers";
 import { CloseIcon } from "@dynamic-labs/sdk-react";
 import {
   BannedIcon,
+  BellIcon,
   ConnectWalletIcon,
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
+import { useFetchNotifications } from "../../hooks/useNotifications";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { Indenticon } from "@yukilabs/governance-components/src/Indenticon";
 
 export interface Props {
   readonly pageContext: PageContext;
@@ -57,6 +63,14 @@ function LayoutDefault(props: Props) {
   const { handleLogOut, setShowAuthFlow } = useDynamicContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBannedModalOpen, setIsBannedModalOpen] = useState(false);
+
+  const {
+    notifications,
+    loading: notificationsLoading,
+    error: notificationsError,
+  } = useFetchNotifications();
+
+  console.log(notifications);
 
   useEffect(() => {
     if (user?.banned) {
@@ -275,6 +289,35 @@ function LayoutDefault(props: Props) {
                 <Box display={{ base: "none", md: "flex" }}>
                   <ShareDialog />
                 </Box>
+                <Dropdown buttonIcon={<BellIcon />}>
+                  {notifications.reverse().map((notification) => {
+                    const formattedAddress =
+                      notification?.user?.ensName ||
+                      truncateAddress(notification?.user?.address);
+                    return (
+                      <MenuItem maxW={"400px"}>
+                        <Flex gap={2}>
+                          <Box>
+                            <Indenticon
+                              size={"40"}
+                              address={notification?.user?.address}
+                            />
+                          </Box>
+                          <Flex direction="column">
+                            <Flex gap={4}>
+                              <Text>{formattedAddress} - </Text>
+                              <Box>{notification.type}</Box>
+                            </Flex>
+                            <Flex className="break-all">
+                              {notification.title}
+                            </Flex>
+                          </Flex>
+                        </Flex>
+                      </MenuItem>
+                    );
+                  })}
+                </Dropdown>
+
                 <GlobalSearch
                   searchResults={globalSearchResults}
                   onSearchItems={handleGlobalSearchItems}

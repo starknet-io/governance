@@ -14,9 +14,11 @@ import * as posts from './schema/posts';
 import * as snips from './schema/snips';
 import * as users from './schema/users';
 import * as votes from './schema/votes';
+import * as notifications from './schema/notifications';
 import * as usersToCouncils from './schema/usersToCouncils';
 import * as proposals from './schema/proposals';
 import * as customDelegateAgreement from './schema/customDelegateAgreement';
+import * as notificationUsers from './schema/notificationUsers';
 
 dotenv.config();
 
@@ -39,6 +41,8 @@ const db = drizzle(pool, {
     ...usersToCouncils,
     ...customDelegateAgreement,
     ...proposals,
+    ...notifications,
+    ...notificationUsers,
   },
 });
 
