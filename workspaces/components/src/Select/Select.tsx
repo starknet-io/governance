@@ -14,7 +14,7 @@ export interface SelectProps extends Props {
   options: Option[];
   value?: string | Option | Option[];
   onChange: (newValue: unknown, actionMeta: ActionMeta<unknown>) => void;
-  labels?: { [key: string]: string }; // General-purpose mapping
+  labels?: { [key: string]: string };
 }
 
 export const Select = ({
@@ -55,7 +55,6 @@ export const Select = ({
     }),
   };
 
-  // Convert the value prop to array of objects format
   const normalizeValue = (val: string | Option | Option[]): Option[] => {
     if (!val) return [];
     if (typeof val === "string")
@@ -68,19 +67,16 @@ export const Select = ({
 
   const newValue = normalizeValue(value);
 
-  // Handle the onChange event
   const handleChange = (
     selectedOptions: Option[],
     actionMeta: ActionMeta<unknown>,
   ) => {
     if (isMulti) {
-      // If multi-select, emit an array of values
       onChange(
         selectedOptions.map((opt) => opt.value),
         actionMeta,
       );
     } else {
-      // If single select, emit the single selected value
       onChange(selectedOptions[0]?.value, actionMeta);
     }
   };
