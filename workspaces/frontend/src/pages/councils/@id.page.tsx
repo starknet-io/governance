@@ -214,7 +214,8 @@ export function Page() {
                 variant="h3"
                 mb="8px"
               >
-                The role of the {council?.name ?? "Council"}
+                {/* The role of the {council?.name ?? "Council"} */}
+                Mission statement
               </Heading>
               {isCouncilLoading ? (
                 // Skeleton representation for loading state
@@ -338,5 +339,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Council",
-  image: "src/images/social-councils.png"
+  image: "src/images/social-councils.png",
 } satisfies DocumentProps;
