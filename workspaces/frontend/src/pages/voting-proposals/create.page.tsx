@@ -365,7 +365,8 @@ Links
             <Box display="flex" justifyContent="flex-end">
               <Button
                 type="submit"
-                size="condensed"
+                width={{ base: "100%", md: "auto" }}
+                size="standard"
                 variant="primary"
                 disabled={isSubmitting}
               >
