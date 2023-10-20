@@ -597,8 +597,13 @@ Conflicts of interest
           </Flex>
         ) : (
           <Flex justifyContent="flex-end">
-            <Button type="submit" variant="primary">
-              Submit delegate profile
+            <Button
+              type="submit"
+              variant="primary"
+              width={{ base: "100%", md: "auto" }}
+              size="standard"
+            >
+              Create delegate profile
             </Button>
           </Flex>
         )}
