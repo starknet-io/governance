@@ -1182,3 +1182,9 @@ export const NotificationVotingProposalIcon = ({
     />
   </Icon>
 );
+
+export const NotificationUnreadIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 14 14" {...rest}>
+    <circle cx="7" cy="7" r="6.5" fill="#E4442F" stroke="#F9F8F9" />
+  </Icon>
+);
