@@ -293,17 +293,7 @@ function LayoutDefault(props: Props) {
                 <Box display={{ base: "none", md: "flex" }}>
                   <ShareDialog />
                 </Box>
-                <NotificationsMenu>
-                  {notifications.reverse().map((notification) => (
-                    <NotificationItem
-                      onMarkNotificationRead={(notificationId: string) =>
-                        markAsRead(notificationId)
-                      }
-                      key={notification.id}
-                      notification={notification}
-                    />
-                  ))}
-                </NotificationsMenu>
+                <NotificationsMenu notifications={notifications} />
                 <GlobalSearch
                   searchResults={globalSearchResults}
                   onSearchItems={handleGlobalSearchItems}

@@ -8,11 +8,17 @@ export function useFetchNotifications() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
   const markNotificationAsRead =
-    trpc.notifications.markNotificationAsRead.useMutation();
+    trpc.notifications.markNotificationAsRead.useMutation({});
 
   // Use trpc hook directly here
   const notificationsQuery =
-    trpc.notifications.getNotificationsForUser.useQuery({});
+    trpc.notifications.getNotificationsForUser.useQuery(
+      {},
+      {
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+      },
+    );
 
   const markAsRead = async (notificationId: string) => {
     // Update local state
@@ -50,14 +56,6 @@ export function useFetchNotifications() {
       setError(notificationsQuery.error);
       setLoading(false);
     }
-
-    // Optionally, set up a polling interval to fetch new notifications periodically
-    const intervalId = setInterval(() => {
-      // Refetch notifications
-      notificationsQuery.refetch();
-    }, 10000); // Fetch every 10 seconds
-
-    return () => clearInterval(intervalId); // Clean up interval on component unmount
   }, [notificationsQuery]);
 
   return { notifications, loading, error, markAsRead };

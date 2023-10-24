@@ -1,13 +1,34 @@
-import { Box, IconButton, Menu, MenuButton, MenuList } from "@chakra-ui/react";
-import React from "react";
+import {
+  Box,
+  Flex,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+} from "@chakra-ui/react";
+import { useMemo, useState } from "react";
+import { Button } from "../Button";
+import { Text } from "../Text";
 import { BellIcon } from "../Icons";
+import { NotificationItem } from "./NotificationItem";
 
 type DropdownProps = {
-  children: React.ReactNode;
+  notifications: any;
+  markAsRead: any;
 };
-export const NotificationsMenu = ({ children }: DropdownProps) => {
+export const NotificationsMenu = ({
+  notifications,
+  markAsRead,
+}: DropdownProps) => {
+  const [isAllSelected, setIsAllSelected] = useState(true);
+  const [isUnreadSelected, setIsUnreadSelected] = useState(false);
+
+  const filteredNotifications = isAllSelected
+    ? notifications
+    : notifications.filter((notification) => !notification.read);
+
   return (
-    <Box style={{ position: "relative" }}>
+    <Box position="relative">
       <Menu>
         <MenuButton
           width="36px"
@@ -19,8 +40,50 @@ export const NotificationsMenu = ({ children }: DropdownProps) => {
         />
 
         <Box top="0px" position="relative">
-          <MenuList maxH="400px" overflowY="scroll">
-            {children}
+          <MenuList h="500px" overflowY="scroll" w={"400px"}>
+            <Box
+              mx={4}
+              py={4}
+              borderBottom="1px solid"
+              borderColor="border.dividers"
+            >
+              <Text variant="bodyLargeStrong"> Notifications </Text>
+            </Box>
+            <Box mx={4} py={4}>
+              <Flex gap={2}>
+                <Button
+                  variant={isAllSelected ? "primary" : "outline"}
+                  size="condensed"
+                  borderRadius="999px"
+                  onClick={() => {
+                    setIsAllSelected(true);
+                    setIsUnreadSelected(false);
+                  }}
+                >
+                  All
+                </Button>
+                <Button
+                  variant={isUnreadSelected ? "primary" : "outline"}
+                  size="condensed"
+                  borderRadius="999px"
+                  onClick={() => {
+                    setIsAllSelected(false);
+                    setIsUnreadSelected(true);
+                  }}
+                >
+                  Unread
+                </Button>
+              </Flex>
+            </Box>
+            {filteredNotifications.map((notification) => (
+              <NotificationItem
+                onMarkNotificationRead={(notificationId: string) =>
+                  markAsRead(notificationId)
+                }
+                key={notification.id}
+                notification={notification}
+              />
+            ))}
           </MenuList>
         </Box>
       </Menu>
