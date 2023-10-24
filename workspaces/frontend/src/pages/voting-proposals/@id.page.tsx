@@ -631,6 +631,8 @@ export function Page() {
                     truncateAddress(`${data?.proposal?.author}`)
                   }
                   address={`${data?.proposal?.author}`}
+                  showTooltip={!authorInfo?.username || !authorInfo?.ensName}
+                  tooltipContent={`${data?.proposal?.author}`}
                 />
               </Flex>
               <Flex gap="standard.xs" paddingTop="0" alignItems="center">

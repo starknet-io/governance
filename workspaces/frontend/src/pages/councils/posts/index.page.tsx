@@ -256,6 +256,10 @@ export function Page() {
                         post?.author?.ensAvatar ??
                         null
                       }
+                      showTooltip={
+                        !post?.author?.username && !post?.author?.ensName
+                      }
+                      tooltipContent={post?.author?.address}
                     />
 
                     <Text variant="small" color="content.default.default">
