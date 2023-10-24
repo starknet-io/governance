@@ -34,6 +34,7 @@ import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.p
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { useHelpMessage } from "src/hooks/HelpMessage";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -199,6 +200,8 @@ export function Delegates({
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [txHash, setTxHash] = useState("");
+
+  const [helpMessage, setHelpMessage] = useHelpMessage();
   // listen to txn with delegation hash
   const {
     isLoading: isDelegationLoading,
@@ -290,7 +293,7 @@ export function Delegates({
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
 
   const { user } = usePageContext();
-
+  console.log("user", user);
   const handleResetFilters = () => {
     state.onReset();
     setFiltersState({ ...filtersState, filters: [] });
@@ -298,7 +301,27 @@ export function Delegates({
 
   function ActionButtons() {
     if (!user) {
-      return null;
+      return (
+        <>
+          <Button
+            width={{ base: "100%", md: "auto" }}
+            size="condensed"
+            variant="outline"
+            onClick={() => setHelpMessage("connectWalletMessage")}
+          >
+            Delegate to address
+          </Button>
+
+          <Button
+            width={{ base: "100%", md: "auto" }}
+            size="condensed"
+            variant="primary"
+            onClick={() => setHelpMessage("connectWalletMessage")}
+          >
+            Create delegate profile
+          </Button>
+        </>
+      );
     }
     const delegateId =
       user &&
