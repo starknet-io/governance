@@ -293,10 +293,12 @@ function LayoutDefault(props: Props) {
                 <Box display={{ base: "none", md: "flex" }}>
                   <ShareDialog />
                 </Box>
-                <NotificationsMenu
-                  notifications={notifications}
-                  markAsRead={markAsRead}
-                />
+                {user && (
+                  <NotificationsMenu
+                    notifications={notifications}
+                    markAsRead={markAsRead}
+                  />
+                )}
                 <GlobalSearch
                   searchResults={globalSearchResults}
                   onSearchItems={handleGlobalSearchItems}
