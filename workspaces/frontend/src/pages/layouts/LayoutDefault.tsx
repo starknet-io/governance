@@ -44,6 +44,7 @@ import {
   BannedIcon,
   BellIcon,
   ConnectWalletIcon,
+  NotificationVotingProposalIcon,
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
 import { useFetchNotifications } from "../../hooks/useNotifications";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
@@ -295,22 +296,37 @@ function LayoutDefault(props: Props) {
                       notification?.user?.ensName ||
                       truncateAddress(notification?.user?.address);
                     return (
-                      <MenuItem maxW={"400px"}>
-                        <Flex gap={2}>
-                          <Box>
+                      <MenuItem
+                        maxW={"400px"}
+                        pt={3}
+                        pb={3}
+                        key={notification.id}
+                      >
+                        <Flex gap={2} justifyContent="space-between">
+                          <Flex direction="column" alignItems="center" gap={2}>
                             <Indenticon
                               size={"40"}
                               address={notification?.user?.address}
                             />
-                          </Box>
-                          <Flex direction="column">
-                            <Flex gap={4}>
-                              <Text>{formattedAddress} - </Text>
-                              <Box>{notification.type}</Box>
+                            <Icon
+                              as={NotificationVotingProposalIcon}
+                              boxSize="5"
+                            />
+                          </Flex>
+                          <Flex
+                            direction="column"
+                            justifyContent="space-between"
+                          >
+                            <Flex gap={2}>
+                              <Text>{formattedAddress}</Text>
+                              <Text color="grey">{notification.type}</Text>
                             </Flex>
                             <Flex className="break-all">
                               {notification.title}
                             </Flex>
+                          </Flex>
+                          <Flex alignItems="center" justifyContent="center">
+                            a
                           </Flex>
                         </Flex>
                       </MenuItem>

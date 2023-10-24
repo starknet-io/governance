@@ -1,6 +1,14 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { InferModel, relations } from 'drizzle-orm';
 import { users } from './users';
+
+export const notificationType = pgEnum('type', [
+  'proposal/created',
+  'proposal/start',
+  'proposal/end',
+  'proposal/deleted',
+  'comment',
+]);
 
 export const notifications = pgTable('notifications', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -11,7 +19,8 @@ export const notifications = pgTable('notifications', {
   }),
   time: timestamp('time', { withTimezone: true }).notNull().defaultNow(),
   title: text('title'),
-  type: text('type').notNull(),
+  proposalId: text('proposalId'),
+  type: notificationType('type').notNull(),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),

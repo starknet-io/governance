@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "59e397df-2aa8-43c9-aaa1-4157f4200259",
+  "id": "fd3dcfa0-2f36-4fac-aeb1-68a7b1f4fc02",
   "prevId": "75e5fd80-ea6f-4172-b591-e8f709230a89",
   "tables": {
     "comments": {
@@ -556,9 +556,15 @@
           "primaryKey": false,
           "notNull": false
         },
+        "proposalId": {
+          "name": "proposalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "type": {
           "name": "type",
-          "type": "text",
+          "type": "type",
           "primaryKey": false,
           "notNull": true
         },
@@ -1240,6 +1246,13 @@
         "build": "build"
       }
     },
+    "type": {
+      "name": "type",
+      "values": {
+        "snip": "snip",
+        "vote": "vote"
+      }
+    },
     "category": {
       "name": "category",
       "values": {
@@ -1258,13 +1271,6 @@
         "Stagnant": "Stagnant",
         "Withdrawn": "Withdrawn",
         "Living": "Living"
-      }
-    },
-    "type": {
-      "name": "type",
-      "values": {
-        "snip": "snip",
-        "vote": "vote"
       }
     },
     "role": {
