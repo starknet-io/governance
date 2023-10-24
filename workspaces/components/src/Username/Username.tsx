@@ -34,7 +34,11 @@ export const Username = ({
       );
 
     return showTooltip ? (
-      <Tooltip label={tooltipContent || displayName} aria-label="Display Name">
+      <Tooltip
+        hasArrow
+        label={tooltipContent || displayName}
+        aria-label="Display Name"
+      >
         {content}
       </Tooltip>
     ) : (
