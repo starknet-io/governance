@@ -9,7 +9,7 @@ export function useFetchNotifications() {
   const [error, setError] = useState<any>(null);
 
   // Use trpc hook directly here
-  const notificationsQuery = trpc.notifications.getAll.useQuery();
+  const notificationsQuery = trpc.notifications.getNotificationsForUser.useQuery({});
 
   useEffect(() => {
     // Check for data or error from the query

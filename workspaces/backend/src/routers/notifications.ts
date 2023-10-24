@@ -1,9 +1,9 @@
 // Import necessary modules and schemas
-import { router, publicProcedure } from '../utils/trpc';
+import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { notifications } from '../db/schema/notifications';
 import { db } from '../db/db';
 import { z } from 'zod';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { notificationUsers } from '../db/schema/notificationUsers';
 
@@ -26,7 +26,7 @@ export const notificationsRouter = router({
       // Extract relevant data from the webhook request
       const { id, space, event } = opts.input;
       const { author, title, start, id: proposalID } = opts.input.proposal;
-      console.log(id, space, event, author, title, start, proposalID)
+      console.log(id, space, event, author, title, start, proposalID);
 
       // Create a message for the notification
       const message = `New voting proposal created with ID: ${id} in space: ${space}`;
@@ -47,7 +47,7 @@ export const notificationsRouter = router({
         time: new Date(start),
         userId: foundUser.id,
         createdAt: new Date(),
-      })
+      });
       try {
         // Insert the new notification
         const insertedNotification = await db
@@ -62,29 +62,91 @@ export const notificationsRouter = router({
             createdAt: new Date(),
           })
           .returning();
+
+        // Get the inserted notification
+        const newNotification = insertedNotification[0];
+        console.log(newNotification);
+
+        // Get all users who should be associated with this notification
+        const allUsers = await db.query.users.findMany();
+
+        // Associate each user with the new notification
+        const notificationUserAssociations = allUsers.map((user) => ({
+          notificationId: newNotification.id,
+          userId: user.id,
+          read: false, // All users initially have not read the notification
+        }));
+
+        // Insert all associations into the notification_users table
+        await db.insert(notificationUsers).values(notificationUserAssociations);
+
+        return newNotification;
       } catch (err) {
-        console.log(err)
+        console.log(err);
+        return false;
       }
-
-      // Get the inserted notification
-      const newNotification = insertedNotification[0];
-      console.log(newNotification);
-
-      // Get all users who should be associated with this notification
-      const allUsers = await db.query.users.findMany();
-
-      // Associate each user with the new notification
-      const notificationUserAssociations = allUsers.map((user) => ({
-        notificationId: newNotification.id,
-        userId: user.id,
-        read: false, // All users initially have not read the notification
-      }));
-
-      // Insert all associations into the notification_users table
-      await db.insert(notificationUsers).values(notificationUserAssociations);
-
-      return newNotification;
     }),
 
+  getNotificationsForUser: protectedProcedure
+    .input(
+      z.object({
+        address: z.string().optional(),
+      }),
+    )
+    .query(async (opts) => {
+      const { id: userId } = opts.ctx.user;
+
+      if (!userId) {
+        throw Error('Unauthorized');
+      }
+
+      // Query the notification_users table to get notifications for the user
+      const userNotifications = await db.query.notificationUsers.findMany({
+        where: eq(userId, notificationUsers.userId),
+        with: {
+          notification: {
+            with: {
+              user: true,
+            }
+          },
+        },
+      });
+
+      // Transform the data to the desired output format
+      const notifications = userNotifications.map((notifUser) => ({
+        ...notifUser.notification,
+        read: notifUser.read,
+      }));
+
+      return notifications;
+    }),
+
+  markNotificationAsRead: protectedProcedure
+    .input(
+      z.object({
+        notificationId: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { id: userId } = opts.ctx.user;
+      const { notificationId } = opts.input;
+
+      if (!userId) {
+        throw Error('Unauthorized');
+      }
+
+      // Update the read field in the notification_users table
+      await db
+        .update(notificationUsers)
+        .set({ read: true })
+        .where(
+          and(
+            eq(notificationUsers.notificationId, notificationId),
+            eq(notificationUsers.userId, userId),
+          ),
+        );
+
+      return true; // Return true to indicate success, or return some other value if needed
+    }),
   // ... other handlers as necessary ...
 });

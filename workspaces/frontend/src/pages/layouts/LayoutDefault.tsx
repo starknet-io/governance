@@ -34,6 +34,8 @@ import {
   Text,
   GlobalSearch,
   SearchIcon,
+  NotificationsMenu,
+  NotificationItem,
 } from "@yukilabs/governance-components";
 import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
 import { NavigationMenu } from "src/components/Navigation";
@@ -290,50 +292,14 @@ function LayoutDefault(props: Props) {
                 <Box display={{ base: "none", md: "flex" }}>
                   <ShareDialog />
                 </Box>
-                <Dropdown buttonIcon={<BellIcon />}>
-                  {notifications.reverse().map((notification) => {
-                    const formattedAddress =
-                      notification?.user?.ensName ||
-                      truncateAddress(notification?.user?.address);
-                    return (
-                      <MenuItem
-                        maxW={"400px"}
-                        pt={3}
-                        pb={3}
-                        key={notification.id}
-                      >
-                        <Flex gap={2} justifyContent="space-between">
-                          <Flex direction="column" alignItems="center" gap={2}>
-                            <Indenticon
-                              size={"40"}
-                              address={notification?.user?.address}
-                            />
-                            <Icon
-                              as={NotificationVotingProposalIcon}
-                              boxSize="5"
-                            />
-                          </Flex>
-                          <Flex
-                            direction="column"
-                            justifyContent="space-between"
-                          >
-                            <Flex gap={2}>
-                              <Text>{formattedAddress}</Text>
-                              <Text color="grey">{notification.type}</Text>
-                            </Flex>
-                            <Flex className="break-all">
-                              {notification.title}
-                            </Flex>
-                          </Flex>
-                          <Flex alignItems="center" justifyContent="center">
-                            a
-                          </Flex>
-                        </Flex>
-                      </MenuItem>
-                    );
-                  })}
-                </Dropdown>
-
+                <NotificationsMenu>
+                  {notifications.reverse().map((notification) => (
+                    <NotificationItem
+                      key={notification.id}
+                      notification={notification}
+                    />
+                  ))}
+                </NotificationsMenu>
                 <GlobalSearch
                   searchResults={globalSearchResults}
                   onSearchItems={handleGlobalSearchItems}

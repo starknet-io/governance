@@ -1,6 +1,5 @@
 import { pgTable, uuid, boolean } from 'drizzle-orm/pg-core';
 import { notifications } from './notifications';
-import { delegates } from './delegates';
 import { InferModel, relations } from 'drizzle-orm';
 import { users } from './users';
 
@@ -9,7 +8,7 @@ export const notificationUsers = pgTable('notification_users', {
     onDelete: 'cascade',
     onUpdate: 'cascade',
   }),
-  userId: uuid('userId').references(() => delegates.id, {
+  userId: uuid('userId').references(() => users.id, {
     onDelete: 'cascade',
     onUpdate: 'cascade',
   }),
@@ -22,6 +21,10 @@ export const notificationUsersRelations = relations(
     user: one(users, {
       fields: [notificationUsers.userId],
       references: [users.id],
+    }),
+    notification: one(notifications, {
+      fields: [notificationUsers.notificationId],
+      references: [notifications.id],
     }),
   }),
 );

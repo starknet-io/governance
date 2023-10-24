@@ -39,6 +39,7 @@ export { Dropdown } from "./src/Dropdown";
 export { FormControlled, useFormErrorHandler } from "./src/FormControlled";
 export { Tooltip } from "./src/Tooltip";
 export { Select } from "./src/Select";
+export { NotificationsMenu, NotificationItem } from "./src/Notifications";
 
 export {
   BoldIcon,
