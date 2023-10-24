@@ -42,6 +42,7 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import * as ProfilePageLayout from "../../../components/ProfilePageLayout/ProfilePageLayout";
 import { BackButton } from "src/components/Header/BackButton";
+import { useHelpMessage } from "src/hooks/HelpMessage";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -378,7 +379,7 @@ export function Page() {
   const delegateOwnProfile =
     delegateAddress &&
     delegateAddress?.toLowerCase() === address?.toLowerCase();
-
+  const [helpMessage, setHelpMessage] = useHelpMessage();
   return (
     <ProfilePageLayout.Root>
       <DelegateModal
@@ -482,8 +483,6 @@ export function Page() {
 
               {/* Dropdown Skeleton */}
             </Flex>
-            {/* Delegate Your Votes Button Skeleton */}
-            <Skeleton height="44px" width="100%" borderRadius="md" />
           </Box>
         ) : (
           <>
@@ -571,7 +570,16 @@ export function Page() {
               : "Delegate voting power"}
           </Button>
         ) : (
-          <></>
+          <Button
+            mt={{ base: "standard.2xl" }}
+            mb="0"
+            width={{ base: "100%" }}
+            variant="primary"
+            size="standard"
+            onClick={() => setHelpMessage("connectWalletMessage")}
+          >
+            Delegate voting power
+          </Button>
         )}
 
         {delegation.isFetched &&
