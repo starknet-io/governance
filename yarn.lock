@@ -23509,9 +23509,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"snapshot-webhook@workspace:workspaces/notifications-webhook":
+"snapshot-webhook@workspace:workspaces/snapshot-webhook":
   version: 0.0.0-use.local
-  resolution: "snapshot-webhook@workspace:workspaces/notifications-webhook"
+  resolution: "snapshot-webhook@workspace:workspaces/snapshot-webhook"
   dependencies:
     "@ethersproject/wallet": ^5.7.0
     "@pusher/push-notifications-server": ^1.2.5

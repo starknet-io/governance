@@ -9,7 +9,7 @@ import pkg from '../package.json';
 import { last_mci, run } from './replay';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4444;
 
 initLogger(app);
 initMetrics(app);

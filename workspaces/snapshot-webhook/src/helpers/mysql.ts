@@ -1,4 +1,4 @@
-import mysql from 'src/helpers/mysql';
+import mysql from 'mysql';
 import Pool from 'mysql/lib/Pool';
 import Connection from 'mysql/lib/Connection';
 import bluebird from 'bluebird';
