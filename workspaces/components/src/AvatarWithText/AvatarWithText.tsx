@@ -5,6 +5,7 @@ import { Heading } from "src/Heading";
 import { Dropdown } from "src/Dropdown";
 import { EllipsisIcon } from "src/Icons";
 import { Tooltip } from "src/Tooltip";
+import { truncateAddress } from "src/utils";
 
 type Props = {
   size?: "condensed" | "standard";
@@ -46,14 +47,7 @@ export const AvatarWithText = ({
     );
 
     return headerTooltipContent ? (
-      <Tooltip
-        left="-40px"
-        shouldWrapChildren
-        placement="top"
-        hasArrow
-        label={headerTooltipContent}
-        aria-label="Header Text"
-      >
+      <Tooltip label={headerTooltipContent} aria-label="Header Text">
         {content}
       </Tooltip>
     ) : (
@@ -62,6 +56,16 @@ export const AvatarWithText = ({
   };
 
   const renderSubheaderText = () => {
+    // If the headerText is showing the truncated address and subheaderText is also an address, don't show the subheaderText.
+    if (
+      headerText?.toLowerCase() ===
+        truncateAddress(address || "").toLowerCase() &&
+      subheaderText?.toLowerCase() ===
+        truncateAddress(address || "").toLowerCase()
+    ) {
+      return null;
+    }
+
     const content =
       size === "condensed" ? (
         <Text
@@ -80,10 +84,7 @@ export const AvatarWithText = ({
 
     return subheaderTooltipContent ? (
       <Tooltip
-        left="-80px"
         shouldWrapChildren
-        placement="top"
-        hasArrow
         label={subheaderTooltipContent}
         aria-label="Subheader Text"
       >
@@ -104,9 +105,15 @@ export const AvatarWithText = ({
             <Indenticon size={48} address={address} />
           )}
         </Box>
-        <Box position="relative">
-          {renderHeaderText()}
-          {renderSubheaderText()}
+        <Box
+          position="relative"
+          flexDirection={"column"}
+          justifyContent={"center"}
+          flex={1}
+          gap="0"
+        >
+          <Box height="24px">{renderHeaderText()}</Box>
+          <Box> {renderSubheaderText()}</Box>
         </Box>
       </Flex>
     );
@@ -142,3 +149,5 @@ export const AvatarWithText = ({
     </Flex>
   );
 };
+
+export default AvatarWithText;

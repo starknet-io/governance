@@ -15,7 +15,7 @@ import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "src/utils";
 import { CopyToClipboard } from "src/CopyToClipboard";
 import { AvatarWithText } from "src/AvatarWithText";
-import { IconButton, ProfileInfoModal } from "index";
+import { IconButton, ProfileInfoModal, Tooltip } from "index";
 import { DisconnectWalletIcon } from "src/Icons/UiIcons";
 
 interface IUser extends User {
@@ -138,9 +138,20 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                 </Box>
 
                 <Box width="50%">
-                  <Text variant="smallStrong" color="content.default.default">
-                    {truncateAddress(user?.starknetAddress || "")}
-                  </Text>
+                  {user?.starknetAddress ? (
+                    <Tooltip label={user.starknetAddress}>
+                      <Text
+                        variant="smallStrong"
+                        color="content.default.default"
+                      >
+                        {truncateAddress(user.starknetAddress)}
+                      </Text>
+                    </Tooltip>
+                  ) : (
+                    <Text variant="smallStrong" color="content.default.default">
+                      {truncateAddress(user?.starknetAddress || "")}
+                    </Text>
+                  )}
                 </Box>
               </Flex>
               <Flex direction="column">
@@ -173,27 +184,36 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
                             fontWeight="normal"
                             href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
                           >
-                            {delegatedTo.username ??
-                              delegatedTo.ensName ??
-                              truncateAddress(delegatedTo?.address || "")}
+                            {delegatedTo.username || delegatedTo.ensName ? (
+                              delegatedTo.username ?? delegatedTo.ensName
+                            ) : (
+                              <Tooltip label={delegatedTo?.address || ""}>
+                                {truncateAddress(delegatedTo?.address || "")}
+                              </Tooltip>
+                            )}
                           </Link>
-
                           <CopyToClipboard text={delegatedTo?.address} />
                         </Flex>
                       ) : (
                         <>
                           {delegatedTo?.address ? (
                             <Flex>
-                              <Text>
-                                {truncateAddress(delegatedTo?.address || "")}
-                              </Text>
+                              <Tooltip label={delegatedTo?.address}>
+                                <Text>
+                                  {truncateAddress(delegatedTo?.address || "")}
+                                </Text>
+                              </Tooltip>
                               <CopyToClipboard text={delegatedTo?.address} />
                             </Flex>
                           ) : delegatedTo &&
                             delegatedTo !==
                               "0x0000000000000000000000000000000000000000" ? (
                             <Flex>
-                              <Text>{truncateAddress(delegatedTo || "")}</Text>
+                              <Tooltip label={delegatedTo}>
+                                <Text>
+                                  {truncateAddress(delegatedTo || "")}
+                                </Text>
+                              </Tooltip>
                               <CopyToClipboard text={delegatedTo} />
                             </Flex>
                           ) : (
