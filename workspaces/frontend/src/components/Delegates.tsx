@@ -594,6 +594,8 @@ export function Delegates({
                           setIsOpen(true);
                           setInputAddress(delegate?.author?.address);
                         }
+                      } else {
+                        setHelpMessage("connectWalletMessage");
                       }
                     }}
                     votingPower={delegate?.votingInfo?.votingPower}
