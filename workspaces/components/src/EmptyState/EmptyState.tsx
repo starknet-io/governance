@@ -6,6 +6,7 @@ import noDelegates from "./assets/no-delegates-found.svg";
 import noPastComments from "./assets/no-past-comments-yet.svg";
 import noPastVotes from "./assets/no-past-votes-yet.svg";
 import noPosts from "./assets/no-posts.svg";
+import noNotifications from "./assets/no-past-notifications.svg";
 type Props = {
   title?: string;
   border?: boolean;
@@ -15,6 +16,7 @@ type Props = {
     | "delegates"
     | "proposals"
     | "comments"
+    | "notifications"
     | "votesCast"
     | null;
   minHeight?: string;
@@ -31,7 +33,7 @@ export const EmptyState = ({
   return (
     <Box
       py="standard.2xl"
-      border="1px solid "
+      border={type !== "notifications" ? "1px solid " : "none"}
       borderColor={border ? "rgba(35, 25, 45, 0.10)" : "transparent"}
       borderRadius="4px"
       display="flex"
@@ -48,6 +50,9 @@ export const EmptyState = ({
       {type === "delegates" && <Image src={noDelegates} width="320px" />}
       {type === "proposals" && <Image src={noVotingProps} width="320px" />}
       {type === "votesCast" && <Image src={noPastVotes} width="250px" />}
+      {type === "notifications" && (
+        <Image src={noNotifications} width="200px" />
+      )}
 
       <Text
         color="#4A4A4F"

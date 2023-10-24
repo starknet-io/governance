@@ -5,12 +5,14 @@ import {
   Menu,
   MenuButton,
   MenuList,
+  Icon
 } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { Button } from "../Button";
 import { Text } from "../Text";
-import { BellIcon } from "../Icons";
+import { BellIcon, NotificationUnreadIcon } from "../Icons";
 import { NotificationItem } from "./NotificationItem";
+import { EmptyState } from "../EmptyState";
 
 type DropdownProps = {
   notifications: any;
@@ -22,14 +24,21 @@ export const NotificationsMenu = ({
 }: DropdownProps) => {
   const [isAllSelected, setIsAllSelected] = useState(true);
   const [isUnreadSelected, setIsUnreadSelected] = useState(false);
+  const hasUnread = notifications.some((notification) => !notification.read);
+
+  const sortedNotifications = useMemo(() => {
+    return [...notifications].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }, [notifications]);
 
   const filteredNotifications = isAllSelected
-    ? notifications
-    : notifications.filter((notification) => !notification.read);
+    ? sortedNotifications
+    : sortedNotifications.filter((notification) => !notification.read);
 
   return (
     <Box position="relative">
-      <Menu>
+      <Menu position="relative">
         <MenuButton
           width="36px"
           height="36px"
@@ -38,7 +47,15 @@ export const NotificationsMenu = ({
           variant="ghost"
           size="lg"
         />
-
+        {hasUnread && (
+          <Icon
+            as={NotificationUnreadIcon}
+            position="absolute"
+            top="-2px"
+            right="6px"
+            boxSize="8px"
+          />
+        )}
         <Box top="0px" position="relative">
           <MenuList h="500px" overflowY="scroll" w={"400px"}>
             <Box
@@ -75,15 +92,25 @@ export const NotificationsMenu = ({
                 </Button>
               </Flex>
             </Box>
-            {filteredNotifications.map((notification) => (
-              <NotificationItem
-                onMarkNotificationRead={(notificationId: string) =>
-                  markAsRead(notificationId)
-                }
-                key={notification.id}
-                notification={notification}
-              />
-            ))}
+            {filteredNotifications && filteredNotifications.length ? (
+              filteredNotifications.map((notification) => (
+                <NotificationItem
+                  onMarkNotificationRead={(notificationId: string) =>
+                    markAsRead(notificationId)
+                  }
+                  key={notification.id}
+                  notification={notification}
+                />
+              ))
+            ) : (
+              <Box>
+                <EmptyState
+                  type="notifications"
+                  title={`No ${isUnreadSelected ? "unread" : ""} notifications yet`}
+                  minHeight="300px"
+                />
+              </Box>
+            )}
           </MenuList>
         </Box>
       </Menu>

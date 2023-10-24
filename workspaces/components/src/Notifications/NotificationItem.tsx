@@ -68,7 +68,7 @@ export const NotificationItem = ({
             </Text>
           </Box>
           <Text variant="small" color="content.support.default" ml={1}>
-            {daysAgo(notification.time)}
+            {daysAgo(notification.createdAt)}
           </Text>
         </Flex>
         <Flex alignSelf="center" justifySelf="flex-end">
