@@ -505,6 +505,16 @@ export function Page() {
               }
               address={delegateAddress}
               dropdownChildren={<ActionButtons />}
+              headerTooltipContent={
+                !delegate?.author?.username && !delegate?.author?.ensName
+                  ? delegateAddress
+                  : undefined
+              }
+              subheaderTooltipContent={
+                delegate?.author?.username || delegate?.author?.ensName
+                  ? delegateAddress
+                  : undefined
+              }
             />
           </>
         )}
