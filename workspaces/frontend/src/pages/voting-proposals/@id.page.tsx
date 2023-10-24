@@ -787,7 +787,7 @@ export function Page() {
           {data?.proposal?.state === "active" ||
           data?.proposal?.state === "closed" ? (
             <>
-              {!user && (
+              {!user && data?.proposal?.state === "active" && (
                 <Heading
                   color="content.accent.default"
                   variant="h4"
@@ -873,27 +873,21 @@ export function Page() {
                   flexDirection={{ base: "column", xl: "row" }}
                   justifyContent="space-around"
                 >
-                  {data.proposal?.choices.map((choice, index) => {
-                    return (
-                      <VoteButton
-                        key={choice}
-                        onClick={() => {
-                          if (!user) {
-                            setHelpMessage("connectWalletMessage");
-                          } else {
-                            setcurrentChoice(index + 1);
-                            setIsOpen(true);
-                          }
-                        }}
-                        active={vote?.data?.votes?.[0]?.choice === index + 1}
-                        // @ts-expect-error todo
-                        type={choice}
-                        label={`${choice}`}
-                      />
-                    );
-                  })}
+                  {data.proposal?.choices.map((choice, index) => (
+                    <VoteButton
+                      key={choice}
+                      onClick={() => {
+                        setcurrentChoice(index + 1);
+                        setIsOpen(true);
+                      }}
+                      active={vote?.data?.votes?.[0]?.choice === index + 1}
+                      // @ts-expect-error todo
+                      type={choice}
+                      label={`${choice}`}
+                    />
+                  ))}
                 </Flex>
-              ) : (
+              ) : !user && data?.proposal?.state !== "closed" ? (
                 <Flex
                   mb="40px"
                   gap="standard.sm"
@@ -901,21 +895,19 @@ export function Page() {
                   flexDirection={{ base: "column", xl: "row" }}
                   justifyContent="space-around"
                 >
-                  {data.proposal?.choices.map((choice, index) => {
-                    return (
-                      <VoteButton
-                        key={choice}
-                        onClick={() => {
-                          setHelpMessage("connectWalletMessage");
-                        }}
-                        // @ts-expect-error todo
-                        type={choice}
-                        label={`${choice}`}
-                      />
-                    );
-                  })}
+                  {data.proposal?.choices.map((choice) => (
+                    <VoteButton
+                      key={choice}
+                      onClick={() => {
+                        setHelpMessage("connectWalletMessage");
+                      }}
+                      // @ts-expect-error todo
+                      type={choice}
+                      label={`${choice}`}
+                    />
+                  ))}
                 </Flex>
-              )}
+              ) : null}
 
               <Box>
                 <Heading
