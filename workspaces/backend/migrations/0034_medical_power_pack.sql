@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "notifications" (
 	"time" timestamp with time zone DEFAULT now() NOT NULL,
 	"title" text,
 	"proposalId" text,
-	"type" "type" NOT NULL,
+	"type" text NOT NULL,
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
 	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "fd3dcfa0-2f36-4fac-aeb1-68a7b1f4fc02",
+  "id": "12238e68-dc7a-4964-89ce-d442065627e2",
   "prevId": "75e5fd80-ea6f-4172-b591-e8f709230a89",
   "tables": {
     "comments": {
@@ -564,7 +564,7 @@
         },
         "type": {
           "name": "type",
-          "type": "type",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -1246,13 +1246,6 @@
         "build": "build"
       }
     },
-    "type": {
-      "name": "type",
-      "values": {
-        "snip": "snip",
-        "vote": "vote"
-      }
-    },
     "category": {
       "name": "category",
       "values": {
@@ -1271,6 +1264,13 @@
         "Stagnant": "Stagnant",
         "Withdrawn": "Withdrawn",
         "Living": "Living"
+      }
+    },
+    "type": {
+      "name": "type",
+      "values": {
+        "snip": "snip",
+        "vote": "vote"
       }
     },
     "role": {
