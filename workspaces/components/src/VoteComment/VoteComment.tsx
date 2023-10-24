@@ -6,6 +6,7 @@ import {
   VoteForIcon,
 } from "src/Icons";
 import { Text } from "src/Text";
+import { Tooltip } from "src/Tooltip";
 import { formatVotesAmount, truncateAddress } from "src/utils";
 
 type Props = {
@@ -32,6 +33,22 @@ export const VoteComment = ({
   author,
 }: Props) => {
   const formatVotes = formatVotesAmount(voteCount);
+
+  const renderAuthorOrAddress = () => {
+    const content = (
+      <Text variant="smallStrong" color="content.accent.default">
+        {author || (ethAddress ? ethAddress : truncateAddress(address))}
+      </Text>
+    );
+
+    return !author ? (
+      <Tooltip label={ethAddress ? ethAddress : address} aria-label="Address">
+        {content}
+      </Tooltip>
+    ) : (
+      content
+    );
+  };
 
   return (
     <Flex
@@ -60,11 +77,8 @@ export const VoteComment = ({
           )}
         </Box>
 
-        <Box>
-          <Text variant="smallStrong" color="content.accent.default">
-            {author || (ethAddress ? ethAddress : truncateAddress(address))}
-          </Text>
-        </Box>
+        <Box>{renderAuthorOrAddress()}</Box>
+
         <Flex ml="auto" justifyContent={"center"} gap="standard.xs">
           <Text variant="smallStrong" color="content.support.default">
             {formatVotes} votes
