@@ -296,7 +296,7 @@ export function Page() {
           : {},
     };
   });
-
+  console.log(pastVotesWithUserInfo);
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
@@ -958,6 +958,7 @@ export function Page() {
                       }
                       comment={vote?.reason as string}
                       voteCount={vote?.vp as number}
+                      signature={vote?.ipfs as string}
                     />
                   ))
                 ) : (

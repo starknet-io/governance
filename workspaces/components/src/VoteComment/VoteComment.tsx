@@ -1,10 +1,12 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
+import { Button } from "src/Button";
 import {
   SignatureIcon,
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
 } from "src/Icons";
+import { Link } from "src/Link";
 import { Text } from "src/Text";
 import { Tooltip } from "src/Tooltip";
 import { formatVotesAmount, truncateAddress } from "src/utils";
@@ -16,6 +18,7 @@ type Props = {
   comment?: string;
   voted: "For" | "Against" | "Abstain";
   author?: string | null;
+  signature?: string | null;
 };
 
 const variant = {
@@ -31,6 +34,7 @@ export const VoteComment = ({
   voteCount,
   comment,
   author,
+  signature,
 }: Props) => {
   const formatVotes = formatVotesAmount(voteCount);
 
@@ -84,7 +88,14 @@ export const VoteComment = ({
             {formatVotes} votes
           </Text>
           <Box as="span" mt="-3px">
-            <SignatureIcon />
+            <Link
+              href={`https://signator.io/view?ipfs=${signature}` || ""}
+              size="condensed"
+              isExternal
+              hasArrow={false}
+            >
+              <SignatureIcon />
+            </Link>
           </Box>
         </Flex>
       </Flex>
