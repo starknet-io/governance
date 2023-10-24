@@ -69,7 +69,7 @@ export const VoteComment = ({
         alignItems="center"
         justifyContent="flex-start"
       >
-        <Box mt="-5px">
+        <Box>
           {voted === "For" && (
             <VoteForIcon boxSize="18px" color={variant[voted]} />
           )}
@@ -83,18 +83,35 @@ export const VoteComment = ({
 
         <Box>{renderAuthorOrAddress()}</Box>
 
-        <Flex ml="auto" justifyContent={"center"} gap="standard.xs">
-          <Text variant="smallStrong" color="content.support.default">
-            {formatVotes} votes
-          </Text>
-          <Box as="span" mt="-3px">
+        <Flex
+          height="100%"
+          ml="auto"
+          justifyContent={"center"}
+          gap="standard.xs"
+        >
+          <Flex
+            height="100%"
+            alignItems={"center"}
+            top="3px"
+            position="relative"
+          >
+            <Text variant="smallStrong" color="content.support.default">
+              {formatVotes} votes
+            </Text>
+          </Flex>
+          <Box as="span" top="1px" position="relative">
             <Link
               href={`https://signator.io/view?ipfs=${signature}` || ""}
-              size="condensed"
+              size="small"
               isExternal
               hasArrow={false}
+              padding="0"
+              borderBottom={"0"}
+              sx={{
+                _hover: { textDecoration: "none", borderBottom: "none" },
+              }}
             >
-              <SignatureIcon />
+              <SignatureIcon boxSize="24px" />
             </Link>
           </Box>
         </Flex>
