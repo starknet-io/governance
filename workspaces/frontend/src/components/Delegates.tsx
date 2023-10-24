@@ -583,6 +583,11 @@ export function Delegates({
                       delegate?.author?.ensAvatar ??
                       null
                     }
+                    headerTooltipContent={
+                      !delegate.author?.username && !delegate.author?.ensName
+                        ? delegate.author?.address
+                        : undefined
+                    }
                     user={
                       delegate.author?.username ??
                       delegate.author?.ensName ??
