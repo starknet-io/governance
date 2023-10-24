@@ -7,9 +7,32 @@ export function useFetchNotifications() {
   const [notifications, setNotifications] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
+  const markNotificationAsRead =
+    trpc.notifications.markNotificationAsRead.useMutation();
 
   // Use trpc hook directly here
-  const notificationsQuery = trpc.notifications.getNotificationsForUser.useQuery({});
+  const notificationsQuery =
+    trpc.notifications.getNotificationsForUser.useQuery({});
+
+  const markAsRead = async (notificationId: string) => {
+    // Update local state
+    // Call the backend to update the read status
+    try {
+      await markNotificationAsRead.mutateAsync(
+        {
+          notificationId,
+        },
+        {
+          onSuccess: () => {
+            notificationsQuery.refetch();
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      // Optionally, revert the local state update if the backend call fails
+    }
+  };
 
   useEffect(() => {
     // Check for data or error from the query
@@ -37,5 +60,5 @@ export function useFetchNotifications() {
     return () => clearInterval(intervalId); // Clean up interval on component unmount
   }, [notificationsQuery]);
 
-  return { notifications, loading, error };
+  return { notifications, loading, error, markAsRead };
 }

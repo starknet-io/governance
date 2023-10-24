@@ -72,7 +72,7 @@ export const NotificationItem = ({
           </Text>
         </Flex>
         <Flex alignSelf="center" justifySelf="flex-end">
-          {notification.read ? <Icon as={NotificationUnreadIcon} /> : null}
+          {!notification.read ? <Icon as={NotificationUnreadIcon} /> : null}
         </Flex>
       </Flex>
     </MenuItem>

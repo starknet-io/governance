@@ -71,6 +71,7 @@ function LayoutDefault(props: Props) {
     notifications,
     loading: notificationsLoading,
     error: notificationsError,
+    markAsRead,
   } = useFetchNotifications();
 
   console.log(notifications);
@@ -295,6 +296,9 @@ function LayoutDefault(props: Props) {
                 <NotificationsMenu>
                   {notifications.reverse().map((notification) => (
                     <NotificationItem
+                      onMarkNotificationRead={(notificationId: string) =>
+                        markAsRead(notificationId)
+                      }
                       key={notification.id}
                       notification={notification}
                     />
