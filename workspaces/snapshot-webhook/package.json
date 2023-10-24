@@ -10,9 +10,6 @@
     "dev": "nodemon src/index.ts",
     "start": "node dist/src/index.js"
   },
-  "eslintConfig": {
-    "extends": "@snapshot-labs"
-  },
   "prettier": "@snapshot-labs/prettier-config",
   "dependencies": {
     "@ethersproject/wallet": "^5.7.0",
