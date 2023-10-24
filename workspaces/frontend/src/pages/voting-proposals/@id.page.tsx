@@ -787,6 +787,15 @@ export function Page() {
           {data?.proposal?.state === "active" ||
           data?.proposal?.state === "closed" ? (
             <>
+              {!user && (
+                <Heading
+                  color="content.accent.default"
+                  variant="h4"
+                  mb="standard.md"
+                >
+                  Cast your vote
+                </Heading>
+              )}
               {!hasVoted && canVote ? (
                 <Heading
                   color="content.accent.default"
@@ -855,7 +864,8 @@ export function Page() {
                   <Divider mb="standard.2xl" />
                 </>
               )}
-              {(hasVoted || canVote) && data?.proposal?.state !== "closed" ? (
+              {(hasVoted || (canVote && user)) &&
+              data?.proposal?.state !== "closed" ? (
                 <Flex
                   mb="40px"
                   gap="standard.sm"
@@ -869,7 +879,7 @@ export function Page() {
                         key={choice}
                         onClick={() => {
                           if (!user) {
-                            setIsConnectedModal(true);
+                            setHelpMessage("connectWalletMessage");
                           } else {
                             setcurrentChoice(index + 1);
                             setIsOpen(true);
@@ -883,7 +893,29 @@ export function Page() {
                     );
                   })}
                 </Flex>
-              ) : null}
+              ) : (
+                <Flex
+                  mb="40px"
+                  gap="standard.sm"
+                  display="flex"
+                  flexDirection={{ base: "column", xl: "row" }}
+                  justifyContent="space-around"
+                >
+                  {data.proposal?.choices.map((choice, index) => {
+                    return (
+                      <VoteButton
+                        key={choice}
+                        onClick={() => {
+                          setHelpMessage("connectWalletMessage");
+                        }}
+                        // @ts-expect-error todo
+                        type={choice}
+                        label={`${choice}`}
+                      />
+                    );
+                  })}
+                </Flex>
+              )}
 
               <Box>
                 <Heading
