@@ -333,7 +333,22 @@ export function Page() {
   });
 
   function ActionButtons() {
-    if (!user) return null;
+    if (!user)
+      return (
+        <ChakraButton
+          variant="ghost"
+          onClick={() => setHelpMessage("connectWalletMessage")}
+          width={"100%"}
+          justifyContent={"flex-start"}
+          padding={0}
+          minHeight={"33px"}
+          paddingLeft={"10px"}
+          fontWeight={"400"}
+          textColor={"#1a1523"}
+        >
+          Report
+        </ChakraButton>
+      );
 
     const canEdit =
       (hasPermission(user.role, [ROLES.USER]) &&

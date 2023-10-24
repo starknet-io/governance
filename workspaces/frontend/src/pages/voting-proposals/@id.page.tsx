@@ -572,7 +572,7 @@ export function Page() {
                 pageContext={pageContext}
               />
             </Box>
-            <Flex alignItems="center" width="100%" overflow="hidden">
+            <Flex alignItems="center" width="100%">
               <Flex flex="1">
                 <Heading
                   color="content.accent.default"
@@ -585,27 +585,42 @@ export function Page() {
 
               <Box marginLeft="auto">
                 <MoreActions>
-                  <MenuItem as="a" href="#">
-                    Share
-                  </MenuItem>
-                  <ChakraButton
-                    variant="ghost"
-                    data-tally-open="mKx1xD"
-                    data-tally-emoji-text="👋"
-                    data-tally-emoji-animation="wave"
-                    data-proposal={
-                      typeof window !== "undefined" ? window.location.href : ""
-                    }
-                    width={"100%"}
-                    justifyContent={"flex-start"}
-                    padding={0}
-                    minHeight={"33px"}
-                    paddingLeft={"10px"}
-                    fontWeight={"400"}
-                    textColor={"#1a1523"}
-                  >
-                    Report
-                  </ChakraButton>
+                  {!user?.isAuthenticatedWithAWallet ? (
+                    <ChakraButton
+                      variant="ghost"
+                      width={"100%"}
+                      justifyContent={"flex-start"}
+                      padding={0}
+                      minHeight={"33px"}
+                      paddingLeft={"10px"}
+                      fontWeight={"400"}
+                      textColor={"#1a1523"}
+                      onClick={() => setHelpMessage("connectWalletMessage")}
+                    >
+                      Report
+                    </ChakraButton>
+                  ) : (
+                    <ChakraButton
+                      variant="ghost"
+                      data-tally-open="mKx1xD"
+                      data-tally-emoji-text="👋"
+                      data-tally-emoji-animation="wave"
+                      data-proposal={
+                        typeof window !== "undefined"
+                          ? window.location.href
+                          : ""
+                      }
+                      width={"100%"}
+                      justifyContent={"flex-start"}
+                      padding={0}
+                      minHeight={"33px"}
+                      paddingLeft={"10px"}
+                      fontWeight={"400"}
+                      textColor={"#1a1523"}
+                    >
+                      Report
+                    </ChakraButton>
+                  )}
                 </MoreActions>
               </Box>
             </Flex>

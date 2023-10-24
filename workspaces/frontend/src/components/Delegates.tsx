@@ -12,7 +12,6 @@ import {
   FilterPopoverIcon,
   Text,
   EmptyState,
-  Skeleton,
   SkeletonCircle,
   SkeletonText,
   DelegateModal,
