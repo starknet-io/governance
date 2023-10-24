@@ -39,6 +39,7 @@ import { ROLES } from "@yukilabs/governance-frontend/src/renderer/types";
 import { Button } from "../Button";
 import { InfoModal } from "../InfoModal";
 import { Banner } from "../Banner/Banner";
+import { Tooltip } from "src/Tooltip";
 
 type CommentWithAuthor = Comment & {
   author: User | null;
@@ -356,6 +357,24 @@ const CommentItem: React.FC<CommentProps> = ({
     return stripped.length > 40 ? stripped.substring(0, 40) : stripped;
   }
 
+  const renderAuthorOrAddress = () => {
+    const content = (
+      <Text as="span" variant="smallStrong" color="content.accent.default">
+        {author?.username ||
+          author?.ensName ||
+          truncateAddress(author ? author.address : "")}
+      </Text>
+    );
+
+    return !author?.username && !author?.ensName ? (
+      <Tooltip label={author ? author.address : ""} aria-label="Address">
+        {content}
+      </Tooltip>
+    ) : (
+      content
+    );
+  };
+
   return (
     <>
       <InfoModal
@@ -437,11 +456,7 @@ const CommentItem: React.FC<CommentProps> = ({
               w="full"
             >
               <Flex direction="column">
-                <Text variant="smallStrong" color="content.accent.default">
-                  {author?.username ||
-                    author?.ensName ||
-                    truncateAddress(author ? author.address : "")}
-                </Text>
+                <Box as="span">{renderAuthorOrAddress()}</Box>
                 <Text variant="small" color="content.support.default" mt="-2px">
                   {daysAgo(createdAt)}
                 </Text>
