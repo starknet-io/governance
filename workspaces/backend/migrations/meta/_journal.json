@@ -243,15 +243,8 @@
     {
       "idx": 34,
       "version": "5",
-      "when": 1698132701364,
-      "tag": "0034_medical_power_pack",
-      "breakpoints": false
-    },
-    {
-      "idx": 35,
-      "version": "5",
-      "when": 1698133230869,
-      "tag": "0035_flaky_millenium_guard",
+      "when": 1698219684723,
+      "tag": "0034_clumsy_stingray",
       "breakpoints": false
     }
   ]

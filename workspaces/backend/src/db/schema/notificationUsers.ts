@@ -1,4 +1,4 @@
-import { pgTable, uuid, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, boolean, timestamp } from 'drizzle-orm/pg-core';
 import { notifications } from './notifications';
 import { InferModel, relations } from 'drizzle-orm';
 import { users } from './users';
@@ -12,6 +12,12 @@ export const notificationUsers = pgTable('notification_users', {
     onDelete: 'cascade',
     onUpdate: 'cascade',
   }),
+  createdAt: timestamp('createdAt', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp('updatedAt', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
   read: boolean('read').notNull().default(false),
 });
 

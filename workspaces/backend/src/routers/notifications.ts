@@ -1,13 +1,12 @@
-// Import necessary modules and schemas
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { notifications } from '../db/schema/notifications';
 import { db } from '../db/db';
 import { z } from 'zod';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { notificationUsers } from '../db/schema/notificationUsers';
 
-// Define the notifications router
+
 export const notificationsRouter = router({
   getAll: publicProcedure.query(async () => {
     const allNotifications = await db.query.notifications.findMany({
@@ -22,11 +21,9 @@ export const notificationsRouter = router({
     .input(z.any())
 
     .mutation(async (opts) => {
-      console.log('CAAAAUGGGGHTTTT');
       // Extract relevant data from the webhook request
       const { id, space, event } = opts.input;
       const { author, title, start, id: proposalID } = opts.input.proposal;
-      console.log(id, space, event, author, title, start, proposalID);
 
       // Create a message for the notification
       const message = `New voting proposal created with ID: ${id} in space: ${space}`;
@@ -39,15 +36,6 @@ export const notificationsRouter = router({
         throw new Error('User not found');
       }
 
-      console.log('Trying to insert', {
-        message,
-        event,
-        title,
-        proposalID,
-        time: new Date(start),
-        userId: foundUser.id,
-        createdAt: new Date(),
-      });
       try {
         // Insert the new notification
         const insertedNotification = await db
@@ -65,8 +53,6 @@ export const notificationsRouter = router({
 
         // Get the inserted notification
         const newNotification = insertedNotification[0];
-        console.log(newNotification);
-
         // Get all users who should be associated with this notification
         const allUsers = await db.query.users.findMany();
 
@@ -103,22 +89,25 @@ export const notificationsRouter = router({
       // Query the notification_users table to get notifications for the user
       const userNotifications = await db.query.notificationUsers.findMany({
         where: eq(userId, notificationUsers.userId),
+        orderBy: [desc(notificationUsers.createdAt)],
+
         with: {
           notification: {
             with: {
               user: true,
-            }
+            },
+            orderBy: [desc(notifications.time)],
           },
         },
       });
 
       // Transform the data to the desired output format
-      const notifications = userNotifications.map((notifUser) => ({
+      const returnedNotifications = userNotifications.map((notifUser) => ({
         ...notifUser.notification,
         read: notifUser.read,
       }));
 
-      return notifications;
+      return returnedNotifications;
     }),
 
   markNotificationAsRead: protectedProcedure
@@ -146,7 +135,6 @@ export const notificationsRouter = router({
           ),
         );
 
-      return true; // Return true to indicate success, or return some other value if needed
+      return true;
     }),
-  // ... other handlers as necessary ...
 });

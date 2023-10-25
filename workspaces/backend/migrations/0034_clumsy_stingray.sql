@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS "notifications" (
 CREATE TABLE IF NOT EXISTS "notification_users" (
 	"notificationId" uuid,
 	"userId" uuid,
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
 	"read" boolean DEFAULT false NOT NULL
 );
 
@@ -29,7 +31,7 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
- ALTER TABLE "notification_users" ADD CONSTRAINT "notification_users_userId_delegates_id_fk" FOREIGN KEY ("userId") REFERENCES "delegates"("id") ON DELETE cascade ON UPDATE cascade;
+ ALTER TABLE "notification_users" ADD CONSTRAINT "notification_users_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE cascade;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

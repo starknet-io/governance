@@ -5,7 +5,7 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  Icon
+  Icon,
 } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { Button } from "../Button";
@@ -26,15 +26,9 @@ export const NotificationsMenu = ({
   const [isUnreadSelected, setIsUnreadSelected] = useState(false);
   const hasUnread = notifications.some((notification) => !notification.read);
 
-  const sortedNotifications = useMemo(() => {
-    return [...notifications].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    );
-  }, [notifications]);
-
   const filteredNotifications = isAllSelected
-    ? sortedNotifications
-    : sortedNotifications.filter((notification) => !notification.read);
+    ? notifications
+    : notifications.filter((notification) => !notification.read);
 
   return (
     <Box position="relative">
@@ -106,7 +100,9 @@ export const NotificationsMenu = ({
               <Box>
                 <EmptyState
                   type="notifications"
-                  title={`No ${isUnreadSelected ? "unread" : ""} notifications yet`}
+                  title={`No ${
+                    isUnreadSelected ? "unread" : ""
+                  } notifications yet`}
                   minHeight="300px"
                 />
               </Box>

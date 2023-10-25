@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "12238e68-dc7a-4964-89ce-d442065627e2",
+  "id": "0bd252a2-e821-4f81-a6f9-cf748afeff82",
   "prevId": "75e5fd80-ea6f-4172-b591-e8f709230a89",
   "tables": {
     "comments": {
@@ -618,6 +618,20 @@
           "primaryKey": false,
           "notNull": false
         },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
         "read": {
           "name": "read",
           "type": "boolean",
@@ -641,10 +655,10 @@
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
-        "notification_users_userId_delegates_id_fk": {
-          "name": "notification_users_userId_delegates_id_fk",
+        "notification_users_userId_users_id_fk": {
+          "name": "notification_users_userId_users_id_fk",
           "tableFrom": "notification_users",
-          "tableTo": "delegates",
+          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
