@@ -6,6 +6,8 @@ import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { commentVotes } from '../db/schema/commentVotes';
 import { profanity } from '@2toad/profanity';
+import { notifications } from '../db/schema/notifications';
+import { notificationUsers } from '../db/schema/notificationUsers';
 
 const commentInsertSchema = createInsertSchema(comments);
 
@@ -196,6 +198,44 @@ export const commentsRouter = router({
           userId: opts.ctx.user?.id,
         })
         .returning();
+
+      const parentId = opts.input.parentId;
+      if (parentId) {
+        const parentComment = await db.query.comments.findFirst({
+          where: eq(comments.id, parentId),
+          with: { author: true },
+        });
+
+        // Step 2: Verify Authorship
+        if (parentComment && parentComment.author.id !== opts.ctx.user?.id) {
+          const message = opts.input.content;
+
+          // Step 3: Create Notification
+          const insertedNotification = await db
+            .insert(notifications)
+            .values({
+              message,
+              type: 'comment_reply',
+              title: 'New Comment Reply',
+              time: new Date(),
+              userId: opts.ctx.user?.id,
+              createdAt: new Date(),
+            })
+            .returning();
+
+          // Step 4: Create NotificationUser Entry
+          const newNotification = insertedNotification[0];
+          const notificationUserAssociation = {
+            notificationId: newNotification.id,
+            userId: parentComment.author.id,
+            read: false,
+          };
+
+          await db
+            .insert(notificationUsers)
+            .values(notificationUserAssociation);
+        }
+      }
 
       return insertedComment[0];
     }),
