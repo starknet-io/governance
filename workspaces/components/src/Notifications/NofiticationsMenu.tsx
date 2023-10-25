@@ -47,7 +47,7 @@ export const NotificationsMenu = ({
             position="absolute"
             top="-2px"
             right="-2px"
-            boxSize="8px"
+            boxSize="9px"
           />
         )}
         <Box top="0px" position="relative">
