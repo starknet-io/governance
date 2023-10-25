@@ -1,11 +1,14 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
+import { Button } from "src/Button";
 import {
   SignatureIcon,
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
 } from "src/Icons";
+import { Link } from "src/Link";
 import { Text } from "src/Text";
+import { Tooltip } from "src/Tooltip";
 import { formatVotesAmount, truncateAddress } from "src/utils";
 
 type Props = {
@@ -15,6 +18,7 @@ type Props = {
   comment?: string;
   voted: "For" | "Against" | "Abstain";
   author?: string | null;
+  signature?: string | null;
 };
 
 const variant = {
@@ -30,8 +34,25 @@ export const VoteComment = ({
   voteCount,
   comment,
   author,
+  signature,
 }: Props) => {
   const formatVotes = formatVotesAmount(voteCount);
+
+  const renderAuthorOrAddress = () => {
+    const content = (
+      <Text variant="smallStrong" color="content.accent.default">
+        {author || (ethAddress ? ethAddress : truncateAddress(address))}
+      </Text>
+    );
+
+    return !author ? (
+      <Tooltip label={ethAddress ? ethAddress : address} aria-label="Address">
+        {content}
+      </Tooltip>
+    ) : (
+      content
+    );
+  };
 
   return (
     <Flex
@@ -48,7 +69,7 @@ export const VoteComment = ({
         alignItems="center"
         justifyContent="flex-start"
       >
-        <Box mt="-5px">
+        <Box>
           {voted === "For" && (
             <VoteForIcon boxSize="18px" color={variant[voted]} />
           )}
@@ -60,17 +81,38 @@ export const VoteComment = ({
           )}
         </Box>
 
-        <Box>
-          <Text variant="smallStrong" color="content.accent.default">
-            {author || (ethAddress ? ethAddress : truncateAddress(address))}
-          </Text>
-        </Box>
-        <Flex ml="auto" justifyContent={"center"} gap="standard.xs">
-          <Text variant="smallStrong" color="content.support.default">
-            {formatVotes} votes
-          </Text>
-          <Box as="span" mt="-3px">
-            <SignatureIcon />
+        <Box>{renderAuthorOrAddress()}</Box>
+
+        <Flex
+          height="100%"
+          ml="auto"
+          justifyContent={"center"}
+          gap="standard.xs"
+        >
+          <Flex
+            height="100%"
+            alignItems={"center"}
+            top="3px"
+            position="relative"
+          >
+            <Text variant="smallStrong" color="content.support.default">
+              {formatVotes} votes
+            </Text>
+          </Flex>
+          <Box as="span" top="1px" position="relative">
+            <Link
+              href={`https://signator.io/view?ipfs=${signature}` || ""}
+              size="small"
+              isExternal
+              hasArrow={false}
+              padding="0"
+              borderBottom={"0"}
+              sx={{
+                _hover: { textDecoration: "none", borderBottom: "none" },
+              }}
+            >
+              <SignatureIcon boxSize="24px" />
+            </Link>
           </Box>
         </Flex>
       </Flex>

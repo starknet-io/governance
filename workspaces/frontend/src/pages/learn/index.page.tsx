@@ -262,6 +262,11 @@ export function Page() {
                     selectedPage?.author?.ensName ??
                     formattedAddress
                   }
+                  showTooltip={
+                    selectedPage?.author?.username == "undefined" ||
+                    selectedPage?.author?.ensName == "undefined"
+                  }
+                  tooltipContent={`${selectedPage?.author?.address}`}
                 />
                 <Text variant="small" color="content.default.default">
                   •
