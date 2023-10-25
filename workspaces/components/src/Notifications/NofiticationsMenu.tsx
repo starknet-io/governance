@@ -32,22 +32,22 @@ export const NotificationsMenu = ({
 
   return (
     <Box position="relative">
-      <Menu position="relative">
+      <Menu>
         <MenuButton
+          as={IconButton}
           width="36px"
           height="36px"
-          as={IconButton}
-          icon={<BellIcon boxSize="36px" />}
+          icon={<BellIcon boxSize="20px" />}
+          size="condensed"
           variant="ghost"
-          size="lg"
         />
         {hasUnread && (
           <Icon
             as={NotificationUnreadIcon}
             position="absolute"
             top="-2px"
-            right="6px"
-            boxSize="8px"
+            right="-2px"
+            boxSize="9px"
           />
         )}
         <Box top="0px" position="relative">
