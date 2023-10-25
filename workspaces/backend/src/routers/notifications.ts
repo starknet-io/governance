@@ -91,7 +91,7 @@ export const notificationsRouter = router({
       const userNotifications = await db.query.notificationUsers.findMany({
         where: eq(userId, notificationUsers.userId),
         orderBy: [desc(notificationUsers.createdAt)],
-
+        limit: 15,
         with: {
           notification: {
             with: {
