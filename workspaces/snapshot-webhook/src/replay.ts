@@ -28,9 +28,9 @@ async function getNextMessages(mci: number) {
       __args: {
         first: 10,
         where: {
-          type_in: ['proposal', 'delete-proposal'],
+          type_in: ['proposal'],
           mci_gt: mci,
-          space: 'robwalsh.eth'
+          space: process.env.SNAPSHOT_SPACE,
         },
         orderBy: 'mci',
         orderDirection: new EnumType('asc')

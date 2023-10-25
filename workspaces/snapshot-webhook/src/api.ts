@@ -4,6 +4,7 @@ import { capture } from '@snapshot-labs/snapshot-sentry';
 
 const router = express.Router();
 
+//  THIS IS JUST A TEST ROUTE
 router.get('/test', async (req, res) => {
   const url: any = 'http://localhost:8000/api/notifications/webhookHandler';
   const method: string = (req.query.method as string) ?? 'POST';

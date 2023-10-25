@@ -12,7 +12,7 @@ export async function sendEvent(event, to, proposal) {
   event.token = sha256(`${to}${serviceEventsSalt}`);
   event.secret = sha256(`${to}${serviceEventsSalt}`);
   const headerSecret = sha256(`${to}${process.env.SERVICE_EVENTS_SALT}`);
-  const url = 'http://localhost:8000/api/notifications/webhookHandler';
+  const url = `${process.env.NOTIFICATIONS_ENDPOINT}/webhookHandler`
   console.log('URL: ', url);
   const end = timeOutgoingRequest.startTimer({ method, provider: 'http' });
   let res;
@@ -51,7 +51,6 @@ export async function sendEvent(event, to, proposal) {
 export async function send(event, _proposal, _subscribersAddresses) {
   const subscribers = await db.queryAsync('SELECT * FROM subscribers WHERE active = 1');
   console.log('[webhook] subscribers', subscribers.length);
-  console.log('SADA CU TI POSLATI NOTIFIKACIJU');
   // _proposal.author
   // _proposal.title
   // _proposal.start
