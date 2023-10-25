@@ -61,6 +61,7 @@ export const notificationsRouter = router({
           notificationId: newNotification.id,
           userId: user.id,
           read: false, // All users initially have not read the notification
+          createdAt: new Date(),
         }));
 
         // Insert all associations into the notification_users table
