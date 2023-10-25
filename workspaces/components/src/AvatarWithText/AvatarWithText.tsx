@@ -69,6 +69,7 @@ export const AvatarWithText = ({
     const content =
       size === "condensed" ? (
         <Text
+          as="span"
           lineHeight="10px"
           color="content.support.default"
           variant="captionSmallUppercase"
@@ -77,19 +78,17 @@ export const AvatarWithText = ({
           {subheaderText}
         </Text>
       ) : (
-        <Text color="content.default.default" variant="small">
+        <Text as="span" color="content.default.default" variant="small">
           {subheaderText}
         </Text>
       );
 
     return subheaderTooltipContent ? (
-      <Tooltip
-        shouldWrapChildren
-        label={subheaderTooltipContent}
-        aria-label="Subheader Text"
-      >
-        {content}
-      </Tooltip>
+      <Box as="span">
+        <Tooltip label={subheaderTooltipContent} aria-label="Subheader Text">
+          {content}
+        </Tooltip>
+      </Box>
     ) : (
       content
     );
@@ -113,7 +112,7 @@ export const AvatarWithText = ({
           gap="0"
         >
           <Box height="24px">{renderHeaderText()}</Box>
-          <Box> {renderSubheaderText()}</Box>
+          <Box mt="-4px">{renderSubheaderText()}</Box>
         </Box>
       </Flex>
     );

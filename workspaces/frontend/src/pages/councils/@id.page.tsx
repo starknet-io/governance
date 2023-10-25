@@ -160,6 +160,7 @@ export function Page() {
                 </MenuItem>
               ) : null
             }
+            subheaderTooltipContent={councilAddress}
           />
         )}
 
