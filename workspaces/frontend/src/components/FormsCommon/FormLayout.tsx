@@ -35,6 +35,8 @@ export const FormLayout = ({ children }: Props) => {
         }}
         pt={{ base: "standard.2xl", lg: "standard.3xl" }}
         pb={{ base: "standard.2xl", lg: "standard.3xl" }}
+        maxWidth="100%"
+        overflow={"hidden"}
       >
         <Box maxWidth={{ base: "100%", lg: "670px" }} mx="auto">
           {children}
