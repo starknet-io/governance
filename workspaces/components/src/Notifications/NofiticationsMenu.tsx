@@ -13,9 +13,10 @@ import { Text } from "../Text";
 import { BellIcon, NotificationUnreadIcon } from "../Icons";
 import { NotificationItem } from "./NotificationItem";
 import { EmptyState } from "../EmptyState";
+import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
 
 type DropdownProps = {
-  notifications: any;
+  notifications: any[];
   markAsRead: any;
 };
 export const NotificationsMenu = ({
@@ -25,10 +26,27 @@ export const NotificationsMenu = ({
   const [isAllSelected, setIsAllSelected] = useState(true);
   const [isUnreadSelected, setIsUnreadSelected] = useState(false);
   const hasUnread = notifications.some((notification) => !notification.read);
+  const { data: proposals } = trpc.proposals.getProposals.useQuery({});
 
-  const filteredNotifications = isAllSelected
-    ? notifications
-    : notifications.filter((notification) => !notification.read);
+  const populatedNotifications = useMemo(() => {
+    return notifications.map((notification) => {
+      if (notification.proposalId) {
+        const foundProposal = (proposals || []).find(
+          (proposal) => proposal.id === notification.proposalId,
+        );
+        return foundProposal
+          ? { ...notification, proposal: foundProposal }
+          : notification;
+      }
+      return notification;
+    });
+  }, [notifications, proposals]);
+
+  const filteredNotifications = useMemo(() => {
+    return isAllSelected
+      ? populatedNotifications
+      : populatedNotifications.filter((notification) => !notification.read);
+  }, [isAllSelected, populatedNotifications]);
 
   return (
     <Box position="relative">

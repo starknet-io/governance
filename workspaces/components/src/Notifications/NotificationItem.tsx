@@ -41,7 +41,11 @@ export const NotificationItem = ({
     return isComment ? "replied on your comment" : notification.type;
   };
   const getTitle = () => {
-    return notification?.post?.title || notification.title;
+    return (
+      notification?.post?.title ||
+      notification?.proposal?.title ||
+      notification.title
+    );
   };
   return (
     <MenuItem
