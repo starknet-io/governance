@@ -5,6 +5,7 @@ import { Indenticon } from "../Indenticon";
 import {
   NotificationUnreadIcon,
   NotificationVotingProposalIcon,
+  CommentIcon,
 } from "../Icons";
 import { daysAgo } from "../Comment/CommentList";
 import { navigate } from "vite-plugin-ssr/client/router";
@@ -12,6 +13,8 @@ import { navigate } from "vite-plugin-ssr/client/router";
 type NotificationItemProps = {
   notification: {
     id: string;
+    post?: any;
+    proposal?: any;
     user: {
       address: string;
       ensName: string;
@@ -32,6 +35,14 @@ export const NotificationItem = ({
 }: NotificationItemProps) => {
   const formattedAddress =
     notification?.user?.ensName || truncateAddress(notification?.user?.address);
+  const isProposal = notification.type.includes("proposal");
+  const isComment = notification.type.includes("comment");
+  const formattedType = () => {
+    return isComment ? "replied on your comment" : notification.type;
+  };
+  const getTitle = () => {
+    return notification?.post?.title || notification.title;
+  };
   return (
     <MenuItem
       maxW={"400px"}
@@ -39,16 +50,23 @@ export const NotificationItem = ({
       pb={1}
       key={notification.id}
       onClick={() => {
+        onMarkNotificationRead(notification.id);
         if (notification.proposalId) {
-          onMarkNotificationRead(notification.id);
           navigate(`/voting-proposals/${notification.proposalId}`);
+        } else if (notification.post && notification.post.council) {
+          navigate(
+            `/councils/${notification.post.council.slug}/posts/${notification.post.slug}`,
+          );
         }
       }}
     >
       <Flex gap={1.5} width="100%">
         <Flex direction="column" alignItems="center" gap={1}>
           <Indenticon size={32} address={notification?.user?.address} />
-          <Icon as={NotificationVotingProposalIcon} boxSize="5" />
+          <Icon
+            as={isProposal ? NotificationVotingProposalIcon : CommentIcon}
+            boxSize="5"
+          />
         </Flex>
         <Flex direction="column" alignItems="flex-start" flex="1">
           <Box display="inline-block">
@@ -61,10 +79,10 @@ export const NotificationItem = ({
               color="content.support.default"
               display="inline-block"
             >
-              {notification.type}:
+              {formattedType()}:
             </Text>
             <Text ml={1} variant="mediumStrong" color="content.default.default">
-              “{notification.title}“
+              “{getTitle()}“
             </Text>
           </Box>
           <Text variant="small" color="content.support.default" ml={1}>

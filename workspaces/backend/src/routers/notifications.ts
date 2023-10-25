@@ -6,7 +6,6 @@ import { and, desc, eq } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { notificationUsers } from '../db/schema/notificationUsers';
 
-
 export const notificationsRouter = router({
   getAll: publicProcedure.query(async () => {
     const allNotifications = await db.query.notifications.findMany({
@@ -96,6 +95,12 @@ export const notificationsRouter = router({
           notification: {
             with: {
               user: true,
+              comment: true,
+              post: {
+                with: {
+                  council: true,
+                }
+              },
             },
             orderBy: [desc(notifications.time)],
           },
