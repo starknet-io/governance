@@ -379,7 +379,11 @@ export function Page() {
             <Text pt="1px" color="content.support.default" variant="small">
               Voting proposals powered by{" "}
             </Text>
-            <Link size="small" href="https://snapshot.org" isExternal>
+            <Link
+              size="small"
+              href="https://snapshot.org/#/starknet.eth"
+              isExternal
+            >
               Snapshot
             </Link>
           </Flex>
