@@ -250,7 +250,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   };
   return (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm, remarkEmoji]}
+      remarkPlugins={[remarkGfm, [remarkEmoji, { emoticon: true }]]}
       className={className}
       components={ChakraUIRenderer(newTheme)}
     >
