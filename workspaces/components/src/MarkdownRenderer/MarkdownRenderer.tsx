@@ -20,16 +20,38 @@ const Highlight: React.FC = ({ children }: React.PropsWithChildren<any>) => (
   <span style={{ backgroundColor: "#95EAB2" }}>{children}</span>
 );
 
+function applyHighlights(content: string) {
+  return content.replace(/==([^=]+)==/g, "@@highlight@@$1@@/highlight@@");
+}
+function applyInsertions(content: string) {
+  return content.replace(/\+\+([^+]+)\+\+/g, "<ins>$1</ins>");
+}
+
+function typographer(content: string) {
+  return content
+    .replace(/\(c\)/gi, "©")
+    .replace(/\(r\)/gi, "®")
+    .replace(/\(tm\)/gi, "™")
+    .replace(/\(p\)/gi, "§")
+    .replace(/\+-/g, "±");
+}
+
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   content,
   textProps,
   className = "markdown-body",
 }) => {
-  const processedContent = content.replace(
-    /==([^=]+)==/g,
-    "@@highlight@@$1@@/highlight@@",
+  const transformations = [
+    applyHighlights,
+    applyInsertions,
+    typographer,
+    he.decode,
+  ];
+  const processedContent = transformations.reduce(
+    (content, transform) => transform(content),
+    content,
   );
-  const decodedContent = he.decode(processedContent);
+
   const newTheme = {
     highlight: Highlight,
     h1: ({ ...props }) => (
@@ -84,6 +106,17 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         mb="standard.base"
         {...props}
         color="content.accent.default"
+      />
+    ),
+    blockquote: ({ ...props }) => (
+      <blockquote
+        style={{
+          fontFamily: `'Inter Variable', sans-serif`,
+          borderLeft: "3px solid rgba(35, 25, 45, 0.10)",
+          marginTop: 8,
+          paddingLeft: 8,
+        }}
+        {...props}
       />
     ),
     p: ({ children, ...props }: React.PropsWithChildren<any>) => {
@@ -216,22 +249,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         {...props}
       />
     ),
-    blockquote: ({ ...props }) => (
-      <blockquote
-        style={{
-          borderLeft: "3px solid content.default.default",
-          paddingLeft: "12px",
-          marginBottom: 18,
-          color: "content.default.default",
-          fontFamily: `'Inter Variable', sans-serif`,
-          fontSize: "15px",
-          lineHeight: "24px",
 
-          marginTop: "8px",
-        }}
-        {...props}
-      />
-    ),
     a: ({ ...props }) => (
       <Text
         as="a"
@@ -243,7 +261,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
       />
     ),
     img: ({ ...props }) => (
-      <Box>
+      <Box mt="24px" mb="24px">
         <img {...props} />
       </Box>
     ),
@@ -254,7 +272,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
       className={className}
       components={ChakraUIRenderer(newTheme)}
     >
-      {decodedContent}
+      {processedContent}
     </ReactMarkdown>
   );
 };
