@@ -171,8 +171,12 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     thead: ({ ...props }) => <Thead {...props} />,
     tbody: ({ ...props }) => <Tbody {...props} />,
     tr: ({ ...props }) => <Tr {...props} />,
-    th: ({ ...props }) => <Th {...props} />,
-    td: ({ ...props }) => <Td {...props} />,
+    th: ({ ...props }) => (
+      <Th fontFamily="Inter variable" fontSize={"12px"} {...props} />
+    ),
+    td: ({ ...props }) => (
+      <Td fontFamily="Inter variable" fontSize={"14px"} {...props} />
+    ),
 
     code: (props): React.PropsWithChildren<any> => {
       const { inline, className, children, ...restProps } = props;
