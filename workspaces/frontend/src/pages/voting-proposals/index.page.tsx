@@ -276,7 +276,7 @@ export function Page() {
         <Box maxWidth={{ base: "100%", lg: "1240px" }} mx="auto">
           <PageTitle
             learnMoreLink="/learn"
-            title="Voting Proposals"
+            title="Voting proposals"
             description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol. "
           />
 
