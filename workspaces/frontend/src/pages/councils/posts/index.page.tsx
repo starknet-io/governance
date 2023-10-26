@@ -349,7 +349,7 @@ export function Page() {
               ) : (
                 // Display EmptyState when there are no comments
                 <EmptyState
-                  border={false}
+                  hasBorder={false}
                   type="comments"
                   title="Add the first comment"
                 />

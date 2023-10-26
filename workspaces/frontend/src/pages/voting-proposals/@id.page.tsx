@@ -791,7 +791,7 @@ export function Page() {
             </>
           ) : (
             <EmptyState
-              border={false}
+              hasBorder={false}
               type="comments"
               title="Add the first comment"
             />
