@@ -14,7 +14,12 @@ export default defineConfig((env) => {
     },
     ssr: {
       target: "node",
-      noExternal: ["@apollo/client", "color-hash", "react-use"],
+      noExternal: [
+        "@apollo/client",
+        "color-hash",
+        "react-use",
+        "react-syntax-highlighter",
+      ],
     },
   } as UserConfig;
 });
