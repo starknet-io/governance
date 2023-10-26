@@ -119,7 +119,9 @@ export async function render(pageContext: PageContextServer) {
       </script>
     </head>
     <body>
-      <div id="page-view">${dangerouslySkipEscape(pageHtml)}</div>
+      <div id="page-view" style="overflow-x:hidden">${dangerouslySkipEscape(
+        pageHtml,
+      )}</div>
     </body>
   </html>`;
 
