@@ -1,4 +1,3 @@
-import { Link } from "@chakra-ui/react";
 import { Button, EmptyState, Flex } from "@yukilabs/governance-components";
 import { DocumentProps } from "src/renderer/types";
 

@@ -9,7 +9,6 @@ import {
   Flex,
   Stat,
   Divider,
-  ProfileSummaryCard,
   MenuItem,
   MarkdownRenderer,
   Text,
@@ -26,7 +25,7 @@ import { extractAndFormatSlug, hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { Grid } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 
 export function Page() {
