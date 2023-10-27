@@ -5,6 +5,13 @@ import { z } from 'zod';
 import { and, desc, eq } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { notificationUsers } from '../db/schema/notificationUsers';
+import formData from 'form-data';
+import Mailgun from 'mailgun.js';
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({
+  username: 'api',
+  key: process.env.MAILGUN_API_KEY!,
+});
 
 export const notificationsRouter = router({
   getAll: publicProcedure.query(async () => {
@@ -20,6 +27,7 @@ export const notificationsRouter = router({
     .input(z.any())
 
     .mutation(async (opts) => {
+      console.log('CAUGHT');
       // Extract relevant data from the webhook request
       const { id, space, event } = opts.input;
       const { author, title, start, id: proposalID } = opts.input.proposal;
@@ -66,6 +74,28 @@ export const notificationsRouter = router({
         // Insert all associations into the notification_users table
         await db.insert(notificationUsers).values(notificationUserAssociations);
 
+        // Now send emails to subscribers
+        const subscribers = await db.query.subscribers.findMany();
+        const emailList = subscribers.map((subscriber) => subscriber.email);
+
+        for (const email of emailList) {
+          console.log('SENDING EMAIL TO ', email);
+          await mg.messages.create(
+            'sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org',
+            {
+              from: 'Excited User <me@sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org>',
+              to: email,
+              subject: message,
+              template: 'notification template ',
+              text: message,
+              'h:X-Mailgun-Variables': JSON.stringify({
+                title: title,
+                url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+              }),
+            },
+          );
+        }
+
         return newNotification;
       } catch (err) {
         console.log(err);
@@ -99,7 +129,7 @@ export const notificationsRouter = router({
               post: {
                 with: {
                   council: true,
-                }
+                },
               },
             },
             orderBy: [desc(notifications.time)],
