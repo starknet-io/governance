@@ -10,7 +10,7 @@ import {
 import { useMemo, useState } from "react";
 import { Button } from "../Button";
 import { Text } from "../Text";
-import { BellIcon, NotificationUnreadIcon } from "../Icons";
+import { BellIcon, EmailSubscribeIcon, NotificationUnreadIcon } from "../Icons";
 import { NotificationItem } from "./NotificationItem";
 import { EmptyState } from "../EmptyState";
 import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
@@ -27,6 +27,9 @@ export const NotificationsMenu = ({
   const [isUnreadSelected, setIsUnreadSelected] = useState(false);
   const hasUnread = notifications.some((notification) => !notification.read);
   const { data: proposals } = trpc.proposals.getProposals.useQuery({});
+  const { data: email } = trpc.subscriptions.getSubscriberEmailAddress.useQuery(
+    {},
+  );
 
   const populatedNotifications = useMemo(() => {
     return notifications.map((notification) => {
@@ -70,14 +73,31 @@ export const NotificationsMenu = ({
         )}
         <Box top="0px" position="relative">
           <MenuList h="500px" overflowY="scroll" w={"400px"}>
-            <Box
+            <Flex
               mx={4}
               py={4}
               borderBottom="1px solid"
+              alignItems="center"
+              justifyContent="space-between"
               borderColor="border.dividers"
             >
               <Text variant="bodyLargeStrong"> Notifications </Text>
-            </Box>
+              {email ? (
+                <Button variant="secondary" size="condensed">
+                  <Flex gap={2}>
+                    <EmailSubscribeIcon color="content.default.default" />
+                    <div>Subscribed</div>
+                  </Flex>
+                </Button>
+              ) : (
+                <Button variant="primary" size="condensed">
+                  <Flex gap={2}>
+                    <Icon as={EmailSubscribeIcon} />
+                    <div>Subscribe</div>
+                  </Flex>
+                </Button>
+              )}
+            </Flex>
             <Box mx={4} py={4}>
               <Flex gap={2}>
                 <Button

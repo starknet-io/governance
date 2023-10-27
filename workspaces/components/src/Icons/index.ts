@@ -16,6 +16,7 @@ import {
   DelegatesIcon,
   FeedbackIcon,
   LearnIcon,
+  EmailSubscribeIcon,
   SecurityIcon,
   SettingsIcon,
   SupportIcon,
@@ -154,4 +155,5 @@ export {
   StarknetOutlineIcon,
   CalendarIcon,
   DisconnectWalletIcon,
+  EmailSubscribeIcon,
 };
