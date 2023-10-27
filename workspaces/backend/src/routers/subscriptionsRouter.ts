@@ -7,9 +7,11 @@ import { eq } from 'drizzle-orm';
 export const subscriptionsRouter = router({
   // Endpoint to subscribe a user to emails
   subscribe: protectedProcedure
-    .input(z.object({
-      email: z.string().email(),
-    }))
+    .input(
+      z.object({
+        email: z.string().email(),
+      }),
+    )
     .mutation(async (opts) => {
       const { id: userId } = opts.ctx.user;
       const { email } = opts.input;
@@ -41,9 +43,11 @@ export const subscriptionsRouter = router({
 
   // Endpoint to unsubscribe a user from emails
   unsubscribe: protectedProcedure
-    .input(z.object({
-      email: z.string().email().optional(),
-    }))
+    .input(
+      z.object({
+        email: z.string().email().optional(),
+      }),
+    )
     .mutation(async (opts) => {
       const { id: userId } = opts.ctx.user;
       const { email } = opts.input;
@@ -53,14 +57,31 @@ export const subscriptionsRouter = router({
       }
 
       // If email is provided, use it to find subscription, otherwise use userId
-      const condition = email ? eq(subscribers.email, email) : eq(subscribers.userId, userId);
+      const condition = email
+        ? eq(subscribers.email, email)
+        : eq(subscribers.userId, userId);
 
       // Delete the subscription record
-      await db
-        .delete(subscribers)
-        .where(condition)
-        .execute();
+      await db.delete(subscribers).where(condition).execute();
 
       return { success: true };
     }),
+  // Endpoint to get a subscriber's email address
+  getSubscriberEmailAddress: protectedProcedure.query(async (opts) => {
+    const { id: userId } = opts.ctx.user;
+
+    if (!userId) {
+      throw new Error('Unauthorized');
+    }
+
+    const subscriber = await db.query.subscribers.findFirst({
+      where: eq(subscribers.userId, userId),
+    });
+
+    if (!subscriber) {
+      throw new Error('No subscription found for this user');
+    }
+
+    return subscriber.email;
+  }),
 });
