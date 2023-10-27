@@ -4,6 +4,7 @@ type HelpMessage =
   | "connectWalletMessage"
   | "connectWalletErrorMessage"
   | "noVotingPowerMessage"
+  | "emailSubscription"
   | null;
 
 export const [useHelpMessage, HelpMessageProvider, HelpMessageContext] =
