@@ -12,7 +12,7 @@ export async function sendEvent(event, to, proposal) {
   event.token = sha256(`${to}${serviceEventsSalt}`);
   event.secret = sha256(`${to}${serviceEventsSalt}`);
   const headerSecret = sha256(`${to}${process.env.SERVICE_EVENTS_SALT}`);
-  const url = process.env.NOTIFICATIONS_ENDPOINT;
+  const url = process.env.NOTIFICATIONS_ENDPOINT as string;
   console.log('URL: ', url);
   const end = timeOutgoingRequest.startTimer({ method, provider: 'http' });
   let res;
