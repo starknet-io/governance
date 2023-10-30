@@ -30,7 +30,14 @@ export const notificationsRouter = router({
       console.log('CAUGHT');
       // Extract relevant data from the webhook request
       const { id, space, event } = opts.input;
-      const { author, title, start, id: proposalID } = opts.input.proposal;
+      const {
+        author,
+        title,
+        start,
+        id: proposalID,
+        scores,
+        body,
+      } = opts.input.proposal;
 
       // Create a message for the notification
       const message = `New voting proposal created with ID: ${id} in space: ${space}`;
@@ -73,34 +80,69 @@ export const notificationsRouter = router({
 
         // Insert all associations into the notification_users table
         await db.insert(notificationUsers).values(notificationUserAssociations);
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
 
+      try {
         // Now send emails to subscribers
         const subscribers = await db.query.subscribers.findMany();
         const emailList = subscribers.map((subscriber) => subscriber.email);
 
         for (const email of emailList) {
           console.log('SENDING EMAIL TO ', email);
-          await mg.messages.create(
-            'sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org',
-            {
-              from: 'Excited User <me@sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org>',
-              to: email,
-              subject: message,
-              template: 'notification template ',
-              text: message,
-              'h:X-Mailgun-Variables': JSON.stringify({
-                title: title,
-                url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
-              }),
-            },
-          );
+          if (event === 'proposal/start') {
+            await mg.messages.create(
+              'sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org',
+              {
+                from: 'Governance Hub <me@sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org>',
+                to: email,
+                subject: 'New voting proposal started',
+                template: 'notification-template',
+                text: message,
+                'h:X-Mailgun-Variables': JSON.stringify({
+                  title: title,
+                  body: body,
+                  url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                }),
+              },
+            );
+          } else if (event === 'proposal/end') {
+            const totalVoted = scores.reduce(
+              (acc: number, val: number) => acc + val,
+              0,
+            );
+            const amountFor = parseFloat((scores[0] / totalVoted).toFixed(2)) * 100;
+            const amountAgainst = parseFloat((scores[1] / totalVoted).toFixed(2)) * 100;
+            const amountAbstain = parseFloat((scores[2] / totalVoted).toFixed(2)) * 100;
+            console.log(amountFor)
+            console.log(amountAgainst)
+            console.log(amountAbstain)
+            await mg.messages.create(
+              'sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org',
+              {
+                from: 'Governance Hub <me@sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org>',
+                to: email,
+                subject: 'Voting proposal ended',
+                template: 'voting proposal ended',
+                text: message,
+                'h:X-Mailgun-Variables': JSON.stringify({
+                  title: title,
+                  url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                  amountFor,
+                  amountAgainst,
+                  amountAbstain,
+                }),
+              },
+            );
+          }
         }
-
-        return newNotification;
       } catch (err) {
         console.log(err);
-        return false;
       }
+
+      return true;
     }),
 
   getNotificationsForUser: protectedProcedure

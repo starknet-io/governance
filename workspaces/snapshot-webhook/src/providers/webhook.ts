@@ -12,7 +12,7 @@ export async function sendEvent(event, to, proposal) {
   event.token = sha256(`${to}${serviceEventsSalt}`);
   event.secret = sha256(`${to}${serviceEventsSalt}`);
   const headerSecret = sha256(`${to}${process.env.SERVICE_EVENTS_SALT}`);
-  const url = 'http://localhost:8000/api/notifications/webhookHandler';
+  const url = process.env.NOTIFICATIONS_ENDPOINT;
   console.log('URL: ', url);
   const end = timeOutgoingRequest.startTimer({ method, provider: 'http' });
   let res;
@@ -59,7 +59,10 @@ export async function send(event, _proposal, _subscribersAddresses) {
     author: _proposal.author,
     title: _proposal.title,
     start: _proposal.start,
-    id: _proposal.id
+    id: _proposal.id,
+    scores: _proposal.scores,
+    votes: _proposal.votes,
+    body: _proposal.body,
   });
 
   Promise.allSettled(

@@ -36,14 +36,12 @@ export async function handleCreatedEvent(event) {
     ...proposalEvent
   });
 
-  if (proposal.end > ts) {
-    query += 'INSERT IGNORE INTO events SET ?; ';
-    params.push({
-      event: 'proposal/end',
-      expire: proposal.end,
-      ...proposalEvent
-    });
-  }
+  query += 'INSERT IGNORE INTO events SET ?; ';
+  params.push({
+    event: 'proposal/end',
+    expire: proposal.end,
+    ...proposalEvent
+  });
   return db.queryAsync(query, params);
 }
 
