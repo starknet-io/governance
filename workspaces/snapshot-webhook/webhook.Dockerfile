@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 RUN yarn install
 RUN --mount=type=secret,id=certificate \
-          cat /run/secrets/certificate >> /app/workspaces/backend/ca-certificate.crt
+          cat /run/secrets/certificate >> /app/ca-certificate.crt
 RUN yarn build
 
 CMD [ "node", "dist/src/index.js" ]
