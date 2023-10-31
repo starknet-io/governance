@@ -10824,6 +10824,7 @@ __metadata:
     jest: ^29.6.2
     jsonwebtoken: ^9.0.1
     mailgun.js: ^9.3.0
+    marked: ^9.1.4
     multer: ^1.4.5-lts.1
     node-mocks-http: ^1.12.2
     nodemon: ^2.0.22
@@ -19353,6 +19354,15 @@ __metadata:
   peerDependencies:
     react: ">= 0.14.0"
   checksum: 8885c6343b71570b0a7ec16cd85a49b853a830234790ee7430e2517ea5d8d361ff138bd52147f650790f3e7b3a28a15c755fc16f8856dd01ddf09a6161782e06
+  languageName: node
+  linkType: hard
+
+"marked@npm:^9.1.4":
+  version: 9.1.4
+  resolution: "marked@npm:9.1.4"
+  bin:
+    marked: bin/marked.js
+  checksum: 660efebcf15bb86e6de5130b5c0bf484d9ad44752fb5a8064f425eb1cd590080727813e416329e6b33922fc36052c5e372109ee131b2556af82149e4b4a1d8f1
   languageName: node
   linkType: hard
 

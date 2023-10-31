@@ -7,6 +7,7 @@ import { users } from '../db/schema/users';
 import { notificationUsers } from '../db/schema/notificationUsers';
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
+import {marked} from "marked";
 const mailgun = new Mailgun(formData);
 const mg = mailgun.client({
   username: 'api',
@@ -89,6 +90,8 @@ export const notificationsRouter = router({
         // Now send emails to subscribers
         const subscribers = await db.query.subscribers.findMany();
         const emailList = subscribers.map((subscriber) => subscriber.email);
+        const htmlBody = body ? marked(body) : "";
+
 
         for (const email of emailList) {
           console.log('SENDING EMAIL TO ', email);
@@ -103,22 +106,23 @@ export const notificationsRouter = router({
                 text: message,
                 'h:X-Mailgun-Variables': JSON.stringify({
                   title: title,
-                  body: body,
+                  body: htmlBody,
                   url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
                 }),
               },
             );
           } else if (event === 'proposal/end') {
-            const totalVoted = scores.reduce(
-              (acc: number, val: number) => acc + val,
-              0,
-            );
-            const amountFor = parseFloat((scores[0] / totalVoted).toFixed(2)) * 100;
-            const amountAgainst = parseFloat((scores[1] / totalVoted).toFixed(2)) * 100;
-            const amountAbstain = parseFloat((scores[2] / totalVoted).toFixed(2)) * 100;
-            console.log(amountFor)
-            console.log(amountAgainst)
-            console.log(amountAbstain)
+            const calculatePercentage = (value: number, total: number) => {
+              const percentage = (value / total) * 100;
+              return Number.isInteger(percentage) ? percentage : parseFloat(percentage.toFixed(2));
+            };
+
+            const totalVoted = scores.reduce((acc: number, val: number) => acc + val, 0);
+
+            const amountFor = calculatePercentage(scores[0], totalVoted) || 0;
+            const amountAgainst = calculatePercentage(scores[1], totalVoted) || 0;
+            const amountAbstain = calculatePercentage(scores[2], totalVoted) || 0;
+
             await mg.messages.create(
               'sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org',
               {
@@ -130,6 +134,7 @@ export const notificationsRouter = router({
                 'h:X-Mailgun-Variables': JSON.stringify({
                   title: title,
                   url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                  body: htmlBody,
                   amountFor,
                   amountAgainst,
                   amountAbstain,
