@@ -86,7 +86,7 @@ export const NotificationsMenu = ({
   const handleConfirmUnsubscribe = async () => {
     try {
       await unsubscribeToEmail.mutateAsync({
-        email: email.data
+        email: email.data as string
       });
       await email.refetch();
       onCloseConfirmUnsubscribe();

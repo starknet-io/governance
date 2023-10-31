@@ -1,6 +1,6 @@
 import { truncateAddress } from "../utils";
 import { MenuItem, Text } from "../../index";
-import { Flex, Icon, Box } from "@chakra-ui/react";
+import { Flex, Icon, Box, Avatar } from "@chakra-ui/react";
 import { Indenticon } from "../Indenticon";
 import {
   NotificationUnreadIcon,
@@ -18,6 +18,8 @@ type NotificationItemProps = {
     user: {
       address: string;
       ensName: string;
+      profileImage?: string;
+      ensAvatar?: string;
     };
     type: string;
     title: string;
@@ -40,6 +42,8 @@ export const NotificationItem = ({
   const formattedType = () => {
     return isComment ? "replied on your comment" : notification.type;
   };
+  const avatar =
+    notification?.user?.profileImage || notification?.user?.ensAvatar;
   const getTitle = () => {
     return (
       notification?.post?.title ||
@@ -66,7 +70,11 @@ export const NotificationItem = ({
     >
       <Flex gap={1.5} width="100%">
         <Flex direction="column" alignItems="center" gap={1}>
-          <Indenticon size={32} address={notification?.user?.address} />
+          {avatar ? (
+            <Avatar width={8} height={8} src={avatar} />
+          ) : (
+            <Indenticon size={32} address={notification?.user?.address} />
+          )}
           <Icon
             as={isProposal ? NotificationVotingProposalIcon : CommentIcon}
             boxSize="5"
