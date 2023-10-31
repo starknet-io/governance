@@ -1,4 +1,4 @@
-name: cron deployment
+name: webhook deployment
 
 on:
   push:
