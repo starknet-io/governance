@@ -9,6 +9,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  Spinner,
 } from "@chakra-ui/react";
 import { Text } from "../Text";
 import { RouterInput } from "@yukilabs/governance-backend/dist/src/routers";
@@ -19,12 +20,14 @@ import { useForm } from "react-hook-form";
 interface EmailSubscriptionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  isLoading?: boolean;
   saveData?: (data: { email: string }) => void;
 }
 
 export const EmailSubscriptionModal = ({
   isOpen,
   onClose,
+  isLoading,
   saveData,
 }: EmailSubscriptionModalProps) => {
   const {
@@ -53,7 +56,12 @@ export const EmailSubscriptionModal = ({
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody p="0" px="standard.xl">
-            <Text color="content.default.default" variant="small" mb={6} textAlign="center">
+            <Text
+              color="content.default.default"
+              variant="small"
+              mb={6}
+              textAlign="center"
+            >
               Subscribe to receive email notifications about Starknet proposals,
               your delegate and replies to your comments
             </Text>
@@ -78,7 +86,10 @@ export const EmailSubscriptionModal = ({
           <ModalFooter p={0} px="standard.xl" mt="standard.xl">
             <Flex flex={1} gap="12px">
               <Button width={"100%"} onClick={handleSave}>
-                Subscribe
+                <Flex gap={1.5}>
+                  {isLoading && <Spinner size="sm" />}
+                  <Text>Subscribe</Text>
+                </Flex>
               </Button>
             </Flex>
           </ModalFooter>

@@ -61,8 +61,8 @@ export const NotificationsMenu = ({
       await subscribeToEmail.mutateAsync({
         email: data.email,
       });
-      onSubscribedToEmailOpen();
       await email.refetch();
+      onSubscribedToEmailOpen();
       onClose();
     } catch (err) {
       console.log(err);
@@ -85,7 +85,9 @@ export const NotificationsMenu = ({
 
   const handleConfirmUnsubscribe = async () => {
     try {
-      await unsubscribeToEmail.mutateAsync({});
+      await unsubscribeToEmail.mutateAsync({
+        email: email.data
+      });
       await email.refetch();
       onCloseConfirmUnsubscribe();
       onUnsubscribedToEmailOpen();
@@ -101,10 +103,13 @@ export const NotificationsMenu = ({
       : populatedNotifications.filter((notification) => !notification.read);
   }, [isAllSelected, populatedNotifications]);
 
+  console.log(email?.data)
+
   return (
     <>
       <EmailSubscriptionModal
         isOpen={isOpen}
+        isLoading={subscribeToEmail.isLoading}
         onClose={onClose}
         saveData={handleSubscription}
       />
@@ -189,7 +194,7 @@ to receive notifications`}
                 borderColor="border.dividers"
               >
                 <Text variant="bodyLargeStrong"> Notifications </Text>
-                {email?.data ? (
+                {email?.data && email?.data?.length ? (
                   <Button
                     variant="secondary"
                     size="condensed"

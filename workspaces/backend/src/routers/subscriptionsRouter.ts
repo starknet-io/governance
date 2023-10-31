@@ -79,7 +79,7 @@ export const subscriptionsRouter = router({
     });
 
     if (!subscriber) {
-      throw new Error('No subscription found for this user');
+      return null
     }
 
     return subscriber.email;
