@@ -297,7 +297,7 @@ export const usersRouter = router({
       const requester = opts.ctx.user;
       if (
         !requester ||
-        (requester.role !== 'admin' && requester.role !== 'moderator')
+        (requester.role !== 'superadmin' && requester.role !== 'admin' && requester.role !== 'moderator')
       ) {
         throw new Error('You do not have permission to ban users');
       }
@@ -310,7 +310,7 @@ export const usersRouter = router({
         throw new Error('User not found');
       }
 
-      if (userToBan?.role === 'moderator' || userToBan?.role === 'admin') {
+      if (userToBan?.role === 'moderator' || userToBan?.role === 'admin' || userToBan?.role === 'superadmin') {
         throw new Error('Cannot ban moderators or admins');
       }
 

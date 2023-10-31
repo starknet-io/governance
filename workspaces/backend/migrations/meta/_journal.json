@@ -239,6 +239,13 @@
       "when": 1697640059257,
       "tag": "0033_plain_exiles",
       "breakpoints": false
+    },
+    {
+      "idx": 34,
+      "version": "5",
+      "when": 1698757233646,
+      "tag": "0034_ancient_pretty_boy",
+      "breakpoints": false
     }
   ]
 }

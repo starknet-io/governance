@@ -202,7 +202,7 @@ export const delegateRouter = router({
       });
 
       if (!delegate) throw new Error('Delegate not found');
-      if (userRole !== 'admin' && userRole !== 'moderator') {
+      if (userRole !== 'admin' && userRole !== 'superadmin' && userRole !== 'moderator') {
         if (delegate.userId !== userId) throw new Error('Unauthorizeds');
       }
       // Determine the agreement value
@@ -466,7 +466,7 @@ export const delegateRouter = router({
 
       if (!delegate) throw new Error('Delegate not found');
 
-      if (userRole !== 'admin' && userRole !== 'moderator') {
+      if (userRole !== 'admin' && userRole !== 'superadmin' && userRole !== 'moderator') {
         if (delegate.userId !== userId) throw new Error('Unauthorized');
       }
 
