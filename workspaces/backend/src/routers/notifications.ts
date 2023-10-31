@@ -179,7 +179,7 @@ export const notificationsRouter = router({
                 },
               },
             },
-            orderBy: [desc(notifications.time)],
+            orderBy: [desc(notifications.createdAt)],
           },
         },
       });
