@@ -16,6 +16,7 @@ import { RouterInput } from "@yukilabs/governance-backend/dist/src/routers";
 import { Input } from "../Input";
 import { FormControlled } from "../FormControlled";
 import { useForm } from "react-hook-form";
+import { validateEmailAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
 
 interface EmailSubscriptionModalProps {
   isOpen: boolean;
@@ -55,44 +56,52 @@ export const EmailSubscriptionModal = ({
             </Heading>
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody p="0" px="standard.xl">
-            <Text
-              color="content.default.default"
-              variant="small"
-              mb={6}
-              textAlign="center"
-            >
-              Subscribe to receive email notifications about Starknet proposals,
-              your delegate and replies to your comments
-            </Text>
-            <form>
+          <form onSubmit={handleSave}>
+            <ModalBody p="0" px="standard.xl">
+              <Text
+                color="content.default.default"
+                variant="small"
+                mb={6}
+                textAlign="center"
+              >
+                Subscribe to receive email notifications about Starknet
+                proposals, your delegate and replies to your comments
+              </Text>
               <Flex flexDirection="column" gap="standard.xl">
                 <FormControlled
                   name="email"
                   isRequired={true}
                   id="email"
                   label="Email"
+                  isInvalid={!!errors.email}
+                  errorMessage={
+                    errors.email?.message || "Not a valid email address"
+                  }
                 >
                   <Input
                     size="standard"
                     variant="primary"
                     placeholder="Email"
-                    {...register("email")}
+                    {...register("email", {
+                      required: true,
+                      validate: (value) =>
+                        validateEmailAddress(value) || "Invalid Email address",
+                    })}
                   />
                 </FormControlled>
               </Flex>
-            </form>
-          </ModalBody>
-          <ModalFooter p={0} px="standard.xl" mt="standard.xl">
-            <Flex flex={1} gap="12px">
-              <Button width={"100%"} onClick={handleSave}>
-                <Flex gap={1.5}>
-                  {isLoading && <Spinner size="sm" />}
-                  <Text>Subscribe</Text>
-                </Flex>
-              </Button>
-            </Flex>
-          </ModalFooter>
+            </ModalBody>
+            <ModalFooter p={0} px="standard.xl" mt="standard.xl">
+              <Flex flex={1} gap="12px">
+                <Button width={"100%"} onClick={handleSave}>
+                  <Flex gap={1.5}>
+                    {isLoading && <Spinner size="sm" />}
+                    <Text>Subscribe</Text>
+                  </Flex>
+                </Button>
+              </Flex>
+            </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
     </>

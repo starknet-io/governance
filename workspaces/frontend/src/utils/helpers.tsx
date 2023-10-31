@@ -92,6 +92,12 @@ export const validateStarknetAddress = (address: string) => {
     return false;
   }
 };
+
+export const validateEmailAddress = (address: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(address);
+}
+
 export function formatSlug(slug: string): string {
   return slug
     .split("_")
