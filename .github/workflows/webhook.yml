@@ -32,7 +32,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          file: workspaces/snapshot-webhook/webkook.Dockerfile
+          file: workspaces/snapshot-webhook/webhook.Dockerfile
           context: workspaces/snapshot-webhook
           push: true
           tags: ${{ steps.meta.outputs.tags }}
