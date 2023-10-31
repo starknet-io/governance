@@ -4,7 +4,7 @@ on:
   push:
     branches: ['dev']
     paths:
-      - 'workspaces/cron/**'
+      - 'workspaces/snapshot-webhook/**'
   workflow_dispatch:
 
 jobs:
@@ -42,6 +42,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           secrets: |
-            "certificate=${{ secrets.CERTIFICATE }}"
+            "certificate=${{ secrets.CERTIFICATE_WEBHOOK }}"
 
 
