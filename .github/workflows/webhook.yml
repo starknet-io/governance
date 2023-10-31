@@ -2,10 +2,6 @@ name: webhook deployment
 
 on:
   push:
-    branches: ['dev']
-    paths:
-      - 'workspaces/snapshot-webhook/**'
-  workflow_dispatch:
 
 jobs:
   Build:
