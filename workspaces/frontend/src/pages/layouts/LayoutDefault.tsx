@@ -191,7 +191,7 @@ function LayoutDefault(props: Props) {
         </DrawerContent>
       </Drawer>
 
-      <Flex width="100vw" minHeight="100vh" direction="row">
+      <Flex width="100%" minHeight="100vh" direction="row">
         <Box
           bg="surface.forms.default"
           width="234px"

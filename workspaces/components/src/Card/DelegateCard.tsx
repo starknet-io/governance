@@ -29,6 +29,7 @@ export type DelegateCardProps = {
   user?: string | null;
   src?: string | null;
   isDelegationLoading?: boolean;
+  headerTooltipContent?: string;
 };
 
 const delegateInterests: Record<string, string> = {
@@ -126,6 +127,7 @@ export const DelegateCard = ({
   onDelegateClick,
   profileURL,
   isDelegationLoading,
+  headerTooltipContent,
 }: DelegateCardProps) => {
   const votesFormatted = formatVotesAmount(votingPower) + " delegated votes";
   const formattedDelegateStatement = extractParagraph(statement || "");
@@ -137,6 +139,7 @@ export const DelegateCard = ({
           <AvatarWithText
             size="condensed"
             headerText={user}
+            headerTooltipContent={headerTooltipContent}
             subheaderText={votesFormatted}
             address={address}
             src={src}

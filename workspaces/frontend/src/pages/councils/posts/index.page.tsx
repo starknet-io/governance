@@ -9,7 +9,6 @@ import {
   Flex,
   Stat,
   Divider,
-  ProfileSummaryCard,
   MenuItem,
   MarkdownRenderer,
   Text,
@@ -26,7 +25,7 @@ import { extractAndFormatSlug, hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { Grid } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 
 export function Page() {
@@ -177,6 +176,8 @@ export function Page() {
           }}
           pt={{ base: "standard.2xl", lg: "standard.3xl" }}
           pb={{ base: "standard.2xl", lg: "standard.3xl" }}
+          maxWidth="100%"
+          overflow={"hidden"}
         >
           <Box maxWidth={{ base: "100%", lg: "626px" }} mx="auto">
             <Box mb="standard.2xl" display={{ lg: "none" }}>
@@ -256,6 +257,10 @@ export function Page() {
                         post?.author?.ensAvatar ??
                         null
                       }
+                      showTooltip={
+                        !post?.author?.username && !post?.author?.ensName
+                      }
+                      tooltipContent={post?.author?.address}
                     />
 
                     <Text variant="small" color="content.default.default">
@@ -345,7 +350,7 @@ export function Page() {
               ) : (
                 // Display EmptyState when there are no comments
                 <EmptyState
-                  border={false}
+                  hasBorder={false}
                   type="comments"
                   title="Add the first comment"
                 />
@@ -360,4 +365,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Post",
+  image: "/social/social-councils.png",
 } satisfies DocumentProps;

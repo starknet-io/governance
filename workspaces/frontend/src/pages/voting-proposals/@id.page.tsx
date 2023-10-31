@@ -27,7 +27,6 @@ import {
   Iframely,
   VoteComment,
   MarkdownRenderer,
-  Select,
   Banner,
   EllipsisIcon,
   Link,
@@ -58,7 +57,7 @@ import {
   SuccessIcon,
   WalletIcon,
 } from "@yukilabs/governance-components/src/Icons";
-import { Button as ChakraButton } from "@chakra-ui/react";
+import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 
@@ -297,7 +296,7 @@ export function Page() {
           : {},
     };
   });
-
+  console.log(pastVotesWithUserInfo);
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
@@ -573,7 +572,7 @@ export function Page() {
                 pageContext={pageContext}
               />
             </Box>
-            <Flex alignItems="center" width="100%" overflow="hidden">
+            <Flex alignItems="center" width="100%">
               <Flex flex="1">
                 <Heading
                   color="content.accent.default"
@@ -586,27 +585,42 @@ export function Page() {
 
               <Box marginLeft="auto">
                 <MoreActions>
-                  <MenuItem as="a" href="#">
-                    Share
-                  </MenuItem>
-                  <ChakraButton
-                    variant="ghost"
-                    data-tally-open="mKx1xD"
-                    data-tally-emoji-text="👋"
-                    data-tally-emoji-animation="wave"
-                    data-proposal={
-                      typeof window !== "undefined" ? window.location.href : ""
-                    }
-                    width={"100%"}
-                    justifyContent={"flex-start"}
-                    padding={0}
-                    minHeight={"33px"}
-                    paddingLeft={"10px"}
-                    fontWeight={"400"}
-                    textColor={"#1a1523"}
-                  >
-                    Report
-                  </ChakraButton>
+                  {!user?.isAuthenticatedWithAWallet ? (
+                    <ChakraButton
+                      variant="ghost"
+                      width={"100%"}
+                      justifyContent={"flex-start"}
+                      padding={0}
+                      minHeight={"33px"}
+                      paddingLeft={"10px"}
+                      fontWeight={"400"}
+                      textColor={"#1a1523"}
+                      onClick={() => setHelpMessage("connectWalletMessage")}
+                    >
+                      Report
+                    </ChakraButton>
+                  ) : (
+                    <ChakraButton
+                      variant="ghost"
+                      data-tally-open="mKx1xD"
+                      data-tally-emoji-text="👋"
+                      data-tally-emoji-animation="wave"
+                      data-proposal={
+                        typeof window !== "undefined"
+                          ? window.location.href
+                          : ""
+                      }
+                      width={"100%"}
+                      justifyContent={"flex-start"}
+                      padding={0}
+                      minHeight={"33px"}
+                      paddingLeft={"10px"}
+                      fontWeight={"400"}
+                      textColor={"#1a1523"}
+                    >
+                      Report
+                    </ChakraButton>
+                  )}
                 </MoreActions>
               </Box>
             </Flex>
@@ -632,6 +646,8 @@ export function Page() {
                     truncateAddress(`${data?.proposal?.author}`)
                   }
                   address={`${data?.proposal?.author}`}
+                  showTooltip={!authorInfo?.username || !authorInfo?.ensName}
+                  tooltipContent={`${data?.proposal?.author}`}
                 />
               </Flex>
               <Flex gap="standard.xs" paddingTop="0" alignItems="center">
@@ -775,7 +791,7 @@ export function Page() {
             </>
           ) : (
             <EmptyState
-              border={false}
+              hasBorder={false}
               type="comments"
               title="Add the first comment"
             />
@@ -786,6 +802,15 @@ export function Page() {
           {data?.proposal?.state === "active" ||
           data?.proposal?.state === "closed" ? (
             <>
+              {!user && data?.proposal?.state === "active" && (
+                <Heading
+                  color="content.accent.default"
+                  variant="h4"
+                  mb="standard.md"
+                >
+                  Cast your vote
+                </Heading>
+              )}
               {!hasVoted && canVote ? (
                 <Heading
                   color="content.accent.default"
@@ -854,7 +879,8 @@ export function Page() {
                   <Divider mb="standard.2xl" />
                 </>
               )}
-              {(hasVoted || canVote) && data?.proposal?.state !== "closed" ? (
+              {(hasVoted || (canVote && user)) &&
+              data?.proposal?.state !== "closed" ? (
                 <Flex
                   mb="40px"
                   gap="standard.sm"
@@ -862,25 +888,39 @@ export function Page() {
                   flexDirection={{ base: "column", xl: "row" }}
                   justifyContent="space-around"
                 >
-                  {data.proposal?.choices.map((choice, index) => {
-                    return (
-                      <VoteButton
-                        key={choice}
-                        onClick={() => {
-                          if (!user) {
-                            setIsConnectedModal(true);
-                          } else {
-                            setcurrentChoice(index + 1);
-                            setIsOpen(true);
-                          }
-                        }}
-                        active={vote?.data?.votes?.[0]?.choice === index + 1}
-                        // @ts-expect-error todo
-                        type={choice}
-                        label={`${choice}`}
-                      />
-                    );
-                  })}
+                  {data.proposal?.choices.map((choice, index) => (
+                    <VoteButton
+                      key={choice}
+                      onClick={() => {
+                        setcurrentChoice(index + 1);
+                        setIsOpen(true);
+                      }}
+                      active={vote?.data?.votes?.[0]?.choice === index + 1}
+                      // @ts-expect-error todo
+                      type={choice}
+                      label={`${choice}`}
+                    />
+                  ))}
+                </Flex>
+              ) : !user && data?.proposal?.state !== "closed" ? (
+                <Flex
+                  mb="40px"
+                  gap="standard.sm"
+                  display="flex"
+                  flexDirection={{ base: "column", xl: "row" }}
+                  justifyContent="space-around"
+                >
+                  {data.proposal?.choices.map((choice) => (
+                    <VoteButton
+                      key={choice}
+                      onClick={() => {
+                        setHelpMessage("connectWalletMessage");
+                      }}
+                      // @ts-expect-error todo
+                      type={choice}
+                      label={`${choice}`}
+                    />
+                  ))}
                 </Flex>
               ) : null}
 
@@ -957,6 +997,7 @@ export function Page() {
                       }
                       comment={vote?.reason as string}
                       voteCount={vote?.vp as number}
+                      signature={vote?.ipfs as string}
                     />
                   ))
                 ) : (
@@ -1015,4 +1056,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Proposals / Voting",
+  image: "/social/social-proposal.png",
 } satisfies DocumentProps;

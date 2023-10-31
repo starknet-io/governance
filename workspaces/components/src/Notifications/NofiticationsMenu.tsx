@@ -249,6 +249,7 @@ to receive notifications`}
                 <Box>
                   <EmptyState
                     type="notifications"
+                    hasBorder={false}
                     title={`No ${
                       isUnreadSelected ? "unread" : ""
                     } notifications yet`}

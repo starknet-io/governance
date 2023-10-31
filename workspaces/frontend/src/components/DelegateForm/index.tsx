@@ -8,7 +8,6 @@ import {
   Divider,
   Flex,
   FormControl,
-  FormLabel,
   Heading,
   Input,
   MarkdownEditor,
@@ -149,7 +148,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
 
   useEffect(() => {
     if (userBalance.isFetched && mode === "create") {
-      console.log(parseFloat(userBalance?.balance))
+      console.log(parseFloat(userBalance?.balance));
       if (parseFloat(userBalance?.balance) < 1) {
         toast({
           position: "top-right",
@@ -346,6 +345,7 @@ Conflicts of interest
                 }))}
                 value={field.value as any}
                 onChange={(values) => field.onChange(values)}
+                labels={delegateNames} // Pass delegateNames as labels
               />
             )}
           />
@@ -597,8 +597,13 @@ Conflicts of interest
           </Flex>
         ) : (
           <Flex justifyContent="flex-end">
-            <Button type="submit" variant="primary">
-              Submit delegate profile
+            <Button
+              type="submit"
+              variant="primary"
+              width={{ base: "100%", md: "auto" }}
+              size="standard"
+            >
+              Create delegate profile
             </Button>
           </Flex>
         )}

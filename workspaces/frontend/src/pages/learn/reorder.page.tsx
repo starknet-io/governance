@@ -13,6 +13,7 @@ import {
 import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 import { useEffect, useRef, useState } from "react";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
+import { DocumentProps } from "src/renderer/types";
 import {
   adaptTreeForFrontend,
   flattenPageWithChildren,
@@ -125,3 +126,8 @@ export function Page() {
     </FormLayout>
   );
 }
+
+export const documentProps = {
+  title: "Learn / Reorder",
+  image: "/social/social-learn.png",
+} satisfies DocumentProps;

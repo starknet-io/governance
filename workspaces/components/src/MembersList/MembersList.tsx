@@ -58,6 +58,8 @@ export const MembersList: React.FC<MembersListProps> = ({
     miniBio: "",
   });
 
+  console.log(members);
+
   const [formErrors, setFormErrors] = useState({
     name: "",
     address: "",
@@ -242,6 +244,8 @@ export const MembersList: React.FC<MembersListProps> = ({
                         displayName={
                           member.name ?? truncateAddress(member.address)
                         }
+                        showTooltip={!member.name}
+                        tooltipContent={`${member.address}`}
                       />
                     </Box>
                     <Box ml="auto">

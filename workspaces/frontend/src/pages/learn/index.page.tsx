@@ -197,6 +197,8 @@ export function Page() {
         }}
         pt={{ base: "standard.2xl", lg: "standard.3xl" }}
         pb={{ base: "standard.2xl", lg: "standard.3xl" }}
+        maxWidth="100%"
+        overflow={"hidden"}
       >
         <Box maxWidth={{ base: "100%", lg: "626px" }} mx="auto">
           {!isLoading ? (
@@ -262,6 +264,11 @@ export function Page() {
                     selectedPage?.author?.ensName ??
                     formattedAddress
                   }
+                  showTooltip={
+                    selectedPage?.author?.username == "undefined" ||
+                    selectedPage?.author?.ensName == "undefined"
+                  }
+                  tooltipContent={`${selectedPage?.author?.address}`}
                 />
                 <Text variant="small" color="content.default.default">
                   •
@@ -418,4 +425,5 @@ function NavItemWrapper({
 
 export const documentProps = {
   title: "Learn / home",
+  image: "/social/social-learn.png",
 } satisfies DocumentProps;

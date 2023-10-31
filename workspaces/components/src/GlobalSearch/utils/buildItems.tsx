@@ -10,10 +10,10 @@ import {
 
 import VotingProposalIcon from "../assets/voting_proposal_icon.svg";
 import LearnIcon from "../assets/learn_icon.svg";
-import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
 import { format } from "date-fns";
 import slugify from "slugify";
 import { Indenticon } from "../../Indenticon";
+import { IProposalWithComments } from "@yukilabs/governance-backend/src/routers/proposals";
 
 export type SearchItemType =
   | "voting_proposal"
@@ -29,6 +29,7 @@ export interface ISearchItem {
   objectID: string;
   refID: string | number;
   avatar?: string;
+  proposal?: IProposalWithComments;
 }
 
 const GroupNames: Record<SearchItemType, string> = {
@@ -170,9 +171,8 @@ function buildGroupList(
 }
 
 function VotingProposalItem({ data }: { data: ISearchItem }) {
-  const { data: proposalData } = trpc.proposals.getProposalById.useQuery({
-    id: data.refID! as string,
-  });
+  const proposalData = data?.proposal;
+
   return (
     <Flex>
       <Flex
@@ -209,15 +209,15 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
                 justifyContent="center"
                 mr="2"
                 borderRadius="standard.base"
-                variant={proposalData.status}
+                variant={proposalData.state}
                 fontSize="10px"
                 p="1"
               >
-                {proposalData.status}
+                {proposalData.state}
               </Badge>
               <Text fontSize="smaller" color="#4A4A4F">
-                {format(new Date(proposalData.startDate * 1000), "yyyy-MM-dd")}{" "}
-                • {proposalData.comments} comments
+                {format(new Date(proposalData.start * 1000), "yyyy-MM-dd")} •{" "}
+                {proposalData.comments.length} comments
               </Text>
             </>
           ) : (

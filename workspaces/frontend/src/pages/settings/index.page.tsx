@@ -11,7 +11,6 @@ import {
   IconButton,
   Input,
   ListRow,
-  Select,
   Stack,
   Text,
   useDisclosure,
@@ -40,8 +39,11 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { ethers } from "ethers";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
-import { Icon, Spinner } from "@chakra-ui/react";
-import {BannedIcon, RemovedIcon} from "@yukilabs/governance-components/src/Icons";
+import { Icon, Spinner, Select } from "@chakra-ui/react";
+import {
+  BannedIcon,
+  RemovedIcon,
+} from "@yukilabs/governance-components/src/Icons";
 
 const userRoleValues = userRoleEnum.enumValues;
 
@@ -265,7 +267,9 @@ export function Page() {
       return aValue - bValue;
     });
   }, [users?.data]);
-
+  const [selectedRole, setSelectedRole] = useState<string>(
+    selectedUser?.role || "user",
+  );
   return (
     <FormLayout>
       <InfoModal
@@ -364,30 +368,21 @@ export function Page() {
         >
           <FormControl id="editRole">
             <FormLabel>Role</FormLabel>
-            <Controller
-              name="role"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  size="sm"
-                  focusBorderColor={"red"}
-                  rounded="md"
-                  options={userRoleValues.map((option) => ({
-                    label: option,
-                    value: option,
-                  }))}
-                  {...editRegister("role")}
-                  ref={selectRef}
-                  value={field.value as any}
-                  onChange={(values) => field.onChange(values)}
-                  defaultValue={{
-                    label: selectedUser?.role || "user",
-                    value: selectedUser?.role,
-                  }}
-                />
-              )}
-            />
+            <Select
+              size="sm"
+              {...editRegister("role")}
+              ref={selectRef}
+              value={selectedUser?.role}
+              onChange={(e) => setEditValue("role", e.target.value)}
+            >
+              {userRoleValues.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </Select>
           </FormControl>
+
           {editError && editError.length && (
             <Box mt={4}>
               <Banner label={editError} type="error" variant="error" />
@@ -428,15 +423,14 @@ export function Page() {
                     <FormLabel>Role</FormLabel>
                     <Select
                       size="sm"
-                      placeholder="Select"
-                      focusBorderColor={"red"}
-                      rounded="md"
-                      options={userRoleValues.map((option) => ({
-                        label: option,
-                        value: option,
-                      }))}
                       {...addRegister("role", { required: true })}
-                    />
+                    >
+                      {userRoleValues.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Select>
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
                   <Flex justifyContent="flex-end">

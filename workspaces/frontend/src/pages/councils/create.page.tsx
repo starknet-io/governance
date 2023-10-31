@@ -16,4 +16,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Council / Create",
+  image: "/social/social-councils.png",
 } satisfies DocumentProps;

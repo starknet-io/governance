@@ -75,6 +75,8 @@ const About = ({ children }: AboutProps) => {
       }}
       pt={{ base: "standard.2xl", lg: "standard.3xl" }}
       pb={{ base: "standard.2xl", lg: "standard.3xl" }}
+      maxWidth="100%"
+      overflow={"hidden"}
     >
       <Box maxWidth={{ base: "100%", lg: "626px" }} mx="auto">
         {children}

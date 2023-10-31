@@ -23,7 +23,6 @@ export function MoreButton() {
         boxShadow="base"
       >
         <Flex p="1" direction="row" alignItems="center">
-          <MarkButton format="underline" />
           <MarkButton format="strikeThrough" />
           <BlockButton format="ul_list" />
           <BlockButton format="ol_list" />

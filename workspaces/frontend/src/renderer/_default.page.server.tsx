@@ -69,6 +69,13 @@ export async function render(pageContext: PageContextServer) {
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
 
+      <!-- Favicons -->
+      <link rel="icon" href="/favicon.ico" sizes="any">
+      <link rel="icon" href="/icon.svg" type="image/svg+xml">
+      <link rel="mask-icon" href="/icon.svg" color="black">
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+      <link rel="manifest" href="/manifest.webmanifest">
+
       <!-- Primary Meta Tags -->
       <title>${documentProps?.title ?? "Starknet"}</title>
       <meta name="title" content="${documentProps?.title ?? "Starknet"}">
@@ -112,7 +119,7 @@ export async function render(pageContext: PageContextServer) {
       </script>
     </head>
     <body>
-      <div id="page-view">${dangerouslySkipEscape(pageHtml)}</div>
+      <div id="page-view" >${dangerouslySkipEscape(pageHtml)}</div>
     </body>
   </html>`;
 

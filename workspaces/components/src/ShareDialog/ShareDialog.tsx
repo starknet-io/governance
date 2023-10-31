@@ -38,7 +38,8 @@ export const ShareDialog: React.FC = () => {
       if (
         path.startsWith("/voting-proposals/") ||
         path.startsWith("/delegates/profile/") ||
-        path.startsWith("/learn")
+        path.startsWith("/learn") ||
+        path.includes("/posts/")
       ) {
         setCurrentUrl(window.location.href);
         setShouldDisplay(true);

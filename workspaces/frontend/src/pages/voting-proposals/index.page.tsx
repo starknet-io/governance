@@ -276,7 +276,7 @@ export function Page() {
         <Box maxWidth={{ base: "100%", lg: "1240px" }} mx="auto">
           <PageTitle
             learnMoreLink="/learn"
-            title="Voting Proposals"
+            title="Voting proposals"
             description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol. "
           />
 
@@ -379,7 +379,11 @@ export function Page() {
             <Text pt="1px" color="content.support.default" variant="small">
               Voting proposals powered by{" "}
             </Text>
-            <Link size="small" href="https://snapshot.org" isExternal>
+            <Link
+              size="small"
+              href="https://snapshot.org/#/starknet.eth"
+              isExternal
+            >
               Snapshot
             </Link>
           </Flex>
@@ -391,4 +395,5 @@ export function Page() {
 
 export const documentProps = {
   title: "Proposals",
+  image: "/social/social-proposal.png",
 } satisfies DocumentProps;

@@ -31,6 +31,7 @@ import {
 } from "./utils/buildItems";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { Input } from "src/Input";
+import usePopulateProposals from "./utils/usePopulateProposals";
 
 interface Props {
   isOpen?: boolean;
@@ -48,6 +49,7 @@ export function GlobalSearch({
   const [searchText, setSearchText] = useState("");
   const [highlightIndex, setHighlightIndex] = useState(0);
   const h = searchResults?.[highlightIndex];
+  const populatedSearchResults = usePopulateProposals(searchResults);
 
   const handleSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -219,7 +221,7 @@ export function GlobalSearch({
 
           {!!searchResults.length && (
             <ModalBody overflowY="scroll" pb="0" px="0px" pt="standard.xs">
-              {buildSearchItems(searchResults, "grouped-items", h)}
+              {buildSearchItems(populatedSearchResults, "grouped-items", h)}
             </ModalBody>
           )}
 
@@ -235,11 +237,7 @@ export function GlobalSearch({
                 gap="standard.xs"
                 color="content.default.default"
               >
-                <Image
-                  maxWidth="280px"
-                  maxHeight="232px"
-                  src={EmptyState}
-                />
+                <Image maxWidth="280px" maxHeight="232px" src={EmptyState} />
                 <Text fontWeight="semibold">No data to display</Text>
               </Flex>
             </ModalBody>

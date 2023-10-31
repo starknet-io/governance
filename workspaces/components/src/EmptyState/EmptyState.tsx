@@ -1,4 +1,4 @@
-import { Box, Image } from "@chakra-ui/react";
+import { Box, BoxProps, Image } from "@chakra-ui/react";
 // import { NoDelegatesIcon, NoPostsIcon, NoSnipsIcon, VoteIcon } from "src/Icons";
 import { Text } from "src/Text";
 import noVotingProps from "./assets/no-voting-proposals-found.svg";
@@ -7,9 +7,10 @@ import noPastComments from "./assets/no-past-comments-yet.svg";
 import noPastVotes from "./assets/no-past-votes-yet.svg";
 import noPosts from "./assets/no-posts.svg";
 import noNotifications from "./assets/no-past-notifications.svg";
+import pageNotFound from "./assets/page-not-found.svg";
 type Props = {
   title?: string;
-  border?: boolean;
+  hasBorder?: boolean;
   type:
     | "posts"
     | "votes"
@@ -18,6 +19,7 @@ type Props = {
     | "comments"
     | "notifications"
     | "votesCast"
+    | "pageNotFound"
     | null;
   minHeight?: string;
   action?: React.ReactNode;
@@ -28,13 +30,13 @@ export const EmptyState = ({
   title = "No posts",
   type = "posts",
   action,
-  border = true,
-}: Props) => {
+  hasBorder = true,
+}: Props & BoxProps) => {
   return (
     <Box
       py="standard.2xl"
-      border={type !== "notifications" ? "1px solid " : "none"}
-      borderColor={border ? "rgba(35, 25, 45, 0.10)" : "transparent"}
+      border="1px solid "
+      borderColor={hasBorder ? "rgba(35, 25, 45, 0.10)" : "transparent"}
       borderRadius="4px"
       display="flex"
       justifyContent={"center"}
@@ -50,6 +52,7 @@ export const EmptyState = ({
       {type === "delegates" && <Image src={noDelegates} width="320px" />}
       {type === "proposals" && <Image src={noVotingProps} width="320px" />}
       {type === "votesCast" && <Image src={noPastVotes} width="250px" />}
+      {type === "pageNotFound" && <Image src={pageNotFound} width="250px" />}
       {type === "notifications" && (
         <Image src={noNotifications} width="200px" />
       )}

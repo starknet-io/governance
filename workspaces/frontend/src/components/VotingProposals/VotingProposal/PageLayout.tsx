@@ -52,6 +52,8 @@ const Content = ({ children }: ContentProps) => {
       pb={{ base: "0" }}
       borderRightWidth={{ base: "none", lg: "1px" }}
       borderColor="border.forms"
+      maxWidth="100%"
+      overflow={"hidden"}
     >
       <Box maxWidth={{ base: "100%", lg: "558px", xl: "690px" }} mx="auto">
         {children}
@@ -77,6 +79,8 @@ const Discussion = ({ children }: DiscussionProps) => {
       pr={{ base: "standard.2xl" }}
       borderRightWidth={{ base: "none", lg: "1px" }}
       borderColor="border.forms"
+      maxWidth="100%"
+      overflow={"hidden"}
     >
       <Box
         maxWidth={{ base: "100%", lg: "558px", xl: "690px" }}
