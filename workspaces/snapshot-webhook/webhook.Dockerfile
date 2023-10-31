@@ -6,5 +6,5 @@ COPY . .
 RUN yarn install
 #RUN --mount=type=secret,id=certificate \
 #          cat /run/secrets/certificate >> /app/workspaces/backend/ca-certificate.crt
-#RUN yarn build     todo: use yarn build for produciton with yarn dev
-ENTRYPOINT [ "yarn", "dev" ]
+RUN yarn build
+ENTRYPOINT [ "node", "dist/src/index.js" ]
