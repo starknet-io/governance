@@ -7,7 +7,7 @@ import { users } from '../db/schema/users';
 import { notificationUsers } from '../db/schema/notificationUsers';
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
-import {marked} from "marked";
+import { marked } from 'marked';
 const mailgun = new Mailgun(formData);
 const mg = mailgun.client({
   username: 'api',
@@ -51,6 +51,20 @@ export const notificationsRouter = router({
         throw new Error('User not found');
       }
 
+      let notificationTimeOrder = null;
+
+      switch (event) {
+        case 'proposal/start':
+          notificationTimeOrder = start + 1;
+          break;
+        case 'proposal/end':
+          notificationTimeOrder = start + 2;
+          break;
+        default:
+          notificationTimeOrder = start;
+          break;
+      }
+
       try {
         // Insert the new notification
         const insertedNotification = await db
@@ -60,7 +74,7 @@ export const notificationsRouter = router({
             type: event,
             title,
             proposalId: proposalID,
-            time: new Date(start * 1000),
+            time: new Date(notificationTimeOrder * 1000),
             userId: foundUser.id,
             createdAt: new Date(),
           })
@@ -90,8 +104,7 @@ export const notificationsRouter = router({
         // Now send emails to subscribers
         const subscribers = await db.query.subscribers.findMany();
         const emailList = subscribers.map((subscriber) => subscriber.email);
-        const htmlBody = body ? marked(body) : "";
-
+        const htmlBody = body ? marked(body) : '';
 
         for (const email of emailList) {
           console.log('SENDING EMAIL TO ', email);
@@ -114,14 +127,21 @@ export const notificationsRouter = router({
           } else if (event === 'proposal/end') {
             const calculatePercentage = (value: number, total: number) => {
               const percentage = (value / total) * 100;
-              return Number.isInteger(percentage) ? percentage : parseFloat(percentage.toFixed(2));
+              return Number.isInteger(percentage)
+                ? percentage
+                : parseFloat(percentage.toFixed(2));
             };
 
-            const totalVoted = scores.reduce((acc: number, val: number) => acc + val, 0);
+            const totalVoted = scores.reduce(
+              (acc: number, val: number) => acc + val,
+              0,
+            );
 
             const amountFor = calculatePercentage(scores[0], totalVoted) || 0;
-            const amountAgainst = calculatePercentage(scores[1], totalVoted) || 0;
-            const amountAbstain = calculatePercentage(scores[2], totalVoted) || 0;
+            const amountAgainst =
+              calculatePercentage(scores[1], totalVoted) || 0;
+            const amountAbstain =
+              calculatePercentage(scores[2], totalVoted) || 0;
 
             await mg.messages.create(
               'sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org',
@@ -179,7 +199,7 @@ export const notificationsRouter = router({
                 },
               },
             },
-            orderBy: [desc(notifications.createdAt)],
+            orderBy: [desc(notifications.time)],
           },
         },
       });
