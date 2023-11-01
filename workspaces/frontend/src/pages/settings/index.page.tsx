@@ -114,6 +114,23 @@ export function Page() {
       space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
     },
   });
+
+  const getEditRolesBasedOnUserRole = () => {
+    if (!user?.role) {
+      return [];
+    }
+    const roles = [];
+    if ([ROLES.SUPERADMIN, ROLES.MODERATOR, ROLES.ADMIN].includes(user?.role)) {
+      roles.push(ROLES.USER, ROLES.AUTHOR);
+    }
+    if ([ROLES.SUPERADMIN, ROLES.ADMIN].includes(user?.role)) {
+      roles.push(ROLES.MODERATOR);
+    }
+    if ([ROLES.SUPERADMIN].includes(user?.role)) {
+      roles.push(ROLES.ADMIN);
+    }
+    return roles;
+  };
   const {
     control,
     handleSubmit: handleEditSubmit,
@@ -335,6 +352,7 @@ export function Page() {
       return aValue - bValue;
     });
   }, [users?.data]);
+  const editableRoles = getEditRolesBasedOnUserRole();
   return (
     <FormLayout>
       <InfoModal
@@ -440,7 +458,7 @@ export function Page() {
               value={selectedUser?.role}
               onChange={(e) => setEditValue("role", e.target.value)}
             >
-              {userRoleValues.map((option) => (
+              {editableRoles.map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -454,7 +472,11 @@ export function Page() {
             </Box>
           )}
         </FormModal>
-        {!hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+        {!hasPermission(user?.role, [
+          ROLES.ADMIN,
+          ROLES.SUPERADMIN,
+          ROLES.MODERATOR,
+        ]) ? (
           <></>
         ) : (
           <Box>
@@ -490,7 +512,7 @@ export function Page() {
                       size="sm"
                       {...addRegister("role", { required: true })}
                     >
-                      {userRoleValues.map((option) => (
+                      {editableRoles.map((option) => (
                         <option key={option} value={option}>
                           {option}
                         </option>
@@ -536,14 +558,18 @@ export function Page() {
                           onClick={() => handleBanUser(data)}
                         />
                       ) : (
-                        <IconButton variant="ghost" disabled icon={null} />
+                        <Box py={6} />
                       )}
-                      <IconButton
-                        aria-label="Edit user role"
-                        icon={<PencilIcon />}
-                        variant="ghost"
-                        onClick={() => handleEditOpen(data)}
-                      />
+                      {editableRoles.includes(data.role) ? (
+                        <IconButton
+                          aria-label="Edit user role"
+                          icon={<PencilIcon />}
+                          variant="ghost"
+                          onClick={() => handleEditOpen(data)}
+                        />
+                      ) : (
+                        <Box py={6} />
+                      )}
                     </Box>
                   </ListRow.Root>
                 ))}
@@ -552,9 +578,6 @@ export function Page() {
           </Box>
         )}
       </Box>
-      <Button onClick={tryToUpdateSpace} variant="primary">
-        Click to edit space moderators
-      </Button>
     </FormLayout>
   );
 }
