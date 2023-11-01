@@ -12,7 +12,7 @@ import { usersToCouncils } from './usersToCouncils';
 import { posts } from './posts';
 import { pages } from './pages';
 
-export const userRoleEnum = pgEnum('role', ['user', 'admin', 'superadmin', 'moderator']);
+export const userRoleEnum = pgEnum('role', ['user', 'author', 'admin', 'superadmin', 'moderator']);
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "9813ed19-f82b-4466-8700-04b791335b4a",
+  "id": "c522248c-a169-47b3-971c-d67aa3e3d193",
   "prevId": "75e5fd80-ea6f-4172-b591-e8f709230a89",
   "tables": {
     "comments": {
@@ -1139,6 +1139,7 @@
       "name": "role",
       "values": {
         "user": "user",
+        "author": "author",
         "admin": "admin",
         "superadmin": "superadmin",
         "moderator": "moderator"

@@ -1,8 +1,6 @@
 import {
   Box,
   Button,
-  ContentContainer,
-  DeletionDialog,
   Flex,
   FormControl,
   FormLabel,
@@ -15,15 +13,13 @@ import {
   Text,
   useDisclosure,
   PencilIcon,
-  TrashIcon,
-  FileUploader,
-  ProfileImage,
-  Checkbox,
   Banner,
   InfoModal,
   SuccessIcon,
 } from "@yukilabs/governance-components";
-import { Controller, useForm } from "react-hook-form";
+import { gql } from "src/gql";
+import { useQuery } from "@apollo/client";
+import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import {
   User,
@@ -34,7 +30,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { DocumentProps, ROLES } from "src/renderer/types";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
-import { useFileUpload } from "src/hooks/useFileUpload";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { ethers } from "ethers";
@@ -44,8 +39,61 @@ import {
   BannedIcon,
   RemovedIcon,
 } from "@yukilabs/governance-components/src/Icons";
+import snapshot from "@snapshot-labs/snapshot.js";
+
+const hub = "https://hub.snapshot.org"; // or https://testnet.snapshot.org for testnet
+const client = new snapshot.Client712(hub);
+import { Web3Provider } from "@ethersproject/providers";
 
 const userRoleValues = userRoleEnum.enumValues;
+
+const GET_SPACE_QUERY = gql(`
+  query GetSpaceQuery(
+    $space: String!
+  ) {
+    space(id: $space) {
+      name
+      about
+      network
+      symbol
+      website
+      private
+      admins
+      moderators
+      members
+      categories
+      plugins
+      children {
+        name
+      }
+      voting {
+        hideAbstain
+      }
+      strategies {
+        name
+        network
+        params
+      }
+      validation {
+        name
+        params
+      }
+      voteValidation {
+        name
+        params
+      }
+      filters {
+        minScore
+        onlyMembers
+      }
+      treasuries {
+        name
+        address
+        network
+      }
+    }
+  }
+`);
 
 export function Page() {
   const {
@@ -55,15 +103,17 @@ export function Page() {
   } = useForm<RouterInput["users"]["addRoles"]>();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageChanged, setImageChanged] = useState<boolean>(false);
-  const editUser = trpc.users.editUser.useMutation();
   const banUser = trpc.users.banUser.useMutation();
   const [isBanUserLoading, setBanUserLoading] = useState(false);
   const [editError, setEditError] = useState("");
-  const utils = trpc.useContext();
-  const { handleUpload } = useFileUpload();
 
   const { user } = usePageContext();
 
+  const { data: space } = useQuery(GET_SPACE_QUERY, {
+    variables: {
+      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+    },
+  });
   const {
     control,
     handleSubmit: handleEditSubmit,
@@ -103,11 +153,44 @@ export function Page() {
   const addRoles = trpc.users.addRoles.useMutation();
   const users = trpc.users.getAll.useQuery();
 
+  const web3 =
+    typeof window !== "undefined" ? new Web3Provider(window.ethereum) : null;
+
   useEffect(() => {
     if (!imageChanged) {
       setImageUrl(user?.profileImage ?? null);
     }
   }, [user, imageChanged]);
+
+  const tryToUpdateSpace = async () => {
+    if (web3) {
+      const [account] = await web3.listAccounts();
+      console.log(space);
+
+      function removeTypename<T>(obj: T): T {
+        if (Array.isArray(obj)) {
+          return obj.map((item) => removeTypename(item)) as any;
+        } else if (obj !== null && typeof obj === "object") {
+          const newObj: Record<string, unknown> = {};
+          for (const key in obj) {
+            if (key !== "__typename") {
+              newObj[key] = removeTypename(
+                (obj as Record<string, unknown>)[key],
+              );
+            }
+          }
+          return newObj as T;
+        }
+        return obj as T;
+      }
+      let cleanedSpace = removeTypename(space?.space);
+
+      const receipt = await client.space(web3, account, {
+        space: "robwalsh.eth",
+        settings: JSON.stringify(cleanedSpace),
+      });
+    }
+  };
 
   const onSubmitAdd = handleAddSubmit(async (data) => {
     try {
@@ -212,21 +295,6 @@ export function Page() {
     }
   };
 
-  // const handleSave = () => {
-  //   if (!user) return;
-  //   editUser.mutateAsync(
-  //     {
-  //       id: user.id,
-  //       profileImage: imageUrl ?? "none",
-  //     },
-  //     {
-  //       onSuccess: () => {
-  //         utils.auth.currentUser.invalidate();
-  //       },
-  //     },
-  //   );
-  // };
-
   const isValidAddress = (address: string) => {
     try {
       const checksumAddress = ethers.utils.getAddress(address);
@@ -267,9 +335,6 @@ export function Page() {
       return aValue - bValue;
     });
   }, [users?.data]);
-  const [selectedRole, setSelectedRole] = useState<string>(
-    selectedUser?.role || "user",
-  );
   return (
     <FormLayout>
       <InfoModal
@@ -487,6 +552,9 @@ export function Page() {
           </Box>
         )}
       </Box>
+      <Button onClick={tryToUpdateSpace} variant="primary">
+        Click to edit space moderators
+      </Button>
     </FormLayout>
   );
 }
