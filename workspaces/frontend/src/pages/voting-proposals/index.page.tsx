@@ -233,7 +233,7 @@ export function Page() {
   });
 
   function ActionButtons() {
-    if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR])) {
+    if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR])) {
       return null;
     }
 

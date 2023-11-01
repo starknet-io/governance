@@ -165,7 +165,7 @@ export function Page() {
               pages={pagesTree}
             />
           </Stack>
-          {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) && (
+          {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR]) && (
             <Flex pl="2">
               <Button
                 height="44px"

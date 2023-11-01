@@ -215,6 +215,7 @@ export function Page() {
                     </Box>
                     {hasPermission(user?.role, [
                       ROLES.ADMIN,
+                      ROLES.SUPERADMIN,
                       ROLES.MODERATOR,
                     ]) ? (
                       <Box

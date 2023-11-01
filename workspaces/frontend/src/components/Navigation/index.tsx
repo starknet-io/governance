@@ -97,7 +97,7 @@ export const NavigationMenu = ({
               />
             ))}
 
-          {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+          {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR, ROLES.SUPERADMIN]) ? (
             <Link
               href="/councils/create"
               style={{ border: "none", marginLeft: "6px" }}

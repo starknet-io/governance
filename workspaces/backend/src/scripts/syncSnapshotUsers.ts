@@ -17,7 +17,7 @@ const graphqlClient = new GraphQLClient(endpoint, {
 const rolesDictionary: any = {
   admins: 'admin',
   moderators: 'moderator',
-  members: 'user',
+  members: 'author',
 };
 
 interface SpaceInterface {
