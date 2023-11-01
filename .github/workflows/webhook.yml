@@ -5,6 +5,8 @@ on:
     branches: ['dev']
     paths:
       - 'workspaces/webhook/**'
+  workflow_dispatch:
+
 jobs:
   Build:
     runs-on: ubuntu-latest
