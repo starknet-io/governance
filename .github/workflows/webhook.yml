@@ -39,5 +39,31 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           secrets: |
             "certificate=${{ secrets.CERTIFICATE_WEBHOOK }}"
+  Deploy-review:
+    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/dev'
+    needs: Build
+    runs-on: ubuntu-latest
+    env:
+      tag: ${{ needs.Build.outputs.tag }}
+    steps:
+      - name: DigitalOcean App Platform deployment
+        uses: digitalocean/app_action@v1.1.5
+        with:
+          app_name: backend-review
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[{"name": "webhook","image":{"registry_type": "DOCR","repository": "webhook","tag": "${{ env.tag }}"}}]'
 
+  Deploy-dev:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+    needs: Build
+    runs-on: ubuntu-latest
+    env:
+      tag: ${{ needs.Build.outputs.tag }}
+    steps:
+      - name: DigitalOcean App Platform deployment
+        uses: digitalocean/app_action@v1.1.5
+        with:
+          app_name: backend-development
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[{"name": "webhook","image":{"registry_type": "DOCR","repository": "webhook","tag": "${{ env.tag }}"}}]'
 
