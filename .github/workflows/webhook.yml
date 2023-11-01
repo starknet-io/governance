@@ -2,7 +2,9 @@ name: webhook deployment
 
 on:
   push:
-
+    branches: ['dev']
+    paths:
+      - 'workspaces/webhook/**'
 jobs:
   Build:
     runs-on: ubuntu-latest
