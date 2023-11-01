@@ -105,6 +105,7 @@ export function Page() {
   const [imageChanged, setImageChanged] = useState<boolean>(false);
   const banUser = trpc.users.banUser.useMutation();
   const [isBanUserLoading, setBanUserLoading] = useState(false);
+  const [editUserRole, setEditUserRole] = useState("");
   const [editError, setEditError] = useState("");
 
   const { user } = usePageContext();
@@ -180,9 +181,32 @@ export function Page() {
   }, [user, imageChanged]);
 
   const tryToUpdateSpace = async () => {
-    if (web3) {
+    if (web3 && space?.space) {
       const [account] = await web3.listAccounts();
       console.log(space);
+      const spaceToEdit = {
+        ...space.space,
+      };
+      const allUsers = users?.data || [];
+      if ([ROLES.SUPERADMIN].includes(user?.role)) {
+        const superAdmin = allUsers.find(
+          (user) => user.role === ROLES.SUPERADMIN,
+        );
+        spaceToEdit.admins = allUsers
+          .filter((user) => user.role === ROLES.ADMIN)
+          .map((user) => user.address);
+        spaceToEdit.admins.unshift(superAdmin?.address);
+      }
+      if ([ROLES.SUPERADMIN, ROLES.ADMIN].includes(user?.role)) {
+        spaceToEdit.moderators = allUsers
+          .filter((user) => user.role === ROLES.MODERATOR)
+          .map((user) => user.address);
+      }
+      if ([ROLES.SUPERADMIN, ROLES.ADMIN, ROLES.AUTHOR].includes(user?.role)) {
+        spaceToEdit.members = allUsers
+          .filter((user) => user.role === ROLES.AUTHOR)
+          .map((user) => user.address);
+      }
 
       function removeTypename<T>(obj: T): T {
         if (Array.isArray(obj)) {
@@ -200,7 +224,8 @@ export function Page() {
         }
         return obj as T;
       }
-      let cleanedSpace = removeTypename(space?.space);
+      const cleanedSpace = removeTypename(spaceToEdit);
+      console.log(cleanedSpace);
 
       const receipt = await client.space(web3, account, {
         space: "robwalsh.eth",
@@ -212,8 +237,9 @@ export function Page() {
   const onSubmitAdd = handleAddSubmit(async (data) => {
     try {
       await addRoles.mutateAsync(data, {
-        onSuccess: () => {
-          users.refetch();
+        onSuccess: async () => {
+          await users.refetch();
+          await tryToUpdateSpace();
         },
       });
     } catch (error) {
@@ -226,12 +252,12 @@ export function Page() {
     try {
       const data = {
         address: selectedUser?.address as string,
-        role: (values?.role?.value || selectedUser?.role || "user") as string,
+        role: (editUserRole || selectedUser?.role || "user") as string,
       };
-      console.log(data);
       await addRoles.mutateAsync(data, {
-        onSuccess: () => {
-          users.refetch();
+        onSuccess: async () => {
+          await users.refetch();
+          await tryToUpdateSpace();
           onEditClose();
         },
       });
@@ -295,10 +321,7 @@ export function Page() {
   const handleEditOpen = (user: User) => {
     setSelectedUser(user);
     setEditError("");
-    setEditValue("role", {
-      label: user.role,
-      value: user.role,
-    });
+    setEditUserRole(user?.role || "user")
     onEditOpen();
   };
 
@@ -325,10 +348,12 @@ export function Page() {
     return (users?.data || []).sort((a, b) => {
       // Define the role priorities
       const rolePriority = {
-        admin: 0,
-        moderator: 1,
-        // Assuming other roles are less prioritized
-        other: 2,
+        superadmin: 0,
+        admin: 1,
+        moderator: 2,
+        author: 3,
+        user: 4,
+        other: 5,
       };
 
       // Determine the priority values for a and b based on their roles
@@ -455,8 +480,11 @@ export function Page() {
               size="sm"
               {...editRegister("role")}
               ref={selectRef}
-              value={selectedUser?.role}
-              onChange={(e) => setEditValue("role", e.target.value)}
+              value={editUserRole}
+              onChange={(e) => {
+                console.log(e.target.value);
+                setEditUserRole(e.target.value)
+              }}
             >
               {editableRoles.map((option) => (
                 <option key={option} value={option}>
@@ -550,7 +578,11 @@ export function Page() {
                       {data.banned ? <ListRow.Status status="banned" /> : null}
                     </Box>
                     <Box flex="1" justifyContent="flex-end" display="flex">
-                      {data.role !== "moderator" && data.role !== "admin" ? (
+                      {![
+                        ROLES.MODERATOR,
+                        ROLES.ADMIN,
+                        ROLES.SUPERADMIN,
+                      ].includes(data?.role) ? (
                         <IconButton
                           aria-label="Delete user role"
                           icon={<RemovedIcon />}

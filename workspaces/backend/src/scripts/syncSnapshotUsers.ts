@@ -56,7 +56,7 @@ async function fetchAllUsersFromSpace() {
       const usersWithRole =
         userArray?.map((address: string) => ({
           address,
-          role: rolesDictionary[role] as 'user' | 'moderator' | 'admin',
+          role: rolesDictionary[role] as 'author' | 'moderator' | 'admin',
         })) || [];
       return acc.concat(usersWithRole);
     },
@@ -70,21 +70,34 @@ const syncSnapshotUsers = async () => {
   console.log('First, get all users from snapshot');
   const allSnapshotSpaceUsers = await fetchAllUsersFromSpace();
   console.log('Now, for each user obtain a role');
+  console.log(allSnapshotSpaceUsers);
+  let isSuperAdminProcessed = false;
   for (const user of allSnapshotSpaceUsers) {
-    console.log('processing', user);
+    let superAdmin = false;
     const existingUser = await db.query.users.findFirst({
       where: eq(users.address, user.address.toLowerCase()),
     });
+    if (user.role === 'admin' && !isSuperAdminProcessed) {
+      superAdmin = true;
+      isSuperAdminProcessed = true;
+    } else {
+      superAdmin = false;
+    }
+    const userRole = superAdmin ? 'superadmin' : user.role;
+    console.log('Will set user: ', user.address, ' to role: ', userRole);
     // If user exists, update role
     if (existingUser) {
-      await db.update(users).set({
-        role: user.role,
-      });
+      await db
+        .update(users)
+        .set({
+          role: userRole,
+        })
+        .where(eq(users.address, user.address));
     } else {
       // if user is new, create one
       await db.insert(users).values({
         address: user.address.toLowerCase(), // save address as lowercase
-        role: user.role,
+        role: userRole,
       });
     }
   }

@@ -2,7 +2,7 @@ import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, inArray} from 'drizzle-orm';
 import { delegates } from '../db/schema/delegates';
 import { Algolia } from '../utils/algolia';
 
