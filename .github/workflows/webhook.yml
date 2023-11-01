@@ -4,7 +4,7 @@ on:
   push:
     branches: ['dev']
     paths:
-      - 'workspaces/webhook/**'
+      - 'workspaces/snapshot-webhook/**'
   workflow_dispatch:
 
 jobs:
