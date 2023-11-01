@@ -2,10 +2,10 @@ name: webhook deployment
 
 on:
   push:
-    branches: ['dev']
-    paths:
-      - 'workspaces/snapshot-webhook/**'
-  workflow_dispatch:
+  #  branches: ['dev']
+  #  paths:
+  #    - 'workspaces/snapshot-webhook/**'
+  #workflow_dispatch:
 
 jobs:
   Build:
@@ -44,7 +44,7 @@ jobs:
           secrets: |
             "certificate=${{ secrets.CERTIFICATE_WEBHOOK }}"
   Deploy-review:
-    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/dev'
+    if:  github.ref != 'refs/heads/dev'   #github.event_name == 'workflow_dispatch' &&
     needs: Build
     runs-on: ubuntu-latest
     env:
