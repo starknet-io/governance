@@ -30,6 +30,7 @@ import { stringToHex } from "viem";
 import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
@@ -192,6 +193,7 @@ export function Delegates({
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
+  const [allDelegates, setAllDelegates] = useState([]);
   const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
@@ -262,6 +264,8 @@ export function Delegates({
   const [filtersState, setFiltersState] = useState({
     filters: [] as string[],
     searchQuery,
+    limit: 12,
+    offset: 0,
     sortBy,
   });
 
@@ -379,6 +383,19 @@ export function Delegates({
       </>
     );
   }
+
+  useEffect(() => {
+    if (delegates.data) {
+      setAllDelegates((prevDelegates) => [...prevDelegates, ...delegates.data]);
+    }
+  }, [delegates.data]);
+
+  const fetchMoreData = () => {
+    setFiltersState((prevState) => ({
+      ...prevState,
+      offset: prevState.offset + 1, // Updating offset
+    }));
+  };
 
   return (
     <>
@@ -505,6 +522,8 @@ export function Delegates({
                   setSortBy(e.target.value);
                   setFiltersState((prevState) => ({
                     ...prevState,
+                    limit: 12,
+                    offset: 0,
                     sortBy: e.target.value,
                   }));
                   delegates.refetch();
@@ -553,7 +572,7 @@ export function Delegates({
             </AppBar.Group>
           </AppBar.Root>
         )}
-        {delegates.isLoading ? (
+        {delegates.isLoading && !allDelegates?.length ? (
           <DelegatesSkeleton />
         ) : delegates.isError ? (
           <EmptyState
@@ -567,15 +586,26 @@ export function Delegates({
             }
           />
         ) : (
-          <>
+          <InfiniteScroll
+            dataLength={delegates.data?.length || 0} // This is important field to render the next data
+            next={fetchMoreData} // A function which calls to fetch the next data
+            hasMore={true} // Boolean stating whether there are more data to load
+            loader={<h4>Loading...</h4>} // Loader to show before loading next set of data
+            scrollThreshold={0.95} // adjust this value
+            endMessage={
+              <p style={{ textAlign: "center" }}>
+                <b>Yay! You have seen it all</b>
+              </p>
+            }
+          >
             <SimpleGrid
               position="relative"
               width="100%"
               spacing="standard.md"
               templateColumns="repeat(auto-fill, minmax(316px, 1fr))"
             >
-              {delegates.data && delegates.data.length > 0 ? (
-                transformData?.(delegates.data)?.map((delegate) => (
+              {allDelegates && allDelegates.length > 0 ? (
+                transformData?.(allDelegates)?.map((delegate) => (
                   <DelegateCard
                     onDelegateClick={() => {
                       if (user) {
@@ -630,7 +660,12 @@ export function Delegates({
                 </Box>
               )}
             </SimpleGrid>
-          </>
+            <Box mt={3}>
+              {delegates.isLoading && allDelegates.length && (
+                <DelegatesSkeleton />
+              )}
+            </Box>
+          </InfiniteScroll>
         )}
       </Box>
     </>

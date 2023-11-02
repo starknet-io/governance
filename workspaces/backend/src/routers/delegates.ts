@@ -318,6 +318,8 @@ export const delegateRouter = router({
         searchQuery: z.string().optional(),
         filters: z.array(z.string()).optional(),
         sortBy: z.string().optional(),
+        offset: z.number().optional(),
+        limit: z.number().optional(),
       }),
     )
     .query(async (opts) => {
@@ -346,7 +348,7 @@ export const delegateRouter = router({
         ) || [];
 
       try {
-        const foundDelegates: any = await db
+        let query = db
           .select()
           .from(delegates)
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
@@ -356,6 +358,16 @@ export const delegateRouter = router({
             eq(customDelegateAgreement.delegateId, delegates.id),
           )
           .orderBy(orderBy);
+
+        if (opts.input.limit !== undefined) {
+          query = query.limit(opts.input.limit);
+        }
+
+        if (opts.input.offset !== undefined) {
+          query = query.offset(opts.input.offset);
+        }
+
+        const foundDelegates: any = await query;
 
         // Since we are using joins instead of with: [field]: true, we need to map to corresponding data format
         if (foundDelegates && foundDelegates.length) {
