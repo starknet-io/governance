@@ -29,7 +29,7 @@ type MemberType = {
 
 function checkUserRole(userRole: string | undefined) {
   if (!userRole) throw new Error('User not found');
-  if (userRole !== 'superAdmin' && userRole !== 'admin' && userRole !== 'moderator')
+  if (userRole !== 'superadmin' && userRole !== 'admin' && userRole !== 'moderator')
     throw new Error('Unauthorized');
 }
 
