@@ -2,7 +2,7 @@ import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
-import { eq, inArray} from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { delegates } from '../db/schema/delegates';
 import { Algolia } from '../utils/algolia';
 
@@ -106,14 +106,7 @@ export const usersRouter = router({
         where: eq(users.address, opts.input.address.toLowerCase()),
       });
       if (user) {
-        const updatedUser = await db
-          .update(users)
-          .set({
-            role: opts.input.role,
-          })
-          .where(eq(users.address, opts.input.address.toLowerCase()))
-          .returning();
-        return updatedUser[0];
+        throw new Error('User already exists');
       } else {
         const createdUser = await db
           .insert(users)
@@ -124,6 +117,32 @@ export const usersRouter = router({
           })
           .returning();
         return createdUser[0];
+      }
+    }),
+
+  editRoles: protectedProcedure
+    .input(
+      z.object({
+        address: z.string(),
+        role: z.any(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.address, opts.input.address.toLowerCase()),
+      });
+      if (!user) {
+        throw new Error("User doesn't exists");
+      } else {
+        const updatedUser = await db
+          .update(users)
+          .set({
+            role: opts.input.role,
+          })
+          .where(eq(users.address, opts.input.address.toLowerCase()))
+
+          .returning();
+        return updatedUser[0];
       }
     }),
 
@@ -297,7 +316,9 @@ export const usersRouter = router({
       const requester = opts.ctx.user;
       if (
         !requester ||
-        (requester.role !== 'superadmin' && requester.role !== 'admin' && requester.role !== 'moderator')
+        (requester.role !== 'superadmin' &&
+          requester.role !== 'admin' &&
+          requester.role !== 'moderator')
       ) {
         throw new Error('You do not have permission to ban users');
       }
@@ -310,7 +331,11 @@ export const usersRouter = router({
         throw new Error('User not found');
       }
 
-      if (userToBan?.role === 'moderator' || userToBan?.role === 'admin' || userToBan?.role === 'superadmin') {
+      if (
+        userToBan?.role === 'moderator' ||
+        userToBan?.role === 'admin' ||
+        userToBan?.role === 'superadmin'
+      ) {
         throw new Error('Cannot ban moderators or admins');
       }
 

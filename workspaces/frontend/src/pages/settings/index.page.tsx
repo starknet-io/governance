@@ -16,6 +16,7 @@ import {
   Banner,
   InfoModal,
   SuccessIcon,
+  WarningIcon,
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -99,6 +100,7 @@ export function Page() {
   const {
     handleSubmit: handleAddSubmit,
     register: addRegister,
+    reset: resetAddUserForm,
     formState: { errors: addErrors, isValid: isAddValid },
   } = useForm<RouterInput["users"]["addRoles"]>();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -107,6 +109,18 @@ export function Page() {
   const [isBanUserLoading, setBanUserLoading] = useState(false);
   const [editUserRole, setEditUserRole] = useState("");
   const [editError, setEditError] = useState("");
+  const [addError, setAddError] = useState("");
+  const [syncError, setSyncError] = useState("");
+  const {
+    isOpen: isSyncingSuccessOpen,
+    onOpen: onSyncingSuccessOpen,
+    onClose: onSyncingSuccessClose,
+  } = useDisclosure();
+  const {
+    isOpen: isSyncingErrorOpen,
+    onOpen: onSyncingErrorOpen,
+    onClose: onSyncingErrorClose,
+  } = useDisclosure();
 
   const { user } = usePageContext();
 
@@ -169,6 +183,7 @@ export function Page() {
   const selectRef = useRef<HTMLSelectElement>(null);
 
   const addRoles = trpc.users.addRoles.useMutation();
+  const editRoles = trpc.users.editRoles.useMutation();
   const users = trpc.users.getAll.useQuery();
 
   const web3 =
@@ -227,24 +242,33 @@ export function Page() {
       const cleanedSpace = removeTypename(spaceToEdit);
       console.log(cleanedSpace);
 
-      const receipt = await client.space(web3, account, {
-        space: "robwalsh.eth",
-        settings: JSON.stringify(cleanedSpace),
-      });
+      try {
+        const receipt = await client.space(web3, account, {
+          space: "robwalsh.eth",
+          settings: JSON.stringify(cleanedSpace),
+        });
+        onSyncingSuccessOpen();
+      } catch (err) {
+        setSyncError(err.error_description || "An error occurred");
+        onSyncingErrorOpen();
+      }
     }
   };
 
   const onSubmitAdd = handleAddSubmit(async (data) => {
+    setAddError("");
     try {
       await addRoles.mutateAsync(data, {
         onSuccess: async () => {
           await users.refetch();
-          await tryToUpdateSpace();
+          resetAddUserForm();
         },
       });
+      setAddError("");
     } catch (error) {
       // Handle error
       console.log(error);
+      setAddError(error?.message || "An error occurred");
     }
   });
 
@@ -254,10 +278,9 @@ export function Page() {
         address: selectedUser?.address as string,
         role: (editUserRole || selectedUser?.role || "user") as string,
       };
-      await addRoles.mutateAsync(data, {
+      await editRoles.mutateAsync(data, {
         onSuccess: async () => {
           await users.refetch();
-          await tryToUpdateSpace();
           onEditClose();
         },
       });
@@ -321,7 +344,7 @@ export function Page() {
   const handleEditOpen = (user: User) => {
     setSelectedUser(user);
     setEditError("");
-    setEditUserRole(user?.role || "user")
+    setEditUserRole(user?.role || "user");
     onEditOpen();
   };
 
@@ -460,6 +483,33 @@ export function Page() {
           Close
         </Button>
       </InfoModal>
+      <InfoModal
+        isOpen={isSyncingSuccessOpen}
+        onClose={onSyncingSuccessClose}
+        title={`Successfully synced roles with snapshot`}
+      >
+        <Flex justifyContent="center">
+          <Icon as={SuccessIcon} boxSize="104px" />
+        </Flex>
+        <Button variant="primary" onClick={onSyncingSuccessClose}>
+          Close
+        </Button>
+      </InfoModal>
+      <InfoModal
+        isOpen={isSyncingErrorOpen}
+        onClose={onSyncingErrorClose}
+        title={`An error occurred while syncing roles with snapshot`}
+      >
+        <Flex justifyContent="center">
+          <Icon as={WarningIcon} boxSize="104px" />
+        </Flex>
+        <Flex alignItems="center" justifyContent="center" width="100%">
+          <Text variant="mediumStrong">{syncError}</Text>
+        </Flex>
+        <Button variant="primary" onClick={onSyncingErrorClose}>
+          Close
+        </Button>
+      </InfoModal>
       <Box
         display="flex"
         flexDirection={{ base: "column", md: "column" }}
@@ -483,7 +533,7 @@ export function Page() {
               value={editUserRole}
               onChange={(e) => {
                 console.log(e.target.value);
-                setEditUserRole(e.target.value)
+                setEditUserRole(e.target.value);
               }}
             >
               {editableRoles.map((option) => (
@@ -548,6 +598,11 @@ export function Page() {
                     </Select>
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
+                  {addError && addError.length && (
+                    <Box mt={4}>
+                      <Banner label={addError} type="error" variant="error" />
+                    </Box>
+                  )}
                   <Flex justifyContent="flex-end">
                     <Button type="submit" variant="primary">
                       Add
@@ -561,6 +616,9 @@ export function Page() {
               <Heading variant="h3" mb="24px" fontSize="28px">
                 Users
               </Heading>
+              <Button onClick={tryToUpdateSpace} variant="primary">
+                Sync with Snapshot
+              </Button>
               <ListRow.Container>
                 {sortedUsersList.map((data) => (
                   <ListRow.Root key={data.id}>

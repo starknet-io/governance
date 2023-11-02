@@ -97,7 +97,11 @@ export const NavigationMenu = ({
               />
             ))}
 
-          {hasPermission(userRole, [ROLES.ADMIN, ROLES.MODERATOR, ROLES.SUPERADMIN]) ? (
+          {hasPermission(userRole, [
+            ROLES.ADMIN,
+            ROLES.MODERATOR,
+            ROLES.SUPERADMIN,
+          ]) ? (
             <Link
               href="/councils/create"
               style={{ border: "none", marginLeft: "6px" }}
@@ -131,7 +135,11 @@ export const NavigationMenu = ({
             />
           ))}
 
-          {user ? (
+          {hasPermission(userRole, [
+            ROLES.ADMIN,
+            ROLES.MODERATOR,
+            ROLES.SUPERADMIN,
+          ]) ? (
             <NavItem
               href="/settings"
               icon={<SettingsIcon />}
