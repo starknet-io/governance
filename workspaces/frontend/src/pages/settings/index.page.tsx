@@ -616,9 +616,11 @@ export function Page() {
               <Heading variant="h3" mb="24px" fontSize="28px">
                 Users
               </Heading>
-              <Button onClick={tryToUpdateSpace} variant="primary">
-                Sync with Snapshot
-              </Button>
+              {[ROLES.SUPERADMIN, ROLES.ADMIN].includes(user?.role) ? (
+                <Button onClick={tryToUpdateSpace} variant="primary">
+                  Sync with Snapshot
+                </Button>
+              ) : null}
               <ListRow.Container>
                 {sortedUsersList.map((data) => (
                   <ListRow.Root key={data.id}>
