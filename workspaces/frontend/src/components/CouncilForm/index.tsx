@@ -17,6 +17,7 @@ import {
   useFormErrorHandler,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
+import { hasPermission } from "../../utils/helpers";
 import { useForm, Controller } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
@@ -25,6 +26,7 @@ import { useFileUpload } from "src/hooks/useFileUpload";
 import { ethers } from "ethers";
 import type { Space } from "@yukilabs/governance-backend/src/db/schema/councils";
 import { usePageContext } from "../../renderer/PageContextProvider";
+import { ROLES } from "../../renderer/types";
 
 interface CouncilFormProps {
   mode: "create" | "edit";
@@ -57,6 +59,7 @@ export function CouncilForm({
   const pageContext = usePageContext();
 
   const [members, setMembers] = useState<MemberType[]>([]);
+  const { user } = usePageContext()
   const [error, setError] = useState<string>("");
   const createCouncil = trpc.councils.saveCouncil.useMutation();
   const editCouncil = trpc.councils.editCouncil.useMutation();
@@ -322,14 +325,20 @@ Links
             </Flex>
           ) : (
             <Flex justifyContent="flex-end" gap="16px">
-              <Button
-                size="condensed"
-                variant="danger"
-                mr="auto"
-                onClick={onOpenDelete}
-              >
-                Delete
-              </Button>
+              {hasPermission(user?.role, [
+                ROLES.ADMIN,
+                ROLES.SUPERADMIN,
+                ROLES.MODERATOR,
+              ]) ? (
+                <Button
+                  size="condensed"
+                  variant="danger"
+                  mr="auto"
+                  onClick={onOpenDelete}
+                >
+                  Delete
+                </Button>
+              ) : null}
               <Button
                 as="a"
                 size="condensed"

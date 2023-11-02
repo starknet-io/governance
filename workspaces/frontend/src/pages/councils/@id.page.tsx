@@ -155,6 +155,7 @@ export function Page() {
                 ROLES.ADMIN,
                 ROLES.SUPERADMIN,
                 ROLES.MODERATOR,
+                ROLES.AUTHOR,
               ]) ? (
                 <MenuItem as="a" href={`/councils/edit/${council?.slug}`}>
                   Edit
