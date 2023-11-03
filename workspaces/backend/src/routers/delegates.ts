@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import { eq, and, isNotNull, or, desc, sql } from 'drizzle-orm';
+import { eq, and, isNotNull, or, desc, sql, gte } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -10,6 +10,7 @@ import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
 import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
+import { raw } from 'express';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -324,9 +325,12 @@ export const delegateRouter = router({
     )
     .query(async (opts) => {
       // Determine if sorting is present - voting power, votes count, created at (default)
+      const isPaginated =
+        opts.input.limit !== undefined && opts.input.offset !== undefined;
+
       const orderBy =
         opts.input.sortBy && opts.input.sortBy.length
-          ? opts.input.sortBy === 'votingPower'
+          ? opts.input.sortBy === 'votingPower' || isPaginated
             ? desc(delegateVotes.votingPower)
             : desc(delegateVotes.totalVotes)
           : desc(delegateVotes.votingPower); // Default to sort by voting power
@@ -348,9 +352,27 @@ export const delegateRouter = router({
         ) || [];
 
       try {
+        let interestsParsed = ``;
+        appliedInterests.forEach(
+          (interest) => (interestsParsed += `"${interest}", `),
+        );
+        if (interestsParsed.length) {
+          interestsParsed = interestsParsed.slice(0, -2);
+        }
+        const interests = JSON.stringify(appliedInterests);
+        console.log(interests)
+
+        const subQuery = `delegates.interests::jsonb @> '${interests}'::jsonb`
+
         let query = db
           .select()
           .from(delegates)
+          .where(
+            appliedInterests.length
+              ? sql`${subQuery}`
+              : sql`TRUE`,
+          )
+          .where(sql`delegates.interests::jsonb @> '["cairo_dev", "daos"]'::jsonb`)
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
           .leftJoin(users, eq(users.id, delegates.userId))
           .leftJoin(
@@ -359,13 +381,27 @@ export const delegateRouter = router({
           )
           .orderBy(orderBy);
 
-        if (opts.input.limit !== undefined) {
-          query = query.limit(opts.input.limit);
+        if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
+          query = query.where(gte(delegateVotes.votingPower, 1000000));
+        }
+        if (appliedSpecialFilters.includes('1_or_more_votes')) {
+          query = query.where(gte(delegateVotes.totalVotes, 1));
         }
 
-        if (opts.input.offset !== undefined) {
+        if (appliedSpecialFilters.includes('delegate_agreement')) {
+          query = query.where(
+            or(
+              isNotNull(customDelegateAgreement.delegateId),
+              eq(delegates.confirmDelegateAgreement, true),
+            ),
+          );
+        }
+
+        if (opts.input.limit !== undefined && opts.input.offset !== undefined) {
+          query = query.limit(opts.input.limit);
           query = query.offset(opts.input.offset);
         }
+
 
         const foundDelegates: any = await query;
 
@@ -380,25 +416,6 @@ export const delegateRouter = router({
               foundDelegates.confirmDelegateAgreement
             ),
           }));
-
-          // Apply filters now
-          if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
-            filteredDelegates = filteredDelegates.filter(
-              (delegate: any) => delegate.votingInfo.votingPower > 1000000,
-            );
-          }
-
-          if (appliedSpecialFilters.includes('1_or_more_votes')) {
-            filteredDelegates = filteredDelegates.filter(
-              (delegate: any) => delegate.votingInfo.totalVotes > 1,
-            );
-          }
-
-          if (appliedSpecialFilters.includes('delegate_agreement')) {
-            filteredDelegates = filteredDelegates.filter(
-              (delegate: any) => delegate.delegateAgreement,
-            );
-          }
 
           // Filter out the delegates based on the comment count
           if (appliedSpecialFilters.includes('1_or_more_comments')) {
@@ -425,14 +442,6 @@ export const delegateRouter = router({
             );
           }
 
-          if (appliedInterests.length) {
-            filteredDelegates = filteredDelegates.filter((delegate: any) =>
-              appliedInterests.every((interest) =>
-                delegate.interests.includes(interest),
-              ),
-            );
-          }
-
           const shuffleArray = (array: any[]) => {
             for (let i = array.length - 1; i > 0; i--) {
               const j = Math.floor(Math.random() * (i + 1));
@@ -444,8 +453,10 @@ export const delegateRouter = router({
           if (
             !opts.input.sortBy &&
             !opts.input.sortBy?.length &&
-            !opts.input.filters?.length
+            !opts.input.filters?.length &&
+            !isPaginated
           ) {
+            console.log('I want to shuffle!');
             const quarterLength = Math.floor(filteredDelegates.length / 4);
             const firstQuarter = shuffleArray(
               filteredDelegates.slice(0, quarterLength),

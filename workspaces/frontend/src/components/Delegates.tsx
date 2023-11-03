@@ -264,8 +264,6 @@ export function Delegates({
   const [filtersState, setFiltersState] = useState({
     filters: [] as string[],
     searchQuery,
-    limit: 12,
-    offset: 0,
     sortBy,
   });
 
@@ -385,10 +383,10 @@ export function Delegates({
   }
 
   useEffect(() => {
-    if (delegates.data) {
-      setAllDelegates((prevDelegates) => [...prevDelegates, ...delegates.data]);
+    if (delegates.data && !delegates.isLoading) {
+      setAllDelegates([...allDelegates, ...delegates.data]);
     }
-  }, [delegates.data]);
+  }, [delegates.data, delegates.isLoading]);
 
   const fetchMoreData = () => {
     setFiltersState((prevState) => ({
@@ -522,8 +520,6 @@ export function Delegates({
                   setSortBy(e.target.value);
                   setFiltersState((prevState) => ({
                     ...prevState,
-                    limit: 12,
-                    offset: 0,
                     sortBy: e.target.value,
                   }));
                   delegates.refetch();
@@ -589,7 +585,7 @@ export function Delegates({
           <InfiniteScroll
             dataLength={delegates.data?.length || 0} // This is important field to render the next data
             next={fetchMoreData} // A function which calls to fetch the next data
-            hasMore={true} // Boolean stating whether there are more data to load
+            hasMore={false} // Boolean stating whether there are more data to load
             loader={<h4>Loading...</h4>} // Loader to show before loading next set of data
             scrollThreshold={0.95} // adjust this value
             endMessage={
