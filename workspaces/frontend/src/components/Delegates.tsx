@@ -258,12 +258,15 @@ export function Delegates({
     defaultValue: delegateFilters.defaultValue,
     onSubmit: (filters) => {
       setFiltersState({ ...filtersState, filters });
+      setAllDelegates([])
     },
   });
 
   const [filtersState, setFiltersState] = useState({
     filters: [] as string[],
     searchQuery,
+    limit: 12,
+    offset: 0,
     sortBy,
   });
 
@@ -384,6 +387,12 @@ export function Delegates({
 
   useEffect(() => {
     if (delegates.data && !delegates.isLoading) {
+      delegates.data.forEach((delegate) => {
+        const found = allDelegates.find((allDelegatesDelegate) => allDelegatesDelegate.id === delegate.id)
+        if (found) {
+          console.log(found)
+        }
+      })
       setAllDelegates([...allDelegates, ...delegates.data]);
     }
   }, [delegates.data, delegates.isLoading]);
@@ -392,6 +401,7 @@ export function Delegates({
     setFiltersState((prevState) => ({
       ...prevState,
       offset: prevState.offset + 1, // Updating offset
+      limit: 12,
     }));
   };
 
@@ -522,6 +532,7 @@ export function Delegates({
                     ...prevState,
                     sortBy: e.target.value,
                   }));
+                  setAllDelegates([])
                   delegates.refetch();
                 }}
               >
@@ -585,7 +596,7 @@ export function Delegates({
           <InfiniteScroll
             dataLength={delegates.data?.length || 0} // This is important field to render the next data
             next={fetchMoreData} // A function which calls to fetch the next data
-            hasMore={false} // Boolean stating whether there are more data to load
+            hasMore={true} // Boolean stating whether there are more data to load
             loader={<h4>Loading...</h4>} // Loader to show before loading next set of data
             scrollThreshold={0.95} // adjust this value
             endMessage={

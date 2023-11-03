@@ -325,12 +325,9 @@ export const delegateRouter = router({
     )
     .query(async (opts) => {
       // Determine if sorting is present - voting power, votes count, created at (default)
-      const isPaginated =
-        opts.input.limit !== undefined && opts.input.offset !== undefined;
-
       const orderBy =
         opts.input.sortBy && opts.input.sortBy.length
-          ? opts.input.sortBy === 'votingPower' || isPaginated
+          ? opts.input.sortBy === 'votingPower'
             ? desc(delegateVotes.votingPower)
             : desc(delegateVotes.totalVotes)
           : desc(delegateVotes.votingPower); // Default to sort by voting power
@@ -360,26 +357,18 @@ export const delegateRouter = router({
           interestsParsed = interestsParsed.slice(0, -2);
         }
         const interests = JSON.stringify(appliedInterests);
-        console.log(interests)
-
-        const subQuery = `delegates.interests::jsonb @> '${interests}'::jsonb`
 
         let query = db
           .select()
           .from(delegates)
-          .where(
-            appliedInterests.length
-              ? sql`${subQuery}`
-              : sql`TRUE`,
-          )
-          .where(sql`delegates.interests::jsonb @> '["cairo_dev", "daos"]'::jsonb`)
+          .where(sql.raw(`delegates.interests::jsonb @> '${interests}'::jsonb`))
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
           .leftJoin(users, eq(users.id, delegates.userId))
           .leftJoin(
             customDelegateAgreement,
             eq(customDelegateAgreement.delegateId, delegates.id),
           )
-          .orderBy(orderBy);
+          .orderBy(orderBy, desc(delegates.id));
 
         if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
           query = query.where(gte(delegateVotes.votingPower, 1000000));
@@ -398,12 +387,29 @@ export const delegateRouter = router({
         }
 
         if (opts.input.limit !== undefined && opts.input.offset !== undefined) {
+          query = query.offset(opts.input.offset * opts.input.limit);
           query = query.limit(opts.input.limit);
-          query = query.offset(opts.input.offset);
+          console.log(query.toSQL());
         }
 
-
-        const foundDelegates: any = await query;
+        console.log(
+          'Apply offset: ',
+          opts.input.offset * opts.input.limit,
+          ' with limit: ',
+          opts.input.limit,
+        );
+        const foundDelegates: any = await query.execute();
+        let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
+          ...foundDelegates.delegates,
+          author: { ...foundDelegates.users },
+          votingInfo: { ...foundDelegates.delegate_votes },
+          delegateAgreement: !!(
+            foundDelegates.custom_delegate_agreement ||
+            foundDelegates.confirmDelegateAgreement
+          ),
+        }));
+        console.log(filteredDelegates.map((del) => del.author.ensName));
+        return filteredDelegates;
 
         // Since we are using joins instead of with: [field]: true, we need to map to corresponding data format
         if (foundDelegates && foundDelegates.length) {
@@ -453,10 +459,8 @@ export const delegateRouter = router({
           if (
             !opts.input.sortBy &&
             !opts.input.sortBy?.length &&
-            !opts.input.filters?.length &&
-            !isPaginated
+            !opts.input.filters?.length
           ) {
-            console.log('I want to shuffle!');
             const quarterLength = Math.floor(filteredDelegates.length / 4);
             const firstQuarter = shuffleArray(
               filteredDelegates.slice(0, quarterLength),
