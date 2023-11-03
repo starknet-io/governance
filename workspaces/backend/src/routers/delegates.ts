@@ -361,14 +361,12 @@ export const delegateRouter = router({
         let query = db
           .select()
           .from(delegates)
-          .where(sql.raw(`delegates.interests::jsonb @> '${interests}'::jsonb`))
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
           .leftJoin(users, eq(users.id, delegates.userId))
           .leftJoin(
             customDelegateAgreement,
             eq(customDelegateAgreement.delegateId, delegates.id),
-          )
-          .orderBy(orderBy, desc(delegates.id));
+          );
 
         if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
           query = query.where(gte(delegateVotes.votingPower, 1000000));
@@ -398,6 +396,12 @@ export const delegateRouter = router({
           ' with limit: ',
           opts.input.limit,
         );
+        query.where(
+          sql.raw(`delegates.interests::jsonb @> '${interests}'::jsonb`),
+        );
+
+        query.orderBy(orderBy, desc(delegates.id));
+
         const foundDelegates: any = await query.execute();
         let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
           ...foundDelegates.delegates,

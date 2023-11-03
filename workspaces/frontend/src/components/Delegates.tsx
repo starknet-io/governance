@@ -194,6 +194,7 @@ export function Delegates({
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [allDelegates, setAllDelegates] = useState([]);
+  const [hasMoreDelegates, setHasMoreDelegates] = useState(true);
   const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
@@ -257,8 +258,9 @@ export function Delegates({
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
     onSubmit: (filters) => {
-      setFiltersState({ ...filtersState, filters });
-      setAllDelegates([])
+      setFiltersState({ ...filtersState, filters, limit: 12, offset: 0 });
+      setAllDelegates([]);
+      setHasMoreDelegates(true);
     },
   });
 
@@ -387,13 +389,19 @@ export function Delegates({
 
   useEffect(() => {
     if (delegates.data && !delegates.isLoading) {
+      /* This line is for debugging, to see if duplicates are returned from database
       delegates.data.forEach((delegate) => {
         const found = allDelegates.find((allDelegatesDelegate) => allDelegatesDelegate.id === delegate.id)
         if (found) {
           console.log(found)
         }
       })
-      setAllDelegates([...allDelegates, ...delegates.data]);
+       */
+      if (!delegates.data.length) {
+        setHasMoreDelegates(false);
+      } else {
+        setAllDelegates([...allDelegates, ...delegates.data]);
+      }
     }
   }, [delegates.data, delegates.isLoading]);
 
@@ -532,7 +540,7 @@ export function Delegates({
                     ...prevState,
                     sortBy: e.target.value,
                   }));
-                  setAllDelegates([])
+                  setAllDelegates([]);
                   delegates.refetch();
                 }}
               >
@@ -596,14 +604,9 @@ export function Delegates({
           <InfiniteScroll
             dataLength={delegates.data?.length || 0} // This is important field to render the next data
             next={fetchMoreData} // A function which calls to fetch the next data
-            hasMore={true} // Boolean stating whether there are more data to load
-            loader={<h4>Loading...</h4>} // Loader to show before loading next set of data
+            hasMore={hasMoreDelegates} // Boolean stating whether there are more data to load
+            loader={null} // Loader to show before loading next set of data
             scrollThreshold={0.95} // adjust this value
-            endMessage={
-              <p style={{ textAlign: "center" }}>
-                <b>Yay! You have seen it all</b>
-              </p>
-            }
           >
             <SimpleGrid
               position="relative"
