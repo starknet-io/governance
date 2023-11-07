@@ -258,10 +258,11 @@ export function Delegates({
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
     onSubmit: (filters) => {
-      setFiltersState({ ...filtersState, filters, limit: 12, offset: 0 });
       setAllDelegates([]);
+      setFiltersState({ ...filtersState, filters, limit: 12, offset: 0 });
       setHasMoreDelegates(true);
     },
+
   });
 
   const [filtersState, setFiltersState] = useState({
@@ -299,10 +300,11 @@ export function Delegates({
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
 
   const { user } = usePageContext();
-  console.log("user", user);
   const handleResetFilters = () => {
     state.onReset();
-    setFiltersState({ ...filtersState, filters: [] });
+    setAllDelegates([]);
+    setHasMoreDelegates(true);
+    setFiltersState({ ...filtersState, filters: [], offset: 0, limit: 12 });
   };
 
   function ActionButtons() {
@@ -389,28 +391,24 @@ export function Delegates({
 
   useEffect(() => {
     if (delegates.data && !delegates.isLoading) {
-      /* This line is for debugging, to see if duplicates are returned from database
-      delegates.data.forEach((delegate) => {
-        const found = allDelegates.find((allDelegatesDelegate) => allDelegatesDelegate.id === delegate.id)
-        if (found) {
-          console.log(found)
-        }
-      })
-       */
+      const newData = delegates.data.filter(
+        (delegate) =>
+          !allDelegates.some((existing) => existing.id === delegate.id),
+      );
       if (!delegates.data.length) {
         setHasMoreDelegates(false);
       } else {
-        setAllDelegates([...allDelegates, ...delegates.data]);
+        setAllDelegates((prevDelegates) => [...prevDelegates, ...newData]);
+        setHasMoreDelegates(true);
       }
     }
   }, [delegates.data, delegates.isLoading]);
 
   const fetchMoreData = () => {
-    setFiltersState((prevState) => ({
-      ...prevState,
-      offset: prevState.offset + 1, // Updating offset
-      limit: 12,
-    }));
+    setFiltersState((prevState) => {
+      const newOffset = prevState.offset + prevState.limit;
+      return { ...prevState, offset: newOffset };
+    });
   };
 
   return (
@@ -536,12 +534,11 @@ export function Delegates({
                 value={sortBy}
                 onChange={(e) => {
                   setSortBy(e.target.value);
+                  setAllDelegates([]);
                   setFiltersState((prevState) => ({
                     ...prevState,
                     sortBy: e.target.value,
                   }));
-                  setAllDelegates([]);
-                  delegates.refetch();
                 }}
               >
                 {sortByOptions.options.map((option) => (
@@ -602,7 +599,7 @@ export function Delegates({
           />
         ) : (
           <InfiniteScroll
-            dataLength={delegates.data?.length || 0} // This is important field to render the next data
+            dataLength={allDelegates.length || 0} // This is important field to render the next data
             next={fetchMoreData} // A function which calls to fetch the next data
             hasMore={hasMoreDelegates} // Boolean stating whether there are more data to load
             loader={null} // Loader to show before loading next set of data
@@ -614,67 +611,79 @@ export function Delegates({
               spacing="standard.md"
               templateColumns="repeat(auto-fill, minmax(316px, 1fr))"
             >
-              {allDelegates && allDelegates.length > 0 ? (
-                transformData?.(allDelegates)?.map((delegate) => (
-                  <DelegateCard
-                    onDelegateClick={() => {
-                      if (user) {
-                        if (
-                          parseFloat(senderData?.balance) <
-                          MINIMUM_TOKENS_FOR_DELEGATION
-                        ) {
-                          setIsStatusModalOpen(true);
-                          setStatusTitle("No voting power");
-                          setStatusDescription(
-                            `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
-                          );
-                          setIsOpen(false);
+              <>
+                {allDelegates && allDelegates.length > 0 ? (
+                  transformData?.(allDelegates)?.map((delegate) => (
+                    <DelegateCard
+                      onDelegateClick={() => {
+                        if (user) {
+                          if (
+                            parseFloat(senderData?.balance) <
+                            MINIMUM_TOKENS_FOR_DELEGATION
+                          ) {
+                            setIsStatusModalOpen(true);
+                            setStatusTitle("No voting power");
+                            setStatusDescription(
+                              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+                            );
+                            setIsOpen(false);
+                          } else {
+                            setIsOpen(true);
+                            setInputAddress(delegate?.author?.address);
+                          }
                         } else {
-                          setIsOpen(true);
-                          setInputAddress(delegate?.author?.address);
+                          setHelpMessage("connectWalletMessage");
                         }
-                      } else {
-                        setHelpMessage("connectWalletMessage");
+                      }}
+                      votingPower={delegate?.votingInfo?.votingPower}
+                      profileURL={`/delegates/profile/${delegate.id}`}
+                      address={delegate?.author?.address}
+                      statement={delegate?.statement}
+                      type={delegate?.interests as string[]}
+                      src={
+                        delegate?.author?.profileImage ??
+                        delegate?.author?.ensAvatar ??
+                        null
                       }
-                    }}
-                    votingPower={delegate?.votingInfo?.votingPower}
-                    profileURL={`/delegates/profile/${delegate.id}`}
-                    address={delegate?.author?.address}
-                    statement={delegate?.statement}
-                    type={delegate?.interests as string[]}
-                    src={
-                      delegate?.author?.profileImage ??
-                      delegate?.author?.ensAvatar ??
-                      null
-                    }
-                    headerTooltipContent={
-                      !delegate.author?.username && !delegate.author?.ensName
-                        ? delegate.author?.address
-                        : undefined
-                    }
-                    user={
-                      delegate.author?.username ??
-                      delegate.author?.ensName ??
-                      truncateAddress(delegate.author?.address)
-                    }
-                    key={delegate?.id}
-                  />
-                ))
-              ) : (
-                <Box position="absolute" inset="0">
-                  <EmptyState
-                    type="delegates"
-                    title="No delegates yet"
-                    minHeight="300px"
-                  />
-                </Box>
-              )}
+                      headerTooltipContent={
+                        !delegate.author?.username && !delegate.author?.ensName
+                          ? delegate.author?.address
+                          : undefined
+                      }
+                      user={
+                        delegate.author?.username ??
+                        delegate.author?.ensName ??
+                        truncateAddress(delegate.author?.address)
+                      }
+                      key={delegate?.id}
+                    />
+                  ))
+                ) : (
+                  <Box position="absolute" inset="0">
+                    <EmptyState
+                      type="delegates"
+                      title="No delegates yet"
+                      minHeight="300px"
+                    />
+                  </Box>
+                )}
+                {delegates.isLoading && allDelegates.length && (
+                  <>
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <Box key={index} padding="6" bg="#fff" borderRadius="8px">
+                        <SkeletonCircle size="10" />
+                        <SkeletonText
+                          mt="4"
+                          noOfLines={6}
+                          spacing="4"
+                          skeletonHeight="2"
+                        />
+                      </Box>
+                    ))}
+                  </>
+                )}
+              </>
             </SimpleGrid>
-            <Box mt={3}>
-              {delegates.isLoading && allDelegates.length && (
-                <DelegatesSkeleton />
-              )}
-            </Box>
           </InfiniteScroll>
         )}
       </Box>

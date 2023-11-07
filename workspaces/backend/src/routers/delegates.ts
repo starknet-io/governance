@@ -399,7 +399,7 @@ export const delegateRouter = router({
         query.orderBy(orderBy, desc(delegates.id));
 
         if (opts.input.limit !== undefined && opts.input.offset !== undefined) {
-          query = query.offset(opts.input.offset * opts.input.limit);
+          query = query.offset(opts.input.offset);
           query = query.limit(opts.input.limit);
         }
 
