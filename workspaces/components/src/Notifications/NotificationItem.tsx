@@ -73,12 +73,19 @@ export const NotificationItem = ({
           {avatar ? (
             <Avatar width={8} height={8} src={avatar} />
           ) : (
-            <Indenticon size={32} address={notification?.user?.address} />
+            <Indenticon size={32} address={notification?.user?.address?.toLowerCase()} />
           )}
-          <Icon
-            as={isProposal ? NotificationVotingProposalIcon : CommentIcon}
-            boxSize="5"
-          />
+          <Box color="content.support.default">
+            <Icon
+              as={() =>
+                isProposal ? (
+                  <NotificationVotingProposalIcon boxSize="20px" />
+                ) : (
+                  <CommentIcon color="currentColor" boxSize="20px" />
+                )
+              }
+            />
+          </Box>
         </Flex>
         <Flex direction="column" alignItems="flex-start" flex="1">
           <Box display="inline-block">

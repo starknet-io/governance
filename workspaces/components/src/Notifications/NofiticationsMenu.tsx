@@ -86,7 +86,7 @@ export const NotificationsMenu = ({
   const handleConfirmUnsubscribe = async () => {
     try {
       await unsubscribeToEmail.mutateAsync({
-        email: email.data as string
+        email: email.data as string,
       });
       await email.refetch();
       onCloseConfirmUnsubscribe();
@@ -103,7 +103,7 @@ export const NotificationsMenu = ({
       : populatedNotifications.filter((notification) => !notification.read);
   }, [isAllSelected, populatedNotifications]);
 
-  console.log(email?.data)
+  console.log(email?.data);
 
   return (
     <>
@@ -184,7 +184,12 @@ to receive notifications`}
             />
           )}
           <Box top="0px" position="relative">
-            <MenuList h="500px" overflowY="scroll" w={"400px"}>
+            <MenuList
+              h="500px"
+              overflowY="scroll"
+              w={"400px"}
+              borderRadius="8px"
+            >
               <Flex
                 mx={4}
                 py={4}
@@ -202,7 +207,7 @@ to receive notifications`}
                   >
                     <Flex gap={2}>
                       <EmailSubscribeIcon color="content.default.default" />
-                      <div>Subscribed</div>
+                      <div>Unsubscribe</div>
                     </Flex>
                   </Button>
                 ) : (
