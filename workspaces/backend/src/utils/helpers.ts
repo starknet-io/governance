@@ -38,3 +38,20 @@ export const getUserByJWT = async (token: string): Promise<User | undefined> => 
   const user = await db.select().from(users).where(eq(users.address, walletAddress.toLowerCase()));
   return user[0];
 }
+
+export const formatTimestamp = (unixTimestamp: number) => {
+  const date = new Date(unixTimestamp * 1000);
+
+  // You can adjust the format here by using the get methods
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth() is zero-indexed
+  const year = date.getFullYear();
+
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+
+  // Format: YYYY-MM-DD HH:mm:ss
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+

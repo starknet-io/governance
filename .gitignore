@@ -7,6 +7,7 @@ node_modules
 
 # yarn
 .pnp.*
+.DS_Store
 .yarn/*
 !.yarn/patches
 !.yarn/plugins

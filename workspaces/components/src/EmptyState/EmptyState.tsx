@@ -6,6 +6,7 @@ import noDelegates from "./assets/no-delegates-found.svg";
 import noPastComments from "./assets/no-past-comments-yet.svg";
 import noPastVotes from "./assets/no-past-votes-yet.svg";
 import noPosts from "./assets/no-posts.svg";
+import noNotifications from "./assets/no-past-notifications.svg";
 import pageNotFound from "./assets/page-not-found.svg";
 type Props = {
   title?: string;
@@ -16,6 +17,7 @@ type Props = {
     | "delegates"
     | "proposals"
     | "comments"
+    | "notifications"
     | "votesCast"
     | "pageNotFound"
     | null;
@@ -51,6 +53,9 @@ export const EmptyState = ({
       {type === "proposals" && <Image src={noVotingProps} width="320px" />}
       {type === "votesCast" && <Image src={noPastVotes} width="250px" />}
       {type === "pageNotFound" && <Image src={pageNotFound} width="250px" />}
+      {type === "notifications" && (
+        <Image src={noNotifications} width="200px" />
+      )}
 
       <Text
         color="#4A4A4F"

@@ -74,7 +74,7 @@ const focusStyles = {
   },
 };
 
-function daysAgo(date: Date): string {
+export function daysAgo(date: Date): string {
   const now = new Date();
   const differenceInMs = now.getTime() - date.getTime();
 

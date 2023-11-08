@@ -11,6 +11,7 @@ import { eq } from 'drizzle-orm';
 import { getUserByJWT } from './utils/helpers';
 import multer from 'multer';
 import { delegateRouter } from "./routers/delegates";
+import {notificationsRouter} from "./routers/notifications";
 
 dotenv.config();
 
@@ -44,6 +45,10 @@ app.use("/trpc", upload.single('file'), createExpressMiddleware({
 }));
 app.use('/api/delegates', createExpressMiddleware({
   router: delegateRouter,
+  createContext
+}));
+app.use('/api/notifications', createExpressMiddleware({
+  router: notificationsRouter,
   createContext
 }));
 

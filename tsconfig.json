@@ -6,6 +6,9 @@
       "path": "./workspaces/backend"
     },
     {
+      "path": "./workspaces/snapshot-webhook"
+    },
+    {
       "path": "./workspaces/frontend"
     },
     {
