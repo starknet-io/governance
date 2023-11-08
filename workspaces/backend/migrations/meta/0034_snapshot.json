@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "a9ea8b2d-ac43-400c-9d9b-fbb8df34ea4c",
+  "id": "17c2c6c7-5eaa-42c6-9844-6df68437411e",
   "prevId": "75e5fd80-ea6f-4172-b591-e8f709230a89",
   "tables": {
     "comments": {
@@ -1001,6 +1001,56 @@
         "snips_userId_users_id_fk": {
           "name": "snips_userId_users_id_fk",
           "tableFrom": "snips",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "subscribers": {
+      "name": "subscribers",
+      "schema": "",
+      "columns": {
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "subscribers_userId_users_id_fk": {
+          "name": "subscribers_userId_users_id_fk",
+          "tableFrom": "subscribers",
           "tableTo": "users",
           "columnsFrom": [
             "userId"
