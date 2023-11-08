@@ -210,8 +210,8 @@ export const councilsRouter = router({
   deleteCouncil: publicProcedure
     .input(
       councilInsertSchema
-        .required({ id: true, slug: true })
-        .pick({ id: true, slug: true }),
+        .required({ id: true })
+        .pick({ id: true }),
     )
     .mutation(async (opts) => {
       const userRole = opts.ctx.user?.role;
