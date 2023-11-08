@@ -134,10 +134,18 @@ export const delegateRouter = router({
       }),
     )
     .query(async (opts) => {
-      const delegateWithAuthor = await db.query.delegates.findFirst({
+      // Fetch the delegate with author and custom agreement
+      const delegate = await db.query.delegates.findFirst({
         where: eq(delegates.id, opts.input.id),
         with: {
           author: true,
+        },
+      });
+
+      const delegatesVotingInfo = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+        with: {
+          delegateVotes: true,
         },
       });
 
@@ -148,17 +156,25 @@ export const delegateRouter = router({
         },
       });
 
-      if (!delegateWithAuthor || !delegateWithCustomAgreement) {
+      if (!delegate) {
         throw new Error('Delegate not found');
       }
 
-      // Merge the results
-      const delegate = {
-        ...delegateWithAuthor,
-        customAgreement: delegateWithCustomAgreement.customAgreement,
-      };
+      // Now fetch the comments related to the delegate's user ID
+      const commentsRelatedToDelegate = await db.query.comments.findMany({
+        where: eq(comments.userId, delegate.userId),
+        with: {
+          author: true, // Assuming that author includes user details you want to fetch
+        },
+      });
 
-      return delegate;
+      // Return the delegate with the comments and other related info
+      return {
+        ...delegate,
+        comments: commentsRelatedToDelegate,
+        customAgreement: delegateWithCustomAgreement?.customAgreement,
+        votingInfo: delegatesVotingInfo?.delegateVotes || {},
+      };
     }),
 
   getDelegateComments: publicProcedure
@@ -202,7 +218,11 @@ export const delegateRouter = router({
       });
 
       if (!delegate) throw new Error('Delegate not found');
-      if (userRole !== 'admin' && userRole !== 'superadmin' && userRole !== 'moderator') {
+      if (
+        userRole !== 'admin' &&
+        userRole !== 'superadmin' &&
+        userRole !== 'moderator'
+      ) {
         if (delegate.userId !== userId) throw new Error('Unauthorizeds');
       }
       // Determine the agreement value
@@ -467,7 +487,11 @@ export const delegateRouter = router({
 
       if (!delegate) throw new Error('Delegate not found');
 
-      if (userRole !== 'admin' && userRole !== 'superadmin' && userRole !== 'moderator') {
+      if (
+        userRole !== 'admin' &&
+        userRole !== 'superadmin' &&
+        userRole !== 'moderator'
+      ) {
         if (delegate.userId !== userId) throw new Error('Unauthorized');
       }
 
