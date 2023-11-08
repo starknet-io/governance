@@ -59,6 +59,7 @@ export async function send(event, _proposal, _subscribersAddresses) {
     author: _proposal.author,
     title: _proposal.title,
     start: _proposal.start,
+    end: _proposal.end,
     id: _proposal.id,
     scores: _proposal.scores,
     votes: _proposal.votes,

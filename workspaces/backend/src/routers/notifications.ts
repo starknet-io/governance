@@ -7,12 +7,13 @@ import { users } from '../db/schema/users';
 import { notificationUsers } from '../db/schema/notificationUsers';
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
-import { marked } from 'marked';
+import {formatTimestamp} from "../utils/helpers";
 const mailgun = new Mailgun(formData);
 const mg = mailgun.client({
   username: 'api',
   key: process.env.MAILGUN_API_KEY!,
 });
+
 
 export const notificationsRouter = router({
   getAll: publicProcedure.query(async () => {
@@ -35,9 +36,9 @@ export const notificationsRouter = router({
         author,
         title,
         start,
+        end,
         id: proposalID,
         scores,
-        body,
       } = opts.input.proposal;
 
       // Create a message for the notification
@@ -104,26 +105,30 @@ export const notificationsRouter = router({
         // Now send emails to subscribers
         const subscribers = await db.query.subscribers.findMany();
         const emailList = subscribers.map((subscriber) => subscriber.email);
-        const htmlBody = body ? marked(body) : '';
 
         const mailgunDomain = process.env.MAILGUN_DOMAIN || ""
         const withEmailMailgunDomain = `@${mailgunDomain}`
+        const formattedStart = formatTimestamp(start)
+        const formattedEnd = formatTimestamp(end)
 
         for (const email of emailList) {
           console.log('SENDING EMAIL TO ', email);
-          if (event === 'proposal/start') {
+          if (event === 'proposal/start' || event === 'proposal/created') {
+            const template = event === 'proposal/start' ? 'notification-template' : 'new proposal created'
+            const subject = event === 'proposal/start' ? 'Voting proposal started' : 'New voting proposal created'
             await mg.messages.create(
               mailgunDomain,
               {
                 from: `Governance Hub <me${withEmailMailgunDomain}>`,
                 to: email,
-                subject: 'New voting proposal started',
-                template: 'notification-template',
+                subject: subject,
+                template: template,
                 text: message,
                 'h:X-Mailgun-Variables': JSON.stringify({
                   title: title,
-                  body: htmlBody,
                   url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                  startTime: formattedStart,
+                  endTime: formattedEnd,
                 }),
               },
             );
@@ -157,7 +162,6 @@ export const notificationsRouter = router({
                 'h:X-Mailgun-Variables': JSON.stringify({
                   title: title,
                   url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
-                  body: htmlBody,
                   amountFor,
                   amountAgainst,
                   amountAbstain,

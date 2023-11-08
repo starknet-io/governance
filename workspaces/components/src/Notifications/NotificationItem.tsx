@@ -20,6 +20,7 @@ type NotificationItemProps = {
       ensName: string;
       profileImage?: string;
       ensAvatar?: string;
+      username?: string;
     };
     type: string;
     title: string;
@@ -36,7 +37,7 @@ export const NotificationItem = ({
   onMarkNotificationRead,
 }: NotificationItemProps) => {
   const formattedAddress =
-    notification?.user?.ensName || truncateAddress(notification?.user?.address);
+    notification?.user?.username || notification?.user?.ensName || truncateAddress(notification?.user?.address);
   const isProposal = notification.type.includes("proposal");
   const isComment = notification.type.includes("comment");
   const formattedType = () => {
