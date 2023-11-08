@@ -1,8 +1,6 @@
 import {
   Box,
   Button,
-  ContentContainer,
-  DeletionDialog,
   Flex,
   FormControl,
   FormLabel,
@@ -15,15 +13,14 @@ import {
   Text,
   useDisclosure,
   PencilIcon,
-  TrashIcon,
-  FileUploader,
-  ProfileImage,
-  Checkbox,
   Banner,
   InfoModal,
   SuccessIcon,
+  WarningIcon,
 } from "@yukilabs/governance-components";
-import { Controller, useForm } from "react-hook-form";
+import { gql } from "src/gql";
+import { useQuery } from "@apollo/client";
+import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import {
   User,
@@ -34,7 +31,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { DocumentProps, ROLES } from "src/renderer/types";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
-import { useFileUpload } from "src/hooks/useFileUpload";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { ethers } from "ethers";
@@ -44,26 +40,112 @@ import {
   BannedIcon,
   RemovedIcon,
 } from "@yukilabs/governance-components/src/Icons";
+import snapshot from "@snapshot-labs/snapshot.js";
+
+const hub = "https://hub.snapshot.org"; // or https://testnet.snapshot.org for testnet
+const client = new snapshot.Client712(hub);
+import { Web3Provider } from "@ethersproject/providers";
 
 const userRoleValues = userRoleEnum.enumValues;
+
+const GET_SPACE_QUERY = gql(`
+  query GetSpaceQuery(
+    $space: String!
+  ) {
+    space(id: $space) {
+      name
+      about
+      network
+      symbol
+      website
+      private
+      admins
+      moderators
+      members
+      categories
+      plugins
+      children {
+        name
+      }
+      voting {
+        hideAbstain
+      }
+      strategies {
+        name
+        network
+        params
+      }
+      validation {
+        name
+        params
+      }
+      voteValidation {
+        name
+        params
+      }
+      filters {
+        minScore
+        onlyMembers
+      }
+      treasuries {
+        name
+        address
+        network
+      }
+    }
+  }
+`);
 
 export function Page() {
   const {
     handleSubmit: handleAddSubmit,
     register: addRegister,
+    reset: resetAddUserForm,
     formState: { errors: addErrors, isValid: isAddValid },
   } = useForm<RouterInput["users"]["addRoles"]>();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageChanged, setImageChanged] = useState<boolean>(false);
-  const editUser = trpc.users.editUser.useMutation();
   const banUser = trpc.users.banUser.useMutation();
   const [isBanUserLoading, setBanUserLoading] = useState(false);
+  const [editUserRole, setEditUserRole] = useState("");
   const [editError, setEditError] = useState("");
-  const utils = trpc.useContext();
-  const { handleUpload } = useFileUpload();
+  const [addError, setAddError] = useState("");
+  const [syncError, setSyncError] = useState("");
+  const {
+    isOpen: isSyncingSuccessOpen,
+    onOpen: onSyncingSuccessOpen,
+    onClose: onSyncingSuccessClose,
+  } = useDisclosure();
+  const {
+    isOpen: isSyncingErrorOpen,
+    onOpen: onSyncingErrorOpen,
+    onClose: onSyncingErrorClose,
+  } = useDisclosure();
 
   const { user } = usePageContext();
 
+  const { data: space } = useQuery(GET_SPACE_QUERY, {
+    variables: {
+      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+    },
+  });
+
+  const getEditRolesBasedOnUserRole = () => {
+    if (!user?.role) {
+      return [];
+    }
+    const roles = [];
+    if ([ROLES.SUPERADMIN, ROLES.MODERATOR, ROLES.ADMIN].includes(user?.role)) {
+      roles.push(ROLES.USER, ROLES.AUTHOR);
+    }
+    if ([ROLES.SUPERADMIN, ROLES.ADMIN].includes(user?.role)) {
+      roles.push(ROLES.MODERATOR);
+    }
+    if ([ROLES.SUPERADMIN].includes(user?.role)) {
+      roles.push(ROLES.ADMIN);
+    }
+    return roles;
+  };
   const {
     control,
     handleSubmit: handleEditSubmit,
@@ -101,7 +183,11 @@ export function Page() {
   const selectRef = useRef<HTMLSelectElement>(null);
 
   const addRoles = trpc.users.addRoles.useMutation();
+  const editRoles = trpc.users.editRoles.useMutation();
   const users = trpc.users.getAll.useQuery();
+
+  const web3 =
+    typeof window !== "undefined" ? new Web3Provider(window.ethereum) : null;
 
   useEffect(() => {
     if (!imageChanged) {
@@ -109,16 +195,80 @@ export function Page() {
     }
   }, [user, imageChanged]);
 
+  const tryToUpdateSpace = async () => {
+    if (web3 && space?.space) {
+      const [account] = await web3.listAccounts();
+      console.log(space);
+      const spaceToEdit = {
+        ...space.space,
+      };
+      const allUsers = users?.data || [];
+      if ([ROLES.SUPERADMIN].includes(user?.role)) {
+        const superAdmin = allUsers.find(
+          (user) => user.role === ROLES.SUPERADMIN,
+        );
+        spaceToEdit.admins = allUsers
+          .filter((user) => user.role === ROLES.ADMIN)
+          .map((user) => user.address);
+        spaceToEdit.admins.unshift(superAdmin?.address);
+      }
+      if ([ROLES.SUPERADMIN, ROLES.ADMIN].includes(user?.role)) {
+        spaceToEdit.moderators = allUsers
+          .filter((user) => user.role === ROLES.MODERATOR)
+          .map((user) => user.address);
+      }
+      if ([ROLES.SUPERADMIN, ROLES.ADMIN, ROLES.AUTHOR].includes(user?.role)) {
+        spaceToEdit.members = allUsers
+          .filter((user) => user.role === ROLES.AUTHOR)
+          .map((user) => user.address);
+      }
+
+      function removeTypename<T>(obj: T): T {
+        if (Array.isArray(obj)) {
+          return obj.map((item) => removeTypename(item)) as any;
+        } else if (obj !== null && typeof obj === "object") {
+          const newObj: Record<string, unknown> = {};
+          for (const key in obj) {
+            if (key !== "__typename") {
+              newObj[key] = removeTypename(
+                (obj as Record<string, unknown>)[key],
+              );
+            }
+          }
+          return newObj as T;
+        }
+        return obj as T;
+      }
+      const cleanedSpace = removeTypename(spaceToEdit);
+      console.log(cleanedSpace);
+
+      try {
+        const receipt = await client.space(web3, account, {
+          space: "robwalsh.eth",
+          settings: JSON.stringify(cleanedSpace),
+        });
+        onSyncingSuccessOpen();
+      } catch (err) {
+        setSyncError(err.error_description || "An error occurred");
+        onSyncingErrorOpen();
+      }
+    }
+  };
+
   const onSubmitAdd = handleAddSubmit(async (data) => {
+    setAddError("");
     try {
       await addRoles.mutateAsync(data, {
-        onSuccess: () => {
-          users.refetch();
+        onSuccess: async () => {
+          await users.refetch();
+          resetAddUserForm();
         },
       });
+      setAddError("");
     } catch (error) {
       // Handle error
       console.log(error);
+      setAddError(error?.message || "An error occurred");
     }
   });
 
@@ -126,12 +276,11 @@ export function Page() {
     try {
       const data = {
         address: selectedUser?.address as string,
-        role: (values?.role?.value || selectedUser?.role || "user") as string,
+        role: (editUserRole || selectedUser?.role || "user") as string,
       };
-      console.log(data);
-      await addRoles.mutateAsync(data, {
-        onSuccess: () => {
-          users.refetch();
+      await editRoles.mutateAsync(data, {
+        onSuccess: async () => {
+          await users.refetch();
           onEditClose();
         },
       });
@@ -195,10 +344,7 @@ export function Page() {
   const handleEditOpen = (user: User) => {
     setSelectedUser(user);
     setEditError("");
-    setEditValue("role", {
-      label: user.role,
-      value: user.role,
-    });
+    setEditUserRole(user?.role || "user");
     onEditOpen();
   };
 
@@ -211,21 +357,6 @@ export function Page() {
       selectRef.current.value = "user";
     }
   };
-
-  // const handleSave = () => {
-  //   if (!user) return;
-  //   editUser.mutateAsync(
-  //     {
-  //       id: user.id,
-  //       profileImage: imageUrl ?? "none",
-  //     },
-  //     {
-  //       onSuccess: () => {
-  //         utils.auth.currentUser.invalidate();
-  //       },
-  //     },
-  //   );
-  // };
 
   const isValidAddress = (address: string) => {
     try {
@@ -240,10 +371,12 @@ export function Page() {
     return (users?.data || []).sort((a, b) => {
       // Define the role priorities
       const rolePriority = {
-        admin: 0,
-        moderator: 1,
-        // Assuming other roles are less prioritized
-        other: 2,
+        superadmin: 0,
+        admin: 1,
+        moderator: 2,
+        author: 3,
+        user: 4,
+        other: 5,
       };
 
       // Determine the priority values for a and b based on their roles
@@ -267,9 +400,7 @@ export function Page() {
       return aValue - bValue;
     });
   }, [users?.data]);
-  const [selectedRole, setSelectedRole] = useState<string>(
-    selectedUser?.role || "user",
-  );
+  const editableRoles = getEditRolesBasedOnUserRole();
   return (
     <FormLayout>
       <InfoModal
@@ -352,6 +483,33 @@ export function Page() {
           Close
         </Button>
       </InfoModal>
+      <InfoModal
+        isOpen={isSyncingSuccessOpen}
+        onClose={onSyncingSuccessClose}
+        title={`Successfully synced roles with snapshot`}
+      >
+        <Flex justifyContent="center">
+          <Icon as={SuccessIcon} boxSize="104px" />
+        </Flex>
+        <Button variant="primary" onClick={onSyncingSuccessClose}>
+          Close
+        </Button>
+      </InfoModal>
+      <InfoModal
+        isOpen={isSyncingErrorOpen}
+        onClose={onSyncingErrorClose}
+        title={`An error occurred while syncing roles with snapshot`}
+      >
+        <Flex justifyContent="center">
+          <Icon as={WarningIcon} boxSize="104px" />
+        </Flex>
+        <Flex alignItems="center" justifyContent="center" width="100%">
+          <Text variant="mediumStrong">{syncError}</Text>
+        </Flex>
+        <Button variant="primary" onClick={onSyncingErrorClose}>
+          Close
+        </Button>
+      </InfoModal>
       <Box
         display="flex"
         flexDirection={{ base: "column", md: "column" }}
@@ -372,10 +530,13 @@ export function Page() {
               size="sm"
               {...editRegister("role")}
               ref={selectRef}
-              value={selectedUser?.role}
-              onChange={(e) => setEditValue("role", e.target.value)}
+              value={editUserRole}
+              onChange={(e) => {
+                console.log(e.target.value);
+                setEditUserRole(e.target.value);
+              }}
             >
-              {userRoleValues.map((option) => (
+              {editableRoles.map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -389,7 +550,11 @@ export function Page() {
             </Box>
           )}
         </FormModal>
-        {!hasPermission(user?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+        {!hasPermission(user?.role, [
+          ROLES.ADMIN,
+          ROLES.SUPERADMIN,
+          ROLES.MODERATOR,
+        ]) ? (
           <></>
         ) : (
           <Box>
@@ -425,7 +590,7 @@ export function Page() {
                       size="sm"
                       {...addRegister("role", { required: true })}
                     >
-                      {userRoleValues.map((option) => (
+                      {editableRoles.map((option) => (
                         <option key={option} value={option}>
                           {option}
                         </option>
@@ -433,6 +598,11 @@ export function Page() {
                     </Select>
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
+                  {addError && addError.length && (
+                    <Box mt={4}>
+                      <Banner label={addError} type="error" variant="error" />
+                    </Box>
+                  )}
                   <Flex justifyContent="flex-end">
                     <Button type="submit" variant="primary">
                       Add
@@ -446,6 +616,11 @@ export function Page() {
               <Heading variant="h3" mb="24px" fontSize="28px">
                 Users
               </Heading>
+              {[ROLES.SUPERADMIN, ROLES.ADMIN].includes(user?.role) ? (
+                <Button onClick={tryToUpdateSpace} variant="primary">
+                  Sync with Snapshot
+                </Button>
+              ) : null}
               <ListRow.Container>
                 {sortedUsersList.map((data) => (
                   <ListRow.Root key={data.id}>
@@ -463,7 +638,11 @@ export function Page() {
                       {data.banned ? <ListRow.Status status="banned" /> : null}
                     </Box>
                     <Box flex="1" justifyContent="flex-end" display="flex">
-                      {data.role !== "moderator" && data.role !== "admin" ? (
+                      {![
+                        ROLES.MODERATOR,
+                        ROLES.ADMIN,
+                        ROLES.SUPERADMIN,
+                      ].includes(data?.role) ? (
                         <IconButton
                           aria-label="Delete user role"
                           icon={<RemovedIcon />}
@@ -471,14 +650,18 @@ export function Page() {
                           onClick={() => handleBanUser(data)}
                         />
                       ) : (
-                        <IconButton variant="ghost" disabled icon={null} />
+                        <Box py={6} />
                       )}
-                      <IconButton
-                        aria-label="Edit user role"
-                        icon={<PencilIcon />}
-                        variant="ghost"
-                        onClick={() => handleEditOpen(data)}
-                      />
+                      {editableRoles.includes(data.role) ? (
+                        <IconButton
+                          aria-label="Edit user role"
+                          icon={<PencilIcon />}
+                          variant="ghost"
+                          onClick={() => handleEditOpen(data)}
+                        />
+                      ) : (
+                        <Box py={6} />
+                      )}
                     </Box>
                   </ListRow.Root>
                 ))}

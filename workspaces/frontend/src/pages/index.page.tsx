@@ -125,6 +125,7 @@ export function Page() {
         <LearnBanner />
         <Delegates
           showFilers={false}
+          disableFetch={true}
           transformData={(data) => data.slice(0, 6)}
           showAllDeligatesLink={true}
         />

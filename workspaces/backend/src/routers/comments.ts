@@ -277,7 +277,7 @@ export const commentsRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async (opts) => {
       const user = opts.ctx.user;
-      if (user?.role !== 'admin' && user?.role !== 'moderator') {
+      if (user?.role !== 'admin' && user?.role !== 'superadmin' && user?.role !== 'moderator') {
         throw new Error('Permission denied: Only admins can delete comments');
       }
 
