@@ -153,7 +153,9 @@ export function Page() {
             dropdownChildren={
               hasPermission(loggedUser?.role, [
                 ROLES.ADMIN,
+                ROLES.SUPERADMIN,
                 ROLES.MODERATOR,
+                ROLES.AUTHOR,
               ]) ? (
                 <MenuItem as="a" href={`/councils/edit/${council?.slug}`}>
                   Edit

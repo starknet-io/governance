@@ -4491,7 +4491,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/providers@npm:5.7.2, @ethersproject/providers@npm:^5.6.8":
+"@ethersproject/providers@npm:5.7.2, @ethersproject/providers@npm:^5.6.8, @ethersproject/providers@npm:^5.7.2":
   version: 5.7.2
   resolution: "@ethersproject/providers@npm:5.7.2"
   dependencies:
@@ -7201,9 +7201,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@snapshot-labs/snapshot.js@npm:^0.4.106":
-  version: 0.4.110
-  resolution: "@snapshot-labs/snapshot.js@npm:0.4.110"
+"@snapshot-labs/snapshot.js@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@snapshot-labs/snapshot.js@npm:0.8.0"
   dependencies:
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ethersproject/abi": ^5.6.4
@@ -7219,7 +7219,7 @@ __metadata:
     cross-fetch: ^3.1.6
     json-to-graphql-query: ^2.2.4
     lodash.set: ^4.3.2
-  checksum: a4fd4658b83648b824cf8ec6dcda9a329ab46dbc7a733e999fc799bf394fd86301f836e6f15dbb89ad1cfc075ce9f1b8a9f492b03c2d56cfe7641d9d87fbba79
+  checksum: 89d1dae29adffd52500558b325630d5b68d63ee5c25a8d089c50edc538274d3ee896503fd857a24bfc6a9dc841d67e3adc586fe05d773af296f225e094f297bd
   languageName: node
   linkType: hard
 
@@ -10374,13 +10374,14 @@ __metadata:
     "@dynamic-labs/wagmi-connector": 0.18.100-viem.24
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
+    "@ethersproject/providers": ^5.7.2
     "@graphql-codegen/cli": 4.0.1
     "@graphql-codegen/client-preset": 4.1.0
     "@graphql-codegen/introspection": 4.0.0
     "@graphql-codegen/typescript": ^4.0.1
     "@graphql-codegen/typescript-resolvers": ^4.0.1
     "@hookform/resolvers": ^3.3.1
-    "@snapshot-labs/snapshot.js": ^0.4.106
+    "@snapshot-labs/snapshot.js": ^0.8.0
     "@tanstack/react-query": ^4.32.0
     "@trpc/client": ^10.36.0
     "@trpc/react-query": ^10.36.0
