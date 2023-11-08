@@ -173,6 +173,7 @@ export type DelegatesProps = {
   showFilers?: boolean;
   transformData?: (data: any) => any;
   showAllDeligatesLink?: boolean;
+  disableFetch?: boolean;
 };
 
 const transformDataDefault = (data: any) => {
@@ -182,6 +183,7 @@ const transformDataDefault = (data: any) => {
 export function Delegates({
   showFilers = true,
   showAllDeligatesLink = false,
+  disableFetch = false,
   transformData = transformDataDefault,
 }: DelegatesProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -601,7 +603,7 @@ export function Delegates({
           <InfiniteScroll
             dataLength={allDelegates.length || 0} // This is important field to render the next data
             next={fetchMoreData} // A function which calls to fetch the next data
-            hasMore={hasMoreDelegates} // Boolean stating whether there are more data to load
+            hasMore={hasMoreDelegates && !disableFetch} // Boolean stating whether there are more data to load
             loader={null} // Loader to show before loading next set of data
             scrollThreshold={0.95} // adjust this value
           >
