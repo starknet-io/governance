@@ -58,6 +58,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.2",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-streaming": "^0.3.14",
     "react-use": "^17.4.0",
     "superjson": "^1.13.1",

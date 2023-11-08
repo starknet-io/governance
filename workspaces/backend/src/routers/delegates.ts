@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import { eq, and, isNotNull, or, desc, sql } from 'drizzle-orm';
+import { eq, and, isNotNull, or, desc, sql, gte } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -318,6 +318,8 @@ export const delegateRouter = router({
         searchQuery: z.string().optional(),
         filters: z.array(z.string()).optional(),
         sortBy: z.string().optional(),
+        offset: z.number().optional(),
+        limit: z.number().optional(),
       }),
     )
     .query(async (opts) => {
@@ -346,16 +348,64 @@ export const delegateRouter = router({
         ) || [];
 
       try {
-        const foundDelegates: any = await db
+        let interestsParsed = ``;
+        appliedInterests.forEach(
+          (interest) => (interestsParsed += `"${interest}", `),
+        );
+        if (interestsParsed.length) {
+          interestsParsed = interestsParsed.slice(0, -2);
+        }
+        const interests = JSON.stringify(appliedInterests);
+
+        let query = db
           .select()
           .from(delegates)
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
-          .leftJoin(users, eq(users.id, delegates.userId))
-          .leftJoin(
-            customDelegateAgreement,
-            eq(customDelegateAgreement.delegateId, delegates.id),
-          )
-          .orderBy(orderBy);
+          .leftJoin(users, eq(users.id, delegates.userId));
+
+        if (appliedSpecialFilters.includes('1_or_more_comments')) {
+          query = query
+            .innerJoin(comments, eq(comments.userId, users.id))
+            .where(isNotNull(comments.id));
+        }
+
+        if (appliedSpecialFilters.includes('delegate_agreement')) {
+          query = query
+            .innerJoin(
+              customDelegateAgreement,
+              eq(customDelegateAgreement.delegateId, delegates.id),
+            )
+            .where(
+              or(
+                isNotNull(customDelegateAgreement.delegateId),
+                eq(delegates.confirmDelegateAgreement, true),
+              ),
+            );
+        }
+
+        if (interests) {
+          query.where(
+            sql.raw(`delegates.interests::jsonb @> '${interests}'::jsonb`),
+          );
+        }
+
+        if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
+          query = query.where(gte(delegateVotes.votingPower, 1000000));
+        }
+        if (appliedSpecialFilters.includes('1_or_more_votes')) {
+          query = query.where(gte(delegateVotes.totalVotes, 1));
+        }
+
+        query.orderBy(orderBy, desc(delegates.id));
+
+        if (opts.input.limit !== undefined && opts.input.offset !== undefined) {
+          query = query.offset(opts.input.offset);
+          query = query.limit(opts.input.limit);
+        }
+
+        //console.log(query.toSQL());
+
+        const foundDelegates: any = await query.execute();
 
         // Since we are using joins instead of with: [field]: true, we need to map to corresponding data format
         if (foundDelegates && foundDelegates.length) {
@@ -368,58 +418,7 @@ export const delegateRouter = router({
               foundDelegates.confirmDelegateAgreement
             ),
           }));
-
-          // Apply filters now
-          if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
-            filteredDelegates = filteredDelegates.filter(
-              (delegate: any) => delegate.votingInfo.votingPower > 1000000,
-            );
-          }
-
-          if (appliedSpecialFilters.includes('1_or_more_votes')) {
-            filteredDelegates = filteredDelegates.filter(
-              (delegate: any) => delegate.votingInfo.totalVotes > 1,
-            );
-          }
-
-          if (appliedSpecialFilters.includes('delegate_agreement')) {
-            filteredDelegates = filteredDelegates.filter(
-              (delegate: any) => delegate.delegateAgreement,
-            );
-          }
-
-          // Filter out the delegates based on the comment count
-          if (appliedSpecialFilters.includes('1_or_more_comments')) {
-            // Fetch the count of comments for each delegate
-            const commentCounts: any = await db
-              .select({
-                delegateId: delegates.id,
-                count: sql<number>`count(${comments.id})`,
-              })
-              .from(delegates)
-              .leftJoin(comments, eq(comments.userId, delegates.userId))
-              .groupBy(delegates.id);
-
-            // Convert this to a dictionary/map for easier lookup
-            const commentCountMap = commentCounts.reduce(
-              (acc: { [key: string]: number }, cur: any) => {
-                acc[cur.delegateId] = cur.count;
-                return acc;
-              },
-              {},
-            );
-            filteredDelegates = filteredDelegates.filter(
-              (delegate: any) => commentCountMap[delegate.id] >= 1,
-            );
-          }
-
-          if (appliedInterests.length) {
-            filteredDelegates = filteredDelegates.filter((delegate: any) =>
-              appliedInterests.every((interest) =>
-                delegate.interests.includes(interest),
-              ),
-            );
-          }
+          //console.log(filteredDelegates.map((del) => del.author.ensName));
 
           const shuffleArray = (array: any[]) => {
             for (let i = array.length - 1; i > 0; i--) {
@@ -446,6 +445,8 @@ export const delegateRouter = router({
           }
 
           return filteredDelegates;
+        } else {
+          return [];
         }
       } catch (error) {
         console.log(error);
