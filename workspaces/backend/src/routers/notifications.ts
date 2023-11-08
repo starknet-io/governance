@@ -106,13 +106,16 @@ export const notificationsRouter = router({
         const emailList = subscribers.map((subscriber) => subscriber.email);
         const htmlBody = body ? marked(body) : '';
 
+        const mailgunDomain = process.env.MAILGUN_DOMAIN || ""
+        const withEmailMailgunDomain = `@${mailgunDomain}`
+
         for (const email of emailList) {
           console.log('SENDING EMAIL TO ', email);
           if (event === 'proposal/start') {
             await mg.messages.create(
-              'sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org',
+              mailgunDomain,
               {
-                from: 'Governance Hub <me@sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org>',
+                from: `Governance Hub <me${withEmailMailgunDomain}>`,
                 to: email,
                 subject: 'New voting proposal started',
                 template: 'notification-template',
@@ -144,9 +147,9 @@ export const notificationsRouter = router({
               calculatePercentage(scores[2], totalVoted) || 0;
 
             await mg.messages.create(
-              'sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org',
+              mailgunDomain,
               {
-                from: 'Governance Hub <me@sandbox0d5b5247c2314f44b16a4a8d668931a4.mailgun.org>',
+                from: `Governance Hub <me${withEmailMailgunDomain}>`,
                 to: email,
                 subject: 'Voting proposal ended',
                 template: 'voting proposal ended',
