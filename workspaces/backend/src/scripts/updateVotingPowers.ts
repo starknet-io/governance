@@ -57,19 +57,6 @@ const sortScoresDescending = (combinedScores) => {
   return sortedScores;
 };
 
-// Function to aggregate scores from multiple strategies
-const aggregateStrategyScores = (strategiesScores) => {
-  return strategiesScores.reduce((acc, strategyScores) => {
-    Object.entries(strategyScores).forEach(([address, score]) => {
-      if (!acc[address]) {
-        acc[address] = 0;
-      }
-      acc[address] += score;
-    });
-    return acc;
-  }, {});
-};
-
 dotenv.config();
 const endpoint = `https://hub.snapshot.org/graphql`;
 
