@@ -230,7 +230,7 @@ export const councilsRouter = router({
       checkUserRole(userRole);
       await db.delete(councils).where(eq(councils.id, opts.input.id)).execute();
       await Algolia.deleteObjectFromIndex({
-        refID: opts.input.slug || opts.input.id,
+        refID: opts.input.id,
         type: 'council',
       });
     }),

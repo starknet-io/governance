@@ -169,6 +169,8 @@ const sortByOptions = {
   ],
 };
 
+const LIMIT = 12
+
 export type DelegatesProps = {
   showFilers?: boolean;
   transformData?: (data: any) => any;
@@ -261,16 +263,15 @@ export function Delegates({
     defaultValue: delegateFilters.defaultValue,
     onSubmit: (filters) => {
       setAllDelegates([]);
-      setFiltersState({ ...filtersState, filters, limit: 12, offset: 0 });
+      setFiltersState({ ...filtersState, filters, limit: LIMIT, offset: 0 });
       setHasMoreDelegates(true);
     },
-
   });
 
   const [filtersState, setFiltersState] = useState({
     filters: [] as string[],
     searchQuery,
-    limit: 12,
+    limit: LIMIT,
     offset: 0,
     sortBy,
   });
@@ -300,13 +301,16 @@ export function Delegates({
 
   const delegates =
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
-
   const { user } = usePageContext();
+  const userDelegate = trpc.users.isDelegate.useQuery({
+    userId: user?.id || "",
+  });
+
   const handleResetFilters = () => {
     state.onReset();
     setAllDelegates([]);
     setHasMoreDelegates(true);
-    setFiltersState({ ...filtersState, filters: [], offset: 0, limit: 12 });
+    setFiltersState({ ...filtersState, filters: [], offset: 0, limit: LIMIT });
   };
 
   function ActionButtons() {
@@ -333,14 +337,7 @@ export function Delegates({
         </>
       );
     }
-    const delegateId =
-      user &&
-      delegates.data &&
-      delegates.data.find(
-        (delegate) =>
-          delegate?.author?.address?.toLowerCase() ===
-          user?.address?.toLowerCase(),
-      )?.id;
+    const delegateId = userDelegate?.data?.id;
 
     return (
       <>
@@ -401,7 +398,11 @@ export function Delegates({
         setHasMoreDelegates(false);
       } else {
         setAllDelegates((prevDelegates) => [...prevDelegates, ...newData]);
-        setHasMoreDelegates(true);
+        if (delegates.data.length < LIMIT) {
+          setHasMoreDelegates(false);
+        } else {
+          setHasMoreDelegates(true);
+        }
       }
     }
   }, [delegates.data, delegates.isLoading]);
