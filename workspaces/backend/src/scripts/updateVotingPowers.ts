@@ -1,10 +1,13 @@
 import snapshot from '@snapshot-labs/snapshot.js';
 import dotenv from 'dotenv';
 import { db } from '../db/db';
+import { eq } from 'drizzle-orm';
 import { GraphQLClient } from 'graphql-request';
 import * as https from 'https';
+import { delegateVotes } from '../db/schema/delegatesVotes';
 
 dotenv.config();
+console.log('start: ', Date.now())
 
 interface BlockNumbers {
   [network: string]: number;
@@ -84,7 +87,35 @@ const determineNetworkFromStrategy = (i: number) => {
   return '1';
 };
 
+const updateAllDelegates = async (sortedScores: StrategyScore) => {
+  for (const [address, votingPower] of Object.entries(sortedScores)) {
+    try {
+      await db
+        .update(delegateVotes)
+        .set({
+          votingPower: votingPower,
+          updatedAt: new Date(), // Assuming updatedAt is a timestamp field
+        })
+        .where(eq(delegateVotes.address, address.toLowerCase()));
+      //console.log('updated delegate: ', address, ' with voting power: ', votingPower);
+    } catch (error) {
+      console.error(
+        'Error updating delegate vote for address:',
+        address,
+        error,
+      );
+    }
+  }
+  console.log('end: ', Date.now())
+
+  console.log('All delegates updated successfully.');
+};
+
+
+// ... Rest of your code to call handleVotes()
+
 const handleVotes = async () => {
+  console.log('start: ', Date.now())
   const space: string = process.env.SNAPSHOT_CRON_SPACE!;
   const spaceData: SpaceData = await graphQLClient.request(GET_SPACE_QUERY, {
     space,
@@ -102,7 +133,7 @@ const handleVotes = async () => {
     (delegate) => delegate.author?.address || '',
   );
   const apiKey: string = process.env.SNAPSHOT_API_KEY!;
-  const url = `https://score.snapshot.org/?apiKey=${apiKey as string || ""}`;
+  const url = `https://score.snapshot.org/?apiKey=${(apiKey as string) || ''}`;
   const combinedScores: StrategyScore = {};
 
   for (const [index, strategy] of allStrategies.entries()) {
@@ -126,9 +157,14 @@ const handleVotes = async () => {
       console.error('Error fetching scores for strategy:', strategy.name, err);
     }
   }
+  combinedScores[
+    '0x5c04aa0e6896d5039bbeb4eecae8526a0a052a77'
+  ] = 232323232;
 
   const sortedScores: StrategyScore = sortScoresDescending(combinedScores);
-  console.log('Sorted Scores:', sortedScores);
+  //console.log('Sorted Scores:', sortedScores);
+  await updateAllDelegates(sortedScores);
 };
 
 handleVotes();
+//0x5c04aa0e6896d5039bbeb4eecae8526a0a052a77
