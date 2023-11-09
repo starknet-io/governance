@@ -114,7 +114,8 @@ export const NotificationItem = ({
     <MenuItem
       maxW={"400px"}
       pt={2}
-      pb={1}
+      pb={2}
+      mb={1}
       key={notification.id}
       onClick={() => {
         onMarkNotificationRead(notification.id);
