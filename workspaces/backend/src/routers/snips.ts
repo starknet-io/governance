@@ -4,6 +4,7 @@ import { db } from '../db/db';
 import { desc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
+import { z } from 'zod';
 
 const snipInsertSchema = createInsertSchema(snips);
 
@@ -17,13 +18,18 @@ export const snipsRouter = router({
       with: {
         author: true,
         comments: true,
-      }
-    })
-    return data
+      },
+    });
+    return data;
   }),
 
   getSNIP: publicProcedure
-    .input(snipInsertSchema.required({ id: true }).pick({ id: true }))
+    .input(
+      snipInsertSchema
+        .required({ id: true })
+        .extend({ id: z.number() })
+        .pick({ id: true }),
+    )
     .query(async (opts) => {
       const data = await db.query.snips.findFirst({
         where: eq(snips.id, opts.input.id),
@@ -31,35 +37,34 @@ export const snipsRouter = router({
           author: true,
           comments: {
             with: {
-              author: true
+              author: true,
             },
-            orderBy: [desc(comments.createdAt)]
-          }
+            orderBy: [desc(comments.createdAt)],
+          },
         },
-      })
+      });
       return data;
     }),
 
   createSNIP: protectedProcedure
     .input(snipInsertSchema.omit({ id: true, type: true, status: true }))
-    .mutation(async (opts) => {
+    .mutation(async (opts: any) => {
       const insertedSnip = await db
         .insert(snips)
         .values({
           ...opts.input,
           type: 'snip',
           status: 'Draft',
-          userId: opts.ctx.user?.id
+          userId: opts.ctx.user?.id,
         })
         .returning();
-
 
       return insertedSnip[0];
     }),
 
   editProposal: publicProcedure
     .input(snipInsertSchema.required({ id: true }))
-    .mutation(async (opts) => {
+    .mutation(async (opts: any) => {
       const updatedSnip = await db
         .update(snips)
         .set(opts.input)
@@ -70,11 +75,13 @@ export const snipsRouter = router({
     }),
 
   deleteProposal: publicProcedure
-    .input(snipInsertSchema.required({ id: true }).pick({ id: true }))
+    .input(
+      snipInsertSchema
+        .required({ id: true })
+        .extend({ id: z.number() })
+        .pick({ id: true }),
+    )
     .mutation(async (opts) => {
-      await db
-        .delete(snips)
-        .where(eq(snips.id, opts.input.id))
-        .execute();
+      await db.delete(snips).where(eq(snips.id, opts.input.id)).execute();
     }),
 });

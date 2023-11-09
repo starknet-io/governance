@@ -29,7 +29,11 @@ type MemberType = {
 
 function checkUserRole(userRole: string | undefined) {
   if (!userRole) throw new Error('User not found');
-  if (userRole !== 'superadmin' && userRole !== 'admin' && userRole !== 'moderator')
+  if (
+    userRole !== 'superadmin' &&
+    userRole !== 'admin' &&
+    userRole !== 'moderator'
+  )
     throw new Error('Unauthorized');
 }
 
@@ -109,7 +113,11 @@ export const councilsRouter = router({
     }),
 
   editCouncil: protectedProcedure
-    .input(councilInsertSchema.required({ id: true }))
+    .input(
+      councilInsertSchema.required({ id: true }).extend({
+        id: z.number(),
+      }),
+    )
     .mutation(async (opts) => {
       const userRole = opts.ctx.user?.role;
       checkUserRole(userRole);
@@ -211,6 +219,10 @@ export const councilsRouter = router({
     .input(
       councilInsertSchema
         .required({ id: true, slug: true })
+        .extend({
+          id: z.number(),
+          slug: z.string(),
+        })
         .pick({ id: true, slug: true }),
     )
     .mutation(async (opts) => {

@@ -4,7 +4,7 @@ type RecordType = 'voting_proposal' | 'council' | 'learn' | 'delegate';
 interface RecordData {
   name?: string;
   type?: RecordType;
-  refID: number | string;
+  refID?: number | string;
   content?: string;
   avatar?: string;
   address?: string;

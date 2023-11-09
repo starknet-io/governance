@@ -4,8 +4,8 @@ import { db } from '../db/db';
 import { desc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
-import { commentVotes } from "../db/schema/commentVotes";
-import { z } from "zod";
+import { commentVotes } from '../db/schema/commentVotes';
+import { z } from 'zod';
 import slugify from 'slugify';
 
 const postInsertSchema = createInsertSchema(posts);
@@ -17,7 +17,7 @@ export const postsRouter = router({
 
   savePost: protectedProcedure
     .input(postInsertSchema.omit({ id: true }))
-    .mutation(async (opts) => {
+    .mutation(async (opts: any) => {
       const insertedPost = await db
         .insert(posts)
         .values({
@@ -27,7 +27,7 @@ export const postsRouter = router({
             lower: true,
           }),
           createdAt: new Date(),
-          userId: opts.ctx.user?.id
+          userId: opts.ctx.user?.id,
         })
         .returning();
 
@@ -35,7 +35,12 @@ export const postsRouter = router({
     }),
 
   getPostComments: publicProcedure
-    .input(z.object({ postId: z.number(), sort: z.enum(['upvotes', 'date']).optional() }))
+    .input(
+      z.object({
+        postId: z.number(),
+        sort: z.enum(['upvotes', 'date']).optional(),
+      }),
+    )
     .query(async (opts) => {
       const userId = opts.ctx.user?.id || null;
 
@@ -52,11 +57,11 @@ export const postsRouter = router({
         orderBy: orderByClause,
         with: {
           author: true,
-          ...userId && {
+          ...(userId && {
             votes: {
-              where: eq(commentVotes.userId, userId)
-            }
-          }
+              where: eq(commentVotes.userId, userId),
+            },
+          }),
         },
       });
 
@@ -77,7 +82,7 @@ export const postsRouter = router({
 
   editPost: protectedProcedure
     .input(postInsertSchema.required({ id: true }))
-    .mutation(async (opts) => {
+    .mutation(async (opts: any) => {
       const updatedPost = await db
         .update(posts)
         .set({
@@ -93,13 +98,23 @@ export const postsRouter = router({
     }),
 
   deletePost: protectedProcedure
-    .input(postInsertSchema.required({ id: true }).pick({ id: true }))
+    .input(
+      postInsertSchema
+        .required({ id: true })
+        .extend({ id: z.number() })
+        .pick({ id: true }),
+    )
     .mutation(async (opts) => {
       await db.delete(posts).where(eq(posts.id, opts.input.id)).execute();
     }),
 
   getPostById: publicProcedure
-    .input(postInsertSchema.required({ id: true }).pick({ id: true }))
+    .input(
+      postInsertSchema
+        .required({ id: true })
+        .extend({ id: z.number() })
+        .pick({ id: true }),
+    )
     .query(async (opts) => {
       const post = await db.query.posts.findFirst({
         where: eq(posts.id, opts.input.id),
@@ -108,10 +123,10 @@ export const postsRouter = router({
           comments: {
             orderBy: [desc(comments.createdAt)],
             with: {
-              author: true
-            }
-          }
-        }
+              author: true,
+            },
+          },
+        },
       });
       return post;
     }),
@@ -127,11 +142,11 @@ export const postsRouter = router({
           comments: {
             orderBy: [desc(comments.createdAt)],
             with: {
-              author: true
-            }
-          }
-        }
+              author: true,
+            },
+          },
+        },
       });
       return post[0];
-    })
+    }),
 });

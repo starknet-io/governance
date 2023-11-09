@@ -4,7 +4,7 @@ import { db } from '../db/db';
 import { asc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import slugify from 'slugify';
-import { boolean } from 'zod';
+import {boolean, z} from 'zod';
 import { buildLearnItemsHierarchy } from '../utils/buildLearnHierarchy';
 import { Algolia } from '../utils/algolia';
 
@@ -31,7 +31,7 @@ export const pagesRouter = router({
 
   editPage: protectedProcedure
     .input(pageInsertSchema.required({ id: true }))
-    .mutation(async (opts) => {
+    .mutation(async (opts: any) => {
       checkUserRole(opts.ctx.user?.role); // Apply role check
 
       const updatedPage = await db
@@ -59,7 +59,7 @@ export const pagesRouter = router({
     }),
 
   deletePage: protectedProcedure
-    .input(pageInsertSchema.required({ id: true }).pick({ id: true }))
+    .input(pageInsertSchema.required({ id: true }).extend({ id: z.number() }).pick({ id: true }))
     .mutation(async (opts) => {
       checkUserRole(opts.ctx.user?.role); // Apply role check
 
@@ -83,7 +83,7 @@ export const pagesRouter = router({
     }),
 
   getPage: publicProcedure
-    .input(pageInsertSchema.required({ id: true }).pick({ id: true }))
+    .input(pageInsertSchema.required({ id: true }).extend({ id: z.number() }).pick({ id: true }))
     .query(async (opts) => {
       const page = await db.query.pages.findFirst({
         where: eq(pages.id, opts.input.id),
@@ -116,7 +116,7 @@ export const pagesRouter = router({
       const newItems = opts.input.filter((item) => item.isNew);
       const existingItems = opts.input.filter((item) => !item.isNew);
       const newCreatedItems = await Promise.all(
-        newItems.map(async (newItem) => {
+        newItems.map(async (newItem: any) => {
           const createdItem = await db
             .insert(pages)
             .values({
@@ -167,7 +167,7 @@ export const pagesRouter = router({
       });
 
       await Promise.all(
-        updatedItems.map(async (m) => {
+        updatedItems.map(async (m: any) => {
           const updatedItem = await db
             .update(pages)
             .set({
