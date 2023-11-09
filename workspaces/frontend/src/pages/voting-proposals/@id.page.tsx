@@ -73,7 +73,6 @@ export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
   const [helpMessage, setHelpMessage] = useHelpMessage();
-  const { user: userData } = usePageContext()
 
   const { data, refetch } = useQuery(
     gql(`query Proposal($proposal: String) {
@@ -121,9 +120,9 @@ export function Page() {
       variables: {
         proposal: pageContext.routeParams!.id,
         space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: userData?.address as any,
+        voter: walletClient?.account.address as any,
       },
-      skip: !userData?.address,
+      skip: walletClient?.account.address == null,
     },
   );
 
@@ -146,11 +145,11 @@ export function Page() {
     {
       variables: {
         where: {
-          voter: userData?.address as any,
+          voter: walletClient?.account.address as any,
           proposal: pageContext.routeParams!.id,
         },
       },
-      skip: !userData?.address,
+      skip: walletClient?.account.address == null,
     },
   );
 
