@@ -264,7 +264,6 @@ export function Delegates({
       setFiltersState({ ...filtersState, filters, limit: 12, offset: 0 });
       setHasMoreDelegates(true);
     },
-
   });
 
   const [filtersState, setFiltersState] = useState({
@@ -300,8 +299,11 @@ export function Delegates({
 
   const delegates =
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
-
   const { user } = usePageContext();
+  const userDelegate = trpc.users.isDelegate.useQuery({
+    userId: user?.id || "",
+  });
+
   const handleResetFilters = () => {
     state.onReset();
     setAllDelegates([]);
@@ -334,13 +336,7 @@ export function Delegates({
       );
     }
     const delegateId =
-      user &&
-      delegates.data &&
-      delegates.data.find(
-        (delegate) =>
-          delegate?.author?.address?.toLowerCase() ===
-          user?.address?.toLowerCase(),
-      )?.id;
+      userDelegate?.data?.id;
 
     return (
       <>

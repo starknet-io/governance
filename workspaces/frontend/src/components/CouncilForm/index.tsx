@@ -146,7 +146,7 @@ export function CouncilForm({
     if (!council?.id) return;
 
     try {
-      await deleteCouncil.mutateAsync({ id: council.id });
+      await deleteCouncil.mutateAsync({ id: council.id, slug: council.slug });
       navigate("/");
       utils.councils.getAll.invalidate();
     } catch (error) {

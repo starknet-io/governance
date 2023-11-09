@@ -29,7 +29,11 @@ type MemberType = {
 
 function checkUserRole(userRole: string | undefined) {
   if (!userRole) throw new Error('User not found');
-  if (userRole !== 'superadmin' && userRole !== 'admin' && userRole !== 'moderator')
+  if (
+    userRole !== 'superadmin' &&
+    userRole !== 'admin' &&
+    userRole !== 'moderator'
+  )
     throw new Error('Unauthorized');
 }
 
@@ -210,15 +214,15 @@ export const councilsRouter = router({
   deleteCouncil: publicProcedure
     .input(
       councilInsertSchema
-        .required({ id: true })
-        .pick({ id: true }),
+        .required({ id: true, slug: true })
+        .pick({ id: true, slug: true }),
     )
     .mutation(async (opts) => {
       const userRole = opts.ctx.user?.role;
       checkUserRole(userRole);
       await db.delete(councils).where(eq(councils.id, opts.input.id)).execute();
       await Algolia.deleteObjectFromIndex({
-        refID: opts.input.slug || opts.input.id,
+        refID: opts.input.id,
         type: 'council',
       });
     }),
