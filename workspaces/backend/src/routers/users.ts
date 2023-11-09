@@ -40,6 +40,24 @@ export const usersRouter = router({
       return insertedUser[0];
     }),
 
+  isDelegate: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      }),
+    )
+    .query(async (opts) => {
+      const foundDelegate = await db.query.delegates.findFirst({
+        where: eq(delegates.userId, opts.input.userId),
+      });
+
+      if (foundDelegate) {
+        return foundDelegate;
+      } else {
+        return null;
+      }
+    }),
+
   editUser: publicProcedure
     .input(
       z.object({
