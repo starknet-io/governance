@@ -105,7 +105,7 @@ export const NotificationItem = ({
       notification.title
     );
   };
-  const notProposalStartOrEnd = !isProposalEnd && !isProposalStart
+  const notProposalStartOrEnd = !isProposalEnd && !isProposalStart;
   return (
     <MenuItem
       maxW={"400px"}
@@ -124,7 +124,11 @@ export const NotificationItem = ({
       }}
     >
       <Flex gap={1.5} width="100%">
-        <Flex direction="column" alignItems="center" gap={notProposalStartOrEnd ? 1 : 0}>
+        <Flex
+          direction="column"
+          alignItems="center"
+          gap={notProposalStartOrEnd ? 1 : 0}
+        >
           {notProposalStartOrEnd ? (
             <>
               {avatar ? (
