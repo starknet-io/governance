@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import { eq, and, isNotNull, or, desc, sql, gte } from 'drizzle-orm';
+import { eq, and, isNotNull, or, desc, sql, gte, ilike } from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -383,6 +383,10 @@ export const delegateRouter = router({
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
           .leftJoin(users, eq(users.id, delegates.userId));
 
+        // Start with an array of conditions for the AND clause
+        const conditions = [];
+
+        // Add conditions based on special filters
         if (appliedSpecialFilters.includes('1_or_more_comments')) {
           query = query
             .innerJoin(comments, eq(comments.userId, users.id))
@@ -390,30 +394,51 @@ export const delegateRouter = router({
         }
 
         if (appliedSpecialFilters.includes('delegate_agreement')) {
-          query = query
-            .innerJoin(
-              customDelegateAgreement,
-              eq(customDelegateAgreement.delegateId, delegates.id),
-            )
-            .where(
-              or(
-                isNotNull(customDelegateAgreement.delegateId),
-                eq(delegates.confirmDelegateAgreement, true),
-              ),
-            );
+          query = query.leftJoin(
+            customDelegateAgreement,
+            eq(customDelegateAgreement.delegateId, delegates.id),
+          );
+          conditions.push(
+            or(
+              isNotNull(customDelegateAgreement.delegateId),
+              eq(delegates.confirmDelegateAgreement, true),
+            ),
+          );
         }
 
+        // Add condition for interests
         if (interests) {
-          query.where(
+          conditions.push(
             sql.raw(`delegates.interests::jsonb @> '${interests}'::jsonb`),
           );
         }
 
+        // Add condition for voting power
         if (appliedSpecialFilters.includes('more_then_1m_voting_power')) {
-          query = query.where(gte(delegateVotes.votingPower, 1000000));
+          conditions.push(gte(delegateVotes.votingPower, 1000000));
         }
+
+        // Add condition for total votes
         if (appliedSpecialFilters.includes('1_or_more_votes')) {
-          query = query.where(gte(delegateVotes.totalVotes, 1));
+          conditions.push(gte(delegateVotes.totalVotes, 1));
+        }
+
+        // Add search query condition
+        if (opts.input.searchQuery && opts.input.searchQuery.length) {
+          const searchQuery = `%${opts.input.searchQuery}%`;
+          conditions.push(
+            or(
+              ilike(delegates.statement, searchQuery),
+              ilike(users.username, searchQuery),
+              ilike(users.ensName, searchQuery),
+              ilike(users.address, searchQuery),
+            ),
+          );
+        }
+
+        // Combine all conditions with an AND clause
+        if (conditions.length > 0) {
+          query = query.where(and(...conditions));
         }
 
         query.orderBy(orderBy, desc(delegates.id));

@@ -169,6 +169,8 @@ const sortByOptions = {
   ],
 };
 
+const LIMIT = 12
+
 export type DelegatesProps = {
   showFilers?: boolean;
   transformData?: (data: any) => any;
@@ -261,7 +263,7 @@ export function Delegates({
     defaultValue: delegateFilters.defaultValue,
     onSubmit: (filters) => {
       setAllDelegates([]);
-      setFiltersState({ ...filtersState, filters, limit: 12, offset: 0 });
+      setFiltersState({ ...filtersState, filters, limit: LIMIT, offset: 0 });
       setHasMoreDelegates(true);
     },
   });
@@ -269,7 +271,7 @@ export function Delegates({
   const [filtersState, setFiltersState] = useState({
     filters: [] as string[],
     searchQuery,
-    limit: 12,
+    limit: LIMIT,
     offset: 0,
     sortBy,
   });
@@ -308,7 +310,7 @@ export function Delegates({
     state.onReset();
     setAllDelegates([]);
     setHasMoreDelegates(true);
-    setFiltersState({ ...filtersState, filters: [], offset: 0, limit: 12 });
+    setFiltersState({ ...filtersState, filters: [], offset: 0, limit: LIMIT });
   };
 
   function ActionButtons() {
@@ -335,8 +337,7 @@ export function Delegates({
         </>
       );
     }
-    const delegateId =
-      userDelegate?.data?.id;
+    const delegateId = userDelegate?.data?.id;
 
     return (
       <>
@@ -397,7 +398,11 @@ export function Delegates({
         setHasMoreDelegates(false);
       } else {
         setAllDelegates((prevDelegates) => [...prevDelegates, ...newData]);
-        setHasMoreDelegates(true);
+        if (delegates.data.length < LIMIT) {
+          setHasMoreDelegates(false);
+        } else {
+          setHasMoreDelegates(true);
+        }
       }
     }
   }, [delegates.data, delegates.isLoading]);
