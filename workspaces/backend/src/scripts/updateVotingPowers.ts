@@ -4,6 +4,28 @@ import { db } from '../db/db';
 import { GraphQLClient } from 'graphql-request';
 import * as https from 'https';
 
+dotenv.config();
+
+interface BlockNumbers {
+  [network: string]: number;
+}
+
+interface StrategyScore {
+  [address: string]: number;
+}
+
+interface Strategy {
+  name: string;
+  params: Record<string, unknown>;
+}
+
+interface SpaceData {
+  space: {
+    name: string;
+    strategies: Strategy[];
+  };
+}
+
 const GET_SPACE_QUERY = `
   query GetSpaceQuery(
     $space: String!
@@ -18,7 +40,14 @@ const GET_SPACE_QUERY = `
   }
 `;
 
-const fetchLatestBlockNumbers = () => {
+const endpoint = `https://hub.snapshot.org/graphql`;
+const graphQLClient = new GraphQLClient(endpoint, {
+  headers: {
+    'x-api-key': process.env.SNAPSHOT_API_KEY!,
+  },
+});
+
+const fetchLatestBlockNumbers = (): Promise<BlockNumbers> => {
   return new Promise((resolve, reject) => {
     https
       .get('https://score.snapshot.org/', (res) => {
@@ -29,7 +58,7 @@ const fetchLatestBlockNumbers = () => {
         res.on('end', () => {
           try {
             const parsed = JSON.parse(data);
-            resolve(parsed.block_num);
+            resolve(parsed.block_num as BlockNumbers);
           } catch (e) {
             reject(e);
           }
@@ -41,43 +70,26 @@ const fetchLatestBlockNumbers = () => {
   });
 };
 
-const sortScoresDescending = (combinedScores) => {
-  // Convert the object into an array of [address, score] pairs
-  let scoresArray = Object.entries(combinedScores);
-
-  // Sort the array based on the scores in descending order, ensuring the scores are numbers
+const sortScoresDescending = (combinedScores: StrategyScore): StrategyScore => {
+  const scoresArray = Object.entries(combinedScores);
   scoresArray.sort((a, b) => Number(b[1]) - Number(a[1]));
-
-  // Convert the sorted array back to an object
-  let sortedScores = {};
-  for (const [address, score] of scoresArray) {
+  const sortedScores: StrategyScore = {};
+  scoresArray.forEach(([address, score]) => {
     sortedScores[address] = score;
-  }
-
+  });
   return sortedScores;
 };
 
-dotenv.config();
-const endpoint = `https://hub.snapshot.org/graphql`;
-
-const graphQLClient = new GraphQLClient(endpoint, {
-  headers: {
-    'x-api-key': process.env.SNAPSHOT_API_KEY!,
-  },
-});
-
-dotenv.config();
-
 const determineNetworkFromStrategy = (i: number) => {
-  return "1"
+  return '1';
 };
 
 const handleVotes = async () => {
-  const space = 'starknet.eth';
-  const spaceData = await graphQLClient.request(GET_SPACE_QUERY, {
-    space: 'starknet.eth',
+  const space: string = process.env.SNAPSHOT_CRON_SPACE!;
+  const spaceData: SpaceData = await graphQLClient.request(GET_SPACE_QUERY, {
+    space,
   });
-  const blockNumbers: any = await fetchLatestBlockNumbers();
+  const blockNumbers: BlockNumbers = await fetchLatestBlockNumbers();
 
   const allStrategies = spaceData.space.strategies;
   const allDelegates = await db.query.delegates.findMany({
@@ -85,52 +97,38 @@ const handleVotes = async () => {
       author: true,
     },
   });
-  const voters = allDelegates.map(
-    (delegate) => delegate?.author?.address || '',
+  const voters: string[] = allDelegates.map(
+    // @ts-ignore
+    (delegate) => delegate.author?.address || '',
   );
-  const apiKey = process.env.SNAPSHOT_API_KEY;
-  const url = `https://score.snapshot.org/?apiKey=${apiKey}`;
-  let combinedScores = {};
+  const apiKey: string = process.env.SNAPSHOT_API_KEY!;
+  const url = `https://score.snapshot.org/?apiKey=${apiKey as string || ""}`;
+  const combinedScores: StrategyScore = {};
 
-  try {
-    for (const [index, strategy] of allStrategies.entries()) {
-      const network = determineNetworkFromStrategy(index);
-      const snapshotTime = blockNumbers[network];
-      try {
-        const strategyScores = await snapshot.utils.getScores(
-          space,
-          [strategy],
-          network,
-          voters,
-          snapshotTime,
-          url,
-        );
-        // Properly merge strategy scores into combinedScores
-        for (const scoreObject of strategyScores) {
-          for (const [address, score] of Object.entries(scoreObject)) {
-            if (
-              address.toLowerCase() ===
-              '0xef0133437ab8da5c5e8873b61189610e2d8cb4f5'
-            ) {
-              console.log('taj lik ', score);
-            }
-            combinedScores[address] = (combinedScores[address] || 0) + score;
-          }
-        }
-      } catch (err) {
-        console.error(
-          'Error fetching scores for strategy:',
-          strategy.name,
-          err,
-        );
-      }
+  for (const [index, strategy] of allStrategies.entries()) {
+    const network: string = determineNetworkFromStrategy(index);
+    const snapshotTime: number = blockNumbers[network];
+    try {
+      const strategyScores: StrategyScore[] = await snapshot.utils.getScores(
+        space,
+        [strategy],
+        network,
+        voters,
+        snapshotTime,
+        url,
+      );
+      strategyScores.forEach((scoreObject: StrategyScore) => {
+        Object.entries(scoreObject).forEach(([address, score]) => {
+          combinedScores[address] = (combinedScores[address] || 0) + score;
+        });
+      });
+    } catch (err) {
+      console.error('Error fetching scores for strategy:', strategy.name, err);
     }
-
-    const sortedScores = sortScoresDescending(combinedScores);
-    console.log('Sorted Scores:', sortedScores);
-  } catch (err) {
-    console.error(err);
   }
+
+  const sortedScores: StrategyScore = sortScoresDescending(combinedScores);
+  console.log('Sorted Scores:', sortedScores);
 };
 
 handleVotes();
