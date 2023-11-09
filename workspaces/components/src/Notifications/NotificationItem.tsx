@@ -41,7 +41,7 @@ type NotificationItemProps = {
 
 const findIndexOfLargest = (scores: Array<number>) => {
   let maxIndex = 0; // Start with the first index
-  if (!scores || !scores.length || !scores.length === 3) {
+  if (!scores || !scores.length || scores.length !== 3) {
     return 0;
   }
   let maxValue = scores[0]; // And the first value
