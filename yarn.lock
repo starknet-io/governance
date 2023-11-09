@@ -7597,6 +7597,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@snapshot-labs/snapshot.js@npm:^0.8.2":
+  version: 0.8.2
+  resolution: "@snapshot-labs/snapshot.js@npm:0.8.2"
+  dependencies:
+    "@ensdomains/eth-ens-namehash": ^2.0.15
+    "@ethersproject/abi": ^5.6.4
+    "@ethersproject/address": ^5.6.1
+    "@ethersproject/bytes": ^5.6.1
+    "@ethersproject/contracts": ^5.6.2
+    "@ethersproject/hash": ^5.7.0
+    "@ethersproject/providers": ^5.6.8
+    "@ethersproject/units": ^5.7.0
+    "@ethersproject/wallet": ^5.6.2
+    ajv: ^8.11.0
+    ajv-formats: ^2.1.1
+    cross-fetch: ^3.1.6
+    json-to-graphql-query: ^2.2.4
+    lodash.set: ^4.3.2
+  checksum: cb7ea329d62745906862293f470260114108f99fbc85074551dda8fc74f0340de34ecdd139e96c3ee1c3b24d3e5c1280bbb77657c9a73f9b25c83b432fa79c95
+  languageName: node
+  linkType: hard
+
 "@solana/buffer-layout@npm:^4.0.0":
   version: 4.0.1
   resolution: "@solana/buffer-layout@npm:4.0.1"
@@ -10863,6 +10885,7 @@ __metadata:
   resolution: "@yukilabs/governance-backend@workspace:workspaces/backend"
   dependencies:
     "@2toad/profanity": ^2.2.0
+    "@snapshot-labs/snapshot.js": ^0.8.2
     "@trpc/server": ^10.36.0
     "@types/cookie-parser": ^1.4.3
     "@types/cors": ^2.8.13

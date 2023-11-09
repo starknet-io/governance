@@ -10,6 +10,7 @@
     "serve": "node dist/src/index.js",
     "seed": "ts-node --transpile-only src/delegatesMigration/index.ts",
     "sync-with-snapshot": "ts-node --transpile-only src/scripts/syncSnapshotUsers.ts",
+    "update-voting-power": "ts-node --transpile-only src/scripts/updateVotingPowers.ts",
     "fetch-voting-power": "ts-node --transpile-only src/routers/delegateVoting.ts",
     "migration:generate": "drizzle-kit generate:pg",
     "migration:run": "drizzle-kit push:pg",
@@ -30,6 +31,7 @@
   },
   "dependencies": {
     "@2toad/profanity": "^2.2.0",
+    "@snapshot-labs/snapshot.js": "^0.8.2",
     "@trpc/server": "^10.36.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
