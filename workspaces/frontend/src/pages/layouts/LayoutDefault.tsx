@@ -74,8 +74,6 @@ function LayoutDefault(props: Props) {
     markAsRead,
   } = useFetchNotifications();
 
-  console.log(notifications);
-
   useEffect(() => {
     if (user?.banned) {
       setIsBannedModalOpen(true);

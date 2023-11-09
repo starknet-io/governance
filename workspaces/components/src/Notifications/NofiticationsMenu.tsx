@@ -103,8 +103,6 @@ export const NotificationsMenu = ({
       : populatedNotifications.filter((notification) => !notification.read);
   }, [isAllSelected, populatedNotifications]);
 
-  console.log(email?.data);
-
   return (
     <>
       <EmailSubscriptionModal
