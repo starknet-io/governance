@@ -44,6 +44,9 @@ import * as ProfilePageLayout from "../../../components/ProfilePageLayout/Profil
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
+import { useProposals } from "../../../hooks/snapshot/useProposals";
+import { useVotes } from "../../../hooks/snapshot/useVotes";
+import { useVotingPower } from "../../../hooks/snapshot/useVotingPower";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -62,60 +65,6 @@ const delegateInterests: Record<string, string> = {
   nft: "NFT",
   defi: "DeFi",
 };
-
-const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
-  query DelegateProposals($space: String!) {
-    proposals(first: 20, skip: 0, where: {space_in: [$space]}, orderBy: "created", orderDirection: desc) {
-      id
-      title
-      choices
-      start
-      end
-      snapshot
-      state
-      scores
-      scores_total
-      author
-      space {
-        id
-        name
-      }
-    }
-  }
-`);
-
-const DELEGATE_PROFILE_PAGE_QUERY = gql(`
-  query DelegateProfilePageQuery(
-    $voter: String!
-    $space: String!
-    $proposal: String
-    $where: VoteWhere
-  ) {
-    votes(where: $where) {
-      id
-      choice
-      voter
-      reason
-      metadata
-      created
-      proposal {
-        id
-        title
-        body
-        choices
-      }
-      ipfs
-      vp
-      vp_by_strategy
-      vp_state
-    }
-    vp(voter: $voter, space: $space, proposal: $proposal) {
-      vp
-      vp_by_strategy
-      vp_state
-    }
-  }
-`);
 
 // Extract this to some constants file
 export const MINIMUM_TOKENS_FOR_DELEGATION = 1;
@@ -215,37 +164,21 @@ export function Page() {
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`;
 
-  const gqlResponse = useQuery(DELEGATE_PROFILE_PAGE_QUERY, {
-    variables: {
-      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      voter: delegateAddress,
-      where: {
-        voter: delegateAddress,
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      },
-    },
-    skip: delegateAddress == null,
+  const votes = useVotes({
+    voter: delegateAddress,
+    skipField: "voter",
   });
-
-  const gqlResponseProposalsByUser = useQuery(
-    GET_PROPOSALS_FOR_DELEGATE_QUERY,
-    {
-      variables: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        where: {
-          space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        },
-      },
-      skip: delegateAddress == null,
-    },
-  );
+  const votingPower = useVotingPower({
+    voter: delegateAddress,
+  });
+  const gqlResponseProposalsByUser = useProposals();
 
   const proposals = gqlResponseProposalsByUser?.data?.proposals || [];
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
 
-  const stats = gqlResponse.data?.votes?.reduce(
+  const stats = votes?.data?.votes?.reduce(
     (acc: { [key: string]: number }, vote) => {
       acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
       return acc;
@@ -327,7 +260,11 @@ export function Page() {
     const canEdit =
       (hasPermission(user.role, [ROLES.USER]) &&
         user.delegationStatement?.id === delegateId) ||
-      hasPermission(user.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR]);
+      hasPermission(user.role, [
+        ROLES.ADMIN,
+        ROLES.SUPERADMIN,
+        ROLES.MODERATOR,
+      ]);
 
     return (
       <>
@@ -360,7 +297,7 @@ export function Page() {
 
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingSocials = !delegateResponse.isFetched;
-  const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
+  const isLoadingGqlResponse = votes?.loading || votingPower?.loading;
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
@@ -379,7 +316,7 @@ export function Page() {
         senderData={senderData}
         receiverData={{
           ...receiverData,
-          vp: gqlResponse?.data?.vp?.vp,
+          vp: votingPower?.data?.vp?.vp,
         }}
         delegateTokens={() => {
           if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
@@ -592,12 +529,12 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Proposals voted on"
-              value={gqlResponse.data?.votes?.length.toString() || "0"}
+              value={votes?.data?.votes?.length.toString() || "0"}
             />
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Delegated votes"
-              value={(gqlResponse.data?.vp?.vp || 0).toLocaleString()}
+              value={(votingPower?.data?.vp?.vp || 0).toLocaleString()}
             />
             <SummaryItems.Item
               isLoading={!delegateCommentsResponse.isFetched}
@@ -728,9 +665,9 @@ export function Page() {
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
-            ) : gqlResponse.data?.votes?.length ? (
+            ) : votes?.data?.votes?.length ? (
               <ListRow.Container mt="0">
-                {gqlResponse.data?.votes.map((vote) => (
+                {votes?.data?.votes.map((vote) => (
                   <Link
                     href={`/voting-proposals/${vote!.proposal!.id}`}
                     key={vote!.id}

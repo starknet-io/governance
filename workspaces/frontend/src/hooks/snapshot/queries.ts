@@ -109,3 +109,24 @@ export const GET_PROPOSAL_QUERY = gql`
     }
   }
 `;
+
+export const GET_PROPOSALS_QUERY = gql(`
+  query Proposals($space: String!) {
+    proposals(first: 20, skip: 0, where: {space_in: [$space]}, orderBy: "created", orderDirection: desc) {
+      id
+      title
+      choices
+      start
+      end
+      snapshot
+      state
+      scores
+      scores_total
+      author
+      space {
+        id
+        name
+      }
+    }
+  }
+`);
