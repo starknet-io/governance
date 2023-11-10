@@ -61,6 +61,8 @@ import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { useVotingPower } from "../../hooks/snapshot/useVotingPower";
+import { useProposal } from "../../hooks/snapshot/useProposal";
+import { useVotes } from "../../hooks/snapshot/useVotes";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -75,72 +77,19 @@ export function Page() {
   const { data: walletClient } = useWalletClient();
   const [helpMessage, setHelpMessage] = useHelpMessage();
 
-  const { data, refetch } = useQuery(
-    gql(`query Proposal($proposal: String) {
-      proposal(id: $proposal) {
-      id
-      author
-      title
-      body
-      choices
-      votes
-      scores
-      start
-      end
-      state
-      discussion
-      ipfs
-      type
-      scores_by_strategy
-      scores_state
-      scores_total
-      scores_updated
-      snapshot
-        strategies {
-          network
-          params
-        }
-      }
-
-    }`),
-    {
-      variables: {
-        proposal: pageContext.routeParams!.id,
-      },
-    },
-  );
+  const { data, refetch } = useProposal({
+    proposal: pageContext.routeParams!.id as string,
+  });
 
   const { data: vp, loading: isVotingPowerLoading } = useVotingPower({
     proposal: pageContext.routeParams!.id,
     voter: walletClient?.account.address as any,
   });
 
-  const vote = useQuery(
-    gql(`
-      query Vote($where: VoteWhere) {
-        votes(where: $where) {
-          choice
-          voter
-          reason
-          metadata
-          created
-          ipfs
-          vp
-          vp_by_strategy
-          vp_state
-        }
-      }
-    `),
-    {
-      variables: {
-        where: {
-          voter: walletClient?.account.address as any,
-          proposal: pageContext.routeParams!.id,
-        },
-      },
-      skip: walletClient?.account.address == null,
-    },
-  );
+  const vote = useVotes({
+    proposal: pageContext.routeParams!.id,
+    voter: walletClient?.account.address as any,
+  });
 
   const votes = useQuery(
     gql(`
@@ -166,8 +115,6 @@ export function Page() {
       },
     },
   );
-
-  console.log(vote?.data, votes?.data, vp);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -288,7 +235,6 @@ export function Page() {
           : {},
     };
   });
-  console.log(pastVotesWithUserInfo);
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
@@ -734,11 +680,7 @@ export function Page() {
             <Box>
               <FormControl>
                 <Box onClick={() => setHelpMessage("connectWalletMessage")}>
-                  <CommentInput
-                    onSend={async (comment) => {
-                      console.log(comment);
-                    }}
-                  />
+                  <CommentInput onSend={async (comment) => {}} />
                 </Box>
               </FormControl>
             </Box>

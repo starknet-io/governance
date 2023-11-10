@@ -352,7 +352,6 @@ const CommentItem: React.FC<CommentProps> = ({
 
   function stripHtmlTagsAndTrim(input: string): string {
     const stripped = input.replace(/[\r\n]+/g, "");
-    console.log("stripped: ", stripped);
 
     return stripped.length > 40 ? stripped.substring(0, 40) : stripped;
   }
