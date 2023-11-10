@@ -60,6 +60,7 @@ import {
 import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import { useVotingPower } from "../../hooks/snapshot/useVotingPower";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -108,23 +109,11 @@ export function Page() {
       },
     },
   );
-  const { data: vp, loading: isVotingPowerLoading, refetch: refetchVotingProposal } = useQuery(
-    gql(`query VpProposal($voter: String!, $space: String!, $proposal: String) {
-      vp(voter: $voter, space: $space, proposal: $proposal) {
-        vp
-        vp_by_strategy
-        vp_state
-      }
-    }`),
-    {
-      variables: {
-        proposal: pageContext.routeParams!.id,
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: walletClient?.account.address as any,
-      },
-      skip: walletClient?.account.address == null,
-    },
-  );
+
+  const { data: vp, loading: isVotingPowerLoading } = useVotingPower({
+    proposal: pageContext.routeParams!.id,
+    voter: walletClient?.account.address as any,
+  });
 
   const vote = useQuery(
     gql(`
@@ -178,7 +167,7 @@ export function Page() {
     },
   );
 
-  console.log(vote?.data, votes?.data, vp)
+  console.log(vote?.data, votes?.data, vp);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
