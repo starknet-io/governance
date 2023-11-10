@@ -34,12 +34,9 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
   Username,
 } from "@yukilabs/governance-components";
 import * as VoteLayout from "../../components/VotingProposals/VotingProposal/PageLayout";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { formatDate } from "@yukilabs/governance-components/src/utils/helpers";
 import { useWalletClient } from "wagmi";
@@ -89,32 +86,13 @@ export function Page() {
   const vote = useVotes({
     proposal: pageContext.routeParams!.id,
     voter: walletClient?.account.address as any,
+    skipField: "voter",
   });
 
-  const votes = useQuery(
-    gql(`
-      query VotingProposalsVotes($where: VoteWhere) {
-        votes(where: $where) {
-          choice
-          voter
-          reason
-          metadata
-          created
-          ipfs
-          vp
-          vp_by_strategy
-          vp_state
-        }
-      }
-    `),
-    {
-      variables: {
-        where: {
-          proposal: pageContext.routeParams!.id,
-        },
-      },
-    },
-  );
+  const votes = useVotes({
+    proposal: pageContext.routeParams!.id,
+    skipField: "proposal",
+  });
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 

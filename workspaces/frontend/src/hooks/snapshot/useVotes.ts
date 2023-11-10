@@ -1,23 +1,32 @@
 import { useQuery } from "@apollo/client";
 import { GET_VOTES_QUERY } from "./queries";
 
+type SkippableField = "voter" | "proposal";
+
 export function useVotes({
   voter,
   proposal,
+  skipField,
 }: {
-  voter: string;
-  proposal: string;
+  voter?: string;
+  proposal?: string;
+  skipField?: SkippableField;
 }) {
   const variables = {
     where: {
-      voter,
+      ...(voter ? { voter } : {}),
       ...(proposal ? { proposal } : {}),
     },
   };
-  console.log(variables);
+  let toSkip = null;
+  if (skipField === "voter") {
+    toSkip = voter;
+  } else if (skipField === "proposal") {
+    toSkip = proposal;
+  }
   const { data, loading, refetch, error } = useQuery(GET_VOTES_QUERY, {
     variables,
-    skip: !voter,
+    skip: !toSkip,
     fetchPolicy: "cache-and-network",
   });
 
