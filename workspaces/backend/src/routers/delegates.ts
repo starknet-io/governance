@@ -478,15 +478,19 @@ export const delegateRouter = router({
             !opts.input.sortBy?.length &&
             !opts.input.filters?.length
           ) {
-            const quarterLength = Math.floor(filteredDelegates.length / 4);
-            const firstQuarter = shuffleArray(
-              filteredDelegates.slice(0, quarterLength),
-            );
-            const remaining = shuffleArray(
-              filteredDelegates.slice(quarterLength),
-            );
+            if (opts.input.limit) {
+              filteredDelegates = shuffleArray(filteredDelegates);
+            } else {
+              const quarterLength = Math.floor(filteredDelegates.length / 4);
+              const firstQuarter = shuffleArray(
+                filteredDelegates.slice(0, quarterLength),
+              );
+              const remaining = shuffleArray(
+                filteredDelegates.slice(quarterLength),
+              );
 
-            filteredDelegates = firstQuarter.concat(remaining);
+              filteredDelegates = firstQuarter.concat(remaining);
+            }
           }
 
           return filteredDelegates;
