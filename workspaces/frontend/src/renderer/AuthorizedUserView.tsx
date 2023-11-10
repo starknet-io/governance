@@ -5,8 +5,6 @@ import { useOutsideClick } from "@chakra-ui/react";
 import { UserProfileMenu } from "@yukilabs/governance-components";
 import { useBalanceData } from "src/utils/hooks";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
 import { stringToHex } from "viem";
 import { usePageContext } from "./PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";

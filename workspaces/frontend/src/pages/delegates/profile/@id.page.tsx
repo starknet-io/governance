@@ -33,8 +33,6 @@ import {
   useDelegateRegistryDelegation,
   useDelegateRegistrySetDelegate,
 } from "src/wagmi/DelegateRegistry";
-import { useQuery } from "@apollo/client";
-import { gql } from "src/gql";
 import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
 import { hasPermission } from "src/utils/helpers";
