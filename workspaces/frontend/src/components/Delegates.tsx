@@ -31,10 +31,9 @@ import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import { useVotingPower } from "../hooks/snapshot/useVotingPower";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -169,7 +168,7 @@ const sortByOptions = {
   ],
 };
 
-const LIMIT = 12
+const LIMIT = 12;
 
 export type DelegatesProps = {
   showFilers?: boolean;
@@ -240,24 +239,9 @@ export function Delegates({
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
-  const { data: votingPower } = useQuery(
-    gql(`
-    query VotingPower($voter: String!, $space: String!) {
-      vp(voter: $voter, space: $space) {
-        vp
-        vp_by_strategy
-        vp_state
-      }
-    }
-  `),
-    {
-      variables: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: inputAddress,
-      },
-      skip: !inputAddress,
-    },
-  );
+  const { data: votingPower } = useVotingPower({
+    voter: inputAddress,
+  });
 
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
