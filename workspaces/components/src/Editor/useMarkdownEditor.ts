@@ -12,8 +12,17 @@ export function useMarkdownEditor(
   initialValue?: any,
   initialSlateData?: ParagraphElement[],
 ) {
-  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+  const editor = useMemo(() => {
+    const withInlines = (editor) => {
+      const { isInline } = editor;
+      editor.isInline = (element) => {
+        return element.type === "link" ? true : isInline(element);
+      };
+      return editor;
+    };
 
+    return withInlines(withHistory(withReact(createEditor())));
+  }, []);
   useEffect(() => {
     initialSlateData && editor.insertNodes(initialSlateData);
   }, []);
@@ -31,7 +40,7 @@ export function useMarkdownEditor(
         focus: Editor.end(editor, []),
       },
     });
-  }
+  };
 
   const resetEditorValue = () => {
     setEditorValue(initialValue);
