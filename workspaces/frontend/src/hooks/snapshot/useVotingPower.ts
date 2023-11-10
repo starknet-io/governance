@@ -17,7 +17,7 @@ export function useVotingPower({
 
   const { data, loading, refetch, error } = useQuery(GET_VOTING_POWER_QUERY, {
     variables,
-    skip: !voter,
+    skip: !voter || !voter.length,
     fetchPolicy: "cache-and-network",
   });
 

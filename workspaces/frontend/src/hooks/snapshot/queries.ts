@@ -18,6 +18,12 @@ export const GET_VOTES_QUERY = gql(`
           voter
           reason
           metadata
+          proposal {
+            id
+            title
+            body
+            choices
+          }
           created
           ipfs
           vp

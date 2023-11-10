@@ -23,45 +23,13 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { useEffect, useState } from "react";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
 import { hasPermission } from "src/utils/helpers";
 import { Flex, Text } from "@chakra-ui/react";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import * as ProfilePageLayout from "../../components/ProfilePageLayout/ProfilePageLayout";
+import { useVotes } from "../../hooks/snapshot/useVotes";
+import { useVotingPower } from "../../hooks/snapshot/useVotingPower";
 
-const DELEGATE_PROFILE_PAGE_QUERY = gql(`
-  query DelegateProfilePageQuery(
-    $voter: String!
-    $space: String!
-    $proposal: String
-    $where: VoteWhere
-  ) {
-    votes(where: $where) {
-      id
-      choice
-      voter
-      reason
-      metadata
-      created
-      proposal {
-        id
-        title
-        body
-        choices
-      }
-      ipfs
-      vp
-      vp_by_strategy
-      vp_state
-    }
-    vp(voter: $voter, space: $space, proposal: $proposal) {
-      vp
-      vp_by_strategy
-      vp_state
-    }
-  }
-`);
 
 export function Page() {
   const pageContext = usePageContext();
@@ -92,29 +60,32 @@ export function Page() {
     navigate(`/councils/posts/create?councilId=${council?.id.toString()}`);
   };
 
-  const gqlResponse = useQuery(DELEGATE_PROFILE_PAGE_QUERY, {
-    variables: {
-      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      voter: council?.address ?? "",
-      where: {
-        voter: council?.address,
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      },
-    },
-    skip: council?.address == null,
+  const {
+    data: votes,
+    loading: isVotesLoading,
+    error: isVotesError,
+  } = useVotes({
+    space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+    voter: council?.address ?? "",
+    skipField: "voter",
   });
 
-  const stats = gqlResponse.data?.votes?.reduce(
-    (acc: { [key: string]: number }, vote) => {
-      acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
-      return acc;
-    },
-    {},
-  );
+  const {
+    data: votingPower,
+    loading: isVotingPowerLoading,
+    error: isVotingPowerError,
+  } = useVotingPower({
+    voter: council?.address ?? "",
+  });
+
+  console.log(votes, votingPower)
+
+  const stats = votes?.votes?.reduce((acc: { [key: string]: number }, vote) => {
+    acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
+    return acc;
+  }, {});
 
   const isCouncilLoading = !council;
-
-  const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
 
   const councilAddress = council?.address?.toLowerCase() ?? "";
 
@@ -186,18 +157,18 @@ export function Page() {
         <Divider my="standard.xl" />
         <SummaryItems.Root>
           <SummaryItems.Item
-            isLoading={isLoadingGqlResponse}
+            isLoading={isVotesLoading}
             label="Proposals voted on"
-            value={gqlResponse.data?.votes?.length.toString() ?? "0"}
+            value={votes?.votes?.length.toString() ?? "0"}
           />
           <SummaryItems.Item
-            isLoading={isLoadingGqlResponse}
+            isLoading={isVotingPowerLoading}
             label="Delegated votes"
-            value={gqlResponse.data?.vp?.vp?.toString() ?? "0"}
+            value={votingPower?.vp?.vp?.toString() ?? "0"}
           />
 
           <SummaryItems.Item
-            isLoading={isLoadingGqlResponse}
+            isLoading={isVotesLoading}
             label="For/against/abstain"
             value={
               (stats && `${stats[1] ?? 0}/${stats[2] ?? 0}/${stats[3] ?? 0}`) ||
@@ -263,7 +234,7 @@ export function Page() {
             <Heading variant="h3" color="content.accent.default">
               Posts
             </Heading>
-            {isLoadingGqlResponse ? (
+            {isVotesLoading || isVotingPowerLoading ? (
               // Skeleton representation for loading state
               <Box mt="24px" display="flex" flexDirection="column" gap="20px">
                 <Skeleton height="60px" width="100%" />
@@ -300,16 +271,16 @@ export function Page() {
             <Heading mb="24px" color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
-            {isLoadingGqlResponse ? (
+            {isVotesLoading ? (
               // Skeleton representation for loading state
               <Box display="flex" flexDirection="column" gap="20px" mt="16px">
                 <Skeleton height="60px" width="100%" />
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
-            ) : gqlResponse.data?.votes?.length ? (
+            ) : votes?.votes?.length ? (
               <ListRow.Container>
-                {gqlResponse.data?.votes.map((vote) => (
+                {votes?.votes.map((vote) => (
                   <Link
                     href={`/voting-proposals/${vote!.proposal!.id}`}
                     key={vote!.id}

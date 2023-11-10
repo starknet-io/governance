@@ -6,15 +6,18 @@ type SkippableField = "voter" | "proposal";
 export function useVotes({
   voter,
   proposal,
+  space,
   skipField,
 }: {
   voter?: string;
   proposal?: string;
+  space?: string;
   skipField?: SkippableField;
 }) {
   const variables = {
     where: {
       ...(voter ? { voter } : {}),
+      ...(space ? { space } : {}),
       ...(proposal ? { proposal } : {}),
     },
   };
@@ -26,7 +29,7 @@ export function useVotes({
   }
   const { data, loading, refetch, error } = useQuery(GET_VOTES_QUERY, {
     variables,
-    skip: !toSkip,
+    skip: !toSkip || !toSkip.length,
     fetchPolicy: "cache-and-network",
   });
 
