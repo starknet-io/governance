@@ -78,10 +78,6 @@ export const ProfileInfoModal = ({
     setValue("starknetAddress", user?.starknetAddress);
   }, [user]);
 
-  useEffect(() => {
-    console.log("userExistsError", errors);
-  }, [errors]);
-
   const handleSave = () => {
     handleSubmit((data) => {
       const saveProfileData: any = {};

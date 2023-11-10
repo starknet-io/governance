@@ -540,6 +540,7 @@ export function Delegates({
                   setAllDelegates([]);
                   setFiltersState((prevState) => ({
                     ...prevState,
+                    offset: 0,
                     sortBy: e.target.value,
                   }));
                 }}
