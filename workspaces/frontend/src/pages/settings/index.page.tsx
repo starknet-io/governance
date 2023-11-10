@@ -18,8 +18,6 @@ import {
   SuccessIcon,
   WarningIcon,
 } from "@yukilabs/governance-components";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import {
@@ -45,56 +43,7 @@ import snapshot from "@snapshot-labs/snapshot.js";
 const hub = "https://hub.snapshot.org"; // or https://testnet.snapshot.org for testnet
 const client = new snapshot.Client712(hub);
 import { Web3Provider } from "@ethersproject/providers";
-
-const userRoleValues = userRoleEnum.enumValues;
-
-const GET_SPACE_QUERY = gql(`
-  query GetSpaceQuery(
-    $space: String!
-  ) {
-    space(id: $space) {
-      name
-      about
-      network
-      symbol
-      website
-      private
-      admins
-      moderators
-      members
-      categories
-      plugins
-      children {
-        name
-      }
-      voting {
-        hideAbstain
-      }
-      strategies {
-        name
-        network
-        params
-      }
-      validation {
-        name
-        params
-      }
-      voteValidation {
-        name
-        params
-      }
-      filters {
-        minScore
-        onlyMembers
-      }
-      treasuries {
-        name
-        address
-        network
-      }
-    }
-  }
-`);
+import { useSpace } from "../../hooks/snapshot/useSpace";
 
 export function Page() {
   const {
@@ -124,11 +73,7 @@ export function Page() {
 
   const { user } = usePageContext();
 
-  const { data: space } = useQuery(GET_SPACE_QUERY, {
-    variables: {
-      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-    },
-  });
+  const { data: space } = useSpace();
 
   const getEditRolesBasedOnUserRole = () => {
     if (!user?.role) {

@@ -11,27 +11,75 @@ export const GET_VOTING_POWER_QUERY = gql`
   }
 `;
 
-export const GET_VOTES_QUERY = gql(`
-      query VoteQuery($where: VoteWhere) {
-        votes(where: $where) {
-          choice
-          voter
-          reason
-          metadata
-          proposal {
-            id
-            title
-            body
-            choices
-          }
-          created
-          ipfs
-          vp
-          vp_by_strategy
-          vp_state
-        }
+export const GET_SPACE_QUERY = gql(`
+  query GetSpaceQuery(
+    $space: String!
+  ) {
+    space(id: $space) {
+      name
+      about
+      network
+      symbol
+      website
+      private
+      admins
+      moderators
+      members
+      categories
+      plugins
+      children {
+        name
       }
-    `);
+      voting {
+        hideAbstain
+      }
+      strategies {
+        name
+        network
+        params
+      }
+      validation {
+        name
+        params
+      }
+      voteValidation {
+        name
+        params
+      }
+      filters {
+        minScore
+        onlyMembers
+      }
+      treasuries {
+        name
+        address
+        network
+      }
+    }
+  }
+`);
+
+export const GET_VOTES_QUERY = gql(`
+  query VoteQuery($where: VoteWhere) {
+    votes(where: $where) {
+      choice
+      voter
+      reason
+      metadata
+      proposal {
+        id
+        title
+        body
+        choices
+      }
+      created
+      ipfs
+      vp
+      vp_by_strategy
+      vp_state
+    }
+  }
+`);
 
 export const GET_PROPOSAL_QUERY = gql`
   query Proposal($proposal: String!) {
