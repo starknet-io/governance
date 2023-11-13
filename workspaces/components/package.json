@@ -19,7 +19,6 @@
     "@types/react-syntax-highlighter": "^15.5.9",
     "chakra-dayzed-datepicker": "^0.2.9",
     "chakra-react-select": "^4.7.0",
-    "chakra-ui-markdown-renderer": "^4.1.0",
     "color-hash": "^2.0.2",
     "date-fns": "^2.30.0",
     "dayzed": "^3.2.3",

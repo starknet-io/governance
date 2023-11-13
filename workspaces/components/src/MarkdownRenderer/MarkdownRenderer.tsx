@@ -4,7 +4,6 @@ import { Box, Code, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import { Heading } from "../Heading";
 import { Text, LocalTextProps } from "../Text";
 import "./bodyText.css";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { xonokai } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -274,7 +273,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     <ReactMarkdown
       remarkPlugins={[remarkGfm, [remarkEmoji]]}
       className={className}
-      components={ChakraUIRenderer(newTheme)}
+      components={newTheme}
     >
       {processedContent}
     </ReactMarkdown>
