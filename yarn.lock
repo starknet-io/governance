@@ -3347,6 +3347,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dynamic-labs/ethereum@npm:^0.18.100-viem.24":
+  version: 0.18.100-viem.28
+  resolution: "@dynamic-labs/ethereum@npm:0.18.100-viem.28"
+  dependencies:
+    "@dynamic-labs/rpc-providers": 0.18.100-viem.28
+    "@dynamic-labs/types": 0.18.100-viem.28
+    "@dynamic-labs/utils": 0.18.100-viem.28
+    "@dynamic-labs/wallet-book": 0.18.100-viem.28
+    "@dynamic-labs/wallet-connector-core": 0.18.100-viem.28
+    "@walletconnect/client": 1.8.0
+    "@walletconnect/ethereum-provider": 1.8.0
+    "@walletconnect/universal-provider": 2.8.3
+    buffer: 6.0.3
+    eventemitter3: 5.0.1
+    stream: 0.0.2
+  peerDependencies:
+    viem: ^1.1.0
+  checksum: 848efc28fa4e2ce7100841fcb52df23cacf1a9cc7935c6b20710f77542919862639b8820dd3b07ba3dde5fe8262ddf33b87909314ae3d1f61b613e03c0398861
+  languageName: node
+  linkType: hard
+
 "@dynamic-labs/flow-all@npm:0.18.100-viem.24":
   version: 0.18.100-viem.24
   resolution: "@dynamic-labs/flow-all@npm:0.18.100-viem.24"
@@ -3399,6 +3420,13 @@ __metadata:
   version: 0.18.100-viem.24
   resolution: "@dynamic-labs/logger@npm:0.18.100-viem.24"
   checksum: d4fb6ef7c09171c41ac10e7131f792041869876327e6b4d35d90146c64da68d461dae5668338ea1c14da3370d0579f75175347efd77ab4808ba4d54555b1c565
+  languageName: node
+  linkType: hard
+
+"@dynamic-labs/logger@npm:0.18.100-viem.28":
+  version: 0.18.100-viem.28
+  resolution: "@dynamic-labs/logger@npm:0.18.100-viem.28"
+  checksum: ceabdcc94709d601054280e51844755e974b3642bf3f5e04ab08e409a705876d1debb13c1b41f87453dfb57d23fa1fead05fa0e0cfeb7937ef7d555fabdad39e
   languageName: node
   linkType: hard
 
@@ -3458,6 +3486,18 @@ __metadata:
   peerDependencies:
     viem: ^1.1.0
   checksum: 7deddbfe1ed11845819b6decc3263f9ef312920f461879fa474ba64891923f8728de9336d1fccff0bc442c0b793d1b34c9b4d105dff79214be394fce2f80e5fc
+  languageName: node
+  linkType: hard
+
+"@dynamic-labs/rpc-providers@npm:0.18.100-viem.28":
+  version: 0.18.100-viem.28
+  resolution: "@dynamic-labs/rpc-providers@npm:0.18.100-viem.28"
+  dependencies:
+    "@dynamic-labs/types": 0.18.100-viem.28
+    "@solana/web3.js": 1.70.1
+  peerDependencies:
+    viem: ^1.1.0
+  checksum: 443fdcb49a3771395c439bac8df93a303face81e4058b18b2231886d37838744380323766ab68dbbf5790e328dd07a78a6ac9e0b159506ad0c1edf2f141df05e
   languageName: node
   linkType: hard
 
@@ -3569,6 +3609,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dynamic-labs/types@npm:0.18.100-viem.28":
+  version: 0.18.100-viem.28
+  resolution: "@dynamic-labs/types@npm:0.18.100-viem.28"
+  dependencies:
+    "@dynamic-labs/sdk-api": 0.0.270
+  peerDependencies:
+    viem: ^1.1.0
+  checksum: a17693bbd6dc70f3275704adc426769d40ce5a0bced0000a4a87cd746cf15209568e21fac58829f1256a994d73eb713c1fbd2ebee62f6e30841000dfd3d5d7b5
+  languageName: node
+  linkType: hard
+
 "@dynamic-labs/utils@npm:0.18.100-viem.24":
   version: 0.18.100-viem.24
   resolution: "@dynamic-labs/utils@npm:0.18.100-viem.24"
@@ -3578,6 +3629,18 @@ __metadata:
   peerDependencies:
     viem: ^1.5.3
   checksum: 56170746ee4282ff9011e9c0ef20f77d4ba39739df41cf39af11e838194c127a69141aaf4777804307c7a9bdf81cb1833188608b9b8acd90a7218e4d5afad4dd
+  languageName: node
+  linkType: hard
+
+"@dynamic-labs/utils@npm:0.18.100-viem.28":
+  version: 0.18.100-viem.28
+  resolution: "@dynamic-labs/utils@npm:0.18.100-viem.28"
+  dependencies:
+    "@dynamic-labs/logger": 0.18.100-viem.28
+    "@dynamic-labs/types": 0.18.100-viem.28
+  peerDependencies:
+    viem: ^1.5.3
+  checksum: d48ad75f1764f8f8813bd2978d75b7afa4f30928e03f782b0c1fb4e206878779fe358e20713a717c7e2d4802516075997707426e1d912a897766717ba5e77141
   languageName: node
   linkType: hard
 
@@ -3609,6 +3672,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dynamic-labs/wallet-book@npm:0.18.100-viem.28":
+  version: 0.18.100-viem.28
+  resolution: "@dynamic-labs/wallet-book@npm:0.18.100-viem.28"
+  dependencies:
+    "@dynamic-labs/logger": 0.18.100-viem.28
+    zod: 3.21.4
+  peerDependencies:
+    react: ^17.0.2 || ^18.0.0
+    react-dom: ^17.0.2 || ^18.0.0
+  checksum: 18451bb695e84395c2587c401a5ecf086d276a4c67d471518dcb6b0e594cdb3d2d1e1e49c832ffc5bd7768380a86b21e1ddbb8c582744e0a2a01b2dcdfb9c2c4
+  languageName: node
+  linkType: hard
+
 "@dynamic-labs/wallet-connector-core@npm:0.18.100-viem.24":
   version: 0.18.100-viem.24
   resolution: "@dynamic-labs/wallet-connector-core@npm:0.18.100-viem.24"
@@ -3619,6 +3695,19 @@ __metadata:
     "@dynamic-labs/wallet-book": 0.18.100-viem.24
     eventemitter3: 5.0.1
   checksum: 7d703a12d2317f6f11458ae1b77662ec9301baba3f296ad12cb005abedb044b0dad4c6c205a770fb119b8f1ba7b02b651e0f8e0ce86fe26529f3c55c26973371
+  languageName: node
+  linkType: hard
+
+"@dynamic-labs/wallet-connector-core@npm:0.18.100-viem.28":
+  version: 0.18.100-viem.28
+  resolution: "@dynamic-labs/wallet-connector-core@npm:0.18.100-viem.28"
+  peerDependencies:
+    "@dynamic-labs/logger": 0.18.100-viem.28
+    "@dynamic-labs/rpc-providers": 0.18.100-viem.28
+    "@dynamic-labs/utils": 0.18.100-viem.28
+    "@dynamic-labs/wallet-book": 0.18.100-viem.28
+    eventemitter3: 5.0.1
+  checksum: cddcda83b2a7348aae79d6f8b7d6ef78afb3566978eec235139eaeb6dd20d439287e0c8f3c26706e5aa19f0f351e5d63cf84c20da32d24c52640d4fe72007272
   languageName: node
   linkType: hard
 
@@ -10969,7 +11058,9 @@ __metadata:
   dependencies:
     "@apollo/client": ^3.7.17
     "@chakra-ui/react": ^2.7.0
+    "@dynamic-labs/ethereum": ^0.18.100-viem.24
     "@dynamic-labs/sdk-react": 0.18.100-viem.24
+    "@dynamic-labs/sdk-react-core": 0.18.100-viem.24
     "@dynamic-labs/wagmi-connector": 0.18.100-viem.24
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
