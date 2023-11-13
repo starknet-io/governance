@@ -160,7 +160,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
         toast({
           position: "top-right",
           title: `Insufficient Balance`,
-          description: `You must have at least 1 token to create delegate profile`,
+          description: `You must have at least 1 USDC to create a delegate profile`,
           status: "error",
           duration: 9000,
           isClosable: true,
