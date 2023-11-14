@@ -16,7 +16,7 @@ const homeLinks = [
     title: "What is Starknet?",
     description:
       "Starknet is a Validity Rollup Layer 2 – scaling Ethereum with high throughput & low gas costs.",
-    link: "learn/what_is_starknet",
+    link: "/learn/what_is_starknet",
   },
   {
     title: "What is the Governance Hub?",
