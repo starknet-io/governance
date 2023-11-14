@@ -1,6 +1,7 @@
 import { router, protectedProcedure } from '../utils/trpc';
 import { db } from '../db/db';
 import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 import { subscribers } from '../db/schema/subscribers';
 import { eq } from 'drizzle-orm';
 
@@ -39,6 +40,51 @@ export const subscriptionsRouter = router({
         .returning();
 
       return newSubscription[0];
+    }),
+  // New endpoint to confirm a subscription
+  confirmSubscription: protectedProcedure
+    .input(
+      z.object({
+        confirmationToken: z.string().uuid(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { confirmationToken } = opts.input;
+
+      const subscription = await db.query.subscribers.findFirst({
+        where: eq(subscribers.confirmationToken, confirmationToken),
+      });
+
+      if (!subscription) {
+        throw new Error('Invalid confirmation token');
+      }
+
+      await db
+        .update(subscribers)
+        .set({ isConfirmed: true, confirmationToken: uuidv4() }) // Confirm and regenerate token
+        .where(eq(subscribers.confirmationToken, confirmationToken));
+    }),
+
+  confirmUnsubscription: protectedProcedure
+    .input(
+      z.object({
+        confirmationToken: z.string().uuid(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { confirmationToken } = opts.input;
+
+      const subscription = await db.query.subscribers.findFirst({
+        where: eq(subscribers.confirmationToken, confirmationToken),
+      });
+
+      if (!subscription) {
+        throw new Error('Invalid unconfirmation token');
+      }
+
+      await db
+        .delete(subscribers)
+        .where(eq(subscribers.confirmationToken, confirmationToken));
     }),
 
   // Endpoint to unsubscribe a user from emails
@@ -79,7 +125,7 @@ export const subscriptionsRouter = router({
     });
 
     if (!subscriber) {
-      return null
+      return null;
     }
 
     return subscriber.email;

@@ -253,6 +253,13 @@
       "when": 1699439333794,
       "tag": "0035_overjoyed_exodus",
       "breakpoints": false
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1699970415686,
+      "tag": "0036_last_magik",
+      "breakpoints": false
     }
   ]
 }
