@@ -274,7 +274,11 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     <ReactMarkdown
       remarkPlugins={[remarkGfm, [remarkEmoji]]}
       className={className}
-      components={ChakraUIRenderer(newTheme)}
+      components={
+        typeof ChakraUIRenderer === "function"
+          ? ChakraUIRenderer(newTheme)
+          : undefined
+      }
     >
       {processedContent}
     </ReactMarkdown>

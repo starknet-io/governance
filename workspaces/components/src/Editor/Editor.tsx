@@ -35,10 +35,17 @@ export const MarkdownEditor: React.FC<
   initialValue = defaultInitialValue,
 }) => {
   const { convertMarkdownToSlate } = useMarkdownEditor("");
-  const editor = useMemo(
-    () => withInlines(withHistory(withReact(createEditor()))),
-    [],
-  );
+  const editor = useMemo(() => {
+    const withInlines = (editor) => {
+      const { isInline } = editor;
+      editor.isInline = (element) => {
+        return element.type === "link" ? true : isInline(element);
+      };
+      return editor;
+    };
+
+    return withInlines(withHistory(withReact(createEditor())));
+  }, []);
 
   const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
