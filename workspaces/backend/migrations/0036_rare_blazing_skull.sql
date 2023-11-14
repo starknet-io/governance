@@ -1,0 +1,2 @@
+ALTER TABLE "subscribers" ADD COLUMN "confirmationToken" uuid DEFAULT '8398e96b-4f23-47a9-9768-3eea30b6a310' NOT NULL;
+ALTER TABLE "subscribers" ADD COLUMN "isConfirmed" boolean DEFAULT false NOT NULL;

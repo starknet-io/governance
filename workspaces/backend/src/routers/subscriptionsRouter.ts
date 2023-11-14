@@ -35,6 +35,7 @@ export const subscriptionsRouter = router({
         .insert(subscribers)
         .values({
           email,
+          confirmationToken: uuidv4(),
           userId,
         })
         .returning();
@@ -79,7 +80,7 @@ export const subscriptionsRouter = router({
       });
 
       if (!subscription) {
-        throw new Error('Invalid unconfirmation token');
+        throw new Error('Invalid confirmation token');
       }
 
       await db

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "b8f570a1-ecb0-432b-a7ab-83fdd0fbb07c",
+  "id": "f3f04849-b35c-4b9a-9006-90450b3ef87c",
   "prevId": "eeb61381-c2b7-4811-a01a-e107724a51d1",
   "tables": {
     "comments": {
@@ -1036,7 +1036,7 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true,
-          "default": "'uuid_generate_v4()'"
+          "default": "'8398e96b-4f23-47a9-9768-3eea30b6a310'"
         },
         "isConfirmed": {
           "name": "isConfirmed",

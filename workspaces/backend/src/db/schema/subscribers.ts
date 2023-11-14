@@ -1,5 +1,6 @@
 import { pgTable, uuid, timestamp, text, boolean } from 'drizzle-orm/pg-core';
 import { InferModel } from 'drizzle-orm';
+import { v4 as uuidv4 } from 'uuid';
 import { users } from './users';
 
 export const subscribers = pgTable('subscribers', {
@@ -8,7 +9,7 @@ export const subscribers = pgTable('subscribers', {
     onDelete: 'cascade',
     onUpdate: 'cascade',
   }),
-  confirmationToken: uuid('confirmationToken').notNull().default('uuid_generate_v4()'),
+  confirmationToken: uuid('confirmationToken').notNull().default(uuidv4()),
   isConfirmed: boolean('isConfirmed').notNull().default(false),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
