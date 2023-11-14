@@ -4,6 +4,13 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { subscribers } from '../db/schema/subscribers';
 import { eq } from 'drizzle-orm';
+import Mailgun from 'mailgun.js';
+import formData from "form-data";
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({
+  username: 'api',
+  key: process.env.MAILGUN_API_KEY!,
+});
 
 export const subscriptionsRouter = router({
   // Endpoint to subscribe a user to emails
@@ -39,6 +46,23 @@ export const subscriptionsRouter = router({
           userId,
         })
         .returning();
+      const mailgunDomain = process.env.MAILGUN_DOMAIN || ""
+      const withEmailMailgunDomain = `@${mailgunDomain}`
+
+      if (newSubscription && newSubscription[0]) {
+        await mg.messages.create(
+          mailgunDomain,
+          {
+            from: `Governance Hub <me${withEmailMailgunDomain}>`,
+            to: email,
+            subject: "Confirm Subscription",
+            template: "confirm email address",
+            'h:X-Mailgun-Variables': JSON.stringify({
+              url: `http://localhost:3000/subscription/confirm/${newSubscription[0].confirmationToken}`,
+            }),
+          },
+        );
+      }
 
       return newSubscription[0];
     }),
@@ -64,6 +88,8 @@ export const subscriptionsRouter = router({
         .update(subscribers)
         .set({ isConfirmed: true, confirmationToken: uuidv4() }) // Confirm and regenerate token
         .where(eq(subscribers.confirmationToken, confirmationToken));
+
+      return subscription.email
     }),
 
   confirmUnsubscription: protectedProcedure
