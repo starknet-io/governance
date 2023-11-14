@@ -16,18 +16,18 @@ const homeLinks = [
     title: "What is Starknet?",
     description:
       "Starknet is a Validity Rollup Layer 2 – scaling Ethereum with high throughput & low gas costs.",
-    link: "https://dev.yuki-labs.dev/learn/governance_for_dummies",
+    link: "learn/what_is_starknet",
   },
   {
     title: "What is the Governance Hub?",
     description:
       "The Hub is where the community propose, debate and vote on Starknet’s future.",
-    link: "https://dev.yuki-labs.dev/learn/governance_for_dummies",
+    link: "/learn/what_is_governance_on_starknet",
   },
   {
     title: "How does Governance work?",
     description: "Governance is a decentralised, community driven process.",
-    link: "https://dev.yuki-labs.dev/learn/governance_for_dummies",
+    link: "/learn/what_is_governance_on_starknet",
   },
 ];
 export const BannerHome = ({
