@@ -164,7 +164,8 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
 
                   <Box width="50%">
                     <Text variant="smallStrong" color="content.default.default">
-                      {userBalance?.balance} {userBalance?.symbol}
+                      {new Intl.NumberFormat().format(userBalance?.balance)}{" "}
+                      {userBalance?.symbol}
                     </Text>
                   </Box>
                 </Flex>
@@ -234,7 +235,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
 
                 <Box>
                   <Text variant="smallStrong" color="content.default.default">
-                    {vp}
+                    {new Intl.NumberFormat().format(vp)}
                   </Text>
                 </Box>
               </Flex>
