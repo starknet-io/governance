@@ -288,6 +288,8 @@ export function Delegates({
   const { user } = usePageContext();
   const userDelegate = trpc.users.isDelegate.useQuery({
     userId: user?.id || "",
+  }, {
+    enabled: !!user?.id
   });
 
   const handleResetFilters = () => {

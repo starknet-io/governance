@@ -28,14 +28,11 @@ import {
   InfoModal,
   Logo,
   ShareDialog,
-  Dropdown,
-  MenuItem,
   SupportModal,
   Text,
   GlobalSearch,
   SearchIcon,
   NotificationsMenu,
-  NotificationItem,
 } from "@yukilabs/governance-components";
 import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
 import { NavigationMenu } from "src/components/Navigation";
@@ -44,13 +41,8 @@ import { extractAndFormatSlug } from "src/utils/helpers";
 import { CloseIcon } from "@dynamic-labs/sdk-react";
 import {
   BannedIcon,
-  BellIcon,
   ConnectWalletIcon,
-  NotificationVotingProposalIcon,
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
-import { useFetchNotifications } from "../../hooks/useNotifications";
-import { truncateAddress } from "@yukilabs/governance-components/src/utils";
-import { Indenticon } from "@yukilabs/governance-components/src/Indenticon";
 
 export interface Props {
   readonly pageContext: PageContext;
@@ -66,13 +58,6 @@ function LayoutDefault(props: Props) {
   const { handleLogOut, setShowAuthFlow } = useDynamicContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBannedModalOpen, setIsBannedModalOpen] = useState(false);
-
-  const {
-    notifications,
-    loading: notificationsLoading,
-    error: notificationsError,
-    markAsRead,
-  } = useFetchNotifications();
 
   useEffect(() => {
     if (user?.banned) {
@@ -293,8 +278,6 @@ function LayoutDefault(props: Props) {
                 </Box>
                 {user && (
                   <NotificationsMenu
-                    notifications={notifications}
-                    markAsRead={markAsRead}
                   />
                 )}
                 <GlobalSearch
