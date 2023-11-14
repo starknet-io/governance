@@ -13,16 +13,18 @@ type HomePageCardProps = {
   title: string;
   description: string;
   link: string;
+  isExternal?: boolean;
 };
 export const HomePageCard = ({
   title,
   description,
   link,
+  isExternal,
 }: HomePageCardProps) => {
   return (
     <LinkBox>
       <Card variant="homePage" height="full">
-        <LinkOverlay href={link} isExternal>
+        <LinkOverlay href={link} isExternal={isExternal}>
           <CardHeader>{title}</CardHeader>
         </LinkOverlay>
         <CardBody>{description}</CardBody>

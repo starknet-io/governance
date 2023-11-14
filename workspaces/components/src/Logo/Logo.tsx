@@ -1,4 +1,5 @@
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
+import { Badge } from "src/Badge";
 import { Heading } from "src/Heading";
 
 type Props = {
@@ -18,7 +19,13 @@ export const Logo = ({ padding, href = "" }: Props) => {
       alignItems="center"
       p={padding ? padding : "standard.lg"}
       zIndex={1}
+      position="relative"
     >
+      <Box position="absolute" left="66px" top="44px">
+        <Badge borderRadius="4px" variant="closed" size="condensed">
+          BETA
+        </Badge>
+      </Box>
       <svg
         width="38"
         height="38"
