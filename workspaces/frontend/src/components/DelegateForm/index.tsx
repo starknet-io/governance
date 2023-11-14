@@ -498,8 +498,7 @@ Conflicts of interest
                   >
                     <Flex gap={1}>
                       <Text variant="mediumStrong" color="content.accent.default">
-                        I agree with the Starknet foundation suggested delegate
-                        agreement -
+                        I agree with the Starknet Foundation's suggested delegate agreement
                       </Text>
                       <Button
                         top="-1px"
