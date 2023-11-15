@@ -17,8 +17,8 @@ config.port = config.hosts[0].port;
 config.connectTimeout = 60e3;
 config.acquireTimeout = 60e3;
 config.timeout = 60e3;
-config.password = '';
 config.charset = 'utf8mb4';
+config.ssl = {ca: fs.readFileSync("ca-certificate.crt").toString()};
 bluebird.promisifyAll([Pool, Connection]);
 const db = mysql.createPool(config);
 
