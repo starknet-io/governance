@@ -8,6 +8,7 @@ import {
   LinkBox,
   LinkOverlay,
   Spinner,
+  Flex,
 } from "@chakra-ui/react";
 import { Tag } from "../Tag";
 import { Button } from "../Button";
@@ -17,6 +18,13 @@ import "./karma.css";
 
 import { AvatarWithText } from "src/AvatarWithText";
 import { Tooltip } from "src/Tooltip";
+import {
+  DiscordIcon,
+  DiscourseIcon,
+  TelegramIcon,
+  TwitterIcon,
+} from "src/Icons";
+import { IconButton } from "src/IconButton";
 
 export type DelegateCardProps = {
   statement: string | null;
@@ -30,6 +38,10 @@ export type DelegateCardProps = {
   src?: string | null;
   isDelegationLoading?: boolean;
   headerTooltipContent?: string;
+  twitter?: string;
+  discord?: string;
+  discourse?: string;
+  telegram?: string;
 };
 
 const delegateInterests: Record<string, string> = {
@@ -128,6 +140,10 @@ export const DelegateCard = ({
   profileURL,
   isDelegationLoading,
   headerTooltipContent,
+  twitter,
+  discord,
+  discourse,
+  telegram,
 }: DelegateCardProps) => {
   const votesFormatted = formatVotesAmount(votingPower) + " delegated votes";
   const formattedDelegateStatement = extractParagraph(statement || "");
@@ -167,19 +183,24 @@ export const DelegateCard = ({
       </CardBody>
 
       <CardFooter>
-        <Box width="100%" display="flex" flexDirection="column" gap="16px">
+        <Box
+          width="100%"
+          display="flex"
+          flexDirection="row"
+          gap="standard.base"
+        >
           <Box>
             {!isDelegationLoading ? (
               <Button
                 size="condensed"
-                variant="outline"
+                variant="secondary"
                 onClick={onDelegateClick}
               >
                 Delegate
               </Button>
             ) : (
               <Button
-                size="condensed"
+                size="secondary"
                 variant="outline"
                 disabled
                 gap={1.5}
@@ -192,6 +213,55 @@ export const DelegateCard = ({
               </Button>
             )}
           </Box>
+          <Flex ml="auto" gap="standard.base">
+            {twitter && (
+              <IconButton
+                size="condensed"
+                variant="secondary"
+                as="a"
+                target="_blank"
+                icon={<TwitterIcon />}
+                {...({ href: `https://twitter.com/${twitter}` } as any)}
+              />
+            )}
+            {telegram && (
+              <IconButton
+                size="condensed"
+                variant="secondary"
+                as="a"
+                target="_blank"
+                icon={<TelegramIcon />}
+                {...({
+                  href: `https://t.me/${telegram}`,
+                } as any)}
+              />
+            )}
+            {discord && (
+              <IconButton
+                size="condensed"
+                variant="secondary"
+                as="a"
+                telegram
+                target="_blank"
+                icon={<DiscordIcon />}
+                {...({
+                  href: `https://discord.com/${discourse}`,
+                } as any)}
+              />
+            )}
+            {discourse && (
+              <IconButton
+                size="condensed"
+                variant="secondary"
+                as="a"
+                target="_blank"
+                icon={<DiscourseIcon />}
+                {...({
+                  href: `https://community.starknet.io/u/${discourse}`,
+                } as any)}
+              />
+            )}
+          </Flex>
         </Box>
       </CardFooter>
     </LinkBox>
