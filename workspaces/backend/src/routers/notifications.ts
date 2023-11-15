@@ -7,13 +7,12 @@ import { users } from '../db/schema/users';
 import { notificationUsers } from '../db/schema/notificationUsers';
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
-import {formatTimestamp} from "../utils/helpers";
+import { formatTimestamp, getUrlBasedOnHost } from '../utils/helpers';
 const mailgun = new Mailgun(formData);
 const mg = mailgun.client({
   username: 'api',
   key: process.env.MAILGUN_API_KEY!,
 });
-
 
 export const notificationsRouter = router({
   getAll: publicProcedure.query(async () => {
@@ -104,34 +103,45 @@ export const notificationsRouter = router({
       try {
         // Now send emails to subscribers
         const subscribers = await db.query.subscribers.findMany();
-        const emailList = subscribers.map((subscriber) => subscriber.email);
 
-        const mailgunDomain = process.env.MAILGUN_DOMAIN || ""
-        const withEmailMailgunDomain = `@${mailgunDomain}`
-        const formattedStart = formatTimestamp(start)
-        const formattedEnd = formatTimestamp(end)
+        const mailgunDomain = process.env.MAILGUN_DOMAIN || '';
+        const withEmailMailgunDomain = `@${mailgunDomain}`;
+        const formattedStart = formatTimestamp(start);
+        const formattedEnd = formatTimestamp(end);
 
-        for (const email of emailList) {
+        const { req } = opts.ctx;
+        const hostname = getUrlBasedOnHost(req.host);
+
+        for (const subscriber of subscribers) {
+          const email = subscriber.email;
+          const confirmationToken = subscriber.confirmationToken;
+          if (!subscriber.isConfirmed) {
+            continue;
+          }
           console.log('SENDING EMAIL TO ', email);
           if (event === 'proposal/start' || event === 'proposal/created') {
-            const template = event === 'proposal/start' ? 'notification-template' : 'new proposal created'
-            const subject = event === 'proposal/start' ? 'Voting proposal started' : 'New voting proposal created'
-            await mg.messages.create(
-              mailgunDomain,
-              {
-                from: `Governance Hub <me${withEmailMailgunDomain}>`,
-                to: email,
-                subject: subject,
-                template: template,
-                text: message,
-                'h:X-Mailgun-Variables': JSON.stringify({
-                  title: title,
-                  url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
-                  startTime: formattedStart,
-                  endTime: formattedEnd,
-                }),
-              },
-            );
+            const template =
+              event === 'proposal/start'
+                ? 'notification-template'
+                : 'new proposal created';
+            const subject =
+              event === 'proposal/start'
+                ? 'Voting proposal started'
+                : 'New voting proposal created';
+            await mg.messages.create(mailgunDomain, {
+              from: `Governance Hub <me${withEmailMailgunDomain}>`,
+              to: email,
+              subject: subject,
+              template: template,
+              text: message,
+              'h:X-Mailgun-Variables': JSON.stringify({
+                title: title,
+                url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                unsubscribeUrl: `${hostname}subscription/unsubscribe/${confirmationToken}`,
+                startTime: formattedStart,
+                endTime: formattedEnd,
+              }),
+            });
           } else if (event === 'proposal/end') {
             const calculatePercentage = (value: number, total: number) => {
               const percentage = (value / total) * 100;
@@ -151,23 +161,21 @@ export const notificationsRouter = router({
             const amountAbstain =
               calculatePercentage(scores[2], totalVoted) || 0;
 
-            await mg.messages.create(
-              mailgunDomain,
-              {
-                from: `Governance Hub <me${withEmailMailgunDomain}>`,
-                to: email,
-                subject: 'Voting proposal ended',
-                template: 'voting proposal ended',
-                text: message,
-                'h:X-Mailgun-Variables': JSON.stringify({
-                  title: title,
-                  url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
-                  amountFor,
-                  amountAgainst,
-                  amountAbstain,
-                }),
-              },
-            );
+            await mg.messages.create(mailgunDomain, {
+              from: `Governance Hub <me${withEmailMailgunDomain}>`,
+              to: email,
+              subject: 'Voting proposal ended',
+              template: 'voting proposal ended',
+              text: message,
+              'h:X-Mailgun-Variables': JSON.stringify({
+                title: title,
+                url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                unsubscribeUrl: `${hostname}subscription/unsubscribe/${confirmationToken}`,
+                amountFor,
+                amountAgainst,
+                amountAbstain,
+              }),
+            });
           }
         }
       } catch (err) {
