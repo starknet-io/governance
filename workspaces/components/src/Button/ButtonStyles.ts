@@ -65,6 +65,28 @@ export const buttonTheme = {
       minHeight: "36px",
       maxWidth: "100%",
       justifyContent: "flex-start",
+      whiteSpace: "normal",
+      overflowWrap: "break-word",
+      wordWrap: "break-word",
+      lineHeight: "normal",
+      textAlign: "left",
+      svg: {
+        boxSize: "24px",
+      },
+    },
+    learnNavLink: {
+      minWidth: "auto",
+      px: "standard.sm",
+      borderRadius: "0",
+      py: "standard.xs",
+      minHeight: "36px",
+      maxWidth: "100%",
+      justifyContent: "flex-start",
+      whiteSpace: "normal",
+      overflowWrap: "break-word",
+      wordWrap: "break-word",
+
+      textAlign: "left",
       svg: {
         boxSize: "24px",
       },
@@ -279,6 +301,64 @@ export const buttonTheme = {
       _active: {
         outlineWidth: 0,
         bg: "surface.forms.selected",
+        color: "content.default.selected",
+        svg: {
+          fill: "content.default.selected",
+        },
+      },
+      _disabled: {
+        bg: "surface.forms.disabled",
+        color: "content.default.disabled",
+        svg: {
+          fill: "content.default.disabled",
+        },
+
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
+      },
+    },
+    learnNavLink: {
+      position: "relative",
+      borderWidth: "0px",
+      borderColor: "transparent",
+      bg: "transparent",
+      color: "content.default.default",
+      svg: {
+        fill: "content.default.default",
+      },
+      boxShadow: " 0px 1px 1px 0px rgba(0, 0, 0, 0)",
+      _before: {
+        content: `""`,
+        position: "absolute",
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: "4px",
+        backgroundColor: "#1A1523",
+        borderTopRightRadius: "4px",
+        borderBottomRightRadius: "4px",
+        opacity: 0,
+      },
+      _hover: {
+        bg: "surface.forms.hover",
+        color: "content.default.hover",
+        svg: {
+          fill: "content.default.hover",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        bg: "surface.forms.hover",
+
+        _before: {
+          opacity: 1, // Make the pseudo-element visible when active
+        },
         color: "content.default.selected",
         svg: {
           fill: "content.default.selected",
