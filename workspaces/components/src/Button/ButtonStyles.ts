@@ -339,11 +339,12 @@ export const buttonTheme = {
         left: 0,
         top: 0,
         bottom: 0,
-        width: "4px",
+        width: "2px",
         backgroundColor: "#1A1523",
         borderTopRightRadius: "4px",
         borderBottomRightRadius: "4px",
         opacity: 0,
+        zIndex: 2,
       },
       _hover: {
         bg: "surface.forms.hover",
