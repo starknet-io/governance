@@ -228,7 +228,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
           marginTop: "8px",
         }}
         {...props}
-        color="content.default.default"
+        color="#4A4A4F"
       />
     ),
     ul: ({ ...props }) => (
@@ -240,15 +240,16 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
           paddingLeft: 17,
           marginBottom: 16,
           marginTop: "8px",
+          color: "#4A4A4F",
         }}
         {...props}
-        color="#4A4A4F"
       />
     ),
     li: ({ ...props }) => (
       <li
         style={{
           marginBottom: "8px",
+          color: "#4A4A4F",
         }}
         {...props}
       />

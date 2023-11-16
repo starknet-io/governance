@@ -142,9 +142,9 @@ export function Page() {
           bg="surface.bgPage"
           pt={{ base: "standard.md" }}
           pb={{ base: "standard.md", lg: "standard.3xl" }}
-          pr={{
-            base: "standard.md",
-          }}
+          // pr={{
+          //   base: "standard.md",
+          // }}
           pl={{
             base: "standard.md",
             md: "0px",
@@ -353,7 +353,7 @@ function LearnPageTree({
   }
 
   return (
-    <Box pr="2">
+    <Box>
       {pages.map((page) => (
         <Box key={page.id}>
           <NavItemWrapper
@@ -395,38 +395,32 @@ function NavItemWrapper({
   selectPage,
 }: NavItemWrapperProps) {
   const isSelectedPage = selectedPage?.id === page.id;
-  const fontSize = isChild ? "xs" : "sm";
-  const fontColor = isSelectedPage ? "#1A1523" : "#4A4A4F";
+  const fontSize = isChild ? "12px" : "14px";
+  const isChildTree = pl && Number(pl) == 5;
 
   return (
-    <Box
+    <Button
       onClick={() => selectPage(page)}
-      pl={pl}
-      position="relative"
-      _before={{
-        content: '""',
-        position: "absolute",
-        width: "2px",
-        height: "70%",
-        backgroundColor: isSelectedPage ? "#1A1523" : "transparent",
-        left: 0,
-        top: "50%",
-        transform: "translateY(-50%)",
-        borderTopRightRadius: 4,
-        borderBottomRightRadius: 4,
-      }}
+      variant="learnNavLink"
+      fontWeight="medium"
+      fontSize={fontSize}
+      size="learnNavLink"
+      width="100%"
+      wordBreak={"break-word"}
+      isActive={isSelectedPage}
+      paddingLeft={isChildTree ? "standard.2xl" : "standard.md"}
+      mb="2px"
     >
-      <Button
-        variant="ghost"
-        fontWeight="medium"
-        fontSize={fontSize}
-        color={fontColor}
-        size="navLink"
-        width="100%"
-      >
-        {(isChild ? `- ${page.title}` : page.title) ?? ""}
-      </Button>
-    </Box>
+      {(isChild ? (
+        <Flex pl="standard.xs">
+          <Flex>{`-`}</Flex>
+
+          <Flex pl="standard.xs">{page.title}</Flex>
+        </Flex>
+      ) : (
+        page.title
+      )) ?? ""}
+    </Button>
   );
 }
 

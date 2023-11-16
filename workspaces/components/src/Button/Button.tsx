@@ -10,7 +10,8 @@ export type props = {
     | "ghost"
     | "danger"
     | "special"
-    | "textSmall";
+    | "textSmall"
+    | "learnNavLink";
   children: React.ReactNode;
   toId?: string;
   href?: string;

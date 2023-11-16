@@ -13,21 +13,22 @@ type Props = {
 
 const homeLinks = [
   {
-    title: "What is Starknet?",
+    title: "Starknet’s progressive governance",
     description:
-      "Starknet is a Validity Rollup Layer 2 – scaling Ethereum with high throughput & low gas costs.",
-    link: "/learn/what_is_starknet",
+      "A decentralized network that strives to evolve over time needs to have progressively evolving decentralized governance mechanisms to support protocol upgrades.",
+    link: "/learn/starknet's_progressive_governance",
   },
   {
-    title: "What is the Governance Hub?",
+    title: "How to Vote",
     description:
       "The Hub is where the community propose, debate and vote on Starknet’s future.",
-    link: "/learn/what_is_governance_on_starknet",
+    link: "/learn/how_to_vote",
   },
   {
-    title: "How does Governance work?",
-    description: "Governance is a decentralised, community driven process.",
-    link: "/learn/what_is_governance_on_starknet",
+    title: "How to delegate voting power",
+    description:
+      "If you are a STRK token holder, you can select a delegate to vote in your place for protocol changes.",
+    link: "/learn/how_to_delegate_voting_power",
   },
 ];
 export const BannerHome = ({

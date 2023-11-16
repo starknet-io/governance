@@ -169,7 +169,7 @@ const sortByOptions = {
   ],
 };
 
-const LIMIT = 12
+const LIMIT = 12;
 
 export type DelegatesProps = {
   showFilers?: boolean;
@@ -338,7 +338,7 @@ export function Delegates({
       );
     }
     const delegateId = userDelegate?.data?.id;
-
+    console.log("ss", allDelegates);
     return (
       <>
         <Button
@@ -660,6 +660,10 @@ export function Delegates({
                         truncateAddress(delegate.author?.address)
                       }
                       key={delegate?.id}
+                      twitter={delegate?.twitter}
+                      discord={delegate?.discord}
+                      discourse={delegate?.discourse}
+                      telegram={delegate?.telegram}
                     />
                   ))
                 ) : (

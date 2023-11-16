@@ -23,7 +23,7 @@ export const Logo = ({ padding, href = "" }: Props) => {
     >
       <Box position="absolute" left="66px" top="44px">
         <Badge borderRadius="4px" variant="closed" size="condensed">
-          BETA
+          ALPHA
         </Badge>
       </Box>
       <svg
