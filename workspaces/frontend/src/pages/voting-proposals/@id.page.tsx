@@ -60,6 +60,7 @@ import {
 import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import {useProposal} from "../../hooks/snapshotX/useProposal";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -73,41 +74,12 @@ export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
   const [helpMessage, setHelpMessage] = useHelpMessage();
+  debugger
 
-  const { data, refetch } = useQuery(
-    gql(`query Proposal($proposal: String) {
-      proposal(id: $proposal) {
-      id
-      author
-      title
-      body
-      choices
-      votes
-      scores
-      start
-      end
-      state
-      discussion
-      ipfs
-      type
-      scores_by_strategy
-      scores_state
-      scores_total
-      scores_updated
-      snapshot
-        strategies {
-          network
-          params
-        }
-      }
+  const { data, refetch } = useProposal({
+    proposal: pageContext.routeParams!.id
+  })
 
-    }`),
-    {
-      variables: {
-        proposal: pageContext.routeParams!.id,
-      },
-    },
-  );
   const { data: vp, loading: isVotingPowerLoading, refetch: refetchVotingProposal } = useQuery(
     gql(`query VpProposal($voter: String!, $space: String!, $proposal: String) {
       vp(voter: $voter, space: $space, proposal: $proposal) {

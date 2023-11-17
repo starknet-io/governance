@@ -22,6 +22,7 @@ import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
+import { useProposals } from "../../hooks/snapshotX/useProposals";
 
 interface SkeletonRowProps {
   numItems: number;
@@ -252,6 +253,11 @@ export function Page() {
     );
   }
 
+  const newProposals = useProposals()
+
+  console.log(newProposals)
+
+
   return (
     <Grid
       bg="surface.bgPage"
@@ -353,8 +359,8 @@ export function Page() {
                     </Button>
                   }
                 />
-              ) : data.length > 0 ? (
-                data.map((item: any) => <Proposal key={item?.id} data={item} />)
+              ) : newProposals?.data?.length > 0 ? (
+                newProposals.data.map((item: any) => <Proposal key={item?.id} data={item} />)
               ) : (
                 <Box position="absolute" inset="0">
                   <EmptyState
