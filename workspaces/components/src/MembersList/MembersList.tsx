@@ -83,7 +83,7 @@ export const MembersList: React.FC<MembersListProps> = ({
         isValidAddress(member.address) || !member.address
           ? ""
           : "Not a valid Ethereum address",
-      twitterHandle: member.twitterHandle ? "" : "Twitter handle is required.",
+      twitterHandle: "",
       miniBio: member.miniBio ? "" : "Add a mini bio for council member",
     };
 
@@ -160,7 +160,6 @@ export const MembersList: React.FC<MembersListProps> = ({
                   />
                 </FormControlled>
                 <FormControlled
-                  isRequired
                   name="twitterHandle"
                   label="Twitter handle"
                   paddingBottom={2}
