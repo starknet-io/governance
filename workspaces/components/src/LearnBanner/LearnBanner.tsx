@@ -4,20 +4,20 @@ import { BookIcon } from "./BookIcon";
 import { Text } from "src/Text";
 import { Button } from "src/Button";
 
-import avatar from "./avatar.jpg";
+import avatar from "./avatar.jpeg";
 import { ArrowRightIcon } from "src/Icons";
 
 const data = {
-  title: "Governance for dummies",
+  title: "What is Starknet governance?",
   author: {
-    name: "Cillian Hunter",
-    username: "cillianhunter.eth",
+    name: "stoobie",
+    username: "stoobie",
     avatar,
-    date: "12 Jan 2023",
+    date: "Nov 19th 2023",
   },
   overview:
-    "If you've ever wondered how the wild west of the Internet - the land of decentralized protocols - manages to maintain some semblance of order, then you're in the right place. It's like stepping into a party where everyone has a say in the playlist, and the chaos that ensues is precisely what makes it a blast. Let's unravel this techno-mumbo-jumbo and understand how this crowd-managed circus, also known as decentralized governance, works.",
-  link: "/learn/governance_for_dummies",
+    "Starknet is on the road toward decentralization, and part of that journey includes deciding how we're going to make decisions, and, for that matter, who are we? The answers to these big questions, along with all the little questions that arise as we answer the big ones, comprise a collection of mechanisms that enable the Starknet community to plot Starknet's course and steer it in the right direction to best serve that community.",
+  link: "/learn/what_is_starknet_governance",
 };
 
 export const LearnBanner = () => {

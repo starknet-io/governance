@@ -79,11 +79,10 @@ export const MembersList: React.FC<MembersListProps> = ({
   const validateForm = () => {
     let errors = {
       name: member.name ? "" : "Add member name",
-      address: member.address
-        ? isValidAddress(member.address)
+      address:
+        isValidAddress(member.address) || !member.address
           ? ""
-          : "Not a valid Ethereum address"
-        : "Add Ethereum address",
+          : "Not a valid Ethereum address",
       twitterHandle: member.twitterHandle ? "" : "Twitter handle is required.",
       miniBio: member.miniBio ? "" : "Add a mini bio for council member",
     };
@@ -131,6 +130,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                 <FormControlled
                   name="name"
                   label="Member name"
+                  isRequired
                   paddingBottom={2}
                   isInvalid={!!formErrors.name}
                   errorMessage={formErrors.name || ""}
@@ -144,6 +144,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                 </FormControlled>
 
                 <FormControlled
+                  isRequired={false}
                   name="address"
                   label="Ethereum address"
                   paddingBottom={2}
@@ -151,6 +152,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                   errorMessage={formErrors.address || ""}
                 >
                   <Input
+                    isRequired={false}
                     placeholder="0x..."
                     name="address"
                     value={member.address ?? ""}
@@ -158,6 +160,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                   />
                 </FormControlled>
                 <FormControlled
+                  isRequired
                   name="twitterHandle"
                   label="Twitter handle"
                   paddingBottom={2}
@@ -172,6 +175,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                   />
                 </FormControlled>
                 <FormControlled
+                  isRequired
                   name="miniBio"
                   label="Mini Bio"
                   paddingBottom={2}
