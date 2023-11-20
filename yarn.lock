@@ -9679,6 +9679,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/uuid@npm:^9.0.7":
+  version: 9.0.7
+  resolution: "@types/uuid@npm:9.0.7"
+  checksum: c7321194aeba9ea173efd1e721403bdf4e7ae6945f8f8cdbc87c791f4b505ccf3dbc4a8883d90b394ef13b7c2dc778045792b05dbb23b3c746f8ea347804d448
+  languageName: node
+  linkType: hard
+
 "@types/ws@npm:^7.4.4":
   version: 7.4.7
   resolution: "@types/ws@npm:7.4.7"
@@ -10963,6 +10970,7 @@ __metadata:
     "@types/node": ^20.4.5
     "@types/pg": ^8.10.2
     "@types/turndown": ^5.0.1
+    "@types/uuid": ^9.0.7
     algoliasearch: ^4.19.1
     body-parser: ^1.20.2
     cookie-parser: ^1.4.6
@@ -10991,6 +10999,7 @@ __metadata:
     ts-node-dev: ^2.0.0
     turndown: ^7.1.2
     typescript: ^5.1.6
+    uuid: ^9.0.1
     zod: ^3.21.4
   languageName: unknown
   linkType: soft
@@ -26252,7 +26261,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^9.0.0":
+"uuid@npm:^9.0.0, uuid@npm:^9.0.1":
   version: 9.0.1
   resolution: "uuid@npm:9.0.1"
   bin:
