@@ -22,3 +22,18 @@ export const transformProposal = (proposal) => {
     state: "active",
   };
 };
+
+export const transformVote = (vote) => {
+  return {
+    ...vote,
+    voter: vote.voter.id,
+  };
+};
+
+export const transformVotes = (data) => {
+  if (data && data.votes && data.votes.length) {
+    return data.votes.map((vote) => transformVote(vote));
+  } else {
+    return data;
+  }
+};

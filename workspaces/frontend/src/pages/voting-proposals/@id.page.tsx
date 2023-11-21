@@ -61,6 +61,7 @@ import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { useProposal } from "../../hooks/snapshotX/useProposal";
+import { useVotes } from "../../hooks/snapshotX/useVotes";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -105,59 +106,19 @@ export function Page() {
     },
   );
 
-  const vote = useQuery(
-    gql(`
-      query Vote($where: VoteWhere) {
-        votes(where: $where) {
-          choice
-          voter
-          reason
-          metadata
-          created
-          ipfs
-          vp
-          vp_by_strategy
-          vp_state
-        }
-      }
-    `),
-    {
-      variables: {
-        where: {
-          voter: walletClient?.account.address as any,
-          proposal: pageContext.routeParams!.id,
-        },
-      },
-      skip: walletClient?.account.address == null,
-    },
-  );
+  const vote = useVotes({
+    proposal: pageContext.routeParams!.id,
+    voter: walletClient?.account.address as any,
+    skipField: "voter",
+  });
 
-  const votes = useQuery(
-    gql(`
-      query VotingProposalsVotes($where: VoteWhere) {
-        votes(where: $where) {
-          choice
-          voter
-          reason
-          metadata
-          created
-          ipfs
-          vp
-          vp_by_strategy
-          vp_state
-        }
-      }
-    `),
-    {
-      variables: {
-        where: {
-          proposal: pageContext.routeParams!.id,
-        },
-      },
-    },
-  );
+  const votes = useVotes({
+    proposal: pageContext.routeParams!.id,
+    skipField: "proposal",
+  });
 
-  console.log(vote?.data, votes?.data, vp);
+  console.log(votes);
+  console.log(vote)
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 

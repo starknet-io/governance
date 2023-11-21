@@ -44,6 +44,7 @@ import * as ProfilePageLayout from "../../../components/ProfilePageLayout/Profil
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
+import { useVotes } from "../../../hooks/snapshotX/useVotes";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -91,24 +92,6 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
     $proposal: String
     $where: VoteWhere
   ) {
-    votes(where: $where) {
-      id
-      choice
-      voter
-      reason
-      metadata
-      created
-      proposal {
-        id
-        title
-        body
-        choices
-      }
-      ipfs
-      vp
-      vp_by_strategy
-      vp_state
-    }
     vp(voter: $voter, space: $space, proposal: $proposal) {
       vp
       vp_by_strategy
@@ -142,6 +125,11 @@ export function Page() {
     error: delegationError,
   } = useWaitForTransaction({ hash: txHash as `0x${string}` });
   // handle delegation cases
+  const votes = useVotes({
+    voter: delegateAddress,
+    skipField: "voter",
+  });
+
   useEffect(() => {
     if (isDelegationLoading && dynamicUser) {
       setIsStatusModalOpen(true);
@@ -245,7 +233,7 @@ export function Page() {
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
 
-  const stats = gqlResponse.data?.votes?.reduce(
+  const stats = votes?.data?.votes?.reduce(
     (acc: { [key: string]: number }, vote) => {
       acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
       return acc;
@@ -327,7 +315,11 @@ export function Page() {
     const canEdit =
       (hasPermission(user.role, [ROLES.USER]) &&
         user.delegationStatement?.id === delegateId) ||
-      hasPermission(user.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR]);
+      hasPermission(user.role, [
+        ROLES.ADMIN,
+        ROLES.SUPERADMIN,
+        ROLES.MODERATOR,
+      ]);
 
     return (
       <>
@@ -592,7 +584,7 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Proposals voted on"
-              value={gqlResponse.data?.votes?.length.toString() || "0"}
+              value={votes?.data?.votes?.length.toString() || "0"}
             />
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
@@ -728,9 +720,9 @@ export function Page() {
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
-            ) : gqlResponse.data?.votes?.length ? (
+            ) : votes?.data?.votes?.length ? (
               <ListRow.Container mt="0">
-                {gqlResponse.data?.votes.map((vote) => (
+                {votes?.data?.votes.map((vote) => (
                   <Link
                     href={`/voting-proposals/${vote!.proposal!.id}`}
                     key={vote!.id}

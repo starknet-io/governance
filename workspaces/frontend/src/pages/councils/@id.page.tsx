@@ -29,32 +29,14 @@ import { hasPermission } from "src/utils/helpers";
 import { Flex, Text } from "@chakra-ui/react";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import * as ProfilePageLayout from "../../components/ProfilePageLayout/ProfilePageLayout";
+import {useVotes} from "../../hooks/snapshotX/useVotes";
 
 const DELEGATE_PROFILE_PAGE_QUERY = gql(`
-  query DelegateProfilePageQuery(
+  query CouncilProfilePageQuery(
     $voter: String!
     $space: String!
     $proposal: String
-    $where: VoteWhere
   ) {
-    votes(where: $where) {
-      id
-      choice
-      voter
-      reason
-      metadata
-      created
-      proposal {
-        id
-        title
-        body
-        choices
-      }
-      ipfs
-      vp
-      vp_by_strategy
-      vp_state
-    }
     vp(voter: $voter, space: $space, proposal: $proposal) {
       vp
       vp_by_strategy
@@ -104,13 +86,20 @@ export function Page() {
     skip: council?.address == null,
   });
 
-  const stats = gqlResponse.data?.votes?.reduce(
-    (acc: { [key: string]: number }, vote) => {
-      acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
-      return acc;
-    },
-    {},
-  );
+  const {
+    data: votes,
+    loading: isVotesLoading,
+    error: isVotesError,
+  } = useVotes({
+    space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+    voter: council?.address ?? "",
+    skipField: "voter",
+  });
+
+  const stats = votes?.votes?.reduce((acc: { [key: string]: number }, vote) => {
+    acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
+    return acc;
+  }, {});
 
   const isCouncilLoading = !council;
 
@@ -188,7 +177,7 @@ export function Page() {
           <SummaryItems.Item
             isLoading={isLoadingGqlResponse}
             label="Proposals voted on"
-            value={gqlResponse.data?.votes?.length.toString() ?? "0"}
+            value={votes?.votes?.length.toString() ?? "0"}
           />
           <SummaryItems.Item
             isLoading={isLoadingGqlResponse}
@@ -307,9 +296,9 @@ export function Page() {
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
-            ) : gqlResponse.data?.votes?.length ? (
+            ) : votes?.votes?.length ? (
               <ListRow.Container>
-                {gqlResponse.data?.votes.map((vote) => (
+                {votes?.votes.map((vote) => (
                   <Link
                     href={`/voting-proposals/${vote!.proposal!.id}`}
                     key={vote!.id}

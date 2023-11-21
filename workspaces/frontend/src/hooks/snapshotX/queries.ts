@@ -68,3 +68,17 @@ export const GET_PROPOSAL_QUERY = gql`
   }
 `;
 
+export const GET_VOTES_QUERY = gql(`
+  query VoteQuery($where: Vote_filter) {
+    votes(where: $where) {
+      choice
+      voter {
+        id
+      }
+      created
+      vp
+    }
+  }
+`);
+
+
