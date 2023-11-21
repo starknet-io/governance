@@ -91,12 +91,14 @@ export function Page() {
     loading: isVotesLoading,
     error: isVotesError,
   } = useVotes({
-    space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
+    space: import.meta.env.VITE_APP_SNAPSHOTX_SPACE,
     voter: council?.address ?? "",
     skipField: "voter",
   });
 
-  const stats = votes?.votes?.reduce((acc: { [key: string]: number }, vote) => {
+  console.log(votes)
+
+  const stats = votes?.votes?.votes?.reduce((acc: { [key: string]: number }, vote) => {
     acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
     return acc;
   }, {});
@@ -177,7 +179,7 @@ export function Page() {
           <SummaryItems.Item
             isLoading={isLoadingGqlResponse}
             label="Proposals voted on"
-            value={votes?.votes?.length.toString() ?? "0"}
+            value={votes?.votes?.votes?.length.toString() ?? "0"}
           />
           <SummaryItems.Item
             isLoading={isLoadingGqlResponse}
@@ -296,9 +298,9 @@ export function Page() {
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
-            ) : votes?.votes?.length ? (
+            ) : votes?.votes?.votes?.length ? (
               <ListRow.Container>
-                {votes?.votes.map((vote) => (
+                {votes?.votes?.votes?.map((vote) => (
                   <Link
                     href={`/voting-proposals/${vote!.proposal!.id}`}
                     key={vote!.id}

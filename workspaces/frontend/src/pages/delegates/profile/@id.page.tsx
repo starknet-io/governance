@@ -125,10 +125,6 @@ export function Page() {
     error: delegationError,
   } = useWaitForTransaction({ hash: txHash as `0x${string}` });
   // handle delegation cases
-  const votes = useVotes({
-    voter: delegateAddress,
-    skipField: "voter",
-  });
 
   useEffect(() => {
     if (isDelegationLoading && dynamicUser) {
@@ -203,6 +199,11 @@ export function Page() {
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`;
 
+  const votes = useVotes({
+    voter: delegateAddress,
+    skipField: "voter",
+  });
+
   const gqlResponse = useQuery(DELEGATE_PROFILE_PAGE_QUERY, {
     variables: {
       space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
@@ -233,7 +234,9 @@ export function Page() {
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
 
-  const stats = votes?.data?.votes?.reduce(
+  const allVotes = votes?.data?.votes?.votes || []
+
+  const stats = allVotes.reduce(
     (acc: { [key: string]: number }, vote) => {
       acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
       return acc;
@@ -584,7 +587,7 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Proposals voted on"
-              value={votes?.data?.votes?.length.toString() || "0"}
+              value={allVotes?.length.toString() || "0"}
             />
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
@@ -720,9 +723,9 @@ export function Page() {
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
-            ) : votes?.data?.votes?.length ? (
+            ) : allVotes?.length ? (
               <ListRow.Container mt="0">
-                {votes?.data?.votes.map((vote) => (
+                {allVotes.map((vote) => (
                   <Link
                     href={`/voting-proposals/${vote!.proposal!.id}`}
                     key={vote!.id}

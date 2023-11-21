@@ -15,10 +15,11 @@ export function useVotes({
   space?: string;
   skipField?: SkippableField;
 }) {
+  const selectedSpace = space || import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
   const variables = {
     where: {
       ...(voter ? { voter } : {}),
-      ...(space ? { space } : {}),
+      ...(selectedSpace ? { space: selectedSpace } : {}),
       ...(proposal ? { proposal: parseInt(proposal) } : {}),
     },
   };
@@ -33,7 +34,6 @@ export function useVotes({
     skip: !toSkip || !toSkip.length,
     context: { clientName: "snapshotX" }, // Adding context to route the query to the second link
   });
-
 
   const transformedVotes = transformVotes(data);
 
