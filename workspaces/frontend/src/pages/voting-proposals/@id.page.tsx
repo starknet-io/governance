@@ -60,7 +60,7 @@ import {
 import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
-import {useProposal} from "../../hooks/snapshotX/useProposal";
+import { useProposal } from "../../hooks/snapshotX/useProposal";
 
 const sortByOptions = {
   defaultValue: "date",
@@ -74,13 +74,20 @@ export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
   const [helpMessage, setHelpMessage] = useHelpMessage();
-  debugger
 
   const { data, refetch } = useProposal({
     proposal: pageContext.routeParams!.id
-  })
+      ? (`${import.meta.env.VITE_APP_SNAPSHOTX_SPACE!}/${
+          pageContext.routeParams!.id
+        }` as string)
+      : undefined,
+  });
 
-  const { data: vp, loading: isVotingPowerLoading, refetch: refetchVotingProposal } = useQuery(
+  const {
+    data: vp,
+    loading: isVotingPowerLoading,
+    refetch: refetchVotingProposal,
+  } = useQuery(
     gql(`query VpProposal($voter: String!, $space: String!, $proposal: String) {
       vp(voter: $voter, space: $space, proposal: $proposal) {
         vp
@@ -150,7 +157,7 @@ export function Page() {
     },
   );
 
-  console.log(vote?.data, votes?.data, vp)
+  console.log(vote?.data, votes?.data, vp);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -918,8 +925,6 @@ export function Page() {
                   const voteCount = data?.proposal?.scores![index];
                   const userVote = false;
                   const strategies = data?.proposal?.strategies;
-                  const scoresByStrategy =
-                    data?.proposal?.scores_by_strategy[index];
                   return (
                     <VoteStat
                       key={choice}
@@ -932,7 +937,6 @@ export function Page() {
                       userVote={userVote}
                       // @ts-expect-error todo
                       strategies={strategies}
-                      scoresByStrategy={scoresByStrategy}
                     />
                   );
                 })}

@@ -9,7 +9,6 @@ type Props = {
   type: "For" | "Against" | "Abstain";
   active?: boolean;
   strategies: Array<{ network: string; params: any }>;
-  scoresByStrategy: number[];
 };
 
 const variant = {

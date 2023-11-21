@@ -1,8 +1,14 @@
 import ReactDOM from "react-dom/client";
 import { PageShell } from "./PageShell";
 import type { PageContextClient } from "./types";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  createHttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 import { TrpcProvider } from "./providers/TrpcProvider";
+import fetch from "cross-fetch";
 
 export const clientRouting = true;
 export const hydrationCanBeAborted = true;
@@ -43,9 +49,25 @@ export function onPageTransitionEnd() {
   console.log("Page transition end");
   document.querySelector("body")!.classList.remove("page-is-transitioning");
 }
-function makeApolloClient(apolloIntialState: any) {
-  return new ApolloClient({
-    uri: `${import.meta.env.VITE_APP_SNAPSHOT_URL}/graphql`,
-    cache: new InMemoryCache().restore(apolloIntialState),
+const snapshotLink = createHttpLink({
+  uri: `${import.meta.env.VITE_APP_SNAPSHOT_URL}/graphql`,
+  fetch,
+});
+
+const snapshotXLink = createHttpLink({
+  uri: `${import.meta.env.VITE_APP_SNAPSHOTX_URL}/graphql`,
+  fetch,
+});
+
+function makeApolloClient() {
+  const apolloClient = new ApolloClient({
+    ssrMode: true,
+    link: ApolloLink.split(
+      (operation) => operation.getContext().clientName === "snapshotX",
+      snapshotXLink,
+      snapshotLink,
+    ),
+    cache: new InMemoryCache(),
   });
+  return apolloClient;
 }

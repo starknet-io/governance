@@ -1,10 +1,12 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client';
 
 export const GET_PROPOSALS_QUERY = gql`
-  query ProposalsSnapshotX($space: String!) {
+  query Proposals_Snapshot_X(
+    $space: String!
+  ) {
     proposals(
       where: {
-        space_in: [$space]
+        space: $space
       }
     ) {
       snapshot
@@ -37,9 +39,10 @@ export const GET_PROPOSALS_QUERY = gql`
 
 export const GET_PROPOSAL_QUERY = gql`
   query SnapshotXSingleProposal(
-    $id: String!
+    $space: String!
+    $proposal_id: String!
   ) {
-    proposal(id: $id) {
+    proposal(space: $space, proposal_id: $proposal_id) {
       snapshot
       id
       start
@@ -67,4 +70,3 @@ export const GET_PROPOSAL_QUERY = gql`
     }
   }
 `;
-
