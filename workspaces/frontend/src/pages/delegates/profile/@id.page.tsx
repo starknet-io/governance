@@ -101,7 +101,7 @@ const DELEGATE_PROFILE_PAGE_QUERY = gql(`
 `);
 
 // Extract this to some constants file
-export const MINIMUM_TOKENS_FOR_DELEGATION = 1;
+export const MINIMUM_TOKENS_FOR_DELEGATION = 0;
 
 export function Page() {
   const pageContext = usePageContext();

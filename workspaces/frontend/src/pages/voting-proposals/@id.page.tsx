@@ -43,9 +43,7 @@ import { useQuery } from "@apollo/client";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { formatDate } from "@yukilabs/governance-components/src/utils/helpers";
 import { useWalletClient } from "wagmi";
-import snapshot from "@snapshot-labs/snapshot.js";
 import { providers } from "ethers";
-import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { trpc } from "src/utils/trpc";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
@@ -62,7 +60,8 @@ import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { useProposal } from "../../hooks/snapshotX/useProposal";
 import { useVotes } from "../../hooks/snapshotX/useVotes";
-
+import { ethSigClient } from "../../clients/clients";
+import { useSpace } from '../../hooks/snapshotX/useSpace'
 const sortByOptions = {
   defaultValue: "date",
   options: [
@@ -117,8 +116,11 @@ export function Page() {
     skipField: "proposal",
   });
 
+  const { data: space } = useSpace()
+  console.log(space)
+
   console.log(votes);
-  console.log(vote)
+  console.log(vote);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -149,24 +151,11 @@ export function Page() {
         return;
       }
 
-      const client = new snapshot.Client712(
-        import.meta.env.VITE_APP_SNAPSHOT_URL,
-      );
-
-      const params: Vote = {
-        // from?: string;
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        // timestamp?: number;
-        proposal: pageContext.routeParams!.id,
-        type: "basic",
-        choice,
-        // privacy?: string;
-        reason,
-        // app?: string;
-        // metadata?: string;
-      };
+      // PREPARE DATA HERE
       setIsOpen(false);
       setisConfirmOpen(true);
+
+      console.log(data);
 
       const web3 = new providers.Web3Provider(walletClient.transport);
 
@@ -174,12 +163,19 @@ export function Page() {
       if (deeplink) {
         window.location.href = deeplink;
       }
+      try {
+        /*
+        const receipt = await ethSigClient.vote({
+          signer: web3.getSigner(),
+          data,
+        });
+               console.log(receipt);
 
-      const receipt = (await client.vote(
-        web3,
-        walletClient.account.address,
-        params,
-      )) as any;
+         */
+      } catch (err) {
+        console.log(err);
+      }
+
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
       refetch();
@@ -210,8 +206,7 @@ export function Page() {
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   const [commentError, setCommentError] = useState("");
   const hasVoted = vote.data && vote.data.votes?.[0];
-  const canVote =
-    data?.proposal?.state === "active" && vp?.vp?.vp && vp?.vp?.vp !== 0;
+  const canVote = data?.proposal?.state === "active"; // && vp?.vp?.vp && vp?.vp?.vp !== 0;
   const hasDelegated =
     delegation.isFetched &&
     userBalance.isFetched &&
