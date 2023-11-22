@@ -16,6 +16,7 @@ import {
   SupportIcon,
   FeedbackIcon,
   Button,
+  StarknetCommunityIcon,
 } from "@yukilabs/governance-components";
 import { IUser, ROLES } from "src/renderer/types";
 import { hasPermission } from "src/utils/helpers";
@@ -74,9 +75,7 @@ export const NavigationMenu = ({
               href={item.href}
             />
           ))}
-        </NavGroup>
 
-        <NavGroup label="Councils">
           {councilData
             ?.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""))
             .map((council) => (
@@ -147,8 +146,8 @@ export const NavigationMenu = ({
             />
           ) : null}
           <NavItem
-            icon={<SupportIcon />}
-            label="Support"
+            icon={<StarknetCommunityIcon />}
+            label="Community links"
             onClick={openSupportModal}
           />
 

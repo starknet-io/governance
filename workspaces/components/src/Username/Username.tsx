@@ -3,6 +3,7 @@ import { Text } from "../Text";
 import { Heading } from "../Heading";
 import { Indenticon } from "src/Indenticon";
 import { Tooltip } from "src/Tooltip";
+import { UserIcon } from "src/Icons/UiIcons";
 
 type Props = {
   src?: string | null;
@@ -11,6 +12,7 @@ type Props = {
   address: string;
   showTooltip?: boolean;
   tooltipContent?: string;
+  isMemberType?: boolean;
 };
 
 export const Username = ({
@@ -19,6 +21,7 @@ export const Username = ({
   size = "condensed",
   address,
   showTooltip = false,
+  isMemberType = false,
   tooltipContent = "",
 }: Props) => {
   const renderDisplayName = () => {
@@ -46,12 +49,32 @@ export const Username = ({
     );
   };
 
+  if (isMemberType && address === "") {
+    return (
+      <Flex alignItems="center" gap="standard.xs">
+        <Avatar
+          size="sm"
+          src={src === null ? "" : src}
+          bg="#1A1523"
+          icon={<UserIcon />}
+        />
+        {renderDisplayName()}
+      </Flex>
+    );
+  }
+
   if (size === "condensed") {
     return (
       <Flex alignItems="center" gap="standard.base">
         <Box height="22px">
           {src !== null ? (
-            <Avatar variant="withBorder" size="xs" src={src} />
+            <Avatar
+              variant="withBorder"
+              size="xs"
+              src={src}
+              bg="red"
+              icon={<UserIcon />}
+            />
           ) : (
             <Indenticon size={22} address={address?.toLowerCase()} />
           )}
@@ -63,7 +86,7 @@ export const Username = ({
   return (
     <Flex alignItems="center" gap="standard.xs">
       {src !== null ? (
-        <Avatar size="sm" src={src} />
+        <Avatar size="sm" src={src} bg="red" icon={<UserIcon />} />
       ) : (
         <Indenticon size={24} address={address?.toLowerCase()} />
       )}

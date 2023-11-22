@@ -33,7 +33,7 @@ export type MemberType = {
   name: string | null;
   twitterHandle: string | null;
   miniBio: string | null;
-  id: number | null
+  id: number | null;
 };
 
 type MembersListProps = {
@@ -248,6 +248,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                         displayName={
                           member.name ?? truncateAddress(member.address)
                         }
+                        isMemberType
                         showTooltip={!member.name}
                         tooltipContent={`${member.address}`}
                       />

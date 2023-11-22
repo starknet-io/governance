@@ -77,6 +77,7 @@ import {
   StarknetOutlineIcon,
   CalendarIcon,
   DisconnectWalletIcon,
+  UserIcon,
 } from "./UiIcons";
 
 export {
