@@ -212,7 +212,6 @@ export const councilsRouter = router({
       const user = await db.query.members.findFirst({
         where: eq(members.id, opts.input.id),
       });
-      console.log(user)
       if (!user) return;
       await db
         .delete(members)
