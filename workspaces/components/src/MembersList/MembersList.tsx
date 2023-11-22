@@ -33,6 +33,7 @@ export type MemberType = {
   name: string | null;
   twitterHandle: string | null;
   miniBio: string | null;
+  id: number | null
 };
 
 type MembersListProps = {
@@ -109,7 +110,7 @@ export const MembersList: React.FC<MembersListProps> = ({
 
   const handleRemoveMember = (indexToRemove: number) => {
     if (editMode) {
-      removeUserFromCouncil?.(members[indexToRemove].address);
+      removeUserFromCouncil?.(members[indexToRemove].id);
     }
     setMembers(members.filter((_, index) => index !== indexToRemove));
   };

@@ -13,6 +13,7 @@ import * as pages from './schema/pages';
 import * as posts from './schema/posts';
 import * as snips from './schema/snips';
 import * as users from './schema/users';
+import * as members from './schema/members';
 import * as votes from './schema/votes';
 import * as notifications from './schema/notifications';
 import * as subscribers from './schema/subscribers';
@@ -25,9 +26,6 @@ dotenv.config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    ca: fs.readFileSync("ca-certificate.crt").toString(),
-  },
 });
 
 const db = drizzle(pool, {
@@ -48,6 +46,7 @@ const db = drizzle(pool, {
     ...notifications,
     ...notificationUsers,
     ...subscribers,
+    ...members,
   },
 });
 
