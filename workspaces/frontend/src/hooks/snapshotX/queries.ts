@@ -100,16 +100,8 @@ export const GET_SPACE = gql`
         }
       }
       authenticators
-      strategies
-      strategies_params
-      validation_strategy
       strategies_indicies
       strategies_metadata
-      strategies_parsed_metadata {
-        data {
-          id
-        }
-      }
       authenticators
       metadata {
         delegation_api_type
@@ -124,7 +116,9 @@ export const GET_SPACE = gql`
       strategies_parsed_metadata {
         data {
           symbol
+          decimals
           payload
+          token
         }
       }
       voting_power_validation_strategy_strategies

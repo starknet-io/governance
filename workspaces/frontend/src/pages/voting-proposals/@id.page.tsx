@@ -65,7 +65,8 @@ import {
   STRATEGIES_ENUM,
 } from "../../hooks/snapshotX/constants";
 import { useSpace } from "../../hooks/snapshotX/useSpace";
-import {ethSigClient, starkSigClient} from "../../clients/clients";
+import { ethSigClient, starkSigClient } from "../../clients/clients";
+import {useVotingPower} from "../../hooks/snapshotX/useVotingPower";
 const sortByOptions = {
   defaultValue: "date",
   options: [
@@ -85,6 +86,10 @@ export function Page() {
           pageContext.routeParams!.id
         }` as string)
       : undefined,
+  });
+
+  const votingPowerTest = useVotingPower({
+    address: walletClient?.account.address as any,
   });
 
   const {
@@ -181,12 +186,7 @@ export function Page() {
         signer: web3.getSigner(),
         data: params,
       });
-      const tx = await starkSigClient.send(receipt)
-      console.log(starkSigClient)
-
-      console.log(receipt);
-      console.log('tx: ', tx)
-
+      const tx = await starkSigClient.send(receipt);
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
       refetch();
