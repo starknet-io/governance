@@ -60,6 +60,12 @@ import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { useProposal } from "../../hooks/snapshotX/useProposal";
 import { useVotes } from "../../hooks/snapshotX/useVotes";
+import {
+  AUTHENTICATORS_ENUM,
+  STRATEGIES_ENUM,
+} from "../../hooks/snapshotX/constants";
+import { useSpace } from "../../hooks/snapshotX/useSpace";
+import {ethSigClient, starkSigClient} from "../../clients/clients";
 const sortByOptions = {
   defaultValue: "date",
   options: [
@@ -109,6 +115,8 @@ export function Page() {
     skipField: "voter",
   });
 
+  const space = useSpace();
+
   const votes = useVotes({
     proposal: pageContext.routeParams!.id,
     skipField: "proposal",
@@ -132,7 +140,8 @@ export function Page() {
   async function handleVote(choice: number, reason?: string) {
     try {
       if (walletClient == null) return;
-
+      // TODO - figure out delegation, for now turn off
+      /*
       if ((vp?.vp?.vp || 0) < MINIMUM_TOKENS_FOR_DELEGATION) {
         setIsStatusModalOpen(true);
         setStatusTitle("No voting power");
@@ -142,12 +151,25 @@ export function Page() {
         setIsOpen(false);
         return;
       }
-
-      // PREPARE DATA HERE
+       */
       setIsOpen(false);
       setisConfirmOpen(true);
 
-      console.log(data);
+      // PREPARE DATA HERE
+
+      const params = {
+        authenticator: AUTHENTICATORS_ENUM.EVM_SIGNATURE,
+        space: space.data.id,
+        proposal: pageContext.routeParams.id!,
+        choice,
+        metadataUri: "",
+        strategies: [
+          {
+            address: STRATEGIES_ENUM.VANILLA,
+            index: 0,
+          },
+        ],
+      };
 
       const web3 = new providers.Web3Provider(walletClient.transport);
 
@@ -155,18 +177,15 @@ export function Page() {
       if (deeplink) {
         window.location.href = deeplink;
       }
-      try {
-        /*
-        const receipt = await ethSigClient.vote({
-          signer: web3.getSigner(),
-          data,
-        });
-               console.log(receipt);
+      const receipt = await ethSigClient.vote({
+        signer: web3.getSigner(),
+        data: params,
+      });
+      const tx = await starkSigClient.send(receipt)
+      console.log(starkSigClient)
 
-         */
-      } catch (err) {
-        console.log(err);
-      }
+      console.log(receipt);
+      console.log('tx: ', tx)
 
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);

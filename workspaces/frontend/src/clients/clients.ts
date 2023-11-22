@@ -5,10 +5,10 @@ const ethUrl = "https://rpcs.snapshotx.xyz/1";
 const manaUrl = "https://mana.pizza";
 
 const starkProvider = new Provider({
-  sequencer: { network: constants.NetworkName.SN_GOERLI },
+  sequencer: { baseUrl: "https://alpha4.starknet.io" },
 });
 
-const clientConfig = {
+export const clientConfig = {
   starkProvider,
   manaUrl,
   ethUrl,
