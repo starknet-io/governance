@@ -18,6 +18,7 @@ import {
   Button,
   StarknetCommunityIcon,
 } from "@yukilabs/governance-components";
+import { CommunityLinksIcon } from "@yukilabs/governance-components/src/Icons";
 import { IUser, ROLES } from "src/renderer/types";
 import { hasPermission } from "src/utils/helpers";
 
@@ -146,7 +147,7 @@ export const NavigationMenu = ({
             />
           ) : null}
           <NavItem
-            icon={<StarknetCommunityIcon />}
+            icon={<CommunityLinksIcon />}
             label="Community links"
             onClick={openSupportModal}
           />

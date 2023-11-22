@@ -7,16 +7,20 @@ type Props = {
 };
 
 export const Indenticon = ({ address, size = 60 }: Props) => {
-  // Define your brand's color palette
-  const brandColors = ["#3F8CFF", "#2F44B2", "#F6C9CE", "#F9E8E8", "#A1A1D6"];
+  const brandColors = [
+    "#3F8CFF",
+    "#EC796B",
+    "#F6C9CE",
+    "#F9E8E8",
+    "#A1A1D6",
+    "#2F44B2",
+    "#90EAC4",
+    "#FBF2B1",
+    "#E175B1",
+  ];
 
   return (
-    <Box
-      // borderRadius="full"
-      overflow="hidden"
-      width={`${size}px`}
-      height={`${size}px`}
-    >
+    <Box overflow="hidden" width={`${size}px`} height={`${size}px`}>
       <Avatar
         size={size}
         name={address}
