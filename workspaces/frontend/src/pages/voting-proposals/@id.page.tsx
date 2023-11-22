@@ -60,8 +60,6 @@ import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { useProposal } from "../../hooks/snapshotX/useProposal";
 import { useVotes } from "../../hooks/snapshotX/useVotes";
-import { ethSigClient } from "../../clients/clients";
-import { useSpace } from '../../hooks/snapshotX/useSpace'
 const sortByOptions = {
   defaultValue: "date",
   options: [
@@ -115,12 +113,6 @@ export function Page() {
     proposal: pageContext.routeParams!.id,
     skipField: "proposal",
   });
-
-  const { data: space } = useSpace()
-  console.log(space)
-
-  console.log(votes);
-  console.log(vote);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 

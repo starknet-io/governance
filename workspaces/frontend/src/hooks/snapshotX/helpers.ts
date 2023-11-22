@@ -37,3 +37,34 @@ export const transformVotes = (data) => {
     return data;
   }
 };
+
+export function getUrl(uri: string) {
+  const IPFS_GATEWAY: string = import.meta.env.VITE_APP_IPFS_GATEWAY || 'https://cloudflare-ipfs.com';
+  const ipfsGateway = `https://${IPFS_GATEWAY}`;
+  if (!uri) return null;
+  if (
+    !uri.startsWith('ipfs://') &&
+    !uri.startsWith('ipns://') &&
+    !uri.startsWith('https://') &&
+    !uri.startsWith('http://')
+  ) {
+    return `${ipfsGateway}/ipfs/${uri}`;
+  }
+
+  const uriScheme = uri.split('://')[0];
+  if (uriScheme === 'ipfs') return uri.replace('ipfs://', `${ipfsGateway}/ipfs/`);
+  if (uriScheme === 'ipns') return uri.replace('ipns://', `${ipfsGateway}/ipns/`);
+  return uri;
+}
+
+
+export const parseStrategyMetadata = async (metadata: string | null) => {
+  if (metadata === null) return null;
+  if (!metadata.startsWith('ipfs://')) return JSON.parse(metadata);
+
+  const strategyUrl = getUrl(metadata);
+  if (!strategyUrl) return null;
+
+  const res = await fetch(strategyUrl);
+  return res.json();
+};
