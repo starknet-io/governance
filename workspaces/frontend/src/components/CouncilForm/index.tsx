@@ -73,11 +73,11 @@ export function CouncilForm({
   const removeUserFromCouncilData =
     trpc.councils.deleteUserFromCouncil.useMutation();
 
-  const removeUserFromCouncil = (address: string) => {
+  const removeUserFromCouncil = (id: number) => {
     if (!council?.id) return;
     removeUserFromCouncilData.mutate({
       councilId: council?.id,
-      userAddress: address,
+      id: id,
     });
   };
 
@@ -95,10 +95,11 @@ export function CouncilForm({
 
     const tempMembers = council?.members?.map((member: any) => {
       return {
-        address: member.user.address,
-        name: member.user.name,
-        twitterHandle: member.user.twitter,
-        miniBio: member.user.miniBio,
+        address: member.address,
+        name: member.name,
+        twitterHandle: member.twitter,
+        miniBio: member.miniBio,
+        id: member?.id
       };
     });
     setMembers(tempMembers ?? []);
