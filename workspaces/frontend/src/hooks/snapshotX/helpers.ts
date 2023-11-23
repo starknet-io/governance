@@ -1,5 +1,28 @@
 import { defaultNetwork, getStarknetStrategy } from "@snapshot-labs/sx";
 import { clientConfig } from "../../clients/clients";
+import { create } from "ipfs-http-client";
+import { pin } from "@snapshot-labs/pineapple";
+
+const client = create({ url: "https://api.thegraph.com/ipfs/api/v0" });
+
+export async function pinGraph(payload: any) {
+  const res = await client.add(JSON.stringify(payload), { pin: true });
+
+  return {
+    provider: "graph",
+    cid: res.cid.toV0().toString(),
+  };
+}
+
+export async function pinPineapple(payload: any) {
+  const pinned = await pin(payload);
+  if (!pinned) throw new Error("Failed to pin");
+
+  return {
+    provider: pinned.provider,
+    cid: pinned.cid,
+  };
+}
 
 export const transformProposalData = (data) => {
   if (data && data.proposals && data.proposals.length) {
@@ -63,21 +86,24 @@ export function getUrl(uri: string) {
   return uri;
 }
 
-export const prepareStrategiesForSignature = async (strategies: string[], strategiesMetadata: any[]) => {
+export const prepareStrategiesForSignature = async (
+  strategies: string[],
+  strategiesMetadata: any[],
+) => {
   const strategiesWithMetadata = await Promise.all(
     strategies.map(async (strategy, i) => {
       const metadata = await parseStrategyMetadata(
-        strategiesMetadata[i].payload
+        strategiesMetadata[i].payload,
       );
 
       return {
         address: strategy,
         index: i,
-        metadata
+        metadata,
       };
-    })
+    }),
   );
-  return strategiesWithMetadata
+  return strategiesWithMetadata;
 };
 
 export const parseStrategyMetadata = async (metadata: string | null) => {

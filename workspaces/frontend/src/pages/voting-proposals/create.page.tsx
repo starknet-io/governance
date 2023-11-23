@@ -29,6 +29,10 @@ import { useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import {AUTHENTICATORS_ENUM} from "../../hooks/snapshotX/constants";
+import {useSpace} from "../../hooks/snapshotX/useSpace";
+import {pinPineapple, prepareStrategiesForSignature} from "../../hooks/snapshotX/helpers";
+import {ethSigClient, starkSigClient} from "../../clients/clients";
 
 interface FieldValues {
   // type: ProposalType;
@@ -86,6 +90,8 @@ export function Page() {
     formatTime(threeDaysFromNow),
   ]);
 
+  const space = useSpace();
+
   const handleEditorChangeWrapper = (value) => {
     handleEditorChange(value);
     if (errors.body) {
@@ -107,20 +113,35 @@ export function Page() {
           chainId: parseInt(import.meta.env.VITE_APP_SNAPSHOT_CHAIN_ID),
         });
 
-        const params: Proposal & {
-          votingPeriod?: Date[];
-        } = {
-          space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-          type: "basic",
+        const pinned = await pinPineapple({
           title: data.title,
           body: editorValue,
-          choices: ["For", "Against", "Abstain"],
-          start: Math.floor(data!.votingPeriod[0].getTime() / 1000),
-          end: Math.floor(data!.votingPeriod[1].getTime() / 1000),
-          snapshot: Number(block),
-          plugins: JSON.stringify({}),
           discussion: data.discussion,
-        };
+          execution: [],
+        });
+        if (!pinned || !pinned.cid) return false;
+        console.log('IPFS', pinned);
+        // PREPARE DATA HERE
+        const strategiesMetadata = space.data.strategies_parsed_metadata.map(
+          (strategy) => ({
+            ...strategy.data,
+          }),
+        );
+        const preparedStrategies = await prepareStrategiesForSignature(
+          space.data.strategies as string[],
+          strategiesMetadata as any[],
+        );
+
+        const params = {
+          authenticator: AUTHENTICATORS_ENUM.EVM_SIGNATURE,
+          space: space.data.id,
+          executionStrategy: {
+            addr: '0x0000000000000000000000000000000000000000',
+            params: []
+          },
+          strategies: preparedStrategies,
+          metadataUri: `ipfs://${pinned.cid}`
+        }
 
         const web3 = new providers.Web3Provider(walletClient.transport);
         const deeplink = walletConnector?.getDeepLink();
@@ -128,19 +149,17 @@ export function Page() {
           window.location.href = deeplink;
         }
 
-        const receipt = (await client.proposal(
-          web3,
-          walletClient.account.address,
-          params,
-        )) as any;
+        const receipt = await ethSigClient.propose({
+          signer: web3.getSigner(),
+          data: params,
+        });
+        const tx = await starkSigClient.send(receipt);
+        console.log(receipt)
+        console.log(tx)
 
-        const proposalData = {
-          title: data.title,
-          discussion: data.discussion,
-          proposalId: receipt.id,
-        };
-
+        return true
         try {
+          /*
           await createProposal
             .mutateAsync(proposalData)
             .then(() => {
@@ -151,6 +170,8 @@ export function Page() {
             .catch((err) => {
               setIsSubmitting(false);
             });
+
+           */
         } catch (error) {
           // Handle error
 
