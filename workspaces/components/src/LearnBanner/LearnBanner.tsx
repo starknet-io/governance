@@ -8,16 +8,16 @@ import avatar from "./avatar.jpeg";
 import { ArrowRightIcon } from "src/Icons";
 
 const data = {
-  title: "What is Starknet governance?",
+  title: "Starknet Governance overview",
   author: {
     name: "stoobie",
     username: "stoobie",
     avatar,
-    date: "Nov 19th 2023",
+    date: "Nov 15th 2023",
   },
   overview:
-    "Starknet is on the road toward decentralization, and part of that journey includes deciding how we're going to make decisions, and, for that matter, who are we? The answers to these big questions, along with all the little questions that arise as we answer the big ones, comprise a collection of mechanisms that enable the Starknet community to plot Starknet's course and steer it in the right direction to best serve that community.",
-  link: "/learn/what_is_starknet_governance",
+    "Starknet is a permissionless decentralized Layer 2 (L2) validity rollup, built to enable Ethereum to scale by using cryptographic protocols called STARKs, without compromising Ethereum’s core principles of decentralization, transparency, inclusivity, and security.",
+  link: "/learn/starknet_governance_overview",
 };
 
 export const LearnBanner = () => {
