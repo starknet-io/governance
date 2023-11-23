@@ -27,6 +27,7 @@ import { Username } from "src/Username";
 import * as ListRow from "src/ListRow/ListRowGeneric";
 import { ethers } from "ethers";
 import { FormControlled } from "src/FormControlled";
+import { Link } from "src/Link";
 
 export type MemberType = {
   address: string;
@@ -255,15 +256,37 @@ export const MembersList: React.FC<MembersListProps> = ({
                     </Box>
                     <Box ml="auto">
                       {member.twitterHandle ? (
-                        <Flex alignItems="center" gap="standard.base">
-                          <TwitterIcon />
-                          <Text
-                            color="content.support.default"
-                            variant="smallStrong"
+                        editMode ? (
+                          // In edit mode: Show Flex as Link with Twitter icon and handle
+                          <Flex
+                            as={Link}
+                            alignItems="center"
+                            gap="standard.base"
+                            href={`https://twitter.com/${member.twitterHandle}`}
                           >
-                            {member.twitterHandle}
-                          </Text>
-                        </Flex>
+                            <TwitterIcon />
+                            <Text
+                              color="content.support.default"
+                              variant="smallStrong"
+                            >
+                              {member.twitterHandle}
+                            </Text>
+                          </Flex>
+                        ) : (
+                          // Not in edit mode: Show IconButton with Twitter icon
+                          <IconButton
+                            size="condensed"
+                            variant="outline"
+                            icon={<TwitterIcon />}
+                            aria-label={`Twitter profile of ${member.twitterHandle}`}
+                            onClick={() =>
+                              window.open(
+                                `https://twitter.com/${member.twitterHandle}`,
+                                "_blank",
+                              )
+                            }
+                          />
+                        )
                       ) : null}
                     </Box>
                     {readonly ? null : (
