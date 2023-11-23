@@ -106,6 +106,7 @@ export function Page() {
   const selectPage = (page: PageWithChildren) => {
     setSelectedPage(page);
     window.history.pushState(null, "", `/learn/${page.slug}`);
+    window.scrollTo(0, 0);
   };
 
   const formattedAddress = truncateAddress(`${selectedPage?.author?.address}`);

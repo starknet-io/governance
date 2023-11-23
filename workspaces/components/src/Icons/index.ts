@@ -77,6 +77,9 @@ import {
   StarknetOutlineIcon,
   CalendarIcon,
   DisconnectWalletIcon,
+  UserIcon,
+  CommunityLinksIcon,
+  BlogPostsIcon,
 } from "./UiIcons";
 
 export {
@@ -156,4 +159,7 @@ export {
   CalendarIcon,
   DisconnectWalletIcon,
   EmailSubscribeIcon,
+  CommunityLinksIcon,
+  UserIcon,
+  BlogPostsIcon,
 };
