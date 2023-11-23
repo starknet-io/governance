@@ -17,6 +17,7 @@ import {
   StarknetOutlineIcon,
   LearnIcon,
   DiscourseIcon,
+  BlogPostsIcon,
 } from "src/Icons";
 import { Text } from "../Text";
 import { Heading } from "src/Heading";
@@ -76,7 +77,7 @@ export const SupportModal = ({ isOpen = false, onClose }: Props) => {
               label="Starknet community forum"
             />
             <LinkBox
-              icon={<LearnIcon boxSize="32px" mr="3px" />}
+              icon={<BlogPostsIcon boxSize="32px" mr="3px" />}
               href="https://www.starknet.io/en/posts/governance"
               label="Governance Blog posts"
             />

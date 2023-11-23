@@ -79,6 +79,7 @@ import {
   DisconnectWalletIcon,
   UserIcon,
   CommunityLinksIcon,
+  BlogPostsIcon,
 } from "./UiIcons";
 
 export {
@@ -160,4 +161,5 @@ export {
   EmailSubscribeIcon,
   CommunityLinksIcon,
   UserIcon,
+  BlogPostsIcon,
 };
