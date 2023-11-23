@@ -33,6 +33,7 @@ import {AUTHENTICATORS_ENUM} from "../../hooks/snapshotX/constants";
 import {useSpace} from "../../hooks/snapshotX/useSpace";
 import {pinPineapple, prepareStrategiesForSignature} from "../../hooks/snapshotX/helpers";
 import {ethSigClient, starkProvider, starkSigClient} from "../../clients/clients";
+import {useProposals} from "../../hooks/snapshotX/useProposals";
 
 interface FieldValues {
   // type: ProposalType;
@@ -48,6 +49,7 @@ export function Page() {
   const { editor, handleEditorChange, editorValue } = useMarkdownEditor("");
   const { handleUpload } = useFileUpload();
   const [error, setError] = useState("");
+  const { data: allProposals, refetch: refetchProposals } = useProposals()
   const { walletConnector } = useDynamicContext();
   const createProposal = trpc.proposals.createProposal.useMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -155,8 +157,13 @@ export function Page() {
         try {
           const result = await starkProvider.waitForTransaction(transaction.transaction_hash)
           console.log(result)
+          console.log(receipt)
+          console.log(transaction)
           setIsSubmitting(false);
           setError("");
+          await refetchProposals()
+          console.log(allProposals)
+          debugger
           navigate("/voting-proposals")
           /*
           await createProposal

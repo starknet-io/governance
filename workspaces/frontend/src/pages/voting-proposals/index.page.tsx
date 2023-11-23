@@ -253,10 +253,7 @@ export function Page() {
     );
   }
 
-  const newProposals = useProposals()
-
-  console.log(newProposals)
-
+  const newProposals = data
 
   return (
     <Grid
@@ -359,8 +356,8 @@ export function Page() {
                     </Button>
                   }
                 />
-              ) : newProposals?.data?.length > 0 ? (
-                newProposals.data.map((item: any) => <Proposal key={item?.id} data={item} />)
+              ) : newProposals && newProposals?.length > 0 ? (
+                newProposals.map((item: any) => <Proposal key={item?.id} data={item} />)
               ) : (
                 <Box position="absolute" inset="0">
                   <EmptyState

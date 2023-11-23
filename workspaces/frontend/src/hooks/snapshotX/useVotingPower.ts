@@ -3,7 +3,13 @@ import { useQuery } from "@apollo/client";
 import { GET_SPACE } from "./queries";
 import { getVotingPowerCalculation } from "./helpers";
 
-export function useVotingPower({ address, proposal }) {
+export function useVotingPower({
+  address,
+  proposal,
+}: {
+  address: string;
+  proposal?: string;
+}) {
   const network = "sn-tn";
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
 
@@ -25,9 +31,11 @@ export function useVotingPower({ address, proposal }) {
         return;
       }
 
-      const strategiesMetadata = spaceObj.space.strategies_parsed_metadata.map((strategy) => ({
-        ...strategy.data,
-      }));
+      const strategiesMetadata = spaceObj.space.strategies_parsed_metadata.map(
+        (strategy) => ({
+          ...strategy.data,
+        }),
+      );
 
       try {
         const vpData = await getVotingPowerCalculation(
@@ -35,13 +43,15 @@ export function useVotingPower({ address, proposal }) {
           spaceObj.space.strategies_params,
           strategiesMetadata,
           address,
-          1700667132
+          1700667132,
         );
-        const parsedData = vpData ? vpData.reduce((acc, strategy) => {
-          let toAdd = BigInt(strategy.value);
-          acc += toAdd;
-          return acc;
-        }, 0n) : 0n;
+        const parsedData = vpData
+          ? vpData.reduce((acc, strategy) => {
+              let toAdd = BigInt(strategy.value);
+              acc += toAdd;
+              return acc;
+            }, 0n)
+          : 0n;
         setData(parsedData);
       } catch (e) {
         console.warn("Failed to load voting power", e);

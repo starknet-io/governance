@@ -91,7 +91,7 @@ export function Page() {
   });
 
   const { data: votingPower, isLoading: votingPowerLoading } = useVotingPower({
-    address: walletClient?.account.address as any,
+    address: walletClient?.account.address as string,
   });
 
   const {
@@ -169,7 +169,6 @@ export function Page() {
         space.data.strategies as string[],
         strategiesMetadata as any[],
       );
-      console.log(preparedStrategies);
 
       const params = {
         authenticator: AUTHENTICATORS_ENUM.EVM_SIGNATURE,
@@ -191,7 +190,6 @@ export function Page() {
         data: params,
       });
       const transaction = await starkSigClient.send(receipt);
-      console.log(receipt);
       console.log(transaction);
       if (!transaction.transaction_hash) {
         setStatusTitle("Voting failed");
@@ -258,7 +256,7 @@ export function Page() {
     };
   });
   const comments = trpc.comments.getProposalComments.useQuery({
-    proposalId: data?.proposal?.id ?? "",
+    proposalId: data?.proposal?.id?.toString() ?? "",
     sort: sortBy,
   });
   const commentCount = comments?.data?.length || 0;
@@ -301,7 +299,7 @@ export function Page() {
     try {
       await saveComment.mutateAsync({
         content: value,
-        proposalId: data?.proposal?.id,
+        proposalId: data?.proposal?.id?.toString(),
       });
     } catch (error) {
       // Handle error
@@ -349,7 +347,7 @@ export function Page() {
       await saveComment.mutateAsync({
         content,
         parentId,
-        proposalId: data?.proposal?.id,
+        proposalId: data?.proposal?.id?.toString(),
       });
     } catch (error) {
       // Handle error
