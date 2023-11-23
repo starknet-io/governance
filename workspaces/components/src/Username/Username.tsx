@@ -72,7 +72,7 @@ export const Username = ({
               variant="withBorder"
               size="xs"
               src={src}
-              bg="red"
+              bg="#1A1523"
               icon={<UserIcon />}
             />
           ) : (
