@@ -60,13 +60,11 @@ import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { useProposal } from "../../hooks/snapshotX/useProposal";
 import { useVotes } from "../../hooks/snapshotX/useVotes";
-import {
-  AUTHENTICATORS_ENUM,
-  STRATEGIES_ENUM,
-} from "../../hooks/snapshotX/constants";
+import { AUTHENTICATORS_ENUM } from "../../hooks/snapshotX/constants";
 import { useSpace } from "../../hooks/snapshotX/useSpace";
 import { ethSigClient, starkSigClient } from "../../clients/clients";
-import {useVotingPower} from "../../hooks/snapshotX/useVotingPower";
+import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
+import { prepareStrategiesForSignature } from "../../hooks/snapshotX/helpers";
 const sortByOptions = {
   defaultValue: "date",
   options: [
@@ -88,7 +86,7 @@ export function Page() {
       : undefined,
   });
 
-  const votingPowerTest = useVotingPower({
+  const { data: votingPower, isLoading: votingPowerLoading } = useVotingPower({
     address: walletClient?.account.address as any,
   });
 
@@ -145,9 +143,7 @@ export function Page() {
   async function handleVote(choice: number, reason?: string) {
     try {
       if (walletClient == null) return;
-      // TODO - figure out delegation, for now turn off
-      /*
-      if ((vp?.vp?.vp || 0) < MINIMUM_TOKENS_FOR_DELEGATION) {
+      if ((votingPower || 0) < MINIMUM_TOKENS_FOR_DELEGATION) {
         setIsStatusModalOpen(true);
         setStatusTitle("No voting power");
         setStatusDescription(
@@ -156,11 +152,20 @@ export function Page() {
         setIsOpen(false);
         return;
       }
-       */
       setIsOpen(false);
       setisConfirmOpen(true);
 
       // PREPARE DATA HERE
+      const strategiesMetadata = space.data.strategies_parsed_metadata.map(
+        (strategy) => ({
+          ...strategy.data,
+        }),
+      );
+      const preparedStrategies = await prepareStrategiesForSignature(
+        space.data.strategies as string[],
+        strategiesMetadata as any[],
+      );
+      console.log(preparedStrategies);
 
       const params = {
         authenticator: AUTHENTICATORS_ENUM.EVM_SIGNATURE,
@@ -168,12 +173,7 @@ export function Page() {
         proposal: pageContext.routeParams.id!,
         choice,
         metadataUri: "",
-        strategies: [
-          {
-            address: STRATEGIES_ENUM.VANILLA,
-            index: 0,
-          },
-        ],
+        strategies: preparedStrategies,
       };
 
       const web3 = new providers.Web3Provider(walletClient.transport);
@@ -187,11 +187,13 @@ export function Page() {
         data: params,
       });
       const tx = await starkSigClient.send(receipt);
+      console.log(receipt);
+      console.log(tx);
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
-      refetch();
-      vote.refetch();
-      votes.refetch();
+      await refetch();
+      await vote.refetch();
+      await votes.refetch();
     } catch (error: any) {
       // Handle error
       setIsStatusModalOpen(true);
@@ -217,14 +219,14 @@ export function Page() {
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   const [commentError, setCommentError] = useState("");
   const hasVoted = vote.data && vote.data.votes?.[0];
-  const canVote = data?.proposal?.state === "active"; // && vp?.vp?.vp && vp?.vp?.vp !== 0;
+  const canVote = data?.proposal?.state === "active" && votingPower > 0;
   const hasDelegated =
     delegation.isFetched &&
     userBalance.isFetched &&
     delegation.data &&
     delegation.data != "0x0000000000000000000000000000000000000000";
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
-
+  console.log(votes, votes.data);
   const showPastVotes = votes?.data?.votes && votes?.data?.votes.length > 0;
   const pastVotes = votes?.data?.votes || [];
   const userAddresses =
@@ -245,7 +247,6 @@ export function Page() {
           : {},
     };
   });
-  console.log(pastVotesWithUserInfo);
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
@@ -390,7 +391,7 @@ export function Page() {
   return (
     <>
       <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <VoteReview choice={currentChoice} voteCount={vp?.vp?.vp as number} />
+        <VoteReview choice={currentChoice} voteCount={votingPower as number} />
         <FormControl id="comment">
           <FormLabel fontSize="14px" color={"content.default.default"}>
             Reason{" "}

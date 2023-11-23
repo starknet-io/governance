@@ -37,7 +37,7 @@ export const transformVotes = (data) => {
   if (data && data.votes && data.votes.length) {
     return data.votes.map((vote) => transformVote(vote));
   } else {
-    return data;
+    return data?.votes || [];
   }
 };
 
@@ -62,6 +62,23 @@ export function getUrl(uri: string) {
     return uri.replace("ipns://", `${ipfsGateway}/ipns/`);
   return uri;
 }
+
+export const prepareStrategiesForSignature = async (strategies: string[], strategiesMetadata: any[]) => {
+  const strategiesWithMetadata = await Promise.all(
+    strategies.map(async (strategy, i) => {
+      const metadata = await parseStrategyMetadata(
+        strategiesMetadata[i].payload
+      );
+
+      return {
+        address: strategy,
+        index: i,
+        metadata
+      };
+    })
+  );
+  return strategiesWithMetadata
+};
 
 export const parseStrategyMetadata = async (metadata: string | null) => {
   if (metadata === null) return null;

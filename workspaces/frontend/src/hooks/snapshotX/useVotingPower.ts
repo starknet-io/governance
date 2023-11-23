@@ -1,67 +1,61 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
-import { GET_SPACE, GET_VOTING_POWER_QUERY } from "./queries";
+import { GET_SPACE } from "./queries";
 import { getVotingPowerCalculation } from "./helpers";
 
-export async function useVotingPower({
-  address,
-  proposal,
-}: {
-  address: string;
-  proposal?: string;
-}) {
+export function useVotingPower({ address, proposal }) {
   const network = "sn-tn";
-  let data = [];
-  let isLoading = false;
-
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
-  const { data: spaceObj } = useQuery(GET_SPACE, {
+
+  const [data, setData] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { data: spaceObj, loading: spaceLoading } = useQuery(GET_SPACE, {
     variables: { space },
     skip: !space,
     fetchPolicy: "cache-first",
-    context: { clientName: "snapshotX" }, // Adding context to route the query to the second link
+    context: { clientName: "snapshotX" },
   });
 
-  const spaceData = spaceObj?.space;
+  useEffect(() => {
+    async function fetchVotingPower() {
+      if (!address || !spaceObj?.space) {
+        setData(0);
+        setIsLoading(false);
+        return;
+      }
 
-  if (!address || !address.length || !spaceData) {
-    return {
-      data: [],
-      isLoading: false,
-    };
-  }
+      const strategiesMetadata = spaceObj.space.strategies_parsed_metadata.map((strategy) => ({
+        ...strategy.data,
+      }));
 
-  const strategiesMetadata = spaceData.strategies_parsed_metadata.map(
-    (strategy: any) => ({
-      ...strategy.data,
-    }),
-  );
+      try {
+        const vpData = await getVotingPowerCalculation(
+          spaceObj.space.strategies,
+          spaceObj.space.strategies_params,
+          strategiesMetadata,
+          address,
+          1700667132
+        );
+        const parsedData = vpData ? vpData.reduce((acc, strategy) => {
+          let toAdd = BigInt(strategy.value);
+          acc += toAdd;
+          return acc;
+        }, 0n) : 0n;
+        setData(parsedData);
+      } catch (e) {
+        console.warn("Failed to load voting power", e);
+        setData(0);
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
-  try {
-    data = await getVotingPowerCalculation(
-      spaceData.strategies, // strategies
-      spaceData.strategies_params,
-      strategiesMetadata,
-      address,
-      1700667132,
-    );
-  } catch (e) {
-    console.warn("Failed to load voting power", e);
-    data = [];
-  } finally {
-    isLoading = false;
-  }
-  const parsedData = data
-    ? data.reduce((acc: bigint, strategy) => {
-        let toAdd = strategy.value;
-        if (typeof strategy.value === "string") {
-          toAdd = parseInt(strategy.value);
-        }
-        acc += toAdd;
-        return acc;
-      }, 0n)
-    : 0;
+    fetchVotingPower();
+  }, [address, spaceObj]);
+
   return {
-    parsedData,
-    isLoading,
+    data,
+    isLoading: isLoading || spaceLoading,
   };
 }

@@ -11,6 +11,7 @@ import { stringToHex } from "viem";
 import { usePageContext } from "./PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
+import { useVotingPower } from "../hooks/snapshotX/useVotingPower";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -23,22 +24,9 @@ const AuthorizedUserView = () => {
   const { handleUpload } = useFileUpload();
   const { user } = usePageContext();
 
-  const { data: vp } = useQuery(
-    gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
-      vp(voter: $voter, space: $space, proposal: $proposal) {
-        vp
-        vp_by_strategy
-        vp_state
-      }
-    }`),
-    {
-      variables: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: user?.address as string,
-      },
-      skip: !user?.address, // Skip the query if the user address is not available
-    },
-  );
+  const { data: votingPower } = useVotingPower({
+    address: user?.address,
+  });
 
   const userBalance = useBalanceData(user?.address as `0x${string}`);
 
@@ -188,7 +176,7 @@ const AuthorizedUserView = () => {
               onDisconnect={handleDisconnect}
               user={user}
               onSave={handleSave}
-              vp={vp?.vp?.vp ?? 0}
+              vp={votingPower ?? 0}
               userBalance={userBalance}
               onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}
               handleUpload={handleUpload}
