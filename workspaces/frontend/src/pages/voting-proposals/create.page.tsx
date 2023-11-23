@@ -155,6 +155,9 @@ export function Page() {
         try {
           const result = await starkProvider.waitForTransaction(transaction.transaction_hash)
           console.log(result)
+          setIsSubmitting(false);
+          setError("");
+          navigate("/voting-proposals")
           /*
           await createProposal
             .mutateAsync(proposalData)
@@ -170,7 +173,7 @@ export function Page() {
            */
         } catch (error) {
           // Handle error
-            console.log(error)
+          console.log(error)
           setIsSubmitting(false);
           // error.description is actual error from snapshot
         }
