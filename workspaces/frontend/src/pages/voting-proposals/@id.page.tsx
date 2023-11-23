@@ -62,7 +62,11 @@ import { useProposal } from "../../hooks/snapshotX/useProposal";
 import { useVotes } from "../../hooks/snapshotX/useVotes";
 import { AUTHENTICATORS_ENUM } from "../../hooks/snapshotX/constants";
 import { useSpace } from "../../hooks/snapshotX/useSpace";
-import { ethSigClient, starkSigClient } from "../../clients/clients";
+import {
+  ethSigClient,
+  starkProvider,
+  starkSigClient,
+} from "../../clients/clients";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import { prepareStrategiesForSignature } from "../../hooks/snapshotX/helpers";
 const sortByOptions = {
@@ -186,9 +190,16 @@ export function Page() {
         signer: web3.getSigner(),
         data: params,
       });
-      const tx = await starkSigClient.send(receipt);
+      const transaction = await starkSigClient.send(receipt);
       console.log(receipt);
-      console.log(tx);
+      console.log(transaction);
+      if (!transaction.transaction_hash) {
+        setStatusTitle("Voting failed");
+        setStatusDescription("An error occurred");
+        return false;
+      }
+      const result = await starkProvider.waitForTransaction(transaction.transaction_hash);
+      console.log(result);
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
       await refetch();
@@ -219,14 +230,13 @@ export function Page() {
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   const [commentError, setCommentError] = useState("");
   const hasVoted = vote.data && vote.data.votes?.[0];
-  const canVote = data?.proposal?.state === "active" && votingPower > 0;
+  const canVote = data?.proposal?.state === "active" && votingPower > 0 && !hasVoted
   const hasDelegated =
     delegation.isFetched &&
     userBalance.isFetched &&
     delegation.data &&
     delegation.data != "0x0000000000000000000000000000000000000000";
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
-  console.log(votes, votes.data);
   const showPastVotes = votes?.data?.votes && votes?.data?.votes.length > 0;
   const pastVotes = votes?.data?.votes || [];
   const userAddresses =
@@ -644,7 +654,7 @@ export function Page() {
               </Link>
             </Box>
 
-            {data?.proposal?.discussion !== "" ? (
+            {data?.proposal?.discussion && data?.proposal?.discussion.length ? (
               <Box height="110px!important" overflow="hidden" mt="standard.2xl">
                 <Iframely
                   id={import.meta.env.VITE_APP_IFRAMELY_ID}

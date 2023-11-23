@@ -15,7 +15,7 @@ export function useFetchNotifications() {
     trpc.notifications.getNotificationsForUser.useQuery(
       {},
       {
-        refetchInterval: 5000,
+        refetchInterval: 50000,
         refetchIntervalInBackground: true,
       },
     );

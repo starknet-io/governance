@@ -96,8 +96,6 @@ export function Page() {
     skipField: "voter",
   });
 
-  console.log(votes)
-
   const stats = votes?.votes?.votes?.reduce((acc: { [key: string]: number }, vote) => {
     acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
     return acc;

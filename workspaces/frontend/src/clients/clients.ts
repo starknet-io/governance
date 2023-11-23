@@ -4,7 +4,7 @@ import { Provider, constants } from "starknet";
 const ethUrl = "https://rpcs.snapshotx.xyz/1";
 const manaUrl = "https://mana.pizza";
 
-const starkProvider = new Provider({
+export const starkProvider = new Provider({
   sequencer: { baseUrl: "https://alpha4.starknet.io" },
 });
 

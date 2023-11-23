@@ -32,7 +32,7 @@ import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import {AUTHENTICATORS_ENUM} from "../../hooks/snapshotX/constants";
 import {useSpace} from "../../hooks/snapshotX/useSpace";
 import {pinPineapple, prepareStrategiesForSignature} from "../../hooks/snapshotX/helpers";
-import {ethSigClient, starkSigClient} from "../../clients/clients";
+import {ethSigClient, starkProvider, starkSigClient} from "../../clients/clients";
 
 interface FieldValues {
   // type: ProposalType;
@@ -105,14 +105,6 @@ export function Page() {
         setIsSubmitting(true);
         if (walletClient == null) return;
 
-        const client = new snapshot.Client712(
-          import.meta.env.VITE_APP_SNAPSHOT_URL,
-        );
-
-        const block = await fetchBlockNumber({
-          chainId: parseInt(import.meta.env.VITE_APP_SNAPSHOT_CHAIN_ID),
-        });
-
         const pinned = await pinPineapple({
           title: data.title,
           body: editorValue,
@@ -153,12 +145,16 @@ export function Page() {
           signer: web3.getSigner(),
           data: params,
         });
-        const tx = await starkSigClient.send(receipt);
+        const transaction = await starkSigClient.send(receipt);
         console.log(receipt)
-        console.log(tx)
-
-        return true
+        console.log(transaction)
+        if (!transaction.transaction_hash) {
+          setError("Error creating proposal")
+          return false
+        }
         try {
+          const result = await starkProvider.waitForTransaction(transaction.transaction_hash)
+          console.log(result)
           /*
           await createProposal
             .mutateAsync(proposalData)
@@ -174,12 +170,13 @@ export function Page() {
            */
         } catch (error) {
           // Handle error
-
+            console.log(error)
           setIsSubmitting(false);
           // error.description is actual error from snapshot
         }
       } catch (error: any) {
         // Handle error
+        console.log(error)
         setIsSubmitting(false);
         setError(`Error: ${error?.error_description}`);
       }
