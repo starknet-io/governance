@@ -30,10 +30,11 @@ import { useAccount, useWaitForTransaction } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import {
   useDelegateRegistryClearDelegate,
-  useDelegateRegistryDelegation,
-  useDelegateRegistrySetDelegate,
 } from "src/wagmi/DelegateRegistry";
-import { useQuery } from "@apollo/client";
+import {
+  useStarknetDelegate,
+  useStarknetDelegates,
+} from "../../../wagmi/StarknetDelegationRegistry";
 import { gql } from "src/gql";
 import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
@@ -45,6 +46,8 @@ import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
 import { useVotes } from "../../../hooks/snapshotX/useVotes";
+import {useVotingPower} from "../../../hooks/snapshotX/useVotingPower";
+import {useProposals} from "../../../hooks/snapshotX/useProposals";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -64,41 +67,6 @@ const delegateInterests: Record<string, string> = {
   defi: "DeFi",
 };
 
-const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
-  query DelegateProposals($space: String!) {
-    proposals(first: 20, skip: 0, where: {space_in: [$space]}, orderBy: "created", orderDirection: desc) {
-      id
-      title
-      choices
-      start
-      end
-      snapshot
-      state
-      scores
-      scores_total
-      author
-      space {
-        id
-        name
-      }
-    }
-  }
-`);
-
-const DELEGATE_PROFILE_PAGE_QUERY = gql(`
-  query DelegateProfilePageQuery(
-    $voter: String!
-    $space: String!
-    $proposal: String
-    $where: VoteWhere
-  ) {
-    vp(voter: $voter, space: $space, proposal: $proposal) {
-      vp
-      vp_by_strategy
-      vp_state
-    }
-  }
-`);
 
 // Extract this to some constants file
 export const MINIMUM_TOKENS_FOR_DELEGATION = 1;
@@ -162,19 +130,14 @@ export function Page() {
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
-  const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+  const { isLoading, writeAsync } = useStarknetDelegate({
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY! as `0x${string}`,
   });
 
-  const delegation = useDelegateRegistryDelegation({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    args: [
-      address!,
-      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
-    ],
+  const delegation = useStarknetDelegates({
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
+    args: [address!],
     watch: true,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
 
@@ -204,45 +167,23 @@ export function Page() {
     skipField: "voter",
   });
 
-  const gqlResponse = useQuery(DELEGATE_PROFILE_PAGE_QUERY, {
-    variables: {
-      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      voter: delegateAddress,
-      where: {
-        voter: delegateAddress,
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      },
-    },
-    skip: delegateAddress == null,
+  const gqlResponse = useVotingPower({
+    address: delegateAddress
   });
 
-  const gqlResponseProposalsByUser = useQuery(
-    GET_PROPOSALS_FOR_DELEGATE_QUERY,
-    {
-      variables: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        where: {
-          space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        },
-      },
-      skip: delegateAddress == null,
-    },
-  );
+  const gqlResponseProposalsByUser = useProposals()
 
   const proposals = gqlResponseProposalsByUser?.data?.proposals || [];
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
 
-  const allVotes = votes?.data?.votes?.votes || []
+  const allVotes = votes?.data?.votes?.votes || [];
 
-  const stats = allVotes.reduce(
-    (acc: { [key: string]: number }, vote) => {
-      acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
-      return acc;
-    },
-    {},
-  );
+  const stats = allVotes.reduce((acc: { [key: string]: number }, vote) => {
+    acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
+    return acc;
+  }, {});
 
   const renderAgreementValue = () => {
     if (delegate?.confirmDelegateAgreement) {
@@ -355,7 +296,7 @@ export function Page() {
 
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingSocials = !delegateResponse.isFetched;
-  const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
+  const isLoadingGqlResponse = gqlResponse.isLoading;
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
@@ -374,7 +315,7 @@ export function Page() {
         senderData={senderData}
         receiverData={{
           ...receiverData,
-          vp: gqlResponse?.data?.vp?.vp,
+          vp: gqlResponse?.data,
         }}
         delegateTokens={() => {
           if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
@@ -390,12 +331,7 @@ export function Page() {
               window.location.href = deeplink;
             }
             writeAsync?.({
-              args: [
-                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                  size: 32,
-                }),
-                delegateAddress,
-              ],
+              args: [delegateAddress],
             })
               .then((tx) => {
                 setTxHash(tx.hash);
@@ -592,7 +528,7 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Delegated votes"
-              value={(gqlResponse.data?.vp?.vp || 0).toLocaleString()}
+              value={(gqlResponse.data || 0).toLocaleString()}
             />
             <SummaryItems.Item
               isLoading={!delegateCommentsResponse.isFetched}

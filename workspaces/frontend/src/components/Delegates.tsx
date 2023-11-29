@@ -36,6 +36,7 @@ import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import {useVotingPower} from "../hooks/snapshotX/useVotingPower";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -202,7 +203,7 @@ export function Delegates({
   const [hasMoreDelegates, setHasMoreDelegates] = useState(true);
 
   const { isLoading, writeAsync } = useStarknetDelegate({
-    address: "0xca14007eff0db1f8135f4c25b34de49ab0d42766",
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY! as `0x${string}`,
   });
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -242,24 +243,9 @@ export function Delegates({
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
-  const { data: votingPower } = useQuery(
-    gql(`
-    query VotingPower($voter: String!, $space: String!) {
-      vp(voter: $voter, space: $space) {
-        vp
-        vp_by_strategy
-        vp_state
-      }
-    }
-  `),
-    {
-      variables: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: inputAddress,
-      },
-      skip: !inputAddress,
-    },
-  );
+  const { data: votingPower } = useVotingPower({
+    address: inputAddress
+  })
 
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
@@ -283,10 +269,10 @@ export function Delegates({
       const foundDelegate = delegates.data.find(
         (delegate) => delegate.author.address === receiverData.address,
       );
-      if (votingPower?.vp?.vp) {
+      if (votingPower) {
         return {
           ...receiverData,
-          vp: votingPower?.vp?.vp,
+          vp: votingPower,
         };
       }
       if (!foundDelegate) {
@@ -340,7 +326,6 @@ export function Delegates({
       );
     }
     const delegateId = userDelegate?.data?.id;
-    console.log("ss", allDelegates);
     return (
       <>
         <Button
