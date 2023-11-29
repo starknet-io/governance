@@ -217,7 +217,7 @@ export function Delegates({
     isError: isDelegationError,
     isSuccess: isDelegationSuccess,
     error: delegationError,
-  } = useWaitForTransaction({ hash: txHash as `0x${string}` });
+  } = ({ hash: txHash as `0x${string}` });
   // handle delegation cases
 
   // handle delegation cases

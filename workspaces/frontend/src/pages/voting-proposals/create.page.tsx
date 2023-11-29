@@ -16,6 +16,7 @@ import {
   FormControlled,
   useFormErrorHandler,
 } from "@yukilabs/governance-components";
+import { useWaitForTransaction } from "wagmi";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
 import { trpc } from "src/utils/trpc";
@@ -155,7 +156,7 @@ export function Page() {
           return false
         }
         try {
-          const result = await starkProvider.waitForTransaction(transaction.transaction_hash)
+          const result = await starkProvider.getTransactionReceipt(transaction.transaction_hash)
           console.log(result)
           console.log(receipt)
           console.log(transaction)

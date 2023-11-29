@@ -195,7 +195,7 @@ export function Page() {
         setStatusDescription("An error occurred");
         return false;
       }
-      const result = await starkProvider.waitForTransaction(transaction.transaction_hash);
+      const result = await starkProvider.getTransactionReceipt(transaction.transaction_hash);
       console.log(result);
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
