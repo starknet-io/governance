@@ -4,10 +4,7 @@ import { trpc } from "src/utils/trpc";
 import { useOutsideClick } from "@chakra-ui/react";
 import { UserProfileMenu } from "@yukilabs/governance-components";
 import { useBalanceData } from "src/utils/hooks";
-import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
-import { stringToHex } from "viem";
+import { useStarknetDelegates } from "../wagmi/StarknetDelegationRegistry";
 import { usePageContext } from "./PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
@@ -30,14 +27,12 @@ const AuthorizedUserView = () => {
 
   const userBalance = useBalanceData(user?.address as `0x${string}`);
 
-  const { data: delegationData } = useDelegateRegistryDelegation({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+  const { data: delegationData } = useStarknetDelegates({
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
     args: [
       user?.address as `0x${string}`,
-      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
     watch: true,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: user?.address != null,
   });
 
