@@ -28,9 +28,7 @@ import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useAccount, useWaitForTransaction } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import {
-  useDelegateRegistryClearDelegate,
-} from "src/wagmi/DelegateRegistry";
+import { useDelegateRegistryClearDelegate } from "src/wagmi/DelegateRegistry";
 import {
   useStarknetDelegate,
   useStarknetDelegates,
@@ -46,8 +44,8 @@ import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
 import { useVotes } from "../../../hooks/snapshotX/useVotes";
-import {useVotingPower} from "../../../hooks/snapshotX/useVotingPower";
-import {useProposals} from "../../../hooks/snapshotX/useProposals";
+import { useVotingPower } from "../../../hooks/snapshotX/useVotingPower";
+import { useProposals } from "../../../hooks/snapshotX/useProposals";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -66,7 +64,6 @@ const delegateInterests: Record<string, string> = {
   nft: "NFT",
   defi: "DeFi",
 };
-
 
 // Extract this to some constants file
 export const MINIMUM_TOKENS_FOR_DELEGATION = 1;
@@ -144,9 +141,8 @@ export function Page() {
   const {
     isLoading: isLoadingUndelegation,
     writeAsync: writeAsyncUndelegation,
-  } = useDelegateRegistryClearDelegate({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+  } = useStarknetDelegate({
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
   });
 
   const delegateId = pageContext.routeParams!.id;
@@ -168,10 +164,10 @@ export function Page() {
   });
 
   const gqlResponse = useVotingPower({
-    address: delegateAddress
+    address: delegateAddress,
   });
 
-  const gqlResponseProposalsByUser = useProposals()
+  const gqlResponseProposalsByUser = useProposals();
 
   const proposals = gqlResponseProposalsByUser?.data?.proposals || [];
 
@@ -463,11 +459,7 @@ export function Page() {
               if (hasUserDelegatedTokensToThisDelegate) {
                 setIsUndelegation(true);
                 writeAsyncUndelegation?.({
-                  args: [
-                    stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                      size: 32,
-                    }),
-                  ],
+                  args: ["0x0000000000000000000000000000000000000000"],
                 })
                   .then((tx) => {
                     setTxHash(tx.hash);
