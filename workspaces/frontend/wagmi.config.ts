@@ -1,13 +1,13 @@
 import { defineConfig } from '@wagmi/cli'
 import {  react } from '@wagmi/cli/plugins'
-import DelegateRegistryABI from './src/wagmi/DelegateRegistryABI.json'
+import DelegateRegistryABI from './src/wagmi/StarknetDelegationRegistryABI.json'
 
 export default defineConfig({
-  out: 'src/wagmi/DelegateRegistry.ts',
+  out: 'src/wagmi/StarknetDelegationRegistry.ts',
   plugins: [react()],
   contracts: [
     {
-      name: 'DelegateRegistry',
+      name: 'Starknet',
       abi: DelegateRegistryABI as any,
     },
   ],

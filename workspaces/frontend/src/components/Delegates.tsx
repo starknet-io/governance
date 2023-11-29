@@ -26,8 +26,9 @@ import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
 import { ethers } from "ethers";
 import { useAccount, useWaitForTransaction } from "wagmi";
-import { stringToHex } from "viem";
-import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
+import {
+  useStarknetDelegate,
+} from "../wagmi/StarknetDelegationRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -199,10 +200,11 @@ export function Delegates({
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [allDelegates, setAllDelegates] = useState([]);
   const [hasMoreDelegates, setHasMoreDelegates] = useState(true);
-  const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+
+  const { isLoading, writeAsync } = useStarknetDelegate({
+    address: "0xca14007eff0db1f8135f4c25b34de49ab0d42766",
   });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [txHash, setTxHash] = useState("");
@@ -446,9 +448,6 @@ export function Delegates({
           } else {
             writeAsync?.({
               args: [
-                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                  size: 32,
-                }),
                 inputAddress as `0x${string}`,
               ],
             })
