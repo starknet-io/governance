@@ -7671,7 +7671,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/base@npm:~1.1.0":
+"@scure/base@npm:^1.1.3, @scure/base@npm:~1.1.0":
   version: 1.1.3
   resolution: "@scure/base@npm:1.1.3"
   checksum: 1606ab8a4db898cb3a1ada16c15437c3bce4e25854fadc8eb03ae93cbbbac1ed90655af4b0be3da37e12056fef11c0374499f69b9e658c9e5b7b3e06353c630c
@@ -7919,9 +7919,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@snapshot-labs/sx@npm:beta":
-  version: 0.1.0-beta.44
-  resolution: "@snapshot-labs/sx@npm:0.1.0-beta.44"
+"@snapshot-labs/sx@npm:^0.1.0-beta.46":
+  version: 0.1.0-beta.46
+  resolution: "@snapshot-labs/sx@npm:0.1.0-beta.46"
   dependencies:
     "@ethersproject/abi": ^5.7.0
     "@ethersproject/abstract-signer": ^5.7.0
@@ -7936,12 +7936,13 @@ __metadata:
     "@ethersproject/solidity": ^5.7.0
     "@ethersproject/wallet": ^5.7.0
     "@openzeppelin/merkle-tree": ^1.0.5
+    bn.js: ^5.2.1
     cross-fetch: ^3.1.5
     micro-starknet: ^0.2.3
     randombytes: ^2.1.0
     snake-case: ^3.0.4
-    starknet: 5.19.1
-  checksum: d7530e4bc76175b34fae3d4765a5d005044d6114be24780ee17095e8b9164391d2004332ee6efd4e4a0048d3f8fdad248e36bdcb67979c4217ae553fde291c77
+    starknet: 5.24.3
+  checksum: fb0a1af90c20db1cafcf7dc96b39ae8d7c9585a82a6f8b599b73eb1e829916a71cfd3d872e79ab3d5e2b8d2d2a6fe2fd807a555f1bc874a9c0a5822bd9574b8a
   languageName: node
   linkType: hard
 
@@ -11339,7 +11340,7 @@ __metadata:
     "@hookform/resolvers": ^3.3.1
     "@snapshot-labs/pineapple": ^1.1.0
     "@snapshot-labs/snapshot.js": ^0.8.0
-    "@snapshot-labs/sx": beta
+    "@snapshot-labs/sx": ^0.1.0-beta.46
     "@tanstack/react-query": ^4.32.0
     "@trpc/client": ^10.36.0
     "@trpc/react-query": ^10.36.0
@@ -11377,7 +11378,7 @@ __metadata:
     react-infinite-scroll-component: ^6.1.0
     react-streaming: ^0.3.14
     react-use: ^17.4.0
-    starknet: ^5.19.5
+    starknet: ^5.24.3
     superjson: ^1.13.1
     use-debounce: ^9.0.4
     viem: ^1.5.0
@@ -11453,7 +11454,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abi-wan-kanabi@npm:^1.0.1, abi-wan-kanabi@npm:^1.0.2, abi-wan-kanabi@npm:^1.0.3":
+"abi-wan-kanabi@npm:^1.0.1, abi-wan-kanabi@npm:^1.0.3":
   version: 1.0.3
   resolution: "abi-wan-kanabi@npm:1.0.3"
   dependencies:
@@ -20653,7 +20654,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micro-starknet@npm:^0.2.3, micro-starknet@npm:~0.2.1":
+"micro-starknet@npm:^0.2.3":
   version: 0.2.3
   resolution: "micro-starknet@npm:0.2.3"
   dependencies:
@@ -25289,18 +25290,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet@npm:5.19.1":
-  version: 5.19.1
-  resolution: "starknet@npm:5.19.1"
+"starknet@npm:5.24.3, starknet@npm:^5.24.3":
+  version: 5.24.3
+  resolution: "starknet@npm:5.24.3"
   dependencies:
-    "@noble/curves": ~1.0.0
-    abi-wan-kanabi: ^1.0.2
+    "@noble/curves": ~1.2.0
+    "@scure/base": ^1.1.3
+    "@scure/starknet": ~0.3.0
     isomorphic-fetch: ^3.0.0
     lossless-json: ^2.0.8
-    micro-starknet: ~0.2.1
     pako: ^2.0.4
     url-join: ^4.0.1
-  checksum: bf97b7b0d675cdc11e90fa14a4896ed65fb5adedb390778c52f7b66a6808cf5728368500abb3ca1254bdc35d43b25f89fdefc4c04197cc2b4f4c8737ceea9849
+  checksum: 92179e331b6516b94add8fda15ec2c66ac0dc065f8aa7f79d5bb6a6d2686c1923c2431a2b3376197d6c89f41770ed5ae0e750c118ee8ffa78466462f6f8e587c
   languageName: node
   linkType: hard
 

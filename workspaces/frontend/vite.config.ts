@@ -9,6 +9,13 @@ export default defineConfig((env) => {
   return {
     publicDir: path.resolve(__dirname, "../../public"),
     plugins: [tsconfigPaths(), react(), ssr(), nodePolyfills()],
+    optimizeDeps: {
+      include: ['@snapshot-labs/sx'],
+      esbuildOptions: {
+        format: 'esm', // or 'cjs' depending on the package
+      },
+    },
+
     build: {
       emptyOutDir: true,
     },
@@ -19,6 +26,7 @@ export default defineConfig((env) => {
         "color-hash",
         "react-use",
         "react-syntax-highlighter",
+        "@snapshot-labs/sx",
       ],
     },
   } as UserConfig;
