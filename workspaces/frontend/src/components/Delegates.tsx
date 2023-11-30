@@ -25,15 +25,13 @@ import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
 import { ethers } from "ethers";
-import { useAccount, useWaitForTransaction } from "wagmi";
+import {useAccount, useWaitForTransaction} from "wagmi";
 import {
   useStarknetDelegate,
 } from "../wagmi/StarknetDelegationRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import {useVotingPower} from "../hooks/snapshotX/useVotingPower";
@@ -217,7 +215,7 @@ export function Delegates({
     isError: isDelegationError,
     isSuccess: isDelegationSuccess,
     error: delegationError,
-  } = ({ hash: txHash as `0x${string}` });
+  } = useWaitForTransaction({ hash: txHash as `0x${string}` });
   // handle delegation cases
 
   // handle delegation cases
