@@ -1,9 +1,51 @@
 import { defaultNetwork, getStarknetStrategy } from "@snapshot-labs/sx";
-import { clientConfig } from "../../clients/clients";
+import { clientConfig, starkProvider as provider } from "../../clients/clients";
+import {
+  constants as starknetConstants,
+  TransactionExecutionStatus,
+  TransactionFinalityStatus,
+} from "starknet";
 import { create } from "ipfs-http-client";
 import { pin } from "@snapshot-labs/pineapple";
 
 const client = create({ url: "https://api.thegraph.com/ipfs/api/v0" });
+
+export const waitForTransaction = async (txId: string) => {
+  let retries = 0;
+
+  return new Promise((resolve, reject) => {
+    const timer = setInterval(async () => {
+      let tx: Awaited<ReturnType<typeof provider.getTransactionReceipt>>;
+      try {
+        tx = await provider.getTransactionReceipt(txId);
+      } catch (e) {
+        if (retries > 20) {
+          clearInterval(timer);
+          reject();
+        }
+
+        retries++;
+
+        return;
+      }
+
+      const successStates = [
+        TransactionFinalityStatus.ACCEPTED_ON_L1,
+        TransactionFinalityStatus.ACCEPTED_ON_L2,
+      ];
+
+      if (successStates.includes(tx.finality_status as any)) {
+        clearInterval(timer);
+        resolve(tx);
+      }
+
+      if (tx.execution_status === TransactionExecutionStatus.REVERTED) {
+        clearInterval(timer);
+        reject(tx);
+      }
+    }, 2000);
+  });
+};
 
 export async function pinGraph(payload: any) {
   const res = await client.add(JSON.stringify(payload), { pin: true });

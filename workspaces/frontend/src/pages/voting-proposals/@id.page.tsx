@@ -68,7 +68,7 @@ import {
   starkSigClient,
 } from "../../clients/clients";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
-import { prepareStrategiesForSignature } from "../../hooks/snapshotX/helpers";
+import {prepareStrategiesForSignature, waitForTransaction} from "../../hooks/snapshotX/helpers";
 import {useStarknetDelegates} from "../../wagmi/StarknetDelegationRegistry";
 const sortByOptions = {
   defaultValue: "date",
@@ -195,8 +195,7 @@ export function Page() {
         setStatusDescription("An error occurred");
         return false;
       }
-      const result = await starkProvider.getTransactionReceipt(transaction.transaction_hash);
-      console.log(result);
+      await waitForTransaction(transaction.transaction_hash);
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
       await refetch();

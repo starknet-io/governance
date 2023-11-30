@@ -16,13 +16,9 @@ import {
   FormControlled,
   useFormErrorHandler,
 } from "@yukilabs/governance-components";
-import { useWaitForTransaction } from "wagmi";
-import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
 import { trpc } from "src/utils/trpc";
-import { fetchBlockNumber } from "@wagmi/core";
 import { providers } from "ethers";
-import { Proposal } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useForm, Controller } from "react-hook-form";
 import { useFileUpload } from "src/hooks/useFileUpload";
@@ -32,7 +28,7 @@ import { FormLayout } from "src/components/FormsCommon/FormLayout";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import {AUTHENTICATORS_ENUM} from "../../hooks/snapshotX/constants";
 import {useSpace} from "../../hooks/snapshotX/useSpace";
-import {pinPineapple, prepareStrategiesForSignature} from "../../hooks/snapshotX/helpers";
+import {pinPineapple, prepareStrategiesForSignature, waitForTransaction} from "../../hooks/snapshotX/helpers";
 import {ethSigClient, starkProvider, starkSigClient} from "../../clients/clients";
 import {useProposals} from "../../hooks/snapshotX/useProposals";
 
@@ -156,7 +152,7 @@ export function Page() {
           return false
         }
         try {
-          const result = await starkProvider.getTransactionReceipt(transaction.transaction_hash)
+          const result = await waitForTransaction(transaction.transaction_hash)
           console.log(result)
           console.log(receipt)
           console.log(transaction)
@@ -164,7 +160,6 @@ export function Page() {
           setError("");
           await refetchProposals()
           console.log(allProposals)
-          debugger
           navigate("/voting-proposals")
           /*
           await createProposal
