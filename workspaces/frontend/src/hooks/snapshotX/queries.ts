@@ -66,6 +66,7 @@ export const GET_VOTES_QUERY = gql(`
   query VoteQuery($where: Vote_filter) {
     votes(where: $where) {
       choice
+      proposal
       voter {
         id
       }

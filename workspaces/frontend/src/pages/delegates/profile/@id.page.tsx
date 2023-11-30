@@ -158,7 +158,7 @@ export function Page() {
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`;
 
-  const votes = useVotes({
+  const { data: votesData, loading: votesLoading } = useVotes({
     voter: delegateAddress,
     skipField: "voter",
   });
@@ -169,12 +169,15 @@ export function Page() {
 
   const gqlResponseProposalsByUser = useProposals();
 
-  const proposals = gqlResponseProposalsByUser?.data?.proposals || [];
+  const proposals = gqlResponseProposalsByUser?.data || [];
+
+  const findProposalTitleByVote = (proposalId) =>
+    proposals?.find((proposal) => proposal.id === proposalId)?.title || "";
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
 
-  const allVotes = votes?.data?.votes?.votes || [];
+  const allVotes = votesData?.votes || [];
 
   const stats = allVotes.reduce((acc: { [key: string]: number }, vote) => {
     acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
@@ -644,28 +647,30 @@ export function Page() {
             <Heading color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
-            {isLoadingGqlResponse ? (
+            {votesLoading ? (
               // Skeleton representation for loading state
               <Box display="flex" flexDirection="column" gap="20px" mt="16px">
                 <Skeleton height="60px" width="100%" />
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
-            ) : allVotes?.length ? (
+            ) : allVotes.length ? (
               <ListRow.Container mt="0">
                 {allVotes.map((vote) => (
                   <Link
-                    href={`/voting-proposals/${vote!.proposal!.id}`}
+                    href={`/voting-proposals/${vote!.proposal}`}
                     key={vote!.id}
                     _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
                   >
                     <ListRow.Root>
                       <ListRow.PastVotes
-                        title={vote?.proposal?.title}
+                        title={findProposalTitleByVote(vote.proposal)}
                         votePreference={
-                          vote!.proposal!.choices?.[
-                            vote!.choice - 1
-                          ]?.toLowerCase() as "for" | "against" | "abstain"
+                          vote!.choice === 1
+                            ? "for"
+                            : vote.choice === 2
+                            ? "against"
+                            : "abstain"
                         }
                         voteCount={vote!.vp}
                         // body={vote?.proposal?.body}

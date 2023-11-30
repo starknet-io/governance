@@ -10,7 +10,6 @@ export function useProposals() {
   });
 
   const parsedData = transformProposalData(data);
-  console.log(parsedData)
 
   return { data: parsedData, loading, refetch, error };
 }
