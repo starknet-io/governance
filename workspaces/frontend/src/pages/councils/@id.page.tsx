@@ -23,27 +23,13 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { useEffect, useState } from "react";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
 import { hasPermission } from "src/utils/helpers";
 import { Flex, Text } from "@chakra-ui/react";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import * as ProfilePageLayout from "../../components/ProfilePageLayout/ProfilePageLayout";
-import {useVotes} from "../../hooks/snapshotX/useVotes";
-
-const DELEGATE_PROFILE_PAGE_QUERY = gql(`
-  query CouncilProfilePageQuery(
-    $voter: String!
-    $space: String!
-    $proposal: String
-  ) {
-    vp(voter: $voter, space: $space, proposal: $proposal) {
-      vp
-      vp_by_strategy
-      vp_state
-    }
-  }
-`);
+import { useVotes } from "../../hooks/snapshotX/useVotes";
+import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
+import { useProposals } from "../../hooks/snapshotX/useProposals";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -74,36 +60,41 @@ export function Page() {
     navigate(`/councils/posts/create?councilId=${council?.id.toString()}`);
   };
 
-  const gqlResponse = useQuery(DELEGATE_PROFILE_PAGE_QUERY, {
-    variables: {
-      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      voter: council?.address ?? "",
-      where: {
-        voter: council?.address,
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      },
+  const gqlResponseProposals = useProposals();
+
+  const proposals = gqlResponseProposals?.data || [];
+
+  const findProposalTitleByVote = (proposalId) =>
+    proposals?.find((proposal) => proposal.id === proposalId)?.title || "";
+  const findProposalBodyByVote = (proposalId) =>
+    proposals?.find((proposal) => proposal.id === proposalId)?.body || "";
+
+  const { data: votingPower, isLoading: isVotingPowerLoading } = useVotingPower(
+    {
+      address: council?.address?.toLowerCase(),
     },
-    skip: council?.address == null,
-  });
+  );
 
   const {
-    data: votes,
+    data: votesData,
     loading: isVotesLoading,
     error: isVotesError,
   } = useVotes({
-    space: import.meta.env.VITE_APP_SNAPSHOTX_SPACE,
-    voter: council?.address ?? "",
+    voter: council?.address?.toLowerCase() ?? "",
     skipField: "voter",
   });
 
-  const stats = votes?.votes?.votes?.reduce((acc: { [key: string]: number }, vote) => {
-    acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
-    return acc;
-  }, {});
+  const stats = votesData?.votes?.reduce(
+    (acc: { [key: string]: number }, vote) => {
+      acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
+      return acc;
+    },
+    {},
+  );
 
   const isCouncilLoading = !council;
 
-  const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
+  const isLoadingGqlResponse = isVotingPowerLoading;
 
   const councilAddress = council?.address?.toLowerCase() ?? "";
 
@@ -177,12 +168,12 @@ export function Page() {
           <SummaryItems.Item
             isLoading={isLoadingGqlResponse}
             label="Proposals voted on"
-            value={votes?.votes?.votes?.length.toString() ?? "0"}
+            value={votesData?.votes?.length.toString() ?? "0"}
           />
           <SummaryItems.Item
             isLoading={isLoadingGqlResponse}
             label="Delegated votes"
-            value={gqlResponse.data?.vp?.vp?.toString() ?? "0"}
+            value={votingPower.toString() ?? "0"}
           />
 
           <SummaryItems.Item
@@ -296,24 +287,26 @@ export function Page() {
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
-            ) : votes?.votes?.votes?.length ? (
+            ) : votesData?.votes?.length ? (
               <ListRow.Container>
-                {votes?.votes?.votes?.map((vote) => (
+                {votesData?.votes?.map((vote) => (
                   <Link
-                    href={`/voting-proposals/${vote!.proposal!.id}`}
+                    href={`/voting-proposals/${vote!.proposal}`}
                     key={vote!.id}
                     _hover={{ textDecoration: "none" }}
                   >
                     <ListRow.Root>
                       <ListRow.PastVotes
-                        title={vote?.proposal?.title}
+                        title={findProposalTitleByVote(vote.proposal)}
                         votePreference={
-                          vote!.proposal!.choices?.[
-                            vote!.choice - 1
-                          ]?.toLowerCase() as "for" | "against" | "abstain"
+                          vote!.choice === 1
+                            ? "for"
+                            : vote.choice === 2
+                            ? "against"
+                            : "abstain"
                         }
                         voteCount={vote!.vp}
-                        body={vote?.proposal?.body}
+                        body={findProposalBodyByVote(vote.proposal)}
                       />
                     </ListRow.Root>
                   </Link>

@@ -7,10 +7,9 @@ export function useVotingPower({
   address,
   proposal,
 }: {
-  address: string;
+  address?: string | null;
   proposal?: string;
 }) {
-  const network = "sn-tn";
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
 
   const [data, setData] = useState(0);
