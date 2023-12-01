@@ -84,6 +84,7 @@ const ImageBlockButton: React.FC<ImageBlockButtonProps> = ({
         isOpen={isOpen}
         onClose={onClose}
         title="Upload Image"
+        size="md"
       >
         <UploadImage
           onImageSelected={handleImageSelected}

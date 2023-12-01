@@ -23,6 +23,7 @@ export const InfoModal = ({
       onClose={onClose}
       isCentered
       title={title}
+      size="md"
     >
       <>
         <Stack spacing="standard.xl">

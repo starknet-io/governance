@@ -24,16 +24,16 @@ const xlDialog = defineStyle({
 });
 
 const mdDialog = defineStyle({
-  px: "standard.md",
-  py: "standard.md",
+  px: "standard.xl",
+  py: "standard.xl",
   width: "100%",
   maxWidth: "446px",
   borderRadius: "standard.lg",
 });
 
 const mdBody = defineStyle({
-  px: "standard.md",
-  py: "standard.md",
+  px: "standard.xl",
+  py: "standard.xl",
   minHeight: "auto"
 });
 const xlBody = defineStyle({

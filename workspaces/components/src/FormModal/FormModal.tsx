@@ -31,6 +31,7 @@ export const FormModal: FC<FormModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={title}
+      size="md"
     >
       <>
         <form

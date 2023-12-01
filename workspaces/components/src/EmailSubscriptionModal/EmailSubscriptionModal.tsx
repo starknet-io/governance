@@ -44,8 +44,8 @@ export const EmailSubscriptionModal = ({
         isCentered
         isOpen={isOpen}
         onClose={onClose}
-        size="standard"
         title="Email notifications"
+        size="md"
       >
         <form onSubmit={handleSave}>
           <Text

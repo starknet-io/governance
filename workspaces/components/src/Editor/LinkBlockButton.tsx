@@ -74,6 +74,7 @@ const LinkBlockButton = ({ editor, format }: any) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         title="Add link"
+        size="md"
       >
         <>
           <Input

@@ -16,7 +16,6 @@ export const AgreementModal = ({ isOpen = false, onClose, content }: Props) => {
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
       title="Delegation Agreement"
       overflowY="scroll"
     >

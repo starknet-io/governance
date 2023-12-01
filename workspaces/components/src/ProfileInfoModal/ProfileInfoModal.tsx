@@ -88,6 +88,7 @@ export const ProfileInfoModal = ({
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
         title="Upload avatar"
+        size="md"
       >
         <>
           <UploadImage

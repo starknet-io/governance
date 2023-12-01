@@ -34,6 +34,7 @@ export const StatusModal = ({
       onClose={onClose}
       isCentered
       title={title}
+      size="md"
     >
       <Stack spacing="6">
         <Flex
