@@ -139,7 +139,7 @@ export const proposalsRouter = router({
         opts.input?.sortBy && opts.input?.sortBy !== 'most_discussed'
           ? opts.input?.sortBy
           : 'desc';
-      const searchQuery = opts.input?.searchQuery || undefined;
+      //const searchQuery = opts.input?.searchQuery || undefined;
 
       const filters = opts.input?.filters;
       const possibleStateFilters = ['active', 'pending', 'closed'];
