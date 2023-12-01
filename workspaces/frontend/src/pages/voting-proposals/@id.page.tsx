@@ -95,28 +95,6 @@ export function Page() {
     address: walletClient?.account.address as string,
   });
 
-  const {
-    data: vp,
-    loading: isVotingPowerLoading,
-    refetch: refetchVotingProposal,
-  } = useQuery(
-    gql(`query VpProposal($voter: String!, $space: String!, $proposal: String) {
-      vp(voter: $voter, space: $space, proposal: $proposal) {
-        vp
-        vp_by_strategy
-        vp_state
-      }
-    }`),
-    {
-      variables: {
-        proposal: pageContext.routeParams!.id,
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: walletClient?.account.address as any,
-      },
-      skip: walletClient?.account.address == null,
-    },
-  );
-
   const vote = useVotes({
     proposal: pageContext.routeParams!.id,
     voter: walletClient?.account.address as any,
@@ -189,7 +167,6 @@ export function Page() {
         data: params,
       });
       const transaction = await starkSigClient.send(receipt);
-      console.log(transaction);
       if (!transaction.transaction_hash) {
         setStatusTitle("Voting failed");
         setStatusDescription("An error occurred");
@@ -776,8 +753,8 @@ export function Page() {
                   Cast your vote
                 </Heading>
               ) : null}
-              {vp?.vp?.vp === 0 &&
-                !isVotingPowerLoading &&
+              {votingPower === 0 &&
+                !votingPowerLoading &&
                 !shouldShowHasDelegated && (
                   <>
                     <Banner label="You cannot vote as it seems you didn’t have any voting power when this Snapshot was taken." />
