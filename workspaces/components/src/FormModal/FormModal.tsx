@@ -1,15 +1,9 @@
 import { FC, ReactNode } from "react";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   Button,
   Flex,
 } from "@chakra-ui/react";
+import { Modal } from "../Modal";
 
 interface FormModalProps {
   isOpen: boolean;
@@ -33,20 +27,20 @@ export const FormModal: FC<FormModalProps> = ({
   cancelButtonText = "Cancel",
 }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
-        <ModalCloseButton />
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+    >
+      <>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             onSubmit();
           }}
         >
-          <ModalBody>{children}</ModalBody>
-
-          <ModalFooter>
+          {children}
+          <Modal.Footer>
             <Flex justifyContent="flex-end" gap="8px" width="100%">
               <Button size="condensed" variant="ghost" onClick={onClose}>
                 {cancelButtonText}
@@ -60,9 +54,9 @@ export const FormModal: FC<FormModalProps> = ({
                 {submitButtonText}
               </Button>
             </Flex>
-          </ModalFooter>
+          </Modal.Footer>
         </form>
-      </ModalContent>
+      </>
     </Modal>
   );
 };

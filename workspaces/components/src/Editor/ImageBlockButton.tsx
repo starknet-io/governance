@@ -2,18 +2,13 @@ import { isBlockActive } from "./hotkeys";
 import { ImageIcon } from "src/Icons";
 import {
   IconButton,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   useDisclosure,
   useToken,
 } from "@chakra-ui/react";
 import { Transforms } from "slate";
 import { UploadImage } from "../UploadImage";
 import { useState } from "react";
+import { Modal } from "../Modal";
 
 interface ImageBlockButtonProps {
   editor: any;
@@ -85,21 +80,16 @@ const ImageBlockButton: React.FC<ImageBlockButtonProps> = ({
           />
         }
       />
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader display={"flex"} justifyContent={"center"}>
-            Upload Image
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <UploadImage
-              onImageSelected={handleImageSelected}
-              loading={loading}
-              closeModal={onClose}
-            />
-          </ModalBody>
-        </ModalContent>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Upload Image"
+      >
+        <UploadImage
+          onImageSelected={handleImageSelected}
+          loading={loading}
+          closeModal={onClose}
+        />
       </Modal>
     </>
   );

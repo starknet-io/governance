@@ -1,12 +1,6 @@
 import {
   Button,
   Flex,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Stack,
 } from "@chakra-ui/react";
 import {
@@ -20,8 +14,8 @@ import {
   BlogPostsIcon,
 } from "src/Icons";
 import { Text } from "../Text";
-import { Heading } from "src/Heading";
 import React from "react";
+import { Modal } from "../Modal";
 
 type Props = {
   isOpen: boolean;
@@ -38,62 +32,45 @@ export const SupportModal = ({ isOpen = false, onClose }: Props) => {
       size="md"
       isCentered
       variant="unstyled"
+      title="Community links"
     >
-      <ModalOverlay />
-      <ModalContent
-        borderRadius="xl"
-        minHeight="300px"
-        overflowY="scroll"
-        padding="8px"
-      >
-        <ModalHeader textAlign="center">
-          <Heading color="content.accent.default" variant="h3">
-            Community links
-          </Heading>
-        </ModalHeader>
-        <ModalCloseButton top="16px" />
-        <ModalBody
-          py={{ base: "4", md: "4", lg: "4" }}
-          pb={{ base: "4" }}
-          minHeight="272px"
-        >
-          <Stack spacing="standard.xl">
-            <Text variant="medium">
-              Check out to following links to learn more about Starknet and the
-              Starknet ecosystem, further engage in discussions, search for
-              events near you, and ask for Starknet support.
-            </Text>
-            {/* <Text variant="medium">
-              The first thing you should know is that we are decentralized. This
-              means no central organization, entity, or person, and because of
-              this, no official support channels exist. But you can ask help
-              from the community!
-            </Text> */}
-          </Stack>
-          <Flex flexDirection="column" gap="standard.sm" mt="standard.xl">
-            <LinkBox
-              icon={<DiscourseIcon boxSize="32px" mr="3px" />}
-              href="https://community.starknet.io/"
-              label="Starknet community forum"
-            />
-            <LinkBox
-              icon={<BlogPostsIcon boxSize="32px" mr="3px" />}
-              href="https://www.starknet.io/en/posts/governance"
-              label="Governance Blog posts"
-            />
-            <LinkBox
-              icon={<StarknetOutlineIcon boxSize="32px" mr="3px" />}
-              href="https://www.starknet.io/"
-              label="Starknet.io"
-            />
-            <LinkBox
-              icon={<DiscordIcon boxSize="32px" mr="3px" />}
-              href="https://discord.com/invite/qypnmzkhbc"
-              label="Starknet Discord"
-            />
-          </Flex>
-        </ModalBody>
-      </ModalContent>
+      <>
+        <Stack spacing="standard.xl">
+          <Text variant="medium">
+            Check out to following links to learn more about Starknet and the
+            Starknet ecosystem, further engage in discussions, search for
+            events near you, and ask for Starknet support.
+          </Text>
+          {/* <Text variant="medium">
+            The first thing you should know is that we are decentralized. This
+            means no central organization, entity, or person, and because of
+            this, no official support channels exist. But you can ask help
+            from the community!
+          </Text> */}
+        </Stack>
+        <Flex flexDirection="column" gap="standard.sm" mt="standard.xl">
+          <LinkBox
+            icon={<DiscourseIcon boxSize="32px" mr="3px" />}
+            href="https://community.starknet.io/"
+            label="Starknet community forum"
+          />
+          <LinkBox
+            icon={<BlogPostsIcon boxSize="32px" mr="3px" />}
+            href="https://www.starknet.io/en/posts/governance"
+            label="Governance Blog posts"
+          />
+          <LinkBox
+            icon={<StarknetOutlineIcon boxSize="32px" mr="3px" />}
+            href="https://www.starknet.io/"
+            label="Starknet.io"
+          />
+          <LinkBox
+            icon={<DiscordIcon boxSize="32px" mr="3px" />}
+            href="https://discord.com/invite/qypnmzkhbc"
+            label="Starknet Discord"
+          />
+        </Flex>
+      </>
     </Modal>
   );
 };
