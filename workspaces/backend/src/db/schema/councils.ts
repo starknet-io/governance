@@ -1,7 +1,7 @@
 import { InferModel, relations } from 'drizzle-orm';
 import { pgTable, text, timestamp, serial } from 'drizzle-orm/pg-core';
-import { usersToCouncils } from './usersToCouncils';
 import { posts } from './posts';
+import {members} from "./members";
 
 export const councils = pgTable('councils', {
   id: serial('id').primaryKey(),
@@ -19,7 +19,7 @@ export const councils = pgTable('councils', {
 });
 
 export const councilsRelations = relations(councils, ({ many }) => ({
-  members: many(usersToCouncils),
+  members: many(members),
   posts: many(posts),
 }));
 

@@ -55,3 +55,13 @@ export const formatTimestamp = (unixTimestamp: number) => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+export const getUrlBasedOnHost = (host: string) => {
+  if (host.includes('review')) {
+    return 'https://review.yuki-labs.dev/';
+  } else if (host.includes('dev')) {
+    return 'https://dev.yuki-labs.dev/';
+  } else if (host.includes('localhost')) {
+    return 'http://localhost:3000/';
+  }
+  return 'https://governance.starknet.io/';
+};

@@ -112,11 +112,13 @@ export const NotificationsMenu = ({
         saveData={handleSubscription}
       />
       <InfoModal
-        title={`You’ve successfully subscribed
-to receive notifications at ${email?.data}`}
+        title={`Confirmation sent to ${email?.data}`}
         isOpen={isSubscribedToEmailOpen}
         onClose={onSubscribedToEmailClose}
       >
+        <Text variant="medium" align="center">
+          Follow the instructions in email to complete your subscription
+        </Text>
         <Flex alignItems="center" justifyContent={"center"}>
           <SuccessIcon boxSize="84" />
         </Flex>

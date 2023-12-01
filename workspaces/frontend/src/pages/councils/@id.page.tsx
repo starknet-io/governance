@@ -45,10 +45,10 @@ export function Page() {
     if (council) {
       const tempMembers = council.members?.map((member) => {
         return {
-          address: member.user.address,
-          name: member.user.name,
-          twitterHandle: member.user.twitter,
-          miniBio: member.user.miniBio,
+          address: member.address,
+          name: member.name,
+          twitterHandle: member.twitter,
+          miniBio: member.miniBio,
         };
       });
       setMembers(tempMembers ?? []);

@@ -4,20 +4,20 @@ import { BookIcon } from "./BookIcon";
 import { Text } from "src/Text";
 import { Button } from "src/Button";
 
-import avatar from "./avatar.jpg";
+import avatar from "./avatar.jpeg";
 import { ArrowRightIcon } from "src/Icons";
 
 const data = {
-  title: "Governance for dummies",
+  title: "Starknet Governance overview",
   author: {
-    name: "Cillian Hunter",
-    username: "cillianhunter.eth",
+    name: "stoobie",
+    username: "stoobie",
     avatar,
-    date: "12 Jan 2023",
+    date: "Nov 15th 2023",
   },
   overview:
-    "If you've ever wondered how the wild west of the Internet - the land of decentralized protocols - manages to maintain some semblance of order, then you're in the right place. It's like stepping into a party where everyone has a say in the playlist, and the chaos that ensues is precisely what makes it a blast. Let's unravel this techno-mumbo-jumbo and understand how this crowd-managed circus, also known as decentralized governance, works.",
-  link: "/learn/governance_for_dummies",
+    "Starknet is a permissionless decentralized Layer 2 (L2) validity rollup, built to enable Ethereum to scale by using cryptographic protocols called STARKs, without compromising Ethereum’s core principles of decentralization, transparency, inclusivity, and security.",
+  link: "/learn/starknet_governance_overview",
 };
 
 export const LearnBanner = () => {

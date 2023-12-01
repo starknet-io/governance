@@ -27,12 +27,14 @@ import { Username } from "src/Username";
 import * as ListRow from "src/ListRow/ListRowGeneric";
 import { ethers } from "ethers";
 import { FormControlled } from "src/FormControlled";
+import { Link } from "src/Link";
 
 export type MemberType = {
   address: string;
   name: string | null;
   twitterHandle: string | null;
   miniBio: string | null;
+  id: number | null;
 };
 
 type MembersListProps = {
@@ -79,12 +81,11 @@ export const MembersList: React.FC<MembersListProps> = ({
   const validateForm = () => {
     let errors = {
       name: member.name ? "" : "Add member name",
-      address: member.address
-        ? isValidAddress(member.address)
+      address:
+        isValidAddress(member.address) || !member.address
           ? ""
-          : "Not a valid Ethereum address"
-        : "Add Ethereum address",
-      twitterHandle: member.twitterHandle ? "" : "Twitter handle is required.",
+          : "Not a valid Ethereum address",
+      twitterHandle: "",
       miniBio: member.miniBio ? "" : "Add a mini bio for council member",
     };
 
@@ -110,7 +111,7 @@ export const MembersList: React.FC<MembersListProps> = ({
 
   const handleRemoveMember = (indexToRemove: number) => {
     if (editMode) {
-      removeUserFromCouncil?.(members[indexToRemove].address);
+      removeUserFromCouncil?.(members[indexToRemove].id);
     }
     setMembers(members.filter((_, index) => index !== indexToRemove));
   };
@@ -131,6 +132,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                 <FormControlled
                   name="name"
                   label="Member name"
+                  isRequired
                   paddingBottom={2}
                   isInvalid={!!formErrors.name}
                   errorMessage={formErrors.name || ""}
@@ -144,6 +146,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                 </FormControlled>
 
                 <FormControlled
+                  isRequired={false}
                   name="address"
                   label="Ethereum address"
                   paddingBottom={2}
@@ -151,6 +154,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                   errorMessage={formErrors.address || ""}
                 >
                   <Input
+                    isRequired={false}
                     placeholder="0x..."
                     name="address"
                     value={member.address ?? ""}
@@ -172,6 +176,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                   />
                 </FormControlled>
                 <FormControlled
+                  isRequired
                   name="miniBio"
                   label="Mini Bio"
                   paddingBottom={2}
@@ -244,21 +249,44 @@ export const MembersList: React.FC<MembersListProps> = ({
                         displayName={
                           member.name ?? truncateAddress(member.address)
                         }
+                        isMemberType
                         showTooltip={!member.name}
                         tooltipContent={`${member.address}`}
                       />
                     </Box>
                     <Box ml="auto">
                       {member.twitterHandle ? (
-                        <Flex alignItems="center" gap="standard.base">
-                          <TwitterIcon />
-                          <Text
-                            color="content.support.default"
-                            variant="smallStrong"
+                        editMode ? (
+                          // In edit mode: Show Flex as Link with Twitter icon and handle
+                          <Flex
+                            as={Link}
+                            alignItems="center"
+                            gap="standard.base"
+                            href={`https://twitter.com/${member.twitterHandle}`}
                           >
-                            {member.twitterHandle}
-                          </Text>
-                        </Flex>
+                            <TwitterIcon />
+                            <Text
+                              color="content.support.default"
+                              variant="smallStrong"
+                            >
+                              {member.twitterHandle}
+                            </Text>
+                          </Flex>
+                        ) : (
+                          // Not in edit mode: Show IconButton with Twitter icon
+                          <IconButton
+                            size="condensed"
+                            variant="outline"
+                            icon={<TwitterIcon />}
+                            aria-label={`Twitter profile of ${member.twitterHandle}`}
+                            onClick={() =>
+                              window.open(
+                                `https://twitter.com/${member.twitterHandle}`,
+                                "_blank",
+                              )
+                            }
+                          />
+                        )
                       ) : null}
                     </Box>
                     {readonly ? null : (

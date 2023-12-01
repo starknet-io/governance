@@ -253,6 +253,20 @@
       "when": 1699439333794,
       "tag": "0035_overjoyed_exodus",
       "breakpoints": false
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1699970890674,
+      "tag": "0036_rare_blazing_skull",
+      "breakpoints": false
+    },
+    {
+      "idx": 37,
+      "version": "5",
+      "when": 1700652260665,
+      "tag": "0037_cheerful_gertrude_yorkes",
+      "breakpoints": false
     }
   ]
 }

@@ -5,13 +5,13 @@ import { and, desc, eq } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import slugify from 'slugify';
-import { users } from '../db/schema/users';
-import { usersToCouncils } from '../db/schema/usersToCouncils';
 import { Algolia } from '../utils/algolia';
+import {members} from "../db/schema/members";
 
 const councilInsertSchema = createInsertSchema(councils).extend({
   members: z.array(
     z.object({
+      id: z.number().optional(),
       address: z.string(),
       name: z.string().optional().nullable(),
       twitterHandle: z.string().optional().nullable(),
@@ -21,6 +21,7 @@ const councilInsertSchema = createInsertSchema(councils).extend({
 });
 
 type MemberType = {
+  id?: number | null
   address: string;
   name?: string | null | undefined;
   twitterHandle?: string | null | undefined;
@@ -69,44 +70,16 @@ export const councilsRouter = router({
       });
 
       for (const member of opts.input.members) {
-        const user = await db.query.users.findFirst({
-          where: eq(users.address, member.address),
-        });
-        if (!user) {
-          const newUser = await db
-            .insert(users)
+          await db
+            .insert(members)
             .values({
               address: member.address,
               name: member.name,
               twitter: member.twitterHandle,
               miniBio: member.miniBio,
+              councilId: insertedCouncil[0].id
             })
             .returning();
-          await db
-            .insert(usersToCouncils)
-            .values({
-              userId: newUser[0].id,
-              councilId: insertedCouncil[0].id,
-            })
-            .execute();
-        } else {
-          await db
-            .update(users)
-            .set({
-              name: member.name,
-              twitter: member.twitterHandle,
-              miniBio: member.miniBio,
-            })
-            .where(eq(users.id, user.id))
-            .execute();
-          await db
-            .insert(usersToCouncils)
-            .values({
-              userId: user.id,
-              councilId: insertedCouncil[0].id,
-            })
-            .execute();
-        }
       }
 
       return insertedCouncil[0];
@@ -118,37 +91,29 @@ export const councilsRouter = router({
       const userRole = opts.ctx.user?.role;
       checkUserRole(userRole);
 
-      const insertUser = async (member: MemberType) => {
-        return await db
-          .insert(users)
+      const insertMember = async (member: MemberType) => {
+        await db
+          .insert(members)
           .values({
             address: member.address,
             name: member.name,
             twitter: member.twitterHandle,
             miniBio: member.miniBio,
+            councilId: opts.input.id
           })
           .returning();
-      };
+      }
 
-      const insertUserToCouncil = async (userId: string, councilId: number) => {
+      const updateMember = async (memberId: number, member: MemberType) => {
         return await db
-          .insert(usersToCouncils)
-          .values({
-            userId: userId,
-            councilId: councilId,
-          })
-          .execute();
-      };
-
-      const updateUser = async (userId: string, member: MemberType) => {
-        return await db
-          .update(users)
+          .update(members)
           .set({
+            address: member.address,
             name: member.name,
             twitter: member.twitterHandle,
             miniBio: member.miniBio,
           })
-          .where(eq(users.id, userId))
+          .where(eq(members.id, memberId))
           .execute();
       };
       const slug = slugify(opts.input.name ?? '', {
@@ -180,32 +145,17 @@ export const councilsRouter = router({
 
       // Process members.
       for (const member of opts.input.members) {
-        const user = await db.query.users.findFirst({
-          where: eq(users.address, member.address),
-        });
+        const foundMember = member?.id ? await db.query.members.findFirst({
+          where: eq(members.id, member.id),
+        }) : null;
 
-        if (!user) {
+        if (!foundMember) {
           // User doesn't exist, create a new user.
-          const newUser = await insertUser(member);
-          await insertUserToCouncil(newUser[0].id, opts.input.id);
+          await insertMember(member);
           continue; // Skip to next member.
         }
 
-        // User exists, check if they're connected to the council.
-        const userToCouncil = await db.query.usersToCouncils.findFirst({
-          where: and(
-            eq(usersToCouncils.userId, user.id),
-            eq(usersToCouncils.councilId, opts.input.id),
-          ),
-        });
-
-        if (!userToCouncil) {
-          // User isn't connected to the council, connect them.
-          await insertUserToCouncil(user.id, opts.input.id);
-        } else {
-          // User is already connected to the council, update the user's info.
-          await updateUser(user.id, member);
-        }
+        await updateMember(foundMember.id, member);
       }
 
       return updatedCouncil[0];
@@ -233,11 +183,7 @@ export const councilsRouter = router({
       const data = await db.query.councils.findFirst({
         where: eq(councils.id, opts.input.councilId),
         with: {
-          members: {
-            with: {
-              user: true,
-            },
-          },
+          members: true,
         },
       });
       return data;
@@ -255,28 +201,24 @@ export const councilsRouter = router({
             },
             orderBy: [desc(councils.createdAt)],
           },
-          members: {
-            with: {
-              user: true,
-            },
-          },
+          members: true,
         },
       });
     }),
 
   deleteUserFromCouncil: protectedProcedure
-    .input(z.object({ userAddress: z.string(), councilId: z.number() }))
+    .input(z.object({ id: z.number(), councilId: z.number() }))
     .mutation(async (opts) => {
-      const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.userAddress),
+      const user = await db.query.members.findFirst({
+        where: eq(members.id, opts.input.id),
       });
       if (!user) return;
       await db
-        .delete(usersToCouncils)
+        .delete(members)
         .where(
           and(
-            eq(usersToCouncils.userId, user.id),
-            eq(usersToCouncils.councilId, opts.input.councilId),
+            eq(members.id, user.id),
+            eq(members.councilId, opts.input.councilId),
           ),
         )
         .execute();

@@ -15,6 +15,9 @@ import {
   DiscordIcon,
   ExternalLinkIcon,
   StarknetOutlineIcon,
+  LearnIcon,
+  DiscourseIcon,
+  BlogPostsIcon,
 } from "src/Icons";
 import { Text } from "../Text";
 import { Heading } from "src/Heading";
@@ -45,7 +48,7 @@ export const SupportModal = ({ isOpen = false, onClose }: Props) => {
       >
         <ModalHeader textAlign="center">
           <Heading color="content.accent.default" variant="h3">
-            Support
+            Community links
           </Heading>
         </ModalHeader>
         <ModalCloseButton top="16px" />
@@ -56,20 +59,27 @@ export const SupportModal = ({ isOpen = false, onClose }: Props) => {
         >
           <Stack spacing="standard.xl">
             <Text variant="medium">
-              Are you looking for official Starknet support?{" "}
+              Check out to following links to learn more about Starknet and the
+              Starknet ecosystem, further engage in discussions, search for
+              events near you, and ask for Starknet support.
             </Text>
-            <Text variant="medium">
+            {/* <Text variant="medium">
               The first thing you should know is that we are decentralized. This
               means no central organization, entity, or person, and because of
               this, no official support channels exist. But you can ask help
               from the community!
-            </Text>
+            </Text> */}
           </Stack>
           <Flex flexDirection="column" gap="standard.sm" mt="standard.xl">
             <LinkBox
-              icon={<StarknetCommunityIcon boxSize="32px" mr="3px" />}
+              icon={<DiscourseIcon boxSize="32px" mr="3px" />}
               href="https://community.starknet.io/"
               label="Starknet community forum"
+            />
+            <LinkBox
+              icon={<BlogPostsIcon boxSize="32px" mr="3px" />}
+              href="https://www.starknet.io/en/posts/governance"
+              label="Governance Blog posts"
             />
             <LinkBox
               icon={<StarknetOutlineIcon boxSize="32px" mr="3px" />}
