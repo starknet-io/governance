@@ -99,19 +99,16 @@ export const proposalsRouter = router({
       const ourProposalData = await db.query.proposals.findFirst({
         where: eq(proposals.proposalId, opts.input.id),
       });
-      const data = (await graphQLClient.request(
-        GET_PROPOSAL_QUERY,
-        {
-          id: opts.input.id,
-          space,
-        },
-      )) as { proposal: IProposal };
+      const data = (await graphQLClient.request(GET_PROPOSAL_QUERY, {
+        id: opts.input.id,
+        space,
+      })) as { proposal: IProposal };
       const totalComments = await db.query.comments.findMany({
         where: eq(proposals.proposalId, opts.input.id),
       });
-      console.log(data)
+      console.log(data);
 
-      const foundProposal = data?.proposal || {}
+      const foundProposal = data?.proposal || {};
 
       const transformedProposal = transformProposalData(foundProposal);
 
@@ -137,14 +134,13 @@ export const proposalsRouter = router({
     .query(async (opts) => {
       const limit = 20;
       const offset = 0;
-      // TODO: Figure out what to do about sorting / filtering
-      /*
+
       const orderDirection =
         opts.input?.sortBy && opts.input?.sortBy !== 'most_discussed'
           ? opts.input?.sortBy
           : 'desc';
       const searchQuery = opts.input?.searchQuery || undefined;
-       */
+
       const filters = opts.input?.filters;
       const possibleStateFilters = ['active', 'pending', 'closed'];
 
@@ -155,6 +151,7 @@ export const proposalsRouter = router({
       let mappedProposals: IProposal[];
       const data = (await graphQLClient.request(GET_PROPOSALS_QUERY, {
         space,
+        orderDirection,
       })) as { proposals: IProposal[] };
 
       const queriedProposals = transformProposalData(data || []);

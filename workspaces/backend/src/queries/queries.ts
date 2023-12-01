@@ -3,11 +3,13 @@ import { gql } from '@apollo/client';
 export const GET_PROPOSALS_QUERY = gql`
   query Proposals_Snapshot_X(
     $space: String!
+    $orderDirection: OrderDirection!
   ) {
     proposals(
       where: {
         space: $space
       }
+      orderDirection: $orderDirection
     ) {
       snapshot
       id

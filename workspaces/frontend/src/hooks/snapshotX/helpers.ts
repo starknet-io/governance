@@ -74,7 +74,18 @@ export const transformProposalData = (data) => {
   }
 };
 
+function getProposalState(proposal: any, current: number) {
+  if (proposal.executed) return "executed";
+  if (proposal.max_end * 1000 <= current) {
+    return "closed";
+  }
+  if (proposal.start * 1000 > current) return "pending";
+
+  return "active";
+}
+
 export const transformProposal = (proposal) => {
+  const timeNow = Date.now();
   return {
     ...proposal,
     ...proposal.metadata,
@@ -87,7 +98,7 @@ export const transformProposal = (proposal) => {
       parseFloat(proposal.scores_2),
       parseFloat(proposal.scores_3),
     ],
-    state: "active",
+    state: getProposalState(proposal, timeNow),
   };
 };
 
