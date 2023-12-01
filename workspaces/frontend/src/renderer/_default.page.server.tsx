@@ -3,7 +3,7 @@ import { PageContextServer } from "./types";
 import { PageShell } from "./PageShell";
 import { getDefaultPageContext } from "./helpers";
 import { getDataFromTree } from "@apollo/client/react/ssr";
-import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
+import {ApolloClient, ApolloLink, createHttpLink, InMemoryCache} from "@apollo/client";
 import fetch from "cross-fetch";
 import { TrpcProvider } from "./providers/TrpcProvider";
 
@@ -24,13 +24,24 @@ export async function onBeforeRender(pageContext: PageContextServer) {
   };
 }
 
+const snapshotLink = createHttpLink({
+  uri: `${import.meta.env.VITE_APP_SNAPSHOT_URL}/graphql`,
+  fetch,
+})
+
+const snapshotXLink = createHttpLink({
+  uri: `${import.meta.env.VITE_APP_SNAPSHOTX_URL}/graphql`,
+  fetch,
+})
+
 function makeApolloClient() {
   const apolloClient = new ApolloClient({
     ssrMode: true,
-    link: createHttpLink({
-      uri: `${import.meta.env.VITE_APP_SNAPSHOT_URL}/graphql`,
-      fetch,
-    }),
+    link: ApolloLink.split(
+      (operation) => operation.getContext().clientName === "snapshotX",
+      snapshotXLink,
+      snapshotLink
+    ),
     cache: new InMemoryCache(),
   });
   return apolloClient;

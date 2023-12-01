@@ -25,16 +25,16 @@ import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
 import { ethers } from "ethers";
-import { useAccount, useWaitForTransaction } from "wagmi";
-import { stringToHex } from "viem";
-import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
+import {useAccount, useWaitForTransaction} from "wagmi";
+import {
+  useStarknetDelegate,
+} from "../wagmi/StarknetDelegationRegistry";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import {useVotingPower} from "../hooks/snapshotX/useVotingPower";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -199,10 +199,11 @@ export function Delegates({
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [allDelegates, setAllDelegates] = useState([]);
   const [hasMoreDelegates, setHasMoreDelegates] = useState(true);
-  const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+
+  const { isLoading, writeAsync } = useStarknetDelegate({
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY! as `0x${string}`,
   });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [txHash, setTxHash] = useState("");
@@ -240,24 +241,9 @@ export function Delegates({
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
-  const { data: votingPower } = useQuery(
-    gql(`
-    query VotingPower($voter: String!, $space: String!) {
-      vp(voter: $voter, space: $space) {
-        vp
-        vp_by_strategy
-        vp_state
-      }
-    }
-  `),
-    {
-      variables: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: inputAddress,
-      },
-      skip: !inputAddress,
-    },
-  );
+  const { data: votingPower } = useVotingPower({
+    address: inputAddress
+  })
 
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
@@ -281,10 +267,10 @@ export function Delegates({
       const foundDelegate = delegates.data.find(
         (delegate) => delegate.author.address === receiverData.address,
       );
-      if (votingPower?.vp?.vp) {
+      if (votingPower) {
         return {
           ...receiverData,
-          vp: votingPower?.vp?.vp,
+          vp: votingPower,
         };
       }
       if (!foundDelegate) {
@@ -338,7 +324,6 @@ export function Delegates({
       );
     }
     const delegateId = userDelegate?.data?.id;
-    console.log("ss", allDelegates);
     return (
       <>
         <Button
@@ -446,9 +431,6 @@ export function Delegates({
           } else {
             writeAsync?.({
               args: [
-                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                  size: 32,
-                }),
                 inputAddress as `0x${string}`,
               ],
             })

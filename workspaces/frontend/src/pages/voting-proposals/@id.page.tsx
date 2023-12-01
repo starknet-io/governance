@@ -43,9 +43,7 @@ import { useQuery } from "@apollo/client";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { formatDate } from "@yukilabs/governance-components/src/utils/helpers";
 import { useWalletClient } from "wagmi";
-import snapshot from "@snapshot-labs/snapshot.js";
 import { providers } from "ethers";
-import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import { trpc } from "src/utils/trpc";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
@@ -60,7 +58,18 @@ import {
 import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
-
+import { useProposal } from "../../hooks/snapshotX/useProposal";
+import { useVotes } from "../../hooks/snapshotX/useVotes";
+import { AUTHENTICATORS_ENUM } from "../../hooks/snapshotX/constants";
+import { useSpace } from "../../hooks/snapshotX/useSpace";
+import {
+  ethSigClient,
+  starkProvider,
+  starkSigClient,
+} from "../../clients/clients";
+import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
+import {prepareStrategiesForSignature, waitForTransaction} from "../../hooks/snapshotX/helpers";
+import {useStarknetDelegates} from "../../wagmi/StarknetDelegationRegistry";
 const sortByOptions = {
   defaultValue: "date",
   options: [
@@ -74,122 +83,39 @@ export function Page() {
   const { data: walletClient } = useWalletClient();
   const [helpMessage, setHelpMessage] = useHelpMessage();
 
-  const { data, refetch } = useQuery(
-    gql(`query Proposal($proposal: String) {
-      proposal(id: $proposal) {
-      id
-      author
-      title
-      body
-      choices
-      votes
-      scores
-      start
-      end
-      state
-      discussion
-      ipfs
-      type
-      scores_by_strategy
-      scores_state
-      scores_total
-      scores_updated
-      snapshot
-        strategies {
-          network
-          params
-        }
-      }
+  const { data, refetch } = useProposal({
+    proposal: pageContext.routeParams!.id
+      ? (`${import.meta.env.VITE_APP_SNAPSHOTX_SPACE!}/${
+          pageContext.routeParams!.id
+        }` as string)
+      : undefined,
+  });
 
-    }`),
-    {
-      variables: {
-        proposal: pageContext.routeParams!.id,
-      },
-    },
-  );
-  const { data: vp, loading: isVotingPowerLoading, refetch: refetchVotingProposal } = useQuery(
-    gql(`query VpProposal($voter: String!, $space: String!, $proposal: String) {
-      vp(voter: $voter, space: $space, proposal: $proposal) {
-        vp
-        vp_by_strategy
-        vp_state
-      }
-    }`),
-    {
-      variables: {
-        proposal: pageContext.routeParams!.id,
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        voter: walletClient?.account.address as any,
-      },
-      skip: walletClient?.account.address == null,
-    },
-  );
+  const { data: votingPower, isLoading: votingPowerLoading } = useVotingPower({
+    address: walletClient?.account.address as string,
+  });
 
-  const vote = useQuery(
-    gql(`
-      query Vote($where: VoteWhere) {
-        votes(where: $where) {
-          choice
-          voter
-          reason
-          metadata
-          created
-          ipfs
-          vp
-          vp_by_strategy
-          vp_state
-        }
-      }
-    `),
-    {
-      variables: {
-        where: {
-          voter: walletClient?.account.address as any,
-          proposal: pageContext.routeParams!.id,
-        },
-      },
-      skip: walletClient?.account.address == null,
-    },
-  );
+  const vote = useVotes({
+    proposal: pageContext.routeParams!.id,
+    voter: walletClient?.account.address as any,
+    skipField: "voter",
+  });
 
-  const votes = useQuery(
-    gql(`
-      query VotingProposalsVotes($where: VoteWhere) {
-        votes(where: $where) {
-          choice
-          voter
-          reason
-          metadata
-          created
-          ipfs
-          vp
-          vp_by_strategy
-          vp_state
-        }
-      }
-    `),
-    {
-      variables: {
-        where: {
-          proposal: pageContext.routeParams!.id,
-        },
-      },
-    },
-  );
+  const space = useSpace();
 
-  console.log(vote?.data, votes?.data, vp)
+  const votes = useVotes({
+    proposal: pageContext.routeParams!.id,
+    skipField: "proposal",
+  });
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
-  const delegation = useDelegateRegistryDelegation({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
+  const delegation = useStarknetDelegates({
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
     args: [
       address!,
-      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
     ],
     watch: true,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
 
@@ -198,8 +124,7 @@ export function Page() {
   async function handleVote(choice: number, reason?: string) {
     try {
       if (walletClient == null) return;
-
-      if ((vp?.vp?.vp || 0) < MINIMUM_TOKENS_FOR_DELEGATION) {
+      if ((votingPower || 0) < MINIMUM_TOKENS_FOR_DELEGATION) {
         setIsStatusModalOpen(true);
         setStatusTitle("No voting power");
         setStatusDescription(
@@ -208,25 +133,28 @@ export function Page() {
         setIsOpen(false);
         return;
       }
-
-      const client = new snapshot.Client712(
-        import.meta.env.VITE_APP_SNAPSHOT_URL,
-      );
-
-      const params: Vote = {
-        // from?: string;
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        // timestamp?: number;
-        proposal: pageContext.routeParams!.id,
-        type: "basic",
-        choice,
-        // privacy?: string;
-        reason,
-        // app?: string;
-        // metadata?: string;
-      };
       setIsOpen(false);
       setisConfirmOpen(true);
+
+      // PREPARE DATA HERE
+      const strategiesMetadata = space.data.strategies_parsed_metadata.map(
+        (strategy) => ({
+          ...strategy.data,
+        }),
+      );
+      const preparedStrategies = await prepareStrategiesForSignature(
+        space.data.strategies as string[],
+        strategiesMetadata as any[],
+      );
+
+      const params = {
+        authenticator: AUTHENTICATORS_ENUM.EVM_SIGNATURE,
+        space: space.data.id,
+        proposal: pageContext.routeParams.id!,
+        choice,
+        metadataUri: "",
+        strategies: preparedStrategies,
+      };
 
       const web3 = new providers.Web3Provider(walletClient.transport);
 
@@ -234,17 +162,22 @@ export function Page() {
       if (deeplink) {
         window.location.href = deeplink;
       }
-
-      const receipt = (await client.vote(
-        web3,
-        walletClient.account.address,
-        params,
-      )) as any;
+      const receipt = await ethSigClient.vote({
+        signer: web3.getSigner(),
+        data: params,
+      });
+      const transaction = await starkSigClient.send(receipt);
+      if (!transaction.transaction_hash) {
+        setStatusTitle("Voting failed");
+        setStatusDescription("An error occurred");
+        return false;
+      }
+      await waitForTransaction(transaction.transaction_hash);
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
-      refetch();
-      vote.refetch();
-      votes.refetch();
+      await refetch();
+      await vote.refetch();
+      await votes.refetch();
     } catch (error: any) {
       // Handle error
       setIsStatusModalOpen(true);
@@ -270,15 +203,13 @@ export function Page() {
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   const [commentError, setCommentError] = useState("");
   const hasVoted = vote.data && vote.data.votes?.[0];
-  const canVote =
-    data?.proposal?.state === "active" && vp?.vp?.vp && vp?.vp?.vp !== 0;
+  const canVote = data?.proposal?.state === "active" && votingPower > 0 && !hasVoted
   const hasDelegated =
     delegation.isFetched &&
     userBalance.isFetched &&
     delegation.data &&
     delegation.data != "0x0000000000000000000000000000000000000000";
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
-
   const showPastVotes = votes?.data?.votes && votes?.data?.votes.length > 0;
   const pastVotes = votes?.data?.votes || [];
   const userAddresses =
@@ -299,9 +230,8 @@ export function Page() {
           : {},
     };
   });
-  console.log(pastVotesWithUserInfo);
   const comments = trpc.comments.getProposalComments.useQuery({
-    proposalId: data?.proposal?.id ?? "",
+    proposalId: data?.proposal?.id?.toString() ?? "",
     sort: sortBy,
   });
   const commentCount = comments?.data?.length || 0;
@@ -344,7 +274,7 @@ export function Page() {
     try {
       await saveComment.mutateAsync({
         content: value,
-        proposalId: data?.proposal?.id,
+        proposalId: data?.proposal?.id?.toString(),
       });
     } catch (error) {
       // Handle error
@@ -392,7 +322,7 @@ export function Page() {
       await saveComment.mutateAsync({
         content,
         parentId,
-        proposalId: data?.proposal?.id,
+        proposalId: data?.proposal?.id?.toString(),
       });
     } catch (error) {
       // Handle error
@@ -444,7 +374,7 @@ export function Page() {
   return (
     <>
       <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <VoteReview choice={currentChoice} voteCount={vp?.vp?.vp as number} />
+        <VoteReview choice={currentChoice} voteCount={votingPower as number} />
         <FormControl id="comment">
           <FormLabel fontSize="14px" color={"content.default.default"}>
             Reason{" "}
@@ -697,7 +627,7 @@ export function Page() {
               </Link>
             </Box>
 
-            {data?.proposal?.discussion !== "" ? (
+            {data?.proposal?.discussion && data?.proposal?.discussion.length ? (
               <Box height="110px!important" overflow="hidden" mt="standard.2xl">
                 <Iframely
                   id={import.meta.env.VITE_APP_IFRAMELY_ID}
@@ -823,8 +753,8 @@ export function Page() {
                   Cast your vote
                 </Heading>
               ) : null}
-              {vp?.vp?.vp === 0 &&
-                !isVotingPowerLoading &&
+              {votingPower === 0 &&
+                !votingPowerLoading &&
                 !shouldShowHasDelegated && (
                   <>
                     <Banner label="You cannot vote as it seems you didn’t have any voting power when this Snapshot was taken." />
@@ -946,8 +876,6 @@ export function Page() {
                   const voteCount = data?.proposal?.scores![index];
                   const userVote = false;
                   const strategies = data?.proposal?.strategies;
-                  const scoresByStrategy =
-                    data?.proposal?.scores_by_strategy[index];
                   return (
                     <VoteStat
                       key={choice}
@@ -960,7 +888,6 @@ export function Page() {
                       userVote={userVote}
                       // @ts-expect-error todo
                       strategies={strategies}
-                      scoresByStrategy={scoresByStrategy}
                     />
                   );
                 })}

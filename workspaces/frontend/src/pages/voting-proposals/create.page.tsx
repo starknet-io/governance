@@ -16,12 +16,9 @@ import {
   FormControlled,
   useFormErrorHandler,
 } from "@yukilabs/governance-components";
-import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
 import { trpc } from "src/utils/trpc";
-import { fetchBlockNumber } from "@wagmi/core";
 import { providers } from "ethers";
-import { Proposal } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useForm, Controller } from "react-hook-form";
 import { useFileUpload } from "src/hooks/useFileUpload";
@@ -29,6 +26,11 @@ import { useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import {AUTHENTICATORS_ENUM} from "../../hooks/snapshotX/constants";
+import {useSpace} from "../../hooks/snapshotX/useSpace";
+import {pinPineapple, prepareStrategiesForSignature, waitForTransaction} from "../../hooks/snapshotX/helpers";
+import {ethSigClient, starkProvider, starkSigClient} from "../../clients/clients";
+import {useProposals} from "../../hooks/snapshotX/useProposals";
 
 interface FieldValues {
   // type: ProposalType;
@@ -44,6 +46,7 @@ export function Page() {
   const { editor, handleEditorChange, editorValue } = useMarkdownEditor("");
   const { handleUpload } = useFileUpload();
   const [error, setError] = useState("");
+  const { data: allProposals, refetch: refetchProposals } = useProposals()
   const { walletConnector } = useDynamicContext();
   const createProposal = trpc.proposals.createProposal.useMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,6 +89,8 @@ export function Page() {
     formatTime(threeDaysFromNow),
   ]);
 
+  const space = useSpace();
+
   const handleEditorChangeWrapper = (value) => {
     handleEditorChange(value);
     if (errors.body) {
@@ -99,28 +104,35 @@ export function Page() {
         setIsSubmitting(true);
         if (walletClient == null) return;
 
-        const client = new snapshot.Client712(
-          import.meta.env.VITE_APP_SNAPSHOT_URL,
-        );
-
-        const block = await fetchBlockNumber({
-          chainId: parseInt(import.meta.env.VITE_APP_SNAPSHOT_CHAIN_ID),
-        });
-
-        const params: Proposal & {
-          votingPeriod?: Date[];
-        } = {
-          space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-          type: "basic",
+        const pinned = await pinPineapple({
           title: data.title,
           body: editorValue,
-          choices: ["For", "Against", "Abstain"],
-          start: Math.floor(data!.votingPeriod[0].getTime() / 1000),
-          end: Math.floor(data!.votingPeriod[1].getTime() / 1000),
-          snapshot: Number(block),
-          plugins: JSON.stringify({}),
           discussion: data.discussion,
-        };
+          execution: [],
+        });
+        if (!pinned || !pinned.cid) return false;
+        console.log('IPFS', pinned);
+        // PREPARE DATA HERE
+        const strategiesMetadata = space.data.strategies_parsed_metadata.map(
+          (strategy) => ({
+            ...strategy.data,
+          }),
+        );
+        const preparedStrategies = await prepareStrategiesForSignature(
+          space.data.strategies as string[],
+          strategiesMetadata as any[],
+        );
+
+        const params = {
+          authenticator: AUTHENTICATORS_ENUM.EVM_SIGNATURE,
+          space: space.data.id,
+          executionStrategy: {
+            addr: '0x0000000000000000000000000000000000000000',
+            params: []
+          },
+          strategies: preparedStrategies,
+          metadataUri: `ipfs://${pinned.cid}`
+        }
 
         const web3 = new providers.Web3Provider(walletClient.transport);
         const deeplink = walletConnector?.getDeepLink();
@@ -128,19 +140,28 @@ export function Page() {
           window.location.href = deeplink;
         }
 
-        const receipt = (await client.proposal(
-          web3,
-          walletClient.account.address,
-          params,
-        )) as any;
-
-        const proposalData = {
-          title: data.title,
-          discussion: data.discussion,
-          proposalId: receipt.id,
-        };
-
+        const receipt = await ethSigClient.propose({
+          signer: web3.getSigner(),
+          data: params,
+        });
+        const transaction = await starkSigClient.send(receipt);
+        console.log(receipt)
+        console.log(transaction)
+        if (!transaction.transaction_hash) {
+          setError("Error creating proposal")
+          return false
+        }
         try {
+          const result = await waitForTransaction(transaction.transaction_hash)
+          console.log(result)
+          console.log(receipt)
+          console.log(transaction)
+          setIsSubmitting(false);
+          setError("");
+          await refetchProposals()
+          console.log(allProposals)
+          navigate("/voting-proposals")
+          /*
           await createProposal
             .mutateAsync(proposalData)
             .then(() => {
@@ -151,14 +172,17 @@ export function Page() {
             .catch((err) => {
               setIsSubmitting(false);
             });
+
+           */
         } catch (error) {
           // Handle error
-
+          console.log(error)
           setIsSubmitting(false);
           // error.description is actual error from snapshot
         }
       } catch (error: any) {
         // Handle error
+        console.log(error)
         setIsSubmitting(false);
         setError(`Error: ${error?.error_description}`);
       }

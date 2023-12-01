@@ -28,12 +28,11 @@ import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useAccount, useWaitForTransaction } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
+import { useDelegateRegistryClearDelegate } from "src/wagmi/DelegateRegistry";
 import {
-  useDelegateRegistryClearDelegate,
-  useDelegateRegistryDelegation,
-  useDelegateRegistrySetDelegate,
-} from "src/wagmi/DelegateRegistry";
-import { useQuery } from "@apollo/client";
+  useStarknetDelegate,
+  useStarknetDelegates,
+} from "../../../wagmi/StarknetDelegationRegistry";
 import { gql } from "src/gql";
 import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
@@ -44,6 +43,9 @@ import * as ProfilePageLayout from "../../../components/ProfilePageLayout/Profil
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
+import { useVotes } from "../../../hooks/snapshotX/useVotes";
+import { useVotingPower } from "../../../hooks/snapshotX/useVotingPower";
+import { useProposals } from "../../../hooks/snapshotX/useProposals";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -62,60 +64,6 @@ const delegateInterests: Record<string, string> = {
   nft: "NFT",
   defi: "DeFi",
 };
-
-const GET_PROPOSALS_FOR_DELEGATE_QUERY = gql(`
-  query DelegateProposals($space: String!) {
-    proposals(first: 20, skip: 0, where: {space_in: [$space]}, orderBy: "created", orderDirection: desc) {
-      id
-      title
-      choices
-      start
-      end
-      snapshot
-      state
-      scores
-      scores_total
-      author
-      space {
-        id
-        name
-      }
-    }
-  }
-`);
-
-const DELEGATE_PROFILE_PAGE_QUERY = gql(`
-  query DelegateProfilePageQuery(
-    $voter: String!
-    $space: String!
-    $proposal: String
-    $where: VoteWhere
-  ) {
-    votes(where: $where) {
-      id
-      choice
-      voter
-      reason
-      metadata
-      created
-      proposal {
-        id
-        title
-        body
-        choices
-      }
-      ipfs
-      vp
-      vp_by_strategy
-      vp_state
-    }
-    vp(voter: $voter, space: $space, proposal: $proposal) {
-      vp
-      vp_by_strategy
-      vp_state
-    }
-  }
-`);
 
 // Extract this to some constants file
 export const MINIMUM_TOKENS_FOR_DELEGATION = 1;
@@ -142,6 +90,7 @@ export function Page() {
     error: delegationError,
   } = useWaitForTransaction({ hash: txHash as `0x${string}` });
   // handle delegation cases
+
   useEffect(() => {
     if (isDelegationLoading && dynamicUser) {
       setIsStatusModalOpen(true);
@@ -178,28 +127,22 @@ export function Page() {
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
-  const { isLoading, writeAsync } = useDelegateRegistrySetDelegate({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+  const { isLoading, writeAsync } = useStarknetDelegate({
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY! as `0x${string}`,
   });
 
-  const delegation = useDelegateRegistryDelegation({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    args: [
-      address!,
-      stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, { size: 32 }),
-    ],
+  const delegation = useStarknetDelegates({
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
+    args: [address!],
     watch: true,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
     enabled: address != null,
   });
 
   const {
     isLoading: isLoadingUndelegation,
     writeAsync: writeAsyncUndelegation,
-  } = useDelegateRegistryClearDelegate({
-    address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
-    chainId: parseInt(import.meta.env.VITE_APP_DELEGATION_CHAIN_ID),
+  } = useStarknetDelegate({
+    address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
   });
 
   const delegateId = pageContext.routeParams!.id;
@@ -215,43 +158,31 @@ export function Page() {
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`;
 
-  const gqlResponse = useQuery(DELEGATE_PROFILE_PAGE_QUERY, {
-    variables: {
-      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      voter: delegateAddress,
-      where: {
-        voter: delegateAddress,
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-      },
-    },
-    skip: delegateAddress == null,
+  const { data: votesData, loading: votesLoading } = useVotes({
+    voter: delegateAddress,
+    skipField: "voter",
   });
 
-  const gqlResponseProposalsByUser = useQuery(
-    GET_PROPOSALS_FOR_DELEGATE_QUERY,
-    {
-      variables: {
-        space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        where: {
-          space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-        },
-      },
-      skip: delegateAddress == null,
-    },
-  );
+  const gqlResponse = useVotingPower({
+    address: delegateAddress,
+  });
 
-  const proposals = gqlResponseProposalsByUser?.data?.proposals || [];
+  const gqlResponseProposalsByUser = useProposals();
+
+  const proposals = gqlResponseProposalsByUser?.data || [];
+
+  const findProposalTitleByVote = (proposalId) =>
+    proposals?.find((proposal) => proposal.id === proposalId)?.title || "";
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
 
-  const stats = gqlResponse.data?.votes?.reduce(
-    (acc: { [key: string]: number }, vote) => {
-      acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
-      return acc;
-    },
-    {},
-  );
+  const allVotes = votesData?.votes || [];
+
+  const stats = allVotes.reduce((acc: { [key: string]: number }, vote) => {
+    acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
+    return acc;
+  }, {});
 
   const renderAgreementValue = () => {
     if (delegate?.confirmDelegateAgreement) {
@@ -327,7 +258,11 @@ export function Page() {
     const canEdit =
       (hasPermission(user.role, [ROLES.USER]) &&
         user.delegationStatement?.id === delegateId) ||
-      hasPermission(user.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR]);
+      hasPermission(user.role, [
+        ROLES.ADMIN,
+        ROLES.SUPERADMIN,
+        ROLES.MODERATOR,
+      ]);
 
     return (
       <>
@@ -360,7 +295,7 @@ export function Page() {
 
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingSocials = !delegateResponse.isFetched;
-  const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
+  const isLoadingGqlResponse = gqlResponse.isLoading;
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
@@ -379,7 +314,7 @@ export function Page() {
         senderData={senderData}
         receiverData={{
           ...receiverData,
-          vp: gqlResponse?.data?.vp?.vp,
+          vp: gqlResponse?.data,
         }}
         delegateTokens={() => {
           if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
@@ -395,12 +330,7 @@ export function Page() {
               window.location.href = deeplink;
             }
             writeAsync?.({
-              args: [
-                stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                  size: 32,
-                }),
-                delegateAddress,
-              ],
+              args: [delegateAddress],
             })
               .then((tx) => {
                 setTxHash(tx.hash);
@@ -532,11 +462,7 @@ export function Page() {
               if (hasUserDelegatedTokensToThisDelegate) {
                 setIsUndelegation(true);
                 writeAsyncUndelegation?.({
-                  args: [
-                    stringToHex(import.meta.env.VITE_APP_SNAPSHOT_SPACE, {
-                      size: 32,
-                    }),
-                  ],
+                  args: ["0x0000000000000000000000000000000000000000"],
                 })
                   .then((tx) => {
                     setTxHash(tx.hash);
@@ -592,12 +518,12 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Proposals voted on"
-              value={gqlResponse.data?.votes?.length.toString() || "0"}
+              value={allVotes?.length.toString() || "0"}
             />
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Delegated votes"
-              value={(gqlResponse.data?.vp?.vp || 0).toLocaleString()}
+              value={(gqlResponse.data || 0).toLocaleString()}
             />
             <SummaryItems.Item
               isLoading={!delegateCommentsResponse.isFetched}
@@ -721,28 +647,30 @@ export function Page() {
             <Heading color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
-            {isLoadingGqlResponse ? (
+            {votesLoading ? (
               // Skeleton representation for loading state
               <Box display="flex" flexDirection="column" gap="20px" mt="16px">
                 <Skeleton height="60px" width="100%" />
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
               </Box>
-            ) : gqlResponse.data?.votes?.length ? (
+            ) : allVotes.length ? (
               <ListRow.Container mt="0">
-                {gqlResponse.data?.votes.map((vote) => (
+                {allVotes.map((vote) => (
                   <Link
-                    href={`/voting-proposals/${vote!.proposal!.id}`}
+                    href={`/voting-proposals/${vote!.proposal}`}
                     key={vote!.id}
                     _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
                   >
                     <ListRow.Root>
                       <ListRow.PastVotes
-                        title={vote?.proposal?.title}
+                        title={findProposalTitleByVote(vote.proposal)}
                         votePreference={
-                          vote!.proposal!.choices?.[
-                            vote!.choice - 1
-                          ]?.toLowerCase() as "for" | "against" | "abstain"
+                          vote!.choice === 1
+                            ? "for"
+                            : vote.choice === 2
+                            ? "against"
+                            : "abstain"
                         }
                         voteCount={vote!.vp}
                         // body={vote?.proposal?.body}

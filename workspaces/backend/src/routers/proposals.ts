@@ -1,12 +1,14 @@
 import { desc, eq } from 'drizzle-orm';
 import { db } from '../db/db';
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
-import { gql, GraphQLClient } from 'graphql-request';
+import { GraphQLClient } from 'graphql-request';
 import { comments } from '../db/schema/comments';
 import { z } from 'zod';
 import { proposals } from '../db/schema/proposals';
 import { createInsertSchema } from 'drizzle-zod';
 import { Algolia } from '../utils/algolia';
+import { GET_PROPOSAL_QUERY, GET_PROPOSALS_QUERY } from '../queries/queries';
+import { transformProposalData } from '../queries/helpers';
 
 export interface IProposal {
   id: string;
@@ -28,77 +30,15 @@ export interface IProposalWithComments extends IProposal {
   }[];
 }
 
-const endpoint = `https://hub.snapshot.org/graphql`;
-const space = 'robwalsh.eth';
+const endpoint = process.env.SNAPSHOT_X_ENDPOINT! as string;
+const space = process.env.SNAPSHOT_X_SPACE;
 
 const graphQLClient = new GraphQLClient(endpoint, {
-  method: `GET`,
+  headers: {
+    'Content-Type': 'application/json',
+    // Include any other headers your GraphQL server might require
+  },
 });
-
-//GraphQL
-const GET_PROPOSALS_BY_ID = gql`
-  query proposals(
-    $space: String!
-    $searchQuery: String = ""
-    $ids: [String!] = []
-    $first: Int = 20
-    $skip: Int = 0
-  ) {
-    proposals(
-      first: $first
-      skip: $skip
-      where: { space: $space, title_contains: $searchQuery, id_in: $ids }
-    ) {
-      id
-      title
-      choices
-      start
-      end
-      snapshot
-      state
-      scores
-      scores_total
-      author
-      space {
-        id
-        name
-      }
-    }
-  }
-`;
-
-const GET_PROPOSALS = gql`
-  query proposals(
-    $space: String!
-    $orderDirection: OrderDirection!
-    $searchQuery: String = ""
-    $first: Int = 20
-    $skip: Int = 0
-  ) {
-    proposals(
-      first: $first
-      skip: $skip
-      orderBy: "created"
-      orderDirection: $orderDirection
-      where: { space: $space, title_contains: $searchQuery }
-    ) {
-      id
-      title
-      choices
-      start
-      end
-      snapshot
-      state
-      scores
-      scores_total
-      author
-      space {
-        id
-        name
-      }
-    }
-  }
-`;
 
 const populateProposalsWithComments = async (
   proposals: IProposal[],
@@ -159,24 +99,25 @@ export const proposalsRouter = router({
       const ourProposalData = await db.query.proposals.findFirst({
         where: eq(proposals.proposalId, opts.input.id),
       });
-      const { proposals: queriedProposals } = (await graphQLClient.request(
-        GET_PROPOSALS_BY_ID,
-        {
-          ids: [opts.input.id],
-          space,
-        },
-      )) as { proposals: IProposal[] };
+      const data = (await graphQLClient.request(GET_PROPOSAL_QUERY, {
+        id: opts.input.id,
+        space,
+      })) as { proposal: IProposal };
       const totalComments = await db.query.comments.findMany({
         where: eq(proposals.proposalId, opts.input.id),
       });
-      const proposal = queriedProposals[0];
+      console.log(data);
+
+      const foundProposal = data?.proposal || {};
+
+      const transformedProposal = transformProposalData(foundProposal);
 
       return {
-        status: proposal.state,
+        status: transformedProposal.state,
         comments: totalComments.length,
-        startDate: proposal.start,
+        startDate: transformedProposal.start,
         backendProposalData: ourProposalData,
-        proposal,
+        transformedProposal,
       };
     }),
 
@@ -199,6 +140,7 @@ export const proposalsRouter = router({
           ? opts.input?.sortBy
           : 'desc';
       const searchQuery = opts.input?.searchQuery || undefined;
+
       const filters = opts.input?.filters;
       const possibleStateFilters = ['active', 'pending', 'closed'];
 
@@ -207,23 +149,17 @@ export const proposalsRouter = router({
         [];
 
       let mappedProposals: IProposal[];
-      {
-        const { proposals: queriedProposals } = (await graphQLClient.request(
-          GET_PROPOSALS,
-          {
-            orderDirection,
-            searchQuery,
-            first: limit,
-            skip: offset,
-            space,
-          },
-        )) as { proposals: IProposal[] };
+      const data = (await graphQLClient.request(GET_PROPOSALS_QUERY, {
+        space,
+        orderDirection,
+      })) as { proposals: IProposal[] };
 
-        // Merge category data into the proposals array
-        mappedProposals = queriedProposals.map((proposal) => ({
-          ...proposal,
-        }));
-      }
+      const queriedProposals = transformProposalData(data || []);
+
+      // Merge category data into the proposals array
+      mappedProposals = queriedProposals.map((proposal: any) => ({
+        ...proposal,
+      }));
 
       if (statesFilter.length > 0) {
         mappedProposals = mappedProposals.filter((proposal) =>
