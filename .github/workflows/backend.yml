@@ -2,7 +2,7 @@ name: back deployment
 
 on:
   push:
-    branches: ['dev', 'snapshot']
+    branches: ['dev', 'snapshotx-dev']
     paths:
       - 'workspaces/backend/**'
   workflow_dispatch:
@@ -76,8 +76,8 @@ jobs:
           app_name: backend-development
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           images: '[{"name": "backend","image":{"registry_type": "DOCR","repository": "backend","tag": "${{ env.tag }}"}}]'
-  Deploy-snapshot:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/snapshot'
+  Deploy-snapshotx:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/snapshotx-dev'
     needs: Build
     runs-on: ubuntu-latest
     env:

@@ -2,7 +2,7 @@ name: front deployment
 
 on:
   push:
-    branches: ['dev', 'snapshot']
+    branches: ['dev', 'snapshotx-dev']
     paths:
       - 'workspaces/frontend/**'
       - 'workspaces/components/**'
@@ -14,7 +14,7 @@ jobs:
     outputs:
       tag: ${{ steps.meta.outputs.version }}
     environment:
-      name: ${{ github.ref_name == 'dev' && 'development-frontend' || github.ref_name == 'snapshot' && 'snapshot-frontend' || 'review-frontend' }}
+      name: ${{ github.ref_name == 'dev' && 'development-frontend' || github.ref_name == 'snapshotx-dev' && 'snapshot-frontend' || 'review-frontend' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -93,8 +93,8 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'
 
-  Deploy-snapshot:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/snapshot'
+  Deploy-snapshotx:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/snapshotx-dev'
     needs: Build
     runs-on: ubuntu-latest
     env:
