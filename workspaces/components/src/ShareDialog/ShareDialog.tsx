@@ -82,11 +82,8 @@ export const ShareDialog: React.FC = () => {
         title="Share"
       >
         <>
-          <Stack spacing="4">
-            <Text variant="bodyMediumStrong" color="content.default.default">Copy Link</Text>
-          </Stack>
-
-          <Box my="2">
+          <Box>
+            <Text variant="bodyMediumStrong" color="content.default.default" mb="standard.xs">Copy Link</Text>
             <InputGroup size="md">
               <Input
                 pr="2.5rem"

@@ -20,7 +20,7 @@ interface CustomModalFooterProps {
 }
 
 const Footer: React.FC<CustomModalFooterProps> = ({ children }) => (
-  <ModalFooter p="0" mt="standard.md">{children}</ModalFooter>
+  <ModalFooter p="0">{children}</ModalFooter>
 );
 
   export const Modal = ({ title, children, overflowY = "auto", ...modalProps }: CustomModalProps) => {

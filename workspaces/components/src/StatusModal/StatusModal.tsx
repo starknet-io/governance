@@ -34,36 +34,35 @@ export const StatusModal = ({
       onClose={onClose}
       isCentered
       title={title}
-      size="md"
     >
-      <Stack spacing="6">
-        <Flex
-          minHeight="144px"
-          flex={1}
-          alignItems="center"
-          justifyContent="center"
-          position="relative"
-        >
-          {isPending && <Spinner size="xxl" />}
-          {isFail && !isPending && (
-            <WarningIcon boxSize="104px" color="#E54D66" />
-          )}
-          {isSuccess && !isPending && (
-            <SuccessIcon boxSize="104px" color="#29AB87" />
-          )}
-        </Flex>
-        <Text align="center" variant="mediumStrong">
-          {description}
-        </Text>
+      <Flex
+        flex={1}
+        alignItems="center"
+        justifyContent="center"
+        position="relative"
+      >
+        {isPending && <Spinner size="xxl" />}
+        {isFail && !isPending && (
+          <WarningIcon boxSize="104px" color="#E54D66" />
+        )}
+        {isSuccess && !isPending && (
+          <SuccessIcon boxSize="104px" color="#29AB87" />
+        )}
+      </Flex>
+      {description ? <Text align="center" variant="mediumStrong">
+        {description}
+      </Text> : null}
+      <Modal.Footer>
         <Button
           type="button"
           variant="primary"
           size="standard"
           onClick={onClose}
+          width="100%"
         >
           Close
         </Button>
-      </Stack>
+      </Modal.Footer>
     </Modal>
   );
 };

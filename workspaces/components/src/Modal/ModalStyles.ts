@@ -34,13 +34,15 @@ const mdDialog = defineStyle({
 });
 
 const mdBody = defineStyle({
+  display: "flex",
+  flexDirection: "column",
   px: "standard.xl",
   py: "standard.xl",
-  minHeight: "auto",
   gap: "standard.md"
 });
 const xlBody = defineStyle({
-  minHeight: "272px",
+  display: "flex",
+  flexDirection: "column",
   gap: "standard.xl"
 });
 const sm = defineStyle({
