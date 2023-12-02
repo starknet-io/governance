@@ -21,6 +21,7 @@ const xlDialog = defineStyle({
   width: "100%",
   maxWidth: "446px",
   borderRadius: "standard.lg",
+  gap: "standard.xl"
 });
 
 const mdDialog = defineStyle({
@@ -29,15 +30,18 @@ const mdDialog = defineStyle({
   width: "100%",
   maxWidth: "446px",
   borderRadius: "standard.lg",
+  gap: "standard.md"
 });
 
 const mdBody = defineStyle({
   px: "standard.xl",
   py: "standard.xl",
-  minHeight: "auto"
+  minHeight: "auto",
+  gap: "standard.md"
 });
 const xlBody = defineStyle({
-  minHeight: "272px"
+  minHeight: "272px",
+  gap: "standard.xl"
 });
 const sm = defineStyle({
   fontSize: "sm",

@@ -37,7 +37,6 @@ const Footer: React.FC<CustomModalFooterProps> = ({ children }) => (
           mx={{ base: "2.5", lg: "16" }}
           maxHeight={{ base: "100%", md: "80%", lg: "60%" }}
           overflowY={overflowY}
-          gap="standard.xl"
         >
           <ModalHeader>
             <Heading textAlign={"center"} pl={8} pr={8} variant="h3" mb="0">{title}</Heading>

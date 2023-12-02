@@ -83,16 +83,16 @@ export const ShareDialog: React.FC = () => {
       >
         <>
           <Stack spacing="4">
-            <Text>Copy Link</Text>
+            <Text variant="bodyMediumStrong" color="content.default.default">Copy Link</Text>
           </Stack>
 
           <Box my="2">
             <InputGroup size="md">
               <Input
-                pr="4.5rem"
+                pr="2.5rem"
                 readOnly
                 value={link}
-                borderColor="#23192D1A"
+                borderColor="border.forms"
                 _focusVisible={{ borderColor: "gray.300" }}
               />
 
@@ -106,27 +106,28 @@ export const ShareDialog: React.FC = () => {
                   top={"-2px"}
                   right={"-13px"}
                 >
-                  <CopyIcon boxSize={"20px"} />
+                  <CopyIcon boxSize={"20px"} color="#86848D" />
                 </Button>
               </Box>
             </InputGroup>
           </Box>
-
-          <Flex justifyContent="space-between" width="100%" mt="24px">
-            <LinkBox
-              icon={<TwitterIcon />}
-              label="Twitter"
-              onClick={shareTwitter}
-              flex="1"
-              mr="3"
-            />
-            <LinkBox
-              icon={<TelegramIcon />}
-              label="Telegram"
-              onClick={shareTelegram}
-              flex="1"
-            />
-          </Flex>
+          <Modal.Footer>
+            <Flex justifyContent="space-between" width="100%">
+              <LinkBox
+                icon={<TwitterIcon />}
+                label="Twitter"
+                onClick={shareTwitter}
+                flex="1"
+                mr="3"
+              />
+              <LinkBox
+                icon={<TelegramIcon />}
+                label="Telegram"
+                onClick={shareTelegram}
+                flex="1"
+              />
+            </Flex>
+          </Modal.Footer>
         </>
       </Modal>
     </>
@@ -153,15 +154,16 @@ const LinkBox = ({ href, icon, label, onClick, flex, mr }: LinkBoxProps) => {
       leftIcon={icon}
       flex={flex}
       onClick={onClick}
-      justifyContent={"space-between"}
+      justifyContent={"center"}
       height="44px"
       padding="12px 20px"
       marginRight={mr}
       cursor={"pointer"}
       _active={{}}
+      borderRadius="standard.base"
+      boxShadow="0px 1px 1px 0px rgba(0, 0, 0, 0.05)"
     >
       <Text
-        marginRight="auto"
         fontSize={"14px"}
         fontWeight="500"
         lineHeight="20px"
