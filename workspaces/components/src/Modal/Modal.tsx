@@ -39,7 +39,7 @@ const Footer: React.FC<CustomModalFooterProps> = ({ children }) => (
           overflowY={overflowY}
         >
           <ModalHeader>
-            <Heading textAlign={"center"} pl={8} pr={8} variant="h3" mb="0">{title}</Heading>
+            <Heading textAlign={"center"} pl={8} pr={8} variant={(modalProps.size === "sm" || modalProps.size === "smBodyMd") ? "h4" : "h3"} mb="0">{title}</Heading>
           </ModalHeader>
           <ModalCloseButton
             top="12px"

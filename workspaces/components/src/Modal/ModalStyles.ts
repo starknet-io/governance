@@ -45,14 +45,12 @@ const xlBody = defineStyle({
   flexDirection: "column",
   gap: "standard.xl"
 });
-const sm = defineStyle({
-  fontSize: "sm",
-  py: "6",
-});
 
 const sizes = {
-  standard: definePartsStyle({ header: sm, dialog: xlDialog, body: xlBody }),
-  md: definePartsStyle({ header: sm, dialog: mdDialog, body: mdBody }),
+  standard: definePartsStyle({ dialog: xlDialog, body: xlBody }),
+  md: definePartsStyle({ dialog: mdDialog, body: mdBody }),
+  sm: definePartsStyle({ dialog: xlDialog, body: xlBody }),
+  smBodyMd: definePartsStyle({ dialog: mdDialog, body: mdDialog }),
 };
 
 export const modalTheme = defineMultiStyleConfig({

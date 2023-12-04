@@ -8,7 +8,7 @@ type Props = {
   onClose: () => void;
   children: React.ReactNode;
   title: string;
-  size?: string;
+  size?: "standard" | "md" | "sm" | "smBodyMd";
 };
 
 export const InfoModal = ({
@@ -16,7 +16,7 @@ export const InfoModal = ({
   children,
   isOpen = false,
   onClose,
-  size = "md"
+  size = "sm"
 }: Props) => {
   return (
     <Modal
