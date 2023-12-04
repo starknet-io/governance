@@ -15,6 +15,7 @@ import {
 
 const REDIRECT_URI = window?.location?.href ?? 'http://localhost:3000/delegates/create'
 const CLIENT_ID = import.meta.env.VITE_APP_TW_CLIENT_ID ?? "";
+console.log('CLIENT_ID', CLIENT_ID)
 
 const TwitterLogin = () => {
   const [provider, setProvider] = useState('')

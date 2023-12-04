@@ -7,6 +7,7 @@
  */
 
 const PASS_CORS_KEY = import.meta.env.VITE_APP_PASS_CORS_KEY ?? "";
+console.log('PASS_CORS_KEY', PASS_CORS_KEY)
 
 import React, { memo, useCallback, useEffect } from 'react';
 
