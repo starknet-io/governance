@@ -29,7 +29,6 @@ export const SupportModal = ({ isOpen = false, onClose }: Props) => {
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      size="md"
       isCentered
       variant="unstyled"
       title="Community links"
@@ -48,7 +47,7 @@ export const SupportModal = ({ isOpen = false, onClose }: Props) => {
             from the community!
           </Text> */}
         </Stack>
-        <Flex flexDirection="column" gap="standard.sm" mt="standard.xl">
+        <Flex flexDirection="column" gap="standard.sm">
           <LinkBox
             icon={<DiscourseIcon boxSize="32px" mr="3px" />}
             href="https://community.starknet.io/"
