@@ -499,6 +499,7 @@ export function Page() {
         title="Snapshot info"
         isOpen={isInfoOpen}
         onClose={() => setIsInfoOpen(false)}
+        size="standard"
       >
         <SummaryItems.Root>
           <SummaryItems.StrategySummary

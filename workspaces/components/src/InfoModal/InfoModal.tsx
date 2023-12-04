@@ -8,6 +8,7 @@ type Props = {
   onClose: () => void;
   children: React.ReactNode;
   title: string;
+  size?: string;
 };
 
 export const InfoModal = ({
@@ -15,6 +16,7 @@ export const InfoModal = ({
   children,
   isOpen = false,
   onClose,
+  size = "md"
 }: Props) => {
   return (
     <Modal
@@ -23,7 +25,7 @@ export const InfoModal = ({
       onClose={onClose}
       isCentered
       title={title}
-      size="md"
+      size={size}
     >
       <>
         <Stack spacing="standard.xl">
