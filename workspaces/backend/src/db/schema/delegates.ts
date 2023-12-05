@@ -11,6 +11,7 @@ import {
 import { users } from './users';
 import {customDelegateAgreement} from "./customDelegateAgreement";
 import { delegateVotes } from "./delegatesVotes";
+import {socials} from "./socials";
 
 export const interestsEnum = pgEnum('interests', [
   // 'Cairo Dev',
@@ -80,6 +81,10 @@ export const delegateRelations = relations(delegates, ({ one }) => ({
     fields: [delegates.id],
     references: [delegateVotes.delegateId],
   }),
+  socials: one(socials, {
+    fields: [delegates.id],
+    references: [socials.delegateId]
+  })
 }));
 
 export type Delegate = InferModel<typeof delegates>;

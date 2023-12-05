@@ -25,7 +25,7 @@ import {
   Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAccount, useWaitForTransaction } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import {
@@ -44,6 +44,7 @@ import * as ProfilePageLayout from "../../../components/ProfilePageLayout/Profil
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
+import DiscordLogin from "../../../components/SocialLogin/DiscordLogin";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -327,7 +328,11 @@ export function Page() {
     const canEdit =
       (hasPermission(user.role, [ROLES.USER]) &&
         user.delegationStatement?.id === delegateId) ||
-      hasPermission(user.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR]);
+      hasPermission(user.role, [
+        ROLES.ADMIN,
+        ROLES.SUPERADMIN,
+        ROLES.MODERATOR,
+      ]);
 
     return (
       <>
@@ -627,6 +632,9 @@ export function Page() {
           </SummaryItems.Root>
           <Divider mt="standard.2xl" />
         </Box>
+        <SummaryItems.Root direction={"row"}>
+          <DiscordLogin delegateId={delegateId} />
+        </SummaryItems.Root>
         {isLoadingSocials ||
         delegate?.twitter ||
         delegate?.discourse ||

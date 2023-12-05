@@ -21,14 +21,12 @@ import * as usersToCouncils from './schema/usersToCouncils';
 import * as proposals from './schema/proposals';
 import * as customDelegateAgreement from './schema/customDelegateAgreement';
 import * as notificationUsers from './schema/notificationUsers';
+import * as socials from './schema/socials';
 
 dotenv.config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    ca: fs.readFileSync('ca-certificate.crt').toString(),
-  },
 });
 
 const db = drizzle(pool, {
@@ -50,6 +48,7 @@ const db = drizzle(pool, {
     ...notificationUsers,
     ...subscribers,
     ...members,
+    ...socials,
   },
 });
 
