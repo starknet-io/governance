@@ -7,7 +7,7 @@ export const TelegramLogin = () => {
       buttonSize={TLoginButtonSize.Large}
       lang="en"
       usePic={false}
-      cornerRadius={20}
+      cornerRadius={4}
       onAuthCallback={(user) => {
         alert('Telegram logged in. Check for console logs')
         console.log('telegram user', user);

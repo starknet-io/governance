@@ -7,23 +7,29 @@
  */
 
 const PASS_CORS_KEY = import.meta.env.VITE_APP_PASS_CORS_KEY ?? "";
-console.log('PASS_CORS_KEY', PASS_CORS_KEY)
+console.log("PASS_CORS_KEY", PASS_CORS_KEY);
 
-import React, { memo, useCallback, useEffect } from 'react';
+// const REDIRECT_URI = window?.location?.href ?? 'http://localhost:3000/delegates/create'
+let REDIRECT_URI = "http://localhost:3000/delegates/create";
+if (typeof window !== "undefined") {
+  REDIRECT_URI = window?.location?.href;
+}
+
+import React, { memo, useCallback, useEffect } from "react";
 
 export type objectType = {
-    [key: string]: any;
-  };
-  
+  [key: string]: any;
+};
+
 export type IResolveParams = {
-    provider: string;
-    data?: objectType;
+  provider: string;
+  data?: objectType;
 };
 
 interface Props {
   client_id: string;
   className?: string;
-  redirect_uri: string;
+  redirect_uri?: string;
   state?: string;
   fields?: string;
   scope?: string;
@@ -36,32 +42,33 @@ interface Props {
   onResolve: ({ provider, data }: IResolveParams) => void;
 }
 
-const TWITTER_URL = 'https://twitter.com';
-const TWITTER_API_URL = 'https://api.twitter.com';
-const PREVENT_CORS_URL = 'https://cors.bridged.cc';
+const TWITTER_URL = "https://twitter.com";
+const TWITTER_API_URL = "https://api.twitter.com";
+const PREVENT_CORS_URL = "https://cors.bridged.cc";
 
 export const LoginSocialTwitter = ({
   client_id,
-  className = '',
-  redirect_uri,
+  className = "",
+  redirect_uri = REDIRECT_URI,
   children,
-  fields = 'created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld',
-  state = 'state',
-  scope = 'users.read%20tweet.read',
+  fields = "created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld",
+  state = "state",
+  scope = "users.read%20tweet.read",
   isOnlyGetCode = false,
   isOnlyGetToken = false,
   onLoginStart,
   onReject,
   onResolve,
 }: Props) => {
-
   useEffect(() => {
-    const popupWindowURL = new URL(window.location.href);
-    const code = popupWindowURL.searchParams.get('code');
-    const state = popupWindowURL.searchParams.get('state');
-    if (state?.includes('_twitter') && code) {
-      localStorage.setItem('twitter', code);
-      window.close();
+    if (typeof window !== "undefined") {
+      const popupWindowURL = new URL(window.location.href);
+      const code = popupWindowURL.searchParams.get("code");
+      const state = popupWindowURL.searchParams.get("state");
+      if (state?.includes("_twitter") && code) {
+        localStorage.setItem("twitter", code);
+        window.close();
+      }
     }
   }, []);
 
@@ -69,47 +76,47 @@ export const LoginSocialTwitter = ({
     (data: objectType) => {
       const url = `${PREVENT_CORS_URL}/${TWITTER_API_URL}/2/users/me?user.fields=${fields}`;
       fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
           Authorization: `Bearer ${data.access_token}`,
-          'x-cors-grida-api-key': PASS_CORS_KEY,
+          "x-cors-grida-api-key": PASS_CORS_KEY,
         },
       })
-        .then(res => res.json())
-        .then(res => {
-          onResolve({ provider: 'twitter', data: { ...data, ...res.data } });
+        .then((res) => res.json())
+        .then((res) => {
+          onResolve({ provider: "twitter", data: { ...data, ...res.data } });
         })
-        .catch(err => onReject(err));
+        .catch((err) => onReject(err));
     },
     [fields, onReject, onResolve],
   );
 
   const getAccessToken = useCallback(
     async (code: string) => {
-      if (isOnlyGetCode) onResolve({ provider: 'twitter', data: { code } });
+      if (isOnlyGetCode) onResolve({ provider: "twitter", data: { code } });
       else {
         const details = new URLSearchParams({
           code,
           redirect_uri,
           client_id,
           grant_type: `authorization_code`,
-          code_verifier: 'challenge',
+          code_verifier: "challenge",
         });
 
         const requestOAuthURL = `${PREVENT_CORS_URL}/${TWITTER_API_URL}/2/oauth2/token`;
         const data = await fetch(requestOAuthURL, {
-          method: 'POST',
+          method: "POST",
           body: details,
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'x-cors-grida-api-key': PASS_CORS_KEY,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "x-cors-grida-api-key": PASS_CORS_KEY,
           },
         })
-          .then(data => data.json())
-          .catch(err => onReject(err));
+          .then((data) => data.json())
+          .catch((err) => onReject(err));
 
         if (data.access_token) {
-          if (isOnlyGetToken) onResolve({ provider: 'twitter', data });
+          if (isOnlyGetToken) onResolve({ provider: "twitter", data });
           else getProfile(data);
         }
       }
@@ -127,41 +134,51 @@ export const LoginSocialTwitter = ({
 
   const handlePostMessage = useCallback(
     async ({ type, code, provider }: objectType) =>
-      type === 'code' && provider === 'twitter' && code && getAccessToken(code),
+      type === "code" && provider === "twitter" && code && getAccessToken(code),
     [getAccessToken],
   );
 
   const onChangeLocalStorage = useCallback(() => {
-    window.removeEventListener('storage', onChangeLocalStorage, false);
-    const code = localStorage.getItem('twitter');
+    if (typeof window !== "undefined") {
+      window.removeEventListener("storage", onChangeLocalStorage, false);
+    }
+    const code = localStorage.getItem("twitter");
     if (code) {
-      handlePostMessage({ provider: 'twitter', type: 'code', code });
-      localStorage.removeItem('twitter');
+      handlePostMessage({ provider: "twitter", type: "code", code });
+      localStorage.removeItem("twitter");
     }
   }, [handlePostMessage]);
 
   const onLogin = useCallback(async () => {
     onLoginStart && onLoginStart();
-    window.addEventListener('storage', onChangeLocalStorage, false);
+    if (typeof window !== "undefined") {
+      window.addEventListener("storage", onChangeLocalStorage, false);
+    }
     const oauthUrl = `${TWITTER_URL}/i/oauth2/authorize?response_type=code&client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope}&state=${
-      state + '_twitter'
+      state + "_twitter"
     }&code_challenge=challenge&code_challenge_method=plain`;
     const width = 450;
     const height = 730;
-    const left = window.screen.width / 2 - width / 2;
-    const top = window.screen.height / 2 - height / 2;
-    window.open(
-      oauthUrl,
-      'twitter',
-      'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' +
-        width +
-        ', height=' +
-        height +
-        ', top=' +
-        top +
-        ', left=' +
-        left,
-    );
+    let left = 0;
+    let top = 0;
+    if (typeof window !== "undefined") {
+      left = window.screen.width / 2 - width / 2;
+      top = window.screen.height / 2 - height / 2;
+    }
+    if (typeof window !== "undefined") {
+      window.open(
+        oauthUrl,
+        "twitter",
+        "menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=" +
+          width +
+          ", height=" +
+          height +
+          ", top=" +
+          top +
+          ", left=" +
+          left,
+      );
+    }
   }, [
     scope,
     state,

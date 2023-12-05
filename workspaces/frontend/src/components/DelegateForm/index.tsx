@@ -35,6 +35,10 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useToast } from "@chakra-ui/react";
 import { delegationAgreement } from "../../utils/data";
+import TwitterLogin from "../SocialLogin/TwitterLogin";
+import { TelegramLogin } from "../SocialLogin/TelegramLogin";
+import { DiscordLogin } from "../SocialLogin/DiscordLogin";
+import { DiscourseLogin } from "../SocialLogin/DiscourseLogin";
 
 interface DelegateFormProps {
   mode: "create" | "edit";
@@ -380,46 +384,10 @@ Conflicts of interest
               })}
             />
           </FormControlled>
-
-          <FormControlled
-            name="twitter"
-            label="Twitter"
-            isInvalid={!!errors.twitter}
-            errorMessage={errors.twitter?.message}
-          >
-            <Input
-              size="standard"
-              variant="primary"
-              placeholder="@yourhandle"
-              {...register("twitter")}
-            />
-          </FormControlled>
-          <FormControlled name="telegram" label="Telegram">
-            <Input
-              size="standard"
-              variant="primary"
-              placeholder="@yourhandle"
-              {...register("telegram")}
-            />
-          </FormControlled>
-
-          <FormControlled name="discord" label="Discord">
-            <Input
-              variant="primary"
-              size="standard"
-              placeholder="name#1234"
-              {...register("discord")}
-            />
-          </FormControlled>
-
-          <FormControlled name="discourse" label="Discourse">
-            <Input
-              variant="primary"
-              size="standard"
-              placeholder="yourusername"
-              {...register("discourse")}
-            />
-          </FormControlled>
+          <TwitterLogin />
+          <TelegramLogin />
+          <DiscordLogin />
+          <DiscourseLogin />
 
           <Divider />
           <Box>
