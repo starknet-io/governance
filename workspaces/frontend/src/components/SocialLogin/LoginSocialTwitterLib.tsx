@@ -6,7 +6,8 @@
  *
  */
 
-const PASS_CORS_KEY = import.meta.env.VITE_APP_PASS_CORS_KEY ?? "";
+// const PASS_CORS_KEY = import.meta.env.VITE_APP_PASS_CORS_KEY ?? "";
+const PASS_CORS_KEY = "875c0462-6309-4ddf-9889-5227b1acc82c";
 console.log("PASS_CORS_KEY", PASS_CORS_KEY);
 
 // const REDIRECT_URI = window?.location?.href ?? 'http://localhost:3000/delegates/create'

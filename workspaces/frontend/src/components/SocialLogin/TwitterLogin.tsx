@@ -6,7 +6,8 @@ import { Button } from "@yukilabs/governance-components";
 // REDIRECT URL must be same with URL where the (reactjs-social-login) components is located
 // MAKE SURE the (reactjs-social-login) components aren't unmounted or destroyed before the ask permission dialog closes
 
-const CLIENT_ID = import.meta.env.VITE_APP_TW_CLIENT_ID ?? "";
+// const CLIENT_ID = import.meta.env.VITE_APP_TW_CLIENT_ID ?? "";
+const CLIENT_ID = "Qm1hbVR4MVRuN25mVVh4ZDNOaUE6MTpjaQ";
 console.log("CLIENT_ID", CLIENT_ID);
 
 const TwitterLogin = () => {
