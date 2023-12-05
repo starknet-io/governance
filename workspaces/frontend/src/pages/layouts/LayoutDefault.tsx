@@ -178,7 +178,7 @@ function LayoutDefault(props: Props) {
           <Box display={{ base: "none", lg: "flex" }}>
             {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
-          <DrawerBody px="12px" py="16px" pt="0" mt="48px">
+          <DrawerBody p="0" mt="60px">
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
@@ -189,7 +189,7 @@ function LayoutDefault(props: Props) {
         </DrawerContent>
       </Drawer>
 
-      <Flex width="100%" minHeight="100vh" direction="row">
+      <Flex width="100%" minHeight="100vh" direction="row" pt={{ base: "60px", lg: "0" }}>
         <Box
           bg="surface.forms.default"
           width="234px"
@@ -222,10 +222,12 @@ function LayoutDefault(props: Props) {
         <Flex direction="column" flex="1">
           {/* //Header  */}
           <Box
-            position="sticky"
+            position={{ base: "fixed", lg: "sticky" }}
             top="0"
+            left="0"
+            right="0"
             bg="surface.bgPage"
-            zIndex={100}
+            zIndex={9999}
             borderBottom="1px solid"
             borderColor="border.forms"
             height={{ base: "60px", md: "68px" }}
@@ -244,16 +246,23 @@ function LayoutDefault(props: Props) {
             }}
           >
             <Flex gap="standard.xs">
-              <Box display={{ base: "block", lg: "none" }}>
+              <Box display={{ base: "flex", lg: "none" }} gap="standard.base">
                 <IconButton
                   aria-label="Open menu"
                   size="condensed"
-                  // toDo replace with x icon
-                  icon={isOpen ? <HamburgerIcon /> : <HamburgerIcon />}
-                  onClick={onOpen}
+                  icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+                  onClick={isOpen ? onClose : onOpen}
                   variant="ghost"
                 />
                 <Show breakpoint="(max-width: 567px)">
+                  {user && (
+                    <NotificationsMenu
+                      notifications={notifications}
+                      markAsRead={markAsRead}
+                    />
+                  )}
+                </Show>
+                {/* <Show breakpoint="(max-width: 567px)">
                   <IconButton
                     aria-label="Open menu"
                     size="condensed"
@@ -261,7 +270,7 @@ function LayoutDefault(props: Props) {
                     onClick={() => setIsGlobalSearchOpen(true)}
                     variant="ghost"
                   />
-                </Show>
+                </Show> */}
               </Box>
 
               <Box display={{ base: "none", lg: "block" }}>
@@ -291,19 +300,22 @@ function LayoutDefault(props: Props) {
                 <Box display={{ base: "none", md: "flex" }}>
                   <ShareDialog />
                 </Box>
-                {user && (
-                  <NotificationsMenu
-                    notifications={notifications}
-                    markAsRead={markAsRead}
+                <Show breakpoint="(min-width: 568px)">
+                  {user && (
+                    <NotificationsMenu
+                      notifications={notifications}
+                      markAsRead={markAsRead}
+                    />
+                  )}
+                </Show>
+                <Show breakpoint="(min-width: 567px)">
+                  <GlobalSearch
+                    searchResults={globalSearchResults}
+                    onSearchItems={handleGlobalSearchItems}
+                    isOpen={isGlobalSearchOpen}
+                    setIsSearchModalOpen={setIsGlobalSearchOpen}
                   />
-                )}
-                <GlobalSearch
-                  searchResults={globalSearchResults}
-                  onSearchItems={handleGlobalSearchItems}
-                  isOpen={isGlobalSearchOpen}
-                  setIsSearchModalOpen={setIsGlobalSearchOpen}
-                />
-
+                </Show>
                 <Box display={{ base: "flex" }} marginLeft="auto">
                   {renderDone ? (
                     <DynamicCustomWidget />

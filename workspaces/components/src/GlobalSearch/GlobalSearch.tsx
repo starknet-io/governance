@@ -110,71 +110,69 @@ export function GlobalSearch({
 
   return (
     <Box onClick={handleSearchClick} cursor="pointer">
-      <Show breakpoint="(min-width: 567px)">
-        <InputGroup
-          color="content.support.default"
-          _hover={{
-            color: "content.support.hover",
-          }}
+      <InputGroup
+        color="content.support.default"
+        _hover={{
+          color: "content.support.hover",
+        }}
+      >
+        <InputLeftElement
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          pointerEvents="none"
+          height={isMobile ? "44px" : "36px"}
+          width="auto"
+          pl="standard.sm"
+          color="inherit"
         >
-          <InputLeftElement
+          <SearchIcon color="currentColor" width="20px" height="20px" />
+        </InputLeftElement>
+        <Input
+          placeholder="Search"
+          width={isMobile ? "100%" : "237px"}
+          height={isMobile ? "44px" : "36px"}
+          pointerEvents="none"
+          paddingLeft="calc(12px + 20px + 8px)" // icon left p 12px, 20px icon width, 8px gap
+          borderRadius="4px"
+          _groupHover={{
+            _placeholder: {
+              color: "content.support.hover",
+            },
+          }}
+        />
+        {!isMobile ? <InputRightElement
+          width="32px"
+          borderRadius="4px"
+          overflow="hidden"
+          top="2px"
+          height="32px"
+          right="2px"
+          pointerEvents="none"
+        >
+          <Box
+            position="relative"
+            height="32px"
+            p="standard.xs"
+            backgroundColor="surface.overlay"
             display="flex"
             alignItems="center"
             justifyContent="center"
-            pointerEvents="none"
-            height="36px"
-            width="auto"
-            pl="standard.sm"
-            color="inherit"
-          >
-            <SearchIcon color="currentColor" width="20px" height="20px" />
-          </InputLeftElement>
-          <Input
-            placeholder="Search"
-            width="237px"
-            height="36px"
-            pointerEvents="none"
-            paddingLeft="calc(12px + 20px + 8px)" // icon left p 12px, 20px icon width, 8px gap
             borderRadius="4px"
-            _groupHover={{
-              _placeholder: {
-                color: "content.support.hover",
-              },
-            }}
-          />
-          <InputRightElement
-            width="32px"
-            borderRadius="4px"
-            overflow="hidden"
-            top="2px"
-            height="32px"
-            right="2px"
-            pointerEvents="none"
           >
-            <Box
-              position="relative"
-              height="32px"
-              p="standard.xs"
-              backgroundColor="surface.overlay"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              borderRadius="4px"
+            <Text
+              fontSize="16px"
+              lineHeight={1}
+              color="inherit"
+              fontWeight="500"
+              w="16px"
+              textAlign="center"
             >
-              <Text
-                fontSize="16px"
-                lineHeight={1}
-                color="inherit"
-                fontWeight="500"
-                w="16px"
-                textAlign="center"
-              >
-                /
-              </Text>
-            </Box>
-          </InputRightElement>
-        </InputGroup>
-      </Show>
+              /
+            </Text>
+          </Box>
+        </InputRightElement> : null}
+      </InputGroup>
 
       <Modal
         isOpen={isOpen}
@@ -183,8 +181,8 @@ export function GlobalSearch({
         size={isMobile ? "full" : "3xl"}
       >
         <ModalOverlay />
-        <ModalContent height="672px" borderRadius="lg">
-          <ModalHeader p="0" borderBottom="1px solid #23192D1A">
+        <ModalContent height={isMobile ? "100vh" : "672px"} borderRadius="lg">
+          <ModalHeader mt={isMobile ? "60px" : "0"} p="0" borderBottom="1px solid #23192D1A">
             <Input placeholder="" hidden />
             <InputGroup
               color="content.support.default"
