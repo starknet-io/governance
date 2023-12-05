@@ -11285,7 +11285,6 @@ __metadata:
     "@types/react-datepicker": ^4.15.0
     "@types/react-syntax-highlighter": ^15.5.9
     "@yukilabs/governance-backend": "workspace:*"
-    boring-avatars: ^1.10.1
     chakra-dayzed-datepicker: ^0.2.9
     chakra-react-select: ^4.7.0
     chakra-ui-markdown-renderer: ^4.1.0
@@ -12540,13 +12539,6 @@ __metadata:
     type-is: ~1.6.18
     unpipe: 1.0.0
   checksum: 14d37ec638ab5c93f6099ecaed7f28f890d222c650c69306872e00b9efa081ff6c596cd9afb9930656aae4d6c4e1c17537bea12bb73c87a217cb3cfea8896737
-  languageName: node
-  linkType: hard
-
-"boring-avatars@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "boring-avatars@npm:1.10.1"
-  checksum: 2f4109d8c007e0eaf62bc191c632da683c814c330803bf978630588d2393f6943d0bc5d5e5d32bfe13e46c940bcff4b860a2bd6bb37d2c5c411a1a8339d40c06
   languageName: node
   linkType: hard
 

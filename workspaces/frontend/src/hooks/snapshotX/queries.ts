@@ -53,7 +53,9 @@ export const GET_PROPOSAL_QUERY = gql`
       vetoed
       executed
       cancelled
+      tx
       metadata {
+        id
         title
         body
         discussion

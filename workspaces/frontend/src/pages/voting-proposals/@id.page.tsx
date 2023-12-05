@@ -454,11 +454,11 @@ export function Page() {
           />
 
           <SummaryItems.LinkItem
-            label="Snapshot block #"
-            link={`https://etherscan.io/block/${data?.proposal?.snapshot}`}
+            label="Txn id"
+            link={`https://testnet.starkscan.co/tx/${data?.proposal?.tx}`}
             linkLabel={
-              data?.proposal?.snapshot
-                ? parseInt(data.proposal.snapshot, 10).toLocaleString()
+              data?.proposal?.tx
+                ? truncateAddress(data.proposal.tx)
                 : ""
             }
             isExternal={true}
