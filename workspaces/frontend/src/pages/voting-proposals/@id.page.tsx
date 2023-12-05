@@ -68,7 +68,11 @@ import {
   starkSigClient,
 } from "../../clients/clients";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
-import {prepareStrategiesForSignature, waitForTransaction} from "../../hooks/snapshotX/helpers";
+import {
+  parseStrategiesToHumanReadableFormat,
+  prepareStrategiesForSignature,
+  waitForTransaction
+} from "../../hooks/snapshotX/helpers";
 import {useStarknetDelegates} from "../../wagmi/StarknetDelegationRegistry";
 const sortByOptions = {
   defaultValue: "date",
@@ -431,7 +435,8 @@ export function Page() {
         <SummaryItems.Root>
           <SummaryItems.StrategySummary
             strategies={
-              (data?.proposal?.strategies || []).filter((s) => s) as any[]
+              //parseStrategiesToHumanReadableFormat(data?.proposal?.strategies || [])
+              []
             }
           />
           <SummaryItems.LinkItem

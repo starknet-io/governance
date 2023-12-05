@@ -27,6 +27,7 @@ export const GET_PROPOSALS_QUERY = gql`
       scores_2
       scores_3
       completed
+      strategies
       vetoed
       executed
       cancelled
@@ -62,6 +63,7 @@ export const GET_PROPOSAL_QUERY = gql`
       scores_3
       completed
       vetoed
+      strategies
       executed
       cancelled
       metadata {

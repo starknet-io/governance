@@ -53,6 +53,7 @@ export const GET_PROPOSAL_QUERY = gql`
       vetoed
       executed
       cancelled
+      strategies
       tx
       metadata {
         id

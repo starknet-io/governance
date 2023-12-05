@@ -7,6 +7,7 @@ import {
 } from "starknet";
 import { create } from "ipfs-http-client";
 import { pin } from "@snapshot-labs/pineapple";
+import {STRATEGIES_ENUM} from "./constants";
 
 const client = create({ url: "https://api.thegraph.com/ipfs/api/v0" });
 
@@ -210,3 +211,14 @@ export const getVotingPowerCalculation = async (
     }),
   );
 };
+
+export const parseStrategiesToHumanReadableFormat = (strategies = []) => {
+  console.log(strategies)
+  return strategies.map((strategy) => {
+    if (STRATEGIES_ENUM?.[strategy]) {
+      return STRATEGIES_ENUM?.[strategy]
+    } else {
+      return ""
+    }
+  })
+}
