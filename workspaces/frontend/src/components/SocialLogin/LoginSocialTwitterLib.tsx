@@ -11,10 +11,10 @@ const PASS_CORS_KEY = "875c0462-6309-4ddf-9889-5227b1acc82c";
 console.log("PASS_CORS_KEY", PASS_CORS_KEY);
 
 // const REDIRECT_URI = window?.location?.href ?? 'http://localhost:3000/delegates/create'
-let REDIRECT_URI = "http://localhost:3000/delegates/create";
-if (typeof window !== "undefined") {
-  REDIRECT_URI = window?.location?.href;
-}
+// let REDIRECT_URI = "http://localhost:3000/delegates/create";
+// if (typeof window !== "undefined") {
+  const REDIRECT_URI = window?.location?.href;
+// }
 
 import React, { memo, useCallback, useEffect } from "react";
 
@@ -47,7 +47,7 @@ const TWITTER_URL = "https://twitter.com";
 const TWITTER_API_URL = "https://api.twitter.com";
 const PREVENT_CORS_URL = "https://cors.bridged.cc";
 
-export const LoginSocialTwitter = ({
+const LoginSocialTwitter = ({
   client_id,
   className = "",
   redirect_uri = REDIRECT_URI,
@@ -61,6 +61,7 @@ export const LoginSocialTwitter = ({
   onReject,
   onResolve,
 }: Props) => {
+  console.log('REDIRECT_URI', REDIRECT_URI)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const popupWindowURL = new URL(window.location.href);
