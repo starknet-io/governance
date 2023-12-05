@@ -1,18 +1,17 @@
 import { trpc } from "../../utils/trpc";
-import { DiscordLoginButton } from "react-social-login-buttons";
+import { TwitterLoginButton } from "react-social-login-buttons";
 import { useState } from "react";
 
-const DiscordAuth = ({ delegateId }: { delegateId: string }) => {
+const TwitterLogin = ({ delegateId }: { delegateId: string }) => {
   const { data, isLoading, isError } = trpc.socials.initiateSocialAuth.useQuery(
     {
       delegateId,
-      origin: "discord",
+      origin: "twitter",
     },
   );
-  const handleDiscordLogin = async () => {
+  const handleTwitterLogin = async () => {
     try {
       if (data?.alreadyVerified) {
-        console.log("asd");
       } else if (data?.redirectUrl) {
         window.location.href = data.redirectUrl;
       }
@@ -26,16 +25,16 @@ const DiscordAuth = ({ delegateId }: { delegateId: string }) => {
   }
 
   if (isError) {
-    return <div>Error fetching discord info...</div>;
+    return <div>Error fetching twitter info...</div>;
   }
 
   console.log(data);
 
-  if (data?.discordUsername) {
-    return <div>Discord: ${data.discordUsername}</div>;
+  if (data?.twitterUsername) {
+    return <div>Twitter: {data.twitterUsername}</div>;
   }
 
-  return <DiscordLoginButton onClick={handleDiscordLogin} />;
+  return <TwitterLoginButton onClick={handleTwitterLogin} />;
 };
 
-export default DiscordAuth;
+export default TwitterLogin;

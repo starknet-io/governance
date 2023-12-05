@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "414b56c4-b995-4ae1-8855-834db8f4d66a",
+  "id": "620cd7a3-b619-4237-a228-f05b8b5cc22d",
   "prevId": "df88e9e6-0e42-485d-b181-275cd8cb4257",
   "tables": {
     "comments": {
@@ -770,6 +770,74 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "oauth_tokens": {
+      "name": "oauth_tokens",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "delegateId": {
+          "name": "delegateId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tokenSecret": {
+          "name": "tokenSecret",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expiration": {
+          "name": "expiration",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oauth_tokens_delegateId_delegates_id_fk": {
+          "name": "oauth_tokens_delegateId_delegates_id_fk",
+          "tableFrom": "oauth_tokens",
+          "tableTo": "delegates",
+          "columnsFrom": [
+            "delegateId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "pages": {
       "name": "pages",
       "schema": "",
@@ -1199,7 +1267,7 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true,
-          "default": "'3535214b-8fae-4e37-b524-2834eefa6563'"
+          "default": "'c1da3fab-9493-4d35-b432-cb5c02b4fe73'"
         },
         "isConfirmed": {
           "name": "isConfirmed",

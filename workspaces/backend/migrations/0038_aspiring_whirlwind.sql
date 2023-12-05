@@ -1,3 +1,13 @@
+CREATE TABLE IF NOT EXISTS "oauth_tokens" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"delegateId" uuid,
+	"token" text,
+	"tokenSecret" text,
+	"provider" text,
+	"expiration" timestamp NOT NULL,
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS "delegate_socials" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"delegateId" uuid,
@@ -13,7 +23,13 @@ CREATE TABLE IF NOT EXISTS "delegate_socials" (
 	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 
-ALTER TABLE "subscribers" ALTER COLUMN "confirmationToken" SET DEFAULT '3535214b-8fae-4e37-b524-2834eefa6563';
+ALTER TABLE "subscribers" ALTER COLUMN "confirmationToken" SET DEFAULT 'c1da3fab-9493-4d35-b432-cb5c02b4fe73';
+DO $$ BEGIN
+ ALTER TABLE "oauth_tokens" ADD CONSTRAINT "oauth_tokens_delegateId_delegates_id_fk" FOREIGN KEY ("delegateId") REFERENCES "delegates"("id") ON DELETE cascade ON UPDATE cascade;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+
 DO $$ BEGIN
  ALTER TABLE "delegate_socials" ADD CONSTRAINT "delegate_socials_delegateId_delegates_id_fk" FOREIGN KEY ("delegateId") REFERENCES "delegates"("id") ON DELETE cascade ON UPDATE cascade;
 EXCEPTION

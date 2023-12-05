@@ -45,6 +45,7 @@ import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
 import DiscordLogin from "../../../components/SocialLogin/DiscordLogin";
+import TwitterLogin2 from "../../../components/SocialLogin/TwitterLogin2";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -634,6 +635,7 @@ export function Page() {
         </Box>
         <SummaryItems.Root direction={"row"}>
           <DiscordLogin delegateId={delegateId} />
+          <TwitterLogin2 delegateId={delegateId} />
         </SummaryItems.Root>
         {isLoadingSocials ||
         delegate?.twitter ||

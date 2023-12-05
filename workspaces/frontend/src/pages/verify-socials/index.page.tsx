@@ -6,19 +6,23 @@ import { navigate } from "vite-plugin-ssr/client/router";
 
 export function Page() {
   const verifyDiscord = trpc.socials.verifyDiscord.useMutation();
+  const verifyTwitter = trpc.socials.verifyTwitter.useMutation();
   const urlParams =
     typeof window !== "undefined"
       ? new URLSearchParams(window.location.search)
       : null;
   const code = urlParams ? urlParams.get("code") : "";
+  const oauthToken = urlParams ? urlParams.get("oauth_token") : "";
+  const oauthVerifier = urlParams ? urlParams.get("oauth_verifier") : "";
+  console.log(oauthToken, oauthVerifier);
   const stateObject =
     urlParams && urlParams.get("state")
       ? JSON.parse(urlParams.get("state") || "")
       : "";
-  console.log(code, stateObject);
 
   useEffect(() => {
     if (code && code.length) {
+      window.history.replaceState(null, "", window.location.pathname);
       if (stateObject.origin === "discord") {
         verifyDiscord.mutateAsync(
           {
@@ -29,11 +33,31 @@ export function Page() {
             onSuccess: () => {
               navigate(`/delegates/profile/${stateObject.delegateId}`);
             },
+            onError: () => {
+              navigate(`/delegates/profile/${stateObject.delegateId}`);
+            },
           },
         );
       }
+    } else if (oauthVerifier?.length && oauthToken?.length) {
+      window.history.replaceState(null, "", window.location.pathname);
+      verifyTwitter.mutateAsync(
+        {
+          oauthToken,
+          oauthVerifier,
+        },
+        {
+          onSuccess: (res) => {
+            console.log(res)
+            navigate(`/delegates/profile/${res.delegateId}`);
+          },
+          onError: () => {
+            // navigate(`/delegates/profile/${stateObject.delegateId}`);
+          },
+        },
+      );
     }
-  }, [code]);
+  }, [code, oauthVerifier, oauthToken]);
 
   return <Spinner />;
 }
