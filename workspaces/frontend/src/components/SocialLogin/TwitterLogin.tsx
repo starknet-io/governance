@@ -5,11 +5,13 @@ const TwitterLogin = ({
   redirectUrl,
   isLoading,
   isError,
+  onDisconnect,
 }: {
   username: string | null | undefined;
   redirectUrl?: string;
   isLoading?: boolean;
   isError?: any;
+  onDisconnect: () => void;
 }) => {
   const handleTwitterLogin = async () => {
     try {
@@ -23,9 +25,7 @@ const TwitterLogin = ({
 
   return (
     <SocialButton
-      onDisconnect={() => {
-        alert("disconnect");
-      }}
+      onDisconnect={onDisconnect}
       onConnect={handleTwitterLogin}
       username={username}
       provider="twitter"

@@ -15,7 +15,7 @@ export const SocialButton = ({
   isLoading,
   provider,
 }: {
-  username: string | null | undefined;
+  username?: string | null;
   onConnect: () => void;
   onDisconnect: () => void;
   isLoading?: boolean;

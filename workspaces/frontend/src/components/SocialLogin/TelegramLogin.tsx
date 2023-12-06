@@ -2,7 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { trpc } from "../../utils/trpc";
 import { SocialButton } from "./SocialButton";
 
-const TelegramLogin = ({ username }: { username: string | null | undefined }) => {
+const TelegramLogin = ({
+  username,
+  onDisconnect,
+}: {
+  username: string | null | undefined;
+  onDisconnect: () => void;
+}) => {
   const telegramButtonContainerRef = useRef(null);
   const verifyTelegram = trpc.socials.verifyTelegram.useMutation();
   const [state, setState] = useState<"loading" | "error" | null>(null);
@@ -57,9 +63,7 @@ const TelegramLogin = ({ username }: { username: string | null | undefined }) =>
   return (
     <div>
       <SocialButton
-        onDisconnect={() => {
-          alert(1);
-        }}
+        onDisconnect={onDisconnect}
         username={username}
         onConnect={handleTelegramLoginClick}
         provider="telegram"

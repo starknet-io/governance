@@ -31,9 +31,26 @@ const Socials = ({
     delegateId,
     origin: "discord",
   });
+  const unlinkSocialDelegate = trpc.socials.unlinkDelegateSocial.useMutation();
   const isUserDelegate = userDelegate?.data?.id === delegateId;
   const isUserDelegateCheckLoading =
     userDelegate?.isLoading || socialsDelegate.isLoading;
+
+  const unlinkSocial = (
+    origin: "telegram" | "discord" | "twitter" | "discourse",
+  ) => {
+    unlinkSocialDelegate.mutateAsync(
+      {
+        delegateId: delegateId,
+        origin,
+      },
+      {
+        onSuccess: () => {
+          await socialsDelegate.refetch();
+        },
+      },
+    );
+  };
 
   if (
     (!isUserDelegate && !isUserDelegateCheckLoading) ||
@@ -85,13 +102,18 @@ const Socials = ({
           redirectUrl={socialsDelegate?.data?.discord?.redirectUrl}
           isLoading={socialsDelegate?.isLoading}
           isError={socialsDelegate?.isError}
+          onDisconnect={() => unlinkSocial("discord")}
         />
         <TwitterLogin
           username={socialsDelegate?.data?.twitter?.username}
           redirectUrl={socialsDelegate?.data?.twitter?.redirectUrl}
           isError={socialsDelegate?.isError}
+          onDisconnect={() => unlinkSocial("twitter")}
         />
-        <TelegramLogin username={socialsDelegate?.data?.telegram?.username} />
+        <TelegramLogin
+          username={socialsDelegate?.data?.telegram?.username}
+          onDisconnect={() => unlinkSocial("telegram")}
+        />
       </Flex>
       <Divider mt="standard.xl" mb="standard.xl" />
     </SummaryItems.Root>

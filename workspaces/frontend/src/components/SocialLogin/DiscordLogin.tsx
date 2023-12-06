@@ -5,11 +5,13 @@ const DiscordAuth = ({
   redirectUrl,
   isLoading,
   isError,
+  onDisconnect,
 }: {
   username: string | null | undefined;
   redirectUrl?: string;
   isLoading?: boolean;
   isError?: any;
+  onDisconnect: () => void;
 }) => {
   const handleDiscordLogin = async () => {
     try {

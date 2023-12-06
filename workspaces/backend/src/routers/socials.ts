@@ -88,7 +88,7 @@ export const socialsRouter = router({
       return response;
     }),
 
-  disconnectFromNetwork: protectedProcedure
+  unlinkDelegateSocial: protectedProcedure
     .input(z.object({ origin: z.string(), delegateId: z.string() }))
     .mutation(async ({ input }) => {
       const { origin, delegateId } = input;
