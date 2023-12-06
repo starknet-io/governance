@@ -38,7 +38,7 @@ const TelegramLogin = ({
         { bot_id: "6886835694", request_access: true },
         (data) => {
           if (!data) {
-            // authorization failed
+            setState(null);
           }
           verifyTelegram.mutateAsync(
             {

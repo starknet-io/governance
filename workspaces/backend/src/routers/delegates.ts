@@ -10,6 +10,7 @@ import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
 import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
+import { socials } from '../db/schema/socials';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -28,9 +29,6 @@ export const delegateRouter = router({
       z.object({
         statement: z.string(),
         interests: z.any(),
-        twitter: z.string(),
-        discord: z.string(),
-        telegram: z.string(),
         discourse: z.string(),
         understandRole: z.boolean(),
         starknetAddress: z.string(),
@@ -76,9 +74,6 @@ export const delegateRouter = router({
         .values({
           statement: opts.input.statement,
           interests: opts.input.interests,
-          twitter: opts.input.twitter,
-          telegram: opts.input.telegram,
-          discord: opts.input.discord,
           discourse: opts.input.discourse,
           understandRole: opts.input.understandRole,
           userId: opts.ctx.user?.id,
@@ -234,9 +229,6 @@ export const delegateRouter = router({
         .set({
           statement: opts.input.statement,
           interests: opts.input.interests,
-          twitter: opts.input.twitter,
-          discord: opts.input.discord,
-          telegram: opts.input.telegram,
           discourse: opts.input.discourse,
           understandRole: !!opts.input.understandRole,
           isKarmaDelegate: false,
@@ -381,7 +373,8 @@ export const delegateRouter = router({
           .select()
           .from(delegates)
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
-          .leftJoin(users, eq(users.id, delegates.userId));
+          .leftJoin(users, eq(users.id, delegates.userId))
+          .leftJoin(socials, eq(socials.delegateId, delegates.id));
 
         // Start with an array of conditions for the AND clause
         const conditions = [];
@@ -454,8 +447,13 @@ export const delegateRouter = router({
 
         // Since we are using joins instead of with: [field]: true, we need to map to corresponding data format
         if (foundDelegates && foundDelegates.length) {
+          console.log(foundDelegates);
           let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
             ...foundDelegates.delegates,
+            ...foundDelegates.delegate_socials,
+            twitter: foundDelegates?.delegate_socials?.twitter || null,
+            discord: foundDelegates?.delegate_socials?.discord || null,
+            telegram: foundDelegates?.delegate_socials?.telegram || null,
             author: { ...foundDelegates.users },
             votingInfo: { ...foundDelegates.delegate_votes },
             delegateAgreement: !!(

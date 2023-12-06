@@ -15,15 +15,11 @@ CREATE TABLE IF NOT EXISTS "delegate_socials" (
 	"discord" text,
 	"telegram" text,
 	"discourse" text,
-	"twitterVerified" boolean DEFAULT false,
-	"discordVerified" boolean DEFAULT false,
-	"telegramVerified" boolean DEFAULT false,
-	"discourseVerified" boolean DEFAULT false,
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
 	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 
-ALTER TABLE "subscribers" ALTER COLUMN "confirmationToken" SET DEFAULT 'c1da3fab-9493-4d35-b432-cb5c02b4fe73';
+ALTER TABLE "subscribers" ALTER COLUMN "confirmationToken" SET DEFAULT '6520ed24-2bdb-4325-9c6a-35d88ca6b190';
 DO $$ BEGIN
  ALTER TABLE "oauth_tokens" ADD CONSTRAINT "oauth_tokens_delegateId_delegates_id_fk" FOREIGN KEY ("delegateId") REFERENCES "delegates"("id") ON DELETE cascade ON UPDATE cascade;
 EXCEPTION

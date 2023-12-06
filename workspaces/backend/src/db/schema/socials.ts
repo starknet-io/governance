@@ -1,4 +1,4 @@
-import { boolean, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { InferModel } from 'drizzle-orm';
 import {delegates} from "./delegates";
 
@@ -13,10 +13,6 @@ export const socials = pgTable('delegate_socials', {
   discord: text('discord'),
   telegram: text('telegram'),
   discourse: text('discourse'),
-  twitterVerified: boolean('twitterVerified').default(false),
-  discordVerified: boolean('discordVerified').default(false),
-  telegramVerified: boolean('telegramVerified').default(false),
-  discourseVerified: boolean('discourseVerified').default(false),
   createdAt: timestamp('createdAt', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updatedAt', { withTimezone: true }).notNull().defaultNow(),
 });

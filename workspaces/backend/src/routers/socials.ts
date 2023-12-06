@@ -142,14 +142,13 @@ export const socialsRouter = router({
         // Update the delegate's socials with the Discord username and set verified to true
         await db
           .update(socials)
-          .set({ discord: discordUsername, discordVerified: true })
+          .set({ discord: discordUsername })
           .where(eq(socials.delegateId, delegateId))
           .execute();
       } else {
         await db.insert(socials).values({
           delegateId,
           discord: discordUsername,
-          discordVerified: true,
         });
       }
 
@@ -190,7 +189,6 @@ export const socialsRouter = router({
         await db.insert(socials).values({
           delegateId,
           telegram: telegramData.username,
-          telegramVerified: true,
         });
 
         return { telegramUsername: telegramData.username };
@@ -244,7 +242,7 @@ export const socialsRouter = router({
                 // Update Socials
                 await db
                   .update(socials)
-                  .set({ twitter: twitterUsername, twitterVerified: true })
+                  .set({ twitter: twitterUsername })
                   .where(eq(socials.delegateId, tokenData.delegateId!))
                   .execute();
 

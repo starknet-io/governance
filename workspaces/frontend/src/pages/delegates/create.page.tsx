@@ -17,17 +17,6 @@ export function Page() {
       <Heading variant="h2" mb="24px">
         Create delegate profile
       </Heading>
-      {showTwitterLogin && (
-        <React.Suspense fallback={<div>Loading...</div>}>
-          <TwitterLoginLazy />
-        </React.Suspense>
-      )}
-      <TelegramLogin />
-      {/* <TwitterLogin /> */}
-      {/* <ClientOnly
-          component={() => import('src/components/TwitterLogin')}
-          fallback={<div>Loading...</div>}
-      /> */}
       <DelegateForm mode="create" />
     </FormLayout>
   );

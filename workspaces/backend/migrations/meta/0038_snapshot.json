@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "620cd7a3-b619-4237-a228-f05b8b5cc22d",
+  "id": "90285099-7f22-403b-9467-7aade011bcb1",
   "prevId": "df88e9e6-0e42-485d-b181-275cd8cb4257",
   "tables": {
     "comments": {
@@ -1184,34 +1184,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "twitterVerified": {
-          "name": "twitterVerified",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "discordVerified": {
-          "name": "discordVerified",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "telegramVerified": {
-          "name": "telegramVerified",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "discourseVerified": {
-          "name": "discourseVerified",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp with time zone",
@@ -1267,7 +1239,7 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true,
-          "default": "'c1da3fab-9493-4d35-b432-cb5c02b4fe73'"
+          "default": "'6520ed24-2bdb-4325-9c6a-35d88ca6b190'"
         },
         "isConfirmed": {
           "name": "isConfirmed",
