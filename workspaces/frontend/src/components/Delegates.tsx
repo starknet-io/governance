@@ -338,6 +338,8 @@ export function Delegates({
       );
     }
 
+    const delegateId = userDelegate?.data?.id;
+
     return (
       <>
         <Button

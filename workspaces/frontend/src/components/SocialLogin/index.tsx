@@ -65,7 +65,7 @@ const Socials = ({
               isLoading={isUserDelegateCheckLoading}
             />
           )}
-          <Divider mt="standard.2xl" mb="standard.2xl" />
+          <Divider mt="standard.xl" mb="standard.xl" />
         </SummaryItems.Root>
       </>
     );
@@ -79,7 +79,7 @@ const Socials = ({
         <TwitterLogin2 delegateId={delegateId} />
         <TelegramLogin delegateId={delegateId} />
       </Flex>
-      <Divider />
+      <Divider mt="standard.xl" mb="standard.xl" />
     </SummaryItems.Root>
   );
 };
