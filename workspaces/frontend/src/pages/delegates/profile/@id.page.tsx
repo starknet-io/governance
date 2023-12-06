@@ -47,6 +47,7 @@ import { delegationAgreement } from "src/utils/data";
 import DiscordLogin from "../../../components/SocialLogin/DiscordLogin";
 import TwitterLogin2 from "../../../components/SocialLogin/TwitterLogin2";
 import TelegramLogin from "../../../components/SocialLogin/TelegramLogin";
+import Socials from "../../../components/SocialLogin";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -634,15 +635,15 @@ export function Page() {
           </SummaryItems.Root>
           <Divider mt="standard.2xl" />
         </Box>
-        <SummaryItems.Root direction={"column"}>
-          <Flex direction="column" gap="standard.xs">
-            <Text variant="bodySmallStrong">Social networks</Text>
-            <DiscordLogin delegateId={delegateId} />
-            <TwitterLogin2 delegateId={delegateId} />
-            <TelegramLogin delegateId={delegateId} />
-          </Flex>
-          <Divider />
-        </SummaryItems.Root>
+        <Socials
+          delegateId={delegateId}
+          socials={{
+            twitter: delegate?.twitter,
+            discord: delegate?.discord,
+            discourse: delegate?.discourse,
+            telegram: delegate?.telegram,
+          }}
+        />
 
         <SummaryItems.Root>
           {isLoadingProfile ? (
