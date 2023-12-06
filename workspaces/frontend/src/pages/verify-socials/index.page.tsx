@@ -1,12 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { trpc } from "src/utils/trpc";
-import { Spinner } from "@chakra-ui/react";
+import { Flex, Spinner, Stack } from "@chakra-ui/react";
 import { DocumentProps } from "../renderer/types";
 import { navigate } from "vite-plugin-ssr/client/router";
+import { usePageContext } from "src/renderer/PageContextProvider";
+import { Button, Heading, Text } from "@yukilabs/governance-components";
 
 export function Page() {
   const verifyDiscord = trpc.socials.verifyDiscord.useMutation();
   const verifyTwitter = trpc.socials.verifyTwitter.useMutation();
+  const { user } = usePageContext();
+  const userDelegate = trpc.users.isDelegate.useQuery({
+    userId: user?.id || "",
+  });
+  const [error, setError] = useState(false);
   const urlParams =
     typeof window !== "undefined"
       ? new URLSearchParams(window.location.search)
@@ -48,20 +55,49 @@ export function Page() {
         },
         {
           onSuccess: (res) => {
-            console.log(res)
+            console.log(res);
             navigate(`/delegates/profile/${res.delegateId}`);
           },
           onError: () => {
-            // navigate(`/delegates/profile/${stateObject.delegateId}`);
+            setError(true);
           },
         },
       );
+    } else {
+      navigate("/page-not-found");
     }
-  }, [code, oauthVerifier, oauthToken]);
+  }, []);
 
-  return <Spinner />;
+  return (
+    <Flex
+      height="100%"
+      flex={1}
+      alignItems={"center"}
+      justifyContent={"center"}
+      pb="50px"
+    >
+      {!error ? (
+        <Spinner size="md" />
+      ) : (
+        <Stack dir="v" justifyContent="center" alignItems="center" gap={3}>
+          <Heading variant="h3">
+            Error Linking Social To Delegate Profile
+          </Heading>
+          {userDelegate && userDelegate?.data?.id && (
+            <Button
+              onClick={() =>
+                navigate(`/delegates/profile/${userDelegate?.data?.id}`)
+              }
+            >
+              Return to delegate profile
+            </Button>
+          )}
+        </Stack>
+      )}
+    </Flex>
+  );
 }
 
 export const documentProps = {
-  title: "VerifyDiscord",
+  title: "Verify Socials",
 } satisfies DocumentProps;

@@ -31,25 +31,21 @@ const Socials = ({
     delegateId,
     origin: "discord",
   });
-  const unlinkSocialDelegate = trpc.socials.unlinkDelegateSocial.useMutation();
+  const unlinkSocialDelegate = trpc.socials.unlinkDelegateSocial.useMutation({
+    onSuccess: () => {
+      socialsDelegate.refetch();
+    },
+  });
   const isUserDelegate = userDelegate?.data?.id === delegateId;
-  const isUserDelegateCheckLoading =
-    userDelegate?.isLoading || socialsDelegate.isLoading;
+  const isUserDelegateCheckLoading = userDelegate?.isLoading;
 
   const unlinkSocial = (
     origin: "telegram" | "discord" | "twitter" | "discourse",
   ) => {
-    unlinkSocialDelegate.mutateAsync(
-      {
-        delegateId: delegateId,
-        origin,
-      },
-      {
-        onSuccess: () => {
-          await socialsDelegate.refetch();
-        },
-      },
-    );
+    unlinkSocialDelegate.mutateAsync({
+      delegateId: delegateId,
+      origin,
+    });
   };
 
   if (
@@ -107,6 +103,7 @@ const Socials = ({
         <TwitterLogin
           username={socialsDelegate?.data?.twitter?.username}
           redirectUrl={socialsDelegate?.data?.twitter?.redirectUrl}
+          isLoading={socialsDelegate?.isLoading}
           isError={socialsDelegate?.isError}
           onDisconnect={() => unlinkSocial("twitter")}
         />

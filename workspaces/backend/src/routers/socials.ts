@@ -175,7 +175,6 @@ export const socialsRouter = router({
 
       // Perform Telegram data verification
       const isVerified = await verifyTelegramData(telegramData);
-      console.log(isVerified);
       if (!isVerified) {
         throw new Error('Telegram verification failed');
       }
@@ -216,8 +215,6 @@ export const socialsRouter = router({
         throw new Error('Token not found');
       }
 
-      console.log(tokenData);
-
       return new Promise((resolve, reject) => {
         twitterOauth.getOAuthAccessToken(
           oauthToken,
@@ -235,12 +232,10 @@ export const socialsRouter = router({
             } else {
               // Fetch user data from Twitter using oauthAccessToken
               try {
-                console.log(oauthAccessToken);
                 const twitterUsername = await fetchTwitterUsername(
                   oauthAccessToken,
                   oauthAccessTokenSecret,
                 );
-                console.log(twitterUsername);
                 if (!twitterUsername) {
                   reject(new Error('Failed to fetch Twitter username'));
                   return;

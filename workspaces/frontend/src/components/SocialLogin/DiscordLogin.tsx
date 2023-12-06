@@ -23,10 +23,6 @@ const DiscordAuth = ({
     }
   };
 
-  const onDisconnect = () => {
-    alert("Disconnecting Discord");
-  };
-
   return (
     <SocialButton
       provider="discord"
