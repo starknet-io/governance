@@ -46,6 +46,7 @@ import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
 import DiscordLogin from "../../../components/SocialLogin/DiscordLogin";
 import TwitterLogin2 from "../../../components/SocialLogin/TwitterLogin2";
+import TelegramLogin from "../../../components/SocialLogin/TelegramLogin";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -638,6 +639,7 @@ export function Page() {
             <Text variant="bodySmallStrong">Social networks</Text>
             <DiscordLogin delegateId={delegateId} />
             <TwitterLogin2 delegateId={delegateId} />
+            <TelegramLogin delegateId={delegateId} />
           </Flex>
           <Divider />
         </SummaryItems.Root>

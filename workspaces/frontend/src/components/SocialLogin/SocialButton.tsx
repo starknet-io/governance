@@ -25,6 +25,7 @@ export const SocialButton = ({
   if (isError) {
     return <div>Error fetching {provider} info...</div>;
   }
+  const label = provider === "twitter" ? "Twitter" : provider === "discord" ? "Discord" : provider === "telegram" ? "Telegram" : provider === "discourse" ? "Discourse" : "Twitter";
   if (isLoading) {
     return (
       <SummaryItems.Socials
@@ -54,7 +55,7 @@ export const SocialButton = ({
           h={"20px"}
           color="#4A4A4F"
         />
-        <Text variant="bodySmall">Discord {username && <span> - </span>}</Text>
+        <Text variant="bodySmall">{label} {username && <span> - </span>}</Text>
         {username && <Text variant="bodySmallStrong">{username}</Text>}
       </Flex>
       {username ? (
