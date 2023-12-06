@@ -1,6 +1,7 @@
 import { router, protectedProcedure } from '../utils/trpc';
 import { db } from '../db/db';
 import axios from 'axios';
+import crypto from 'crypto';
 import { socials } from '../db/schema/socials';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
@@ -153,6 +154,48 @@ export const socialsRouter = router({
 
       return { discordUsername };
     }),
+  verifyTelegram: protectedProcedure
+    .input(
+      z.object({
+        delegateId: z.string(),
+        telegramData: z.object({
+          id: z.number(),
+          first_name: z.string(),
+          last_name: z.string().optional(),
+          username: z.string().optional(),
+          photo_url: z.string().optional(),
+          auth_date: z.number(),
+          hash: z.string(),
+        }),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { delegateId, telegramData } = input;
+
+      // Perform Telegram data verification
+      const isVerified = await verifyTelegramData(telegramData);
+      console.log(isVerified)
+      if (!isVerified) {
+        throw new Error('Telegram verification failed');
+      }
+
+      // Fetch or update the socials table
+      const existingSocials = await db.query.socials.findFirst({
+        where: eq(socials.delegateId, delegateId),
+      });
+
+      if (existingSocials) {
+        return { telegramUsername: existingSocials.telegram };
+      } else {
+        await db.insert(socials).values({
+          delegateId,
+          telegram: telegramData.username,
+          telegramVerified: true,
+        });
+
+        return { telegramUsername: telegramData.username };
+      }
+    }),
   verifyTwitter: protectedProcedure
     .input(
       z.object({
@@ -214,7 +257,6 @@ export const socialsRouter = router({
                   .delete(oauthTokens)
                   .where(eq(oauthTokens.token, oauthToken))
                   .execute();
-
 
                 resolve({ delegateId: tokenData.delegateId });
               } catch (fetchError) {
@@ -294,4 +336,35 @@ async function fetchTwitterUsername(
       },
     );
   });
+}
+
+interface TelegramData {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+  photo_url?: string;
+  auth_date: number;
+  hash: string;
+  [key: string]: number | string | undefined;
+}
+
+async function verifyTelegramData(telegramData: TelegramData) {
+  const secretKey = crypto
+    .createHash('sha256')
+    .update(process.env.TELEGRAM_BOT_TOKEN!)
+    .digest();
+
+  const dataCheckString = Object.keys(telegramData)
+    .filter((key) => key !== 'hash')
+    .sort()
+    .map((key) => `${key}=${telegramData[key as keyof TelegramData]}`)
+    .join('\n');
+
+  const hash = crypto
+    .createHmac('sha256', secretKey)
+    .update(dataCheckString)
+    .digest('hex');
+
+  return hash === telegramData.hash;
 }
