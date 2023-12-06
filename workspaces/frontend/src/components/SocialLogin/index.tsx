@@ -17,10 +17,10 @@ const Socials = ({
 }: {
   delegateId: string;
   socials: {
-    twitter?: string;
-    discord?: string;
-    telegram?: string;
-    discourse?: string;
+    twitter?: string | null;
+    discord?: string | null;
+    telegram?: string | null;
+    discourse?: string | null;
   };
 }) => {
   const { user } = usePageContext();
@@ -65,8 +65,8 @@ const Socials = ({
               isLoading={isUserDelegateCheckLoading}
             />
           )}
+          <Divider mt="standard.2xl" mb="standard.2xl" />
         </SummaryItems.Root>
-        <Divider mt="standard.2xl" mb="standard.2xl" />
       </>
     );
   }

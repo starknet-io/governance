@@ -44,9 +44,6 @@ import * as ProfilePageLayout from "../../../components/ProfilePageLayout/Profil
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
-import DiscordLogin from "../../../components/SocialLogin/DiscordLogin";
-import TwitterLogin2 from "../../../components/SocialLogin/TwitterLogin2";
-import TelegramLogin from "../../../components/SocialLogin/TelegramLogin";
 import Socials from "../../../components/SocialLogin";
 
 const delegateInterests: Record<string, string> = {
@@ -566,7 +563,7 @@ export function Page() {
               ? "Undelegate voting power"
               : "Delegate voting power"}
           </Button>
-        ) : (
+        ) : !user ? (
           <Button
             mt={{ base: "standard.2xl" }}
             mb="0"
@@ -577,7 +574,7 @@ export function Page() {
           >
             Delegate voting power
           </Button>
-        )}
+        ) : null}
 
         {delegation.isFetched &&
           delegation.data?.toLowerCase() === delegateAddress?.toLowerCase() && (
@@ -587,13 +584,14 @@ export function Page() {
               />
             </Box>
           )}
-
+        {/*
         {delegateResponse.isFetched &&
           address?.toLowerCase() === delegateAddress?.toLowerCase() && (
             <Box mt="standard.md">
               <Banner label="You can’t delegate voting power to your own account." />
             </Box>
           )}
+          */}
 
         <Box mt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
