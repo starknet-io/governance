@@ -20,7 +20,7 @@ import {
   Text,
   Textarea,
   VoteButton,
-  VoteModal,
+  Modal,
   VoteReview,
   VoteStat,
   StatusModal,
@@ -443,9 +443,9 @@ export function Page() {
 
   return (
     <>
-      <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <Modal title="Confirm Vote" isOpen={isOpen} onClose={() => setIsOpen(false)} size="md">
         <VoteReview choice={currentChoice} voteCount={vp?.vp?.vp as number} />
-        <FormControl id="comment">
+        <FormControl id="comment" mt="standard.xl">
           <FormLabel fontSize="14px" color={"content.default.default"}>
             Reason{" "}
             <Text color="content.support.default" as="span">
@@ -464,15 +464,17 @@ export function Page() {
             onChange={(e) => setComment(e.target.value)}
           />
         </FormControl>
-        <Button
-          type="submit"
-          variant="primary"
-          size="standard"
-          onClick={() => handleVote(currentChoice, comment)}
-        >
-          Submit vote
-        </Button>
-      </VoteModal>
+        <Modal.Footer>
+          <Button
+            type="submit"
+            variant="primary"
+            size="standard"
+            onClick={() => handleVote(currentChoice, comment)}
+          >
+            Submit vote
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <StatusModal
         isOpen={isStatusModalOpen}
         isSuccess={!statusDescription?.length}
@@ -497,6 +499,7 @@ export function Page() {
         title="Snapshot info"
         isOpen={isInfoOpen}
         onClose={() => setIsInfoOpen(false)}
+        size="standard"
       >
         <SummaryItems.Root>
           <SummaryItems.StrategySummary

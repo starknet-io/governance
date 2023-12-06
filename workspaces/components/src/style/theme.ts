@@ -9,7 +9,7 @@ import { cardTheme as Card } from "../Card/CardStyles";
 import { inputTheme as Input } from "../Input/InputStyles";
 import { textareaTheme as Textarea } from "../Textarea/TextareaStyles";
 import { ProgressTheme as Progress } from "../Progress/ProgressStyles";
-import { modalTheme as Modal } from "../VoteModal/ModalStyles";
+import { modalTheme as Modal } from "../Modal/ModalStyles";
 import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
 import { menuTheme } from "src/Menu/MenuStyles";
 import { linkTheme } from "src/Link/LinkStyles";

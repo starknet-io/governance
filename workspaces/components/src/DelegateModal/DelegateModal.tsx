@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
   Stack,
   FormControl,
   Box,
@@ -13,10 +8,10 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { Button } from "src/Button";
-import { Heading } from "src/Heading";
 import * as Swap from "../Swap/Swap";
 import { Text } from "../Text";
 import { ethers } from "ethers";
+import { Modal } from "../Modal";
 
 type Props = {
   isOpen: boolean;
@@ -83,109 +78,97 @@ export const DelegateModal = ({
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      isCentered
+      title={isUndelegation
+        ? "Undelegate voting power"
+        : "Delegate voting power"}
     >
-      <ModalOverlay />
-      <ModalContent overflow="hidden">
-        <ModalCloseButton
-          top="0"
-          right="0"
-          size="lg"
-          borderRadius="none"
-          borderBottomLeftRadius="md"
-        />
-        <ModalBody>
-          <Stack spacing="6">
-            <Heading fontSize="21px" fontWeight="semibold" variant="h3">
-              {isUndelegation
-                ? "Undelegate voting power"
-                : "Delegate voting power"}
-            </Heading>
-            <Stack spacing="32px">
-              <Swap.Root>
+      <Stack spacing="6">
+        <Stack spacing="standard.xl">
+          <Swap.Root>
+            <Swap.UserSummary
+              address={senderData.address}
+              balance={senderData.balance}
+              symbol={senderData.symbol}
+              isSender
+            />
+            {receiverData ? (
+              <>
+                <Swap.Arrow />
                 <Swap.UserSummary
-                  address={senderData.address}
-                  balance={senderData.balance}
-                  symbol={senderData.symbol}
-                  isSender
+                  address={receiverData.address}
+                  balance={getTotalVotingPower()}
+                  symbol={receiverData.symbol}
+                  isReceiver
+                  text={"To"}
                 />
-                {receiverData ? (
-                  <>
-                    <Swap.Arrow />
-                    <Swap.UserSummary
-                      address={receiverData.address}
-                      balance={getTotalVotingPower()}
-                      symbol={receiverData.symbol}
-                      isReceiver
-                      text={"To"}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Swap.Arrow />
-                    <Box
-                      fontSize="14px"
-                      bg="#FAFAFA"
-                      p="16px"
-                      border="1px solid #E4E5E7"
-                      borderRadius="8px"
-                      color="#6C6C75"
-                      display="flex"
-                      justifyContent="space-between"
-                    >
-                      <FormControl isInvalid={true}>
-                        <FormLabel>
-                          <Text color="#6C6C75" as="span">
-                            Receiver
-                          </Text>
-                        </FormLabel>
-                        <Input
-                          placeholder="0x..."
-                          value={customAddress}
-                          onChange={(e) => setCustomAddress(e.target.value)}
-                        />
-                        {isError && customAddress !== "" && (
-                          <FormErrorMessage>
-                            Not a valid ethereum address
-                          </FormErrorMessage>
-                        )}
-                      </FormControl>
-                    </Box>
-                  </>
-                )}
-              </Swap.Root>
-              {receiverData ? (
-                isConnected && (
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    size="lg"
-                    onClick={delegateTokens}
-                  >
-                    {isUndelegation
-                      ? "Undelegate voting power"
-                      : "Delegate voting power"}
-                  </Button>
-                )
-              ) : (
-                <Button
-                  variant="primary"
-                  type="submit"
-                  isDisabled={!customAddress || isError}
-                  onClick={() => {
-                    if (onContinue) {
-                      onContinue(customAddress);
-                    }
-                  }}
-                  size="lg"
+              </>
+            ) : (
+              <>
+                <Swap.Arrow />
+                <Box
+                  fontSize="14px"
+                  bg="#FAFAFA"
+                  p="16px"
+                  border="1px solid #E4E5E7"
+                  borderRadius="8px"
+                  color="#6C6C75"
+                  display="flex"
+                  justifyContent="space-between"
                 >
-                  Continue
-                </Button>
-              )}
-            </Stack>
-          </Stack>
-        </ModalBody>
-      </ModalContent>
+                  <FormControl isInvalid={true}>
+                    <FormLabel>
+                      <Text color="#6C6C75" as="span">
+                        Receiver
+                      </Text>
+                    </FormLabel>
+                    <Input
+                      placeholder="0x..."
+                      value={customAddress}
+                      onChange={(e) => setCustomAddress(e.target.value)}
+                    />
+                    {isError && customAddress !== "" && (
+                      <FormErrorMessage>
+                        Not a valid ethereum address
+                      </FormErrorMessage>
+                    )}
+                  </FormControl>
+                </Box>
+              </>
+            )}
+          </Swap.Root>
+          {receiverData ? (
+            isConnected && (
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                onClick={delegateTokens}
+              >
+                {isUndelegation
+                  ? "Undelegate voting power"
+                  : "Delegate voting power"}
+              </Button>
+            )
+          ) : (
+            <Button
+              variant="primary"
+              type="submit"
+              isDisabled={!customAddress || isError}
+              onClick={() => {
+                if (onContinue) {
+                  onContinue(customAddress);
+                }
+              }}
+              fontSize="14px"
+              fontWeight="500"
+              lineHeight="20px"
+              letterSpacing="0.07px"
+            >
+              Continue
+            </Button>
+          )}
+        </Stack>
+      </Stack>
     </Modal>
   );
 };

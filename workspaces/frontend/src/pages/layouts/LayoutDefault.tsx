@@ -117,25 +117,28 @@ function LayoutDefault(props: Props) {
         isOpen={isBannedModalOpen}
         onClose={() => setIsBannedModalOpen(false)}
         title="Your Account Was Banned"
+        size="smBodyMd"
       >
-        <Flex justifyContent="center">
-          <Icon as={BannedIcon} boxSize="104px" />
+        <Flex direction="column" gap="standard.md">
+          <Flex justifyContent="center">
+            <Icon as={BannedIcon} boxSize="104px" />
+          </Flex>
+          <Text size="small">
+            We're sorry to let you know that your account has been suspended for
+            not following our community guidelines.
+            <br />
+            <br />
+            Rest assured, this was done to ensure a safe and respectful space for
+            everyone. If you have any questions or want to appeal, reach out to us
+            through our support channels.
+            <br />
+            <br />
+            Thank you for your understanding.
+          </Text>
+          <Button variant="outline" onClick={() => setIsBannedModalOpen(false)}>
+            Close
+          </Button>
         </Flex>
-        <Text size="small">
-          We're sorry to let you know that your account has been suspended for
-          not following our community guidelines.
-          <br />
-          <br />
-          Rest assured, this was done to ensure a safe and respectful space for
-          everyone. If you have any questions or want to appeal, reach out to us
-          through our support channels.
-          <br />
-          <br />
-          Thank you for your understanding.
-        </Text>
-        <Button variant="outline" onClick={() => setIsBannedModalOpen(false)}>
-          Close
-        </Button>
       </InfoModal>
       <InfoModal
         title="Connect wallet"
