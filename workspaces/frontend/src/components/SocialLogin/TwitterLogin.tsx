@@ -1,6 +1,6 @@
 import { SocialButton } from "./SocialButton";
 
-const DiscordAuth = ({
+const TwitterLogin = ({
   username,
   redirectUrl,
   isLoading,
@@ -11,7 +11,7 @@ const DiscordAuth = ({
   isLoading?: boolean;
   isError?: any;
 }) => {
-  const handleDiscordLogin = async () => {
+  const handleTwitterLogin = async () => {
     try {
       if (redirectUrl && !username) {
         window.location.href = redirectUrl;
@@ -21,20 +21,18 @@ const DiscordAuth = ({
     }
   };
 
-  const onDisconnect = () => {
-    alert("Disconnecting Discord");
-  };
-
   return (
     <SocialButton
-      provider="discord"
+      onDisconnect={() => {
+        alert("disconnect");
+      }}
+      onConnect={handleTwitterLogin}
       username={username}
-      onDisconnect={onDisconnect}
-      onConnect={handleDiscordLogin}
-      isError={!!isError}
+      provider="twitter"
       isLoading={isLoading}
+      isError={!!isError}
     />
   );
 };
 
-export default DiscordAuth;
+export default TwitterLogin;

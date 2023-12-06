@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { trpc } from "../../utils/trpc";
 import { SocialButton } from "./SocialButton";
 
-const TelegramLogin = ({ delegateId }: { delegateId: string }) => {
+const TelegramLogin = ({ username }: { username: string | null | undefined }) => {
   const telegramButtonContainerRef = useRef(null);
   const verifyTelegram = trpc.socials.verifyTelegram.useMutation();
-  const [state, setState] = useState<"loading" | "error">("");
+  const [state, setState] = useState<"loading" | "error" | null>(null);
 
   useEffect(() => {
     // Function to load the Telegram script
@@ -28,7 +28,6 @@ const TelegramLogin = ({ delegateId }: { delegateId: string }) => {
     // Try to find the Telegram button
     setState("loading");
     if (typeof window !== "undefined") {
-      console.log(window.Telegram);
       window.Telegram.Login.auth(
         { bot_id: "6886835694", request_access: true },
         (data) => {
@@ -42,11 +41,9 @@ const TelegramLogin = ({ delegateId }: { delegateId: string }) => {
             },
             {
               onSuccess: () => {
-                console.log("SUCCESS");
-                setState("");
+                setState(null);
               },
               onError: () => {
-                console.log("ERROR");
                 setState("error");
               },
             },
@@ -60,6 +57,10 @@ const TelegramLogin = ({ delegateId }: { delegateId: string }) => {
   return (
     <div>
       <SocialButton
+        onDisconnect={() => {
+          alert(1);
+        }}
+        username={username}
         onConnect={handleTelegramLoginClick}
         provider="telegram"
         isError={state === "error"}

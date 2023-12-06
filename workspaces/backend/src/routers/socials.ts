@@ -30,96 +30,51 @@ export const socialsRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const { delegateId, origin } = input;
+      const { delegateId } = input;
 
-      if (delegateId) {
-        // Check if the user has already verified Discord
-        const existingSocials = await db.query.socials.findFirst({
-          where: eq(socials.delegateId, delegateId),
-        });
-
-        if (!existingSocials) {
-          await db.insert(socials).values({
-            delegateId,
-          });
-        }
-
-        if (
-          existingSocials &&
-          origin === 'discord' &&
-          existingSocials.discordVerified
-        ) {
-          return {
-            discordUsername: existingSocials.discord,
-            alreadyVerified: true,
-          };
-        } else if (
-          existingSocials &&
-          origin === 'twitter' &&
-          existingSocials.twitter
-        ) {
-          return {
-            twitterUsername: existingSocials.twitter,
-            alreadyVerified: true,
-          };
-        }
+      if (!delegateId) {
+        throw new Error('Delegate id is missing');
       }
 
-      const stateObject = {
-        delegateId: delegateId,
-        origin,
+      // Check if the user has already verified their social accounts
+      const existingSocials = await db.query.socials.findFirst({
+        where: eq(socials.delegateId, delegateId),
+      });
+
+      if (!existingSocials) {
+        await db.insert(socials).values({ delegateId });
+      }
+
+      const response = {
+        twitter: { username: existingSocials?.twitter, redirectUrl: '' },
+        discord: { username: existingSocials?.discord, redirectUrl: '' },
+        telegram: { username: existingSocials?.telegram },
       };
+
+      const stateObject = { delegateId, origin };
       const serializedState = encodeURIComponent(JSON.stringify(stateObject));
-      if (origin === 'discord') {
-        // Generate Discord authentication URL
-        const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${
+
+      if (!response.discord.username) {
+        response.discord.redirectUrl = `https://discord.com/api/oauth2/authorize?client_id=${
           process.env.DISCORD_CLIENT_ID
         }&response_type=code&redirect_uri=${encodeURIComponent(
-          process.env.DISCORD_REDIRECT_URI! as string,
+          process.env.DISCORD_REDIRECT_URI!,
         )}&scope=identify&state=${serializedState}`;
-
-        // Redirect user to Discord's authentication page
-        return { redirectUrl: discordAuthUrl, alreadyVerified: false };
       }
 
-      if (origin === 'twitter') {
-        return new Promise((resolve, reject) => {
-          twitterOauth.getOAuthRequestToken(async function (
-            error: any,
-            oauthToken: string,
-            oauthTokenSecret: string,
-          ) {
-            if (error) {
-              console.error('Error getting OAuth request token:', error);
-              reject(new Error('Failed to initiate Twitter authentication'));
-            } else {
-              // Store oauthToken and oauthTokenSecret in the database
-              try {
-                await db.insert(oauthTokens).values({
-                  delegateId: delegateId,
-                  token: oauthToken,
-                  tokenSecret: oauthTokenSecret,
-                  provider: 'twitter',
-                  expiration: new Date(Date.now() + 300000), // e.g., 5 minutes from now
-                });
-                const twitterAuthUrl = `https://api.twitter.com/oauth/authenticate?oauth_token=${oauthToken}`;
-                resolve({
-                  redirectUrl: twitterAuthUrl,
-                  alreadyVerified: false,
-                });
-              } catch (dbError) {
-                console.error('Error storing OAuth token:', dbError);
-                reject(new Error('Failed to store OAuth token'));
-              }
-            }
-          });
-        });
+      if (!response.twitter.username) {
+        try {
+          const twitterAuthUrl = (await getTwitterAuthUrl(
+            delegateId,
+          )) as string;
+          response.twitter.redirectUrl = twitterAuthUrl;
+        } catch (error) {
+          console.error('Error getting Twitter Auth URL:', error);
+          // Handle error appropriately
+        }
       }
 
-      return {
-        redirectUrl: null,
-        alreadyVerified: false,
-      };
+      return response;
     }),
 
   verifyDiscord: protectedProcedure
@@ -174,7 +129,7 @@ export const socialsRouter = router({
 
       // Perform Telegram data verification
       const isVerified = await verifyTelegramData(telegramData);
-      console.log(isVerified)
+      console.log(isVerified);
       if (!isVerified) {
         throw new Error('Telegram verification failed');
       }
@@ -331,6 +286,33 @@ async function fetchTwitterUsername(
           } catch (parseError) {
             console.error('Error parsing Twitter response:', parseError);
             reject(null);
+          }
+        }
+      },
+    );
+  });
+}
+
+async function getTwitterAuthUrl(delegateId: string) {
+  return new Promise((resolve, reject) => {
+    twitterOauth.getOAuthRequestToken(
+      async function (error, oauthToken, oauthTokenSecret) {
+        if (error) {
+          reject(new Error('Failed to initiate Twitter authentication'));
+        } else {
+          try {
+            await db.insert(oauthTokens).values({
+              delegateId,
+              token: oauthToken,
+              tokenSecret: oauthTokenSecret,
+              provider: 'twitter',
+              expiration: new Date(Date.now() + 300000), // 5 minutes from now
+            });
+            resolve(
+              `https://api.twitter.com/oauth/authenticate?oauth_token=${oauthToken}`,
+            );
+          } catch (dbError) {
+            reject(new Error('Failed to store OAuth token'));
           }
         }
       },
