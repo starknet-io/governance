@@ -436,7 +436,7 @@ export function Page() {
   };
 
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegation.data ? delegation.data.toLowerCase() : "",
+    address: delegation?.data ? delegation?.data?.toLowerCase() : "",
   });
 
   if (data == null) return null;

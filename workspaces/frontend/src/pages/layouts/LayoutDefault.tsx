@@ -291,7 +291,7 @@ function LayoutDefault(props: Props) {
                 />
               </Box>
               <Flex gap="standard.xs " marginLeft="auto">
-                <Box display={{ base: "none", md: "flex" }}>
+                <Box display={{ base: "flex" }}>
                   <ShareDialog />
                 </Box>
                 {user && (

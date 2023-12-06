@@ -1,4 +1,4 @@
-import { useMemo, ClipboardEvent } from "react";
+import { useState, useMemo, ClipboardEvent } from "react";
 import { withReact, Slate } from "slate-react";
 import { withHistory } from "slate-history";
 import { Toolbar } from "./EditorComponents";

@@ -27,16 +27,15 @@ export const EditableComponent = ({
   placeholder,
   isInvalid = false,
 }: EditableComponentProps) => {
+  const editor = useSlate();
   const renderElement = useCallback(
-    (props: RenderElementProps) => <Element {...props} />,
+    (props: RenderElementProps) => <Element editor={editor} {...props} />,
     [],
   );
   const renderLeaf = useCallback(
     (props: RenderLeafProps) => <Leaf {...props} />,
     [],
   );
-
-  const editor = useSlate();
   const [isFocused, setIsFocused] = useState(false);
   const styleObj = {
     overflowY: "scroll",
