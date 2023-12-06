@@ -29,6 +29,7 @@ const Socials = ({
   });
   const socialsDelegate = trpc.socials.initiateSocialAuth.useQuery({
     delegateId,
+    origin: "discord",
   });
   const isUserDelegate = userDelegate?.data?.id === delegateId;
   const isUserDelegateCheckLoading =

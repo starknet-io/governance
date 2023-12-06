@@ -10,7 +10,6 @@ import { oauthTokens } from '../db/schema/oauthTokens';
 
 const TWITTER_CONSUMER_KEY = process.env.TWITTER_CLIENT_ID!;
 const TWITTER_CONSUMER_SECRET = process.env.TWITTER_CLIENT_SECRET!;
-// const TWITTER_AUTHORIZE_URL = 'https://api.twitter.com/oauth/authorize';
 const twitterOauth = new OAuth(
   'https://api.twitter.com/oauth/request_token',
   'https://api.twitter.com/oauth/access_token',
@@ -21,6 +20,18 @@ const twitterOauth = new OAuth(
   'HMAC-SHA1',
 );
 
+type SocialNetwork = 'twitter' | 'discord' | 'telegram' | 'discourse';
+
+type Socials = {
+  delegateId: string | null;
+  id: string;
+  twitter: string | null;
+  discord: string | null;
+  telegram: string | null;
+  discourse: string | null;
+  [key: string]: any; // This allows indexing with a string type
+};
+
 export const socialsRouter = router({
   initiateSocialAuth: protectedProcedure
     .input(
@@ -30,7 +41,7 @@ export const socialsRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const { delegateId } = input;
+      const { delegateId, origin } = input;
 
       if (!delegateId) {
         throw new Error('Delegate id is missing');
@@ -75,6 +86,41 @@ export const socialsRouter = router({
       }
 
       return response;
+    }),
+
+  disconnectFromNetwork: protectedProcedure
+    .input(z.object({ origin: z.string(), delegateId: z.string() }))
+    .mutation(async ({ input }) => {
+      const { origin, delegateId } = input;
+
+      const validOrigins: SocialNetwork[] = [
+        'twitter',
+        'discord',
+        'telegram',
+        'discourse',
+      ];
+
+      if (!validOrigins.includes(origin as SocialNetwork)) {
+        throw new Error('Requested social network does not exist');
+      }
+
+      // Find the user's social connections
+      const existingSocial = (await db.query.socials.findFirst({
+        where: eq(socials.delegateId, delegateId),
+      })) as Socials; // Cast to the defined type
+
+      if (!existingSocial || !existingSocial[origin]) {
+        throw new Error('Social network not connected');
+      }
+
+      // Update the socials table to disconnect the user from the specified network
+      await db
+        .update(socials)
+        .set({ [origin]: null }) // Set the social network field to null and verified status to false
+        .where(eq(socials.delegateId, delegateId))
+        .execute();
+
+      return { success: true, message: `Disconnected from ${origin}` };
     }),
 
   verifyDiscord: protectedProcedure
