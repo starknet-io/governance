@@ -634,50 +634,15 @@ export function Page() {
           </SummaryItems.Root>
           <Divider mt="standard.2xl" />
         </Box>
-        <SummaryItems.Root direction={"row"}>
-          <DiscordLogin delegateId={delegateId} />
-          <TwitterLogin2 delegateId={delegateId} />
-          <TelegramLogin delegateId={delegateId} />
+        <SummaryItems.Root direction={"column"}>
+          <Flex direction="column" gap="standard.xs">
+            <Text variant="bodySmallStrong">Social networks</Text>
+            <DiscordLogin delegateId={delegateId} />
+            <TwitterLogin2 delegateId={delegateId} />
+            <TelegramLogin delegateId={delegateId} />
+          </Flex>
+          <Divider />
         </SummaryItems.Root>
-        {isLoadingSocials ||
-        delegate?.twitter ||
-        delegate?.discourse ||
-        delegate?.telegram ||
-        delegate?.discord ? (
-          <>
-            <SummaryItems.Root direction="row">
-              {(isLoadingSocials || delegate?.twitter) && (
-                <SummaryItems.Socials
-                  label="twitter"
-                  value={delegate?.twitter}
-                  isLoading={isLoadingSocials}
-                />
-              )}
-              {(isLoadingSocials || delegate?.discourse) && (
-                <SummaryItems.Socials
-                  label="discourse"
-                  value={delegate?.discourse}
-                  isLoading={isLoadingSocials}
-                />
-              )}
-              {(isLoadingSocials || delegate?.discord) && (
-                <SummaryItems.Socials
-                  label="discord"
-                  value={delegate?.discord}
-                  isLoading={isLoadingSocials}
-                />
-              )}
-              {(isLoadingSocials || delegate?.telegram) && (
-                <SummaryItems.Socials
-                  label="telegram"
-                  value={delegate?.telegram}
-                  isLoading={isLoadingSocials}
-                />
-              )}
-            </SummaryItems.Root>
-            <Divider mt="standard.2xl" mb="standard.2xl" />
-          </>
-        ) : null}
 
         <SummaryItems.Root>
           {isLoadingProfile ? (

@@ -1,9 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { trpc } from "../../utils/trpc";
+import { SocialButton } from "./SocialButton";
 
 const TelegramLogin = ({ delegateId }: { delegateId: string }) => {
   const telegramButtonContainerRef = useRef(null);
   const verifyTelegram = trpc.socials.verifyTelegram.useMutation();
+  const [state, setState] = useState<"loading" | "error">("");
 
   useEffect(() => {
     // Function to load the Telegram script
@@ -24,6 +26,7 @@ const TelegramLogin = ({ delegateId }: { delegateId: string }) => {
 
   const handleTelegramLoginClick = () => {
     // Try to find the Telegram button
+    setState("loading");
     if (typeof window !== "undefined") {
       console.log(window.Telegram);
       window.Telegram.Login.auth(
@@ -40,9 +43,11 @@ const TelegramLogin = ({ delegateId }: { delegateId: string }) => {
             {
               onSuccess: () => {
                 console.log("SUCCESS");
+                setState("");
               },
               onError: () => {
                 console.log("ERROR");
+                setState("error");
               },
             },
           );
@@ -54,7 +59,12 @@ const TelegramLogin = ({ delegateId }: { delegateId: string }) => {
 
   return (
     <div>
-      <div onClick={handleTelegramLoginClick}>My Telegram Bot Here</div>
+      <SocialButton
+        onConnect={handleTelegramLoginClick}
+        provider="telegram"
+        isError={state === "error"}
+        isLoading={state === "loading"}
+      />
       <div ref={telegramButtonContainerRef} style={{ display: "none" }}></div>
     </div>
   );

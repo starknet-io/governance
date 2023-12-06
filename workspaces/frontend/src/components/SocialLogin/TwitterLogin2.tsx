@@ -1,6 +1,5 @@
 import { trpc } from "../../utils/trpc";
-import { TwitterLoginButton } from "react-social-login-buttons";
-import { useState } from "react";
+import { SocialButton } from "./SocialButton";
 
 const TwitterLogin = ({ delegateId }: { delegateId: string }) => {
   const { data, isLoading, isError } = trpc.socials.initiateSocialAuth.useQuery(
@@ -20,21 +19,14 @@ const TwitterLogin = ({ delegateId }: { delegateId: string }) => {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error fetching twitter info...</div>;
-  }
-
-  console.log(data);
-
-  if (data?.twitterUsername) {
-    return <div>Twitter: {data.twitterUsername}</div>;
-  }
-
-  return <TwitterLoginButton onClick={handleTwitterLogin} />;
+  return (
+    <SocialButton
+      onConnect={handleTwitterLogin}
+      provider="twitter"
+      isLoading={isLoading}
+      isError={isError}
+    />
+  );
 };
 
 export default TwitterLogin;
