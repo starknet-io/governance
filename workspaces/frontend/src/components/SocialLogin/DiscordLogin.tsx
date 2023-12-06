@@ -1,6 +1,5 @@
 import { trpc } from "../../utils/trpc";
-import { DiscordLoginButton } from "react-social-login-buttons";
-import { useState } from "react";
+import { SocialButton } from "./SocialButton";
 
 const DiscordAuth = ({ delegateId }: { delegateId: string }) => {
   const { data, isLoading, isError } = trpc.socials.initiateSocialAuth.useQuery(
@@ -21,21 +20,20 @@ const DiscordAuth = ({ delegateId }: { delegateId: string }) => {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const onDisconnect = () => {
+    alert("Disconnecting Discord");
+  };
 
-  if (isError) {
-    return <div>Error fetching discord info...</div>;
-  }
-
-  console.log(data);
-
-  if (data?.discordUsername) {
-    return <div>Discord: ${data.discordUsername}</div>;
-  }
-
-  return <DiscordLoginButton onClick={handleDiscordLogin} />;
+  return (
+    <SocialButton
+      provider="discord"
+      username={data?.discordUsername}
+      onDisconnect={onDisconnect}
+      onConnect={handleDiscordLogin}
+      isError={isError}
+      isLoading={isLoading}
+    />
+  );
 };
 
 export default DiscordAuth;
