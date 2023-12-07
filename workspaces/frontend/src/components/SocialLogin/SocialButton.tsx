@@ -1,4 +1,4 @@
-import { Flex, Icon } from "@chakra-ui/react";
+import { Box, Flex, Icon } from "@chakra-ui/react";
 import { Button, SummaryItems, Text } from "@yukilabs/governance-components";
 import {
   DiscordIcon,
@@ -14,12 +14,14 @@ export const SocialButton = ({
   isError,
   isLoading,
   provider,
+  readonly,
 }: {
   username?: string | null;
   onConnect: () => void;
   onDisconnect: () => void;
   isLoading?: boolean;
   isError?: boolean;
+  readonly?: boolean;
   provider: "discord" | "twitter" | "telegram" | "discourse";
 }) => {
   if (isError) {
@@ -69,7 +71,7 @@ export const SocialButton = ({
         </Text>
         {username && <Text variant="bodySmallStrong">{username}</Text>}
       </Flex>
-      {username ? (
+      {username && !readonly ? (
         <Button
           aria-label="Disconnect"
           variant="unstyled"
@@ -112,10 +114,12 @@ export const SocialButton = ({
             </g>
           </svg>
         </Button>
-      ) : (
+      ) : !readonly ? (
         <Button variant="outline" onClick={onConnect}>
           Connect
         </Button>
+      ) : (
+        <Box p={6} />
       )}
     </Flex>
   );

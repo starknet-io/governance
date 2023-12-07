@@ -1,7 +1,17 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import {eq, and, isNotNull, or, desc, sql, gte, ilike, exists} from 'drizzle-orm';
+import {
+  eq,
+  and,
+  isNotNull,
+  or,
+  desc,
+  sql,
+  gte,
+  ilike,
+  exists,
+} from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -137,6 +147,10 @@ export const delegateRouter = router({
         },
       });
 
+      if (!delegate) {
+        throw new Error('Delegate not found');
+      }
+
       const delegatesVotingInfo = await db.query.delegates.findFirst({
         where: eq(delegates.id, opts.input.id),
         with: {
@@ -151,9 +165,12 @@ export const delegateRouter = router({
         },
       });
 
-      if (!delegate) {
-        throw new Error('Delegate not found');
-      }
+      const delegateSocials: any = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+        with: {
+          socials: true,
+        },
+      });
 
       // Now fetch the comments related to the delegate's user ID
       const commentsRelatedToDelegate = await db.query.comments.findMany({
@@ -167,6 +184,9 @@ export const delegateRouter = router({
       return {
         ...delegate,
         comments: commentsRelatedToDelegate,
+        twitter: delegateSocials?.socials?.twitter,
+        discord: delegateSocials?.socials?.discord,
+        telegram: delegateSocials?.socials?.telegram,
         customAgreement: delegateWithCustomAgreement?.customAgreement,
         votingInfo: delegatesVotingInfo?.delegateVotes || {},
       };
@@ -318,7 +338,11 @@ export const delegateRouter = router({
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address),
         with: {
-          delegationStatement: true,
+          delegationStatement: {
+            with: {
+              socials: true,
+            },
+          },
         },
       });
       return user;

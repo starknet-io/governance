@@ -10,6 +10,7 @@ import {
 } from "@yukilabs/governance-components";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { trpc } from "../../utils/trpc";
+import { SocialButton } from "./SocialButton";
 
 const Socials = ({
   delegateId,
@@ -111,6 +112,13 @@ const Socials = ({
           username={socialsDelegate?.data?.telegram?.username}
           onDisconnect={() => unlinkSocial("telegram")}
         />
+        {socials?.discourse && (
+          <SocialButton
+            provider="discourse"
+            readonly
+            username={socials?.discourse}
+          />
+        )}
       </Flex>
       <Divider mt="standard.xl" mb="standard.xl" />
     </SummaryItems.Root>
