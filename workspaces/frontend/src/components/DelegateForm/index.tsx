@@ -51,9 +51,6 @@ type FormValues = {
   confirmDelegateAgreement: boolean;
   customDelegateAgreementContent?: string;
   starknetAddress: string;
-  twitter: string;
-  telegram: string;
-  discord: string;
   discourse: string;
   understandRole: boolean;
 };
@@ -122,9 +119,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     );
     setValue("interests", delegateData.interests as string[]);
     setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
-    setValue("twitter", delegateData.twitter as string);
-    setValue("telegram", delegateData.telegram as string);
-    setValue("discord", delegateData.discord as string);
     setValue("discourse", delegateData.discourse as string);
     setValue("understandRole", delegateData.understandRole as boolean);
     setValue(
@@ -378,37 +372,6 @@ Conflicts of interest
                 validate: (value) =>
                   validateStarknetAddress(value) || "Invalid Starknet address",
               })}
-            />
-          </FormControlled>
-
-          <FormControlled
-            name="twitter"
-            label="Twitter"
-            isInvalid={!!errors.twitter}
-            errorMessage={errors.twitter?.message}
-          >
-            <Input
-              size="standard"
-              variant="primary"
-              placeholder="@yourhandle"
-              {...register("twitter")}
-            />
-          </FormControlled>
-          <FormControlled name="telegram" label="Telegram">
-            <Input
-              size="standard"
-              variant="primary"
-              placeholder="@yourhandle"
-              {...register("telegram")}
-            />
-          </FormControlled>
-
-          <FormControlled name="discord" label="Discord">
-            <Input
-              variant="primary"
-              size="standard"
-              placeholder="name#1234"
-              {...register("discord")}
             />
           </FormControlled>
 
