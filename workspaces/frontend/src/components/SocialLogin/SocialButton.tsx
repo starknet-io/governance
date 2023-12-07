@@ -25,7 +25,7 @@ export const SocialButton = ({
   provider: "discord" | "twitter" | "telegram" | "discourse";
 }) => {
   if (isError) {
-    return <div>Error fetching {provider} info...</div>;
+    return <Text variant="mediumStrong">Error fetching {provider} info...</Text>;
   }
   const label =
     provider === "twitter"

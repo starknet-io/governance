@@ -33,7 +33,7 @@ import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delega
 import { trpc } from "../../utils/trpc";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { useToast } from "@chakra-ui/react";
+import { Spinner, useToast } from "@chakra-ui/react";
 import { delegationAgreement } from "../../utils/data";
 
 interface DelegateFormProps {
@@ -254,6 +254,8 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
       console.log(error);
     }
   };
+
+  const isSubmitting = createDelegate.isLoading || editDelegate.isLoading;
 
   const handleRadioChange = (value: string) => {
     if (value === "standard") {
@@ -578,7 +580,10 @@ Conflicts of interest
                 Cancel
               </Button>
               <Button type="submit" size="condensed" variant="primary">
-                Save
+                <Flex alignItems="center" gap={2}>
+                  {isSubmitting && <Spinner size="sm" />}
+                  <div>Save</div>
+                </Flex>
               </Button>
             </Flex>
           ) : (
@@ -589,7 +594,10 @@ Conflicts of interest
                 width={{ base: "100%", md: "auto" }}
                 size="standard"
               >
-                Create delegate profile
+                <Flex alignItems="center" gap={2}>
+                  {isSubmitting && <Spinner size="sm" />}
+                  <div>Create Delegate</div>
+                </Flex>
               </Button>
             </Flex>
           )}
