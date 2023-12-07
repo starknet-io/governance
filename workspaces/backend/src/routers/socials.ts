@@ -184,7 +184,12 @@ export const socialsRouter = router({
       });
 
       if (existingSocials) {
-        return { telegramUsername: existingSocials.telegram };
+        await db
+          .update(socials)
+          .set({ telegram: telegramData.username || telegramData.first_name })
+          .where(eq(socials.delegateId, delegateId!))
+          .execute();
+        return { telegramUsername: telegramData.username };
       } else {
         await db.insert(socials).values({
           delegateId,

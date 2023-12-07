@@ -6,10 +6,12 @@ const TelegramLogin = ({
   username,
   delegateId,
   onDisconnect,
+  onSuccess,
 }: {
   username: string | null | undefined;
   delegateId: string;
   onDisconnect: () => void;
+  onSuccess: () => any;
 }) => {
   const telegramButtonContainerRef = useRef(null);
   const verifyTelegram = trpc.socials.verifyTelegram.useMutation();
@@ -37,7 +39,10 @@ const TelegramLogin = ({
     setState("loading");
     if (typeof window !== "undefined") {
       window.Telegram.Login.auth(
-        { bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_KEY, request_access: true },
+        {
+          bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_KEY,
+          request_access: true,
+        },
         (data) => {
           if (!data) {
             setState(null);
@@ -50,6 +55,7 @@ const TelegramLogin = ({
             {
               onSuccess: () => {
                 setState(null);
+                onSuccess();
               },
               onError: () => {
                 setState("error");

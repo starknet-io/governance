@@ -111,6 +111,7 @@ const Socials = ({
         <TelegramLogin
           delegateId={delegateId}
           username={socialsDelegate?.data?.telegram?.username}
+          onSuccess={socialsDelegate.refetch}
           onDisconnect={() => unlinkSocial("telegram")}
         />
         {socials?.discourse && (
