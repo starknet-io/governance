@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import { eq, and, isNotNull, or, desc, sql, gte, ilike } from 'drizzle-orm';
+import {eq, and, isNotNull, or, desc, sql, gte, ilike, exists} from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -379,11 +379,13 @@ export const delegateRouter = router({
         // Start with an array of conditions for the AND clause
         const conditions = [];
 
-        // Add conditions based on special filters
         if (appliedSpecialFilters.includes('1_or_more_comments')) {
-          query = query
-            .innerJoin(comments, eq(comments.userId, users.id))
-            .where(isNotNull(comments.id));
+          const commentSubquery = db
+            .select()
+            .from(comments)
+            .where(eq(comments.userId, delegates.userId));
+
+          conditions.push(exists(commentSubquery));
         }
 
         if (appliedSpecialFilters.includes('delegate_agreement')) {
@@ -447,7 +449,6 @@ export const delegateRouter = router({
 
         // Since we are using joins instead of with: [field]: true, we need to map to corresponding data format
         if (foundDelegates && foundDelegates.length) {
-          console.log(foundDelegates);
           let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
             ...foundDelegates.delegates,
             ...foundDelegates.delegate_socials,
