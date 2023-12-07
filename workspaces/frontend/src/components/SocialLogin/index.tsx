@@ -109,6 +109,7 @@ const Socials = ({
           onDisconnect={() => unlinkSocial("twitter")}
         />
         <TelegramLogin
+          delegateId={delegateId}
           username={socialsDelegate?.data?.telegram?.username}
           onDisconnect={() => unlinkSocial("telegram")}
         />

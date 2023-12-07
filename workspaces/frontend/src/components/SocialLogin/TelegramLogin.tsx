@@ -4,9 +4,11 @@ import { SocialButton } from "./SocialButton";
 
 const TelegramLogin = ({
   username,
+  delegateId,
   onDisconnect,
 }: {
   username: string | null | undefined;
+  delegateId: string;
   onDisconnect: () => void;
 }) => {
   const telegramButtonContainerRef = useRef(null);
@@ -35,7 +37,7 @@ const TelegramLogin = ({
     setState("loading");
     if (typeof window !== "undefined") {
       window.Telegram.Login.auth(
-        { bot_id: "6886835694", request_access: true },
+        { bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_KEY, request_access: true },
         (data) => {
           if (!data) {
             setState(null);
