@@ -91,6 +91,285 @@ const AuthorizedUserView = () => {
     }
   }, [address, delegate.data, checkDelegateStatus]);
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+  //     const firstHostElement = hostElements[0];
+  //     if (firstHostElement && firstHostElement.shadowRoot) {
+  //       const observer = new MutationObserver((mutations) => {
+  //         const evmNetworkControlElement = firstHostElement.shadowRoot?.querySelector('.dynamic-widget-inline-controls__network-picker-main');
+  //         if (evmNetworkControlElement) {
+  //           evmNetworkControlElement.addEventListener('click', () => {
+  //             const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+  //             const lastHostElement = hostElements[hostElements.length - 1];
+  //             if (lastHostElement && lastHostElement.shadowRoot) {
+  //               const hostElement2 = lastHostElement.shadowRoot.querySelector('.dynamic-shadow-dom-content');
+  //               if (hostElement2) {
+  //                 const elements = hostElement2.querySelectorAll('div');
+  //                 elements.forEach((element) => {
+  //                   element.style.transform = 'none';
+  //                 });
+  //                 setTimeout(() => {
+  //                   const hostElement3 = hostElement2.querySelector('.dynamic-widget-inline-controls__network-picker-list');
+  //                   if (hostElement3) {
+  //                     hostElement3.style.position = 'fixed';
+  //                   }
+  //                 }, 300);
+  //               }
+  //             }
+  //           });
+  //         }
+  //       });
+  //       const config = { childList: true, subtree: true };
+  //       observer.observe(firstHostElement.shadowRoot, config);
+  
+  //       return () => {
+  //         observer.disconnect();
+  //         if (firstHostElement.shadowRoot) {
+  //           const evmNetworkControlElement = firstHostElement.shadowRoot?.querySelector('.dynamic-widget-inline-controls__network-picker-main');
+  //           if (evmNetworkControlElement) {
+  //             evmNetworkControlElement.removeEventListener('click');
+  //           }
+  //         }
+  //       };
+  //     }
+  //   }, 3000);
+  // }, []);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     let evmNetworkControlElement;
+  //     const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+  //     const firstHostElement = hostElements[0];
+  //     if (firstHostElement && firstHostElement.shadowRoot) {
+  //       evmNetworkControlElement = firstHostElement.shadowRoot?.querySelector('.dynamic-widget-inline-controls__network-picker-main');
+  //       if (evmNetworkControlElement) {
+  //         evmNetworkControlElement.addEventListener('click', () => {
+  //           console.log("usao")
+  //           const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+  //           const lastHostElement = hostElements[hostElements.length - 1];
+  //           console.log("elemelastHostElementnts ", lastHostElement)
+  //           if (lastHostElement && lastHostElement.shadowRoot) {
+  //             const hostElement2 = lastHostElement.shadowRoot.querySelector('.dynamic-shadow-dom-content');
+  //             if (hostElement2) {
+  //               const elements = hostElement2.querySelectorAll('div');
+  //               console.log("elements ", elements)
+  //               elements.forEach((element) => {
+  //                 element.style.transform = 'none';
+  //               });
+  //               setTimeout(() => {
+  //                 const hostElement3 = hostElement2.querySelector('.dynamic-widget-inline-controls__network-picker-list');
+  //                 console.log("hostElement3 ", hostElement3)
+  //                 if (hostElement3) {
+  //                   hostElement3.style.position = 'fixed';
+  //                 }
+  //               }, 300);
+  //             }
+  //           }
+  //         });
+  //       }
+  //     }
+  //     return () => {
+  //       if (firstHostElement && firstHostElement.shadowRoot && evmNetworkControlElement) {
+  //         evmNetworkControlElement.removeEventListener('click');
+  //       }
+  //     };
+  //   }, 3000);
+  // }, []);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     let evmNetworkControlElement;
+  //     const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+  //     const firstHostElement = hostElements[0];
+  //     if (firstHostElement && firstHostElement.shadowRoot) {
+  //       evmNetworkControlElement = firstHostElement.shadowRoot?.querySelector('.dynamic-widget-inline-controls__network-picker-main');
+  //       if (evmNetworkControlElement) {
+  //         evmNetworkControlElement.addEventListener('click', () => {
+  //           console.log("usao")
+  //           const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+  //           const lastHostElement = hostElements[hostElements.length - 1];
+  //           console.log("elemelastHostElementnts ", lastHostElement)
+  //           if (lastHostElement && lastHostElement.shadowRoot) {
+  //             const hostElement2 = lastHostElement.shadowRoot.querySelector('.dynamic-shadow-dom-content');
+  //             if (hostElement2) {
+  //               const elements = hostElement2.querySelectorAll('div');
+  //               console.log("elements ", elements)
+  //               elements.forEach((element) => {
+  //                 element.style.transform = 'none';
+  //               });
+  //               setTimeout(() => {
+  //                 const hostElement3 = hostElement2.querySelector('.dynamic-widget-inline-controls__network-picker-list');
+  //                 console.log("hostElement3 ", hostElement3)
+  //                 if (hostElement3) {
+  //                   hostElement3.style.position = 'fixed';
+  //                 }
+  //               }, 300);
+  
+  //               // Create a new MutationObserver to watch for changes in the elements
+  //               const observer = new MutationObserver((mutations) => {
+  //                 // Code to execute when an element changes
+  //               });
+  //               const config = { attributes: true, childList: true, subtree: true };
+  //               elements.forEach((element) => {
+  //                 observer.observe(element, config);
+  //               });
+  
+  //               return () => {
+  //                 observer.disconnect();
+  //               };
+  //             }
+  //           }
+  //         });
+  //       }
+  //     }
+  //     return () => {
+  //       if (firstHostElement && firstHostElement.shadowRoot && evmNetworkControlElement) {
+  //         evmNetworkControlElement.removeEventListener('click');
+  //       }
+  //     };
+  //   }, 3000);
+  // }, []);
+
+  useEffect(() => {
+    let evmNetworkControlElement;
+    let styleObservers = [];
+    let hostElement2Observer;
+  
+    const handleClick = () => {
+      const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+      const lastHostElement = hostElements[hostElements.length - 1];
+  
+      if (lastHostElement && lastHostElement.shadowRoot) {
+        const hostElement2 = lastHostElement.shadowRoot.querySelector('.dynamic-shadow-dom-content');
+        if (hostElement2) {
+          hostElement2Observer = new MutationObserver((mutations) => {
+            requestAnimationFrame(() => {
+              const elements = hostElement2.querySelectorAll('div');
+              elements.forEach((element) => {
+                // if (element.style.transition === "transform 100ms linear 0s" && element.style.opacity === "100ms linear 0s" && element.style.transform === "translateY(0px)") {
+                //   console.log('usao element ', element)
+                // }
+                const styleObserver = new MutationObserver((mutations) => {
+                  mutations.forEach((mutation) => {
+                    // if (element.style.transition === "transform 100ms linear 0s" && element.style.opacity === "100ms linear 0s" && element.style.transform === "translateY(0px)") {
+                    //   console.log('usao element 2 ', element)
+                    // }
+                    // console.log('usao mutation ', mutation)
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                      // console.log('usao ', element.style.transform)
+                      if (element.style.transform === 'translateY(0px)') {
+                        console.log('unison ', element.style)
+                        element.style.transform = 'none';
+                      }
+                    }
+                    element.style.transform = 'none';
+                    element.style.zIndex = '2';
+                  });
+                });
+  
+                styleObserver.observe(element, { attributes: true, attributeFilter: ['style'] });
+                styleObservers.push(styleObserver);
+              });
+            });
+            setTimeout(() => {
+              const hostElement3 = hostElement2.querySelector('.dynamic-widget-inline-controls__network-picker-list');
+              if (hostElement3) {
+                hostElement3.style.position = 'fixed';
+              }
+            }, 300);
+          });
+  
+          const hostElement2Config = { childList: true, subtree: true };
+          hostElement2Observer.observe(hostElement2, hostElement2Config);
+        }
+      }
+    };
+  
+    setTimeout(() => {
+      const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+      const firstHostElement = hostElements[0];
+  
+      if (firstHostElement && firstHostElement.shadowRoot) {
+        evmNetworkControlElement = firstHostElement.shadowRoot?.querySelector('.dynamic-widget-inline-controls__network-picker-main');
+        if (evmNetworkControlElement) {
+          if (!evmNetworkControlElement.hasAttribute('listener')) {
+            evmNetworkControlElement.addEventListener('click', handleClick);
+            evmNetworkControlElement.setAttribute('listener', 'true');
+          }
+        }
+      }
+    }, 1000);
+  
+    return () => {
+      styleObservers.forEach(observer => observer.disconnect());
+      if (hostElement2Observer) {
+        hostElement2Observer.disconnect();
+      }
+      if (evmNetworkControlElement) {
+        evmNetworkControlElement.removeEventListener('click', handleClick);
+        evmNetworkControlElement.removeAttribute('listener');
+      }
+    };
+  }, []);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     let evmNetworkControlElement;
+  //     const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+  //     console.log("hostElements ", hostElements)
+  //     const firstHostElement = hostElements[0];
+  //     if (firstHostElement && firstHostElement.shadowRoot) {
+  //       evmNetworkControlElement = firstHostElement.shadowRoot?.querySelector('.dynamic-widget-inline-controls__network-picker-main');
+  //       if (evmNetworkControlElement) {
+  //         if (!evmNetworkControlElement.hasAttribute('listener')) {
+  //           evmNetworkControlElement.addEventListener('click', () => {
+  //             // console.log("usao")
+  //             const hostElements = document.querySelectorAll('.dynamic-shadow-dom');
+  //             console.log("hostElements 2 ", hostElements)
+  //             const lastHostElement = hostElements[hostElements.length - 1];
+  //             // console.log("elemelastHostElementnts ", lastHostElement)
+  //             if (lastHostElement && lastHostElement.shadowRoot) {
+  //               const hostElement2 = lastHostElement.shadowRoot.querySelector('.dynamic-shadow-dom-content');
+  //               if (hostElement2) {
+  //                 const hostElement2Observer = new MutationObserver((mutations) => {
+  //                   setTimeout(() => {
+  //                     const elements = hostElement2.querySelectorAll('div');
+  //                     console.log("elements ", elements)
+  //                     elements.forEach((element) => {
+  //                       element.style.transform = 'none';
+  //                     });
+  //                     setTimeout(() => {
+  //                       const hostElement3 = hostElement2.querySelector('.dynamic-widget-inline-controls__network-picker-list');
+  //                       console.log("hostElement3 ", hostElement3)
+  //                       if (hostElement3) {
+  //                         hostElement3.style.position = 'fixed';
+  //                       }
+  //                     }, 300);
+  //                   }, 0);
+  //                 });
+  //                 const hostElement2Config = { childList: true, subtree: true };
+  //                 hostElement2Observer.observe(hostElement2, hostElement2Config);
+  
+  //                 return () => {
+  //                   hostElement2Observer.disconnect();
+  //                 };
+  //               }
+  //             }
+  //           });
+  //           evmNetworkControlElement.setAttribute('listener', 'true');
+  //         }
+  //       }
+  //     }
+  //     return () => {
+  //       if (firstHostElement && firstHostElement.shadowRoot && evmNetworkControlElement) {
+  //         evmNetworkControlElement.removeEventListener('click');
+  //         evmNetworkControlElement.removeAttribute('listener');
+  //       }
+  //     };
+  //   }, 3000);
+  // }, []);
+
   useEffect(() => {
     function handleClick(event: any) {
       const clickedElement = event.target;
