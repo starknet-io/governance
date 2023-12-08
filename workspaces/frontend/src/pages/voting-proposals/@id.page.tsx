@@ -760,7 +760,7 @@ export function Page() {
           {comments.data && comments.data.length > 0 ? (
             <>
               <AppBar.Root>
-                <AppBar.Group mobileDirection="row">
+                <AppBar.Group mobileDirection="row" gap="standard.sm">
                   <Box minWidth={"52px"}>
                     <Text variant="mediumStrong">Sort by</Text>
                   </Box>

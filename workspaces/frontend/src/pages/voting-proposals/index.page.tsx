@@ -243,7 +243,7 @@ export function Page() {
           width={{ base: "100%", md: "auto" }}
           as="a"
           href="voting-proposals/create"
-          size="condensed"
+          size="standard"
           variant="primary"
         >
           Create proposal
@@ -277,11 +277,12 @@ export function Page() {
           <PageTitle
             learnMoreLink="/learn"
             title="Voting proposals"
+            standard={false}
             description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol. "
           />
 
           <AppBar.Root>
-            <AppBar.Group mobileDirection="row">
+            <AppBar.Group mobileDirection="row" gap="standard.sm">
               <Box minWidth={"52px"}>
                 <Text variant="mediumStrong">Sort by</Text>
               </Box>
@@ -290,7 +291,7 @@ export function Page() {
                 aria-label="All"
                 placeholder="All"
                 rounded="md"
-                height="36px"
+                height="44px"
                 value={sortBy}
                 onChange={(e) => {
                   setSortBy(e.target.value as SortingTypes);
@@ -334,7 +335,7 @@ export function Page() {
             </AppBar.Group>
           </AppBar.Root>
 
-          <Box position={"relative"} mb="24px">
+          <Box position={"relative"}>
             <ListRow.Container>
               {loading ? (
                 <VotingPropsSkeleton
@@ -375,7 +376,7 @@ export function Page() {
               )}
             </ListRow.Container>
           </Box>
-          <Flex justifyContent={"flex-end"} gap="standard.base">
+          <Flex justifyContent={"flex-end"} gap="standard.base" mt="standard.xl">
             <Text pt="1px" color="content.support.default" variant="small">
               Voting proposals powered by{" "}
             </Text>

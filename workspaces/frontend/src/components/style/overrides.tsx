@@ -87,5 +87,10 @@ padding-inline-end:0;
   .account-control__container.account-control__container--multiwallet-disabled.dynamic-widget-inline-controls__account-control:hover {
     background:transparent;
   }
-
+  .dynamic-shadow-dom .dynamic-shadow-dom-content div {
+    transform: none !important
+  }
+  .dynamic-widget-inline-controls__network-picker-list {
+    position: fixed !important;
+  }
 `;
