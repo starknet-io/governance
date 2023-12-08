@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Heading } from "../Heading";
 interface CustomModalProps extends Omit<ModalProps, 'children'> {
-  title: string;
+  title?: string;
   children: React.ReactNode;
   fixedHeader?: boolean;
   overflowY?: 'hidden' | 'auto' | 'scroll' | undefined;
@@ -54,7 +54,7 @@ const Footer: React.FC<CustomModalFooterProps> = ({ children }) => (
             },
           }}
         >
-          <ModalHeader sx={{
+          {title ? <ModalHeader sx={{
             '@media (max-width: 768px)': {
               position: fixedHeader ? "fixed" : "absolute",
               top: "0",
@@ -83,7 +83,7 @@ const Footer: React.FC<CustomModalFooterProps> = ({ children }) => (
               }
             }}
             />
-          </ModalHeader>
+          </ModalHeader> : null}
           <ModalBody
             sx={{
               paddingLeft: "0",
@@ -91,7 +91,7 @@ const Footer: React.FC<CustomModalFooterProps> = ({ children }) => (
               paddingBottom: "0",
               paddingTop: "0",
               '@media (max-width: 768px)': {
-                paddingTop: "53px"
+                paddingTop: title ? "53px" : "0",
               }
             }}
           >
