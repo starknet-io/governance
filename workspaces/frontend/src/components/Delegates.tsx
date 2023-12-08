@@ -343,7 +343,7 @@ export function Delegates({
       <>
         <Button
           width={{ base: "100%", md: "auto" }}
-          size="condensed"
+          size="standard"
           variant="outline"
           onClick={() => {
             if (
@@ -368,7 +368,7 @@ export function Delegates({
             width={{ base: "100%", md: "auto" }}
             as="a"
             href="/delegates/create"
-            size="condensed"
+            size="standard"
             variant="primary"
           >
             Create delegate profile
@@ -378,7 +378,7 @@ export function Delegates({
             width={{ base: "100%", md: "auto" }}
             as="a"
             href={`/delegates/profile/${delegateId!}`}
-            size="condensed"
+            size="standard"
             variant="primary"
           >
             View delegate profile
@@ -528,8 +528,7 @@ export function Delegates({
                 <Text variant="mediumStrong">Sort by</Text>
               </Box>
               <Select
-                size="sm"
-                height="36px"
+                height="44px"
                 aria-label="Random"
                 placeholder="Random"
                 focusBorderColor={"red"}

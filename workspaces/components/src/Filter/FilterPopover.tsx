@@ -10,9 +10,12 @@ import {
   Text,
   useColorModeValue as mode,
   usePopoverContext,
+  Button
 } from "@chakra-ui/react";
 import { ElementType, ReactNode } from "react";
-
+import {
+  Modal
+} from "@yukilabs/governance-components";
 import {
   FilterActionButtons,
   FilterActionButtonsProps,
@@ -66,7 +69,7 @@ export const FilterPopoverIcon = (props: FilterPopoverButtonProps) => {
         isActive={selected}
         sx={{ position: "relative" }}
         variant="outline"
-        size="withBadgeCondensed"
+        size="withBadgeStandard"
         badgeContent={badgeContent}
         aria-label="filter by"
         icon={<FiltersIcon />}
@@ -81,9 +84,45 @@ type FilterPopoverContentProps = FilterActionButtonsProps & {
 };
 
 export const FilterPopoverContent = (props: FilterPopoverContentProps) => {
+  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
   const { header, children, onClickCancel, onClickApply, isCancelDisabled } =
     props;
-  const { onClose } = usePopoverContext();
+  const { onClose, isOpen } = usePopoverContext();
+  if (isMobile) {
+    return (
+      <Modal title="Filters" onClose={onClose} isOpen={isOpen}>
+        {header && <PopoverHeader srOnly>{header}</PopoverHeader>}
+        {children}
+        <Modal.Footer>
+        <Button
+          variant="tertiary"
+          onClick={() => {
+            onClickCancel?.();
+            onClose();
+          }}
+          isDisabled={isCancelDisabled}
+          sx={{
+            flex: 1
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          colorScheme="blue"
+          onClick={() => {
+            onClickApply?.();
+            onClose();
+          }}
+          sx={{
+            flex: 1
+          }}
+        >
+          Save
+        </Button>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
   return (
     <PopoverContent
       bg="#fff"
