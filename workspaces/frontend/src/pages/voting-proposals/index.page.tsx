@@ -17,7 +17,8 @@ import {
   Link,
   Flex,
 } from "@yukilabs/governance-components";
-import { Grid, Select } from "@chakra-ui/react";
+import { Grid, Select, PopoverContent,
+  PopoverBody } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -232,18 +233,18 @@ export function Page() {
     ...filtersState,
   });
 
+  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
   function ActionButtons() {
     if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR])) {
       return null;
     }
-
     return (
       <>
         <Button
           width={{ base: "100%", md: "auto" }}
           as="a"
           href="voting-proposals/create"
-          size="standard"
+          size={isMobile ? "standard" : "condensed"}
           variant="primary"
         >
           Create proposal
@@ -291,7 +292,7 @@ export function Page() {
                 aria-label="All"
                 placeholder="All"
                 rounded="md"
-                height="44px"
+                height={isMobile ? "44px" : "36px"}
                 value={sortBy}
                 onChange={(e) => {
                   setSortBy(e.target.value as SortingTypes);
@@ -318,7 +319,7 @@ export function Page() {
                   onClickApply={state.onSubmit}
                   onClickCancel={handleResetFilters}
                 >
-                  <Text mt="4" mb="2" fontWeight="bold">
+                  <Text mb="standard.sm" fontWeight="bold">
                     Status
                   </Text>
                   <CheckboxFilter

@@ -525,7 +525,7 @@ export function Delegates({
           <AppBar.Root>
             <AppBar.Group mobileDirection="row">
               <Box minWidth={"52px"}>
-                <Text variant="mediumStrong">Sort by</Text>
+                <Text variant="mediumStrong" fontWeight="600" color="content.default.default">Sort by</Text>
               </Box>
               <Select
                 height="44px"

@@ -62,14 +62,14 @@ export const FilterPopoverButton = (props: FilterPopoverButtonProps) => {
 
 export const FilterPopoverIcon = (props: FilterPopoverButtonProps) => {
   const { selected, badgeContent } = props;
-
+  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
   return (
     <PopoverTrigger>
       <IconButtonWithBadge
         isActive={selected}
         sx={{ position: "relative" }}
         variant="outline"
-        size="withBadgeStandard"
+        size={isMobile ? "withBadgeStandard" : "withBadgeCondensed"}
         badgeContent={badgeContent}
         aria-label="filter by"
         icon={<FiltersIcon />}
@@ -90,7 +90,9 @@ export const FilterPopoverContent = (props: FilterPopoverContentProps) => {
   const { onClose, isOpen } = usePopoverContext();
   if (isMobile) {
     return (
-      <Modal title="Filters" onClose={onClose} isOpen={isOpen}>
+      <Modal title="Filters" onClose={onClose} isOpen={isOpen}
+        bg="#fafafa"
+      >
         {header && <PopoverHeader srOnly>{header}</PopoverHeader>}
         {children}
         <Modal.Footer>
@@ -131,7 +133,7 @@ export const FilterPopoverContent = (props: FilterPopoverContentProps) => {
       _focusVisible={{ shadow: "outline" }}
     >
       {header && <PopoverHeader srOnly>{header}</PopoverHeader>}
-      <PopoverBody padding="6">{children}</PopoverBody>
+      <PopoverBody padding="0">{children}</PopoverBody>
       <PopoverFooter sx={{ borderTop: "none" }}>
         <FilterActionButtons
           onClickCancel={() => {
