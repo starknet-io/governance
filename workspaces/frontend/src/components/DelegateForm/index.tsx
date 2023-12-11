@@ -51,7 +51,6 @@ type FormValues = {
   confirmDelegateAgreement: boolean;
   customDelegateAgreementContent?: string;
   starknetAddress: string;
-  discourse: string;
   understandRole: boolean;
 };
 
@@ -119,7 +118,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     );
     setValue("interests", delegateData.interests as string[]);
     setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
-    setValue("discourse", delegateData.discourse as string);
     setValue("understandRole", delegateData.understandRole as boolean);
     setValue(
       "confirmDelegateAgreement",
@@ -376,16 +374,6 @@ Conflicts of interest
               })}
             />
           </FormControlled>
-
-          <FormControlled name="discourse" label="Discourse">
-            <Input
-              variant="primary"
-              size="standard"
-              placeholder="yourusername"
-              {...register("discourse")}
-            />
-          </FormControlled>
-
           <Divider />
           <Box>
             <Heading variant="h3" display="flex" mb="standard.base">

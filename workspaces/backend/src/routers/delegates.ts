@@ -39,7 +39,6 @@ export const delegateRouter = router({
       z.object({
         statement: z.string(),
         interests: z.any(),
-        discourse: z.string(),
         understandRole: z.boolean(),
         starknetAddress: z.string(),
         customDelegateAgreementContent: z.optional(z.string()), // Optionally add custom agreement content
@@ -59,7 +58,9 @@ export const delegateRouter = router({
         },
       });
       if (user?.delegationStatement) {
-        throw new Error('A delegate with the address of the user already exists');
+        throw new Error(
+          'A delegate with the address of the user already exists',
+        );
       }
 
       // Determine the agreement value
@@ -72,7 +73,6 @@ export const delegateRouter = router({
         .values({
           statement: opts.input.statement,
           interests: opts.input.interests,
-          discourse: opts.input.discourse,
           understandRole: opts.input.understandRole,
           userId: opts.ctx.user?.id,
           createdAt: new Date(),
@@ -237,7 +237,6 @@ export const delegateRouter = router({
         .set({
           statement: opts.input.statement,
           interests: opts.input.interests,
-          discourse: opts.input.discourse,
           understandRole: !!opts.input.understandRole,
           isKarmaDelegate: false,
           isGovernanceDelegate: true,

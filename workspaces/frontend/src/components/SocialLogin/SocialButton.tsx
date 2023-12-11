@@ -25,7 +25,9 @@ export const SocialButton = ({
   provider: "discord" | "twitter" | "telegram" | "discourse";
 }) => {
   if (isError) {
-    return <Text variant="mediumStrong">Error fetching {provider} info...</Text>;
+    return (
+      <Text variant="mediumStrong">Error fetching {provider} info...</Text>
+    );
   }
   const label =
     provider === "twitter"
@@ -76,6 +78,8 @@ export const SocialButton = ({
           aria-label="Disconnect"
           variant="unstyled"
           onClick={onDisconnect}
+          display="flex"
+          justifyContent="center"
         >
           <svg
             width="18"
