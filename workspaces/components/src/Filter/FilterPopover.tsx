@@ -90,9 +90,7 @@ export const FilterPopoverContent = (props: FilterPopoverContentProps) => {
   const { onClose, isOpen } = usePopoverContext();
   if (isMobile) {
     return (
-      <Modal title="Filters" onClose={onClose} isOpen={isOpen}
-        bg="#fafafa"
-      >
+      <Modal title="Filters" onClose={onClose} isOpen={isOpen}>
         {header && <PopoverHeader srOnly>{header}</PopoverHeader>}
         {children}
         <Modal.Footer>
