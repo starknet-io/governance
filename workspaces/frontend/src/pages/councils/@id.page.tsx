@@ -175,7 +175,7 @@ export function Page() {
           >
             {council?.description ? council?.description : ""}
           </Text>
-          {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+          {!hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
             <Button variant="outline" onClick={handleClick} width="100%">
               Add new post
             </Button>
@@ -209,7 +209,7 @@ export function Page() {
 
       <ProfilePageLayout.About>
         <Stack width="100%" spacing="0" direction={{ base: "column" }}>
-          <Collapse startingHeight={300}>
+          <Collapse startingHeight={300} height="76">
             <Stack spacing="0" direction={{ base: "column" }}>
               <Heading
                 lineHeight="32px"
@@ -242,7 +242,7 @@ export function Page() {
                   <Skeleton height="100px" width="80%" />
                   <Skeleton height="100px" width="80%" />
                 </Box>
-              ) : members.length > 0 ? (
+              ) : members.length > -1 ? (
                 <Box mb="standard.xs" mt="standard.2xl">
                   <Heading color="content.accent.default" variant="h3">
                     Members
