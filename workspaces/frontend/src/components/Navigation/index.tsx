@@ -147,7 +147,7 @@ export const NavigationMenu = ({
             />
           ) : null}
           <NavItem
-            icon={<CommunityLinksIcon />}
+            icon={<CommunityLinksIcon fill="red" />}
             label="Community links"
             onClick={openSupportModal}
           />
