@@ -29,7 +29,7 @@ export interface IProposalWithComments extends IProposal {
 }
 
 const endpoint = `https://hub.snapshot.org/graphql`;
-const space = 'robwalsh.eth';
+const space = process.env.SNAPSHOT_SPACE;
 
 const graphQLClient = new GraphQLClient(endpoint, {
   method: `GET`,
