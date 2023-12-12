@@ -104,7 +104,7 @@ export const DiscourseFormModal = ({
                 </Text>
               </FormLabel>
               <Input
-                placeholder="Paste a link here..."
+                placeholder="Name"
                 value={discourseAddress}
                 onChange={(e) => setDiscourseAddress(e.target.value)}
               />
