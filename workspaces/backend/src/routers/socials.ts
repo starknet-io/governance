@@ -60,6 +60,7 @@ export const socialsRouter = router({
         twitter: { username: existingSocials?.twitter, redirectUrl: '' },
         discord: { username: existingSocials?.discord, redirectUrl: '' },
         telegram: { username: existingSocials?.telegram },
+        discourse: { username: existingSocials?.discourse },
       };
 
       const stateObject = { delegateId, origin };
@@ -264,6 +265,37 @@ export const socialsRouter = router({
           },
         );
       });
+    }),
+  addDiscourse: protectedProcedure
+    .input(
+      z.object({
+        delegateId: z.string(),
+        username: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { delegateId, username } = input;
+
+      // Fetch or update the socials table
+      const existingSocials = await db.query.socials.findFirst({
+        where: eq(socials.delegateId, delegateId),
+      });
+
+      if (existingSocials) {
+        await db
+          .update(socials)
+          .set({ discourse: username })
+          .where(eq(socials.delegateId, delegateId!))
+          .execute();
+        return { discourseUsername: username };
+      } else {
+        await db.insert(socials).values({
+          delegateId,
+          discourse: username,
+        });
+
+        return { discourseUsername: username };
+      }
     }),
 });
 

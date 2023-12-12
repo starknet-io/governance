@@ -1,16 +1,9 @@
 import { Heading } from "@yukilabs/governance-components";
+import { FormLayout } from "src/components/FormsCommon/FormLayout";
 import { DocumentProps } from "src/renderer/types";
 import DelegateForm from "../../components/DelegateForm";
-import { FormLayout } from "src/components/FormsCommon/FormLayout";
-import React from "react";
-import { TelegramLogin } from "src/components/SocialLogin/TelegramLogin";
-const TwitterLoginLazy = React.lazy(() => import("src/components/SocialLogin/TwitterLogin"));
 
 export function Page() {
-  const [showTwitterLogin, setShowTwitterLogin] = React.useState(false);
-  React.useEffect(() => {
-    setShowTwitterLogin(true);
-  }, []);
 
   return (
     <FormLayout>

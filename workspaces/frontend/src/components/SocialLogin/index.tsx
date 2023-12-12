@@ -1,16 +1,17 @@
-import React from "react";
-import DiscordLogin from "./DiscordLogin";
-import TwitterLogin from "./TwitterLogin";
-import TelegramLogin from "./TelegramLogin";
 import {
   Divider,
   Flex,
   SummaryItems,
   Text,
 } from "@yukilabs/governance-components";
+import { useState } from "react";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { trpc } from "../../utils/trpc";
+import DiscordLogin from "./DiscordLogin";
+import { DiscourseFormModal } from "./DiscourseFormModal";
 import { SocialButton } from "./SocialButton";
+import TelegramLogin from "./TelegramLogin";
+import TwitterLogin from "./TwitterLogin";
 
 const Socials = ({
   delegateId,
@@ -25,6 +26,8 @@ const Socials = ({
   };
 }) => {
   const { user } = usePageContext();
+  const [showDiscourse, setShowDiscourse] = useState(false);
+
   const userDelegate = trpc.users.isDelegate.useQuery({
     userId: user?.id || "",
   });
@@ -48,7 +51,9 @@ const Socials = ({
       origin,
     });
   };
-
+  const closeDiscourseModal = () => {
+    setShowDiscourse(false);
+  };
   if (
     (!isUserDelegate && !isUserDelegateCheckLoading) ||
     isUserDelegateCheckLoading
@@ -63,13 +68,6 @@ const Socials = ({
               isLoading={isUserDelegateCheckLoading}
             />
           )}
-          {socials?.discourse && (
-            <SummaryItems.Socials
-              label="discourse"
-              value={socials?.discourse}
-              isLoading={isUserDelegateCheckLoading}
-            />
-          )}
           {socials?.discord && (
             <SummaryItems.Socials
               label="discord"
@@ -81,6 +79,13 @@ const Socials = ({
             <SummaryItems.Socials
               label="telegram"
               value={socials?.telegram}
+              isLoading={isUserDelegateCheckLoading}
+            />
+          )}
+          {socials?.discourse && (
+            <SummaryItems.Socials
+              label="discourse"
+              value={socials?.discourse}
               isLoading={isUserDelegateCheckLoading}
             />
           )}
@@ -114,13 +119,18 @@ const Socials = ({
           onSuccess={socialsDelegate.refetch}
           onDisconnect={() => unlinkSocial("telegram")}
         />
-        {socials?.discourse && (
-          <SocialButton
-            provider="discourse"
-            readonly
-            username={socials?.discourse}
-          />
-        )}
+        <SocialButton
+          provider="discourse"
+          username={socialsDelegate?.data?.discourse?.username}
+          onConnect={() => setShowDiscourse(true)}
+          onDisconnect={() => unlinkSocial("discourse")}
+        />
+        <DiscourseFormModal
+          isOpen={showDiscourse}
+          onClose={closeDiscourseModal}
+          onSuccess={socialsDelegate.refetch}
+          delagateId={delegateId}
+        />
       </Flex>
       <Divider mt="standard.xl" mb="standard.xl" />
     </SummaryItems.Root>
