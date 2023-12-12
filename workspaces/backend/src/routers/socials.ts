@@ -73,19 +73,17 @@ export const socialsRouter = router({
         )}&scope=identify&state=${serializedState}`;
       }
 
-      if (!response.twitter.username) {
-        try {
-          const twitterAuthUrl = (await getTwitterAuthUrl(
-            delegateId,
-          )) as string;
-          response.twitter.redirectUrl = twitterAuthUrl;
-        } catch (error) {
-          console.error('Error getting Twitter Auth URL:', error);
-          // Handle error appropriately
-        }
-      }
-
       return response;
+    }),
+  getTwitterAuthUrl: protectedProcedure
+    .input(z.object({ delegateId: z.string() }))
+    .query(async ({ input }) => {
+      const { delegateId } = input;
+      if (!delegateId) {
+        throw new Error('Delegate id is missing');
+      }
+      const twitterAuthUrl = (await getTwitterAuthUrl(delegateId)) as string;
+      return twitterAuthUrl;
     }),
 
   unlinkDelegateSocial: protectedProcedure

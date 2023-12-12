@@ -102,8 +102,8 @@ const Socials = ({
           onDisconnect={() => unlinkSocial("discord")}
         />
         <TwitterLogin
+          delegateId={delegateId}
           username={socialsDelegate?.data?.twitter?.username}
-          redirectUrl={socialsDelegate?.data?.twitter?.redirectUrl}
           isLoading={socialsDelegate?.isLoading}
           isError={socialsDelegate?.isError}
           onDisconnect={() => unlinkSocial("twitter")}
