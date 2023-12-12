@@ -2,6 +2,7 @@ import {
   Button,
   FormControl,
   FormErrorMessage,
+  FormLabel,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -10,7 +11,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import { Flex, Heading, Input } from "@yukilabs/governance-components";
+import { Flex, Heading, Input, Text } from "@yukilabs/governance-components";
 import { useState } from "react";
 import { trpc } from "../../utils/trpc";
 
@@ -74,9 +75,14 @@ export const DiscourseFormModal = ({
       <ModalOverlay />
       <ModalContent borderRadius="xl" overflow="hidden">
         <form>
-          <ModalHeader display="flex" justifyContent="center">
+          <ModalHeader
+            display="flex"
+            justifyContent="center"
+            pt="0.5rem"
+            pb={0}
+          >
             <Heading variant="h3" color="content.accent.default">
-              Add discourse handle
+              Add Discourse
             </Heading>
           </ModalHeader>
           <ModalCloseButton
@@ -86,13 +92,17 @@ export const DiscourseFormModal = ({
             borderRadius="none"
             borderBottomLeftRadius="md"
           />
-          <ModalBody>
+          <ModalBody py="standard.xl">
             <FormControl isInvalid={true}>
-              {/* <FormLabel>
-              <Text color="#6C6C75" as="span">
-                Discourse handle
-              </Text>
-            </FormLabel> */}
+              <FormLabel>
+                <Text
+                  as="h5"
+                  variant="bodyMediumStrong"
+                  color="content.default.default"
+                >
+                  Discourse username
+                </Text>
+              </FormLabel>
               <Input
                 placeholder="Paste a link here..."
                 value={discourseAddress}
@@ -100,7 +110,7 @@ export const DiscourseFormModal = ({
               />
               {state === "error" && discourseAddress !== "" && (
                 <FormErrorMessage>
-                  Not a valid discourse handle
+                  Something went wrong, please try again later
                 </FormErrorMessage>
               )}
             </FormControl>
