@@ -175,6 +175,7 @@ export const delegateRouter = router({
         twitter: delegateSocials?.socials?.twitter,
         discord: delegateSocials?.socials?.discord,
         telegram: delegateSocials?.socials?.telegram,
+        discourse: delegateSocials?.socials?.discourse,
         customAgreement: delegateWithCustomAgreement?.customAgreement,
         votingInfo: delegatesVotingInfo?.delegateVotes || {},
       };
@@ -462,10 +463,10 @@ export const delegateRouter = router({
         if (foundDelegates && foundDelegates.length) {
           let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
             ...foundDelegates.delegates,
-            ...foundDelegates.delegate_socials,
             twitter: foundDelegates?.delegate_socials?.twitter || null,
             discord: foundDelegates?.delegate_socials?.discord || null,
             telegram: foundDelegates?.delegate_socials?.telegram || null,
+            discourse: foundDelegates?.delegate_socials?.discourse || null,
             author: { ...foundDelegates.users },
             votingInfo: { ...foundDelegates.delegate_votes },
             delegateAgreement: !!(

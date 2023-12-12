@@ -11118,9 +11118,7 @@ __metadata:
     react-dom: ^18.2.0
     react-hook-form: ^7.45.2
     react-infinite-scroll-component: ^6.1.0
-    react-social-login-buttons: ^3.9.1
     react-streaming: ^0.3.14
-    react-telegram-auth: ^1.0.4
     react-use: ^17.4.0
     superjson: ^1.13.1
     use-debounce: ^9.0.4
@@ -22918,15 +22916,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-social-login-buttons@npm:^3.9.1":
-  version: 3.9.1
-  resolution: "react-social-login-buttons@npm:3.9.1"
-  peerDependencies:
-    react: ^15.0.0 || ^16.0.0 || ^17.x || ^18.x
-  checksum: 6d0f199cd916b0ebda8057f150fa8441753729132ad61ead111b31415b09f2d8134f6feda61244ecfa413448c0ce3748fb9611d6dbe96fa2e8c60461e18c3ac2
-  languageName: node
-  linkType: hard
-
 "react-sortablejs@npm:^6.1.4":
   version: 6.1.4
   resolution: "react-sortablejs@npm:6.1.4"
@@ -22988,15 +22977,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-telegram-auth@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "react-telegram-auth@npm:1.0.4"
-  dependencies:
-    react: 18.2.0
-  checksum: 292b41b36272ad042ed3188c0c1dfe430ec22bf3bdd41265bfff50af772d1d7b7840a8deba6fa924180fb23b61ab2ae5988f509dc2c108114aa2f7cb60f55d2d
-  languageName: node
-  linkType: hard
-
 "react-transition-group@npm:^4.3.0":
   version: 4.4.5
   resolution: "react-transition-group@npm:4.4.5"
@@ -23047,7 +23027,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.2.0, react@npm:^18.2.0":
+"react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
