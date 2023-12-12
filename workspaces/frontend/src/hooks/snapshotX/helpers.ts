@@ -222,3 +222,9 @@ export const parseStrategiesToHumanReadableFormat = (strategies = []) => {
     }
   })
 }
+
+export const parseStrategiesMetadata = (strategies) => {
+  return strategies.map((strategy) => {
+    return `${strategy?.data?.name} - ${strategy?.data?.symbol}`
+  })
+}

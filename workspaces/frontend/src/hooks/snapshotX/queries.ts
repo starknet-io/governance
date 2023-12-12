@@ -117,6 +117,7 @@ export const GET_SPACE = gql`
       strategies_parsed_metadata {
         data {
           symbol
+          name
           decimals
           payload
           token

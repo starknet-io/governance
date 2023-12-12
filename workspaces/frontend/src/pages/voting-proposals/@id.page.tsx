@@ -69,6 +69,7 @@ import {
 } from "../../clients/clients";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import {
+  parseStrategiesMetadata,
   parseStrategiesToHumanReadableFormat,
   prepareStrategiesForSignature,
   waitForTransaction
@@ -107,6 +108,7 @@ export function Page() {
   });
 
   const space = useSpace();
+  const parsedVotingStrategies = parseStrategiesMetadata(space?.data?.strategies_parsed_metadata || [])
 
   const votes = useVotes({
     proposal: pageContext.routeParams!.id,
@@ -448,7 +450,7 @@ export function Page() {
           />
           <SummaryItems.Item
             label="Voting system"
-            value={`${data?.proposal?.type} voting`}
+            value={parsedVotingStrategies}
           />
           <SummaryItems.CustomDate
             label="Start date"
