@@ -149,6 +149,7 @@ export function Page() {
   return (
     <Grid
       bg="surface.bgPage"
+      h="100%"
       templateColumns={{
         base: "1fr",
         md: "270px 1fr",
@@ -185,8 +186,6 @@ export function Page() {
             base: "standard.md",
             md: "0px",
           }}
-          borderBottom="1px solid"
-          borderColor="border.forms"
         >
           <Stack
             spacing="1px"
@@ -350,6 +349,8 @@ export function Page() {
           alignSelf="stretch"
           borderTop="1px solid"
           borderColor="border.dividers"
+          maxWidth={{ base: "100%", lg: "626px" }}
+          mx="auto"
         >
           {previousPage ? <Flex
             direction="column"
