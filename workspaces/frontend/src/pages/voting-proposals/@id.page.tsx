@@ -97,6 +97,7 @@ export function Page() {
 
   const { data: votingPower, isLoading: votingPowerLoading } = useVotingPower({
     address: walletClient?.account.address as string,
+    timestamp: data?.proposal?.created || null,
   });
 
   const vote = useVotes({
@@ -759,6 +760,7 @@ export function Page() {
                 </Heading>
               ) : null}
               {votingPower === 0 &&
+                user &&
                 !votingPowerLoading &&
                 !shouldShowHasDelegated && (
                   <>
