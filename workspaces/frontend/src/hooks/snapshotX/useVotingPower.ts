@@ -42,7 +42,7 @@ export function useVotingPower({
           spaceObj.space.strategies_params,
           strategiesMetadata,
           address,
-          1700667132,
+          Math.floor(Date.now() / 1000),
         );
         const parsedData = vpData
           ? vpData.reduce((acc, strategy) => {

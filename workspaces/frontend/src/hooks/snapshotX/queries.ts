@@ -108,9 +108,6 @@ export const GET_SPACE = gql`
       strategies_metadata
       authenticators
       metadata {
-        delegation_api_type
-        delegation_contract
-        delegation_api_url
         voting_power_symbol
       }
       strategies
