@@ -58,6 +58,7 @@ jobs:
             VITE_APP_ALGOLIA_APP_ID=${{ secrets.VITE_APP_ALGOLIA_APP_ID }}
             VITE_APP_ALGOLIA_PUBLIC_API_KEY=${{ secrets.VITE_APP_ALGOLIA_PUBLIC_API_KEY }}
             VITE_APP_ALGOLIA_INDEX=${{ vars.VITE_APP_ALGOLIA_INDEX }}
+            VITE_APP_TELEGRAM_BOT_KEY=${{ secrets.VITE_APP_TELEGRAM_BOT_KEY }}
 
   Deploy-production:
     needs: Build

@@ -25,7 +25,7 @@ import {
   Text,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAccount, useWaitForTransaction } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import {
@@ -44,6 +44,7 @@ import * as ProfilePageLayout from "../../../components/ProfilePageLayout/Profil
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import { delegationAgreement } from "src/utils/data";
+import Socials from "../../../components/SocialLogin";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -390,7 +391,7 @@ export function Page() {
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
-              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
+              `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to delegate.`,
             );
             setIsOpen(false);
           } else {
@@ -527,7 +528,7 @@ export function Page() {
                 setIsStatusModalOpen(true);
                 setStatusTitle("No voting power");
                 setStatusDescription(
-                  `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+                  `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to delegate.`,
                 );
                 setIsOpen(false);
                 return;
@@ -562,7 +563,7 @@ export function Page() {
               ? "Undelegate voting power"
               : "Delegate voting power"}
           </Button>
-        ) : (
+        ) : !user ? (
           <Button
             mt={{ base: "standard.2xl" }}
             mb="0"
@@ -573,7 +574,7 @@ export function Page() {
           >
             Delegate voting power
           </Button>
-        )}
+        ) : null}
 
         {delegation.isFetched &&
           delegation.data?.toLowerCase() === delegateAddress?.toLowerCase() && (
@@ -583,13 +584,14 @@ export function Page() {
               />
             </Box>
           )}
-
+        {/*
         {delegateResponse.isFetched &&
           address?.toLowerCase() === delegateAddress?.toLowerCase() && (
             <Box mt="standard.md">
               <Banner label="You can’t delegate voting power to your own account." />
             </Box>
           )}
+          */}
 
         <Box mt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
@@ -631,45 +633,15 @@ export function Page() {
           </SummaryItems.Root>
           <Divider mt="standard.2xl" />
         </Box>
-        {isLoadingSocials ||
-        delegate?.twitter ||
-        delegate?.discourse ||
-        delegate?.telegram ||
-        delegate?.discord ? (
-          <>
-            <SummaryItems.Root direction="row">
-              {(isLoadingSocials || delegate?.twitter) && (
-                <SummaryItems.Socials
-                  label="twitter"
-                  value={delegate?.twitter}
-                  isLoading={isLoadingSocials}
-                />
-              )}
-              {(isLoadingSocials || delegate?.discourse) && (
-                <SummaryItems.Socials
-                  label="discourse"
-                  value={delegate?.discourse}
-                  isLoading={isLoadingSocials}
-                />
-              )}
-              {(isLoadingSocials || delegate?.discord) && (
-                <SummaryItems.Socials
-                  label="discord"
-                  value={delegate?.discord}
-                  isLoading={isLoadingSocials}
-                />
-              )}
-              {(isLoadingSocials || delegate?.telegram) && (
-                <SummaryItems.Socials
-                  label="telegram"
-                  value={delegate?.telegram}
-                  isLoading={isLoadingSocials}
-                />
-              )}
-            </SummaryItems.Root>
-            <Divider mt="standard.2xl" mb="standard.2xl" />
-          </>
-        ) : null}
+        <Socials
+          delegateId={delegateId}
+          socials={{
+            twitter: delegate?.twitter,
+            discord: delegate?.discord,
+            discourse: delegate?.discourse,
+            telegram: delegate?.telegram,
+          }}
+        />
 
         <SummaryItems.Root>
           {isLoadingProfile ? (

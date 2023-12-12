@@ -337,8 +337,9 @@ export function Delegates({
         </>
       );
     }
+
     const delegateId = userDelegate?.data?.id;
-    console.log("ss", allDelegates);
+
     return (
       <>
         <Button
