@@ -391,7 +391,7 @@ export function Page() {
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
-              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
+              `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to delegate.`,
             );
             setIsOpen(false);
           } else {
@@ -528,7 +528,7 @@ export function Page() {
                 setIsStatusModalOpen(true);
                 setStatusTitle("No voting power");
                 setStatusDescription(
-                  `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+                  `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to delegate.`,
                 );
                 setIsOpen(false);
                 return;
