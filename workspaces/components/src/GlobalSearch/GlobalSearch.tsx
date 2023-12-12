@@ -181,7 +181,7 @@ export function GlobalSearch({
         size={isMobile ? "full" : "3xl"}
       >
         <ModalOverlay />
-        <ModalContent height={isMobile ? "100vh" : "672px"} borderRadius="lg">
+        <ModalContent height={isMobile ? "100vh" : "672px"} overflow="auto" borderRadius="lg">
           <ModalHeader mt={isMobile ? "60px" : "0"} p="0" borderBottom="1px solid #23192D1A">
             <Input placeholder="" hidden />
             <InputGroup
