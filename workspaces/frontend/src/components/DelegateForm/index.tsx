@@ -60,6 +60,9 @@ type FormValues = {
 
 const interestsValues = interestsEnum.enumValues;
 
+const DELEGATE_CREATION_MINIMUM = 0.00001;
+const DELEGATE_CREATION_TOKEN = "ETH";
+
 export const DelegateForm: React.FC<DelegateFormProps> = ({
   mode,
   delegate,
@@ -150,17 +153,16 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   };
 
   const { data: user } = trpc.users.me.useQuery();
-  const userBalance = useBalanceData(user?.address as `0x${string}`);
+  const userBalance = useBalanceData(user?.address as `0x${string}`, true);
   const toast = useToast();
 
   useEffect(() => {
     if (userBalance.isFetched && mode === "create") {
-      console.log(parseFloat(userBalance?.balance));
-      if (parseFloat(userBalance?.balance) < 1) {
+      if (parseFloat(userBalance?.balance) < DELEGATE_CREATION_MINIMUM) {
         toast({
           position: "top-right",
           title: `Insufficient Balance`,
-          description: `You must have at least 1 USDC to create a delegate profile`,
+          description: `You must have at least ${DELEGATE_CREATION_MINIMUM} ${DELEGATE_CREATION_TOKEN} to create a delegate profile`,
           status: "error",
           duration: 9000,
           isClosable: true,

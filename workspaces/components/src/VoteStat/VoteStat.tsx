@@ -6,7 +6,7 @@ type Props = {
   voteCount?: number;
   totalVotes: number;
   userVote: boolean;
-  type: "For" | "Against" | "Abstain";
+  type: string;
   active?: boolean;
   strategies: Array<{ network: string; params: any }>;
   scoresByStrategy: number[];
@@ -21,8 +21,14 @@ const variant = {
 const formatPercentage = (num: number) => {
   return num % 1 === 0 ? num.toFixed(0) : num.toFixed(2);
 };
+const getVariantKey = (type: string): "For" | "Against" | "Abstain" => {
+  if (type.includes("Yes")) return "For";
+  if (type.includes("No")) return "Against";
+  return "Abstain"; // Default case
+};
 
 export const VoteStat = (props: Props) => {
+  console.log(props.type);
   const votePercentage =
     props.totalVotes > 0
       ? ((props.voteCount || 0) / props.totalVotes) * 100
@@ -52,7 +58,7 @@ export const VoteStat = (props: Props) => {
       </Flex>
       <Box bg="purple" width="100%">
         <Progress
-          variant={variant[props.type]}
+          variant={variant[getVariantKey(props.type)]}
           height="4px"
           value={votePercentage}
         />
