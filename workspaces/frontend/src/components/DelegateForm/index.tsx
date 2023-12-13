@@ -35,6 +35,7 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useToast } from "@chakra-ui/react";
 import { delegationAgreement } from "../../utils/data";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 
 interface DelegateFormProps {
   mode: "create" | "edit";
@@ -277,7 +278,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     }
   };
 
-  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
+  const isMobile = useIsMobile();
 
   return (
     <>

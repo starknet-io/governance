@@ -1,5 +1,5 @@
 import { DocumentProps, ROLES } from "src/renderer/types";
-
+import useIsMobile from "src/hooks/useIsMobile";
 import {
   Box,
   AppBar,
@@ -233,7 +233,7 @@ export function Page() {
     ...filtersState,
   });
 
-  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
+  const isMobile = useIsMobile();
   function ActionButtons() {
     if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR])) {
       return null;

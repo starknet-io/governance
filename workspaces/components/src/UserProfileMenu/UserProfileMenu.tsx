@@ -17,6 +17,7 @@ import { CopyToClipboard } from "src/CopyToClipboard";
 import { AvatarWithText } from "src/AvatarWithText";
 import { IconButton, ProfileInfoModal, Tooltip } from "index";
 import { DisconnectWalletIcon } from "src/Icons/UiIcons";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -55,7 +56,6 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   useEffect(() => {
     onModalStateChange(isModalOpen);
   }, [isModalOpen]);
-
 
   return (
     <>
@@ -226,7 +226,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
   setUsernameErrorFalse,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
+  const isMobile = useIsMobile();
   const handleCloseModal = () => setIsModalOpen(false);
   const handleOpenModal = () => setIsModalOpen(true);
   const [editUserProfile, setEditUserProfile] = useState(false);

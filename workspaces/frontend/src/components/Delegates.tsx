@@ -35,6 +35,7 @@ import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -319,7 +320,7 @@ export function Delegates({
         <>
           <Button
             width={{ base: "100%", md: "auto" }}
-            size="condensed"
+            size={isMobile ? "standard" : "condensed"}
             variant="outline"
             onClick={() => setHelpMessage("connectWalletMessage")}
           >
@@ -328,7 +329,7 @@ export function Delegates({
 
           <Button
             width={{ base: "100%", md: "auto" }}
-            size="condensed"
+            size={isMobile ? "standard" : "condensed"}
             variant="primary"
             onClick={() => setHelpMessage("connectWalletMessage")}
           >
@@ -413,6 +414,8 @@ export function Delegates({
       return { ...prevState, offset: newOffset };
     });
   };
+
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -528,7 +531,9 @@ export function Delegates({
                 <Text variant="mediumStrong" fontWeight="600" color="content.default.default">Sort by</Text>
               </Box>
               <Select
-                height="44px"
+                height={isMobile ? "44px" : "36px"}
+                border="1px solid"
+                borderColor="border.forms"
                 aria-label="Random"
                 placeholder="Random"
                 focusBorderColor={"red"}

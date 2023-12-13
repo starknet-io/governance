@@ -1,5 +1,5 @@
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
-
+import useIsMobile from "src/hooks/useIsMobile";
 export { LayoutDefault };
 import {
   Box,
@@ -103,19 +103,7 @@ function LayoutDefault(props: Props) {
 
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 567);
-    };
-
-    checkIfMobile();
-
-    window.addEventListener('resize', checkIfMobile);
-
-    return () => window.removeEventListener('resize', checkIfMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
 

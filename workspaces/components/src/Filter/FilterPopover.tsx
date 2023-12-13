@@ -20,6 +20,7 @@ import {
   FilterActionButtons,
   FilterActionButtonsProps,
 } from "./FilterActionButtons";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 
 import { FiltersIcon } from "src/Icons";
 import { IconButtonWithBadge } from "src/IconButton/IconButton";
@@ -62,7 +63,7 @@ export const FilterPopoverButton = (props: FilterPopoverButtonProps) => {
 
 export const FilterPopoverIcon = (props: FilterPopoverButtonProps) => {
   const { selected, badgeContent } = props;
-  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
+  const isMobile = useIsMobile();
   return (
     <PopoverTrigger>
       <IconButtonWithBadge

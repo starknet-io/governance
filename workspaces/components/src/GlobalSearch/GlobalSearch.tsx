@@ -14,6 +14,7 @@ import {
   Show,
 } from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import {
   ChangeEvent,
   Dispatch,
@@ -106,7 +107,7 @@ export function GlobalSearch({
     };
   }, []);
 
-  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
+  const isMobile = useIsMobile();
 
   return (
     <Box onClick={handleSearchClick} cursor="pointer">
