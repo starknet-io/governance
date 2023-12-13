@@ -182,8 +182,6 @@ export function Page() {
     },
   );
 
-  console.log(vote?.data, votes?.data, vp);
-
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
   const delegation = useDelegateRegistryDelegation({
@@ -303,7 +301,6 @@ export function Page() {
           : {},
     };
   });
-  console.log(pastVotesWithUserInfo);
   const comments = trpc.comments.getProposalComments.useQuery({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
@@ -951,8 +948,6 @@ export function Page() {
                     ? `Current results`
                     : "Final Results"}
                 </Heading>
-
-                {console.log(data?.proposal)}
 
                 {data?.proposal?.choices.map((choice, index) => {
                   const totalVotes = data?.proposal?.scores?.reduce(
