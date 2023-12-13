@@ -365,7 +365,7 @@ export function Page() {
 
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingSocials = !delegateResponse.isFetched;
-  const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
+  const isLoadingGqlResponse = !gqlResponse.data || gqlResponse.loading;
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
@@ -739,7 +739,7 @@ export function Page() {
             <Heading mb="24px" color="content.accent.default" variant="h3">
               Comments
             </Heading>
-            {isLoadingGqlResponse ? (
+            {delegateCommentsResponse?.isLoading ? (
               // Skeleton representation for loading state
               <Box display="flex" flexDirection="column" gap="20px">
                 <Skeleton height="60px" width="100%" />
