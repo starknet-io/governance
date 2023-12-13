@@ -108,7 +108,11 @@ export function Page() {
       },
     },
   );
-  const { data: vp, loading: isVotingPowerLoading, refetch: refetchVotingProposal } = useQuery(
+  const {
+    data: vp,
+    loading: isVotingPowerLoading,
+    refetch: refetchVotingProposal,
+  } = useQuery(
     gql(`query VpProposal($voter: String!, $space: String!, $proposal: String) {
       vp(voter: $voter, space: $space, proposal: $proposal) {
         vp
@@ -178,7 +182,7 @@ export function Page() {
     },
   );
 
-  console.log(vote?.data, votes?.data, vp)
+  console.log(vote?.data, votes?.data, vp);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -443,7 +447,12 @@ export function Page() {
 
   return (
     <>
-      <Modal title="Confirm Vote" isOpen={isOpen} onClose={() => setIsOpen(false)} size="md">
+      <Modal
+        title="Confirm Vote"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        size="md"
+      >
         <VoteReview choice={currentChoice} voteCount={vp?.vp?.vp as number} />
         <FormControl id="comment" mt="standard.xl">
           <FormLabel fontSize="14px" color={"content.default.default"}>
@@ -827,6 +836,8 @@ export function Page() {
                 </Heading>
               ) : null}
               {vp?.vp?.vp === 0 &&
+                user &&
+                data?.proposal?.state !== "closed" &&
                 !isVotingPowerLoading &&
                 !shouldShowHasDelegated && (
                   <>
