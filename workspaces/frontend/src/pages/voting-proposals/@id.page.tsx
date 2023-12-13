@@ -941,6 +941,8 @@ export function Page() {
                     : "Final Results"}
                 </Heading>
 
+                {console.log(data?.proposal)}
+
                 {data?.proposal?.choices.map((choice, index) => {
                   const totalVotes = data?.proposal?.scores?.reduce(
                     (a, b) => a! + b!,

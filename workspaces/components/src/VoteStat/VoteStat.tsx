@@ -22,8 +22,8 @@ const formatPercentage = (num: number) => {
   return num % 1 === 0 ? num.toFixed(0) : num.toFixed(2);
 };
 const getVariantKey = (type: string): "For" | "Against" | "Abstain" => {
-  if (type.includes("Yes")) return "For";
-  if (type.includes("No")) return "Against";
+  if (type.includes("Yes") || type.includes("For")) return "For";
+  if (type.includes("No") || type.includes("Against")) return "Against";
   return "Abstain"; // Default case
 };
 
