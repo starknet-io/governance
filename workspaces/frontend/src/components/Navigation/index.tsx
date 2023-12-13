@@ -43,9 +43,10 @@ export const NavigationMenu = ({
 }: NavigationMenuProps) => {
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
+  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
   return (
     <>
-      <Flex flexDirection={"column"} justifyContent="space-between" height="100%" flex={1}>
+      <Flex flexDirection={"column"} justifyContent="space-between" height="100%" overflowY={isMobile ? "scroll" : "auto"} flex={1}>
         <NavGroup align="start">
           <Show breakpoint="(max-width: 834px)">
             <Box alignItems={"flex-start"} justifyContent={"center"}>
