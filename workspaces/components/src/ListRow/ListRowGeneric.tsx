@@ -293,7 +293,7 @@ const CommentSummary = ({
     : "Unknown date";
 
   return (
-    <Flex flexDirection="row" flex={1} alignItems="end">
+    <Flex flexDirection="row" flex={1} alignItems="end" width="100%">
       <Flex
         flexDirection="column"
         gap="standard.base"

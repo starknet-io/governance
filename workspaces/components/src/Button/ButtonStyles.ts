@@ -25,9 +25,9 @@ export const buttonTheme = {
     },
     condensed: {
       minWidth: "36px",
-      px: "condensed.sm",
+      px: "standard.sm",
       borderRadius: "condensed.base",
-      py: "condensed.xs",
+      py: "standard.xs",
       height: "36px",
       maxWidth: "100%",
       svg: {
