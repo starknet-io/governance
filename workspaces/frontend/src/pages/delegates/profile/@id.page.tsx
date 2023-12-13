@@ -739,7 +739,7 @@ export function Page() {
             <Heading mb="24px" color="content.accent.default" variant="h3">
               Comments
             </Heading>
-            {isLoadingGqlResponse ? (
+            {delegateCommentsResponse?.isLoading ? (
               // Skeleton representation for loading state
               <Box display="flex" flexDirection="column" gap="20px">
                 <Skeleton height="60px" width="100%" />

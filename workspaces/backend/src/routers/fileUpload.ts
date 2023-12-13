@@ -6,8 +6,8 @@ import { z } from 'zod';
 const s3 = new AWS.S3({
   endpoint: new AWS.Endpoint('https://sfo3.digitaloceanspaces.com'),
   credentials: {
-    accessKeyId: 'DO00RDWHK4NH3DBV7HWZ',
-    secretAccessKey: '2TrVL5bbxufmfSGK2frzsaG3lHLQlkDbeODshfdTxH8'
+    accessKeyId: process.env.DIGITAL_OCEAN_ACCESS_KEY!,
+    secretAccessKey: process.env.DIGITAL_SECRET_OCEAN_ACCESS_KEY!,
   }
 });
 

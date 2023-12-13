@@ -21,7 +21,6 @@ export function Page() {
   const code = urlParams ? urlParams.get("code") : "";
   const oauthToken = urlParams ? urlParams.get("oauth_token") : "";
   const oauthVerifier = urlParams ? urlParams.get("oauth_verifier") : "";
-  console.log(oauthToken, oauthVerifier);
   const stateObject =
     urlParams && urlParams.get("state")
       ? JSON.parse(urlParams.get("state") || "")
@@ -55,7 +54,6 @@ export function Page() {
         },
         {
           onSuccess: (res) => {
-            console.log(res);
             navigate(`/delegates/profile/${res.delegateId}`);
           },
           onError: () => {
