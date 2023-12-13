@@ -223,7 +223,7 @@ function LayoutDefault(props: Props) {
             />
           </Flex>
         </Box>
-        <Flex direction="column" flex="1" ml={isMobile ? "0" : "234px"}>
+        <Flex direction="column" flex="1" ml={isMobile ? "0px" : "234px"}>
           {/* //Header  */}
           <Box
             position="fixed"
