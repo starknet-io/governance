@@ -92,20 +92,6 @@ export const NavigationMenu = ({
                 href={item.href}
               />
             ))}
-          </Box>
-          <Text
-            as="span"
-            lineHeight="10px"
-            color="content.support.default"
-            variant="captionSmallUppercase"
-            pt="standard.lg"
-            pr="standard.md"
-            pb="standard.base"
-            pl="standard.xl"
-          >
-            Councils
-          </Text>
-          <Box py="standard.xs" px="standard.sm">
             {councilData
               ?.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""))
               .map((council) => (
@@ -124,7 +110,8 @@ export const NavigationMenu = ({
                     `/councils/${council.slug}`,
                   )}
                 />
-              ))}
+              ))
+            }
           </Box>
           {hasPermission(userRole, [
             ROLES.ADMIN,
