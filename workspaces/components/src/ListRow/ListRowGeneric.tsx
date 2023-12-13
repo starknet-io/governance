@@ -31,7 +31,7 @@ const cellPadding = {
 };
 const Container = ({ children, ...rest }: Props) => {
   return (
-    <Box mt="24px" display="flex" flexDirection="column" {...rest}>
+    <Box mt="standard.xs" display="flex" flexDirection="column" {...rest}>
       {children}
     </Box>
   );
@@ -293,7 +293,14 @@ const CommentSummary = ({
 
   return (
     <Flex flexDirection="row" flex={1} alignItems="end">
-      <Flex flexDirection="column" gap="standard.base" pt="standard.xs" pr="standard.sm" pb="standard.xs">
+      <Flex
+        flexDirection="column"
+        gap="standard.base"
+        pt="standard.xs"
+        pr="standard.sm"
+        pb="standard.xs"
+        width="calc(100% - 64px)"
+      >
         <Box flex="1">
           <Text
             variant="mediumStrong"

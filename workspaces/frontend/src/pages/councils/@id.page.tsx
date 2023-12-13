@@ -265,7 +265,7 @@ export function Page() {
             </Heading>
             {isLoadingGqlResponse ? (
               // Skeleton representation for loading state
-              <Box mt="24px" display="flex" flexDirection="column" gap="20px">
+              <Box mt="standard.xs" display="flex" flexDirection="column" gap="20px">
                 <Skeleton height="60px" width="100%" />
                 <Skeleton height="60px" width="90%" />
                 <Skeleton height="60px" width="80%" />
@@ -297,7 +297,7 @@ export function Page() {
             )}
           </Box>
           <Box mt="24px">
-            <Heading mb="24px" color="content.accent.default" variant="h3">
+            <Heading mb="standard.xs" color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
             {isLoadingGqlResponse ? (
