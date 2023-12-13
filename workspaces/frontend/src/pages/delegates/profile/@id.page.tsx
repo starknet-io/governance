@@ -365,7 +365,7 @@ export function Page() {
 
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingSocials = !delegateResponse.isFetched;
-  const isLoadingGqlResponse = !gqlResponse.data || gqlResponse.loading;
+  const isLoadingGqlResponse = !gqlResponse.data && !gqlResponse.error;
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
