@@ -286,7 +286,7 @@ export function Page() {
           <AppBar.Root>
             <AppBar.Group mobileDirection="row" gap="standard.sm">
               <Box minWidth={"52px"}>
-                <Text variant="mediumStrong">Sort by</Text>
+                <Text variant="mediumStrong" color="content.default.default">Sort by</Text>
               </Box>
               <Select
                 size="sm"
