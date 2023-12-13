@@ -39,6 +39,6 @@ To start the application, follow these steps:
     ```bash
       yarn migration:generate
     ```
-
++
 
 
