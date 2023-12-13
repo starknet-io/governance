@@ -103,7 +103,20 @@ function LayoutDefault(props: Props) {
 
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
-  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 567);
+    };
+
+    checkIfMobile();
+
+    window.addEventListener('resize', checkIfMobile);
+
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
   const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
 
   return (
