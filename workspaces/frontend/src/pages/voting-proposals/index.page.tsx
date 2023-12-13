@@ -103,7 +103,8 @@ export function Proposal({ data }: any) {
         base: "column",
         xl: "row",
       }}
-      alignItems="flex-start"
+      alignItems="center"
+      py="standard.sm"
     >
       <Flex
         flex={{
@@ -120,7 +121,7 @@ export function Proposal({ data }: any) {
         }}
         width="100%"
       >
-        <ListRow.Title label={data.title} flex={1} />
+        <ListRow.Title label={data.title} flex={1} alignItems="center" />
         <Flex
           display={{ base: "flex" }}
           justifyContent={{

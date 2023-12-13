@@ -1,6 +1,7 @@
 import { Badge, Box, BoxProps, Flex, Icon } from "@chakra-ui/react";
 
 import { Text } from "../Text";
+import { Heading } from "../Heading";
 import {
   format,
   differenceInDays,
@@ -97,9 +98,9 @@ type TitleProps = {
 const Title = ({ label = "", ...rest }: TitleProps) => {
   return (
     <Box flex="1" {...cellPadding} {...rest}>
-      <Text variant="cardBody" noOfLines={1} fontWeight="500">
+      <Heading variant="h5" noOfLines={1} color="content.default.default">
         {label}
-      </Text>
+      </Heading>
     </Box>
   );
 };
