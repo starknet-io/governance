@@ -344,7 +344,7 @@ export function Delegates({
       <>
         <Button
           width={{ base: "100%", md: "auto" }}
-          size="standard"
+          size={isMobile ? "standard" : "condensed"}
           variant="outline"
           onClick={() => {
             if (
@@ -369,7 +369,7 @@ export function Delegates({
             width={{ base: "100%", md: "auto" }}
             as="a"
             href="/delegates/create"
-            size="standard"
+            size={isMobile ? "standard" : "condensed"}
             variant="primary"
           >
             Create delegate profile
@@ -379,7 +379,7 @@ export function Delegates({
             width={{ base: "100%", md: "auto" }}
             as="a"
             href={`/delegates/profile/${delegateId!}`}
-            size="standard"
+            size={isMobile ? "standard" : "condensed"}
             variant="primary"
           >
             View delegate profile
