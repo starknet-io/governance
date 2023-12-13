@@ -132,8 +132,8 @@ export const FilterPopoverContent = (props: FilterPopoverContentProps) => {
       _focusVisible={{ shadow: "outline" }}
     >
       {header && <PopoverHeader srOnly>{header}</PopoverHeader>}
-      <PopoverBody padding="0">{children}</PopoverBody>
-      <PopoverFooter sx={{ borderTop: "none" }}>
+      <PopoverBody padding="0" display="flex" flexDirection="column" gap="standard.xs">{children}</PopoverBody>
+      <PopoverFooter sx={{ borderTop: "none", p: 0, mt: "standard.xs" }}>
         <FilterActionButtons
           onClickCancel={() => {
             onClickCancel?.();

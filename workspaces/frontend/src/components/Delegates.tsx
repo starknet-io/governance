@@ -11,6 +11,7 @@ import {
   useFilterState,
   FilterPopoverIcon,
   Text,
+  Heading,
   EmptyState,
   SkeletonCircle,
   SkeletonText,
@@ -565,18 +566,18 @@ export function Delegates({
                   onClickApply={state.onSubmit}
                   onClickCancel={handleResetFilters}
                 >
-                  <Text mt="4" mb="2" fontWeight="bold">
+                  <Heading variant="h5">
                     Filters
-                  </Text>
+                  </Heading>
                   <CheckboxFilter
                     hideLabel
                     value={state.value}
                     onChange={(v) => state.onChange(v)}
                     options={delegateFilters.options}
                   />
-                  <Text mt="4" mb="2" fontWeight="bold">
+                  <Heading mt="standard.xs" variant="h5">
                     Interests
-                  </Text>
+                  </Heading>
                   <CheckboxFilter
                     hideLabel
                     value={state.value}

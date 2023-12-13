@@ -1,4 +1,5 @@
-import { Button, HStack } from "@chakra-ui/react";
+import { HStack } from "@chakra-ui/react";
+import { Button } from "src/Button";
 
 export type FilterActionButtonsProps = {
   onClickCancel?: VoidFunction;
@@ -11,14 +12,14 @@ export const FilterActionButtons = (props: FilterActionButtonsProps) => {
   return (
     <HStack spacing="standard.sm" justify="flex-end">
       <Button
-        size="sm"
-        variant="tertiary"
+        size="condensed"
+        variant="ghost"
         onClick={onClickCancel}
         isDisabled={isCancelDisabled}
       >
         Cancel
       </Button>
-      <Button size="sm" colorScheme="blue" onClick={onClickApply}>
+      <Button size="condensed" colorScheme="blue" onClick={onClickApply}>
         Save
       </Button>
     </HStack>
