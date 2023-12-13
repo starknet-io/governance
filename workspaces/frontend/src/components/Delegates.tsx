@@ -35,6 +35,8 @@ import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import { useCheckBalance } from "./useCheckBalance";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -302,6 +304,7 @@ export function Delegates({
   const delegates =
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
   const { user } = usePageContext();
+  const { checkUserBalance } = useCheckBalance(user?.address as `0x${string}`);
   const userDelegate = trpc.users.isDelegate.useQuery({
     userId: user?.id || "",
   });
@@ -367,8 +370,13 @@ export function Delegates({
         {!delegateId ? (
           <Button
             width={{ base: "100%", md: "auto" }}
-            as="a"
-            href="/delegates/create"
+            onClick={() => {
+              checkUserBalance({
+                onSuccess: () => {
+                  navigate("/delegates/create");
+                },
+              });
+            }}
             size="condensed"
             variant="primary"
           >
