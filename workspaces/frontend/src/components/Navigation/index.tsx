@@ -149,7 +149,7 @@ export const NavigationMenu = ({
           )}
         </NavGroup>
 
-        <Box py="standard.xs" px="standard.sm">
+        <Box py="standard.xs" px="standard.sm" mb="50px">
           <NavGroup align="end">
             {[
               {
