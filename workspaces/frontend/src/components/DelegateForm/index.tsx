@@ -24,7 +24,6 @@ import {
   AgreementModal,
 } from "@yukilabs/governance-components";
 import type { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
-import { useBalanceData } from "src/utils/hooks";
 import { Controller, useForm } from "react-hook-form";
 import { delegateNames } from "../Delegates";
 import { validateStarknetAddress } from "../../utils/helpers";
@@ -33,8 +32,9 @@ import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delega
 import { trpc } from "../../utils/trpc";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { Spinner, useToast } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 import { delegationAgreement } from "../../utils/data";
+import { useCheckBalance } from "../useCheckBalance";
 
 interface DelegateFormProps {
   mode: "create" | "edit";
@@ -55,9 +55,6 @@ type FormValues = {
 };
 
 const interestsValues = interestsEnum.enumValues;
-
-const DELEGATE_CREATION_MINIMUM = 0.00001;
-const DELEGATE_CREATION_TOKEN = "ETH";
 
 export const DelegateForm: React.FC<DelegateFormProps> = ({
   mode,
@@ -145,24 +142,15 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   };
 
   const { data: user } = trpc.users.me.useQuery();
-  const userBalance = useBalanceData(user?.address as `0x${string}`, true);
-  const toast = useToast();
+  const { checkUserBalance } = useCheckBalance(user?.address as `0x${string}`);
 
   useEffect(() => {
-    if (userBalance.isFetched && mode === "create") {
-      if (parseFloat(userBalance?.balance) < DELEGATE_CREATION_MINIMUM) {
-        toast({
-          position: "top-right",
-          title: `Insufficient Balance`,
-          description: `You must have at least ${DELEGATE_CREATION_MINIMUM} ${DELEGATE_CREATION_TOKEN} to create a delegate profile`,
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
+    checkUserBalance({
+      onFail: () => {
         navigate("/delegates");
-      }
-    }
-  }, [userBalance.isFetched]);
+      },
+    });
+  }, [checkUserBalance]);
 
   useEffect(() => {
     if (mode === "edit" && isFetchingDelegateSuccess) {
