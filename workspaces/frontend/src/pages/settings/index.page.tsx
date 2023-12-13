@@ -33,7 +33,7 @@ import { DocumentProps, ROLES } from "src/renderer/types";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
-import { ethers } from "ethers";
+import {ethers, providers} from "ethers";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
 import { Icon, Spinner, Select } from "@chakra-ui/react";
 import {
@@ -45,6 +45,7 @@ import snapshot from "@snapshot-labs/snapshot.js";
 const hub = "https://hub.snapshot.org"; // or https://testnet.snapshot.org for testnet
 const client = new snapshot.Client712(hub);
 import { Web3Provider } from "@ethersproject/providers";
+import {useWalletClient} from "wagmi";
 
 const userRoleValues = userRoleEnum.enumValues;
 
@@ -103,6 +104,7 @@ export function Page() {
     reset: resetAddUserForm,
     formState: { errors: addErrors, isValid: isAddValid },
   } = useForm<RouterInput["users"]["addRoles"]>();
+  const { data: walletClient } = useWalletClient();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageChanged, setImageChanged] = useState<boolean>(false);
   const banUser = trpc.users.banUser.useMutation();
@@ -186,9 +188,6 @@ export function Page() {
   const editRoles = trpc.users.editRoles.useMutation();
   const users = trpc.users.getAll.useQuery();
 
-  const web3 =
-    typeof window !== "undefined" ? new Web3Provider(window.ethereum) : null;
-
   useEffect(() => {
     if (!imageChanged) {
       setImageUrl(user?.profileImage ?? null);
@@ -196,9 +195,9 @@ export function Page() {
   }, [user, imageChanged]);
 
   const tryToUpdateSpace = async () => {
-    if (web3 && space?.space) {
+    if (walletClient && space?.space) {
+      const web3 = new providers.Web3Provider(walletClient.transport);
       const [account] = await web3.listAccounts();
-      console.log(space);
       const spaceToEdit = {
         ...space.space,
       };

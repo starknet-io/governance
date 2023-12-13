@@ -67,7 +67,7 @@ jobs:
       tag: ${{ needs.Build.outputs.tag }}
     environment:
       name: production-frontend
-      url: https://governance.yuki-labs.dev
+      url: https://governance.starknet.io
     steps:
       - name: DigitalOcean App Platform deployment
         uses: digitalocean/app_action@v1.1.5

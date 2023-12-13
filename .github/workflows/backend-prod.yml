@@ -50,7 +50,7 @@ jobs:
       tag: ${{ needs.Build.outputs.tag }}
     environment:
       name: production-backend
-      url: https://api.yuki-labs.dev
+      url: https://api.governance.starknet.io
     steps:
       - name: DigitalOcean App Platform deployment
         uses: digitalocean/app_action@v1.1.5

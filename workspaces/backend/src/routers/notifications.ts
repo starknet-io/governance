@@ -136,7 +136,7 @@ export const notificationsRouter = router({
               text: message,
               'h:X-Mailgun-Variables': JSON.stringify({
                 title: title,
-                url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                url: `https://governance.starknet.io/voting-proposals/${proposalID}`,
                 unsubscribeUrl: `${hostname}subscription/unsubscribe/${confirmationToken}`,
                 startTime: formattedStart,
                 endTime: formattedEnd,
@@ -169,7 +169,7 @@ export const notificationsRouter = router({
               text: message,
               'h:X-Mailgun-Variables': JSON.stringify({
                 title: title,
-                url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                url: `https://governance.starknet.io/voting-proposals/${proposalID}`,
                 unsubscribeUrl: `${hostname}subscription/unsubscribe/${confirmationToken}`,
                 amountFor,
                 amountAgainst,
