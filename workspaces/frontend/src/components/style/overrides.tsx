@@ -87,7 +87,7 @@ padding-inline-end:0;
   .account-control__container.account-control__container--multiwallet-disabled.dynamic-widget-inline-controls__account-control:hover {
     background:transparent;
   }
-  .dynamic-shadow-dom-content div {
+  .dynamic-shadow-dom-content div:not(.modal) {
     transform: none !important;
     z-index: 22222;
   }

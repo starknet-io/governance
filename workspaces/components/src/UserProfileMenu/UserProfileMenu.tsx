@@ -1,3 +1,4 @@
+import { forwardRef, RefObject } from "react";
 import {
   Box,
   Flex,
@@ -32,12 +33,16 @@ interface UserProfileMenuProps {
     profileImage: string | null;
   }) => Promise<any>;
   vp: number;
+  isMenuOpen?: boolean;
   userBalance: any;
   delegatedTo: any;
-  onModalStateChange: (isOpen: boolean) => void;
+  onModalStateChange?: (isOpen: boolean) => void;
   handleUpload?: (file: File) => Promise<string | void> | void;
   userExistsError?: boolean;
   setUsernameErrorFalse?: () => void;
+  handleOpenModal?: () => void;
+  setEditUserProfile?: (value: boolean) => void;
+  setIsMenuOpen?: (value: boolean) => void;
 }
 
 export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
@@ -46,16 +51,9 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   vp,
   userBalance,
   delegatedTo,
-  onModalStateChange,
+  handleOpenModal,
+  setEditUserProfile
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleOpenModal = () => setIsModalOpen(true);
-  const [editUserProfile, setEditUserProfile] = useState(false);
-
-  useEffect(() => {
-    onModalStateChange(isModalOpen);
-  }, [isModalOpen]);
 
   return (
     <>
@@ -66,6 +64,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           icon={<DisconnectWalletIcon />}
           variant="outline"
           onClick={onDisconnect}
+          zIndex={2}
         />
       </Box>
       <VStack spacing={"spacing.md"} align="stretch">
@@ -200,9 +199,9 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           <Button
             variant="secondary"
             size="condensed"
-            onClick={() => {
-              setEditUserProfile(true);
-              handleOpenModal();
+            onClick={(e) => {
+              setEditUserProfile && setEditUserProfile(true);
+              handleOpenModal && handleOpenModal();
             }}
           >
             Edit user profile
@@ -213,26 +212,37 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   );
 };
 
-export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
-  onDisconnect,
-  user,
-  onSave,
-  vp,
-  userBalance,
-  delegatedTo,
-  onModalStateChange,
-  handleUpload,
-  userExistsError = false,
-  setUsernameErrorFalse,
-}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const UserProfileMenuComponent = (
+  {
+    isMenuOpen,
+    onDisconnect,
+    user,
+    onSave,
+    vp,
+    userBalance,
+    delegatedTo,
+    onModalStateChange,
+    handleUpload,
+    userExistsError = false,
+    setUsernameErrorFalse,
+    setIsMenuOpen
+  },
+  ref
+) => {
+  const [isModalOpen, setIsModalOpen] = useState(isMenuOpen);
+  useEffect(() => {
+    setIsModalOpen(isMenuOpen)
+  }, [isMenuOpen])
+
   const isMobile = useIsMobile();
-  const handleCloseModal = () => setIsModalOpen(false);
+  const handleCloseModal = () => {
+    setIsMenuOpen(false);
+  }
   const handleOpenModal = () => setIsModalOpen(true);
   const [editUserProfile, setEditUserProfile] = useState(false);
 
   useEffect(() => {
-    onModalStateChange(isModalOpen);
+    onModalStateChange && onModalStateChange(isModalOpen);
   }, [isModalOpen]);
 
   async function handleSave(data: {
@@ -248,9 +258,9 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
   }
 
   return (
-    <>
+    <div ref={ref}>
       <ProfileInfoModal
-        isOpen={isModalOpen}
+        isOpen={editUserProfile}
         onClose={() => {
           handleCloseModal();
           setEditUserProfile(false);
@@ -261,13 +271,12 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
         userExistsError={userExistsError}
         setUsernameErrorFalse={setUsernameErrorFalse}
       />
-      {editUserProfile ? (
-        <></>
-      ) : isMobile ? <Modal
+      {isMobile ? <Modal
         isCentered
-        isOpen={true}
+        isOpen={isModalOpen}
         onClose={() => {
           handleCloseModal();
+          console.log('false 2')
           setEditUserProfile(false);
         }}
         size="md"
@@ -279,10 +288,10 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
           vp={vp}
           userBalance={userBalance}
           delegatedTo={delegatedTo}
-          onModalStateChange={onModalStateChange}
+          handleOpenModal={handleOpenModal}
+          setEditUserProfile={setEditUserProfile}
         />
-      </Modal> : (
-        <Box
+      </Modal> : isModalOpen && <Box
           p={"standard.xl"}
           borderRadius={"standard.md"}
           bg="surface.cards.default"
@@ -303,9 +312,11 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
             userBalance={userBalance}
             delegatedTo={delegatedTo}
             onModalStateChange={onModalStateChange}
+            setEditUserProfile={setEditUserProfile}
           />
-        </Box>
-      )}
-    </>
+        </Box>}
+    </div>
   );
 };
+
+export const UserProfileMenu = forwardRef<HTMLDivElement, UserProfileMenuProps>(UserProfileMenuComponent);
