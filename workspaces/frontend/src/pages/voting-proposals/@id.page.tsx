@@ -708,7 +708,11 @@ export function Page() {
               </Box>
 
               {data?.proposal?.discussion !== "" ? (
-                <Box height="110px!important" overflow="hidden" mt="standard.2xl">
+                <Box
+                  height="110px!important"
+                  overflow="hidden"
+                  mt="standard.2xl"
+                >
                   <Iframely
                     id={import.meta.env.VITE_APP_IFRAMELY_ID}
                     url={`${data?.proposal?.discussion}`}
@@ -733,7 +737,7 @@ export function Page() {
             >
               Discussion
             </Heading>
-            {user ? (
+            {/* {user ? (
               <FormControl id="delegate-statement">
                 <CommentInput
                   onSend={async (comment) => {
@@ -763,8 +767,8 @@ export function Page() {
                   </Box>
                 </FormControl>
               </Box>
-            )}
-            {comments.data && comments.data.length > 0 ? (
+            )} */}
+            {/* {comments.data && comments.data.length > 0 ? (
               <>
                 <AppBar.Root>
                   <AppBar.Group mobileDirection="row">
@@ -808,7 +812,8 @@ export function Page() {
                 type="comments"
                 title="Add the first comment"
               />
-            )}
+            )} */}
+            <Banner label="Comments are now closed." />
           </VoteLayout.Discussion>
         </VoteLayout.LeftSide>
         <VoteLayout.RightSide>
@@ -845,34 +850,36 @@ export function Page() {
                     </>
                   )}
 
-                {shouldShowHasDelegated && data?.proposal?.state !== "closed" && (
-                  <>
-                    <Heading
-                      color="content.accent.default"
-                      variant="h4"
-                      mb="standard.md"
-                    >
-                      Your vote
-                    </Heading>
-                    <Banner
-                      label={
-                        <>
-                          Your voting power of {userBalance.balance}{" "}
-                          {userBalance.symbol} is currently assigned to delegate{" "}
-                          <Link
-                            fontSize="small"
-                            fontWeight="normal"
-                            href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
-                          >
-                            {truncateAddress(delegation.data! || "")}
-                          </Link>
-                        </>
-                      }
-                    />
+                {shouldShowHasDelegated &&
+                  data?.proposal?.state !== "closed" && (
+                    <>
+                      <Heading
+                        color="content.accent.default"
+                        variant="h4"
+                        mb="standard.md"
+                      >
+                        Your vote
+                      </Heading>
+                      <Banner
+                        label={
+                          <>
+                            Your voting power of {userBalance.balance}{" "}
+                            {userBalance.symbol} is currently assigned to
+                            delegate{" "}
+                            <Link
+                              fontSize="small"
+                              fontWeight="normal"
+                              href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
+                            >
+                              {truncateAddress(delegation.data! || "")}
+                            </Link>
+                          </>
+                        }
+                      />
 
-                    <Divider mb="standard.2xl" />
-                  </>
-                )}
+                      <Divider mb="standard.2xl" />
+                    </>
+                  )}
 
                 {vote.data && vote.data.votes?.[0] && (
                   <>
@@ -1001,7 +1008,9 @@ export function Page() {
                       <VoteComment
                         key={index}
                         author={
-                          vote?.author?.username || vote?.author?.ensName || null
+                          vote?.author?.username ||
+                          vote?.author?.ensName ||
+                          null
                         }
                         address={vote?.voter as string}
                         voted={
@@ -1046,7 +1055,11 @@ export function Page() {
                   top="0"
                 >
                   <PlaceholderImage />
-                  <Heading variant="h4" color="content.default.default" mb="8px">
+                  <Heading
+                    variant="h4"
+                    color="content.default.default"
+                    mb="8px"
+                  >
                     Voting starts{" "}
                     {`${formatDate(
                       data?.proposal?.start ?? 0,
@@ -1059,7 +1072,8 @@ export function Page() {
                     variant="small"
                     color="content.default.default"
                   >
-                    Review the proposal, discuss and debate before voting starts.
+                    Review the proposal, discuss and debate before voting
+                    starts.
                   </Text>
                 </Flex>
               </Box>
