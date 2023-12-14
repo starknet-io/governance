@@ -106,6 +106,16 @@ function LayoutDefault(props: Props) {
 
   const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
 
+  const [windowHeight, setWindowHeight] = useState("100vh");
+  useEffect(() => {
+    const checkWindowHeight = () => {
+      setWindowHeight(window?.innerHeight);
+    };
+    checkWindowHeight();
+    window.addEventListener('resize', checkWindowHeight);
+    return () => window.removeEventListener('resize', checkWindowHeight);
+  }, []);
+
   return (
     <>
       <TallyScript />
@@ -164,7 +174,7 @@ function LayoutDefault(props: Props) {
         isFullHeight
       >
         <DrawerOverlay />
-        <DrawerContent maxHeight={window.innerHeight}>
+        <DrawerContent maxHeight={windowHeight}>
           <Box position="absolute" top="16px" zIndex="12px">
             <IconButton
               aria-label="Close menu"
@@ -178,7 +188,7 @@ function LayoutDefault(props: Props) {
           <Box display={{ base: "none", lg: "flex" }}>
             {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
-          <DrawerBody p="0" mt="60px" height={`calc(${window.innerHeight} - 60px)`}>
+          <DrawerBody p="0" mt="60px" height={`calc(${windowHeight} - 60px)`}>
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
