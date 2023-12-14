@@ -164,7 +164,7 @@ function LayoutDefault(props: Props) {
         isFullHeight
       >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent maxHeight={window.innerHeight}>
           <Box position="absolute" top="16px" zIndex="12px">
             <IconButton
               aria-label="Close menu"
@@ -178,7 +178,7 @@ function LayoutDefault(props: Props) {
           <Box display={{ base: "none", lg: "flex" }}>
             {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
-          <DrawerBody p="0" mt="60px" height="calc(100vh - 60px)">
+          <DrawerBody p="0" mt="60px" height={`calc(${window.innerHeight} - 60px)`}>
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
