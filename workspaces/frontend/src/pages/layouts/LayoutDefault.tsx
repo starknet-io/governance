@@ -109,7 +109,7 @@ function LayoutDefault(props: Props) {
   const [windowHeight, setWindowHeight] = useState("100vh");
   useEffect(() => {
     const checkWindowHeight = () => {
-      setWindowHeight(window?.innerHeight);
+      setWindowHeight(window?.innerHeight.toString());
     };
     checkWindowHeight();
     window.addEventListener('resize', checkWindowHeight);
