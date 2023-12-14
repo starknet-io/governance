@@ -35,6 +35,8 @@ import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import { useCheckBalance } from "./useCheckBalance";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -302,6 +304,7 @@ export function Delegates({
   const delegates =
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
   const { user } = usePageContext();
+  const { checkUserBalance } = useCheckBalance(user?.address as `0x${string}`);
   const userDelegate = trpc.users.isDelegate.useQuery({
     userId: user?.id || "",
   });
@@ -337,8 +340,9 @@ export function Delegates({
         </>
       );
     }
+
     const delegateId = userDelegate?.data?.id;
-    console.log("ss", allDelegates);
+
     return (
       <>
         <Button
@@ -352,7 +356,7 @@ export function Delegates({
               setIsStatusModalOpen(true);
               setStatusTitle("No voting power");
               setStatusDescription(
-                `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+                `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to delegate.`,
               );
               setIsOpen(false);
             } else {
@@ -366,8 +370,13 @@ export function Delegates({
         {!delegateId ? (
           <Button
             width={{ base: "100%", md: "auto" }}
-            as="a"
-            href="/delegates/create"
+            onClick={() => {
+              checkUserBalance({
+                onSuccess: () => {
+                  navigate("/delegates/create");
+                },
+              });
+            }}
             size="condensed"
             variant="primary"
           >
@@ -440,7 +449,7 @@ export function Delegates({
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
-              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+              `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to delegate.`,
             );
             setIsOpen(false);
           } else {
@@ -628,7 +637,7 @@ export function Delegates({
                             setIsStatusModalOpen(true);
                             setStatusTitle("No voting power");
                             setStatusDescription(
-                              `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to vote.`,
+                              `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to delegate.`,
                             );
                             setIsOpen(false);
                           } else {

@@ -8,7 +8,7 @@ import {
   Icon,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "../Button";
 import { Text } from "../Text";
 import {
@@ -28,13 +28,74 @@ type DropdownProps = {
   notifications: any[];
   markAsRead: any;
 };
-export const NotificationsMenu = ({
-  notifications,
-  markAsRead,
-}: DropdownProps) => {
+
+export function useFetchNotifications() {
+  const [notifications, setNotifications] = useState<any>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<any>(null);
+  const markNotificationAsRead =
+    trpc.notifications.markNotificationAsRead.useMutation({});
+
+  // Use trpc hook directly here
+  const notificationsQuery =
+    trpc.notifications.getNotificationsForUser.useQuery(
+      {},
+      {
+        refetchInterval: 10000,
+        refetchIntervalInBackground: true,
+      },
+    );
+
+  const markAsRead = async (notificationId: string) => {
+    // Update local state
+    // Call the backend to update the read status
+    try {
+      await markNotificationAsRead.mutateAsync(
+        {
+          notificationId,
+        },
+        {
+          onSuccess: () => {
+            notificationsQuery.refetch();
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      // Optionally, revert the local state update if the backend call fails
+    }
+  };
+
+  useEffect(() => {
+    // Check for data or error from the query
+    if (notificationsQuery.data) {
+      setNotifications(notificationsQuery.data);
+      // Store notifications to local storage
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify(notificationsQuery.data),
+      );
+      setLoading(false);
+    }
+
+    if (notificationsQuery.error) {
+      setError(notificationsQuery.error);
+      setLoading(false);
+    }
+  }, [notificationsQuery]);
+
+  return { notifications, loading, error, markAsRead };
+}
+export const NotificationsMenu = () => {
+  const {
+    notifications,
+    loading: notificationsLoading,
+    error: notificationsError,
+    markAsRead,
+  } = useFetchNotifications();
   const [isAllSelected, setIsAllSelected] = useState(true);
   const [isUnreadSelected, setIsUnreadSelected] = useState(false);
-  const hasUnread = notifications.some((notification) => !notification.read);
+  const hasUnread = notifications?.some((notification) => !notification.read);
   const { data: proposals } = trpc.proposals.getProposals.useQuery({});
   const email = trpc.subscriptions.getSubscriberEmailAddress.useQuery();
   const subscribeToEmail = trpc.subscriptions.subscribe.useMutation();

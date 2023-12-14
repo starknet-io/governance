@@ -15,6 +15,9 @@ import {
   Text,
   Username,
   Dropdown,
+  Link,
+  ArrowLeftIcon,
+  ArrowRightIcon
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useMemo, useState } from "react";
@@ -79,6 +82,8 @@ export function Page() {
   const isLoading = pagesResp.isLoading;
   const { user: loggedUser } = usePageContext();
   const pageContext = usePageContext();
+  const [previousPage, setPreviousPage] = useState<PageWithChildren | null>(null)
+  const [nextPage, setNextPage] = useState<PageWithChildren | null>(null)
 
   const { data: pagesTree } = trpc.pages.getPagesTree.useQuery();
 
@@ -93,6 +98,36 @@ export function Page() {
       }
     }
   }, [pages]);
+
+  function flattenPages(pages) {
+    let flatPages = [];
+  
+    pages.sort((a, b) => a.orderNumber - b.orderNumber).forEach(page => {
+      flatPages.push(page);
+  
+      if (page.children) {
+        flatPages = flatPages.concat(flattenPages(page.children));
+      }
+    });
+  
+    return flatPages;
+  }
+  
+  useEffect(() => {
+    if (selectedPage && pagesTree) {
+      const sortedPages = flattenPages(pagesTree);
+      const currentPage = sortedPages.find(page => page.slug === selectedPage?.slug);
+      const currentPageIndex = sortedPages.findIndex(page => page.slug === selectedPage?.slug);
+
+      if (currentPage) {
+        const previousPage = currentPageIndex > 0 ? sortedPages[currentPageIndex - 1] : null;
+        const nextPage = currentPageIndex < sortedPages.length - 1 ? sortedPages[currentPageIndex + 1] : null;
+  
+        setPreviousPage(previousPage || null);
+        setNextPage(nextPage || null);
+      }
+    }
+  }, [selectedPage, pagesTree])
 
   useEffect(() => {
     if (!pageContext.routeParams.slug && pages.length > 0) {
@@ -114,6 +149,7 @@ export function Page() {
   return (
     <Grid
       bg="surface.bgPage"
+      h="100%"
       templateColumns={{
         base: "1fr",
         md: "270px 1fr",
@@ -150,8 +186,6 @@ export function Page() {
             base: "standard.md",
             md: "0px",
           }}
-          borderBottom="1px solid"
-          borderColor="border.forms"
         >
           <Stack
             spacing="1px"
@@ -287,7 +321,7 @@ export function Page() {
                 </Stat.Root>
               </Flex>
               <Divider mt="standard.xl" />
-              <Box mt="standard.2xl">
+              <Box mt="standard.2xl" mb="standard.md">
                 <MarkdownRenderer content={selectedPage?.content ?? ""} />
               </Box>
             </Stack>
@@ -308,6 +342,62 @@ export function Page() {
             </Box>
           )}
         </Box>
+        <Flex
+          pt="standard.md"
+          justifyContent={!previousPage ? "flex-end" : "space-between"}
+          alignItems="flex-start"
+          alignSelf="stretch"
+          borderTop="1px solid"
+          borderColor="border.dividers"
+          maxWidth={{ base: "100%", lg: "626px" }}
+          mx="auto"
+        >
+          {previousPage ? <Flex
+            direction="column"
+            alignItems="flex-start"
+            gap="standard.2xs"
+          >
+            <Text variant="captionSmallStrong" color="content.accent.default">Prev</Text>
+            <Flex
+              py="standard.base"
+              px="0"
+              alignItems="center"
+              gap="standard.2xs"
+            >
+              <Link
+                variant="primary"
+                size="medium"
+                onClick={() => selectPage(previousPage)}
+              >
+                <ArrowLeftIcon width="18px" height="18px" />
+                {previousPage.title}
+              </Link>
+            </Flex>
+          </Flex> : null}
+          {nextPage ? <Flex
+            direction="column"
+            alignItems="flex-end"
+            gap="standard.2xs"
+          >
+            <Text variant="captionSmallStrong" color="content.accent.default">Next</Text>
+            <Flex
+              py="standard.base"
+              px="0"
+              alignItems="center"
+              gap="standard.2xs"
+            >
+              <Link
+                variant="primary"
+                size="medium"
+                onClick={() => selectPage(nextPage)}
+                textAlign="right"
+              >
+                {nextPage.title}
+                <ArrowRightIcon width="18px" height="18px" />
+              </Link>
+            </Flex>
+          </Flex> : null}
+        </Flex>
       </Box>
     </Grid>
   );

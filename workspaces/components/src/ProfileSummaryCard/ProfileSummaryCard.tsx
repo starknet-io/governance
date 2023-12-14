@@ -69,10 +69,10 @@ const Profile = ({
       )}
       <Stack spacing={size === "lg" ? "4px" : "2px"}>
         <Heading
-          variant="h3"
-          fontSize={size === "lg" ? "20px" : "16px"}
+          variant="h5"
+          fontSize={size === "lg" ? "20px" : "14px"}
           color="content.accent.default"
-          lineHeight={size === "lg" ? "24px" : "16px"}
+          lineHeight={size === "lg" ? "24px" : "20px"}
         >
           {formattedAddress}
         </Heading>

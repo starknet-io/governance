@@ -28,14 +28,11 @@ import {
   InfoModal,
   Logo,
   ShareDialog,
-  Dropdown,
-  MenuItem,
   SupportModal,
   Text,
   GlobalSearch,
   SearchIcon,
   NotificationsMenu,
-  NotificationItem,
 } from "@yukilabs/governance-components";
 import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
 import { NavigationMenu } from "src/components/Navigation";
@@ -44,13 +41,8 @@ import { extractAndFormatSlug } from "src/utils/helpers";
 import { CloseIcon } from "@dynamic-labs/sdk-react";
 import {
   BannedIcon,
-  BellIcon,
   ConnectWalletIcon,
-  NotificationVotingProposalIcon,
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
-import { useFetchNotifications } from "../../hooks/useNotifications";
-import { truncateAddress } from "@yukilabs/governance-components/src/utils";
-import { Indenticon } from "@yukilabs/governance-components/src/Indenticon";
 
 export interface Props {
   readonly pageContext: PageContext;
@@ -66,13 +58,6 @@ function LayoutDefault(props: Props) {
   const { handleLogOut, setShowAuthFlow } = useDynamicContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBannedModalOpen, setIsBannedModalOpen] = useState(false);
-
-  const {
-    notifications,
-    loading: notificationsLoading,
-    error: notificationsError,
-    markAsRead,
-  } = useFetchNotifications();
 
   useEffect(() => {
     if (user?.banned) {
@@ -127,25 +112,28 @@ function LayoutDefault(props: Props) {
         isOpen={isBannedModalOpen}
         onClose={() => setIsBannedModalOpen(false)}
         title="Your Account Was Banned"
+        size="smBodyMd"
       >
-        <Flex justifyContent="center">
-          <Icon as={BannedIcon} boxSize="104px" />
+        <Flex direction="column" gap="standard.md">
+          <Flex justifyContent="center">
+            <Icon as={BannedIcon} boxSize="104px" />
+          </Flex>
+          <Text size="small">
+            We're sorry to let you know that your account has been suspended for
+            not following our community guidelines.
+            <br />
+            <br />
+            Rest assured, this was done to ensure a safe and respectful space
+            for everyone. If you have any questions or want to appeal, reach out
+            to us through our support channels.
+            <br />
+            <br />
+            Thank you for your understanding.
+          </Text>
+          <Button variant="outline" onClick={() => setIsBannedModalOpen(false)}>
+            Close
+          </Button>
         </Flex>
-        <Text size="small">
-          We're sorry to let you know that your account has been suspended for
-          not following our community guidelines.
-          <br />
-          <br />
-          Rest assured, this was done to ensure a safe and respectful space for
-          everyone. If you have any questions or want to appeal, reach out to us
-          through our support channels.
-          <br />
-          <br />
-          Thank you for your understanding.
-        </Text>
-        <Button variant="outline" onClick={() => setIsBannedModalOpen(false)}>
-          Close
-        </Button>
       </InfoModal>
       <InfoModal
         title="Connect wallet"
@@ -311,13 +299,10 @@ function LayoutDefault(props: Props) {
                 </Box>
                 <Show breakpoint="(min-width: 568px)">
                   {user && (
-                    <NotificationsMenu
-                      notifications={notifications}
-                      markAsRead={markAsRead}
-                    />
+                    <NotificationsMenu />
                   )}
                 </Show>
-                <Show breakpoint="(min-width: 567px)">
+                <Show breakpoint="(min-width: 568px)">
                   <GlobalSearch
                     searchResults={globalSearchResults}
                     onSearchItems={handleGlobalSearchItems}

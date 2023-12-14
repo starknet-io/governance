@@ -245,7 +245,7 @@ export const DelegateCard = ({
                 target="_blank"
                 icon={<DiscordIcon />}
                 {...({
-                  href: `https://discord.com/${discourse}`,
+                  href: `https://discord.com/${discord}`,
                 } as any)}
               />
             )}
