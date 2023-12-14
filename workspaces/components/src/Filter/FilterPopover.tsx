@@ -95,7 +95,7 @@ export const FilterPopoverContent = (props: FilterPopoverContentProps) => {
         {header && <PopoverHeader srOnly>{header}</PopoverHeader>}
         {children}
         <Modal.Footer>
-        <Button
+        {!isCancelDisabled ? <Button
           variant="tertiary"
           onClick={() => {
             onClickCancel?.();
@@ -107,7 +107,7 @@ export const FilterPopoverContent = (props: FilterPopoverContentProps) => {
           }}
         >
           Cancel
-        </Button>
+        </Button> : null}
         <Button
           colorScheme="blue"
           onClick={() => {
