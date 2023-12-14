@@ -165,7 +165,12 @@ type PastVotesProps = {
   title?: string | null;
   body?: string | null;
   voteCount?: number | null;
-  votePreference?: "for" | "against" | "abstain";
+  votePreference?:
+    | "for"
+    | "against"
+    | "abstain"
+    | "Yes, More TPS Daddy 👉👈"
+    | "No, Less TPS Daddy 😔";
 };
 
 const PastVotes = ({
@@ -181,10 +186,17 @@ const PastVotes = ({
     mt: "-2px",
   };
   const renderIconBasedOnVotePreference = () => {
+    console.log("vote preference ", votePreference);
     switch (votePreference) {
       case "for":
         return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
+      case "Yes, More TPS Daddy 👉👈":
+        return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
       case "against":
+        return (
+          <VoteAgainstIcon {...iconProps} boxSize="18px" color="#EC796B" />
+        );
+      case "No, Less TPS Daddy 😔":
         return (
           <VoteAgainstIcon {...iconProps} boxSize="18px" color="#EC796B" />
         );
@@ -197,6 +209,7 @@ const PastVotes = ({
     }
   };
   const formatedVotes = formatVotesAmount(voteCount);
+
   return (
     <Flex
       // pt="standard.base"
@@ -402,7 +415,7 @@ const colors: { [key: string]: string } = {
   Against: "surface.danger.default",
   Abstain: "surface.accentSecondary.default",
   Yes: "surface.success.default",
-  No: " surface.accentSecondary.default",
+  No: "surface.danger.default",
 };
 
 interface VoteResultsProps extends BoxProps {
@@ -418,7 +431,10 @@ const VoteResults: React.FC<VoteResultsProps> = ({
   const total = scores.reduce((a, b) => a + b, 0);
   const noVotes = total === 0;
   const onlyOneVote = total === Math.max(...scores);
-
+  const getColorForKey = (choice: string): string => {
+    const key = choice.split(",")[0].trim(); // Extracts the first word before a comma
+    return colors[key] || "surface.onBg.default"; // Fallback color
+  };
   const toolTipContent = choices
     .map((choice, i) => {
       const rawVotePercentage = (scores[i] / total) * 100;
@@ -457,7 +473,7 @@ const VoteResults: React.FC<VoteResultsProps> = ({
               backgroundColor={
                 noVotes || (onlyOneVote && isNoVote)
                   ? "surface.onBg.default"
-                  : colors[choice]
+                  : getColorForKey(choice)
               }
               width={
                 noVotes
