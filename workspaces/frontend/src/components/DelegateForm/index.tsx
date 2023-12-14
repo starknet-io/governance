@@ -262,7 +262,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     }
   };
 
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   return (
     <>

@@ -88,7 +88,7 @@ function LayoutDefault(props: Props) {
 
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
-  const isMobile = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
 
   const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
 
@@ -182,7 +182,7 @@ function LayoutDefault(props: Props) {
         <Box
           bg="surface.forms.default"
           width="234px"
-          minWidth={isMobile ? "0" : "234px"}
+          minWidth={isTablet ? "0" : "234px"}
           height="100vh"
           display={{ base: "none", lg: "flex" }}
           flexDirection={"column"}
@@ -209,12 +209,12 @@ function LayoutDefault(props: Props) {
             />
           </Flex>
         </Box>
-        <Flex direction="column" flex="1" ml={isMobile ? "0px" : "234px"}>
+        <Flex direction="column" flex="1" ml={isTablet ? "0px" : "234px"}>
           {/* //Header  */}
           <Box
             position="fixed"
             top="0"
-            left={isMobile ? "0" : "234px"}
+            left={isTablet ? "0" : "234px"}
             right="0"
             bg="surface.bgPage"
             zIndex={100}

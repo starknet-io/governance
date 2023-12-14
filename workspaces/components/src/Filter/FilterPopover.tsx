@@ -63,7 +63,7 @@ export const FilterPopoverButton = (props: FilterPopoverButtonProps) => {
 
 export const FilterPopoverIcon = (props: FilterPopoverButtonProps) => {
   const { selected, badgeContent } = props;
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   return (
     <PopoverTrigger>
       <IconButtonWithBadge

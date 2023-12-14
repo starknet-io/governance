@@ -234,7 +234,7 @@ const UserProfileMenuComponent = (
     setIsModalOpen(isMenuOpen)
   }, [isMenuOpen])
 
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const handleCloseModal = () => {
     setIsMenuOpen(false);
   }

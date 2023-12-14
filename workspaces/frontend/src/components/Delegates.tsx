@@ -425,7 +425,7 @@ export function Delegates({
     });
   };
 
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   return (
     <>

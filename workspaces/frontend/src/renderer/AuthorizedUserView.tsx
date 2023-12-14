@@ -23,7 +23,7 @@ const AuthorizedUserView = () => {
   const { handleLogOut } = useDynamicContext();
   const { handleUpload } = useFileUpload();
   const { user } = usePageContext();
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const { data: vp } = useQuery(
     gql(`query Vp($voter: String!, $space: String!, $proposal: String) {
       vp(voter: $voter, space: $space, proposal: $proposal) {

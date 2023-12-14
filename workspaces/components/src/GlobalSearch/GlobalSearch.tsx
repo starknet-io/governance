@@ -107,7 +107,7 @@ export function GlobalSearch({
     };
   }, []);
 
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   return (
     <Box onClick={handleSearchClick} cursor="pointer">

@@ -234,7 +234,7 @@ export function Page() {
     ...filtersState,
   });
 
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   function ActionButtons() {
     if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR])) {
       return null;
