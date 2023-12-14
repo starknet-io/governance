@@ -16,7 +16,7 @@ export const Link = ({
   return (
     <ChakraLink {...rest} target={isExternal ? "_blank" : "_top"}>
       {children}
-      {isExternal && hasArrow && <ExternalLinkIcon ml="2px" />}
+      {isExternal && hasArrow && <ExternalLinkIcon ml="2px" fontSize="14px" mb="1px" />}
     </ChakraLink>
   );
 };

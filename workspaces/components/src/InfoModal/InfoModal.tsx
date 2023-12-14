@@ -1,18 +1,14 @@
 import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
   Stack,
 } from "@chakra-ui/react";
-import { Heading } from "../Heading";
+import { Modal } from "../Modal";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
   title: string;
+  size?: "standard" | "md" | "sm" | "smBodyMd";
 };
 
 export const InfoModal = ({
@@ -20,6 +16,7 @@ export const InfoModal = ({
   children,
   isOpen = false,
   onClose,
+  size = "sm"
 }: Props) => {
   return (
     <Modal
@@ -27,26 +24,14 @@ export const InfoModal = ({
       isOpen={isOpen}
       onClose={onClose}
       isCentered
+      title={title}
+      size={size}
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="xl" overflow="hidden">
-        <ModalCloseButton
-          top="standard.xl"
-          right="standard.xl"
-          size="lg"
-          borderRadius="none"
-          borderBottomLeftRadius="md"
-          color="#4A4A4F"
-        />
-        <ModalBody>
-          <Stack spacing="standard.xl">
-            <Heading textAlign={"center"} pl={8} pr={8} variant="h3" mb="0">
-              {title}
-            </Heading>
-            {children}
-          </Stack>
-        </ModalBody>
-      </ModalContent>
+      <>
+        <Stack spacing="standard.xl">
+          {children}
+        </Stack>
+      </>
     </Modal>
   );
 };

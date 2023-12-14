@@ -1,7 +1,17 @@
 import { z } from 'zod';
 import { delegates } from '../db/schema/delegates';
 import { protectedProcedure, publicProcedure, router } from '../utils/trpc';
-import { eq, and, isNotNull, or, desc, sql, gte, ilike } from 'drizzle-orm';
+import {
+  eq,
+  and,
+  isNotNull,
+  or,
+  desc,
+  sql,
+  gte,
+  ilike,
+  exists,
+} from 'drizzle-orm';
 import { users } from '../db/schema/users';
 import { createInsertSchema } from 'drizzle-zod';
 import { comments } from '../db/schema/comments';
@@ -10,6 +20,7 @@ import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
 import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
+import { socials } from '../db/schema/socials';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -28,10 +39,6 @@ export const delegateRouter = router({
       z.object({
         statement: z.string(),
         interests: z.any(),
-        twitter: z.string(),
-        discord: z.string(),
-        telegram: z.string(),
-        discourse: z.string(),
         understandRole: z.boolean(),
         starknetAddress: z.string(),
         customDelegateAgreementContent: z.optional(z.string()), // Optionally add custom agreement content
@@ -40,20 +47,8 @@ export const delegateRouter = router({
     )
     .mutation(async (opts) => {
       const userAddress = opts.ctx.user?.address;
-      const userId = opts.ctx.user?.id;
       if (!userAddress) {
         throw new Error('User not found');
-      }
-
-      // Check if a delegate with the user’s address already exists.
-      const existingDelegate = await db.query.delegates.findFirst({
-        where: eq(delegates.userId, userId),
-      });
-
-      if (existingDelegate) {
-        throw new Error(
-          'A delegate with the address of the user already exists',
-        );
       }
 
       const user = await db.query.users.findFirst({
@@ -63,7 +58,9 @@ export const delegateRouter = router({
         },
       });
       if (user?.delegationStatement) {
-        throw new Error('You already have a delegate statement');
+        throw new Error(
+          'A delegate with the address of the user already exists',
+        );
       }
 
       // Determine the agreement value
@@ -76,10 +73,6 @@ export const delegateRouter = router({
         .values({
           statement: opts.input.statement,
           interests: opts.input.interests,
-          twitter: opts.input.twitter,
-          telegram: opts.input.telegram,
-          discord: opts.input.discord,
-          discourse: opts.input.discourse,
           understandRole: opts.input.understandRole,
           userId: opts.ctx.user?.id,
           createdAt: new Date(),
@@ -87,7 +80,7 @@ export const delegateRouter = router({
         })
         .returning();
 
-      await Algolia.saveObjectToIndex({
+      Algolia.saveObjectToIndex({
         name: (user?.ensName || user?.address) ?? '',
         type: 'delegate',
         address: user?.address,
@@ -142,6 +135,10 @@ export const delegateRouter = router({
         },
       });
 
+      if (!delegate) {
+        throw new Error('Delegate not found');
+      }
+
       const delegatesVotingInfo = await db.query.delegates.findFirst({
         where: eq(delegates.id, opts.input.id),
         with: {
@@ -156,9 +153,12 @@ export const delegateRouter = router({
         },
       });
 
-      if (!delegate) {
-        throw new Error('Delegate not found');
-      }
+      const delegateSocials: any = await db.query.delegates.findFirst({
+        where: eq(delegates.id, opts.input.id),
+        with: {
+          socials: true,
+        },
+      });
 
       // Now fetch the comments related to the delegate's user ID
       const commentsRelatedToDelegate = await db.query.comments.findMany({
@@ -172,6 +172,10 @@ export const delegateRouter = router({
       return {
         ...delegate,
         comments: commentsRelatedToDelegate,
+        twitter: delegateSocials?.socials?.twitter,
+        discord: delegateSocials?.socials?.discord,
+        telegram: delegateSocials?.socials?.telegram,
+        discourse: delegateSocials?.socials?.discourse,
         customAgreement: delegateWithCustomAgreement?.customAgreement,
         votingInfo: delegatesVotingInfo?.delegateVotes || {},
       };
@@ -234,10 +238,6 @@ export const delegateRouter = router({
         .set({
           statement: opts.input.statement,
           interests: opts.input.interests,
-          twitter: opts.input.twitter,
-          discord: opts.input.discord,
-          telegram: opts.input.telegram,
-          discourse: opts.input.discourse,
           understandRole: !!opts.input.understandRole,
           isKarmaDelegate: false,
           isGovernanceDelegate: true,
@@ -326,7 +326,11 @@ export const delegateRouter = router({
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address),
         with: {
-          delegationStatement: true,
+          delegationStatement: {
+            with: {
+              socials: true,
+            },
+          },
         },
       });
       return user;
@@ -381,16 +385,19 @@ export const delegateRouter = router({
           .select()
           .from(delegates)
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
-          .leftJoin(users, eq(users.id, delegates.userId));
+          .leftJoin(users, eq(users.id, delegates.userId))
+          .leftJoin(socials, eq(socials.delegateId, delegates.id));
 
         // Start with an array of conditions for the AND clause
         const conditions = [];
 
-        // Add conditions based on special filters
         if (appliedSpecialFilters.includes('1_or_more_comments')) {
-          query = query
-            .innerJoin(comments, eq(comments.userId, users.id))
-            .where(isNotNull(comments.id));
+          const commentSubquery = db
+            .select()
+            .from(comments)
+            .where(eq(comments.userId, delegates.userId));
+
+          conditions.push(exists(commentSubquery));
         }
 
         if (appliedSpecialFilters.includes('delegate_agreement')) {
@@ -456,6 +463,10 @@ export const delegateRouter = router({
         if (foundDelegates && foundDelegates.length) {
           let filteredDelegates = foundDelegates.map((foundDelegates: any) => ({
             ...foundDelegates.delegates,
+            twitter: foundDelegates?.delegate_socials?.twitter || null,
+            discord: foundDelegates?.delegate_socials?.discord || null,
+            telegram: foundDelegates?.delegate_socials?.telegram || null,
+            discourse: foundDelegates?.delegate_socials?.discourse || null,
             author: { ...foundDelegates.users },
             votingInfo: { ...foundDelegates.delegate_votes },
             delegateAgreement: !!(
