@@ -170,7 +170,7 @@ export const NavigationMenu = ({
               label="Community links"
               onClick={openSupportModal}
             />
-            <Box as="span" display={{ base: "none", md: "flex" }}>
+            <Box as="span" display="flex">
               <Button
                 variant="feedback"
                 leftIcon={<FeedbackIcon />}

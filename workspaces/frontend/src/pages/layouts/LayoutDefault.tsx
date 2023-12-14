@@ -216,9 +216,8 @@ function LayoutDefault(props: Props) {
           <Logo href="/" />
           <Flex
             flexDirection={"column"}
-            px="standard.sm"
             flex={1}
-            pb="standard.md"
+            pb="standard.xs"
           >
             <NavigationMenu
               pageContext={pageContext}
