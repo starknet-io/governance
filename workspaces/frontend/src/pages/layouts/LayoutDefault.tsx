@@ -253,10 +253,7 @@ function LayoutDefault(props: Props) {
                 />
                 <Show breakpoint="(max-width: 567px)">
                   {user && (
-                    <NotificationsMenu
-                      notifications={notifications}
-                      markAsRead={markAsRead}
-                    />
+                    <NotificationsMenu />
                   )}
                 </Show>
                 {/* <Show breakpoint="(max-width: 567px)">
