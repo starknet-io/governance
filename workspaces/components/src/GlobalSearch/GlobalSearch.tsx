@@ -107,7 +107,7 @@ export function GlobalSearch({
     };
   }, []);
 
-  const { isMobile } = useIsMobile();
+  const { isMobile, isTablet } = useIsMobile();
 
   return (
     <Box onClick={handleSearchClick} cursor="pointer">
@@ -122,7 +122,7 @@ export function GlobalSearch({
           alignItems="center"
           justifyContent="center"
           pointerEvents="none"
-          height={isMobile ? "44px" : "36px"}
+          height={isTablet ? "44px" : "36px"}
           width="auto"
           pl="standard.sm"
           color="inherit"
@@ -131,8 +131,8 @@ export function GlobalSearch({
         </InputLeftElement>
         <Input
           placeholder="Search"
-          width={isMobile ? "100%" : "237px"}
-          height={isMobile ? "44px" : "36px"}
+          width={isTablet ? "100%" : "237px"}
+          height={isTablet ? "44px" : "36px"}
           pointerEvents="none"
           paddingLeft="calc(12px + 20px + 8px)" // icon left p 12px, 20px icon width, 8px gap
           borderRadius="4px"
@@ -142,7 +142,7 @@ export function GlobalSearch({
             },
           }}
         />
-        {!isMobile ? <InputRightElement
+        {!isTablet ? <InputRightElement
           width="32px"
           borderRadius="4px"
           overflow="hidden"

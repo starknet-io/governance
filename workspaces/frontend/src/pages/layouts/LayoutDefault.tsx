@@ -156,7 +156,7 @@ function LayoutDefault(props: Props) {
       </InfoModal>
 
       <Drawer
-        isOpen={isOpen}
+        isOpen={isTablet ? isOpen : false}
         size={{ base: "full", md: "sm" }}
         placement="left"
         onClose={onClose}
@@ -177,7 +177,7 @@ function LayoutDefault(props: Props) {
           <Box display={{ base: "none", lg: "flex" }}>
             {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
-          <DrawerBody p="0" mt="60px" height={`calc(${windowHeight} - 60px)`}>
+          <DrawerBody p="0" mt={{base: "60px", md: "68px"}} height={{base: `calc(${windowHeight}px - 60px)`, md: `calc(${windowHeight}px - 68px)`}}>
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
@@ -301,7 +301,7 @@ function LayoutDefault(props: Props) {
                     <NotificationsMenu />
                   )}
                 </Show>
-                <Show breakpoint="(min-width: 568px)">
+                <Show breakpoint="(min-width: 1079px)">
                   <GlobalSearch
                     searchResults={globalSearchResults}
                     onSearchItems={handleGlobalSearchItems}
@@ -319,7 +319,7 @@ function LayoutDefault(props: Props) {
               </Flex>
             </Flex>
           </Box>
-          <Box as="main" role="main" flex={1} mt="68px">
+          <Box as="main" role="main" flex={1} mt={[0, 0, 0, "68px"]}>
             {children}
           </Box>
         </Flex>
