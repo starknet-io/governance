@@ -1,5 +1,5 @@
 import { DocumentProps, ROLES } from "src/renderer/types";
-
+import useIsMobile from "src/hooks/useIsMobile";
 import {
   Box,
   AppBar,
@@ -17,7 +17,8 @@ import {
   Link,
   Flex,
 } from "@yukilabs/governance-components";
-import { Grid, Select } from "@chakra-ui/react";
+import { Grid, Select, PopoverContent,
+  PopoverBody } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -102,7 +103,8 @@ export function Proposal({ data }: any) {
         base: "column",
         xl: "row",
       }}
-      alignItems="flex-start"
+      alignItems="center"
+      py="standard.sm"
     >
       <Flex
         flex={{
@@ -119,7 +121,7 @@ export function Proposal({ data }: any) {
         }}
         width="100%"
       >
-        <ListRow.Title label={data.title} flex={1} />
+        <ListRow.Title label={data.title} flex={1} alignItems="center" />
         <Flex
           display={{ base: "flex" }}
           justifyContent={{
@@ -233,18 +235,18 @@ export function Page() {
     ...filtersState,
   });
 
+  const { isMobile } = useIsMobile();
   function ActionButtons() {
     if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR])) {
       return null;
     }
-
     return (
       <>
         <Button
           width={{ base: "100%", md: "auto" }}
           as="a"
           href="voting-proposals/create"
-          size="condensed"
+          size={isMobile ? "standard" : "condensed"}
           variant="primary"
         >
           Create proposal
@@ -278,20 +280,21 @@ export function Page() {
           <PageTitle
             learnMoreLink="/learn"
             title="Voting proposals"
+            standard={false}
             description="Starknet delegates vote to approve protocol upgrades on behalf of token holders, influencing the direction of the protocol. "
           />
 
           <AppBar.Root>
-            <AppBar.Group mobileDirection="row">
+            <AppBar.Group mobileDirection="row" gap="standard.sm">
               <Box minWidth={"52px"}>
-                <Text variant="mediumStrong">Sort by</Text>
+                <Text variant="mediumStrong" color="content.default.default">Sort by</Text>
               </Box>
               <Select
                 size="sm"
                 aria-label="All"
                 placeholder="All"
                 rounded="md"
-                height="36px"
+                height={isMobile ? "44px" : "36px"}
                 value={sortBy}
                 onChange={(e) => {
                   setSortBy(e.target.value as SortingTypes);
@@ -318,7 +321,7 @@ export function Page() {
                   onClickApply={state.onSubmit}
                   onClickCancel={handleResetFilters}
                 >
-                  <Text mt="4" mb="2" fontWeight="bold">
+                  <Text mb="standard.sm" fontWeight="bold">
                     Status
                   </Text>
                   <CheckboxFilter
@@ -335,7 +338,7 @@ export function Page() {
             </AppBar.Group>
           </AppBar.Root>
 
-          <Box position={"relative"} mb="24px">
+          <Box position={"relative"}>
             <ListRow.Container>
               {loading ? (
                 <VotingPropsSkeleton
@@ -376,7 +379,7 @@ export function Page() {
               )}
             </ListRow.Container>
           </Box>
-          <Flex justifyContent={"flex-end"} gap="standard.base">
+          <Flex justifyContent={"flex-end"} gap="standard.base" mt="standard.xl">
             <Text pt="1px" color="content.support.default" variant="small">
               Voting proposals powered by{" "}
             </Text>

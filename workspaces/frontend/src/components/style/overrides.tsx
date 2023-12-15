@@ -87,5 +87,34 @@ padding-inline-end:0;
   .account-control__container.account-control__container--multiwallet-disabled.dynamic-widget-inline-controls__account-control:hover {
     background:transparent;
   }
-
+  .dynamic-shadow-dom-content div:not(.modal) {
+    transform: none !important;
+    z-index: 22222;
+  }
+  .dynamic-shadow-dom-content .dynamic-widget-inline-controls__network-picker-list {
+    position: fixed !important;
+    box-shadow: 0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10);
+  }
+  .dynamic-widget-inline-controls__network-picker-list .typography--title {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+    font-family: Poppins,sans-serif;
+    text-align: center;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin-bottom: 0px;
+  }
+  .dynamic-widget-inline-controls__network-picker-list .modal-header {
+    padding-top: 1.5rem;
+  }
+  .dynamic-shadow-dom-content .overlay-card--overlay {
+    background: #23192D1A; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2222; 
+  }
 `;

@@ -57,7 +57,17 @@ export const modalTheme = defineMultiStyleConfig({
   baseStyle: {
     dialog: {
       boxShadow: "0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)",
-      background: "surface.cards.default"
+      background: "surface.cards.default",
+      marginInlineStart: '0 !important',
+      marginInlineEnd: '0 !important',
+      // '@media (max-width: 768px)': {
+      //   width: '100vw',
+      //   maxW: '100vw',
+      //   h: '100vh',
+      //   maxH: '100vh',
+      //   margin: 0,
+      //   borderRadius: 0
+      // },
     },
     overlay: {
       bg: "surface.overlay"

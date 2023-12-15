@@ -11,6 +11,7 @@ import {
   useFilterState,
   FilterPopoverIcon,
   Text,
+  Heading,
   EmptyState,
   SkeletonCircle,
   SkeletonText,
@@ -35,6 +36,7 @@ import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { useCheckBalance } from "./useCheckBalance";
 import { navigate } from "vite-plugin-ssr/client/router";
 
@@ -322,7 +324,7 @@ export function Delegates({
         <>
           <Button
             width={{ base: "100%", md: "auto" }}
-            size="condensed"
+            size={isMobile ? "standard" : "condensed"}
             variant="outline"
             onClick={() => setHelpMessage("connectWalletMessage")}
           >
@@ -331,7 +333,7 @@ export function Delegates({
 
           <Button
             width={{ base: "100%", md: "auto" }}
-            size="condensed"
+            size={isMobile ? "standard" : "condensed"}
             variant="primary"
             onClick={() => setHelpMessage("connectWalletMessage")}
           >
@@ -347,7 +349,7 @@ export function Delegates({
       <>
         <Button
           width={{ base: "100%", md: "auto" }}
-          size="condensed"
+          size={isMobile ? "standard" : "condensed"}
           variant="outline"
           onClick={() => {
             if (
@@ -370,6 +372,7 @@ export function Delegates({
         {!delegateId ? (
           <Button
             width={{ base: "100%", md: "auto" }}
+            size={isMobile ? "standard" : "condensed"}
             onClick={() => {
               checkUserBalance({
                 onSuccess: () => {
@@ -377,7 +380,6 @@ export function Delegates({
                 },
               });
             }}
-            size="condensed"
             variant="primary"
           >
             Create delegate profile
@@ -387,7 +389,7 @@ export function Delegates({
             width={{ base: "100%", md: "auto" }}
             as="a"
             href={`/delegates/profile/${delegateId!}`}
-            size="condensed"
+            size={isMobile ? "standard" : "condensed"}
             variant="primary"
           >
             View delegate profile
@@ -422,6 +424,8 @@ export function Delegates({
       return { ...prevState, offset: newOffset };
     });
   };
+
+  const { isMobile } = useIsMobile();
 
   return (
     <>
@@ -534,11 +538,12 @@ export function Delegates({
           <AppBar.Root>
             <AppBar.Group mobileDirection="row">
               <Box minWidth={"52px"}>
-                <Text variant="mediumStrong">Sort by</Text>
+                <Text variant="mediumStrong" fontWeight="600" color="content.default.default">Sort by</Text>
               </Box>
               <Select
-                size="sm"
-                height="36px"
+                height={isMobile ? "44px" : "36px"}
+                border="1px solid"
+                borderColor="border.forms"
                 aria-label="Random"
                 placeholder="Random"
                 focusBorderColor={"red"}
@@ -570,18 +575,18 @@ export function Delegates({
                   onClickApply={state.onSubmit}
                   onClickCancel={handleResetFilters}
                 >
-                  <Text mt="4" mb="2" fontWeight="bold">
+                  <Heading variant="h5">
                     Filters
-                  </Text>
+                  </Heading>
                   <CheckboxFilter
                     hideLabel
                     value={state.value}
                     onChange={(v) => state.onChange(v)}
                     options={delegateFilters.options}
                   />
-                  <Text mt="4" mb="2" fontWeight="bold">
+                  <Heading mt="standard.xs" variant="h5">
                     Interests
-                  </Text>
+                  </Heading>
                   <CheckboxFilter
                     hideLabel
                     value={state.value}

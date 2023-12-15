@@ -37,7 +37,7 @@ export const IconButtonWithBadge = React.forwardRef(
           top="9px"
           size="iconButtonBadge"
           right="8px"
-          variant="amount"
+          variant="stagnant"
           zIndex={1}
           pointerEvents="none"
         >

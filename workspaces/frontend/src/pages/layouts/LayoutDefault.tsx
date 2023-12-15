@@ -1,5 +1,5 @@
 import { useDynamicContext } from "@dynamic-labs/sdk-react";
-
+import useIsMobile from "src/hooks/useIsMobile";
 export { LayoutDefault };
 import {
   Box,
@@ -88,6 +88,7 @@ function LayoutDefault(props: Props) {
 
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
+  const { isTablet } = useIsMobile();
 
   const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
 
@@ -191,11 +192,12 @@ function LayoutDefault(props: Props) {
         <Box
           bg="surface.forms.default"
           width="234px"
-          minWidth="234px"
+          minWidth={["0", "0", "0", "234px"]}
           height="100vh"
           display={{ base: "none", lg: "flex" }}
           flexDirection={"column"}
-          position="sticky"
+          position="fixed"
+          zIndex={100}
           top="0"
           // overflow={"auto"}
           borderRight="1px solid"
@@ -216,12 +218,12 @@ function LayoutDefault(props: Props) {
             />
           </Flex>
         </Box>
-        <Flex direction="column" flex="1">
+        <Flex direction="column" flex="1" ml={["0", "0", "0", "234px"]}>
           {/* //Header  */}
           <Box
-            position={{ base: "fixed", lg: "sticky" }}
+            position="fixed"
             top="0"
-            left="0"
+            left={["0", "0", "0", "234px"]}
             right="0"
             bg="surface.bgPage"
             zIndex={9999}
@@ -291,7 +293,7 @@ function LayoutDefault(props: Props) {
                 />
               </Box>
               <Flex gap="standard.xs " marginLeft="auto">
-                <Box display={{ base: "none", md: "flex" }}>
+                <Box display={{ base: "flex" }}>
                   <ShareDialog />
                 </Box>
                 <Show breakpoint="(min-width: 568px)">
@@ -317,7 +319,7 @@ function LayoutDefault(props: Props) {
               </Flex>
             </Flex>
           </Box>
-          <Box as="main" role="main" flex={1}>
+          <Box as="main" role="main" flex={1} mt="68px">
             {children}
           </Box>
         </Flex>

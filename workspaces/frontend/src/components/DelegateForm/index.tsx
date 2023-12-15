@@ -34,6 +34,7 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { Spinner } from "@chakra-ui/react";
 import { delegationAgreement } from "../../utils/data";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { useCheckBalance } from "../useCheckBalance";
 
 interface DelegateFormProps {
@@ -260,6 +261,8 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
       setValue("confirmDelegateAgreement", false);
     }
   };
+
+  const { isMobile } = useIsMobile();
 
   return (
     <>
@@ -540,12 +543,28 @@ Conflicts of interest
               </Button>
             </Flex>
           ) : mode === "edit" ? (
-            <Flex justifyContent="flex-end" gap="16px">
+            <Flex
+              justifyContent="flex-end"
+              gap="16px"
+              sx={{
+                '@media (max-width: 768px)': {
+                  gap: "0px",
+                  flexDirection: "column"
+                }
+              }}
+            >
               <Button
                 size="condensed"
                 variant="danger"
                 onClick={onOpenDelete}
                 mr="auto"
+                sx={{
+                  '@media (max-width: 768px)': {
+                    order: 3,
+                    width: "100%",
+                    marginRight: "0"
+                  }
+                }}
               >
                 Delete
               </Button>
@@ -554,11 +573,29 @@ Conflicts of interest
                 size="condensed"
                 variant="ghost"
                 href={`/delegates/profile/${pageContext.routeParams!.id}`}
+                sx={{
+                  '@media (max-width: 768px)': {
+                    marginBottom: "standard.lg",
+                    width: "100%",
+                    order: 2
+                  }
+                }}
               >
                 Cancel
               </Button>
-              <Button type="submit" size="condensed" variant="primary">
-                <Flex alignItems="center" gap={2}>
+              <Button
+                type="submit"
+                size="condensed"
+                variant="primary"
+                sx={{
+                  '@media (max-width: 768px)': {
+                    marginBottom: "standard.sm",
+                    order: 1,
+                    width: "100%"
+                  }
+                }}
+              >
+                 <Flex alignItems="center" gap={2}>
                   {isSubmitting && <Spinner size="sm" />}
                   <div>Save</div>
                 </Flex>

@@ -437,7 +437,7 @@ export function Page() {
   };
 
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegation.data ? delegation.data.toLowerCase() : "",
+    address: delegation?.data ? delegation?.data?.toLowerCase() : "",
   });
 
   if (data == null) return null;
@@ -771,7 +771,7 @@ export function Page() {
             {/* {comments.data && comments.data.length > 0 ? (
               <>
                 <AppBar.Root>
-                  <AppBar.Group mobileDirection="row">
+                  <AppBar.Group mobileDirection="row" gap="standard.sm">
                     <Box minWidth={"52px"}>
                       <Text variant="mediumStrong">Sort by</Text>
                     </Box>

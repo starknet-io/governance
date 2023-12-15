@@ -27,12 +27,13 @@ type MyElement = CustomParagraphElement | BaseElement;
 
 type RenderElementProps = Omit<SlateRenderElementProps, "element"> & {
   element: MyElement;
+  editor?: any;
 };
 
 type RenderLeafProps = Omit<SlateRenderLeafProps, "leaf"> & { leaf: any };
 
 export const Element = (props: RenderElementProps) => {
-  const { attributes, children, element } = props;
+  const { attributes, children, element, editor } = props;
   const style = {};
   //@ts-expect-error error
   switch (element.type as CustomParagraphTypes) {
@@ -125,7 +126,7 @@ export const Element = (props: RenderElementProps) => {
     case "image":
       return <ImageBlock {...props} />;
     case "link":
-      return <LinkBlock {...props} />;
+      return <LinkBlock editor={editor} {...props} />;
     default:
       return (
         <p

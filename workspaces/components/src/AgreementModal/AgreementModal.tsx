@@ -18,6 +18,7 @@ export const AgreementModal = ({ isOpen = false, onClose, content }: Props) => {
       onClose={onClose}
       title="Delegation Agreement"
       overflowY="scroll"
+      fixedHeader={true}
     >
       <Stack spacing="6">
         <MarkdownRenderer content={content || ""} />
