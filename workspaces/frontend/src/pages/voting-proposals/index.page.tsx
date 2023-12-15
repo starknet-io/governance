@@ -208,6 +208,7 @@ export function Page() {
   const [sortBy, setSortBy] = useState<SortingTypes>("desc");
   const { user } = usePageContext();
   const state = useFilterState({
+    defaultValue: statusFilters.defaultValue,
     onSubmit: (filters) => {
       setFiltersState({ ...filtersState, filters });
     },
