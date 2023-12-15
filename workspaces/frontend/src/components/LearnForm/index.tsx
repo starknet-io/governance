@@ -25,7 +25,7 @@ import { useFileUpload } from "src/hooks/useFileUpload";
 import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";
 import { usePageContext } from "../../renderer/PageContextProvider";
-import type { Page } from "@yukilabs/governance-backend/src/db/schema/pages";
+import slugify from "slugify";
 
 type LearnFormProps = {
   mode: "create" | "edit";
@@ -104,7 +104,12 @@ export function LearnForm({ mode }: LearnFormProps) {
 
       savePagesTree.mutate(newItems, {
         onSuccess: () => {
-          navigate(`/learn`);
+          const slug = slugify(data.title ?? '', {
+            replacement: '_',
+            lower: true,
+          }) ?? '';
+          
+          navigate(`/learn/${slug}`);
         },
         onError: (err) => {
           setError(err?.message || "An Error Occurred");
