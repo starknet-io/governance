@@ -8,7 +8,7 @@ export enum Type {
     // UNORDERED_LIST = 'unordered-list',
     ORDERED_LIST = 'ol_list',
     UNORDERED_LIST = 'ul_list',
-    LIST_ITEM = 'list-item',
+    LIST_ITEM = 'list_item',
     LIST_ITEM_TEXT = 'list-item-text',
 }
 

@@ -62,14 +62,14 @@ export const toggleBlock = (editor: Editor, format: CustomParagraphTypes) => {
   if(isList && isActive){
       ListsEditor.unwrapList(editor)
   } 
-  Transforms.unwrapNodes(editor, {
-    match: (n) =>
-      !Editor.isEditor(n) &&
-      SlateElement.isElement(n) &&
-      //@ts-expect-error error
-      LIST_TYPES.includes(n.type),
-    split: true,
-  });
+  // Transforms.unwrapNodes(editor, {
+  //   match: (n) =>
+  //     !Editor.isEditor(n) &&
+  //     SlateElement.isElement(n) &&
+  //     //@ts-expect-error error
+  //     LIST_TYPES.includes(n.type),
+  //   split: true,
+  // });
 
   const type: CustomParagraphTypes = isActive
     ? "paragraph"

@@ -10,6 +10,19 @@ import { ParagraphElement } from "./initialValue";
 import { withListsReact } from '@prezly/slate-lists';
 import { withListsPlugin } from "./withListsPlugin";
 
+function formatString(input) {
+  // Split the input string by hyphen followed by any number of spaces
+  const parts = input.split(/-\s*/);
+
+  // Filter out empty strings and trim each part
+  const formattedParts = parts.filter(part => part.trim() !== '').map(part => part.trim());
+
+  // Join the parts with hyphen and new line
+  const result = formattedParts.map(part => `- ${part}`).join('\n');
+
+  return result;
+}
+
 export function useMarkdownEditor(
   initialValue?: any,
   initialSlateData?: ParagraphElement[],
@@ -33,7 +46,8 @@ export function useMarkdownEditor(
   const [editorValue, setEditorValue] = useState(initialValue);
 
   const handleEditorChange = (value: any[]) => {
-    setEditorValue(convertSlateToMarkdown(value));
+    const convertedValue = formatString(convertSlateToMarkdown(value));
+    setEditorValue(convertedValue);
   };
 
   const clearEditor = () => {
