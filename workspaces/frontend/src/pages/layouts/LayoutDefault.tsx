@@ -98,8 +98,8 @@ function LayoutDefault(props: Props) {
       setWindowHeight(window?.innerHeight.toString());
     };
     checkWindowHeight();
-    window.addEventListener('resize', checkWindowHeight);
-    return () => window.removeEventListener('resize', checkWindowHeight);
+    window.addEventListener("resize", checkWindowHeight);
+    return () => window.removeEventListener("resize", checkWindowHeight);
   }, []);
 
   return (
@@ -177,7 +177,14 @@ function LayoutDefault(props: Props) {
           <Box display={{ base: "none", lg: "flex" }}>
             {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
-          <DrawerBody p="0" mt={{base: "60px", md: "68px"}} height={{base: `calc(${windowHeight}px - 60px)`, md: `calc(${windowHeight}px - 68px)`}}>
+          <DrawerBody
+            p="0"
+            mt={{ base: "60px", md: "68px" }}
+            height={{
+              base: `calc(${windowHeight}px - 60px)`,
+              md: `calc(${windowHeight}px - 68px)`,
+            }}
+          >
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
@@ -188,7 +195,12 @@ function LayoutDefault(props: Props) {
         </DrawerContent>
       </Drawer>
 
-      <Flex width="100%" minHeight="100vh" direction="row" pt={{ base: "60px", lg: "0" }}>
+      <Flex
+        width="100%"
+        minHeight="100vh"
+        direction="row"
+        pt={{ base: "60px", lg: "0" }}
+      >
         <Box
           bg="surface.forms.default"
           width="234px"
@@ -204,11 +216,7 @@ function LayoutDefault(props: Props) {
           borderColor="border.forms"
         >
           <Logo href="/" />
-          <Flex
-            flexDirection={"column"}
-            flex={1}
-            pb="standard.xs"
-          >
+          <Flex flexDirection={"column"} flex={1} pb="standard.xs">
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
@@ -226,7 +234,7 @@ function LayoutDefault(props: Props) {
             left={["0", "0", "0", "234px"]}
             right="0"
             bg="surface.bgPage"
-            zIndex={9999}
+            zIndex={100}
             borderBottom="1px solid"
             borderColor="border.forms"
             height={{ base: "60px", md: "68px" }}
@@ -254,9 +262,7 @@ function LayoutDefault(props: Props) {
                   variant="ghost"
                 />
                 <Show breakpoint="(max-width: 567px)">
-                  {user && (
-                    <NotificationsMenu />
-                  )}
+                  {user && <NotificationsMenu />}
                 </Show>
                 {/* <Show breakpoint="(max-width: 567px)">
                   <IconButton
@@ -297,9 +303,7 @@ function LayoutDefault(props: Props) {
                   <ShareDialog />
                 </Box>
                 <Show breakpoint="(min-width: 568px)">
-                  {user && (
-                    <NotificationsMenu />
-                  )}
+                  {user && <NotificationsMenu />}
                 </Show>
                 <Show breakpoint="(min-width: 1079px)">
                   <GlobalSearch
