@@ -435,8 +435,8 @@ const VoteResults: React.FC<VoteResultsProps> = ({
       <Box
         display="flex"
         flex="100%"
-        maxWidth="108px"
-        width="108px"
+        maxWidth="200px"
+        width="200px"
         gap="2px"
         overflow="hidden"
         {...cellPadding}
