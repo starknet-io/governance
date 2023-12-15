@@ -10,6 +10,7 @@ type Props = {
 };
 
 export const Logo = ({ padding, href = "" }: Props) => {
+  console.log('padding je ', padding)
   return (
     <Flex
       as="a"
