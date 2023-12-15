@@ -238,7 +238,7 @@ export const usersRouter = router({
         },
       });
 
-      if (foundUser?.profileImage || foundUser?.name) {
+      if (foundUser) {
         const delegate = await db.query.delegates.findFirst({
           where: eq(delegates.userId, id),
         });
