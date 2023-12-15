@@ -2,7 +2,7 @@ name: front deployment
 
 on:
   push:
-    branches: ['dev']
+    branches: ['snapshotx-dev']
     paths:
       - 'workspaces/frontend/**'
       - 'workspaces/components/**'
@@ -14,7 +14,7 @@ jobs:
     outputs:
       tag: ${{ steps.meta.outputs.version }}
     environment:
-      name: ${{ github.ref_name == 'dev' && 'development-frontend' || 'review-frontend' }}
+      name: snapshot-frontend
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -58,38 +58,25 @@ jobs:
             VITE_APP_ALGOLIA_APP_ID=${{ secrets.VITE_APP_ALGOLIA_APP_ID }}
             VITE_APP_ALGOLIA_PUBLIC_API_KEY=${{ secrets.VITE_APP_ALGOLIA_PUBLIC_API_KEY }}
             VITE_APP_ALGOLIA_INDEX=${{ vars.VITE_APP_ALGOLIA_INDEX }}
-            VITE_APP_TELEGRAM_BOT_KEY=${{ secrets.VITE_APP_TELEGRAM_BOT_KEY }}
+            VITE_APP_STARKNET_REGISTRY=${{ vars.VITE_APP_STARKNET_REGISTRY }}
+            VITE_APP_SNAPSHOTX_SPACE=${{ vars.VITE_APP_SNAPSHOTX_SPACE }}
+            VITE_APP_SNAPSHOTX_URL=${{ vars.VITE_APP_SNAPSHOTX_URL }}
+            VITE_APP_IPFS_GATEWAY=${{ vars.VITE_APP_IPFS_GATEWAY }}
+            VITE_APP_INFURA_API_KEY=${{ secrets.VITE_APP_INFURA_API_KEY }}
 
-  Deploy-review:
-    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/dev'
+  Deploy-snapshotx:
     needs: Build
     runs-on: ubuntu-latest
     env:
       tag: ${{ needs.Build.outputs.tag }}
     environment:
-      name: review-frontend
-      url: https://review.yuki-labs.dev
+      name: snapshot-frontend
+      url: https://snapshot.yuki-labs.dev
     steps:
       - name: DigitalOcean App Platform deployment
         uses: digitalocean/app_action@v1.1.5
         with:
-          app_name: frontend-review
+          app_name: frontend-snapshot
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'
 
-  Deploy-dev:
-    if:  github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
-    needs: Build
-    runs-on: ubuntu-latest
-    env:
-      tag: ${{ needs.Build.outputs.tag }}
-    environment:
-      name: development-frontend
-      url: https://dev.yuki-labs.dev
-    steps:
-      - name: DigitalOcean App Platform deployment
-        uses: digitalocean/app_action@v1.1.5
-        with:
-          app_name: frontend-development
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'

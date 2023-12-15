@@ -234,7 +234,13 @@ export function Page() {
   });
 
   function ActionButtons() {
-    if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR])) {
+    if (
+      !hasPermission(user?.role, [
+        ROLES.ADMIN,
+        ROLES.SUPERADMIN,
+        ROLES.MODERATOR,
+      ])
+    ) {
       return null;
     }
 
@@ -253,7 +259,7 @@ export function Page() {
     );
   }
 
-  const newProposals = data
+  const newProposals = data;
 
   return (
     <Grid
@@ -357,7 +363,9 @@ export function Page() {
                   }
                 />
               ) : newProposals && newProposals?.length > 0 ? (
-                newProposals.map((item: any) => <Proposal key={item?.id} data={item} />)
+                newProposals.map((item: any) => (
+                  <Proposal key={item?.id} data={item} />
+                ))
               ) : (
                 <Box position="absolute" inset="0">
                   <EmptyState

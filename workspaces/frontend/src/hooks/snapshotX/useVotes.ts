@@ -31,7 +31,7 @@ export function useVotes({
   }
   const { data, loading, refetch, error } = useQuery(GET_VOTES_QUERY, {
     variables,
-    skip: !toSkip || !toSkip.length,
+    skip: !toSkip || !toSkip?.toString()?.length,
     context: { clientName: "snapshotX" }, // Adding context to route the query to the second link
   });
 

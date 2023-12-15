@@ -6,9 +6,11 @@ import { getVotingPowerCalculation } from "./helpers";
 export function useVotingPower({
   address,
   proposal,
+  timestamp,
 }: {
   address?: string | null;
   proposal?: string;
+  timestamp?: number | null;
 }) {
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
 
@@ -42,7 +44,7 @@ export function useVotingPower({
           spaceObj.space.strategies_params,
           strategiesMetadata,
           address,
-          1700667132,
+          timestamp ? timestamp : Math.floor(Date.now() / 1000),
         );
         const parsedData = vpData
           ? vpData.reduce((acc, strategy) => {
@@ -61,7 +63,7 @@ export function useVotingPower({
     }
 
     fetchVotingPower();
-  }, [address, spaceObj]);
+  }, [address, spaceObj, timestamp]);
 
   return {
     data,

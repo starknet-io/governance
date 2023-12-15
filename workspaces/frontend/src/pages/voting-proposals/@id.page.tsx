@@ -69,6 +69,7 @@ import {
 } from "../../clients/clients";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import {
+  parseStrategiesMetadata,
   prepareStrategiesForSignature,
   waitForTransaction,
 } from "../../hooks/snapshotX/helpers";
@@ -96,6 +97,7 @@ export function Page() {
 
   const { data: votingPower, isLoading: votingPowerLoading } = useVotingPower({
     address: walletClient?.account.address as string,
+    timestamp: data?.proposal?.created || null,
   });
 
   const vote = useVotes({
@@ -105,6 +107,7 @@ export function Page() {
   });
 
   const space = useSpace();
+  const parsedVotingStrategies = parseStrategiesMetadata(space?.data?.strategies_parsed_metadata || [])
 
   const votes = useVotes({
     proposal: pageContext.routeParams!.id,
@@ -450,7 +453,8 @@ export function Page() {
         <SummaryItems.Root>
           <SummaryItems.StrategySummary
             strategies={
-              (data?.proposal?.strategies || []).filter((s) => s) as any[]
+              //parseStrategiesToHumanReadableFormat(data?.proposal?.strategies || [])
+              []
             }
           />
           <SummaryItems.LinkItem
@@ -461,7 +465,7 @@ export function Page() {
           />
           <SummaryItems.Item
             label="Voting system"
-            value={`${data?.proposal?.type} voting`}
+            value={parsedVotingStrategies}
           />
           <SummaryItems.CustomDate
             label="Start date"
@@ -778,6 +782,7 @@ export function Page() {
                   </Heading>
                 ) : null}
                 {votingPower === 0 &&
+                  user &&
                   !votingPowerLoading &&
                   !shouldShowHasDelegated && (
                     <>
