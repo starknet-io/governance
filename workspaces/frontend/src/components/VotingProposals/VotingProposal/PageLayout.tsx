@@ -1,4 +1,4 @@
-import { Box, Grid } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
 type RootProps = {
@@ -7,31 +7,36 @@ type RootProps = {
 
 const Root = ({ children }: RootProps) => {
   return (
-    <Grid
-      bg="surface.bgPage"
-      templateColumns={{
-        base: "1fr",
-        lg: "1fr 288px",
-        xl: "1fr 380px",
-      }}
-      templateAreas={{
-        base: `
-          "content"
-          "voting"
-          "discussion"
-        `,
-        lg: `
-          "content voting"
-          "discussion voting"
-        `,
-        xl: `
-          "content voting"
-          "discussion voting"
-        `,
+    <Flex bg="surface.bgPage" flexDirection={{ base: "column", lg: "row" }}>
+      {children}
+    </Flex>
+  );
+};
+
+const LeftSide = ({ children }: RootProps) => {
+  return (
+    <Flex
+      direction="column"
+      flex={1}
+      borderRightWidth={{ base: "none", lg: "1px" }}
+      borderColor="border.forms"
+    >
+      {children}
+    </Flex>
+  );
+};
+
+const RightSide = ({ children }: RootProps) => {
+  return (
+    <Box
+      flexBasis={{
+        base: undefined,
+        lg: "288px",
+        xl: "380px",
       }}
     >
       {children}
-    </Grid>
+    </Box>
   );
 };
 
@@ -50,8 +55,6 @@ const Content = ({ children }: ContentProps) => {
       }}
       pt={{ base: "standard.2xl", lg: "standard.3xl" }}
       pb={{ base: "0" }}
-      borderRightWidth={{ base: "none", lg: "1px" }}
-      borderColor="border.forms"
       maxWidth="100%"
       overflow={"hidden"}
     >
@@ -77,8 +80,6 @@ const Discussion = ({ children }: DiscussionProps) => {
       }}
       pb={{ base: "standard.2xl", lg: "standard.3xl" }}
       pr={{ base: "standard.2xl" }}
-      borderRightWidth={{ base: "none", lg: "1px" }}
-      borderColor="border.forms"
       maxWidth="100%"
       overflow={"hidden"}
     >
@@ -115,4 +116,4 @@ const VoteWidget = ({ children }: WidgetProps) => {
   );
 };
 
-export { Root, Content, Discussion, VoteWidget };
+export { Root, Content, Discussion, VoteWidget, LeftSide, RightSide };

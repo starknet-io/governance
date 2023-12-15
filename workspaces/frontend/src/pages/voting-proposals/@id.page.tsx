@@ -20,7 +20,7 @@ import {
   Text,
   Textarea,
   VoteButton,
-  VoteModal,
+  Modal,
   VoteReview,
   VoteStat,
   StatusModal,
@@ -70,11 +70,10 @@ import {
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import {
   parseStrategiesMetadata,
-  parseStrategiesToHumanReadableFormat,
   prepareStrategiesForSignature,
-  waitForTransaction
+  waitForTransaction,
 } from "../../hooks/snapshotX/helpers";
-import {useStarknetDelegates} from "../../wagmi/StarknetDelegationRegistry";
+import { useStarknetDelegates } from "../../wagmi/StarknetDelegationRegistry";
 const sortByOptions = {
   defaultValue: "date",
   options: [
@@ -119,9 +118,7 @@ export function Page() {
 
   const delegation = useStarknetDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
-    args: [
-      address!,
-    ],
+    args: [address!],
     watch: true,
     enabled: address != null,
   });
@@ -154,11 +151,20 @@ export function Page() {
         strategiesMetadata as any[],
       );
 
+      let convertedChoice = 1;
+
+      if (choice === 2) {
+        convertedChoice = 0;
+      }
+      if (choice === 3) {
+        convertedChoice = 2;
+      }
+
       const params = {
         authenticator: AUTHENTICATORS_ENUM.EVM_SIGNATURE,
         space: space.data.id,
         proposal: pageContext.routeParams.id!,
-        choice,
+        choice: convertedChoice,
         metadataUri: "",
         strategies: preparedStrategies,
       };
@@ -210,7 +216,8 @@ export function Page() {
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   const [commentError, setCommentError] = useState("");
   const hasVoted = vote.data && vote.data.votes?.[0];
-  const canVote = data?.proposal?.state === "active" && votingPower > 0 && !hasVoted
+  const canVote =
+    data?.proposal?.state === "active" && votingPower > 0 && !hasVoted;
   const hasDelegated =
     delegation.isFetched &&
     userBalance.isFetched &&
@@ -380,9 +387,14 @@ export function Page() {
 
   return (
     <>
-      <VoteModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <Modal
+        title="Confirm Vote"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        size="md"
+      >
         <VoteReview choice={currentChoice} voteCount={votingPower as number} />
-        <FormControl id="comment">
+        <FormControl id="comment" mt="standard.xl">
           <FormLabel fontSize="14px" color={"content.default.default"}>
             Reason{" "}
             <Text color="content.support.default" as="span">
@@ -401,15 +413,17 @@ export function Page() {
             onChange={(e) => setComment(e.target.value)}
           />
         </FormControl>
-        <Button
-          type="submit"
-          variant="primary"
-          size="standard"
-          onClick={() => handleVote(currentChoice, comment)}
-        >
-          Submit vote
-        </Button>
-      </VoteModal>
+        <Modal.Footer>
+          <Button
+            type="submit"
+            variant="primary"
+            size="standard"
+            onClick={() => handleVote(currentChoice, comment)}
+          >
+            Submit vote
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <StatusModal
         isOpen={isStatusModalOpen}
         isSuccess={!statusDescription?.length}
@@ -434,6 +448,7 @@ export function Page() {
         title="Snapshot info"
         isOpen={isInfoOpen}
         onClose={() => setIsInfoOpen(false)}
+        size="standard"
       >
         <SummaryItems.Root>
           <SummaryItems.StrategySummary
@@ -462,12 +477,10 @@ export function Page() {
           />
 
           <SummaryItems.LinkItem
-            label="Txn id"
+            label="Txn Id"
             link={`https://testnet.starkscan.co/tx/${data?.proposal?.tx}`}
             linkLabel={
-              data?.proposal?.tx
-                ? truncateAddress(data.proposal.tx)
-                : ""
+              data?.proposal?.tx ? truncateAddress(data.proposal.tx) : ""
             }
             isExternal={true}
           />
@@ -499,495 +512,512 @@ export function Page() {
       </InfoModal>
 
       <VoteLayout.Root>
-        <VoteLayout.Content>
-          <Flex
-            gap="0"
-            direction={{ base: "column" }}
-            color="content.default.default"
-          >
-            <Box mb="standard.2xl" display={{ lg: "none" }}>
-              <BackButton
-                buttonText="Voting proposals"
-                urlStart={["/voting-proposals/"]}
-                href="/voting-proposals "
-                pageContext={pageContext}
-              />
-            </Box>
-            <Flex alignItems="center" width="100%">
-              <Flex flex="1">
-                <Heading
-                  color="content.accent.default"
-                  variant="h2"
-                  mb="standard.md"
-                >
-                  {data?.proposal?.title}
-                </Heading>
-              </Flex>
-
-              <Box marginLeft="auto">
-                <MoreActions>
-                  {!user?.isAuthenticatedWithAWallet ? (
-                    <ChakraButton
-                      variant="ghost"
-                      width={"100%"}
-                      justifyContent={"flex-start"}
-                      padding={0}
-                      minHeight={"33px"}
-                      paddingLeft={"10px"}
-                      fontWeight={"400"}
-                      textColor={"#1a1523"}
-                      onClick={() => setHelpMessage("connectWalletMessage")}
-                    >
-                      Report
-                    </ChakraButton>
-                  ) : (
-                    <ChakraButton
-                      variant="ghost"
-                      data-tally-open="mKx1xD"
-                      data-tally-emoji-text="👋"
-                      data-tally-emoji-animation="wave"
-                      data-proposal={
-                        typeof window !== "undefined"
-                          ? window.location.href
-                          : ""
-                      }
-                      width={"100%"}
-                      justifyContent={"flex-start"}
-                      padding={0}
-                      minHeight={"33px"}
-                      paddingLeft={"10px"}
-                      fontWeight={"400"}
-                      textColor={"#1a1523"}
-                    >
-                      Report
-                    </ChakraButton>
-                  )}
-                </MoreActions>
-              </Box>
-            </Flex>
+        <VoteLayout.LeftSide>
+          <VoteLayout.Content>
             <Flex
-              gap="standard.sm"
-              flexWrap={"wrap"}
-              rowGap="standard.sm"
-              mb="standard.md"
+              gap="0"
+              direction={{ base: "column" }}
+              color="content.default.default"
             >
-              <Flex gap="standard.sm" paddingTop="0" alignItems="center">
-                <Stat.Root>
-                  <Stat.Status status={data?.proposal?.state} />
-                </Stat.Root>
-                <Text variant="small" color="content.default.default">
-                  •
-                </Text>
-                {/* toDo get user images / display names */}
-                <Username
-                  src={authorInfo?.profileImage || null}
-                  displayName={
-                    authorInfo?.username ||
-                    authorInfo?.ensName ||
-                    truncateAddress(`${data?.proposal?.author}`)
-                  }
-                  address={`${data?.proposal?.author}`}
-                  showTooltip={!authorInfo?.username || !authorInfo?.ensName}
-                  tooltipContent={`${data?.proposal?.author}`}
-                />
-              </Flex>
-              <Flex gap="standard.xs" paddingTop="0" alignItems="center">
-                <Text
-                  display={{ base: "none", md: "inline-block" }}
-                  variant="small"
-                  color="content.default.default"
-                >
-                  •
-                </Text>
-                <Stat.Root>
-                  <Stat.Date
-                    date={
-                      data?.proposal?.start
-                        ? new Date(data?.proposal?.start * 1000)
-                        : undefined
-                    }
-                  />
-                </Stat.Root>
-                <Text variant="small" color="content.default.default">
-                  •
-                </Text>
-                <Stat.Root>
-                  <Stat.Link
-                    href="#discussion"
-                    label={`${commentCount} comments`}
-                  />
-                </Stat.Root>
-                <Text variant="small" color="content.default.default">
-                  •
-                </Text>
-                <Stat.Root>
-                  <Stat.Text label={`Category`} />
-                </Stat.Root>
-              </Flex>
-            </Flex>
-            <Box>
-              <Link
-                as="button"
-                size="small"
-                onClick={() => setIsInfoOpen(true)}
-              >
-                View Snapshot info
-              </Link>
-            </Box>
-
-            {data?.proposal?.discussion && data?.proposal?.discussion.length ? (
-              <Box height="110px!important" overflow="hidden" mt="standard.2xl">
-                <Iframely
-                  id={import.meta.env.VITE_APP_IFRAMELY_ID}
-                  url={`${data?.proposal?.discussion}`}
+              <Box mb="standard.2xl" display={{ lg: "none" }}>
+                <BackButton
+                  buttonText="Voting proposals"
+                  urlStart={["/voting-proposals/"]}
+                  href="/voting-proposals "
+                  pageContext={pageContext}
                 />
               </Box>
-            ) : (
-              <></>
-            )}
-
-            <Box mt="standard.2xl">
-              <MarkdownRenderer content={data?.proposal?.body || ""} />
-            </Box>
-            <Divider my="standard.2xl" />
-          </Flex>
-        </VoteLayout.Content>
-        <VoteLayout.Discussion>
-          <Heading
-            color="content.accent.default"
-            variant="h3"
-            mb="standard.2xl"
-            id="discussion"
-          >
-            Discussion
-          </Heading>
-          {user ? (
-            <FormControl id="delegate-statement">
-              <CommentInput
-                onSend={async (comment) => {
-                  try {
-                    await handleCommentSend(comment);
-                    setCommentError("");
-                  } catch (err) {
-                    setCommentError(err?.message || "");
-                  }
-                }}
-              />
-              {commentError && commentError.length && (
-                <Box mb={6}>
-                  <Banner type="error" variant="error" label={commentError} />
-                </Box>
-              )}
-            </FormControl>
-          ) : (
-            <Box>
-              <FormControl>
-                <Box onClick={() => setHelpMessage("connectWalletMessage")}>
-                  <CommentInput
-                    onSend={async (comment) => {
-                      console.log(comment);
-                    }}
-                  />
-                </Box>
-              </FormControl>
-            </Box>
-          )}
-          {comments.data && comments.data.length > 0 ? (
-            <>
-              <AppBar.Root>
-                <AppBar.Group mobileDirection="row">
-                  <Box minWidth={"52px"}>
-                    <Text variant="mediumStrong">Sort by</Text>
-                  </Box>
-                  <Select
-                    size="sm"
-                    aria-label="Sort by"
-                    focusBorderColor={"red"}
-                    rounded="md"
-                    value={sortBy}
-                    onChange={(e) =>
-                      setSortBy(e.target.value as "upvotes" | "date")
-                    }
+              <Flex alignItems="center" width="100%">
+                <Flex flex="1">
+                  <Heading
+                    color="content.accent.default"
+                    variant="h2"
+                    mb="standard.md"
                   >
-                    <option selected hidden disabled value="">
-                      Sort by
-                    </option>
-                    {sortByOptions.options.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </AppBar.Group>
-              </AppBar.Root>
-              <Box mt="standard.xs">
-                <CommentList
-                  commentsList={comments.data}
-                  onVote={handleCommentVote}
-                  onDelete={handleCommentDelete}
-                  onReply={handleReplySend}
-                  onEdit={handleCommentEdit}
-                />
-              </Box>
-            </>
-          ) : (
-            <EmptyState
-              hasBorder={false}
-              type="comments"
-              title="Add the first comment"
-            />
-          )}
-        </VoteLayout.Discussion>
+                    {data?.proposal?.title}
+                  </Heading>
+                </Flex>
 
-        <VoteLayout.VoteWidget>
-          {data?.proposal?.state === "active" ||
-          data?.proposal?.state === "closed" ? (
-            <>
-              {!user && data?.proposal?.state === "active" && (
-                <Heading
-                  color="content.accent.default"
-                  variant="h4"
-                  mb="standard.md"
+                <Box marginLeft="auto">
+                  <MoreActions>
+                    {!user?.isAuthenticatedWithAWallet ? (
+                      <ChakraButton
+                        variant="ghost"
+                        width={"100%"}
+                        justifyContent={"flex-start"}
+                        padding={0}
+                        minHeight={"33px"}
+                        paddingLeft={"10px"}
+                        fontWeight={"400"}
+                        textColor={"#1a1523"}
+                        onClick={() => setHelpMessage("connectWalletMessage")}
+                      >
+                        Report
+                      </ChakraButton>
+                    ) : (
+                      <ChakraButton
+                        variant="ghost"
+                        data-tally-open="mKx1xD"
+                        data-tally-emoji-text="👋"
+                        data-tally-emoji-animation="wave"
+                        data-proposal={
+                          typeof window !== "undefined"
+                            ? window.location.href
+                            : ""
+                        }
+                        width={"100%"}
+                        justifyContent={"flex-start"}
+                        padding={0}
+                        minHeight={"33px"}
+                        paddingLeft={"10px"}
+                        fontWeight={"400"}
+                        textColor={"#1a1523"}
+                      >
+                        Report
+                      </ChakraButton>
+                    )}
+                  </MoreActions>
+                </Box>
+              </Flex>
+              <Flex
+                gap="standard.sm"
+                flexWrap={"wrap"}
+                rowGap="standard.sm"
+                mb="standard.md"
+              >
+                <Flex gap="standard.sm" paddingTop="0" alignItems="center">
+                  <Stat.Root>
+                    <Stat.Status status={data?.proposal?.state} />
+                  </Stat.Root>
+                  <Text variant="small" color="content.default.default">
+                    •
+                  </Text>
+                  {/* toDo get user images / display names */}
+                  <Username
+                    src={authorInfo?.profileImage || null}
+                    displayName={
+                      authorInfo?.username ||
+                      authorInfo?.ensName ||
+                      truncateAddress(`${data?.proposal?.author}`)
+                    }
+                    address={`${data?.proposal?.author}`}
+                    showTooltip={!authorInfo?.username || !authorInfo?.ensName}
+                    tooltipContent={`${data?.proposal?.author}`}
+                  />
+                </Flex>
+                <Flex gap="standard.xs" paddingTop="0" alignItems="center">
+                  <Text
+                    display={{ base: "none", md: "inline-block" }}
+                    variant="small"
+                    color="content.default.default"
+                  >
+                    •
+                  </Text>
+                  <Stat.Root>
+                    <Stat.Date
+                      date={
+                        data?.proposal?.start
+                          ? new Date(data?.proposal?.start * 1000)
+                          : undefined
+                      }
+                    />
+                  </Stat.Root>
+                  <Text variant="small" color="content.default.default">
+                    •
+                  </Text>
+                  <Stat.Root>
+                    <Stat.Link
+                      href="#discussion"
+                      label={`${commentCount} comments`}
+                    />
+                  </Stat.Root>
+                  <Text variant="small" color="content.default.default">
+                    •
+                  </Text>
+                  <Stat.Root>
+                    <Stat.Text label={`Category`} />
+                  </Stat.Root>
+                </Flex>
+              </Flex>
+              <Box>
+                <Link
+                  as="button"
+                  size="small"
+                  onClick={() => setIsInfoOpen(true)}
                 >
-                  Cast your vote
-                </Heading>
+                  View Snapshot info
+                </Link>
+              </Box>
+
+              {data?.proposal?.discussion &&
+              data?.proposal?.discussion.length ? (
+                <Box
+                  height="110px!important"
+                  overflow="hidden"
+                  mt="standard.2xl"
+                >
+                  <Iframely
+                    id={import.meta.env.VITE_APP_IFRAMELY_ID}
+                    url={`${data?.proposal?.discussion}`}
+                  />
+                </Box>
+              ) : (
+                <></>
               )}
-              {!hasVoted && canVote ? (
-                <Heading
-                  color="content.accent.default"
-                  variant="h4"
-                  mb="standard.md"
-                >
-                  Cast your vote
-                </Heading>
-              ) : null}
-              {votingPower === 0 &&
-                user &&
-                !votingPowerLoading &&
-                !shouldShowHasDelegated && (
+
+              <Box mt="standard.2xl">
+                <MarkdownRenderer content={data?.proposal?.body || ""} />
+              </Box>
+              <Divider my="standard.2xl" />
+            </Flex>
+          </VoteLayout.Content>
+          <VoteLayout.Discussion>
+            <Heading
+              color="content.accent.default"
+              variant="h3"
+              mb="standard.2xl"
+              id="discussion"
+            >
+              Discussion
+            </Heading>
+            {user ? (
+              <FormControl id="delegate-statement">
+                <CommentInput
+                  onSend={async (comment) => {
+                    try {
+                      await handleCommentSend(comment);
+                      setCommentError("");
+                    } catch (err) {
+                      setCommentError(err?.message || "");
+                    }
+                  }}
+                />
+                {commentError && commentError.length && (
+                  <Box mb={6}>
+                    <Banner type="error" variant="error" label={commentError} />
+                  </Box>
+                )}
+              </FormControl>
+            ) : (
+              <Box>
+                <FormControl>
+                  <Box onClick={() => setHelpMessage("connectWalletMessage")}>
+                    <CommentInput
+                      onSend={async (comment) => {
+                        console.log(comment);
+                      }}
+                    />
+                  </Box>
+                </FormControl>
+              </Box>
+            )}
+            {comments.data && comments.data.length > 0 ? (
+              <>
+                <AppBar.Root>
+                  <AppBar.Group mobileDirection="row">
+                    <Box minWidth={"52px"}>
+                      <Text variant="mediumStrong">Sort by</Text>
+                    </Box>
+                    <Select
+                      size="sm"
+                      aria-label="Sort by"
+                      focusBorderColor={"red"}
+                      rounded="md"
+                      value={sortBy}
+                      onChange={(e) =>
+                        setSortBy(e.target.value as "upvotes" | "date")
+                      }
+                    >
+                      <option selected hidden disabled value="">
+                        Sort by
+                      </option>
+                      {sortByOptions.options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </AppBar.Group>
+                </AppBar.Root>
+                <Box mt="standard.xs">
+                  <CommentList
+                    commentsList={comments.data}
+                    onVote={handleCommentVote}
+                    onDelete={handleCommentDelete}
+                    onReply={handleReplySend}
+                    onEdit={handleCommentEdit}
+                  />
+                </Box>
+              </>
+            ) : (
+              <EmptyState
+                hasBorder={false}
+                type="comments"
+                title="Add the first comment"
+              />
+            )}
+          </VoteLayout.Discussion>
+        </VoteLayout.LeftSide>
+        <VoteLayout.RightSide>
+          <VoteLayout.VoteWidget>
+            {data?.proposal?.state === "active" ||
+            data?.proposal?.state === "closed" ? (
+              <>
+                {!user && data?.proposal?.state === "active" && (
+                  <Heading
+                    color="content.accent.default"
+                    variant="h4"
+                    mb="standard.md"
+                  >
+                    Cast your vote
+                  </Heading>
+                )}
+                {!hasVoted && canVote ? (
+                  <Heading
+                    color="content.accent.default"
+                    variant="h4"
+                    mb="standard.md"
+                  >
+                    Cast your vote
+                  </Heading>
+                ) : null}
+                {votingPower === 0 &&
+                  user &&
+                  !votingPowerLoading &&
+                  !shouldShowHasDelegated && (
+                    <>
+                      <Banner label="You cannot vote as it seems you didn’t have any voting power when this Snapshot was taken." />
+                      <Divider mb="standard.2xl" />
+                    </>
+                  )}
+
+                {shouldShowHasDelegated &&
+                  data?.proposal?.state !== "closed" && (
+                    <>
+                      <Heading
+                        color="content.accent.default"
+                        variant="h4"
+                        mb="standard.md"
+                      >
+                        Your vote
+                      </Heading>
+                      <Banner
+                        label={
+                          <>
+                            Your voting power of {userBalance.balance}{" "}
+                            {userBalance.symbol} is currently assigned to
+                            delegate{" "}
+                            <Link
+                              fontSize="small"
+                              fontWeight="normal"
+                              href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
+                            >
+                              {truncateAddress(delegation.data! || "")}
+                            </Link>
+                          </>
+                        }
+                      />
+
+                      <Divider mb="standard.2xl" />
+                    </>
+                  )}
+
+                {vote.data && vote.data.votes?.[0] && (
                   <>
-                    <Banner label="You cannot vote as it seems you didn’t have any voting power when this Snapshot was taken." />
+                    <Heading
+                      color="content.accent.default"
+                      variant="h4"
+                      mb="standard.md"
+                    >
+                      Your vote
+                    </Heading>
+                    <Banner
+                      label={`You voted ${
+                        vote.data.votes[0].choice === 1
+                          ? "For"
+                          : vote.data.votes[0].choice === 2
+                          ? "Against"
+                          : "Abstain"
+                      } using ${vote.data.votes[0].vp} votes`}
+                    />
                     <Divider mb="standard.2xl" />
                   </>
                 )}
+                {(hasVoted || (canVote && user)) &&
+                data?.proposal?.state !== "closed" ? (
+                  <Flex
+                    mb="40px"
+                    gap="standard.sm"
+                    display="flex"
+                    flexDirection={{ base: "column", xl: "row" }}
+                    justifyContent="space-around"
+                  >
+                    {data.proposal?.choices.map((choice, index) => (
+                      <VoteButton
+                        key={choice}
+                        onClick={() => {
+                          setcurrentChoice(index + 1);
+                          setIsOpen(true);
+                        }}
+                        active={vote?.data?.votes?.[0]?.choice === index + 1}
+                        // @ts-expect-error todo
+                        type={choice}
+                        label={`${choice}`}
+                      />
+                    ))}
+                  </Flex>
+                ) : !user && data?.proposal?.state !== "closed" ? (
+                  <Flex
+                    mb="40px"
+                    gap="standard.sm"
+                    display="flex"
+                    flexDirection={{ base: "column", xl: "row" }}
+                    justifyContent="space-around"
+                  >
+                    {data.proposal?.choices.map((choice) => (
+                      <VoteButton
+                        key={choice}
+                        onClick={() => {
+                          setHelpMessage("connectWalletMessage");
+                        }}
+                        // @ts-expect-error todo
+                        type={choice}
+                        label={`${choice}`}
+                      />
+                    ))}
+                  </Flex>
+                ) : null}
 
-              {shouldShowHasDelegated && data?.proposal?.state !== "closed" && (
-                <>
+                <Box>
                   <Heading
                     color="content.accent.default"
                     variant="h4"
                     mb="standard.md"
                   >
-                    Your vote
+                    {data?.proposal?.state === "active"
+                      ? `Current results`
+                      : "Final Results"}
                   </Heading>
-                  <Banner
-                    label={
-                      <>
-                        Your voting power of {userBalance.balance}{" "}
-                        {userBalance.symbol} is currently assigned to delegate{" "}
-                        <Link
-                          fontSize="small"
-                          fontWeight="normal"
-                          href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
-                        >
-                          {truncateAddress(delegation.data! || "")}
-                        </Link>
-                      </>
+
+                  {data?.proposal?.choices.map((choice, index) => {
+                    const totalVotes = data?.proposal?.scores?.reduce(
+                      (a, b) => a! + b!,
+                      0,
+                    );
+                    const voteCount = data?.proposal?.scores![index];
+                    const userVote = false;
+                    const strategies = data?.proposal?.strategies;
+                    return (
+                      <VoteStat
+                        key={choice}
+                        // @ts-expect-error todo
+                        type={choice}
+                        // @ts-expect-error todo
+                        totalVotes={totalVotes}
+                        // @ts-expect-error todo
+                        voteCount={voteCount}
+                        userVote={userVote}
+                        // @ts-expect-error todo
+                        strategies={strategies}
+                      />
+                    );
+                  })}
+                </Box>
+                <Divider
+                  mb="standard.2xl"
+                  mt="standard.2xl"
+                  position="relative"
+                  left={{ base: "-16px", xl: "-24px" }}
+                  width={{ base: "calc(100% + 32px)", xl: "calc(100% + 48px)" }}
+                />
+                <Box mb="standard.2xl">
+                  <Heading
+                    variant="h4"
+                    mb={
+                      votes.data?.votes && votes.data.votes.length > 0
+                        ? "standard.sm"
+                        : "0px"
                     }
-                  />
-
-                  <Divider mb="standard.2xl" />
-                </>
-              )}
-
-              {vote.data && vote.data.votes?.[0] && (
-                <>
-                  <Heading
-                    color="content.accent.default"
-                    variant="h4"
-                    mb="standard.md"
                   >
-                    Your vote
+                    Votes
                   </Heading>
-                  <Banner
-                    label={`You voted ${
-                      vote.data.votes[0].choice === 1
-                        ? "For"
-                        : vote.data.votes[0].choice === 2
-                        ? "Against"
-                        : "Abstain"
-                    } using ${vote.data.votes[0].vp} votes`}
-                  />
-                  <Divider mb="standard.2xl" />
-                </>
-              )}
-              {(hasVoted || (canVote && user)) &&
-              data?.proposal?.state !== "closed" ? (
-                <Flex
-                  mb="40px"
-                  gap="standard.sm"
-                  display="flex"
-                  flexDirection={{ base: "column", xl: "row" }}
-                  justifyContent="space-around"
-                >
-                  {data.proposal?.choices.map((choice, index) => (
-                    <VoteButton
-                      key={choice}
-                      onClick={() => {
-                        setcurrentChoice(index + 1);
-                        setIsOpen(true);
-                      }}
-                      active={vote?.data?.votes?.[0]?.choice === index + 1}
-                      // @ts-expect-error todo
-                      type={choice}
-                      label={`${choice}`}
+                  {showPastVotes ? (
+                    pastVotesWithUserInfo.map((vote, index) => (
+                      <VoteComment
+                        key={index}
+                        author={
+                          vote?.author?.username ||
+                          vote?.author?.ensName ||
+                          null
+                        }
+                        address={vote?.voter as string}
+                        voted={
+                          vote?.choice === 1
+                            ? "For"
+                            : vote?.choice === 2
+                            ? "Against"
+                            : "Abstain"
+                        }
+                        comment={vote?.reason as string}
+                        voteCount={vote?.vp as number}
+                        signature={vote?.ipfs as string}
+                      />
+                    ))
+                  ) : (
+                    <EmptyState
+                      title={`No votes ${
+                        data?.proposal?.state !== "closed" ? "yet" : ""
+                      }`}
+                      type="votesCast"
+                      border={false}
                     />
-                  ))}
-                </Flex>
-              ) : !user && data?.proposal?.state !== "closed" ? (
-                <Flex
-                  mb="40px"
-                  gap="standard.sm"
-                  display="flex"
-                  flexDirection={{ base: "column", xl: "row" }}
-                  justifyContent="space-around"
-                >
-                  {data.proposal?.choices.map((choice) => (
-                    <VoteButton
-                      key={choice}
-                      onClick={() => {
-                        setHelpMessage("connectWalletMessage");
-                      }}
-                      // @ts-expect-error todo
-                      type={choice}
-                      label={`${choice}`}
-                    />
-                  ))}
-                </Flex>
-              ) : null}
+                  )}
+                </Box>
+              </>
+            ) : (
+              <Box
+                display="flex"
+                flexDirection="column"
+                gap="16px"
+                height="100%"
+                // height={data?.proposal?.state === "pending" ? "100vh" : "100%"}
 
-              <Box>
-                <Heading
-                  color="content.accent.default"
-                  variant="h4"
-                  mb="standard.md"
-                >
-                  {data?.proposal?.state === "active"
-                    ? `Current results`
-                    : "Final Results"}
-                </Heading>
-
-                {data?.proposal?.choices.map((choice, index) => {
-                  const totalVotes = data?.proposal?.scores?.reduce(
-                    (a, b) => a! + b!,
-                    0,
-                  );
-                  const voteCount = data?.proposal?.scores![index];
-                  const userVote = false;
-                  const strategies = data?.proposal?.strategies;
-                  return (
-                    <VoteStat
-                      key={choice}
-                      // @ts-expect-error todo
-                      type={choice}
-                      // @ts-expect-error todo
-                      totalVotes={totalVotes}
-                      // @ts-expect-error todo
-                      voteCount={voteCount}
-                      userVote={userVote}
-                      // @ts-expect-error todo
-                      strategies={strategies}
-                    />
-                  );
-                })}
-              </Box>
-              <Divider
-                mb="standard.2xl"
-                mt="standard.2xl"
                 position="relative"
-                left={{ base: "-16px", xl: "-24px" }}
-                width={{ base: "calc(100% + 32px)", xl: "calc(100% + 48px)" }}
-              />
-              <Box mb="standard.2xl">
-                <Heading
-                  variant="h4"
-                  mb={
-                    votes.data?.votes && votes.data.votes.length > 0
-                      ? "standard.sm"
-                      : "0px"
-                  }
-                >
-                  Votes
-                </Heading>
-                {showPastVotes ? (
-                  pastVotesWithUserInfo.map((vote, index) => (
-                    <VoteComment
-                      key={index}
-                      author={
-                        vote?.author?.username || vote?.author?.ensName || null
-                      }
-                      address={vote?.voter as string}
-                      voted={
-                        vote?.choice === 1
-                          ? "For"
-                          : vote?.choice === 2
-                          ? "Against"
-                          : "Abstain"
-                      }
-                      comment={vote?.reason as string}
-                      voteCount={vote?.vp as number}
-                      signature={vote?.ipfs as string}
-                    />
-                  ))
-                ) : (
-                  <EmptyState
-                    title={`No votes ${
-                      data?.proposal?.state !== "closed" ? "yet" : ""
-                    }`}
-                    type="votesCast"
-                    border={false}
-                  />
-                )}
-              </Box>
-            </>
-          ) : (
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap="16px"
-              height="100%"
-              // height={data?.proposal?.state === "pending" ? "100vh" : "100%"}
-
-              position="relative"
-            >
-              <Flex
-                direction="column"
-                height={{ base: "auto", lg: "800px" }}
-                alignItems="center"
-                justifyContent="center"
-                position={{ base: "unset", lg: "sticky" }}
-                top="0"
               >
-                <PlaceholderImage />
-                <Heading variant="h4" color="content.default.default" mb="8px">
-                  Voting starts{" "}
-                  {`${formatDate(
-                    data?.proposal?.start ?? 0,
-                    "yyyy-MM-dd",
-                    true,
-                  )}`}
-                </Heading>
-                <Text
-                  textAlign="center"
-                  variant="small"
-                  color="content.default.default"
+                <Flex
+                  direction="column"
+                  height={{ base: "auto", lg: "800px" }}
+                  alignItems="center"
+                  justifyContent="center"
+                  position={{ base: "unset", lg: "sticky" }}
+                  top="0"
                 >
-                  Review the proposal, discuss and debate before voting starts.
-                </Text>
-              </Flex>
-            </Box>
-          )}
-        </VoteLayout.VoteWidget>
+                  <PlaceholderImage />
+                  <Heading
+                    variant="h4"
+                    color="content.default.default"
+                    mb="8px"
+                  >
+                    Voting starts{" "}
+                    {`${formatDate(
+                      data?.proposal?.start ?? 0,
+                      "yyyy-MM-dd",
+                      true,
+                    )}`}
+                  </Heading>
+                  <Text
+                    textAlign="center"
+                    variant="small"
+                    color="content.default.default"
+                  >
+                    Review the proposal, discuss and debate before voting
+                    starts.
+                  </Text>
+                </Flex>
+              </Box>
+            )}
+          </VoteLayout.VoteWidget>
+        </VoteLayout.RightSide>
       </VoteLayout.Root>
     </>
   );

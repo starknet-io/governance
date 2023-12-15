@@ -9734,6 +9734,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/oauth@npm:^0.9.4":
+  version: 0.9.4
+  resolution: "@types/oauth@npm:0.9.4"
+  dependencies:
+    "@types/node": "*"
+  checksum: eb82393214ddc4e5bff2177cecb80237a7e2562ee94872234dcf822118a6b8bff11efa37e26f98a836b675bc211689272cdecb7d9221a9990dbc5a4b363fc033
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -11228,6 +11237,7 @@ __metadata:
     "@types/jsonwebtoken": ^9.0.2
     "@types/multer": ^1.4.7
     "@types/node": ^20.4.5
+    "@types/oauth": ^0.9.4
     "@types/pg": ^8.10.2
     "@types/turndown": ^5.0.1
     "@types/uuid": ^9.0.7
@@ -11250,6 +11260,7 @@ __metadata:
     multer: ^1.4.5-lts.1
     node-mocks-http: ^1.12.2
     nodemon: ^2.0.22
+    oauth: ^0.10.0
     pg: ^8.11.2
     slugify: ^1.6.6
     superjson: ^1.13.1
@@ -21810,6 +21821,13 @@ __metadata:
     bn.js: 4.11.6
     strip-hex-prefix: 1.0.0
   checksum: 5b8c9dbe7b49dc7a069e5f0ba4e197257c89db11463478cb002fee7a34dc8868636952bd9f6310e5fdf22b266e0e6dffb5f9537c741734718107e90ae59b3de4
+  languageName: node
+  linkType: hard
+
+"oauth@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "oauth@npm:0.10.0"
+  checksum: 68fbcd9fc382985fd6a4856245bb9f78281c08ea238e814288c51e6cfb65e442c9c4eea67d54ec595384eb3f007e7b64ae3b8e67ec309228df44aba64cc9e0c7
   languageName: node
   linkType: hard
 

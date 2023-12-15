@@ -39,6 +39,7 @@ export const GET_PROPOSAL_QUERY = gql`
       start
       quorum
       created
+      tx
       author {
         id
       }
@@ -70,6 +71,7 @@ export const GET_VOTES_QUERY = gql(`
     votes(where: $where) {
       choice
       proposal
+      tx
       voter {
         id
       }

@@ -1,6 +1,7 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
 import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
 import { Text } from "src/Text";
+import { Heading } from "src/Heading";
 import { ArrowDownIcon } from "src/Icons";
 
 type Props = {
@@ -38,16 +39,18 @@ const UserSummary = ({
   return (
     <Box
       fontSize="14px"
-      bg="#FAFAFA"
-      p="16px"
-      border="1px solid #E4E5E7"
+      bg="surface.forms.default"
+      p="standard.md"
+      border="1px solid"
+      borderColor="border.forms"
       borderRadius="8px"
       color="#6C6C75"
       display="flex"
       justifyContent="space-between"
+      boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.04)"
     >
-      <Flex flexDirection="column" gap="8px">
-        <Text color="#6C6C75" as="span">
+      <Flex flexDirection="column" gap="standard.2xs">
+        <Text color="content.default.default" variant="bodyMediumStrong" as="span">
           {text}
         </Text>
         <ProfileSummaryCard.Root>
@@ -59,14 +62,15 @@ const UserSummary = ({
           ></ProfileSummaryCard.Profile>
         </ProfileSummaryCard.Root>
       </Flex>
-      <Flex flexDirection={"column"} alignItems="flex-end" gap="10px">
-        <Text color="#6C6C75" as="span">
+      <Flex flexDirection={"column"} alignItems="flex-end" gap="standard.xs">
+        <Text color="content.default.default" variant="bodyMediumStrong" as="span">
           {isSender && "Available votes"}
           {isReceiver && !isSender && "Delegated votes"}
         </Text>
-        <Text color="#292932" fontSize="16px">
+        <Heading
+          variant="h5">
           {balance} {symbol}
-        </Text>
+        </Heading>
       </Flex>
     </Box>
   );
@@ -79,7 +83,7 @@ const Arrow = () => {
       justifyContent="center"
       alignItems="center"
       width="100%"
-      py="11px"
+      py="standard.xl"
     >
       <Icon as={ArrowDownIcon} color="#6C6C75" boxSize="24px" />
     </Box>
