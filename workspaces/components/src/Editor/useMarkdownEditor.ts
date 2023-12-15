@@ -1,27 +1,35 @@
 import { useEffect, useMemo, useState } from "react";
-import { serialize } from "remark-slate";
-import { unified } from "unified";
 import markdown from "remark-parse";
-import slate from "remark-slate";
-import { withHistory } from "slate-history";
-import { withReact } from "slate-react";
-import { Editor, Transforms, createEditor } from "slate";
+import slate, { serialize } from "remark-slate";
+import { Editor, Transforms } from "slate";
+import { unified } from "unified";
 import { ParagraphElement } from "./initialValue";
+import { createEditorWithPlugins } from "./plugins/createEditorWithPlugins";
+
+function normalizeSlateList(arr: Array<any>) {
+  return [...arr].map((item) => {
+    // Check if the type is 'ol_list' or 'ul_list'
+    if (item.type === "ol_list" || item.type === "ul_list") {
+      // Map the children to a new structure
+      item.children = item.children.map((listItem) => {
+        // Assuming that each list item has only one 'paragraph' child
+        if (listItem.children && listItem.children[0].type === "paragraph") {
+          // Replace the list item's children with the paragraph's children
+          return { ...listItem, children: listItem.children[0].children };
+        }
+        return listItem;
+      });
+    }
+    return item;
+  });
+}
 
 export function useMarkdownEditor(
   initialValue?: any,
   initialSlateData?: ParagraphElement[],
 ) {
   const editor = useMemo(() => {
-    const withInlines = (editor) => {
-      const { isInline } = editor;
-      editor.isInline = (element) => {
-        return element.type === "link" ? true : isInline(element);
-      };
-      return editor;
-    };
-
-    return withInlines(withHistory(withReact(createEditor())));
+    return createEditorWithPlugins();
   }, []);
   useEffect(() => {
     initialSlateData && editor.insertNodes(initialSlateData);
@@ -48,7 +56,7 @@ export function useMarkdownEditor(
 
   const setMarkdownValue = async (value: string) => {
     const result = await convertMarkdownToSlate(value);
-    result && editor.insertNodes(result);
+    result && editor.insertNodes(result, { at: [0] });
     setEditorValue(result);
   };
 
@@ -67,7 +75,7 @@ export function useMarkdownEditor(
           if (err) {
             reject(err);
           } else {
-            resolve(file?.result as ParagraphElement[]);
+            resolve(normalizeSlateList(file?.result as ParagraphElement[]));
           }
         });
     });

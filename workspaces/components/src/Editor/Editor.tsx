@@ -6,14 +6,14 @@ import { Box, Divider } from "@chakra-ui/react";
 import { EditableComponent } from "./EditableComponent";
 import { MarkdownEditorProps } from "./MarkdownEditorProps";
 import { defaultInitialValue } from "./initialValue";
-import { Descendant, createEditor } from "slate";
+import { Descendant } from "slate";
 import MarkButton from "./MarkButton";
 import { useMarkdownEditor } from "./useMarkdownEditor";
 import ImageBlockButton from "./ImageBlockButton";
 import LinkBlockButton from "./LinkBlockButton";
 import { TextTypeButton } from "./TextTypeButton";
 import { MoreButton } from "./MoreButton";
-import { withInlines } from "./hotkeys";
+import { createEditorWithPlugins } from "./plugins/createEditorWithPlugins";
 
 export const MarkdownEditor: React.FC<
   MarkdownEditorProps & {
@@ -36,15 +36,7 @@ export const MarkdownEditor: React.FC<
 }) => {
   const { convertMarkdownToSlate } = useMarkdownEditor("");
   const editor = useMemo(() => {
-    const withInlines = (editor) => {
-      const { isInline } = editor;
-      editor.isInline = (element) => {
-        return element.type === "link" ? true : isInline(element);
-      };
-      return editor;
-    };
-
-    return withInlines(withHistory(withReact(createEditor())));
+    createEditorWithPlugins();
   }, []);
 
   const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
@@ -52,7 +44,7 @@ export const MarkdownEditor: React.FC<
     const data = e.clipboardData?.getData("Text") ?? "";
     
     const mainEditor = customEditor ?? editor;
-    const markdown = await convertMarkdownToSlate(` ${data}`);
+    const markdown = await convertMarkdownToSlate(`${data}`);
     mainEditor?.insertFragment(markdown);
   };
 
