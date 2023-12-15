@@ -689,12 +689,12 @@ export function Page() {
                       label={`${commentCount} comments`}
                     />
                   </Stat.Root>
-                  <Text variant="small" color="content.default.default">
+                  {/* <Text variant="small" color="content.default.default">
                     •
                   </Text>
                   <Stat.Root>
                     <Stat.Text label={`Category`} />
-                  </Stat.Root>
+                  </Stat.Root> */}
                 </Flex>
               </Flex>
               <Box>
