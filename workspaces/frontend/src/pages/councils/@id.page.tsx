@@ -175,7 +175,7 @@ export function Page() {
           >
             {council?.description ? council?.description : ""}
           </Text>
-          {!hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
+          {hasPermission(loggedUser?.role, [ROLES.ADMIN, ROLES.MODERATOR]) ? (
             <Button variant="outline" onClick={handleClick} width="100%">
               Add new post
             </Button>
