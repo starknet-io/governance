@@ -246,7 +246,7 @@ to receive notifications`}
           )}
           <Box top="0px" position="relative">
             <MenuList
-              h="500px"
+              h="calc(100vh - 56px)"
               overflowY="scroll"
               w={"400px"}
               borderRadius="8px"
@@ -317,7 +317,7 @@ to receive notifications`}
                   />
                 ))
               ) : (
-                <Box>
+                <Flex height="calc(100vh - 199px)">
                   <EmptyState
                     type="notifications"
                     hasBorder={false}
@@ -326,7 +326,7 @@ to receive notifications`}
                     } notifications yet`}
                     minHeight="300px"
                   />
-                </Box>
+                </Flex>
               )}
             </MenuList>
           </Box>

@@ -21,6 +21,7 @@ import { db } from '../db/db';
 import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
 import { socials } from '../db/schema/socials';
+import {profanity} from "@2toad/profanity";
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -49,6 +50,10 @@ export const delegateRouter = router({
       const userAddress = opts.ctx.user?.address;
       if (!userAddress) {
         throw new Error('User not found');
+      }
+
+      if (profanity.exists(opts.input.statement)) {
+        throw new Error('Your delegate statement contains inappropriate language.');
       }
 
       const user = await db.query.users.findFirst({
@@ -227,7 +232,11 @@ export const delegateRouter = router({
         userRole !== 'superadmin' &&
         userRole !== 'moderator'
       ) {
-        if (delegate.userId !== userId) throw new Error('Unauthorizeds');
+        if (delegate.userId !== userId) throw new Error('Unauthorized');
+      }
+
+      if (profanity.exists(opts.input.statement)) {
+        throw new Error('Your delegate statement contains inappropriate language.');
       }
       // Determine the agreement value
       const confirmDelegateAgreement = opts.input.customDelegateAgreementContent

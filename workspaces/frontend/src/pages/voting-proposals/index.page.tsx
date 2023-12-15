@@ -138,7 +138,7 @@ export function Proposal({ data }: any) {
             },
           }}
         >
-          <ListRow.CategoryText category={data?.category || ""} />
+          {/* <ListRow.CategoryText category={data?.category || ""} /> */}
           <ListRow.VoteResults
             choices={
               data.choices
@@ -152,11 +152,11 @@ export function Proposal({ data }: any) {
             }
             w={{
               base: "auto",
-              md: "132px",
+              md: "200px",
             }}
             maxW={{
               base: "none",
-              md: "132px",
+              md: "200px",
             }}
             ml={{
               base: "auto",
@@ -210,6 +210,7 @@ export function Page() {
   const [sortBy, setSortBy] = useState<SortingTypes>("desc");
   const { user } = usePageContext();
   const state = useFilterState({
+    defaultValue: statusFilters.defaultValue,
     onSubmit: (filters) => {
       setFiltersState({ ...filtersState, filters });
     },

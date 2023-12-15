@@ -92,6 +92,16 @@ function LayoutDefault(props: Props) {
 
   const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
 
+  const [windowHeight, setWindowHeight] = useState("100vh");
+  useEffect(() => {
+    const checkWindowHeight = () => {
+      setWindowHeight(window?.innerHeight.toString());
+    };
+    checkWindowHeight();
+    window.addEventListener('resize', checkWindowHeight);
+    return () => window.removeEventListener('resize', checkWindowHeight);
+  }, []);
+
   return (
     <>
       <TallyScript />
@@ -153,7 +163,7 @@ function LayoutDefault(props: Props) {
         isFullHeight
       >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent maxHeight={windowHeight}>
           <Box position="absolute" top="16px" zIndex="12px">
             <IconButton
               aria-label="Close menu"
@@ -167,7 +177,7 @@ function LayoutDefault(props: Props) {
           <Box display={{ base: "none", lg: "flex" }}>
             {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
-          <DrawerBody px="12px" py="16px" pt="0" mt="48px">
+          <DrawerBody p="0" mt="60px" height={`calc(${windowHeight} - 60px)`}>
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
@@ -178,7 +188,7 @@ function LayoutDefault(props: Props) {
         </DrawerContent>
       </Drawer>
 
-      <Flex width="100%" minHeight="100vh" direction="row">
+      <Flex width="100%" minHeight="100vh" direction="row" pt={{ base: "60px", lg: "0" }}>
         <Box
           bg="surface.forms.default"
           width="234px"
@@ -196,9 +206,8 @@ function LayoutDefault(props: Props) {
           <Logo href="/" />
           <Flex
             flexDirection={"column"}
-            px="standard.sm"
             flex={1}
-            pb="standard.md"
+            pb="standard.xs"
           >
             <NavigationMenu
               pageContext={pageContext}
@@ -217,7 +226,7 @@ function LayoutDefault(props: Props) {
             left={["0", "0", "0", "234px"]}
             right="0"
             bg="surface.bgPage"
-            zIndex={100}
+            zIndex={9999}
             borderBottom="1px solid"
             borderColor="border.forms"
             height={{ base: "60px", md: "68px" }}
@@ -236,16 +245,20 @@ function LayoutDefault(props: Props) {
             }}
           >
             <Flex gap="standard.xs">
-              <Box display={{ base: "block", lg: "none" }}>
+              <Box display={{ base: "flex", lg: "none" }} gap="standard.base">
                 <IconButton
                   aria-label="Open menu"
                   size="condensed"
-                  // toDo replace with x icon
-                  icon={isOpen ? <HamburgerIcon /> : <HamburgerIcon />}
-                  onClick={onOpen}
+                  icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+                  onClick={isOpen ? onClose : onOpen}
                   variant="ghost"
                 />
                 <Show breakpoint="(max-width: 567px)">
+                  {user && (
+                    <NotificationsMenu />
+                  )}
+                </Show>
+                {/* <Show breakpoint="(max-width: 567px)">
                   <IconButton
                     aria-label="Open menu"
                     size="condensed"
@@ -253,7 +266,7 @@ function LayoutDefault(props: Props) {
                     onClick={() => setIsGlobalSearchOpen(true)}
                     variant="ghost"
                   />
-                </Show>
+                </Show> */}
               </Box>
 
               <Box display={{ base: "none", lg: "block" }}>
@@ -283,14 +296,19 @@ function LayoutDefault(props: Props) {
                 <Box display={{ base: "flex" }}>
                   <ShareDialog />
                 </Box>
-                {user && <NotificationsMenu />}
-                <GlobalSearch
-                  searchResults={globalSearchResults}
-                  onSearchItems={handleGlobalSearchItems}
-                  isOpen={isGlobalSearchOpen}
-                  setIsSearchModalOpen={setIsGlobalSearchOpen}
-                />
-
+                <Show breakpoint="(min-width: 568px)">
+                  {user && (
+                    <NotificationsMenu />
+                  )}
+                </Show>
+                <Show breakpoint="(min-width: 568px)">
+                  <GlobalSearch
+                    searchResults={globalSearchResults}
+                    onSearchItems={handleGlobalSearchItems}
+                    isOpen={isGlobalSearchOpen}
+                    setIsSearchModalOpen={setIsGlobalSearchOpen}
+                  />
+                </Show>
                 <Box display={{ base: "flex" }} marginLeft="auto">
                   {renderDone ? (
                     <DynamicCustomWidget />
