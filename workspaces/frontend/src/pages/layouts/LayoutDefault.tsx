@@ -226,7 +226,7 @@ function LayoutDefault(props: Props) {
             left={["0", "0", "0", "234px"]}
             right="0"
             bg="surface.bgPage"
-            zIndex={9999}
+            zIndex={999}
             borderBottom="1px solid"
             borderColor="border.forms"
             height={{ base: "60px", md: "68px" }}
