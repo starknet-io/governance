@@ -114,8 +114,8 @@ export const UploadImage: React.FC<UploadImageProps> = ({
       key={file.name}
       borderRadius="12px"
       mb={2}
-      mr={2}
       width="100%"
+      maxWidth="398px"
       position="relative"
     >
       <img
