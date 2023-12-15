@@ -48,7 +48,7 @@ export const NavigationMenu = ({
     <>
       <Flex flexDirection={"column"} justifyContent="space-between" height="100%" overflowY={isMobile ? "scroll" : "auto"} flex={1}>
         <NavGroup align="start">
-          <Show breakpoint="(max-width: 834px)">
+          <Show breakpoint="(max-width: 1078px)">
             <Box alignItems={"flex-start"} justifyContent={"center"}>
               <Logo href="/" padding="20px 16px 12px 16px" />
             </Box>
