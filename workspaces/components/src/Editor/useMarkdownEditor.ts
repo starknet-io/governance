@@ -7,6 +7,8 @@ import { withHistory } from "slate-history";
 import { withReact } from "slate-react";
 import { Editor, Transforms, createEditor } from "slate";
 import { ParagraphElement } from "./initialValue";
+import { withListsReact } from '@prezly/slate-lists';
+import { withListsPlugin } from "./withListsPlugin";
 
 export function useMarkdownEditor(
   initialValue?: any,
@@ -21,7 +23,8 @@ export function useMarkdownEditor(
       return editor;
     };
 
-    return withInlines(withHistory(withReact(createEditor())));
+    // return withInlines(withHistory(withReact(createEditor())));
+    return withListsReact(withListsPlugin(withInlines(withHistory(withReact(createEditor())))));
   }, []);
   useEffect(() => {
     initialSlateData && editor.insertNodes(initialSlateData);
@@ -48,7 +51,7 @@ export function useMarkdownEditor(
 
   const setMarkdownValue = async (value: string) => {
     const result = await convertMarkdownToSlate(value);
-    result && editor.insertNodes(result);
+    result && editor.insertNodes(result, { at: [0] });
     setEditorValue(result);
   };
 

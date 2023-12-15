@@ -14,6 +14,8 @@ import LinkBlockButton from "./LinkBlockButton";
 import { TextTypeButton } from "./TextTypeButton";
 import { MoreButton } from "./MoreButton";
 import { withInlines } from "./hotkeys";
+import { withListsPlugin } from "./withListsPlugin";
+import { withListsReact } from "@prezly/slate-lists";
 
 export const MarkdownEditor: React.FC<
   MarkdownEditorProps & {
@@ -44,7 +46,8 @@ export const MarkdownEditor: React.FC<
       return editor;
     };
 
-    return withInlines(withHistory(withReact(createEditor())));
+    // return withInlines(withHistory(withReact(createEditor())));
+    return withListsReact(withListsPlugin(withInlines(withHistory(withReact(createEditor())))));
   }, []);
 
   const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {

@@ -8,6 +8,7 @@ import { Element, Leaf } from "./ElementLeaf";
 import { toggleMark, HOTKEYS } from "./hotkeys";
 import isHotkey from "is-hotkey";
 import "./EditableComponent.css";
+import { onKeyDown } from "@prezly/slate-lists";
 
 interface EditableComponentProps
   extends React.TextareaHTMLAttributes<HTMLDivElement> {
@@ -67,10 +68,11 @@ export const EditableComponent = ({
       onFocus={() => setIsFocused(true)} // Set focus state to true
       onBlur={() => setIsFocused(false)} // Set focus state to false
       onKeyDown={(event) => {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          editor.insertBreak();
-        }
+        onKeyDown(editor, event)
+        // if (event.key === "Enter") {
+        //   event.preventDefault();
+        //   editor.insertBreak();
+        // }
 
         for (const hotkey in HOTKEYS) {
           if (isHotkey(hotkey, event as any)) {

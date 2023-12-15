@@ -8,6 +8,7 @@ import {
 import { MoreDotsIcon } from "src/Icons/ToolbarIcons";
 import BlockButton from "./BlockButton";
 import MarkButton from "./MarkButton";
+import { Type } from "./withListsPlugin";
 
 export function MoreButton() {
   return (
@@ -24,8 +25,8 @@ export function MoreButton() {
       >
         <Flex p="1" direction="row" alignItems="center">
           <MarkButton format="strikeThrough" />
-          <BlockButton format="ul_list" />
-          <BlockButton format="ol_list" />
+          <BlockButton format={Type.UNORDERED_LIST} />
+          <BlockButton format={Type.ORDERED_LIST} />
           <BlockButton format="block_quote" />
         </Flex>
       </PopoverContent>

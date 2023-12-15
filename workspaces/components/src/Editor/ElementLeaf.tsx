@@ -5,6 +5,7 @@ import {
 } from "slate-react";
 import ImageBlock from "./ImageBlock";
 import LinkBlock from "./LinkBlock";
+import { Type } from "./withListsPlugin";
 
 /* For serializing to work correctly make sure to use the same types used by "remark-slate" package */
 export type CustomParagraphTypes =
@@ -34,6 +35,7 @@ type RenderLeafProps = Omit<SlateRenderLeafProps, "leaf"> & { leaf: any };
 export const Element = (props: RenderElementProps) => {
   const { attributes, children, element } = props;
   const style = {};
+
   //@ts-expect-error error
   switch (element.type as CustomParagraphTypes) {
     case "block_quote":
@@ -85,7 +87,7 @@ export const Element = (props: RenderElementProps) => {
           {children}
         </h2>
       );
-    case "ul_list":
+    case Type.UNORDERED_LIST:
       return (
         <ul
           style={{
@@ -99,7 +101,7 @@ export const Element = (props: RenderElementProps) => {
           {children}
         </ul>
       );
-    case "ol_list":
+    case Type.ORDERED_LIST:
       return (
         <ol
           style={{
@@ -113,7 +115,7 @@ export const Element = (props: RenderElementProps) => {
           {children}
         </ol>
       );
-    case "list_item":
+    case Type.LIST_ITEM:
       return (
         <li
           style={{ fontSize: "0.938rem", lineHeight: "1.5rem", ...style }}
@@ -122,6 +124,8 @@ export const Element = (props: RenderElementProps) => {
           {children}
         </li>
       );
+    case Type.LIST_ITEM_TEXT:
+      return <div {...attributes}>{children}</div>;
     case "image":
       return <ImageBlock {...props} />;
     case "link":

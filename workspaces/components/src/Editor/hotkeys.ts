@@ -7,6 +7,7 @@ import {
 } from "slate";
 import { CustomParagraphTypes } from "./ElementLeaf";
 import { ReactEditor } from "slate-react";
+import { ListType, ListsEditor } from "@prezly/slate-lists";
 
 export const HOTKEYS: { [key: string]: string } = {
   "mod+b": "bold",
@@ -58,6 +59,9 @@ export const toggleBlock = (editor: Editor, format: CustomParagraphTypes) => {
   const isList = LIST_TYPES.includes(format);
   const isImage = format === "image";
 
+  if(isList && isActive){
+      ListsEditor.unwrapList(editor)
+  } 
   Transforms.unwrapNodes(editor, {
     match: (n) =>
       !Editor.isEditor(n) &&
@@ -78,8 +82,9 @@ export const toggleBlock = (editor: Editor, format: CustomParagraphTypes) => {
   Transforms.setNodes<SlateElement>(editor, newProperties);
 
   if (!isActive && isList) {
-    const block = { type: format, children: [] };
-    Transforms.wrapNodes(editor, block);
+    ListsEditor.wrapInList(editor, format === 'ol_list' ? ListType.ORDERED : ListType.UNORDERED)
+    // const block = { type: format, children: [] };
+    // Transforms.wrapNodes(editor, block);
   } else if (!isActive && isImage) {
     const block = { type: format, children: [] };
     Transforms.wrapNodes(editor, block);
