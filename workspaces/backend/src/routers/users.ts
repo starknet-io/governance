@@ -238,7 +238,7 @@ export const usersRouter = router({
         },
       });
 
-      if (foundUser?.profileImage) {
+      if (foundUser?.profileImage || foundUser?.name) {
         const delegate = await db.query.delegates.findFirst({
           where: eq(delegates.userId, id),
         });
@@ -247,9 +247,13 @@ export const usersRouter = router({
             await Algolia.updateObjectFromIndex({
               refID: delegate.id,
               type: 'delegate',
-              name: foundUser.ensName || foundUser.address,
-              content: delegate.statement + delegate.interests,
-              avatar: foundUser.profileImage,
+              name:
+                foundUser.username || foundUser.ensName || foundUser.address,
+              content:
+                delegate.statement + delegate.interests + foundUser.address,
+              ...(foundUser.profileImage
+                ? { avatar: foundUser.profileImage }
+                : {}),
             });
           } catch (err) {
             console.log(err);
