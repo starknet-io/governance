@@ -6,19 +6,11 @@ import {
   Text,
   Flex,
   IconButton,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
   Textarea,
-  FormLabel,
-  FormControl,
   Stack,
 } from "@chakra-ui/react";
+import { Modal } from "../Modal";
 import "./members-list.css";
 import { Button } from "src/Button";
 import { TrashIcon, TwitterIcon } from "src/Icons";
@@ -118,15 +110,12 @@ export const MembersList: React.FC<MembersListProps> = ({
 
   return (
     <Box>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader display="flex" justifyContent="center">
-            Add council member
-          </ModalHeader>
-
-          <ModalCloseButton />
-          <ModalBody>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Add council member"
+      >
+        <>
             <form>
               <Stack spacing="standard.xl">
                 <FormControlled
@@ -192,20 +181,18 @@ export const MembersList: React.FC<MembersListProps> = ({
                 </FormControlled>
               </Stack>
             </form>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              variant="primary"
-              onClick={handleAddMember}
-              disabled={
-                !member.address && !member.name && !member.twitterHandle
-              }
-            >
-              Add Member
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+            <Modal.Footer>
+              <Button
+                variant="primary"
+                onClick={handleAddMember}
+                disabled={
+                  !member.address && !member.name && !member.twitterHandle
+                }
+              >
+                Add Member
+              </Button>
+            </Modal.Footer>
+          </>
       </Modal>
 
       <Box mt="24px">

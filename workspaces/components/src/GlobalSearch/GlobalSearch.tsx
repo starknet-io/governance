@@ -4,7 +4,6 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  Modal,
   ModalBody,
   ModalOverlay,
   ModalContent,
@@ -32,6 +31,7 @@ import {
 import { navigate } from "vite-plugin-ssr/client/router";
 import { Input } from "src/Input";
 import usePopulateProposals from "./utils/usePopulateProposals";
+import { Modal } from "../Modal";
 
 interface Props {
   isOpen?: boolean;

@@ -24,7 +24,6 @@ import {
   AgreementModal,
 } from "@yukilabs/governance-components";
 import type { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
-import { useBalanceData } from "src/utils/hooks";
 import { Controller, useForm } from "react-hook-form";
 import { delegateNames } from "../Delegates";
 import { validateStarknetAddress } from "../../utils/helpers";
@@ -33,8 +32,9 @@ import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delega
 import { trpc } from "../../utils/trpc";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { useToast } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 import { delegationAgreement } from "../../utils/data";
+import { useCheckBalance } from "../useCheckBalance";
 
 interface DelegateFormProps {
   mode: "create" | "edit";
@@ -51,10 +51,6 @@ type FormValues = {
   confirmDelegateAgreement: boolean;
   customDelegateAgreementContent?: string;
   starknetAddress: string;
-  twitter: string;
-  telegram: string;
-  discord: string;
-  discourse: string;
   understandRole: boolean;
 };
 
@@ -122,10 +118,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     );
     setValue("interests", delegateData.interests as string[]);
     setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
-    setValue("twitter", delegateData.twitter as string);
-    setValue("telegram", delegateData.telegram as string);
-    setValue("discord", delegateData.discord as string);
-    setValue("discourse", delegateData.discourse as string);
     setValue("understandRole", delegateData.understandRole as boolean);
     setValue(
       "confirmDelegateAgreement",
@@ -150,25 +142,15 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   };
 
   const { data: user } = trpc.users.me.useQuery();
-  const userBalance = useBalanceData(user?.address as `0x${string}`);
-  const toast = useToast();
+  const { checkUserBalance } = useCheckBalance(user?.address as `0x${string}`);
 
   useEffect(() => {
-    if (userBalance.isFetched && mode === "create") {
-      console.log(parseFloat(userBalance?.balance));
-      if (parseFloat(userBalance?.balance) < 1) {
-        toast({
-          position: "top-right",
-          title: `Insufficient Balance`,
-          description: `You must have at least 1 USDC to create a delegate profile`,
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
+    checkUserBalance({
+      onFail: () => {
         navigate("/delegates");
-      }
-    }
-  }, [userBalance.isFetched]);
+      },
+    });
+  }, [checkUserBalance]);
 
   useEffect(() => {
     if (mode === "edit" && isFetchingDelegateSuccess) {
@@ -260,6 +242,8 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
       console.log(error);
     }
   };
+
+  const isSubmitting = createDelegate.isLoading || editDelegate.isLoading;
 
   const handleRadioChange = (value: string) => {
     if (value === "standard") {
@@ -380,47 +364,6 @@ Conflicts of interest
               })}
             />
           </FormControlled>
-
-          <FormControlled
-            name="twitter"
-            label="Twitter"
-            isInvalid={!!errors.twitter}
-            errorMessage={errors.twitter?.message}
-          >
-            <Input
-              size="standard"
-              variant="primary"
-              placeholder="@yourhandle"
-              {...register("twitter")}
-            />
-          </FormControlled>
-          <FormControlled name="telegram" label="Telegram">
-            <Input
-              size="standard"
-              variant="primary"
-              placeholder="@yourhandle"
-              {...register("telegram")}
-            />
-          </FormControlled>
-
-          <FormControlled name="discord" label="Discord">
-            <Input
-              variant="primary"
-              size="standard"
-              placeholder="name#1234"
-              {...register("discord")}
-            />
-          </FormControlled>
-
-          <FormControlled name="discourse" label="Discourse">
-            <Input
-              variant="primary"
-              size="standard"
-              placeholder="yourusername"
-              {...register("discourse")}
-            />
-          </FormControlled>
-
           <Divider />
           <Box>
             <Heading variant="h3" display="flex" mb="standard.base">
@@ -615,7 +558,10 @@ Conflicts of interest
                 Cancel
               </Button>
               <Button type="submit" size="condensed" variant="primary">
-                Save
+                <Flex alignItems="center" gap={2}>
+                  {isSubmitting && <Spinner size="sm" />}
+                  <div>Save</div>
+                </Flex>
               </Button>
             </Flex>
           ) : (
@@ -626,7 +572,10 @@ Conflicts of interest
                 width={{ base: "100%", md: "auto" }}
                 size="standard"
               >
-                Create delegate profile
+                <Flex alignItems="center" gap={2}>
+                  {isSubmitting && <Spinner size="sm" />}
+                  <div>Create Delegate</div>
+                </Flex>
               </Button>
             </Flex>
           )}

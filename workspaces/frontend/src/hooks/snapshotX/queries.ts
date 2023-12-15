@@ -39,6 +39,7 @@ export const GET_PROPOSAL_QUERY = gql`
       start
       quorum
       created
+      tx
       author {
         id
       }
@@ -70,6 +71,7 @@ export const GET_VOTES_QUERY = gql(`
     votes(where: $where) {
       choice
       proposal
+      tx
       voter {
         id
       }
@@ -108,9 +110,6 @@ export const GET_SPACE = gql`
       strategies_metadata
       authenticators
       metadata {
-        delegation_api_type
-        delegation_contract
-        delegation_api_url
         voting_power_symbol
       }
       strategies
@@ -120,6 +119,7 @@ export const GET_SPACE = gql`
       strategies_parsed_metadata {
         data {
           symbol
+          name
           decimals
           payload
           token

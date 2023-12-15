@@ -93,6 +93,7 @@ export const transformProposal = (proposal) => {
     author: proposal.author.id,
     end: proposal.max_end,
     id: proposal.proposal_id,
+    ipfs: proposal?.metadata?.id,
     choices: ["For", "Against", "Abstain"],
     ipfs: proposal.metadata.id,
     scores: [
@@ -220,5 +221,11 @@ export const parseStrategiesToHumanReadableFormat = (strategies = []) => {
     } else {
       return ""
     }
+  })
+}
+
+export const parseStrategiesMetadata = (strategies) => {
+  return strategies.map((strategy) => {
+    return `${strategy?.data?.name} - ${strategy?.data?.symbol}`
   })
 }

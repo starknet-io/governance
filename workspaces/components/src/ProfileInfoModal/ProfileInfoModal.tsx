@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   Button,
   Box,
   Text,
@@ -15,6 +8,7 @@ import {
   FormLabel,
   Flex,
 } from "@chakra-ui/react";
+import { Modal } from "../Modal";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
@@ -23,7 +17,6 @@ import { ProfileImage } from "src/ProfileImage";
 import { ShareIcon } from "src/Icons";
 import { Input } from "src/Input";
 import { FormControlled } from "src/FormControlled";
-import { Heading } from "src/Heading";
 
 interface ProfileInfoModalProps {
   isOpen: boolean;
@@ -94,118 +87,102 @@ export const ProfileInfoModal = ({
         isCentered
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
+        title="Upload avatar"
+        size="md"
       >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader display={"flex"} justifyContent={"center"} p="0">
-            <Heading variant="h4" mb="standard.xl">
-              Upload avatar
-            </Heading>
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <UploadImage
-              onImageSelected={handleImageSelected}
-              loading={loading}
-              closeModal={() => setIsUploadOpen(false)}
-            />
-          </ModalBody>
-        </ModalContent>
+        <>
+          <UploadImage
+            onImageSelected={handleImageSelected}
+            loading={loading}
+            closeModal={() => setIsUploadOpen(false)}
+          />
+        </>
       </Modal>
       <Modal
         isCentered
         isOpen={isOpen && !isUploadOpen}
         onClose={onClose}
         size="standard"
+        title={`${mode === "create" ? "Add" : "Edit"} your profile info`}
       >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader display={"flex"} justifyContent={"center"} p="0">
-            <Heading variant="h4" mb="standard.xl">
-              {mode === "create" ? "Add" : "Edit"} your profile info
-            </Heading>
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody p="0" px="standard.xl">
-            <Box
-              mb="standard.xl"
-              display={"flex"}
-              flexDirection={"row"}
-              alignItems="center"
-              gap="24px"
-            >
-              <Box>
-                <ProfileImage imageUrl={imageUrl} size="medium" />
-              </Box>
-              <Box>
-                <Box
-                  display={"flex"}
-                  flexDirection={"column"}
-                  alignItems="flex-start"
-                  gap="8px"
-                >
-                  <Button
-                    variant={"secondary"}
-                    onClick={() => setIsUploadOpen(true)}
-                    spinner={<Spinner />}
-                    leftIcon={<ShareIcon />}
-                    size="standard"
-                  >
-                    Upload Avatar
-                  </Button>
-                  <Text variant="small" color={"content.default.default"}>
-                    We support PNGs, JPEGs and GIFs under 10MB
-                  </Text>
-                </Box>
-                <Box></Box>
-              </Box>
+        <>
+          <Box
+            mb="standard.xl"
+            display={"flex"}
+            flexDirection={"row"}
+            alignItems="center"
+            gap="24px"
+          >
+            <Box>
+              <ProfileImage imageUrl={imageUrl} size="medium" />
             </Box>
-            <form>
-              <Flex flexDirection="column" gap="standard.xl">
-                <FormControlled
-                  name="username"
-                  isRequired={false}
-                  id="member-name"
-                  label="Username"
-                  isInvalid={!!userExistsError}
-                  errorMessage="Username already exists"
+            <Box>
+              <Box
+                display={"flex"}
+                flexDirection={"column"}
+                alignItems="flex-start"
+                gap="8px"
+              >
+                <Button
+                  variant={"secondary"}
+                  onClick={() => setIsUploadOpen(true)}
+                  spinner={<Spinner />}
+                  leftIcon={<ShareIcon />}
+                  size="standard"
                 >
-                  <Input
-                    size="standard"
-                    variant="primary"
-                    placeholder="Username"
-                    {...register("username")}
-                    onChange={setUsernameErrorFalse}
-                  />
-                </FormControlled>
+                  Upload Avatar
+                </Button>
+                <Text variant="small" color={"content.default.default"}>
+                  We support PNGs, JPEGs and GIFs under 10MB
+                </Text>
+              </Box>
+              <Box></Box>
+            </Box>
+          </Box>
+          <form>
+            <Flex flexDirection="column" gap="standard.xl">
+              <FormControlled
+                name="username"
+                isRequired={false}
+                id="member-name"
+                label="Username"
+                isInvalid={!!userExistsError}
+                errorMessage="Username already exists"
+              >
+                <Input
+                  size="standard"
+                  variant="primary"
+                  placeholder="Username"
+                  {...register("username")}
+                  onChange={setUsernameErrorFalse}
+                />
+              </FormControlled>
 
-                <FormControlled
-                  name="starknetAddress"
-                  isRequired={false}
-                  id="address"
-                  label="Starknet address"
-                  isInvalid={
-                    !!errors.starknetAddress &&
-                    errors.starknetAddress.type === "validate"
-                  }
-                  errorMessage="Invalid Starknet address"
-                >
-                  <Input
-                    size="standard"
-                    variant="primary"
-                    placeholder="0x..."
-                    {...register("starknetAddress", {
-                      validate: (value) =>
-                        validateStarknetAddress(value) ||
-                        "Invalid Starknet address",
-                    })}
-                  />
-                </FormControlled>
-              </Flex>
-            </form>
-          </ModalBody>
-
-          <ModalFooter p={0} px="standard.xl" mt="standard.xl">
+              <FormControlled
+                name="starknetAddress"
+                isRequired={false}
+                id="address"
+                label="Starknet address"
+                isInvalid={
+                  !!errors.starknetAddress &&
+                  errors.starknetAddress.type === "validate"
+                }
+                errorMessage="Invalid Starknet address"
+              >
+                <Input
+                  size="standard"
+                  variant="primary"
+                  placeholder="0x..."
+                  {...register("starknetAddress", {
+                    validate: (value) =>
+                      validateStarknetAddress(value) ||
+                      "Invalid Starknet address",
+                  })}
+                />
+              </FormControlled>
+            </Flex>
+          </form>
+          <Modal.Footer p={0} px="standard.xl" mt="standard.xl">
             <Flex flex={1} gap="12px">
               <Button width={"100%"} variant={"ghost"} onClick={onClose}>
                 {mode === "create" ? "Skip" : "Cancel"}
@@ -214,8 +191,8 @@ export const ProfileInfoModal = ({
                 Save
               </Button>
             </Flex>
-          </ModalFooter>
-        </ModalContent>
+          </Modal.Footer>
+        </>
       </Modal>
     </>
   );

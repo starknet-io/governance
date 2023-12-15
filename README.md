@@ -3,6 +3,7 @@
 This is a monorepo application containing multiple services that work together. The application is deployed using Docker Compose, which allows us to easily manage, build, and run these services.
 
 ## Infrastructure
+
 the application is deployed in DigitalOcean using 2 App platforms (frontend and backend) per environment (Review and development, production) and a Digitalocean Managed database,
 
 the backend app platform has two components: the app and a cronjob worker  
@@ -34,10 +35,10 @@ To start the application, follow these steps:
 4. Build and start the services using Docker Compose:
    ```bash
        docker-compose up -d -f docker-compose.local.yml
-    ```
-5. migrate local database using 
-    ```bash
-      yarn migration:generate
-    ```
+   ```
+5. migrate local database using
+   ```bash
+     yarn migration:generate
+   ```
 
-
+-

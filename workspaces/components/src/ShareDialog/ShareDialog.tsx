@@ -2,20 +2,13 @@ import React, { useEffect, useState } from "react";
 import {
   Flex,
   Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Stack,
   useDisclosure,
   Box,
   InputGroup,
 } from "@chakra-ui/react";
-
+import { Modal } from "../Modal";
 import { Text } from "../Text";
-import { Heading } from "src/Heading";
 import {
   CopyIcon,
   DiscordIcon,
@@ -86,52 +79,37 @@ export const ShareDialog: React.FC = () => {
         onClose={onClose}
         size="md"
         isCentered
-        variant="unstyled"
+        title="Share"
       >
-        <ModalOverlay />
-        <ModalContent borderRadius="xl" height={"250px"}>
-          <ModalHeader textAlign="center">
-            <Heading fontSize="21px" fontWeight="semibold" variant="h3">
-              Share
-            </Heading>
-          </ModalHeader>
-          <ModalCloseButton top="16px" />
-          <ModalBody
-            py={{ base: "4", md: "4", lg: "4" }}
-            pb={{ base: "4" }}
-            minHeight="272px"
-          >
-            <Stack spacing="4">
-              <Text>Copy Link</Text>
-            </Stack>
+        <>
+          <Box>
+            <Text variant="bodyMediumStrong" color="content.default.default" mb="standard.xs">Copy Link</Text>
+            <InputGroup size="md">
+              <Input
+                pr="2.5rem"
+                readOnly
+                value={link}
+                borderColor="border.forms"
+                _focusVisible={{ borderColor: "gray.300" }}
+              />
 
-            <Box my="2">
-              <InputGroup size="md">
-                <Input
-                  pr="4.5rem"
-                  readOnly
-                  value={link}
-                  borderColor="#23192D1A"
-                  _focusVisible={{ borderColor: "gray.300" }}
-                />
-
-                <Box>
-                  <Button
-                    variant={"ghost"}
-                    _hover={{}}
-                    _active={{}}
-                    onClick={copyLink}
-                    position={"absolute"}
-                    top={"-2px"}
-                    right={"-13px"}
-                  >
-                    <CopyIcon boxSize={"20px"} />
-                  </Button>
-                </Box>
-              </InputGroup>
-            </Box>
-
-            <Flex justifyContent="space-between" width="100%" mt="24px">
+              <Box>
+                <Button
+                  variant={"ghost"}
+                  _hover={{}}
+                  _active={{}}
+                  onClick={copyLink}
+                  position={"absolute"}
+                  top={"-2px"}
+                  right={"-13px"}
+                >
+                  <CopyIcon boxSize={"20px"} color="#86848D" />
+                </Button>
+              </Box>
+            </InputGroup>
+          </Box>
+          <Modal.Footer>
+            <Flex justifyContent="space-between" width="100%">
               <LinkBox
                 icon={<TwitterIcon />}
                 label="Twitter"
@@ -144,11 +122,10 @@ export const ShareDialog: React.FC = () => {
                 label="Telegram"
                 onClick={shareTelegram}
                 flex="1"
-                mr="3"
               />
             </Flex>
-          </ModalBody>
-        </ModalContent>
+          </Modal.Footer>
+        </>
       </Modal>
     </>
   );
@@ -174,15 +151,16 @@ const LinkBox = ({ href, icon, label, onClick, flex, mr }: LinkBoxProps) => {
       leftIcon={icon}
       flex={flex}
       onClick={onClick}
-      justifyContent={"space-between"}
+      justifyContent={"center"}
       height="44px"
       padding="12px 20px"
       marginRight={mr}
       cursor={"pointer"}
       _active={{}}
+      borderRadius="standard.base"
+      boxShadow="0px 1px 1px 0px rgba(0, 0, 0, 0.05)"
     >
       <Text
-        marginRight="auto"
         fontSize={"14px"}
         fontWeight="500"
         lineHeight="20px"
