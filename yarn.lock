@@ -11048,6 +11048,7 @@ __metadata:
     react-infinite-scroll-component: ^6.1.0
     react-streaming: ^0.3.14
     react-use: ^17.4.0
+    slugify: ^1.6.6
     superjson: ^1.13.1
     use-debounce: ^9.0.4
     viem: ^1.5.0
