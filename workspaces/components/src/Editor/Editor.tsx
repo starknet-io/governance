@@ -50,11 +50,10 @@ export const MarkdownEditor: React.FC<
   const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
     const data = e.clipboardData?.getData("Text") ?? "";
+    
     const mainEditor = customEditor ?? editor;
     const markdown = await convertMarkdownToSlate(` ${data}`);
-    mainEditor?.insertNodes(markdown, {
-      at: editor.selection?.focus,
-    });
+    mainEditor?.insertFragment(markdown);
   };
 
   const mainEditor = customEditor || editor;
