@@ -49,11 +49,11 @@ export const VoteStat = (props: Props) => {
           </Text>
         </Box>
         <Text
-          textTransform="lowercase"
+          textTransform="uppercase"
           variant="captionSmallStrong"
           color="content.default.default"
         >
-          {voteCountFormatted} votes
+          {voteCountFormatted} STRK
         </Text>
       </Flex>
       <Box bg="purple" width="100%">
