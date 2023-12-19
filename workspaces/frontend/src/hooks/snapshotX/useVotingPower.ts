@@ -46,6 +46,7 @@ export function useVotingPower({
           address,
           timestamp ? timestamp : Math.floor(Date.now() / 1000),
         );
+        console.log(vpData)
         const parsedData = vpData
           ? vpData.reduce((acc, strategy) => {
               let toAdd = BigInt(strategy.value);
