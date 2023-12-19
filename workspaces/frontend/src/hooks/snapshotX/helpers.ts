@@ -95,7 +95,6 @@ export const transformProposal = (proposal) => {
     id: proposal.proposal_id,
     ipfs: proposal?.metadata?.id,
     choices: ["For", "Against", "Abstain"],
-    ipfs: proposal.metadata.id,
     scores: [
       parseFloat(proposal.scores_1),
       parseFloat(proposal.scores_2),

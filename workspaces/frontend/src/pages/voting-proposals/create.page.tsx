@@ -113,13 +113,13 @@ export function Page() {
         if (!pinned || !pinned.cid) return false;
         console.log('IPFS', pinned);
         // PREPARE DATA HERE
-        const strategiesMetadata = space.data.strategies_parsed_metadata.map(
+        const strategiesMetadata = space.data.voting_power_validation_strategies_parsed_metadata.map(
           (strategy) => ({
             ...strategy.data,
           }),
         );
         const preparedStrategies = await prepareStrategiesForSignature(
-          space.data.strategies as string[],
+          space.data.voting_power_validation_strategy_strategies as string[],
           strategiesMetadata as any[],
         );
 

@@ -2,7 +2,7 @@ export const transformProposalData = (data: any) => {
   if (data && data.proposals && data.proposals.length) {
     return data.proposals.map((proposal: any) => transformProposal(proposal));
   } else {
-    return data;
+    return [];
   }
 };
 

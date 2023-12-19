@@ -154,7 +154,7 @@ export const proposalsRouter = router({
         orderDirection,
       })) as { proposals: IProposal[] };
 
-      const queriedProposals = transformProposalData(data || []);
+      const queriedProposals = transformProposalData(data || []) || [];
 
       // Merge category data into the proposals array
       mappedProposals = queriedProposals.map((proposal: any) => ({
