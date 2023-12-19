@@ -16,10 +16,9 @@
   "dependencies": {
     "@apollo/client": "^3.7.17",
     "@chakra-ui/react": "^2.7.0",
-    "@dynamic-labs/ethereum": "^0.18.100-viem.31",
-    "@dynamic-labs/sdk-react": "^0.18.100-viem.31",
-    "@dynamic-labs/sdk-react-core": "^0.18.100-viem.31",
-    "@dynamic-labs/wagmi-connector": "^0.18.100-viem.31",
+    "@dynamic-labs/ethereum": "^0.19.7",
+    "@dynamic-labs/sdk-react-core": "^0.19.7",
+    "@dynamic-labs/wagmi-connector": "^0.19.7",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@ethersproject/providers": "^5.7.2",

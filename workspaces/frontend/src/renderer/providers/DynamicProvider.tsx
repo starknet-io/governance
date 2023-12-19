@@ -1,4 +1,4 @@
-import { UserProfile, Wallet, WalletConnector } from "@dynamic-labs/sdk-react";
+import { UserProfile, Wallet, WalletConnector } from "@dynamic-labs/sdk-react-core";
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";

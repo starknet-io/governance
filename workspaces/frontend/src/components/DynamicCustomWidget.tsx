@@ -1,4 +1,4 @@
-import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react";
+import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button } from "@yukilabs/governance-components";
 import AuthorizedUserView from "src/renderer/AuthorizedUserView";
 

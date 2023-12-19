@@ -31,7 +31,6 @@
     "typescript": "^5.1.6"
   },
   "resolutions": {
-    "viem": "1.0.7",
     "@onflow/fcl@^1.3.2": "patch:@onflow/fcl@npm%3A1.4.1#./.yarn/patches/@onflow-fcl-npm-1.4.1-e0969c9f1b.patch"
   }
 }
