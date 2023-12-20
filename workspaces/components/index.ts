@@ -119,7 +119,6 @@ export {
   FilterPopoverIcon,
 } from "./src/Filter/";
 export { MarkdownEditor } from "./src/Editor";
-export { Multiselect } from "./src/Multiselect";
 export { ShareDialog } from "./src/ShareDialog";
 export { SupportModal } from "./src/SupportModal";
 export { StatusModal } from "./src/StatusModal";

@@ -16,8 +16,9 @@ import {
   useFilterState,
   Link,
   Flex,
+  Select
 } from "@yukilabs/governance-components";
-import { Grid, Select, PopoverContent,
+import { Grid, PopoverContent,
   PopoverBody } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
@@ -290,11 +291,9 @@ export function Page() {
                 <Text variant="mediumStrong" color="content.default.default">Sort by</Text>
               </Box>
               <Select
-                size="sm"
+                size={isMobile ? "md" : "sm"}
                 aria-label="All"
                 placeholder="All"
-                rounded="md"
-                height={isMobile ? "44px" : "36px"}
                 value={sortBy}
                 onChange={(e) => {
                   setSortBy(e.target.value as SortingTypes);
@@ -304,13 +303,12 @@ export function Page() {
                   }));
                   refetch();
                 }}
-              >
-                {SORTING_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+                options={SORTING_OPTIONS.map((option) => ({
+                  value: option.value,
+                  label: option.label
+                }
                 ))}
-              </Select>
+              />
               <Popover placement="bottom-start">
                 <FilterPopoverIcon
                   label="Filter by"

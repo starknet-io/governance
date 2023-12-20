@@ -85,11 +85,14 @@ export function Page() {
               </FormControl>
               <FormControl id="starknet-type">
                 <FormLabel>Status</FormLabel>
-                <Select placeholder="Select option">
-                  <option value="option1">Draft</option>
-                  <option value="option2">Review</option>
-                  <option value="option3">Last call</option>
-                </Select>
+                <Select
+                  placeholder="Select option"
+                  options={[
+                    { value: "option1", label: "Draft" },
+                    { value: "option2", label: "Review" },
+                    { value: "option3", label: "Last call" }
+                  ]}
+                />
               </FormControl>
 
               <Flex justifyContent="flex-end">

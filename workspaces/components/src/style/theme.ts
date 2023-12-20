@@ -69,6 +69,30 @@ export const theme = extendTheme({
     Modal,
     Spinner,
     Divider: dividerTheme,
+    Select: {
+      sizes: {
+        sm: {
+          container: {
+            paddingTop: "standard.xs",
+            paddingRight: "standard.xs",
+            paddingBottom: "standard.xs",
+            paddingLeft: "standard.sm",
+          },
+          control: {
+            paddingTop: "standard.xs",
+            paddingRight: "standard.xs",
+            paddingBottom: "standard.xs",
+            paddingLeft: "standard.sm",
+          },
+        },
+        md: {
+          container: {
+            px: "standard.sm",
+            py: "standard.sm",
+          },
+        },
+      },
+    },
     ...FormTheme,
     Popover: {
       baseStyle: {

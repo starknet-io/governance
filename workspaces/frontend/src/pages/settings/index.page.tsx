@@ -17,6 +17,7 @@ import {
   InfoModal,
   SuccessIcon,
   WarningIcon,
+  Select
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -35,7 +36,7 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { ethers } from "ethers";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
-import { Icon, Spinner, Select } from "@chakra-ui/react";
+import { Icon, Spinner } from "@chakra-ui/react";
 import {
   BannedIcon,
   RemovedIcon,
@@ -401,6 +402,12 @@ export function Page() {
     });
   }, [users?.data]);
   const editableRoles = getEditRolesBasedOnUserRole();
+  console.log('editableRoles ', editableRoles);
+  const [roleValue, setRoleValue] = useState("");
+  const handleSelectChange = (selectedOption) => {
+    console.log('selectedOption ', selectedOption)
+    setRoleValue("milos");
+  };
   return (
     <FormLayout>
       <InfoModal
@@ -527,7 +534,7 @@ export function Page() {
           <FormControl id="editRole">
             <FormLabel>Role</FormLabel>
             <Select
-              size="sm"
+              size="md"
               {...editRegister("role")}
               ref={selectRef}
               value={editUserRole}
@@ -535,13 +542,11 @@ export function Page() {
                 console.log(e.target.value);
                 setEditUserRole(e.target.value);
               }}
-            >
-              {editableRoles.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
+              options={editableRoles.map((option) => ({
+                value: option,
+                label: option,
+              }))}
+            />
           </FormControl>
 
           {editError && editError.length && (
@@ -587,15 +592,15 @@ export function Page() {
                   <FormControl id="role">
                     <FormLabel>Role</FormLabel>
                     <Select
-                      size="sm"
+                      size="md"
                       {...addRegister("role", { required: true })}
-                    >
-                      {editableRoles.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </Select>
+                      options={editableRoles.map((option) => ({
+                        value: option,
+                        label: option,
+                      }))}
+                      value={roleValue}
+                      onChange={(e) => { handleSelectChange(e.target.value)}}
+                    />
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
                   {addError && addError.length && (

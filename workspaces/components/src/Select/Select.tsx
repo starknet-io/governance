@@ -15,6 +15,7 @@ export interface SelectProps extends Props {
   value?: string | Option | Option[];
   onChange: (newValue: unknown, actionMeta: ActionMeta<unknown>) => void;
   labels?: { [key: string]: string };
+  variant?: "fill" | "outline";
 }
 
 export const Select = ({
@@ -24,17 +25,67 @@ export const Select = ({
   size,
   labels,
   value,
+  variant,
   onChange,
   ...rest
 }: SelectProps & { size?: "sm" | "md" }) => {
   const chakraStyles: ChakraStylesConfig = {
-    container: (provided) => ({
+    control: (provided, state) => ({
       ...provided,
+      padding: state.selectProps.size === 'md' 
+        ? '12px 8px 12px 12px'
+        : '8px 8px 8px 12px',
+      alignItems: 'center',
+      gap: '8px',
+      alignSelf: 'stretch',
+      borderRadius: '4px',
+      border: '1px solid rgba(35, 25, 45, 0.10)',
+      background: '#FBFBFB',
+      boxShadow: '0px 1px 1px 0px rgba(0, 0, 0, 0.05)',
+      _hover: {
+        background: state.selectProps.variant === "fill" ? 'surface.forms.default' : "surface.forms.hover",
+        borderColor: "border.formsHover",
+      },
+      _active: {
+        borderColor: "surface.accent.selected",
+        boxShadow: '0px 1px 1px 0px rgba(0, 0, 0, 0.05)',
+        "& input::placeholder": {
+          color: "content.accent.default"
+        }
+      },
+      _focusVisible: {
+        background: state.selectProps.variant === "fill" ? 'surface.forms.default' : "surface.forms.hover",
+        borderColor: "surface.accent.selected",
+        boxShadow: '0px 1px 1px 0px rgba(0, 0, 0, 0.05)',
+        "& input::placeholder": {
+          color: "content.accent.default"
+        }
+      },
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: 'content.support.default',
+      _hover: {
+        color: "content.support.hover"
+      },
+      _active: {
+        color: "content.accent.default"
+      },
+    }),
+    dropdownIndicator: (provided, state) => ({
+      height: '20px !important',
+      p: 0, // Reset padding to 0
+      lineHeight: '1', // Remove padding to fit within the 44px height constraint
+      // You might need to adjust the size of the svg icon here
+      svg: {
+        height: '20px', // Match the height of the control
+      width: '20px',
+      }
     }),
     valueContainer: (provided) => ({
       ...provided,
-      paddingInlineStart: "8px",
-      paddingInlineEnd: "8px",
+      padding: "0",
+      height: "20px"
     }),
     menuList: (provided) => ({
       ...provided,
@@ -89,7 +140,7 @@ export const Select = ({
       tagVariant="select"
       isInvalid={isInvalid}
       isReadOnly={isReadOnly}
-      variant="primary"
+      variant={variant}
       value={newValue}
       onChange={handleChange}
       {...rest}
