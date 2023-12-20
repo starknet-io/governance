@@ -241,7 +241,6 @@ export const DelegateCard = ({
                 size="condensed"
                 variant="secondary"
                 as="a"
-                telegram
                 target="_blank"
                 icon={<DiscordIcon />}
                 {...({
