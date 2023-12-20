@@ -52,12 +52,11 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   userBalance,
   delegatedTo,
   handleOpenModal,
-  setEditUserProfile
+  setEditUserProfile,
 }) => {
-
   return (
     <>
-      <Box position="absolute" right="12px" top="12px">
+      <Box position="absolute" right="12px" top="12px" zIndex={0}>
         <IconButton
           aria-label="disconnect"
           size="condensed"
@@ -95,10 +94,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
             <Box width="50%">
               {user?.starknetAddress ? (
                 <Tooltip label={user.starknetAddress}>
-                  <Text
-                    variant="smallStrong"
-                    color="content.default.default"
-                  >
+                  <Text variant="smallStrong" color="content.default.default">
                     {truncateAddress(user.starknetAddress)}
                   </Text>
                 </Tooltip>
@@ -166,9 +162,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
                           "0x0000000000000000000000000000000000000000" ? (
                         <Flex>
                           <Tooltip label={delegatedTo}>
-                            <Text>
-                              {truncateAddress(delegatedTo || "")}
-                            </Text>
+                            <Text>{truncateAddress(delegatedTo || "")}</Text>
                           </Tooltip>
                           <CopyToClipboard text={delegatedTo} />
                         </Flex>
@@ -225,19 +219,19 @@ const UserProfileMenuComponent = (
     handleUpload,
     userExistsError = false,
     setUsernameErrorFalse,
-    setIsMenuOpen
+    setIsMenuOpen,
   },
-  ref
+  ref,
 ) => {
   const [isModalOpen, setIsModalOpen] = useState(isMenuOpen);
   useEffect(() => {
-    setIsModalOpen(isMenuOpen)
-  }, [isMenuOpen])
+    setIsModalOpen(isMenuOpen);
+  }, [isMenuOpen]);
 
   const { isMobile } = useIsMobile();
   const handleCloseModal = () => {
     setIsMenuOpen(false);
-  }
+  };
   const handleOpenModal = () => setIsModalOpen(true);
   const [editUserProfile, setEditUserProfile] = useState(false);
 
@@ -271,38 +265,16 @@ const UserProfileMenuComponent = (
         userExistsError={userExistsError}
         setUsernameErrorFalse={setUsernameErrorFalse}
       />
-      {isMobile ? <Modal
-        isCentered
-        isOpen={isModalOpen}
-        onClose={() => {
-          handleCloseModal();
-          console.log('false 2')
-          setEditUserProfile(false);
-        }}
-        size="md"
-      >
-        <UserProfileContent
-          onDisconnect={onDisconnect}
-          user={user}
-          onSave={onSave}
-          vp={vp}
-          userBalance={userBalance}
-          delegatedTo={delegatedTo}
-          handleOpenModal={handleOpenModal}
-          setEditUserProfile={setEditUserProfile}
-        />
-      </Modal> : isModalOpen && <Box
-          p={"standard.xl"}
-          borderRadius={"standard.md"}
-          bg="surface.cards.default"
-          position={"absolute"}
-          width="348px"
-          right={{ base: "16px", md: "60px" }}
-          top="55px"
-          border="1px solid #E9E8EA"
-          // borderColor="content.default.default"
-          boxShadow="0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)"
-          fontSize="12px"
+      {isMobile ? (
+        <Modal
+          isCentered
+          isOpen={isModalOpen}
+          onClose={() => {
+            handleCloseModal();
+            console.log("false 2");
+            setEditUserProfile(false);
+          }}
+          size="md"
         >
           <UserProfileContent
             onDisconnect={onDisconnect}
@@ -311,12 +283,42 @@ const UserProfileMenuComponent = (
             vp={vp}
             userBalance={userBalance}
             delegatedTo={delegatedTo}
-            onModalStateChange={onModalStateChange}
+            handleOpenModal={handleOpenModal}
             setEditUserProfile={setEditUserProfile}
           />
-        </Box>}
+        </Modal>
+      ) : (
+        isModalOpen && (
+          <Box
+            p={"standard.xl"}
+            borderRadius={"standard.md"}
+            bg="surface.cards.default"
+            position={"absolute"}
+            width="348px"
+            right={{ base: "16px", md: "60px" }}
+            top="55px"
+            border="1px solid #E9E8EA"
+            // borderColor="content.default.default"
+            boxShadow="0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)"
+            fontSize="12px"
+          >
+            <UserProfileContent
+              onDisconnect={onDisconnect}
+              user={user}
+              onSave={onSave}
+              vp={vp}
+              userBalance={userBalance}
+              delegatedTo={delegatedTo}
+              onModalStateChange={onModalStateChange}
+              setEditUserProfile={setEditUserProfile}
+            />
+          </Box>
+        )
+      )}
     </div>
   );
 };
 
-export const UserProfileMenu = forwardRef<HTMLDivElement, UserProfileMenuProps>(UserProfileMenuComponent);
+export const UserProfileMenu = forwardRef<HTMLDivElement, UserProfileMenuProps>(
+  UserProfileMenuComponent,
+);
