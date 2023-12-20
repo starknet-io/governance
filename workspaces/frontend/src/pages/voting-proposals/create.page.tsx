@@ -28,7 +28,7 @@ import { useFileUpload } from "src/hooks/useFileUpload";
 import { useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 interface FieldValues {
   // type: ProposalType;

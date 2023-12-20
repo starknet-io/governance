@@ -39,7 +39,7 @@ import { useBalanceData } from "src/utils/hooks";
 import { stringToHex } from "viem";
 import { hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import * as ProfilePageLayout from "../../../components/ProfilePageLayout/ProfilePageLayout";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";

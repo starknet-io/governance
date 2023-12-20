@@ -1,4 +1,4 @@
-import { DynamicNav, useDynamicContext } from "@dynamic-labs/sdk-react";
+import { DynamicNav, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "src/utils/trpc";
 import { useOutsideClick } from "@chakra-ui/react";

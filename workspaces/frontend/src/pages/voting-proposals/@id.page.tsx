@@ -46,7 +46,7 @@ import { useWalletClient } from "wagmi";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { providers } from "ethers";
 import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { trpc } from "src/utils/trpc";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { useBalanceData } from "src/utils/hooks";
