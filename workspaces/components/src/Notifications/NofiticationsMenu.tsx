@@ -246,10 +246,19 @@ to receive notifications`}
           )}
           <Box top="0px" position="relative">
             <MenuList
-              h="calc(100vh - 56px)"
+              h="500px"
               overflowY="scroll"
               w={"400px"}
               borderRadius="8px"
+              sx={{
+                '@media (max-width: 567px)': {
+                  height: "calc(100vh - 58px)",
+                  marginTop: "3px",
+                  marginLeft: "-48px",
+                  borderRadius: 0,
+                  width: "100vw"
+                }
+              }}
             >
               <Flex
                 mx={4}
@@ -317,7 +326,13 @@ to receive notifications`}
                   />
                 ))
               ) : (
-                <Flex height="calc(100vh - 199px)">
+                <Flex
+                  sx={{
+                    '@media (max-width: 567px)': {
+                      height: "calc(100vh - 207px)"
+                    }
+                  }}
+                >
                   <EmptyState
                     type="notifications"
                     hasBorder={false}
