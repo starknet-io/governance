@@ -399,11 +399,9 @@ export function Page() {
     });
   }, [users?.data]);
   const editableRoles = getEditRolesBasedOnUserRole();
-  console.log('editableRoles ', editableRoles);
   const [roleValue, setRoleValue] = useState("");
   const handleSelectChange = (selectedOption) => {
-    console.log('selectedOption ', selectedOption)
-    setRoleValue("milos");
+    setRoleValue(selectedOption);
   };
   return (
     <FormLayout>
