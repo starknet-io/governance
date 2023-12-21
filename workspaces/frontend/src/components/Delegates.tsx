@@ -307,9 +307,14 @@ export function Delegates({
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
   const { user } = usePageContext();
   const { checkUserBalance } = useCheckBalance(user?.address as `0x${string}`);
-  const userDelegate = trpc.users.isDelegate.useQuery({
-    userId: user?.id || "",
-  });
+  const userDelegate = trpc.users.isDelegate.useQuery(
+    {
+      userId: user?.id || "",
+    },
+    {
+      enabled: !!user?.id,
+    },
+  );
 
   const handleResetFilters = () => {
     state.onReset();
@@ -538,7 +543,13 @@ export function Delegates({
           <AppBar.Root>
             <AppBar.Group mobileDirection="row">
               <Box minWidth={"52px"}>
-                <Text variant="mediumStrong" fontWeight="600" color="content.default.default">Sort by</Text>
+                <Text
+                  variant="mediumStrong"
+                  fontWeight="600"
+                  color="content.default.default"
+                >
+                  Sort by
+                </Text>
               </Box>
               <Select
                 height={isMobile ? "44px" : "36px"}
@@ -575,9 +586,7 @@ export function Delegates({
                   onClickApply={state.onSubmit}
                   onClickCancel={handleResetFilters}
                 >
-                  <Heading variant="h5">
-                    Filters
-                  </Heading>
+                  <Heading variant="h5">Filters</Heading>
                   <CheckboxFilter
                     hideLabel
                     value={state.value}

@@ -54,6 +54,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   handleOpenModal,
   setEditUserProfile,
 }) => {
+  const delegatedToName = delegatedTo.username || delegatedTo.ensName
   return (
     <>
       <Box position="absolute" right="12px" top="12px" zIndex={0}>
@@ -136,8 +137,8 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
                         fontWeight="normal"
                         href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
                       >
-                        {delegatedTo.username || delegatedTo.ensName ? (
-                          delegatedTo.username ?? delegatedTo.ensName
+                        {delegatedToName ? (
+                          truncateAddress(delegatedToName || "")
                         ) : (
                           <Tooltip label={delegatedTo?.address || ""}>
                             {truncateAddress(delegatedTo?.address || "")}
