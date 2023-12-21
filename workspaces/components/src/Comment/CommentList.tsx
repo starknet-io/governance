@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import {

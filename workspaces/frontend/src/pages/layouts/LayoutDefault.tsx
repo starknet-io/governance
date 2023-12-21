@@ -1,4 +1,4 @@
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import useIsMobile from "src/hooks/useIsMobile";
 export { LayoutDefault };
 import {
@@ -38,7 +38,7 @@ import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
 import { NavigationMenu } from "src/components/Navigation";
 import { BackButton } from "src/components/Header/BackButton";
 import { extractAndFormatSlug } from "src/utils/helpers";
-import { CloseIcon } from "@dynamic-labs/sdk-react";
+import { CloseIcon } from "@dynamic-labs/sdk-react-core";
 import {
   BannedIcon,
   ConnectWalletIcon,
