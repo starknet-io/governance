@@ -20,7 +20,6 @@ const baseStyle = {
 const variants = {
   delegate: definePartsStyle({
     container: {
-      minWidth: "316px",
       gap: "standard.lg",
     },
     header: {
