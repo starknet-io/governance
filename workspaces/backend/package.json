@@ -20,6 +20,7 @@
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^29.5.3",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^20.4.5",
     "@types/oauth": "^0.9.4",
     "@types/pg": "^8.10.2",
@@ -67,6 +68,7 @@
     "trpc": "^0.11.3",
     "turndown": "^7.1.2",
     "uuid": "^9.0.1",
+    "xss": "^1.0.14",
     "zod": "^3.22.3"
   }
 }

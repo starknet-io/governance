@@ -14,7 +14,6 @@ import { delegateRouter } from './routers/delegates';
 import { notificationsRouter } from './routers/notifications';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
-import url from 'url';
 import morgan from 'morgan';
 
 // 15 mins -> 250 reqs
@@ -22,7 +21,7 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 250,
   standardHeaders: 'draft-7',
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
 dotenv.config();
@@ -55,16 +54,24 @@ const fetchUserMiddleware = async (
   next();
 };
 
+// Xss defense
 app.use(cookieParser());
 app.use(fetchUserMiddleware);
+// Rate limiter
 app.use(limiter);
-morgan.token('decoded-url', (req) => decodeURIComponent(req.originalUrl));
+morgan.token('decoded-url', (req: any) => decodeURIComponent(req.originalUrl));
 
-app.use(morgan(':method :decoded-url :status :response-time ms', {
-  skip: function (req, res) {
-    return res.statusCode < 400;  // Skip logging if status code is less than 400
-  }
-}));app.use(helmet());
+app.use(
+  morgan(':method :decoded-url :status :response-time ms', {
+    skip: function (req: any, res: any) {
+      return res.statusCode < 400; // Skip logging if status code is less than 400
+    },
+  }),
+);
+
+
+// Headers
+app.use(helmet());
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
