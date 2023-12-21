@@ -75,11 +75,11 @@ export function extractParagraph(
   // Replace Markdown links with just the link text
   const noMarkdownLinks = noTitles.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
 
-  // Replace Markdown list items with formatted text
-  const formattedListItems = noMarkdownLinks.replace(/^\s*[*-]\s+/gm, "• ");
+  // Remove Markdown list item markers
+  const noListMarkers = noMarkdownLinks.replace(/^\s*[*-]\s+/gm, "");
 
   // Split content into paragraphs or lines
-  const paragraphs = formattedListItems.split("\n");
+  const paragraphs = noListMarkers.split("\n");
 
   // Concatenate paragraphs up to the character limit or return the beginning of the text
   if (paragraphs.length > 1) {
@@ -97,6 +97,7 @@ export function extractParagraph(
     return markdownContent.substring(0, charLimit);
   }
 }
+
 const DelegateTags = ({
   type,
 }: {
