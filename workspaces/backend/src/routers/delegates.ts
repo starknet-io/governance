@@ -390,7 +390,7 @@ export const delegateRouter = router({
         }
         const interests = JSON.stringify(appliedInterests);
 
-        let query = db
+        let query: any = db
           .select()
           .from(delegates)
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
@@ -459,8 +459,11 @@ export const delegateRouter = router({
 
         query.orderBy(orderBy, desc(delegates.id));
 
-        if (opts.input.limit !== undefined && opts.input.offset !== undefined) {
+        // Apply pagination
+        if (typeof opts.input.offset === 'number') {
           query = query.offset(opts.input.offset);
+        }
+        if (typeof opts.input.limit === 'number') {
           query = query.limit(opts.input.limit);
         }
 
