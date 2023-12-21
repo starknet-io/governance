@@ -432,6 +432,11 @@ export function Delegates({
 
   const { isMobile } = useIsMobile();
 
+  const sortedDelegateInterests = delegateInterests.options
+    .slice(0)
+    .sort((a, b) => {
+      return a.label.localeCompare(b.label);
+    });
   return (
     <>
       <DelegateModal
@@ -600,7 +605,7 @@ export function Delegates({
                     hideLabel
                     value={state.value}
                     onChange={(v) => state.onChange(v)}
-                    options={delegateInterests.options}
+                    options={sortedDelegateInterests}
                   />
                 </FilterPopoverContent>
               </Popover>
