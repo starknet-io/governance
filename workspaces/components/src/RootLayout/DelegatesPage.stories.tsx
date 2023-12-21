@@ -130,7 +130,7 @@ export const DelegatesPage = () => (
                 position="relative"
                 width="100%"
                 spacing={4}
-                templateColumns="repeat(auto-fill, 1fr)"
+                templateColumns="repeat(auto-fill, minmax(327px, 1fr))"
               >
                 {delegatesData.map((delegate) => (
                   <DelegateCard
