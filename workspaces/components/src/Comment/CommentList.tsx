@@ -492,6 +492,7 @@ const CommentItem: React.FC<CommentProps> = ({
                 ) : (
                   <Box>
                     <MarkdownRenderer
+                      className="markdown-body-comments"
                       textProps={{
                         fontSize: "14px",
                         color: "content.accent.default",
