@@ -47,7 +47,7 @@ export const VoteStat = (props: Props) => {
         <Box>
           <Text variant="captionSmallStrong" color="content.default.default">
             {formatPercentage(votePercentage)}% {props.userVote ? "✓" : ""}{" "}
-            {props.type}
+            {getVariantKey(props.type)}
           </Text>
         </Box>
         <Text
