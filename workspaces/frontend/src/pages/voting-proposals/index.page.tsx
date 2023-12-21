@@ -18,8 +18,7 @@ import {
   Flex,
   Select
 } from "@yukilabs/governance-components";
-import { Grid, PopoverContent,
-  PopoverBody } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -296,10 +295,10 @@ export function Page() {
                 placeholder="All"
                 value={sortBy}
                 onChange={(e) => {
-                  setSortBy(e.target.value as SortingTypes);
+                  setSortBy(e as unknown as SortingTypes);
                   setFiltersState((prevState) => ({
                     ...prevState,
-                    sortBy: e.target.value as SortingTypes,
+                    sortBy: e as unknown as SortingTypes,
                   }));
                   refetch();
                 }}

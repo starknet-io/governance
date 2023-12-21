@@ -181,7 +181,6 @@ export function Page() {
     onOpen: onUserUnbannedOpen,
     onClose: onUserUnbannedClose,
   } = useDisclosure();
-  const selectRef = useRef<HTMLSelectElement>(null);
 
   const addRoles = trpc.users.addRoles.useMutation();
   const editRoles = trpc.users.editRoles.useMutation();
@@ -354,9 +353,7 @@ export function Page() {
     onEditClose();
     setEditError("");
     reset();
-    if (selectRef.current) {
-      selectRef.current.value = "user";
-    }
+    setEditUserRole("user");
   };
 
   const isValidAddress = (address: string) => {
@@ -531,16 +528,15 @@ export function Page() {
           onSubmit={onSubmitEdit}
           isValid={true}
         >
-          <FormControl id="editRole">
+          <FormControl id="editRole" sx={{ marginBottom: "standard.md" }}>
             <FormLabel>Role</FormLabel>
             <Select
               size="md"
               {...editRegister("role")}
-              ref={selectRef}
               value={editUserRole}
               onChange={(e) => {
-                console.log(e.target.value);
-                setEditUserRole(e.target.value);
+                console.log(e);
+                setEditUserRole(e);
               }}
               options={editableRoles.map((option) => ({
                 value: option,
@@ -599,7 +595,7 @@ export function Page() {
                         label: option,
                       }))}
                       value={roleValue}
-                      onChange={(e) => { handleSelectChange(e.target.value)}}
+                      onChange={handleSelectChange}
                     />
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>

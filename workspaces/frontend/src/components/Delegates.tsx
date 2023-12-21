@@ -543,16 +543,15 @@ export function Delegates({
               <Select
                 aria-label="Random"
                 placeholder="Random"
-                focusBorderColor={"red"}
                 size={isMobile ? "md" : "sm"}
                 value={sortBy}
                 onChange={(e) => {
-                  setSortBy(e.target.value);
+                  setSortBy(e);
                   setAllDelegates([]);
                   setFiltersState((prevState) => ({
                     ...prevState,
                     offset: 0,
-                    sortBy: e.target.value,
+                    sortBy: e,
                   }));
                 }}
                 options={sortByOptions.options.map((option) => ({

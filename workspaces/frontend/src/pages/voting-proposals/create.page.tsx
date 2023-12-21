@@ -290,8 +290,8 @@ Links
               <Select
                 size="md"
                 isReadOnly
-                defaultValue="option1"
-                options={[{ label: "Basic", value: "desc" }]}
+                defaultValue="basic"
+                options={[{ label: "Basic", value: "basic" }]}
                 onChange={() => console.log("changed")}
                 placeholder="Basic"
               />
@@ -302,10 +302,10 @@ Links
               <Select
                 size="md"
                 isReadOnly
-                defaultValue="option1"
-                options={[{ label: "Basic", value: "desc" }]}
+                defaultValue="basic"
+                options={[{ label: "Basic", value: "basic" }]}
                 onChange={() => console.log("changed")}
-                placeholder="For"
+                placeholder="Basic"
               />
             </FormControlled>
 

@@ -16,7 +16,7 @@ import {
   useDisclosure,
   useMarkdownEditor,
   FormControlled,
-  Select,
+  Multiselect,
   useFormErrorHandler,
   RadioGroup,
   Radio,
@@ -332,7 +332,7 @@ Conflicts of interest
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
-                <Select
+                <Multiselect
                   size="md"
                   isInvalid={!!errors.interests}
                   options={interestsValues.map((option) => ({
