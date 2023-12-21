@@ -68,25 +68,26 @@ export const Select = ({
       alignSelf: 'stretch',
       borderRadius: '4px',
       border: '1px solid rgba(35, 25, 45, 0.10)',
-      background: '#FBFBFB',
+      borderColor: state.isFocused ? "#86848d !important" : "rgba(35, 25, 45, 0.10)",
+      background: !state.isFocused ? '#FBFBFB' : state.selectProps.variant === "fill" ? '#fbfbfb' : "rgba(55, 22, 55, 0.0300)",
       boxShadow: '0px 1px 1px 0px rgba(0, 0, 0, 0.05)',
       _hover: {
-        background: state.selectProps.variant === "fill" ? 'surface.forms.default' : "surface.forms.hover",
-        borderColor: "border.formsHover",
+        background: state.selectProps.variant === "fill" ? '#fbfbfb' : "rgba(55, 22, 55, 0.0300)",
+        borderColor: "#C8C7CB",
       },
       _active: {
-        borderColor: "surface.accent.selected",
+        borderColor: "#86848d",
         boxShadow: '0px 1px 1px 0px rgba(0, 0, 0, 0.05)',
         "& input::placeholder": {
-          color: "content.accent.default"
+          color: "#1a1523"
         }
       },
       _focusVisible: {
-        background: state.selectProps.variant === "fill" ? 'surface.forms.default' : "surface.forms.hover",
-        borderColor: "surface.accent.selected",
+        background: state.selectProps.variant === "fill" ? '#fbfbfb' : "rgba(55, 22, 55, 0.0300)",
+        borderColor: "#86848d",
         boxShadow: '0px 1px 1px 0px rgba(0, 0, 0, 0.05)',
         "& input::placeholder": {
-          color: "content.accent.default"
+          color: "#1a1523"
         }
       },
     }),
@@ -191,6 +192,7 @@ export const Select = ({
   return (
     <div ref={wrapperRef}>
       <CustomSelect
+        isSearchable={false}
         onMenuOpen={() => setMenuIsOpen(true)}
         onMenuClose={() => setMenuIsOpen(false)}
         menuIsOpen={menuIsOpen}

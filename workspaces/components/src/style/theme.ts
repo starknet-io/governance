@@ -7,7 +7,6 @@ import { textTheme as Text } from "../Text/TextStyles";
 import { tagTheme as Tag } from "../Tag/TagStyles";
 import { cardTheme as Card } from "../Card/CardStyles";
 import { inputTheme as Input } from "../Input/InputStyles";
-import { selectTheme as Select } from "../Select/SelectStyles";
 import { textareaTheme as Textarea } from "../Textarea/TextareaStyles";
 import { ProgressTheme as Progress } from "../Progress/ProgressStyles";
 import { modalTheme as Modal } from "../Modal/ModalStyles";
@@ -70,7 +69,6 @@ export const theme = extendTheme({
     Modal,
     Spinner,
     Divider: dividerTheme,
-    Select,
     ...FormTheme,
     Popover: {
       baseStyle: {
