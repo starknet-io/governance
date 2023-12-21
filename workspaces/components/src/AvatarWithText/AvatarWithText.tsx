@@ -35,7 +35,7 @@ export const AvatarWithText = ({
         lineHeight="24px"
         variant={size === "condensed" ? "h4" : "h3"}
         mb="standard.2xs"
-        width={size === "condensed" ? undefined : { base: "100%", lg: "80%" }}
+        width={size === "condensed" ? undefined : { base: "calc(100% - 48px)", lg: "calc(100% - 48px)" }}
         style={{
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -97,7 +97,7 @@ export const AvatarWithText = ({
   if (size === "condensed") {
     return (
       <Flex gap="standard.sm" alignItems="center">
-        <Box>
+        <Box width="66px">
           {src !== null ? (
             <Avatar size="lg" src={src} />
           ) : (
@@ -110,6 +110,7 @@ export const AvatarWithText = ({
           justifyContent={"center"}
           flex={1}
           gap="0"
+          width="calc(100% - 78px)"
         >
           <Box height="24px">{renderHeaderText()}</Box>
           <Box mt="-4px">{renderSubheaderText()}</Box>
@@ -125,7 +126,7 @@ export const AvatarWithText = ({
       position={"relative"}
       overflow="hidden"
     >
-      <Box>
+      <Box width="66px">
         {src !== null ? (
           <Avatar variant="withBorder" size="xlg" src={src} />
         ) : (
@@ -133,7 +134,7 @@ export const AvatarWithText = ({
         )}
       </Box>
 
-      <Flex flexDirection={"column"} justifyContent={"center"} flex={1}>
+      <Flex flexDirection={"column"} justifyContent={"center"} flex={1} width="calc(100% - 78px)">
         {renderHeaderText()}
         {renderSubheaderText()}
       </Flex>
