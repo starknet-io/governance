@@ -20,8 +20,8 @@ import {
   StatusModal,
   Flex,
   ArrowRightIcon,
+  Select
 } from "@yukilabs/governance-components";
-import { Select } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
@@ -541,30 +541,25 @@ export function Delegates({
                 <Text variant="mediumStrong" fontWeight="600" color="content.default.default">Sort by</Text>
               </Box>
               <Select
-                height={isMobile ? "44px" : "36px"}
-                border="1px solid"
-                borderColor="border.forms"
                 aria-label="Random"
                 placeholder="Random"
-                focusBorderColor={"red"}
-                rounded="md"
+                size={isMobile ? "md" : "sm"}
                 value={sortBy}
                 onChange={(e) => {
-                  setSortBy(e.target.value);
+                  setSortBy(e);
                   setAllDelegates([]);
                   setFiltersState((prevState) => ({
                     ...prevState,
                     offset: 0,
-                    sortBy: e.target.value,
+                    sortBy: e,
                   }));
                 }}
-              >
-                {sortByOptions.options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+                options={sortByOptions.options.map((option) => ({
+                  value: option.value,
+                  label: option.label,
+                }
                 ))}
-              </Select>
+              />
               <Popover placement="bottom-start">
                 <FilterPopoverIcon
                   label="Filter by"

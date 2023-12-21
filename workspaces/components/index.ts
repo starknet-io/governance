@@ -39,6 +39,7 @@ export { Dropdown } from "./src/Dropdown";
 export { FormControlled, useFormErrorHandler } from "./src/FormControlled";
 export { Tooltip } from "./src/Tooltip";
 export { Select } from "./src/Select";
+export { Multiselect } from "./src/Multiselect";
 export { NotificationsMenu, NotificationItem } from "./src/Notifications";
 export { EmailSubscriptionModal } from "./src/EmailSubscriptionModal";
 export { Modal } from "./src/Modal";
@@ -119,7 +120,6 @@ export {
   FilterPopoverIcon,
 } from "./src/Filter/";
 export { MarkdownEditor } from "./src/Editor";
-export { Multiselect } from "./src/Multiselect";
 export { ShareDialog } from "./src/ShareDialog";
 export { SupportModal } from "./src/SupportModal";
 export { StatusModal } from "./src/StatusModal";
