@@ -32,6 +32,7 @@ export type DelegateCardProps = {
   votingPower: number;
   voteCount?: number;
   onDelegateClick?: () => void;
+  onDelegateCardClick?: () => void;
   profileURL?: string;
   address: string | null | undefined;
   user?: string | null;
@@ -137,6 +138,7 @@ export const DelegateCard = ({
   address,
   user,
   onDelegateClick,
+  onDelegateCardClick,
   profileURL,
   isDelegationLoading,
   headerTooltipContent,
@@ -151,7 +153,11 @@ export const DelegateCard = ({
   return (
     <LinkBox as={Card} variant="delegate">
       <CardHeader>
-        <LinkOverlay href={profileURL}>
+        <LinkOverlay
+          href={!onDelegateCardClick ? profileURL : undefined}
+          onClick={onDelegateCardClick ? (e) => { e.preventDefault(); onDelegateCardClick(); } : undefined}
+          sx={{ cursor: onDelegateCardClick || profileURL ? "pointer" : "default"}}
+        >
           <AvatarWithText
             size="condensed"
             headerText={user}
