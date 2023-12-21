@@ -981,6 +981,9 @@ export function Page() {
                         // @ts-expect-error todo
                         strategies={strategies}
                         scoresByStrategy={scoresByStrategy}
+                        delegationSymbol={
+                          import.meta.env.VITE_APP_DELEGATION_SYMBOL
+                        }
                       />
                     );
                   })}

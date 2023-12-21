@@ -10,6 +10,7 @@ type Props = {
   active?: boolean;
   strategies: Array<{ network: string; params: any }>;
   scoresByStrategy: number[];
+  delegationSymbol?: string;
 };
 
 const variant = {
@@ -54,7 +55,8 @@ export const VoteStat = (props: Props) => {
           variant="captionSmallStrong"
           color="content.default.default"
         >
-          {voteCountFormatted} STRK
+          {voteCountFormatted}{" "}
+          {props.delegationSymbol ? props.delegationSymbol : "STRK"}
         </Text>
       </Flex>
       <Box bg="purple" width="100%">
