@@ -69,6 +69,26 @@ app.use(
   }),
 );
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS!.split(',') : [];
+
+const checkOriginMiddleware = (req: any, res: any, next: any) => {
+  if (!allowedOrigins.length) {
+    next()
+  } else {
+    const origin = req.headers.origin || req.headers['x-forwarded-for'];
+    console.log('origin: ', req.headers.origin)
+    console.log('x-forwarded-for', req.headers['x-forwarded-for'])
+    if (allowedOrigins.includes(origin)) {
+      console.log('succeeeess')
+      next();
+    } else {
+      return res.status(403).send('Access Denied');
+    }
+  }
+};
+
+app.use(checkOriginMiddleware);
+
 
 // Headers
 app.use(helmet());

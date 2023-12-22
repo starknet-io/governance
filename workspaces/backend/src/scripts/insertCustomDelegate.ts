@@ -9,8 +9,7 @@ const turndownService = new TurndownService();
 
 const delegateInfo = {
   address: '',
-  starknetAddress:
-    '',
+  starknetAddress: '',
   ensName: '',
   delegateStatement: '',
   interests: [],
@@ -56,7 +55,7 @@ async function insertCustomDelegate(delegate = delegateInfo) {
 
     if (existingDelegate) {
       console.log('Delegate already exists - terminating process');
-      return
+      return;
     }
 
     if (!existingDelegate) {
@@ -100,4 +99,4 @@ async function insertCustomDelegate(delegate = delegateInfo) {
   }
 }
 
-insertCustomDelegate()
+insertCustomDelegate();
