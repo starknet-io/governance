@@ -63,6 +63,12 @@ export const Select = ({
       padding: state.selectProps.size === 'md' 
       ? '12px 8px 12px 12px'
       : '8px 8px 8px 12px',
+      minHeight: state.selectProps.size === 'md' 
+        ? '44px'
+        : '36px',
+      height: state.selectProps.size === 'md' 
+        ? '44px'
+        : '36px',
       alignItems: 'center',
       gap: '8px',
       alignSelf: 'stretch',
