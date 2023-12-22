@@ -8,32 +8,12 @@ import TurndownService from 'turndown';
 const turndownService = new TurndownService();
 
 const delegateInfo = {
-  address: '0xbE2fd46639EAe548552aA79b1245D65718cB89d9',
+  address: '',
   starknetAddress:
-    '0x0640cC5d7E32Bb5226E49A1c41b697dA98962E66a86f6F109A089c8291E3BF40',
-  ensName: '0xremiss.ETH',
-  delegateStatement:
-    'Hey everyone,\n' +
-    '\n' +
-    'I’m 0xRemiss, a content creator in the StarkNet Ecosystem. I’ve been involved in crypto since 2017 and have been an active member of the StarkNet community since its inception. I’m also a team member of Starknet Turkey.\n' +
-    '\n' +
-    'On Twitter and Medium, I share the latest StarkNet news, educational content, and updates. I assist users who encounter issues with wallets, bridges, and other aspects of using StarkNet Alpha. Additionally, I have a weekly StarkNet newsletter for the community.\n' +
-    '\n' +
-    'I aspire to become a delegate because I have been contributing to the StarkNet ecosystem for a significant period of time, and I want to contribute even more to this vibrant community. Being a delegate will provide me with an opportunity to make a greater impact and be a voice for the community as someone who is actively involved in the ecosystem.\n' +
-    '\n' +
-    'I have extensive experience with DAO governance and possess knowledge of the concept. I understand the responsibilities associated with being a delegate.\n' +
-    '\n' +
-    'My skills and expertise are about creating contents. I believe I have the ability to create good content and simplify complex topics in writing. I also think I have skills in video creation and article writing. I believe I can better amplify the voice of the community in this way.\n' +
-    '\n' +
-    'I believe you should choose me because I have the ability to make objective decisions and I always prioritize the decisions made by the StarkNet community.\n' +
-    '\n' +
-    'I will continue to support the StarkNet ecosystem and I am committed to not being involved in any community or institution that goes against the values of the StarkNet community.\n' +
-    '\n' +
-    'Anyone can contact me anytime through social media to ask questions about anything related to crypto and StarkNet.\n' +
-    '\n' +
-    'Thank you !\n' +
-    '\n' +
-    '0xRemiss',
+    '',
+  ensName: '',
+  delegateStatement: '',
+  interests: [],
 };
 
 async function insertCustomDelegate(delegate = delegateInfo) {
@@ -88,7 +68,7 @@ async function insertCustomDelegate(delegate = delegateInfo) {
 
       const newDelegate = {
         userId: userId,
-        interests: [],
+        interests: delegate.interests,
         statement: statementMarkdown,
         twitter: null,
         discord: null,
