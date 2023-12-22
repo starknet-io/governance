@@ -6,7 +6,7 @@ const { definePartsStyle, defineMultiStyleConfig } =
 
 const primary = definePartsStyle({
   field: {
-    color: "content.support.default",
+    color: "content.accent.default",
     _placeholder: {
       color: "content.support.default",
     },
@@ -19,10 +19,6 @@ const primary = definePartsStyle({
     },
     _hover: {
       borderColor: "#C8C7CB",
-      color: "content.support.hover",
-      // _placeholder: {
-      //   color: "content.support.hover",
-      // },
     },
     _disabled: {
       color: "content.support.disabled",
