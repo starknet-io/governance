@@ -64,7 +64,7 @@ morgan.token('decoded-url', (req: any) => decodeURIComponent(req.originalUrl));
 app.use(
   morgan(':method :decoded-url :status :response-time ms\n', {
     skip: function (req: any, res: any) {
-      return res.statusCode < 200; // Skip logging if status code is less than 400
+      return res.statusCode < 400; // Skip logging if status code is less than 400
     },
   }),
 );

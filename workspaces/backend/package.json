@@ -12,6 +12,7 @@
     "sync-with-snapshot": "ts-node --transpile-only src/scripts/syncSnapshotUsers.ts",
     "migrate-karma-discourses": "ts-node --transpile-only src/scripts/migrateKarmaDiscourses.ts",
     "delete-notifications": "ts-node --transpile-only src/scripts/deleteNotifications.ts",
+    "insert-custom-delegate": "ts-node --transpile-only src/scripts/insertCustomDelegate.ts",
     "fetch-voting-power": "ts-node --transpile-only src/routers/delegateVoting.ts",
     "migration:generate": "drizzle-kit generate:pg",
     "migration:run": "drizzle-kit push:pg",
