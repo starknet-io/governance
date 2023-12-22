@@ -191,13 +191,20 @@ export const commentsRouter = router({
         }
       }
 
-      const insertedComment = await db
+      const insertedCommentResult = await db
         .insert(comments)
         .values({
           ...opts.input,
           userId: opts.ctx.user?.id,
         })
         .returning();
+      let insertedComment = null;
+      if (
+        Array.isArray(insertedCommentResult) &&
+        insertedCommentResult.length > 0
+      ) {
+        insertedComment = insertedCommentResult[0];
+      }
 
       const parentId = opts.input.parentId;
       if (parentId) {
@@ -218,7 +225,7 @@ export const commentsRouter = router({
               type: 'comment_reply',
               title: 'New Comment Reply',
               proposalId: opts.input.proposalId,
-              commentId: insertedComment[0]?.id,
+              commentId: insertedComment?.id,
               postId: opts.input.postId,
               time: new Date(),
               userId: opts.ctx.user?.id,
@@ -240,7 +247,7 @@ export const commentsRouter = router({
         }
       }
 
-      return insertedComment[0];
+      return insertedComment;
     }),
 
   editComment: protectedProcedure
@@ -270,14 +277,23 @@ export const commentsRouter = router({
         .where(eq(comments.id, opts.input.id))
         .returning();
 
-      return updatedComment[0];
+      if (Array.isArray(updatedComment)) {
+        return updatedComment[0]; // Now TypeScript knows that updatedComment is an array
+      } else {
+        console.error('Expected an array, but received:', updatedComment);
+        throw new Error('Unexpected error occurred while updating the comment');
+      }
     }),
 
   deleteComment: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async (opts) => {
       const user = opts.ctx.user;
-      if (user?.role !== 'admin' && user?.role !== 'superadmin' && user?.role !== 'moderator') {
+      if (
+        user?.role !== 'admin' &&
+        user?.role !== 'superadmin' &&
+        user?.role !== 'moderator'
+      ) {
         throw new Error('Permission denied: Only admins can delete comments');
       }
 
