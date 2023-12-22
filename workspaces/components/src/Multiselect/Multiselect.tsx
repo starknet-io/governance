@@ -37,6 +37,12 @@ export const Multiselect = ({
       alignSelf: 'stretch',
       borderRadius: '4px',
       border: '1px solid rgba(35, 25, 45, 0.10)',
+      minHeight: state.selectProps.size === 'md' 
+        ? '44px'
+        : '36px',
+      height: state.selectProps.size === 'md' 
+        ? '44px'
+        : '36px',
       background: '#FBFBFB',
       boxShadow: '0px 1px 1px 0px rgba(0, 0, 0, 0.05)',
       _hover: {
