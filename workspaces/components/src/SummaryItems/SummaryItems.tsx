@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Skeleton } from "@chakra-ui/react";
+import { Box, Flex, Icon, Skeleton, SystemStyleObject } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 
 import { Text } from "../Text";
@@ -21,8 +21,9 @@ import { Tooltip } from "src/Tooltip";
 type RootProps = {
   children?: ReactNode | undefined;
   direction?: "column" | "row";
+  style?: SystemStyleObject;
 };
-const Root = ({ children, direction = "column" }: RootProps) => {
+const Root = ({ children, direction = "column", style }: RootProps) => {
   return (
     <Box
       display="flex"
@@ -31,6 +32,7 @@ const Root = ({ children, direction = "column" }: RootProps) => {
       flexDirection={direction}
       flexWrap={direction === "row" ? "wrap" : "nowrap"}
       justifyContent="flex-start"
+      sx={{ ...style }}
     >
       {children}
     </Box>
