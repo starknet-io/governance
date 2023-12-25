@@ -112,6 +112,42 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
     });
   };
 
+  const updateEditedComment = (commentId, newContent) => {
+    setAllComments((prevComments) =>
+      updateCommentInList(prevComments, commentId, (comment) => ({
+        ...comment,
+        content: newContent,
+      })),
+    );
+  };
+
+  const markCommentAsDeleted = (commentId) => {
+    setAllComments((prevComments) =>
+      updateCommentInList(prevComments, commentId, (comment) => ({
+        ...comment,
+        isDeleted: true,
+      })),
+    );
+  };
+
+  const updateCommentInList = (comments, commentId, updateFunction) => {
+    return comments.map((comment) => {
+      if (comment.id === commentId) {
+        return updateFunction(comment);
+      } else if (comment.replies) {
+        return {
+          ...comment,
+          replies: updateCommentInList(
+            comment.replies,
+            commentId,
+            updateFunction,
+          ),
+        };
+      }
+      return comment;
+    });
+  };
+
   const handleCommentSend = async (value: string) => {
     try {
       const newComment = await saveComment.mutateAsync({
@@ -137,6 +173,7 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
         content,
         id: commentId,
       });
+      updateEditedComment(commentId, content);
     } catch (error) {
       // Handle error
       throw error;
@@ -148,6 +185,7 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
       await deleteComment.mutateAsync({
         id: commentId,
       });
+      markCommentAsDeleted(commentId);
     } catch (error) {
       // Handle error
       console.log(error);
