@@ -12,10 +12,10 @@ import {
   Heading,
   Text,
 } from "@yukilabs/governance-components";
-import { Select } from "@chakra-ui/react";
+import { Divider, HStack, Select } from "@chakra-ui/react";
 import * as VoteLayout from "../VotingProposal/PageLayout";
-import {useDynamicContext} from "@dynamic-labs/sdk-react-core";
-import {useHelpMessage} from "../../../hooks/HelpMessage";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { useHelpMessage } from "../../../hooks/HelpMessage";
 
 const LIMIT = 5;
 
@@ -27,19 +27,13 @@ const sortByOptions = {
   ],
 };
 
-const VotingProposalComments = ({
-  proposalId,
-}: {
-  proposalId: string;
-}) => {
+const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
   const [offset, setOffset] = useState(1);
   const [allComments, setAllComments] = useState([]);
   const [sortBy, setSortBy] = useState<"date" | "upvotes">("date");
   const [helpMessage, setHelpMessage] = useHelpMessage();
 
-
   const { user } = useDynamicContext();
-
 
   const comments = trpc.comments.getProposalComments.useQuery({
     offset,
@@ -60,19 +54,19 @@ const VotingProposalComments = ({
 
   const editComment = trpc.comments.editComment.useMutation({
     onSuccess: () => {
-      comments.refetch();
+      // comments.refetch();
     },
   });
 
   const deleteComment = trpc.comments.deleteComment.useMutation({
     onSuccess: () => {
-      comments.refetch();
+      // comments.refetch();
     },
   });
 
   const voteComment = trpc.comments.voteComment.useMutation({
     onSuccess: () => {
-      comments.refetch();
+      // comments.refetch();
     },
   });
 
@@ -136,26 +130,76 @@ const VotingProposalComments = ({
     }
   };
 
-  const handleCommentVote = async ({
-    commentId,
-    voteType,
-  }: {
-    commentId: number;
-    voteType: "upvote" | "downvote";
-  }) => {
+  const updateCommentVotes = (
+    commentId: number,
+    newVoteType: "upvote" | "downvote",
+  ) => {
+    setAllComments((prevComments: any) =>
+      prevComments.map((comment: any) => {
+        // Function to update vote counts
+        const updateVotes = (comment) => {
+          let updatedComment = { ...comment };
+          let isNewVote = false;
+
+          if (!updatedComment.votes) {
+            updatedComment.votes = { voteType: newVoteType };
+            isNewVote = true;
+          }
+
+          if (newVoteType === "upvote") {
+            if (isNewVote || updatedComment.votes.voteType !== "upvote") {
+              updatedComment.upvotes += 1;
+            }
+            if (updatedComment.votes.voteType === "downvote") {
+              updatedComment.downvotes -= 1;
+            }
+          } else if (newVoteType === "downvote") {
+            if (isNewVote || updatedComment.votes.voteType !== "downvote") {
+              updatedComment.downvotes += 1;
+            }
+            if (updatedComment.votes.voteType === "upvote") {
+              updatedComment.upvotes -= 1;
+            }
+          }
+
+          updatedComment.netVotes =
+            updatedComment.upvotes - updatedComment.downvotes;
+          updatedComment.votes.voteType = newVoteType;
+
+          return updatedComment;
+        };
+
+        if (comment.id === commentId) {
+          return updateVotes(comment);
+        } else if (comment.replies) {
+          const updatedReplies = comment.replies.map((reply) =>
+            reply.id === commentId ? updateVotes(reply) : reply,
+          );
+          return { ...comment, replies: updatedReplies };
+        }
+        return comment;
+      }),
+    );
+  };
+
+  const handleCommentVote = async ({ commentId, voteType }) => {
     try {
       await voteComment.mutateAsync({
         commentId,
         voteType,
       });
+      updateCommentVotes(commentId, voteType);
     } catch (error) {
-      // Handle error
       console.log(error);
     }
   };
 
   const commentCount = comments?.data?.comments?.length || 0;
   const [commentError, setCommentError] = useState("");
+
+  const replaceVotes = (commentId, vote) => {};
+
+  const onFetchReplies = () => {};
 
   useEffect(() => {
     if (sortBy && sortBy.length) {
@@ -245,6 +289,7 @@ const VotingProposalComments = ({
             <CommentList
               commentsList={allComments || []}
               onVote={handleCommentVote}
+              onFetchReplies={() => {}}
               onDelete={handleCommentDelete}
               onReply={handleReplySend}
               onEdit={handleCommentEdit}
@@ -263,9 +308,23 @@ const VotingProposalComments = ({
             */}
       {comments?.data?.moreCommentsAvailable && (
         <>
-          <Button variant="ghost" onClick={onLoadMoreComments}>
-            View More Comments
-          </Button>
+          <HStack
+            position="relative"
+            spacing="0"
+            h="80px"
+            bgGradient="linear-gradient(0deg, #F9F8F9 0%, rgba(249, 248, 249, 0.50) 100%)"
+          >
+            <Divider />
+            <Button
+              minWidth="180px"
+              variant="secondary"
+              size="standard"
+              onClick={onLoadMoreComments}
+            >
+              View More Comments
+            </Button>
+            <Divider />
+          </HStack>
         </>
       )}
     </VoteLayout.Discussion>

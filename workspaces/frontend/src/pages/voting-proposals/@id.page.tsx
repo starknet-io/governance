@@ -58,7 +58,7 @@ import {
 import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
-import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments";
+import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments/VotingProposalComments";
 
 
 export function Page() {
