@@ -279,9 +279,50 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
   const commentCount = comments?.data?.comments?.length || 0;
   const [commentError, setCommentError] = useState("");
 
-  const replaceVotes = (commentId, vote) => {};
+  const updateCommentsWithNewReplies = (comments, commentId, newReplies) => {
+    return comments.map(comment => {
+      if (comment.id === commentId) {
+        // Found the comment, now update its replies
+        return {
+          ...comment,
+          replies: [...comment.replies, ...newReplies],
+          remainingReplies: comment.remainingReplies - newReplies.length
+        };
+      } else if (comment.replies && comment.replies.length > 0) {
+        // Recursively update nested comments
+        return {
+          ...comment,
+          replies: updateCommentsWithNewReplies(comment.replies, commentId, newReplies)
+        };
+      }
+      // Return the comment unchanged if it's not the one we're updating
+      return comment;
+    });
+  };
 
-  const onFetchReplies = () => {};
+
+  const fetchMoreReplies = async (commentId, currentRepliesCount) => {
+    const newOffset = currentRepliesCount + 1;
+    const replyLimit = 5; // Or any other number you choose
+
+    try {
+      const fetchedReplies = trpc.comments.getReplies.useQuery({
+        commentId,
+        limit: replyLimit,
+        offset: newOffset,
+      });
+
+      console.log(fetchedReplies)
+
+      setAllComments(prevComments =>
+        updateCommentsWithNewReplies(prevComments, commentId, fetchedReplies?.data?.replies)
+      );
+    } catch (error) {
+      console.error('Error fetching replies:', error);
+    }
+  };
+
+  //fetchMoreReplies(51)
 
   useEffect(() => {
     if (sortBy && sortBy.length) {
