@@ -32,6 +32,7 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
   const [allComments, setAllComments] = useState([]);
   const [sortBy, setSortBy] = useState<"date" | "upvotes">("date");
   const [helpMessage, setHelpMessage] = useHelpMessage();
+  const [newComment, setNewComment] = useState<any>(null);
 
   const { user } = useDynamicContext();
 
@@ -48,7 +49,7 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
 
   const saveComment = trpc.comments.saveComment.useMutation({
     onSuccess: () => {
-      comments.refetch();
+      // comments.refetch();
     },
   });
 
@@ -70,12 +71,54 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
     },
   });
 
+  useEffect(() => {
+    if (newComment) {
+      if (newComment?.parentId) {
+        setAllComments((prevComments) =>
+          addNewReplyToComments(prevComments, newComment),
+        );
+      } else {
+        setAllComments((prevComments) =>
+          addNewCommentToComments(prevComments, newComment),
+        );
+      }
+      setNewComment(null);
+    }
+  }, [newComment]);
+
+  const addNewCommentToComments = (comments, newComment) => {
+    // Add new top-level comment
+    return [newComment, ...comments];
+  };
+
+  const addNewReplyToComments = (comments, newComment) => {
+    // Add new reply to an existing comment
+    const toIterate = Array.isArray(comments) ? comments : comments.replies;
+    return toIterate.map((comment) => {
+      if (comment.id === newComment.parentId) {
+        return {
+          ...comment,
+          replies: comment.replies
+            ? [...comment.replies, newComment]
+            : [newComment],
+        };
+      } else if (comment.replies) {
+        return {
+          ...comment,
+          replies: addNewReplyToComments(comment.replies, newComment),
+        };
+      }
+      return comment;
+    });
+  };
+
   const handleCommentSend = async (value: string) => {
     try {
-      await saveComment.mutateAsync({
+      const newComment = await saveComment.mutateAsync({
         content: value,
         proposalId: proposalId,
       });
+      setNewComment(newComment);
     } catch (error) {
       // Handle error
       throw error;
@@ -119,11 +162,12 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
     parentId: number;
   }) => {
     try {
-      await saveComment.mutateAsync({
+      const newComment = await saveComment.mutateAsync({
         content,
         parentId,
         proposalId: proposalId,
       });
+      setNewComment(newComment);
     } catch (error) {
       // Handle error
       throw error;

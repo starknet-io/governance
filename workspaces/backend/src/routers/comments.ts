@@ -8,6 +8,7 @@ import { commentVotes } from '../db/schema/commentVotes';
 import { profanity } from '@2toad/profanity';
 import { notifications } from '../db/schema/notifications';
 import { notificationUsers } from '../db/schema/notificationUsers';
+import { users } from '../db/schema/users';
 
 const commentInsertSchema = createInsertSchema(comments);
 
@@ -76,8 +77,6 @@ export const commentsRouter = router({
         comment.totalReplyCount = repliesObject.totalReplyCount;
         comment.netVotes = comment.upvotes - comment.downvotes;
       }
-      console.log(totalMainCommentCount[0]?.value)
-      console.log(opts.input.offset * opts.input.limit)
 
       return {
         comments: rawComments,
@@ -312,6 +311,17 @@ export const commentsRouter = router({
         }
       }
 
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, opts.ctx.user?.id),
+      });
+
+      if (user) {
+        return {
+          ...insertedComment,
+          author: user,
+        };
+      }
+
       return insertedComment;
     }),
 
@@ -381,12 +391,15 @@ async function getLimitedReplies(commentId: number, depth = 1): Promise<any> {
     limit: 5,
   });
 
-  const totalAllReplyCount = await db
-    .select({
-      value: sql`count(${comments.id})`.mapWith(Number),
-    })
-    .from(comments)
-    .where(eq(comments.parentId, commentId));
+  const totalAllReplyCount =
+    depth === 1
+      ? await db
+          .select({
+            value: sql`count(${comments.id})`.mapWith(Number),
+          })
+          .from(comments)
+          .where(eq(comments.parentId, commentId))
+      : null;
 
   for (const reply of replies) {
     const totalReplyCount = await db
@@ -401,9 +414,13 @@ async function getLimitedReplies(commentId: number, depth = 1): Promise<any> {
     reply.remainingReplies = reply.totalReplyCount - reply.replies.length; // New field indicating remaining replies
   }
 
-  return {
-    replies,
-    totalReplyCount: totalAllReplyCount?.[0]?.value || 0,
-    remainingReplies: (totalAllReplyCount?.[0]?.value || 0) - replies.length,
-  };
+  if (depth === 1) {
+    return {
+      replies,
+      totalReplyCount: totalAllReplyCount?.[0]?.value || 0,
+      remainingReplies: (totalAllReplyCount?.[0]?.value || 0) - replies.length,
+    };
+  } else {
+    return replies;
+  }
 }
