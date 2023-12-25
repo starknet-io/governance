@@ -4,8 +4,6 @@ import {
   AppBar,
   Box,
   Button,
-  CommentInput,
-  CommentList,
   ConfirmModal,
   Divider,
   Flex,
@@ -60,14 +58,8 @@ import {
 import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments";
 
-const sortByOptions = {
-  defaultValue: "date",
-  options: [
-    { label: "Date", value: "date" },
-    { label: "Upvotes", value: "upvotes" },
-  ],
-};
 
 export function Page() {
   const pageContext = usePageContext();
@@ -264,14 +256,11 @@ export function Page() {
   const [isSuccessModalOpen, setisSuccessModalOpen] = useState(false);
   const [currentChoice, setcurrentChoice] = useState<number>(0);
   const [comment, setComment] = useState("");
-  const [sortBy, setSortBy] = useState<"date" | "upvotes">("date");
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
-  const [allComments, setAllComments] = useState([])
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
-  const [commentError, setCommentError] = useState("");
   const hasVoted = vote.data && vote.data.votes?.[0];
   const canVote =
     data?.proposal?.state === "active" && vp?.vp?.vp && vp?.vp?.vp !== 0;
@@ -302,26 +291,15 @@ export function Page() {
           : {},
     };
   });
-  const [commentsState, setCommentsState] = useState({
-    proposalId: data?.proposal?.id ?? "",
-    sort: sortBy,
-    limit: 5,
-    offset: 1,
-  });
-  const comments = trpc.comments.getProposalComments.useQuery({
-    ...commentsState,
-  });
-  const commentCount = comments?.data?.comments?.length || 0;
+
+  /*
 
   useEffect(() => {
     comments.refetch();
   }, [user?.isAuthenticatedWithAWallet]);
 
-  useEffect(() => {
-    if (comments.data && comments.data?.comments && !comments.isLoading) {
-      setAllComments((prevComments) => [...prevComments, ...comments.data?.comments]);
-    }
-  }, [comments.data, comments.isLoading]);
+   */
+
 
   useEffect(() => {
     if (user) {
@@ -329,114 +307,7 @@ export function Page() {
     }
   }, [user]);
 
-  const onLoadMoreComments = () => {
-    setCommentsState({
-      ...commentsState,
-      offset: commentsState.offset + 1,
-    });
-  };
 
-  const saveComment = trpc.comments.saveComment.useMutation({
-    onSuccess: () => {
-      comments.refetch();
-    },
-  });
-
-  const editComment = trpc.comments.editComment.useMutation({
-    onSuccess: () => {
-      comments.refetch();
-    },
-  });
-
-  const deleteComment = trpc.comments.deleteComment.useMutation({
-    onSuccess: () => {
-      comments.refetch();
-    },
-  });
-
-  const voteComment = trpc.comments.voteComment.useMutation({
-    onSuccess: () => {
-      comments.refetch();
-    },
-  });
-
-  const handleCommentSend = async (value: string) => {
-    try {
-      await saveComment.mutateAsync({
-        content: value,
-        proposalId: data?.proposal?.id,
-      });
-    } catch (error) {
-      // Handle error
-      throw error;
-    }
-  };
-
-  const handleCommentEdit = async ({
-    content,
-    commentId,
-  }: {
-    content: string;
-    commentId: number;
-  }) => {
-    try {
-      await editComment.mutateAsync({
-        content,
-        id: commentId,
-      });
-    } catch (error) {
-      // Handle error
-      throw error;
-    }
-  };
-
-  const handleCommentDelete = async ({ commentId }: { commentId: number }) => {
-    try {
-      await deleteComment.mutateAsync({
-        id: commentId,
-      });
-    } catch (error) {
-      // Handle error
-      console.log(error);
-    }
-  };
-
-  const handleReplySend = async ({
-    content,
-    parentId,
-  }: {
-    content: string;
-    parentId: number;
-  }) => {
-    try {
-      await saveComment.mutateAsync({
-        content,
-        parentId,
-        proposalId: data?.proposal?.id,
-      });
-    } catch (error) {
-      // Handle error
-      throw error;
-    }
-  };
-
-  const handleCommentVote = async ({
-    commentId,
-    voteType,
-  }: {
-    commentId: number;
-    voteType: "upvote" | "downvote";
-  }) => {
-    try {
-      await voteComment.mutateAsync({
-        commentId,
-        voteType,
-      });
-    } catch (error) {
-      // Handle error
-      console.log(error);
-    }
-  };
 
   type MoreActionsProps = {
     children: React.ReactNode;
@@ -705,7 +576,7 @@ export function Page() {
                   <Stat.Root>
                     <Stat.Link
                       href="#discussion"
-                      label={`${commentCount} comments`}
+                      label={`${0} comments`}
                     />
                   </Stat.Root>
                   {/* <Text variant="small" color="content.default.default">
@@ -747,102 +618,7 @@ export function Page() {
               <Divider my="standard.2xl" />
             </Flex>
           </VoteLayout.Content>
-          <VoteLayout.Discussion>
-            <Heading
-              color="content.accent.default"
-              variant="h3"
-              mb="standard.2xl"
-              id="discussion"
-            >
-              Discussion
-            </Heading>
-            {user ? (
-              <FormControl id="delegate-statement">
-                <CommentInput
-                  onSend={async (comment) => {
-                    try {
-                      await handleCommentSend(comment);
-                      setCommentError("");
-                    } catch (err) {
-                      setCommentError(err?.message || "");
-                    }
-                  }}
-                />
-                {commentError && commentError.length && (
-                  <Box mb={6}>
-                    <Banner type="error" variant="error" label={commentError} />
-                  </Box>
-                )}
-              </FormControl>
-            ) : (
-              <Box>
-                <FormControl>
-                  <Box onClick={() => setHelpMessage("connectWalletMessage")}>
-                    <CommentInput
-                      onSend={async (comment) => {
-                        console.log(comment);
-                      }}
-                    />
-                  </Box>
-                </FormControl>
-              </Box>
-            )}
-            {allComments.length > 0 ? (
-              <>
-                <AppBar.Root>
-                  <AppBar.Group mobileDirection="row" gap="standard.sm">
-                    <Box minWidth={"52px"}>
-                      <Text variant="mediumStrong">Sort by</Text>
-                    </Box>
-                    <Select
-                      size="sm"
-                      aria-label="Sort by"
-                      focusBorderColor={"red"}
-                      rounded="md"
-                      value={sortBy}
-                      onChange={(e) =>
-                        setSortBy(e.target.value as "upvotes" | "date")
-                      }
-                    >
-                      <option selected hidden disabled value="">
-                        Sort by
-                      </option>
-                      {sortByOptions.options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </Select>
-                  </AppBar.Group>
-                </AppBar.Root>
-                <Box mt="standard.xs">
-                  <CommentList
-                    commentsList={allComments || []}
-                    onVote={handleCommentVote}
-                    onDelete={handleCommentDelete}
-                    onReply={handleReplySend}
-                    onEdit={handleCommentEdit}
-                  />
-                </Box>
-              </>
-            ) : (
-              <EmptyState
-                hasBorder={false}
-                type="comments"
-                title="Add the first comment"
-              />
-            )}
-            {/*
-            <Banner label="Comments are now closed." />
-            */}
-            {comments?.data?.moreCommentsAvailable && (
-              <>
-                <Button variant="ghost" onClick={onLoadMoreComments}>
-                  View More Comments
-                </Button>
-              </>
-            )}
-          </VoteLayout.Discussion>
+          <VotingProposalComments proposalId={pageContext.routeParams!.id} />
         </VoteLayout.LeftSide>
         <VoteLayout.RightSide>
           <VoteLayout.VoteWidget>
