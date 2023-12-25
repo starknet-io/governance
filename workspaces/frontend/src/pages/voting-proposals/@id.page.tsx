@@ -269,6 +269,7 @@ export function Page() {
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
+  const [allComments, setAllComments] = useState([])
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   const [commentError, setCommentError] = useState("");
   const hasVoted = vote.data && vote.data.votes?.[0];
@@ -301,21 +302,39 @@ export function Page() {
           : {},
     };
   });
-  const comments = trpc.comments.getProposalComments.useQuery({
+  const [commentsState, setCommentsState] = useState({
     proposalId: data?.proposal?.id ?? "",
     sort: sortBy,
+    limit: 5,
+    offset: 1,
   });
-  const commentCount = comments?.data?.length || 0;
+  const comments = trpc.comments.getProposalComments.useQuery({
+    ...commentsState,
+  });
+  const commentCount = comments?.data?.comments?.length || 0;
 
   useEffect(() => {
     comments.refetch();
   }, [user?.isAuthenticatedWithAWallet]);
 
   useEffect(() => {
+    if (comments.data && comments.data?.comments && !comments.isLoading) {
+      setAllComments((prevComments) => [...prevComments, ...comments.data?.comments]);
+    }
+  }, [comments.data, comments.isLoading]);
+
+  useEffect(() => {
     if (user) {
       setIsConnectedModal(false);
     }
   }, [user]);
+
+  const onLoadMoreComments = () => {
+    setCommentsState({
+      ...commentsState,
+      offset: commentsState.offset + 1,
+    });
+  };
 
   const saveComment = trpc.comments.saveComment.useMutation({
     onSuccess: () => {
@@ -768,7 +787,7 @@ export function Page() {
                 </FormControl>
               </Box>
             )}
-            {comments.data && comments.data.length > 0 ? (
+            {allComments.length > 0 ? (
               <>
                 <AppBar.Root>
                   <AppBar.Group mobileDirection="row" gap="standard.sm">
@@ -798,7 +817,7 @@ export function Page() {
                 </AppBar.Root>
                 <Box mt="standard.xs">
                   <CommentList
-                    commentsList={comments.data}
+                    commentsList={allComments || []}
                     onVote={handleCommentVote}
                     onDelete={handleCommentDelete}
                     onReply={handleReplySend}
@@ -813,7 +832,16 @@ export function Page() {
                 title="Add the first comment"
               />
             )}
+            {/*
             <Banner label="Comments are now closed." />
+            */}
+            {comments?.data?.moreCommentsAvailable && (
+              <>
+                <Button variant="ghost" onClick={onLoadMoreComments}>
+                  View More Comments
+                </Button>
+              </>
+            )}
           </VoteLayout.Discussion>
         </VoteLayout.LeftSide>
         <VoteLayout.RightSide>

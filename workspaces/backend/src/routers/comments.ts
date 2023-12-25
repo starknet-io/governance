@@ -56,29 +56,40 @@ export const commentsRouter = router({
         },
       });
 
+      // Count total main comments
+      const totalMainCommentCount = await db
+        .select({
+          value: sql`count(${comments.id})`.mapWith(Number),
+        })
+        .from(comments)
+        .where(
+          and(
+            eq(comments.proposalId, opts.input.proposalId),
+            isNull(comments.parentId),
+          ),
+        );
+
       for (const comment of rawComments) {
         const repliesObject = await getLimitedReplies(comment.id);
         comment.replies = repliesObject.replies;
         comment.remainingReplies = repliesObject.remainingReplies;
         comment.totalReplyCount = repliesObject.totalReplyCount;
+        comment.netVotes = comment.upvotes - comment.downvotes;
       }
+      console.log(totalMainCommentCount[0]?.value)
+      console.log(opts.input.offset * opts.input.limit)
 
-      return rawComments;
-      /*
-      function buildCommentTree(parentId: number | null, commentList: any) {
-        return commentList
-          .filter((comment: any) => comment.parentId === parentId)
-          .map((comment: any) => ({
-            ...comment,
-            netVotes: comment.upvotes - comment.downvotes, // Simple subtraction here
-            replies: buildCommentTree(comment.id, commentList),
-          }));
-      }
-
-      const structuredComments = buildCommentTree(null, rawComments);
-
-      return structuredComments;
-       */
+      return {
+        comments: rawComments,
+        moreCommentsAvailable:
+          totalMainCommentCount[0]?.value >
+          opts.input.offset * opts.input.limit,
+        remainingComments: Math.max(
+          totalMainCommentCount[0]?.value -
+            opts.input.offset * opts.input.limit,
+          0,
+        ),
+      };
     }),
 
   getReplies: publicProcedure
@@ -359,11 +370,7 @@ export const commentsRouter = router({
     }),
 });
 
-async function getLimitedReplies(
-  commentId: number,
-  depth = 1,
-): Promise<any> {
-  console.log(depth);
+async function getLimitedReplies(commentId: number, depth = 1): Promise<any> {
   if (depth > 3) {
     // Limiting the depth to 2 (replies and sub-replies)
     return [];
@@ -389,6 +396,7 @@ async function getLimitedReplies(
       .from(comments)
       .where(eq(comments.parentId, reply.id));
     reply.replies = await getLimitedReplies(reply.id, depth + 1);
+    reply.netVotes = reply.upvotes - reply.downvotes; // Simple subtraction here
     reply.totalReplyCount = totalReplyCount?.[0]?.value || 0;
     reply.remainingReplies = reply.totalReplyCount - reply.replies.length; // New field indicating remaining replies
   }

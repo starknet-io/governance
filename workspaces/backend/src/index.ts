@@ -76,10 +76,7 @@ const checkOriginMiddleware = (req: any, res: any, next: any) => {
     next()
   } else {
     const origin = req.headers.origin || req.headers['x-forwarded-for'];
-    console.log('origin: ', req.headers.origin)
-    console.log('x-forwarded-for', req.headers['x-forwarded-for'])
     if (allowedOrigins.includes(origin)) {
-      console.log('succeeeess')
       next();
     } else {
       return res.status(403).send('Access Denied');
