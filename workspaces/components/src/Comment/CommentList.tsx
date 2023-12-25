@@ -318,7 +318,7 @@ const CommentItem: React.FC<CommentProps> = ({
   const isDownvote = votes?.voteType === "downvote";
 
   const showReplyMarkdownEditor = activeCommentEditor === comment.id;
-  const [isThreadOpen, changeIsThreadOpen] = useState<boolean>(true);
+  const [isThreadOpen, changeIsThreadOpen] = useState<boolean>(false);
   const hasReplies = comment.replies && comment.replies.length;
 
   useEffect(() => {

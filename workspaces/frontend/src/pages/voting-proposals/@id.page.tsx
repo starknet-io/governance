@@ -737,7 +737,7 @@ export function Page() {
             >
               Discussion
             </Heading>
-            {/* {user ? (
+            {user ? (
               <FormControl id="delegate-statement">
                 <CommentInput
                   onSend={async (comment) => {
@@ -767,8 +767,8 @@ export function Page() {
                   </Box>
                 </FormControl>
               </Box>
-            )} */}
-            {/* {comments.data && comments.data.length > 0 ? (
+            )}
+            {comments.data && comments.data.length > 0 ? (
               <>
                 <AppBar.Root>
                   <AppBar.Group mobileDirection="row" gap="standard.sm">
@@ -812,7 +812,7 @@ export function Page() {
                 type="comments"
                 title="Add the first comment"
               />
-            )} */}
+            )}
             <Banner label="Comments are now closed." />
           </VoteLayout.Discussion>
         </VoteLayout.LeftSide>
