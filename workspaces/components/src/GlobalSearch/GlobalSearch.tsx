@@ -5,7 +5,6 @@ import {
   InputLeftElement,
   InputRightElement,
   ModalBody,
-  ModalOverlay,
   ModalContent,
   ModalHeader,
   ModalFooter,
@@ -38,14 +37,16 @@ interface Props {
   isOpen?: boolean;
   searchResults: ISearchItem[];
   onSearchItems: (searchText: string) => void;
-  setIsSearchModalOpen: Dispatch<SetStateAction<boolean>>;
+  onGlobalSearchOpen: () => void;
+  onGlobalSearchClose: () => void;
 }
 
 export function GlobalSearch({
   searchResults,
   onSearchItems,
   isOpen = false,
-  setIsSearchModalOpen,
+  onGlobalSearchOpen,
+  onGlobalSearchClose,
 }: Props) {
   const [searchText, setSearchText] = useState("");
   const [highlightIndex, setHighlightIndex] = useState(0);
@@ -59,7 +60,15 @@ export function GlobalSearch({
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "/") {
-      setIsSearchModalOpen((condition) => !condition);
+      const activeElement = document.activeElement;
+      const tagName = activeElement?.tagName.toLowerCase();
+      if ((activeElement?.role !== 'textbox' && tagName !== 'input' && tagName !== 'textarea') || activeElement?.parentElement?.parentElement?.tagName?.toLowerCase() === "header") {
+        if (isOpen) {
+          onGlobalSearchClose();
+        } else {
+          onGlobalSearchOpen();
+        }
+      }
     }
 
     if (e.key === "ArrowDown") {
@@ -77,7 +86,7 @@ export function GlobalSearch({
   const handleEnterPress = () => {
     if (h) {
       let path = getSearchItemHref(h?.type, h?.refID);
-      setIsSearchModalOpen(false);
+      onGlobalSearchClose();
       if (h?.type === "delegate") {
         path = path.replace("/delegates/", "/delegates/profile/");
       }
@@ -86,7 +95,7 @@ export function GlobalSearch({
   };
 
   const handleSearchClick = () => {
-    setIsSearchModalOpen(true);
+    onGlobalSearchOpen();
   };
 
   // Using setTimeout here to remove "/" upon clicking it
@@ -177,12 +186,16 @@ export function GlobalSearch({
 
       <Modal
         isOpen={isOpen}
-        onClose={() => setIsSearchModalOpen(false)}
-        autoFocus={false}
+        onClose={onGlobalSearchClose}
         size={isMobile ? "full" : "3xl"}
+        maxHeight="100%"
       >
-        <ModalOverlay />
-        <ModalContent height={isMobile ? "100vh" : "672px"} overflow="auto" borderRadius="lg">
+        <Flex
+          height={isMobile ? "100vh" : "672px"}
+          overflow="auto"
+          borderRadius="lg"
+          direction="column"
+        >
           <ModalHeader mt={isMobile ? "60px" : "0"} p="0" borderBottom="1px solid #23192D1A">
             <Input placeholder="" hidden />
             <InputGroup
@@ -211,7 +224,7 @@ export function GlobalSearch({
                 paddingLeft="2.5rem"
               />
               <Show breakpoint="(max-width: 567px)">
-                <InputRightElement onClick={() => setIsSearchModalOpen(false)}>
+                <InputRightElement onClick={onGlobalSearchClose}>
                   <CloseIcon />
                 </InputRightElement>
               </Show>
@@ -281,7 +294,7 @@ export function GlobalSearch({
               </Flex>
             </ModalFooter>
           </Show>
-        </ModalContent>
+        </Flex>
       </Modal>
     </Box>
   );

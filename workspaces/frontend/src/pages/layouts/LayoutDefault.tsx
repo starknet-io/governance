@@ -87,7 +87,11 @@ function LayoutDefault(props: Props) {
   }, [helpMessage, setHelpMessage]);
 
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
-  const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
+  const {
+    isOpen: isGlobalSearchOpen,
+    onOpen: onGlobalSearchOpen,
+    onClose: onGlobalSearchClose,
+  } = useDisclosure();
   const { isTablet } = useIsMobile();
 
   const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
@@ -306,7 +310,8 @@ function LayoutDefault(props: Props) {
                     searchResults={globalSearchResults}
                     onSearchItems={handleGlobalSearchItems}
                     isOpen={isGlobalSearchOpen}
-                    setIsSearchModalOpen={setIsGlobalSearchOpen}
+                    onGlobalSearchOpen={onGlobalSearchOpen}
+                    onGlobalSearchClose={onGlobalSearchClose}
                   />
                 </Show>
                 <Box display={{ base: "flex" }} marginLeft="auto">
