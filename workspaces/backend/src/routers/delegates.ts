@@ -239,9 +239,9 @@ export const delegateRouter = router({
         throw new Error('Your delegate statement contains inappropriate language.');
       }
       // Determine the agreement value
-      const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
-        ? null
-        : opts.input.confirmDelegateAgreement; // Use true or appropriate value for standard agreement
+      // const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
+      //   ? null
+      //   : opts.input.confirmDelegateAgreement; // Use true or appropriate value for standard agreement
       const updatedDelegate = await db
         .update(delegates)
         .set({
