@@ -3432,6 +3432,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dynamic-labs/starknet@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@dynamic-labs/starknet@npm:1.0.2"
+  dependencies:
+    "@dynamic-labs/rpc-providers": 1.0.2
+    "@dynamic-labs/sdk-api": 0.0.330
+    "@dynamic-labs/types": 1.0.2
+    "@dynamic-labs/utils": 1.0.2
+    "@dynamic-labs/wallet-book": 1.0.2
+    "@dynamic-labs/wallet-connector-core": 1.0.2
+    get-starknet-core: ^3.2.0
+    starknet: ^5.24.3
+    text-encoding: 0.7.0
+  checksum: a250e160c29024982e4d8184a381f4680e41b424208a340d9227ebea6961f6ae89b0571c7e3900299c15c1cc62b340fc5f1188b0bc20339387ea08d725383925
+  languageName: node
+  linkType: hard
+
 "@dynamic-labs/turnkey@npm:1.0.2":
   version: 1.0.2
   resolution: "@dynamic-labs/turnkey@npm:1.0.2"
@@ -11123,6 +11140,7 @@ __metadata:
     "@dynamic-labs/ethereum": ^1.0.2
     "@dynamic-labs/ethereum-aa": ^1.0.2
     "@dynamic-labs/sdk-react-core": ^1.0.2
+    "@dynamic-labs/starknet": ^1.0.2
     "@dynamic-labs/wagmi-connector": ^1.0.2
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
@@ -16926,6 +16944,18 @@ __metadata:
     data-uri-to-buffer: ^2.0.0
     source-map: ^0.6.1
   checksum: c73368fee709594ba38682ec1a96872aac6f7d766396019611d3d2358b68186a7847765a773ea0db088c42781126cc6bc09e4b87f263951c74dae5dcea50ad42
+  languageName: node
+  linkType: hard
+
+"get-starknet-core@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "get-starknet-core@npm:3.2.0"
+  peerDependencies:
+    starknet: ^5.18.0
+  peerDependenciesMeta:
+    starknet:
+      optional: false
+  checksum: 9bb3ddea6634a40b951c0f01366444beffe8c6785809a2404ad0ff60ec925420e9a4e846b809ddb40ecb5e9dbb73213359b0a051b8426a6d46974f5cd78ccf93
   languageName: node
   linkType: hard
 
@@ -26006,6 +26036,13 @@ __metadata:
   version: 1.0.2
   resolution: "text-encoding-utf-8@npm:1.0.2"
   checksum: ec4c15d50e738c5dba7327ad432ebf0725ec75d4d69c0bd55609254c5a3bc5341272d7003691084a0a73d60d981c8eb0e87603676fdb6f3fed60f4c9192309f9
+  languageName: node
+  linkType: hard
+
+"text-encoding@npm:0.7.0":
+  version: 0.7.0
+  resolution: "text-encoding@npm:0.7.0"
+  checksum: b6109a843fb1b8748b32e1ecd6df74d370f46c13ac136bcb6ca15db70209bb0b8ec1f296ebb4b0dd9961150e205dcc044b89f8cf7657f6faef78c7569a2a81bc
   languageName: node
   linkType: hard
 
