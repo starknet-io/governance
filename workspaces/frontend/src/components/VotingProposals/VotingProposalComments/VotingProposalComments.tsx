@@ -47,6 +47,48 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
     setOffset(offset + 1);
   };
 
+  const [fetchParams, setFetchParams] = useState({
+    commentId: null,
+    offset: 0,
+  });
+
+  const fetchReplies = trpc.comments.getReplies.useQuery(
+    {
+      commentId: fetchParams.commentId,
+      limit: 5,
+      offset: fetchParams.offset,
+    },
+    {
+      enabled: false,
+    },
+  );
+
+  const fetchMoreReplies = (
+    commentId: number | null,
+    currentRepliesCount: number,
+  ) => {
+    setFetchParams({ commentId, offset: currentRepliesCount });
+  };
+
+  useEffect(() => {
+    if (fetchReplies.data) {
+      // Update your comments state with the new replies
+      setAllComments((prevComments) =>
+        updateCommentsWithNewReplies(
+          prevComments,
+          fetchParams.commentId,
+          fetchReplies.data.replies,
+        ),
+      );
+    }
+  }, [fetchReplies.data, fetchParams.commentId]);
+
+  useEffect(() => {
+    if (fetchParams.commentId !== null) {
+      fetchReplies.refetch();
+    }
+  }, [fetchParams.commentId, fetchParams.offset]);
+
   const saveComment = trpc.comments.saveComment.useMutation({
     onSuccess: () => {
       // comments.refetch();
@@ -280,49 +322,29 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
   const [commentError, setCommentError] = useState("");
 
   const updateCommentsWithNewReplies = (comments, commentId, newReplies) => {
-    return comments.map(comment => {
+    return comments.map((comment) => {
       if (comment.id === commentId) {
         // Found the comment, now update its replies
         return {
           ...comment,
           replies: [...comment.replies, ...newReplies],
-          remainingReplies: comment.remainingReplies - newReplies.length
+          remainingReplies: comment.remainingReplies - newReplies.length,
         };
       } else if (comment.replies && comment.replies.length > 0) {
         // Recursively update nested comments
         return {
           ...comment,
-          replies: updateCommentsWithNewReplies(comment.replies, commentId, newReplies)
+          replies: updateCommentsWithNewReplies(
+            comment.replies,
+            commentId,
+            newReplies,
+          ),
         };
       }
       // Return the comment unchanged if it's not the one we're updating
       return comment;
     });
   };
-
-
-  const fetchMoreReplies = async (commentId, currentRepliesCount) => {
-    const newOffset = currentRepliesCount + 1;
-    const replyLimit = 5; // Or any other number you choose
-
-    try {
-      const fetchedReplies = trpc.comments.getReplies.useQuery({
-        commentId,
-        limit: replyLimit,
-        offset: newOffset,
-      });
-
-      console.log(fetchedReplies)
-
-      setAllComments(prevComments =>
-        updateCommentsWithNewReplies(prevComments, commentId, fetchedReplies?.data?.replies)
-      );
-    } catch (error) {
-      console.error('Error fetching replies:', error);
-    }
-  };
-
-  //fetchMoreReplies(51)
 
   useEffect(() => {
     if (sortBy && sortBy.length) {
@@ -410,9 +432,9 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
           </AppBar.Root>
           <Box mt="standard.xs">
             <CommentList
+              fetchMoreReplies={fetchMoreReplies}
               commentsList={allComments || []}
               onVote={handleCommentVote}
-              onFetchReplies={() => {}}
               onDelete={handleCommentDelete}
               onReply={handleReplySend}
               onEdit={handleCommentEdit}

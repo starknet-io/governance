@@ -14,6 +14,7 @@ import {
 } from "../Icons/UiIcons";
 import { IconButton } from "../IconButton";
 import CommentItem from "./CommentItem";
+import { Button } from "../Button";
 
 export type CommentWithAuthor = Comment & {
   author: User | null;
@@ -75,6 +76,15 @@ export function daysAgo(date: Date): string {
     return "0m";
   }
 }
+
+export const FetchMoreRepliesButton = ({
+  onFetchMoreReplies,
+  remainingReplies,
+}: any) => (
+  <Button mt={2} variant="ghost" onClick={onFetchMoreReplies} maxW="160px">
+    Fetch {remainingReplies} more replies
+  </Button>
+);
 
 export const CommentShowMoreReplies = ({
   isThreadOpen,
@@ -268,6 +278,7 @@ export type CommentProps = {
   depth?: number;
   activeCommentEditor: number | null;
   setActiveCommentEditor: (val: number | null) => void;
+  fetchMoreReplies: (commentId: number, repliesCount: number) => void;
 };
 
 export const CommentList: React.FC<CommentListProps> = ({
@@ -276,6 +287,7 @@ export const CommentList: React.FC<CommentListProps> = ({
   onVote,
   onEdit,
   onDelete,
+  fetchMoreReplies,
 }: {
   commentsList: CommentWithAuthor[];
   onReply?: (data: { parentId: number; content: string }) => void;
@@ -295,6 +307,7 @@ export const CommentList: React.FC<CommentListProps> = ({
       {commentsList.map((comment, index) => (
         <CommentItem
           key={index}
+          onFetchMoreReplies={fetchMoreReplies}
           activeCommentEditor={activeCommentEditor}
           setActiveCommentEditor={setActiveCommentEditor}
           comment={comment}

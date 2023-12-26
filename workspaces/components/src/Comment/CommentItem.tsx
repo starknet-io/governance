@@ -15,7 +15,7 @@ import { Banner } from "../Banner/Banner";
 import { MarkdownRenderer } from "../MarkdownRenderer";
 import { IconButton } from "../IconButton";
 import { ReplyIcon } from "../Icons/UiIcons";
-import { Button as ChakraButton } from "@chakra-ui/react"
+import { Button as ChakraButton } from "@chakra-ui/react";
 import {
   CommentMoreActions,
   CommentProps,
@@ -23,6 +23,7 @@ import {
   CommentVotes,
   CommentWithAuthor,
   daysAgo,
+  FetchMoreRepliesButton,
 } from "./CommentList";
 
 const CommentItem: React.FC<CommentProps> = ({
@@ -33,6 +34,7 @@ const CommentItem: React.FC<CommentProps> = ({
   onVote,
   onEdit,
   onDelete,
+  onFetchMoreReplies,
   depth = 0,
 }) => {
   const { author, createdAt, content, id, votes } = comment;
@@ -91,7 +93,7 @@ const CommentItem: React.FC<CommentProps> = ({
       <Text as="span" variant="smallStrong" color="content.accent.default">
         {author?.username ||
           author?.ensName ||
-          truncateAddress(author ? author.address : "")}
+          truncateAddress(author ? author.address?.toLowerCase() : "")}
       </Text>
     );
 
@@ -383,6 +385,16 @@ const CommentItem: React.FC<CommentProps> = ({
             depth={depth < 3 ? depth + 1 : depth}
           />
         ))}
+      {comment.remainingReplies > 0 && (
+        <Stack pl={(depth + 0.5) * 8}>
+          <FetchMoreRepliesButton
+            onFetchMoreReplies={() => {
+              onFetchMoreReplies(comment.id, comment.replies.length);
+            }}
+            remainingReplies={comment.remainingReplies}
+          />
+        </Stack>
+      )}
     </>
   );
 };
