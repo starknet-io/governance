@@ -22,7 +22,7 @@ export const clientConfig = {
   networkConfig: starknetGoerli1,
 };
 
-export const starknetEvmClient = new clients.StarkNetTx(clientConfig);
-export const starkSigClient = new clients.StarkNetSig(clientConfig);
+export const starknetEvmClient = new clients.StarknetTx(clientConfig);
+export const starkSigClient = new clients.StarknetSig(clientConfig);
 export const evmClient = new clients.EthereumTx(clientConfig);
 export const ethSigClient = new clients.EthereumSig(clientConfig);
