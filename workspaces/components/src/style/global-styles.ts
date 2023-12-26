@@ -13,12 +13,13 @@ export const styles = {
       scrollPaddingTop: "140px",
       margin: 0,
       padding: 0,
+      overflowX: "hidden",
     },
 
     body: {
       background: "surface.bgPage",
       // background: ["blue", "green", "yellow", "red"],/
-
+      overflowX: "hidden",
       color: "fg-default",
       padding: 0,
       margin: 0,

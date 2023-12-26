@@ -250,6 +250,15 @@ to receive notifications`}
               overflowY="scroll"
               w={"400px"}
               borderRadius="8px"
+              sx={{
+                '@media (max-width: 567px)': {
+                  height: "calc(100vh - 58px)",
+                  marginTop: "3px",
+                  marginLeft: "-48px",
+                  borderRadius: 0,
+                  width: "100vw"
+                }
+              }}
             >
               <Flex
                 mx={4}
@@ -317,7 +326,13 @@ to receive notifications`}
                   />
                 ))
               ) : (
-                <Box>
+                <Flex
+                  sx={{
+                    '@media (max-width: 567px)': {
+                      height: "calc(100vh - 207px)"
+                    }
+                  }}
+                >
                   <EmptyState
                     type="notifications"
                     hasBorder={false}
@@ -326,7 +341,7 @@ to receive notifications`}
                     } notifications yet`}
                     minHeight="300px"
                   />
-                </Box>
+                </Flex>
               )}
             </MenuList>
           </Box>

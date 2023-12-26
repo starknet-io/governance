@@ -1,6 +1,7 @@
 import { Badge, Box, BoxProps, Flex, Icon } from "@chakra-ui/react";
 
 import { Text } from "../Text";
+import { Heading } from "../Heading";
 import {
   format,
   differenceInDays,
@@ -31,7 +32,7 @@ const cellPadding = {
 };
 const Container = ({ children, ...rest }: Props) => {
   return (
-    <Box mt="24px" display="flex" flexDirection="column" {...rest}>
+    <Box mt="standard.xs" display="flex" flexDirection="column" {...rest}>
       {children}
     </Box>
   );
@@ -53,7 +54,8 @@ const Root = ({ children, href, sx, ...rest }: RootProps) => {
       borderBottom="1px solid"
       borderColor="border.forms"
       // minHeight="68px"
-      py="standard.sm"
+      py="standard.base"
+      px="0"
       alignItems="center"
       _hover={{
         textDecoration: "none",
@@ -96,9 +98,9 @@ type TitleProps = {
 const Title = ({ label = "", ...rest }: TitleProps) => {
   return (
     <Box flex="1" {...cellPadding} {...rest}>
-      <Text variant="cardBody" noOfLines={1} fontWeight="500">
+      <Heading variant="h5" noOfLines={1} color="content.default.default">
         {label}
-      </Text>
+      </Heading>
     </Box>
   );
 };
@@ -238,6 +240,9 @@ const PastVotes = ({
             display="flex"
             alignItems={"center"}
             gap={"standard.xxs"}
+            pt="standard.base"
+            pr="standard.xs"
+            pb="standard.base"
           >
             Voted{renderIconBasedOnVotePreference()}with {formatedVotes} votes
           </Text>
@@ -269,12 +274,14 @@ const Comments = ({ count, width, ...rest }: CommentsProps) => {
       alignItems="center"
       color="content.support.default"
       minW={{
-        md: "72px",
+        md: "64px",
       }}
-      {...cellPadding}
+      pt="standard.xs"
+      pl="standard.sm"
+      pb="standard.xs"
       {...rest}
     >
-      <Icon as={() => <CommentIcon color="currentColor" />} />
+      <Icon as={() => <CommentIcon color="currentColor" width="20px" height="20px" />} />
       <Text variant="bodySmall" fontWeight={500}>
         {count}
       </Text>
@@ -299,40 +306,49 @@ const CommentSummary = ({
     : "Unknown date";
 
   return (
-    <Flex flexDirection="column" flex={1} gap="standard.base" {...cellPadding}>
-      <Box flex="1">
-        <Text
-          variant="mediumStrong"
-          noOfLines={1}
-          color="content.default.default"
-          sx={{
-            _firstLetter: {
-              textTransform: "uppercase",
-            },
-          }}
-        >
-          {postTitle} on {formattedDate ?? ""}
-        </Text>
-      </Box>
-
-      <Flex flex={1}>
-        <Box height="20px" overflow="hidden">
-          <MarkdownRenderer
-            textProps={{
-              fontSize: "12px",
-              noOfLines: 1,
-              color: "content.support.default",
-              fontWeight: "500",
+    <Flex flexDirection="row" flex={1} alignItems="end" width="100%">
+      <Flex
+        flexDirection="column"
+        gap="standard.base"
+        pt="standard.xs"
+        pr="standard.sm"
+        pb="standard.xs"
+        width="calc(100% - 64px)"
+      >
+        <Box flex="1">
+          <Text
+            variant="mediumStrong"
+            noOfLines={1}
+            color="content.default.default"
+            sx={{
+              _firstLetter: {
+                textTransform: "uppercase",
+              },
             }}
-            content={`&quot;${comment}&quot;` ?? ""}
-          />
+          >
+            {postTitle} on {formattedDate ?? ""}
+          </Text>
         </Box>
-        {count ? (
-          <Box ml="auto">
-            <Comments width={"52"} count={count} />
+
+        <Flex flex={1}>
+          <Box height="20px" overflow="hidden">
+            <MarkdownRenderer
+              textProps={{
+                fontSize: "12px",
+                noOfLines: 1,
+                color: "content.support.default",
+                fontWeight: "500",
+              }}
+              content={`&quot;${comment}&quot;` ?? ""}
+            />
           </Box>
-        ) : null}
+        </Flex>
       </Flex>
+      {count ? (
+        <Box ml="auto">
+          <Comments width={"52"} count={count} />
+        </Box>
+      ) : null}
     </Flex>
   );
 };
@@ -435,8 +451,8 @@ const VoteResults: React.FC<VoteResultsProps> = ({
       <Box
         display="flex"
         flex="100%"
-        maxWidth="108px"
-        width="108px"
+        maxWidth="200px"
+        width="200px"
         gap="2px"
         overflow="hidden"
         {...cellPadding}

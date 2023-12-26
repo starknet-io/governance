@@ -9,6 +9,8 @@ type Props = {
   type: string;
   active?: boolean;
   strategies: Array<{ network: string; params: any }>;
+  scoresByStrategy: number[];
+  delegationSymbol?: string;
 };
 
 const variant = {
@@ -44,15 +46,17 @@ export const VoteStat = (props: Props) => {
       >
         <Box>
           <Text variant="captionSmallStrong" color="content.default.default">
-            {formatPercentage(votePercentage)} % {props.userVote ? "✓" : ""}
+            {formatPercentage(votePercentage)}% {props.userVote ? "✓" : ""}{" "}
+            {getVariantKey(props.type)}
           </Text>
         </Box>
         <Text
-          textTransform="lowercase"
+          textTransform="uppercase"
           variant="captionSmallStrong"
           color="content.default.default"
         >
-          {voteCountFormatted} votes
+          {voteCountFormatted}{" "}
+          {props.delegationSymbol ? props.delegationSymbol : "STRK"}
         </Text>
       </Flex>
       <Box bg="purple" width="100%">

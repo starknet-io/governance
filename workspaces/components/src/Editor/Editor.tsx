@@ -1,4 +1,4 @@
-import { useMemo, ClipboardEvent } from "react";
+import { useState, useMemo, ClipboardEvent } from "react";
 import { withReact, Slate } from "slate-react";
 import { withHistory } from "slate-history";
 import { Toolbar } from "./EditorComponents";
@@ -50,11 +50,10 @@ export const MarkdownEditor: React.FC<
   const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
     const data = e.clipboardData?.getData("Text") ?? "";
+    
     const mainEditor = customEditor ?? editor;
     const markdown = await convertMarkdownToSlate(` ${data}`);
-    mainEditor?.insertNodes(markdown, {
-      at: editor.selection?.focus,
-    });
+    mainEditor?.insertFragment(markdown);
   };
 
   const mainEditor = customEditor || editor;

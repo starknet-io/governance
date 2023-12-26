@@ -17,6 +17,7 @@ import {
   InfoModal,
   SuccessIcon,
   WarningIcon,
+  Select
 } from "@yukilabs/governance-components";
 import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
@@ -35,7 +36,7 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
 import { ethers } from "ethers";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
-import { Icon, Spinner, Select } from "@chakra-ui/react";
+import { Icon, Spinner } from "@chakra-ui/react";
 import {
   BannedIcon,
   RemovedIcon,
@@ -127,7 +128,6 @@ export function Page() {
     onOpen: onUserUnbannedOpen,
     onClose: onUserUnbannedClose,
   } = useDisclosure();
-  const selectRef = useRef<HTMLSelectElement>(null);
 
   const addRoles = trpc.users.addRoles.useMutation();
   const editRoles = trpc.users.editRoles.useMutation();
@@ -241,9 +241,7 @@ export function Page() {
     onEditClose();
     setEditError("");
     reset();
-    if (selectRef.current) {
-      selectRef.current.value = "user";
-    }
+    setEditUserRole("user");
   };
 
   const isValidAddress = (address: string) => {
@@ -289,6 +287,10 @@ export function Page() {
     });
   }, [users?.data]);
   const editableRoles = getEditRolesBasedOnUserRole();
+  const [roleValue, setRoleValue] = useState("");
+  const handleSelectChange = (selectedOption) => {
+    setRoleValue(selectedOption);
+  };
   return (
     <FormLayout>
       <InfoModal
@@ -412,24 +414,21 @@ export function Page() {
           onSubmit={onSubmitEdit}
           isValid={true}
         >
-          <FormControl id="editRole">
+          <FormControl id="editRole" sx={{ marginBottom: "standard.md" }}>
             <FormLabel>Role</FormLabel>
             <Select
-              size="sm"
+              size="md"
               {...editRegister("role")}
-              ref={selectRef}
               value={editUserRole}
               onChange={(e) => {
-                console.log(e.target.value);
-                setEditUserRole(e.target.value);
+                console.log(e);
+                setEditUserRole(e);
               }}
-            >
-              {editableRoles.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
+              options={editableRoles.map((option) => ({
+                value: option,
+                label: option,
+              }))}
+            />
           </FormControl>
 
           {editError && editError.length && (
@@ -475,15 +474,15 @@ export function Page() {
                   <FormControl id="role">
                     <FormLabel>Role</FormLabel>
                     <Select
-                      size="sm"
+                      size="md"
                       {...addRegister("role", { required: true })}
-                    >
-                      {editableRoles.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </Select>
+                      options={editableRoles.map((option) => ({
+                        value: option,
+                        label: option,
+                      }))}
+                      value={roleValue}
+                      onChange={handleSelectChange}
+                    />
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
                   {addError && addError.length && (

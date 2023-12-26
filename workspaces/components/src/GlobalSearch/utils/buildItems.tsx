@@ -197,6 +197,7 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
           fontWeight="semibold"
           variant="bodyMedium"
           color="content.accent.default"
+          wordBreak="break-word"
         >
           {data.name}
         </Text>
@@ -276,7 +277,7 @@ function DelegateItem({ data }: { data: ISearchItem }) {
         )}
       </Flex>
       <Flex flexDirection="column" justifyContent="center">
-        <Text fontWeight="semibold" fontSize="sm">
+        <Text fontWeight="semibold" fontSize="sm" wordBreak="break-word">
           {data.name}
         </Text>
         <Text fontSize="smaller" fontWeight="medium" color="grey">
@@ -302,7 +303,7 @@ function LearnItem({ data }: { data: ISearchItem }) {
         <Image width="8" height="8" src={LearnIcon} alt="learn icon" />
       </Flex>
       <Flex flexDirection="column" justifyContent="center">
-        <Text fontWeight="semibold" fontSize="sm">
+        <Text fontWeight="semibold" fontSize="sm" wordBreak="break-word">
           {data.name}
         </Text>
         <Text fontSize="smaller" fontWeight="medium" color="grey">

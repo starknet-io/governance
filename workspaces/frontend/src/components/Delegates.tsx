@@ -11,6 +11,7 @@ import {
   useFilterState,
   FilterPopoverIcon,
   Text,
+  Heading,
   EmptyState,
   SkeletonCircle,
   SkeletonText,
@@ -19,8 +20,8 @@ import {
   StatusModal,
   Flex,
   ArrowRightIcon,
+  Select
 } from "@yukilabs/governance-components";
-import { Select } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
@@ -35,6 +36,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import {useVotingPower} from "../hooks/snapshotX/useVotingPower";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { useCheckBalance } from "./useCheckBalance";
 import { navigate } from "vite-plugin-ssr/client/router";
 
@@ -291,9 +293,14 @@ export function Delegates({
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
   const { user } = usePageContext();
   const { checkUserBalance } = useCheckBalance(user?.address as `0x${string}`);
-  const userDelegate = trpc.users.isDelegate.useQuery({
-    userId: user?.id || "",
-  });
+  const userDelegate = trpc.users.isDelegate.useQuery(
+    {
+      userId: user?.id || "",
+    },
+    {
+      enabled: !!user?.id,
+    },
+  );
 
   const handleResetFilters = () => {
     state.onReset();
@@ -308,7 +315,7 @@ export function Delegates({
         <>
           <Button
             width={{ base: "100%", md: "auto" }}
-            size="condensed"
+            size={isMobile ? "standard" : "condensed"}
             variant="outline"
             onClick={() => setHelpMessage("connectWalletMessage")}
           >
@@ -317,7 +324,7 @@ export function Delegates({
 
           <Button
             width={{ base: "100%", md: "auto" }}
-            size="condensed"
+            size={isMobile ? "standard" : "condensed"}
             variant="primary"
             onClick={() => setHelpMessage("connectWalletMessage")}
           >
@@ -333,7 +340,7 @@ export function Delegates({
       <>
         <Button
           width={{ base: "100%", md: "auto" }}
-          size="condensed"
+          size={isMobile ? "standard" : "condensed"}
           variant="outline"
           onClick={() => {
             if (
@@ -356,6 +363,7 @@ export function Delegates({
         {!delegateId ? (
           <Button
             width={{ base: "100%", md: "auto" }}
+            size={isMobile ? "standard" : "condensed"}
             onClick={() => {
               checkUserBalance({
                 onSuccess: () => {
@@ -363,7 +371,6 @@ export function Delegates({
                 },
               });
             }}
-            size="condensed"
             variant="primary"
           >
             Create delegate profile
@@ -373,7 +380,7 @@ export function Delegates({
             width={{ base: "100%", md: "auto" }}
             as="a"
             href={`/delegates/profile/${delegateId!}`}
-            size="condensed"
+            size={isMobile ? "standard" : "condensed"}
             variant="primary"
           >
             View delegate profile
@@ -409,6 +416,13 @@ export function Delegates({
     });
   };
 
+  const { isMobile } = useIsMobile();
+
+  const sortedDelegateInterests = delegateInterests.options
+    .slice(0)
+    .sort((a, b) => {
+      return a.label.localeCompare(b.label);
+    });
   return (
     <>
       <DelegateModal
@@ -517,32 +531,34 @@ export function Delegates({
           <AppBar.Root>
             <AppBar.Group mobileDirection="row">
               <Box minWidth={"52px"}>
-                <Text variant="mediumStrong">Sort by</Text>
+                <Text
+                  variant="mediumStrong"
+                  fontWeight="600"
+                  color="content.default.default"
+                >
+                  Sort by
+                </Text>
               </Box>
               <Select
-                size="sm"
-                height="36px"
                 aria-label="Random"
                 placeholder="Random"
-                focusBorderColor={"red"}
-                rounded="md"
+                size={isMobile ? "md" : "sm"}
                 value={sortBy}
                 onChange={(e) => {
-                  setSortBy(e.target.value);
+                  setSortBy(e);
                   setAllDelegates([]);
                   setFiltersState((prevState) => ({
                     ...prevState,
                     offset: 0,
-                    sortBy: e.target.value,
+                    sortBy: e,
                   }));
                 }}
-              >
-                {sortByOptions.options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+                options={sortByOptions.options.map((option) => ({
+                  value: option.value,
+                  label: option.label,
+                }
                 ))}
-              </Select>
+              />
               <Popover placement="bottom-start">
                 <FilterPopoverIcon
                   label="Filter by"
@@ -553,23 +569,21 @@ export function Delegates({
                   onClickApply={state.onSubmit}
                   onClickCancel={handleResetFilters}
                 >
-                  <Text mt="4" mb="2" fontWeight="bold">
-                    Filters
-                  </Text>
+                  <Heading variant="h5">Filters</Heading>
                   <CheckboxFilter
                     hideLabel
                     value={state.value}
                     onChange={(v) => state.onChange(v)}
                     options={delegateFilters.options}
                   />
-                  <Text mt="4" mb="2" fontWeight="bold">
+                  <Heading mt="standard.xs" variant="h5">
                     Interests
-                  </Text>
+                  </Heading>
                   <CheckboxFilter
                     hideLabel
                     value={state.value}
                     onChange={(v) => state.onChange(v)}
-                    options={delegateInterests.options}
+                    options={sortedDelegateInterests}
                   />
                 </FilterPopoverContent>
               </Popover>

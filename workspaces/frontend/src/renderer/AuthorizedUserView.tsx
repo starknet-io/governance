@@ -1,4 +1,4 @@
-import { DynamicNav, useDynamicContext } from "@dynamic-labs/sdk-react";
+import { DynamicNav, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "src/utils/trpc";
 import { useOutsideClick } from "@chakra-ui/react";
@@ -9,6 +9,7 @@ import { usePageContext } from "./PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { useVotingPower } from "../hooks/snapshotX/useVotingPower";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -20,6 +21,7 @@ const AuthorizedUserView = () => {
   const { handleLogOut } = useDynamicContext();
   const { handleUpload } = useFileUpload();
   const { user } = usePageContext();
+  const { isMobile } = useIsMobile();
 
   const { data: votingPower } = useVotingPower({
     address: user?.address,
@@ -106,21 +108,23 @@ const AuthorizedUserView = () => {
 
   const handleAddressClick = (event: any) => {
     event.preventDefault();
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen(true);
   };
 
   useOutsideClick({
     ref: navRef,
     handler: () => {
-      if (isMenuOpen && !isUserModalOpen) {
+      if (!isMobile && isMenuOpen) {
         setIsMenuOpen(false);
       }
     },
   });
 
+  const userProfileMenuRef = useRef<HTMLDivElement>(null);
+
   const handleDisconnect = () => {
     handleLogOut();
-    setIsMenuOpen(false);
+    // setIsMenuOpen(false);
   };
 
   async function handleSave(data: {
@@ -162,26 +166,23 @@ const AuthorizedUserView = () => {
     <>
       <div className="user-menu" ref={navRef}>
         <DynamicNav />
-        {isMenuOpen ? (
-          <>
-            <UserProfileMenu
-              delegatedTo={
-                delegatedTo?.data ? delegatedTo?.data : delegationData
-              }
-              onDisconnect={handleDisconnect}
-              user={user}
-              onSave={handleSave}
-              vp={votingPower ?? 0}
-              userBalance={userBalance}
-              onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}
-              handleUpload={handleUpload}
-              userExistsError={userExistsError}
-              setUsernameErrorFalse={() => setUserExistsError(false)}
-            />
-          </>
-        ) : (
-          <></>
-        )}
+        <UserProfileMenu
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          ref={userProfileMenuRef}
+          delegatedTo={
+            delegatedTo?.data ? delegatedTo?.data : delegationData
+          }
+          onDisconnect={handleDisconnect}
+          user={user}
+          onSave={handleSave}
+          vp={votingPower ?? 0}
+          userBalance={userBalance}
+          onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}
+          handleUpload={handleUpload}
+          userExistsError={userExistsError}
+          setUsernameErrorFalse={() => setUserExistsError(false)}
+        />
       </div>
     </>
   );

@@ -1,6 +1,7 @@
-import { UserProfile, Wallet, WalletConnector } from "@dynamic-labs/sdk-react";
+import { UserProfile, Wallet, WalletConnector } from "@dynamic-labs/sdk-react-core";
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+import { ZeroDevSmartWalletConnectors } from '@dynamic-labs/ethereum-aa';
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { trpc } from "src/utils/trpc";
@@ -121,7 +122,7 @@ export const DynamicProvider = (props: Props) => {
       />
       <DynamicContextProvider
         settings={{
-          walletConnectors: [EthereumWalletConnectors],
+          walletConnectors: [EthereumWalletConnectors, ZeroDevSmartWalletConnectors],
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {

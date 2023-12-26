@@ -195,7 +195,7 @@ export const MembersList: React.FC<MembersListProps> = ({
           </>
       </Modal>
 
-      <Box mt="24px">
+      <Box mt="standard.xs">
         {members.length === 0 ? (
           <Center>
             <Text className="empty-state">No members added </Text>
@@ -225,7 +225,6 @@ export const MembersList: React.FC<MembersListProps> = ({
                     ml="standard.sm"
                     flex="1"
                     alignItems="center"
-                    mb="6px"
                     pr="standard.sm"
                   >
                     <Box>
@@ -240,6 +239,15 @@ export const MembersList: React.FC<MembersListProps> = ({
                         showTooltip={!member.name}
                         tooltipContent={`${member.address}`}
                       />
+                      <Flex ml="22px" pr="standard.sm" mt="2px">
+                        <Text
+                          ml="standard.sm"
+                          color="content.support.default"
+                          variant="small"
+                        >
+                          {member.miniBio}
+                        </Text>
+                      </Flex>
                     </Box>
                     <Box ml="auto">
                       {member.twitterHandle ? (
@@ -286,15 +294,6 @@ export const MembersList: React.FC<MembersListProps> = ({
                         />
                       </Box>
                     )}
-                  </Flex>
-                  <Flex ml="standard.2xl" pr="standard.sm">
-                    <Text
-                      ml="standard.sm"
-                      color="content.support.default"
-                      variant="small"
-                    >
-                      {member.miniBio}
-                    </Text>
                   </Flex>
                 </Flex>
               </Box>

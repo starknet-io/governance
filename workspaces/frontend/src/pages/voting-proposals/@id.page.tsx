@@ -44,7 +44,8 @@ import { usePageContext } from "src/renderer/PageContextProvider";
 import { formatDate } from "@yukilabs/governance-components/src/utils/helpers";
 import { useWalletClient } from "wagmi";
 import { providers } from "ethers";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { trpc } from "src/utils/trpc";
 import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { useBalanceData } from "src/utils/hooks";
@@ -380,7 +381,7 @@ export function Page() {
   };
 
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegation.data ? delegation.data.toLowerCase() : "",
+    address: delegation?.data ? delegation?.data?.toLowerCase() : "",
   });
 
   if (data == null) return null;
@@ -631,12 +632,12 @@ export function Page() {
                       label={`${commentCount} comments`}
                     />
                   </Stat.Root>
-                  <Text variant="small" color="content.default.default">
+                  {/* <Text variant="small" color="content.default.default">
                     •
                   </Text>
                   <Stat.Root>
                     <Stat.Text label={`Category`} />
-                  </Stat.Root>
+                  </Stat.Root> */}
                 </Flex>
               </Flex>
               <Box>
@@ -919,6 +920,9 @@ export function Page() {
                         userVote={userVote}
                         // @ts-expect-error todo
                         strategies={strategies}
+                        delegationSymbol={
+                          import.meta.env.VITE_APP_DELEGATION_SYMBOL
+                        }
                       />
                     );
                   })}

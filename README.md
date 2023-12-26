@@ -6,7 +6,7 @@ This is a monorepo application containing multiple services that work together. 
 
 the application is deployed in DigitalOcean using 2 App platforms (frontend and backend) per environment (Review and development, production) and a Digitalocean Managed database,
 
-the backend app platform has two components: the app and a cronjob worker  
+the backend app platform has two components: the app and a cronjob worker
 all secrets and variables are declared in the digitalocean app platform
 
 ## Prerequisites
@@ -42,3 +42,5 @@ To start the application, follow these steps:
    ```
 
 -
+
+.

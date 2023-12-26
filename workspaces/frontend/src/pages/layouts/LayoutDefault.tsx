@@ -1,5 +1,5 @@
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
-
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import useIsMobile from "src/hooks/useIsMobile";
 export { LayoutDefault };
 import {
   Box,
@@ -38,7 +38,7 @@ import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
 import { NavigationMenu } from "src/components/Navigation";
 import { BackButton } from "src/components/Header/BackButton";
 import { extractAndFormatSlug } from "src/utils/helpers";
-import { CloseIcon } from "@dynamic-labs/sdk-react";
+import { CloseIcon } from "@dynamic-labs/sdk-react-core";
 import {
   BannedIcon,
   ConnectWalletIcon,
@@ -88,8 +88,19 @@ function LayoutDefault(props: Props) {
 
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
+  const { isTablet } = useIsMobile();
 
   const formattedSlug = extractAndFormatSlug(`${pageContext?.urlOriginal}`);
+
+  const [windowHeight, setWindowHeight] = useState("100vh");
+  useEffect(() => {
+    const checkWindowHeight = () => {
+      setWindowHeight(window?.innerHeight.toString());
+    };
+    checkWindowHeight();
+    window.addEventListener('resize', checkWindowHeight);
+    return () => window.removeEventListener('resize', checkWindowHeight);
+  }, []);
 
   return (
     <>
@@ -145,14 +156,14 @@ function LayoutDefault(props: Props) {
       </InfoModal>
 
       <Drawer
-        isOpen={isOpen}
+        isOpen={isTablet ? isOpen : false}
         size={{ base: "full", md: "sm" }}
         placement="left"
         onClose={onClose}
         isFullHeight
       >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent maxHeight={windowHeight}>
           <Box position="absolute" top="16px" zIndex="12px">
             <IconButton
               aria-label="Close menu"
@@ -166,7 +177,7 @@ function LayoutDefault(props: Props) {
           <Box display={{ base: "none", lg: "flex" }}>
             {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
-          <DrawerBody px="12px" py="16px" pt="0" mt="48px">
+          <DrawerBody p="0" mt={{base: "60px", md: "68px"}} height={{base: `calc(${windowHeight}px - 60px)`, md: `calc(${windowHeight}px - 68px)`}}>
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
@@ -177,15 +188,16 @@ function LayoutDefault(props: Props) {
         </DrawerContent>
       </Drawer>
 
-      <Flex width="100%" minHeight="100vh" direction="row">
+      <Flex width="100%" minHeight="100vh" direction="row" pt={{ base: "60px", lg: "0" }}>
         <Box
           bg="surface.forms.default"
           width="234px"
-          minWidth="234px"
+          minWidth={["0", "0", "0", "234px"]}
           height="100vh"
           display={{ base: "none", lg: "flex" }}
           flexDirection={"column"}
-          position="sticky"
+          position="fixed"
+          zIndex={100}
           top="0"
           // overflow={"auto"}
           borderRight="1px solid"
@@ -194,9 +206,8 @@ function LayoutDefault(props: Props) {
           <Logo href="/" />
           <Flex
             flexDirection={"column"}
-            px="standard.sm"
             flex={1}
-            pb="standard.md"
+            pb="standard.xs"
           >
             <NavigationMenu
               pageContext={pageContext}
@@ -207,13 +218,15 @@ function LayoutDefault(props: Props) {
             />
           </Flex>
         </Box>
-        <Flex direction="column" flex="1">
+        <Flex direction="column" flex="1" ml={["0", "0", "0", "234px"]}>
           {/* //Header  */}
           <Box
-            position="sticky"
+            position="fixed"
             top="0"
+            left={["0", "0", "0", "234px"]}
+            right="0"
             bg="surface.bgPage"
-            zIndex={100}
+            zIndex={999}
             borderBottom="1px solid"
             borderColor="border.forms"
             height={{ base: "60px", md: "68px" }}
@@ -232,16 +245,20 @@ function LayoutDefault(props: Props) {
             }}
           >
             <Flex gap="standard.xs">
-              <Box display={{ base: "block", lg: "none" }}>
+              <Box display={{ base: "flex", lg: "none" }} gap="standard.base">
                 <IconButton
                   aria-label="Open menu"
                   size="condensed"
-                  // toDo replace with x icon
-                  icon={isOpen ? <HamburgerIcon /> : <HamburgerIcon />}
-                  onClick={onOpen}
+                  icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+                  onClick={isOpen ? onClose : onOpen}
                   variant="ghost"
                 />
                 <Show breakpoint="(max-width: 567px)">
+                  {user && (
+                    <NotificationsMenu />
+                  )}
+                </Show>
+                {/* <Show breakpoint="(max-width: 567px)">
                   <IconButton
                     aria-label="Open menu"
                     size="condensed"
@@ -249,7 +266,7 @@ function LayoutDefault(props: Props) {
                     onClick={() => setIsGlobalSearchOpen(true)}
                     variant="ghost"
                   />
-                </Show>
+                </Show> */}
               </Box>
 
               <Box display={{ base: "none", lg: "block" }}>
@@ -276,17 +293,22 @@ function LayoutDefault(props: Props) {
                 />
               </Box>
               <Flex gap="standard.xs " marginLeft="auto">
-                <Box display={{ base: "none", md: "flex" }}>
+                <Box display={{ base: "flex" }}>
                   <ShareDialog />
                 </Box>
-                {user && <NotificationsMenu />}
-                <GlobalSearch
-                  searchResults={globalSearchResults}
-                  onSearchItems={handleGlobalSearchItems}
-                  isOpen={isGlobalSearchOpen}
-                  setIsSearchModalOpen={setIsGlobalSearchOpen}
-                />
-
+                <Show breakpoint="(min-width: 568px)">
+                  {user && (
+                    <NotificationsMenu />
+                  )}
+                </Show>
+                <Show breakpoint="(min-width: 1079px)">
+                  <GlobalSearch
+                    searchResults={globalSearchResults}
+                    onSearchItems={handleGlobalSearchItems}
+                    isOpen={isGlobalSearchOpen}
+                    setIsSearchModalOpen={setIsGlobalSearchOpen}
+                  />
+                </Show>
                 <Box display={{ base: "flex" }} marginLeft="auto">
                   {renderDone ? (
                     <DynamicCustomWidget />
@@ -297,7 +319,7 @@ function LayoutDefault(props: Props) {
               </Flex>
             </Flex>
           </Box>
-          <Box as="main" role="main" flex={1}>
+          <Box as="main" role="main" flex={1} mt={[0, 0, 0, "68px"]}>
             {children}
           </Box>
         </Flex>

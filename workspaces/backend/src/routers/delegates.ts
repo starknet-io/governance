@@ -21,6 +21,7 @@ import { db } from '../db/db';
 import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
 import { socials } from '../db/schema/socials';
+import {profanity} from "@2toad/profanity";
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -49,6 +50,10 @@ export const delegateRouter = router({
       const userAddress = opts.ctx.user?.address;
       if (!userAddress) {
         throw new Error('User not found');
+      }
+
+      if (profanity.exists(opts.input.statement)) {
+        throw new Error('Your delegate statement contains inappropriate language.');
       }
 
       const user = await db.query.users.findFirst({
@@ -227,7 +232,11 @@ export const delegateRouter = router({
         userRole !== 'superadmin' &&
         userRole !== 'moderator'
       ) {
-        if (delegate.userId !== userId) throw new Error('Unauthorizeds');
+        if (delegate.userId !== userId) throw new Error('Unauthorized');
+      }
+
+      if (profanity.exists(opts.input.statement)) {
+        throw new Error('Your delegate statement contains inappropriate language.');
       }
       // Determine the agreement value
       const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
@@ -381,7 +390,7 @@ export const delegateRouter = router({
         }
         const interests = JSON.stringify(appliedInterests);
 
-        let query = db
+        let query: any = db
           .select()
           .from(delegates)
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
@@ -450,8 +459,11 @@ export const delegateRouter = router({
 
         query.orderBy(orderBy, desc(delegates.id));
 
-        if (opts.input.limit !== undefined && opts.input.offset !== undefined) {
+        // Apply pagination
+        if (typeof opts.input.offset === 'number') {
           query = query.offset(opts.input.offset);
+        }
+        if (typeof opts.input.limit === 'number') {
           query = query.limit(opts.input.limit);
         }
 

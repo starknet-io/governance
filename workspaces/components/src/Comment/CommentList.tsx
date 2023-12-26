@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { truncateAddress } from "src/utils";
 import { Indenticon } from "../Indenticon";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 import { MarkdownRenderer } from "src/MarkdownRenderer";
 import {
@@ -492,6 +492,7 @@ const CommentItem: React.FC<CommentProps> = ({
                 ) : (
                   <Box>
                     <MarkdownRenderer
+                      className="markdown-body-comments"
                       textProps={{
                         fontSize: "14px",
                         color: "content.accent.default",
