@@ -93,7 +93,7 @@ export const DiscourseFormModal = ({
             borderBottomLeftRadius="md"
           />
           <ModalBody py="standard.xl">
-            <FormControl isInvalid={true}>
+            <FormControl>
               <FormLabel>
                 <Text
                   as="h5"

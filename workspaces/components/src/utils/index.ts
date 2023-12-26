@@ -9,8 +9,8 @@ export function truncateAddress(
   }
 
   // Otherwise, truncate
-  const start = str.substring(0, frontLength);
-  const end = str.substring(str.length - backLength);
+  const start = str?.substring(0, frontLength);
+  const end = str?.substring(str.length - backLength);
   return `${start}...${end}`;
 }
 

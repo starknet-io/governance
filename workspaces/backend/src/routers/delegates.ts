@@ -305,7 +305,7 @@ export const delegateRouter = router({
             updatedAt: new Date(),
           });
         }
-      } else if (confirmDelegateAgreement) {
+      } else {
         // If the standard agreement is selected, remove any existing custom agreement
         await db
           .delete(customDelegateAgreement)

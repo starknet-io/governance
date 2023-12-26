@@ -29,7 +29,6 @@ const getVariantKey = (type: string): "For" | "Against" | "Abstain" => {
 };
 
 export const VoteStat = (props: Props) => {
-  console.log(props.type);
   const votePercentage =
     props.totalVotes > 0
       ? ((props.voteCount || 0) / props.totalVotes) * 100
