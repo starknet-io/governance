@@ -71,7 +71,7 @@ export const commentsRouter = router({
         );
 
       for (const comment of rawComments) {
-        const repliesObject = await getLimitedReplies(comment.id);
+        const repliesObject = await getLimitedReplies(comment.id, userId);
         comment.replies = repliesObject.replies;
         comment.remainingReplies = repliesObject.remainingReplies;
         comment.totalReplyCount = repliesObject.totalReplyCount;
@@ -100,13 +100,22 @@ export const commentsRouter = router({
       }),
     )
     .query(async (opts) => {
+      const userId = opts.ctx.user?.id || null;
       const { limit, offset } = opts.input;
 
       // Query to fetch replies for the given commentId with pagination
       const replies = await db.query.comments.findMany({
         where: eq(comments.parentId, opts.input.commentId),
-        offset: (offset - 1) * limit, // Correct the offset calculation
+        offset: offset, // Correct the offset calculation
         limit: limit,
+        with: {
+          author: true,
+          ...(userId && {
+            votes: {
+              where: eq(commentVotes.userId, userId),
+            },
+          }),
+        },
       });
 
       // Count total replies
@@ -380,7 +389,11 @@ export const commentsRouter = router({
     }),
 });
 
-async function getLimitedReplies(commentId: number, depth = 1): Promise<any> {
+async function getLimitedReplies(
+  commentId: number,
+  userId: string | null,
+  depth = 1,
+): Promise<any> {
   if (depth > 3) {
     // Limiting the depth to 2 (replies and sub-replies)
     return [];
@@ -389,6 +402,14 @@ async function getLimitedReplies(commentId: number, depth = 1): Promise<any> {
   const replies = await db.query.comments.findMany({
     where: eq(comments.parentId, commentId),
     limit: 5,
+    with: {
+      author: true,
+      ...(userId && {
+        votes: {
+          where: eq(commentVotes.userId, userId),
+        },
+      }),
+    },
   });
 
   const totalAllReplyCount =
@@ -408,7 +429,7 @@ async function getLimitedReplies(commentId: number, depth = 1): Promise<any> {
       })
       .from(comments)
       .where(eq(comments.parentId, reply.id));
-    reply.replies = await getLimitedReplies(reply.id, depth + 1);
+    reply.replies = await getLimitedReplies(reply.id, userId, depth + 1);
     reply.netVotes = reply.upvotes - reply.downvotes; // Simple subtraction here
     reply.totalReplyCount = totalReplyCount?.[0]?.value || 0;
     reply.remainingReplies = reply.totalReplyCount - reply.replies.length; // New field indicating remaining replies

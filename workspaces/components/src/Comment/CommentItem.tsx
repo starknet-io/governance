@@ -83,7 +83,6 @@ const CommentItem: React.FC<CommentProps> = ({
 
   function stripHtmlTagsAndTrim(input: string): string {
     const stripped = input.replace(/[\r\n]+/g, "");
-    console.log("stripped: ", stripped);
 
     return stripped.length > 40 ? stripped.substring(0, 40) : stripped;
   }
@@ -385,7 +384,7 @@ const CommentItem: React.FC<CommentProps> = ({
             depth={depth < 3 ? depth + 1 : depth}
           />
         ))}
-      {comment.remainingReplies > 0 && (
+      {comment.remainingReplies > 0 && isThreadOpen && (
         <Stack pl={(depth + 0.5) * 8}>
           <FetchMoreRepliesButton
             onFetchMoreReplies={() => {

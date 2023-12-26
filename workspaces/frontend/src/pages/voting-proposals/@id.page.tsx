@@ -60,7 +60,6 @@ import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments/VotingProposalComments";
 
-
 export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
@@ -300,14 +299,11 @@ export function Page() {
 
    */
 
-
   useEffect(() => {
     if (user) {
       setIsConnectedModal(false);
     }
   }, [user]);
-
-
 
   type MoreActionsProps = {
     children: React.ReactNode;
@@ -574,10 +570,7 @@ export function Page() {
                     •
                   </Text>
                   <Stat.Root>
-                    <Stat.Link
-                      href="#discussion"
-                      label={`${0} comments`}
-                    />
+                    <Stat.Link href="#discussion" label={`${0} comments`} />
                   </Stat.Root>
                   {/* <Text variant="small" color="content.default.default">
                     •
@@ -597,7 +590,8 @@ export function Page() {
                 </Link>
               </Box>
 
-              {data?.proposal?.discussion !== "" ? (
+              {data?.proposal?.discussion !== "" &&
+              data?.proposal?.discussion.length ? (
                 <Box
                   height="110px!important"
                   overflow="hidden"
