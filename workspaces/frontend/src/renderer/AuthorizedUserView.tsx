@@ -43,7 +43,7 @@ const AuthorizedUserView = () => {
 
   const userBalance = useBalanceData(user?.address as `0x${string}`);
 
-  const { data: delegationData } = useDelegateRegistryDelegation({
+  const { data: delegationData, isLoading } = useDelegateRegistryDelegation({
     address: import.meta.env.VITE_APP_DELEGATION_REGISTRY,
     args: [
       user?.address as `0x${string}`,
@@ -54,9 +54,17 @@ const AuthorizedUserView = () => {
     enabled: user?.address != null,
   });
 
-  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegationData ? delegationData.toLowerCase() : "",
-  });
+  const hasDelegationData =
+    !isLoading && delegationData && delegationData.length;
+
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery(
+    {
+      address: delegationData ? delegationData.toLowerCase() : "",
+    },
+    {
+      enabled: !!hasDelegationData,
+    },
+  );
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
 
@@ -186,9 +194,7 @@ const AuthorizedUserView = () => {
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}
           ref={userProfileMenuRef}
-          delegatedTo={
-            delegatedTo?.data ? delegatedTo?.data : delegationData
-          }
+          delegatedTo={delegatedTo?.data ? delegatedTo?.data : delegationData}
           onDisconnect={handleDisconnect}
           user={user}
           onSave={handleSave}
