@@ -103,6 +103,10 @@ export const CommentShowMoreReplies = ({
     onClick={toggleReplies}
     mt={0}
     height="36px"
+    sx={{
+      background: "white",
+      zIndex: "2"
+    }}
   >
     {isThreadOpen ? (
       <MinusCircleIcon boxSize="22px" />
@@ -254,12 +258,12 @@ export const CommentMoreActions = ({ children }: { children: ReactNode }) => (
   <Box style={{ position: "relative" }}>
     <Menu>
       <MenuButton
-        as={IconButton}
-        size="small"
-        icon={<EllipsisIcon boxSize="20px" />}
-        variant="icon"
-      />
-
+        as={Button}
+        variant="ghost"
+        size="condensed"
+      >
+        <EllipsisIcon color="surface.accent.hover" boxSize="20px" width="20px" height="20px" />
+      </MenuButton>
       <Box top="0px" position="relative">
         <MenuList>{children}</MenuList>
       </Box>
