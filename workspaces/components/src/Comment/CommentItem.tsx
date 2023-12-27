@@ -95,7 +95,8 @@ const CommentItem: React.FC<CommentProps> = ({
             author?.ensName ||
             truncateAddress(author ? author.address?.toLowerCase() : "")}
         </Text>
-        <Text as="span" variant="bodySmall" color="content.accent.default">{`•`}</Text>
+        {(author?.username || author?.ensName) && <>
+          <Text as="span" variant="bodySmall" color="content.accent.default">{`•`}</Text>
         <Text
           as="span"
           variant="smallStrong"
@@ -105,7 +106,7 @@ const CommentItem: React.FC<CommentProps> = ({
           padding="standard.base"
         >
           {truncateAddress(author ? author.address?.toLowerCase() : "", 4, 2)}
-        </Text>
+        </Text></>}
       </Flex>
     );
 
@@ -218,7 +219,7 @@ const CommentItem: React.FC<CommentProps> = ({
                       position: "absolute",
                       width: "32px",
                       height: "54px",
-                      backgroundColor: "white",
+                      backgroundColor: "surface.bgPage",
                       top: "-12px",
                       left: "0",
                       zIndex: 2
@@ -233,7 +234,7 @@ const CommentItem: React.FC<CommentProps> = ({
                     position: "absolute",
                     width: "32px",
                     height: "54px",
-                    backgroundColor: "white",
+                    backgroundColor: "surface.bgPage",
                     top: "-12px",
                     left: "0",
                     zIndex: 2

@@ -104,7 +104,7 @@ export const CommentShowMoreReplies = ({
     mt={0}
     height="36px"
     sx={{
-      background: "white",
+      background: "surface.bgPage",
       zIndex: "2"
     }}
   >
