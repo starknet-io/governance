@@ -160,7 +160,7 @@ export const NavigationMenu = ({
               />
             ))}
 
-            {!hasPermission(userRole, [
+            {hasPermission(userRole, [
               ROLES.ADMIN,
               ROLES.MODERATOR,
               ROLES.SUPERADMIN,
