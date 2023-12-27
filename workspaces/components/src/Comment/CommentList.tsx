@@ -22,6 +22,7 @@ export type CommentWithAuthor = Comment & {
 
 export type CommentListProps = {
   commentsList: CommentWithAuthor[];
+  fetchMoreReplies: (commentId: number, repliesCount: number) => void;
 };
 
 const hoverStyles = {
@@ -78,10 +79,10 @@ export function daysAgo(date: Date): string {
 }
 
 export const FetchMoreRepliesButton = ({
-  onFetchMoreReplies,
+  fetchMoreReplies,
   remainingReplies,
 }: any) => (
-  <Button mt={2} variant="ghost" onClick={onFetchMoreReplies} maxW="160px">
+  <Button mt={2} variant="ghost" onClick={fetchMoreReplies} maxW="160px">
     Fetch {remainingReplies} more replies
   </Button>
 );
@@ -281,6 +282,10 @@ export type CommentProps = {
   fetchMoreReplies: (commentId: number, repliesCount: number) => void;
 };
 
+export type CommentItemProps = CommentProps & {
+  fetchMoreReplies: (commentId: number, repliesCount: number) => void;
+};
+
 export const CommentList: React.FC<CommentListProps> = ({
   commentsList,
   onReply,
@@ -307,7 +312,7 @@ export const CommentList: React.FC<CommentListProps> = ({
       {commentsList.map((comment, index) => (
         <CommentItem
           key={index}
-          onFetchMoreReplies={fetchMoreReplies}
+          fetchMoreReplies={fetchMoreReplies}
           activeCommentEditor={activeCommentEditor}
           setActiveCommentEditor={setActiveCommentEditor}
           comment={comment}

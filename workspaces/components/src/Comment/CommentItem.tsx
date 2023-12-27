@@ -34,7 +34,7 @@ const CommentItem: React.FC<CommentProps> = ({
   onVote,
   onEdit,
   onDelete,
-  onFetchMoreReplies,
+  fetchMoreReplies,
   depth = 0,
 }) => {
   const { author, createdAt, content, id, votes } = comment;
@@ -382,13 +382,14 @@ const CommentItem: React.FC<CommentProps> = ({
             onDelete={onDelete}
             onEdit={onEdit}
             depth={depth < 3 ? depth + 1 : depth}
+            fetchMoreReplies={fetchMoreReplies}
           />
         ))}
       {comment.remainingReplies > 0 && isThreadOpen && (
         <Stack pl={(depth + 0.5) * 8}>
           <FetchMoreRepliesButton
-            onFetchMoreReplies={() => {
-              onFetchMoreReplies(comment.id, comment.replies.length);
+            fetchMoreReplies={() => {
+              fetchMoreReplies(comment.id, comment.replies.length);
             }}
             remainingReplies={comment.remainingReplies}
           />
