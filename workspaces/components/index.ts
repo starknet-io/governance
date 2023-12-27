@@ -48,6 +48,7 @@ export {
   BoldIcon,
   ItalicIcon,
   UnderlineIcon,
+  EthereumIcon,
   Heading2Icon,
   NumberedListIcon,
   BulletedListIcon,

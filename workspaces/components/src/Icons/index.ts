@@ -78,6 +78,7 @@ import {
   CalendarIcon,
   DisconnectWalletIcon,
   UserIcon,
+  EthereumIcon,
   CommunityLinksIcon,
   BlogPostsIcon,
 } from "./UiIcons";
@@ -162,4 +163,5 @@ export {
   CommunityLinksIcon,
   UserIcon,
   BlogPostsIcon,
+  EthereumIcon,
 };

@@ -4,7 +4,7 @@ import {
   Box,
   Button,
   Flex,
-  Grid,
+  Icon,
   Spinner,
   Stack,
   Text,
@@ -17,14 +17,147 @@ import {
   PageTitle,
   ProfileImage,
   ShareIcon,
+  StarknetIcon,
   UploadImage,
+  EthereumIcon,
 } from "@yukilabs/governance-components";
+import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/dist/src/routers";
 import { usePageContext } from "../../../renderer/PageContextProvider";
 import { useFileUpload } from "../../../hooks/useFileUpload";
 import { trpc } from "../../../utils/trpc";
 import { FormLayout } from "../../../components/FormsCommon/FormLayout";
+
+import {
+  CheckIcon,
+  DynamicConnectButton,
+  useDynamicContext,
+  useUserWallets,
+} from "@dynamic-labs/sdk-react-core";
+
+import type { WalletConnector } from "@dynamic-labs/wallet-connector-core";
+
+type Wallet = {
+  address: string;
+  chain: string;
+  connected: boolean;
+  connector: WalletConnector;
+  id: string;
+  network?: string | number;
+  authenticated: boolean;
+};
+
+enum Chain {
+  EVM = "eip155",
+  STARKNET = "starknet",
+}
+
+const WalletDisplay = ({
+  wallet,
+  icon,
+  isSelectable,
+  onClick,
+  isActive,
+}: {
+  wallet: Wallet;
+  icon: any;
+  isSelectable?: boolean;
+  onClick: () => void;
+  isActive?: boolean;
+}) => {
+  return wallet ? (
+    isSelectable ? (
+      <Button variant="secondary" onClick={onClick} type="button">
+        <Flex gap="standard.xs" alignItems="center">
+          <Icon as={icon} />
+          <Text variant="medium">{truncateAddress(wallet.address)}</Text>
+          <Icon as={CheckIcon} />
+        </Flex>
+      </Button>
+    ) : (
+      <Flex gap="standard.xs" alignItems="center">
+        <Icon as={icon} />
+        <Text variant="medium">{truncateAddress(wallet.address)}</Text>
+        <Icon as={CheckIcon} />
+      </Flex>
+    )
+  ) : (
+    <DynamicConnectButton>
+      <Button
+        data-testid={wallet ? "eth" : "stark"}
+        variant="secondary"
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+        type="button"
+      >
+        <Flex gap="standard.xs" alignItems="center">
+          <Icon as={icon} />
+          <Text variant="medium">Connect</Text>
+        </Flex>
+      </Button>
+    </DynamicConnectButton>
+  );
+};
+
+const WalletButtons = ({
+  withLabel,
+  selectable,
+}: {
+  withLabel?: boolean;
+  selectable?: boolean;
+}) => {
+  const userWallets = useUserWallets();
+  const { setPrimaryWallet } = useDynamicContext();
+
+  const findMatchingWallet = (wallets: any[], key: "EVM" | "STARKNET") => {
+    return wallets.find((wallet) => wallet.chain === Chain[key]);
+  };
+  console.log(userWallets);
+
+  const starknetWallet = findMatchingWallet(userWallets, "STARKNET");
+  const ethWallet = findMatchingWallet(userWallets, "EVM");
+
+  return (
+    <Flex justifyContent="space-between">
+      <Flex direction="column" gap="standard.xl">
+        {withLabel && (
+          <Text variant="mediumStrong">Connect Starknet wallet</Text>
+        )}
+        <WalletDisplay
+          wallet={starknetWallet}
+          icon={StarknetIcon}
+          isSelectable={selectable}
+          onClick={async () => {
+            try {
+              await setPrimaryWallet(starknetWallet.id);
+            } catch (err) {
+              console.error(err);
+            }
+          }}
+        />
+      </Flex>
+      <Flex direction="column" gap="standard.xl">
+        {withLabel && (
+          <Text variant="mediumStrong">Connect Ethereum wallet</Text>
+        )}
+        <WalletDisplay
+          wallet={ethWallet}
+          icon={EthereumIcon}
+          isSelectable={selectable}
+          onClick={async () => {
+            try {
+              await setPrimaryWallet(ethWallet.id);
+            } catch (err) {
+              console.error(err);
+            }
+          }}
+        />
+      </Flex>
+    </Flex>
+  );
+};
 
 export function Page() {
   const { user } = usePageContext();
@@ -75,7 +208,7 @@ export function Page() {
       const saveProfileData: any = {};
       saveProfileData.username = data.username;
       saveProfileData.profileImage = imageUrl;
-      setLoading(true)
+      setLoading(true);
 
       try {
         const res = await editUserProfile.mutateAsync(
@@ -90,14 +223,14 @@ export function Page() {
           {
             onSuccess: () => {
               utils.auth.currentUser.invalidate();
-              setLoading(false)
+              setLoading(false);
               return true;
             },
             onError: (error) => {
               if (error.message === "Username already exists") {
                 setUserExistsError(true);
               }
-              setLoading(false)
+              setLoading(false);
               return false;
             },
           },
@@ -190,7 +323,8 @@ export function Page() {
                   onChange={setUsernameErrorFalse}
                 />
               </FormControlled>
-              <Button onClick={handleSave} maxW="140px">
+              <WalletButtons withLabel selectable />
+              <Button onClick={handleSave} maxW="140px" type="submit">
                 {loading ? (
                   <Flex gap={1.5} alignItems="center">
                     <Spinner size="sm" />

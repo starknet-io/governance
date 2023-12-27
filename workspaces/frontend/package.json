@@ -18,6 +18,7 @@
     "@chakra-ui/react": "^2.7.0",
     "@dynamic-labs/ethereum": "^1.0.2",
     "@dynamic-labs/ethereum-aa": "^1.0.2",
+    "@dynamic-labs/multi-wallet": "^1.0.2",
     "@dynamic-labs/sdk-react-core": "^1.0.2",
     "@dynamic-labs/starknet": "^1.0.2",
     "@dynamic-labs/wagmi-connector": "^1.0.2",
