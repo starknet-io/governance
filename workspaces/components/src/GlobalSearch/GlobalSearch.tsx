@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   Box,
   Text,
@@ -5,7 +6,6 @@ import {
   InputLeftElement,
   InputRightElement,
   ModalBody,
-  ModalContent,
   ModalHeader,
   ModalFooter,
   Flex,
@@ -16,8 +16,6 @@ import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import {
   ChangeEvent,
-  Dispatch,
-  SetStateAction,
   useEffect,
   useState,
 } from "react";
@@ -48,10 +46,15 @@ export function GlobalSearch({
   onGlobalSearchOpen,
   onGlobalSearchClose,
 }: Props) {
+  const [searchResultsState, setSearchResultsState] = useState(searchResults);
+  useEffect(() => {
+    setSearchResultsState(searchResults);
+  }, [searchResults])
+  const searchResultsStateRef = useRef(searchResultsState);
+  searchResultsStateRef.current = searchResultsState;
   const [searchText, setSearchText] = useState("");
   const [highlightIndex, setHighlightIndex] = useState(0);
-  const h = searchResults?.[highlightIndex];
-  const populatedSearchResults = usePopulateProposals(searchResults);
+  const populatedSearchResults = usePopulateProposals(searchResultsState);
 
   const handleSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -72,8 +75,9 @@ export function GlobalSearch({
     }
 
     if (e.key === "ArrowDown") {
-      console.log("ArrowDown");
-      setHighlightIndex((i) => (i + 1 === searchResults.length ? i : i + 1));
+      setHighlightIndex((i) => {
+        return i + 1 === searchResultsStateRef.current.length ? i : i + 1;
+      });
     }
 
     if (e.key === "ArrowUp") {
@@ -84,10 +88,10 @@ export function GlobalSearch({
   };
 
   const handleEnterPress = () => {
-    if (h) {
-      let path = getSearchItemHref(h?.type, h?.refID);
+    if (searchResultsStateRef.current?.[highlightIndex]) {
+      let path = getSearchItemHref(searchResultsStateRef.current?.[highlightIndex]?.type, searchResultsStateRef.current?.[highlightIndex]?.refID);
       onGlobalSearchClose();
-      if (h?.type === "delegate") {
+      if (searchResultsStateRef.current?.[highlightIndex]?.type === "delegate") {
         path = path.replace("/delegates/", "/delegates/profile/");
       }
       navigate(path);
@@ -231,13 +235,13 @@ export function GlobalSearch({
             </InputGroup>
           </ModalHeader>
 
-          {!!searchResults.length && (
+          {!!searchResultsState.length && (
             <ModalBody overflowY="scroll" pb="0" px="0px" pt="standard.xs">
-              {buildSearchItems(populatedSearchResults, "grouped-items", h)}
+              {buildSearchItems(populatedSearchResults, "grouped-items", searchResultsState?.[highlightIndex])}
             </ModalBody>
           )}
 
-          {!searchResults.length && (
+          {!searchResultsState.length && (
             <ModalBody
               display="flex"
               alignItems="center"
