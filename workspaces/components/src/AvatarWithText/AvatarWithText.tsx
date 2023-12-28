@@ -6,6 +6,7 @@ import { Dropdown } from "src/Dropdown";
 import { EllipsisIcon } from "src/Icons";
 import { Tooltip } from "src/Tooltip";
 import { truncateAddress } from "src/utils";
+import { CopyToClipboard } from "../CopyToClipboard";
 
 type Props = {
   size?: "condensed" | "standard";
@@ -16,10 +17,12 @@ type Props = {
   dropdownChildren?: React.ReactNode;
   headerTooltipContent?: string; // Tooltip for headerText
   subheaderTooltipContent?: string; // Tooltip for subheaderText
+  withCopy?: boolean;
 };
 
 export const AvatarWithText = ({
   size,
+  withCopy,
   headerText,
   subheaderText,
   address,
@@ -82,13 +85,27 @@ export const AvatarWithText = ({
           {subheaderText}
         </Text>
       );
-
+    //
     return subheaderTooltipContent ? (
-      <Box as="span">
-        <Tooltip label={subheaderTooltipContent} aria-label="Subheader Text">
-          {content}
-        </Tooltip>
-      </Box>
+      withCopy ? (
+        <Box as="span">
+          <CopyToClipboard text={subheaderTooltipContent} iconSize="12px">
+            <Tooltip
+              shouldWrapChildren={false}
+              label={subheaderTooltipContent}
+              aria-label="Subheader Text"
+            >
+              {content}
+            </Tooltip>
+          </CopyToClipboard>
+        </Box>
+      ) : (
+        <Box as="span">
+          <Tooltip label={subheaderTooltipContent} aria-label="Subheader Text">
+            {content}
+          </Tooltip>
+        </Box>
+      )
     ) : (
       content
     );
