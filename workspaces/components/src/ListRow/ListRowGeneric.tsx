@@ -170,7 +170,10 @@ type PastVotesProps = {
     | "against"
     | "abstain"
     | "Yes, More TPS Daddy 👉👈"
-    | "No, Less TPS Daddy 😔";
+    | "No, Less TPS Daddy 😔"
+    | "most aligned 🧭📈"
+    | "least aligned🧭📉"
+    | "starknet is ethereum";
 };
 
 const PastVotes = ({
@@ -192,13 +195,23 @@ const PastVotes = ({
         return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
       case "Yes, More TPS Daddy 👉👈":
         return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
+      case "most aligned 🧭📈":
+        return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
       case "against":
+        return (
+          <VoteAgainstIcon {...iconProps} boxSize="18px" color="#EC796B" />
+        );
+      case "least aligned🧭📉":
         return (
           <VoteAgainstIcon {...iconProps} boxSize="18px" color="#EC796B" />
         );
       case "No, Less TPS Daddy 😔":
         return (
           <VoteAgainstIcon {...iconProps} boxSize="18px" color="#EC796B" />
+        );
+      case "starknet is ethereum":
+        return (
+          <VoteAbstainIcon {...iconProps} boxSize="18px" color="#4A4A4F" />
         );
       case "abstain":
         return (
@@ -281,7 +294,11 @@ const Comments = ({ count, width, ...rest }: CommentsProps) => {
       pb="standard.xs"
       {...rest}
     >
-      <Icon as={() => <CommentIcon color="currentColor" width="20px" height="20px" />} />
+      <Icon
+        as={() => (
+          <CommentIcon color="currentColor" width="20px" height="20px" />
+        )}
+      />
       <Text variant="bodySmall" fontWeight={500}>
         {count}
       </Text>
@@ -416,6 +433,9 @@ const colors: { [key: string]: string } = {
   Abstain: "surface.accentSecondary.default",
   Yes: "surface.success.default",
   No: "surface.danger.default",
+  "most aligned 🧭📈": "surface.success.default",
+  "least aligned🧭📉": "surface.danger.default",
+  "starknet is ethereum": "surface.accentSecondary.default",
 };
 
 interface VoteResultsProps extends BoxProps {
