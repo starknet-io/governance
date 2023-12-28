@@ -436,6 +436,9 @@ const colors: { [key: string]: string } = {
   "most aligned 🧭📈": "surface.success.default",
   "least aligned🧭📉": "surface.danger.default",
   "starknet is ethereum": "surface.accentSecondary.default",
+  0: "surface.success.default",
+  1: "surface.danger.default",
+  2: "surface.accentSecondary.default",
 };
 
 interface VoteResultsProps extends BoxProps {
@@ -451,9 +454,9 @@ const VoteResults: React.FC<VoteResultsProps> = ({
   const total = scores.reduce((a, b) => a + b, 0);
   const noVotes = total === 0;
   const onlyOneVote = total === Math.max(...scores);
-  const getColorForKey = (choice: string): string => {
+  const getColorForKey = (choice: string, i: number): string => {
     const key = choice.split(",")[0].trim(); // Extracts the first word before a comma
-    return colors[key] || "surface.onBg.default"; // Fallback color
+    return colors[key] || colors[i] || "surface.onBg.default"; // Fallback color
   };
   const toolTipContent = choices
     .map((choice, i) => {
