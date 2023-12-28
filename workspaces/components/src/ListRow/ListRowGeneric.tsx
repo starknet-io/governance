@@ -244,7 +244,7 @@ const PastVotes = ({
       >
         {title}
       </Text>
-      <Flex gap="standard.xs">
+      <Flex gap="standard.xs" alignItems="center">
         <Flex flexShrink={0}>
           <Text
             variant="small"

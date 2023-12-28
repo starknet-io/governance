@@ -652,6 +652,7 @@ export function Page() {
                   </Text>
                   {/* toDo get user images / display names */}
                   <Username
+                    withCopy
                     src={authorInfo?.profileImage || null}
                     displayName={
                       authorInfo?.username ||
@@ -893,10 +894,10 @@ export function Page() {
                     <Banner
                       label={`You voted ${
                         vote.data.votes[0].choice === 1
-                          ? "For"
+                          ? data?.proposal?.choices?.[0] || "For"
                           : vote.data.votes[0].choice === 2
-                          ? "Against"
-                          : "Abstain"
+                          ? data?.proposal?.choices?.[1] || "Against"
+                          : data?.proposal?.choices?.[2] || "Abstain"
                       } using ${vote.data.votes[0].vp} votes`}
                     />
                     <Divider mb="standard.2xl" />
@@ -968,7 +969,9 @@ export function Page() {
                     const strategies = data?.proposal?.strategies;
                     const scoresByStrategy =
                       data?.proposal?.scores_by_strategy[index];
-                    {/*console.log(data?.proposal) */}
+                    {
+                      /*console.log(data?.proposal) */
+                    }
                     return (
                       <VoteStat
                         key={choice}
