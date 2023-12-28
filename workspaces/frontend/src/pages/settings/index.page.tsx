@@ -99,6 +99,7 @@ const GET_SPACE_QUERY = gql(`
 
 export function Page() {
   const {
+    setValue,
     handleSubmit: handleAddSubmit,
     register: addRegister,
     reset: resetAddUserForm,
@@ -148,7 +149,6 @@ export function Page() {
     return roles;
   };
   const {
-    control,
     handleSubmit: handleEditSubmit,
     register: editRegister,
     formState: { errors: editErrors, isValid: isEditValid },
@@ -593,7 +593,10 @@ export function Page() {
                         label: option,
                       }))}
                       value={roleValue}
-                      onChange={handleSelectChange}
+                      onChange={(option) => {
+                        setValue("role", option)
+                        handleSelectChange(option)
+                      }}
                     />
                     {addErrors.role && <span>This field is required.</span>}
                   </FormControl>
