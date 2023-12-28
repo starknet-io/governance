@@ -968,9 +968,11 @@ export function Page() {
                     const strategies = data?.proposal?.strategies;
                     const scoresByStrategy =
                       data?.proposal?.scores_by_strategy[index];
+                    {/*console.log(data?.proposal) */}
                     return (
                       <VoteStat
                         key={choice}
+                        choice={index}
                         // @ts-expect-error todo
                         type={choice}
                         // @ts-expect-error todo
