@@ -40,8 +40,6 @@ export const notificationsRouter = router({
         scores,
       } = opts.input.proposal;
 
-      console.log(opts.input.proposal)
-
       // Create a message for the notification
       const message = `New voting proposal created with ID: ${id} in space: ${space}`;
 
