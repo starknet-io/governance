@@ -54,6 +54,8 @@ export function GlobalSearch({
   searchResultsStateRef.current = searchResultsState;
   const [searchText, setSearchText] = useState("");
   const [highlightIndex, setHighlightIndex] = useState(0);
+  const highlightIndexRef = useRef(highlightIndex);
+  highlightIndexRef.current = highlightIndex;
   const populatedSearchResults = usePopulateProposals(searchResultsState);
 
   const handleSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -88,13 +90,13 @@ export function GlobalSearch({
   };
 
   const handleEnterPress = () => {
-    if (searchResultsStateRef.current?.[highlightIndex]) {
-      let path = getSearchItemHref(searchResultsStateRef.current?.[highlightIndex]?.type, searchResultsStateRef.current?.[highlightIndex]?.refID);
+    if (searchResultsStateRef.current?.[highlightIndexRef.current]) {
+      let path = getSearchItemHref(searchResultsStateRef.current?.[highlightIndexRef.current]?.type, searchResultsStateRef.current?.[highlightIndexRef.current]?.refID, searchResultsStateRef.current?.[highlightIndexRef.current]?.name);
       onGlobalSearchClose();
-      if (searchResultsStateRef.current?.[highlightIndex]?.type === "delegate") {
+      if (searchResultsStateRef.current?.[highlightIndexRef.current]?.type === "delegate") {
         path = path.replace("/delegates/", "/delegates/profile/");
       }
-      navigate(path);
+      window.location.href = path;
     }
   };
 
