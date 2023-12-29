@@ -50,9 +50,19 @@ export const AvatarWithText = ({
     );
 
     return headerTooltipContent ? (
-      <Tooltip label={headerTooltipContent} aria-label="Header Text">
-        {content}
-      </Tooltip>
+      <>
+        <Tooltip label={headerTooltipContent} aria-label="Header Text">
+          {content}
+        </Tooltip>
+        {withCopy && !subheaderText && (
+          <Flex alignItems="center" gap={0.5}>
+            <CopyToClipboard noPadding text={address || ""} />
+            <Text as="span" color="content.default.default" variant="small">
+              Copy
+            </Text>
+          </Flex>
+        )}
+      </>
     ) : (
       content
     );
@@ -85,7 +95,7 @@ export const AvatarWithText = ({
           {subheaderText}
         </Text>
       );
-    
+
     return subheaderTooltipContent ? (
       withCopy ? (
         <Box as="span">
