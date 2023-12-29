@@ -66,7 +66,7 @@ export const VoteStat = (props: Props) => {
       </Flex>
       <Box bg="purple" width="100%">
         <Progress
-          variant={variant[getVariantKey(props.type)] ? variant[getVariantKey(props.type)] : variant[props.choice]}
+          variant={variant?.[props.choice] || variant[getVariantKey(props.type)]}
           height="4px"
           value={votePercentage}
         />

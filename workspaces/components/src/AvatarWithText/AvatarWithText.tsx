@@ -85,7 +85,7 @@ export const AvatarWithText = ({
           {subheaderText}
         </Text>
       );
-    //
+    
     return subheaderTooltipContent ? (
       withCopy ? (
         <Box as="span">
