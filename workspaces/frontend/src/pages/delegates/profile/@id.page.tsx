@@ -496,6 +496,7 @@ export function Page() {
                   ? truncateAddress(delegateAddress)
                   : null
               }
+              withCopy
               address={delegateAddress}
               dropdownChildren={<ActionButtons />}
               headerTooltipContent={

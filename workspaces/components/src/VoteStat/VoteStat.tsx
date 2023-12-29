@@ -5,6 +5,7 @@ import { formatVotesAmount } from "src/utils";
 type Props = {
   voteCount?: number;
   totalVotes: number;
+  choice: 0 | 1 | 2;
   userVote: boolean;
   type: string;
   active?: boolean;
@@ -17,6 +18,9 @@ const variant = {
   For: "success",
   Against: "danger",
   Abstain: "neutral",
+  0: "success",
+  1: "danger",
+  2: "neutral",
 };
 
 const formatPercentage = (num: number) => {
@@ -48,7 +52,7 @@ export const VoteStat = (props: Props) => {
         <Box>
           <Text variant="captionSmallStrong" color="content.default.default">
             {formatPercentage(votePercentage)}% {props.userVote ? "✓" : ""}{" "}
-            {getVariantKey(props.type)}
+            {props.type}
           </Text>
         </Box>
         <Text
@@ -62,7 +66,7 @@ export const VoteStat = (props: Props) => {
       </Flex>
       <Box bg="purple" width="100%">
         <Progress
-          variant={variant[getVariantKey(props.type)]}
+          variant={variant?.[props.choice] || variant[getVariantKey(props.type)]}
           height="4px"
           value={votePercentage}
         />
