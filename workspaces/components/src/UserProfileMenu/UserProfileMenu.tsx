@@ -91,7 +91,6 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
                 Starknet address
               </Text>
             </Box>
-
             <Box width="50%">
               {user?.starknetAddress ? (
                 <Tooltip label={user.starknetAddress}>
