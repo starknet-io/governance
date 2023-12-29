@@ -40,15 +40,23 @@ export const notificationsRouter = router({
         scores,
       } = opts.input.proposal;
 
+      console.log(opts.input.proposal)
+
       // Create a message for the notification
       const message = `New voting proposal created with ID: ${id} in space: ${space}`;
 
-      const foundUser = await db.query.users.findFirst({
+      let foundUser = await db.query.users.findFirst({
         where: eq(author.toLowerCase(), users.address),
       });
 
       if (!foundUser) {
-        throw new Error('User not found');
+        const newUser = await db
+          .insert(users)
+          .values({
+            address: author.toLowerCase(),
+          })
+          .returning();
+        foundUser = newUser[0];
       }
 
       let notificationTimeOrder = null;
@@ -136,7 +144,7 @@ export const notificationsRouter = router({
               text: message,
               'h:X-Mailgun-Variables': JSON.stringify({
                 title: title,
-                url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                url: `${hostname}voting-proposals/${proposalID}`,
                 unsubscribeUrl: `${hostname}subscription/unsubscribe/${confirmationToken}`,
                 startTime: formattedStart,
                 endTime: formattedEnd,
@@ -169,7 +177,7 @@ export const notificationsRouter = router({
               text: message,
               'h:X-Mailgun-Variables': JSON.stringify({
                 title: title,
-                url: `https://governance.yuki-labs.dev/voting-proposals/${proposalID}`,
+                url: `${hostname}/${proposalID}`,
                 unsubscribeUrl: `${hostname}subscription/unsubscribe/${confirmationToken}`,
                 amountFor,
                 amountAgainst,
