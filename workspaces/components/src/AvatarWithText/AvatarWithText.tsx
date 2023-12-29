@@ -57,7 +57,7 @@ export const AvatarWithText = ({
         {withCopy && !subheaderText && (
           <Flex alignItems="center" gap={0.5}>
             <CopyToClipboard noPadding text={address || ""} />
-            <Text variant="bodySmall" color="content.default.default">
+            <Text as="span" color="content.default.default" variant="small">
               Copy
             </Text>
           </Flex>
