@@ -824,8 +824,7 @@ export function Page() {
                         : undefined
                     }
                     onEdit={
-                      data?.proposal?.state === "active" ||
-                      data?.proposal?.state === "pending"
+                      data?.proposal?.state === "active"
                         ? handleCommentEdit
                         : undefined
                     }
