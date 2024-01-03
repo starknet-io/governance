@@ -738,7 +738,8 @@ export function Page() {
             >
               Discussion
             </Heading>
-            {data?.proposal?.state === "active" && user ? (
+            {data?.proposal?.state === "active" ||
+            (data?.proposal?.state === "pending" && user) ? (
               <FormControl id="delegate-statement">
                 <CommentInput
                   onSend={async (comment) => {
@@ -758,19 +759,20 @@ export function Page() {
               </FormControl>
             ) : null}
 
-            {data?.proposal?.state === "active" && !user && (
-              <Box>
-                <FormControl>
-                  <Box onClick={() => setHelpMessage("connectWalletMessage")}>
-                    <CommentInput
-                      onSend={async (comment) => {
-                        console.log(comment);
-                      }}
-                    />
-                  </Box>
-                </FormControl>
-              </Box>
-            )}
+            {data?.proposal?.state === "active" ||
+              (data?.proposal?.state === "pending" && !user && (
+                <Box>
+                  <FormControl>
+                    <Box onClick={() => setHelpMessage("connectWalletMessage")}>
+                      <CommentInput
+                        onSend={async (comment) => {
+                          console.log(comment);
+                        }}
+                      />
+                    </Box>
+                  </FormControl>
+                </Box>
+              ))}
 
             {comments.data && comments.data.length > 0 ? (
               <>
@@ -842,9 +844,6 @@ export function Page() {
 
             {data?.proposal?.state === "closed" && (
               <Banner label="Comments are closed." />
-            )}
-            {data?.proposal?.state === "pending" && (
-              <Banner label="Comments will be open soon." />
             )}
           </VoteLayout.Discussion>
         </VoteLayout.LeftSide>
