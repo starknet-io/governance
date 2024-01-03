@@ -806,22 +806,26 @@ export function Page() {
                   <CommentList
                     commentsList={comments.data}
                     onVote={
-                      data?.proposal?.state === "active"
+                      data?.proposal?.state === "active" ||
+                      data?.proposal?.state === "pending"
                         ? handleCommentVote
                         : undefined
                     }
                     onDelete={
-                      data?.proposal?.state === "active"
+                      data?.proposal?.state === "active" ||
+                      data?.proposal?.state === "pending"
                         ? handleCommentDelete
                         : undefined
                     }
                     onReply={
-                      data?.proposal?.state === "active"
+                      data?.proposal?.state === "active" ||
+                      data?.proposal?.state === "pending"
                         ? handleReplySend
                         : undefined
                     }
                     onEdit={
-                      data?.proposal?.state === "active"
+                      data?.proposal?.state === "active" ||
+                      data?.proposal?.state === "pending"
                         ? handleCommentEdit
                         : undefined
                     }
