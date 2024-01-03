@@ -738,7 +738,7 @@ export function Page() {
             >
               Discussion
             </Heading>
-            {/* {user ? (
+            {data?.proposal?.state === "active" && user ? (
               <FormControl id="delegate-statement">
                 <CommentInput
                   onSend={async (comment) => {
@@ -756,7 +756,9 @@ export function Page() {
                   </Box>
                 )}
               </FormControl>
-            ) : (
+            ) : null}
+
+            {data?.proposal?.state === "active" && !user && (
               <Box>
                 <FormControl>
                   <Box onClick={() => setHelpMessage("connectWalletMessage")}>
@@ -768,8 +770,9 @@ export function Page() {
                   </Box>
                 </FormControl>
               </Box>
-            )} */}
-            {/* {comments.data && comments.data.length > 0 ? (
+            )}
+
+            {comments.data && comments.data.length > 0 ? (
               <>
                 <AppBar.Root>
                   <AppBar.Group mobileDirection="row" gap="standard.sm">
@@ -800,21 +803,49 @@ export function Page() {
                 <Box mt="standard.xs">
                   <CommentList
                     commentsList={comments.data}
-                    onVote={handleCommentVote}
-                    onDelete={handleCommentDelete}
-                    onReply={handleReplySend}
-                    onEdit={handleCommentEdit}
+                    onVote={
+                      data?.proposal?.state === "active"
+                        ? handleCommentVote
+                        : undefined
+                    }
+                    onDelete={
+                      data?.proposal?.state === "active"
+                        ? handleCommentDelete
+                        : undefined
+                    }
+                    onReply={
+                      data?.proposal?.state === "active"
+                        ? handleReplySend
+                        : undefined
+                    }
+                    onEdit={
+                      data?.proposal?.state === "active"
+                        ? handleCommentEdit
+                        : undefined
+                    }
                   />
                 </Box>
               </>
-            ) : (
+            ) : data?.proposal?.state === "active" ? (
               <EmptyState
                 hasBorder={false}
                 type="comments"
                 title="Add the first comment"
               />
-            )} */}
-            <Banner label="Comments are now closed." />
+            ) : (
+              <EmptyState
+                hasBorder={false}
+                type="comments"
+                title="There are no comments."
+              />
+            )}
+
+            {data?.proposal?.state === "closed" && (
+              <Banner label="Comments are closed." />
+            )}
+            {data?.proposal?.state === "pending" && (
+              <Banner label="Comments will be open soon." />
+            )}
           </VoteLayout.Discussion>
         </VoteLayout.LeftSide>
         <VoteLayout.RightSide>
