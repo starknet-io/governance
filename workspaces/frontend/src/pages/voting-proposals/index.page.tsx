@@ -92,8 +92,7 @@ const SORTING_OPTIONS = [
 type SortingTypes = "desc" | "asc" | "most_discussed" | "" | undefined;
 
 export function Proposal({ data }: any) {
-  const comments = data.comments;
-  const count = comments ? comments.length : 0;
+  const count = data?.commentsCount || 0;
 
   return (
     <ListRow.Root

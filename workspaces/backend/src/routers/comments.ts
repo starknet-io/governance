@@ -1,13 +1,14 @@
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { comments } from '../db/schema/comments';
 import { db } from '../db/db';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, isNull, sql } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { commentVotes } from '../db/schema/commentVotes';
 import { profanity } from '@2toad/profanity';
 import { notifications } from '../db/schema/notifications';
 import { notificationUsers } from '../db/schema/notificationUsers';
+import { users } from '../db/schema/users';
 
 const commentInsertSchema = createInsertSchema(comments);
 
@@ -23,6 +24,8 @@ export const commentsRouter = router({
       z.object({
         proposalId: z.string(),
         sort: z.enum(['upvotes', 'date', '']).optional(),
+        limit: z.number().default(5),
+        offset: z.number().default(1),
       }),
     )
     .query(async (opts) => {
@@ -37,8 +40,13 @@ export const commentsRouter = router({
       }
 
       const rawComments = await db.query.comments.findMany({
-        where: eq(comments.proposalId, opts.input.proposalId),
+        where: and(
+          eq(comments.proposalId, opts.input.proposalId),
+          isNull(comments.parentId), // Use isNull to select comments with no parent
+        ),
         orderBy: orderByClause,
+        offset: (opts.input.offset - 1) * opts.input.limit,
+        limit: opts.input.limit,
         with: {
           author: true,
           ...(userId && {
@@ -49,19 +57,84 @@ export const commentsRouter = router({
         },
       });
 
-      function buildCommentTree(parentId: number | null, commentList: any) {
-        return commentList
-          .filter((comment: any) => comment.parentId === parentId)
-          .map((comment: any) => ({
-            ...comment,
-            netVotes: comment.upvotes - comment.downvotes, // Simple subtraction here
-            replies: buildCommentTree(comment.id, commentList),
-          }));
+      // Count total main comments
+      const totalMainCommentCount = await db
+        .select({
+          value: sql`count(${comments.id})`.mapWith(Number),
+        })
+        .from(comments)
+        .where(
+          and(
+            eq(comments.proposalId, opts.input.proposalId),
+            isNull(comments.parentId),
+          ),
+        );
+
+      for (const comment of rawComments) {
+        const repliesObject = await getLimitedReplies(comment.id, userId);
+        comment.replies = repliesObject.replies;
+        comment.remainingReplies = repliesObject.remainingReplies;
+        comment.totalReplyCount = repliesObject.totalReplyCount;
+        comment.netVotes = comment.upvotes - comment.downvotes;
       }
 
-      const structuredComments = buildCommentTree(null, rawComments);
+      return {
+        comments: rawComments,
+        moreCommentsAvailable:
+          totalMainCommentCount[0]?.value >
+          opts.input.offset * opts.input.limit,
+        remainingComments: Math.max(
+          totalMainCommentCount[0]?.value -
+            opts.input.offset * opts.input.limit,
+          0,
+        ),
+      };
+    }),
 
-      return structuredComments;
+  getReplies: publicProcedure
+    .input(
+      z.object({
+        commentId: z.number(),
+        limit: z.number().default(5),
+        offset: z.number().default(1),
+      }),
+    )
+    .query(async (opts) => {
+      const userId = opts.ctx.user?.id || null;
+      const { limit, offset } = opts.input;
+
+      // Query to fetch replies for the given commentId with pagination
+      const replies = await db.query.comments.findMany({
+        where: eq(comments.parentId, opts.input.commentId),
+        offset: offset, // Correct the offset calculation
+        limit: limit,
+        with: {
+          author: true,
+          ...(userId && {
+            votes: {
+              where: eq(commentVotes.userId, userId),
+            },
+          }),
+        },
+      });
+
+      // Count total replies
+      const totalReplyCount = await db
+        .select({
+          value: sql`count(${comments.id})`.mapWith(Number),
+        })
+        .from(comments)
+        .where(eq(comments.parentId, opts.input.commentId));
+
+      // Add information about more replies and remaining replies
+      return {
+        replies: replies,
+        moreRepliesAvailable: totalReplyCount[0]?.value > offset * limit,
+        remainingReplies: Math.max(
+          totalReplyCount[0]?.value - offset * limit,
+          0,
+        ),
+      };
     }),
 
   voteComment: protectedProcedure
@@ -247,6 +320,17 @@ export const commentsRouter = router({
         }
       }
 
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, opts.ctx.user?.id),
+      });
+
+      if (user) {
+        return {
+          ...insertedComment,
+          author: user,
+        };
+      }
+
       return insertedComment;
     }),
 
@@ -304,3 +388,60 @@ export const commentsRouter = router({
         .execute();
     }),
 });
+
+async function getLimitedReplies(
+  commentId: number,
+  userId: string | null,
+  depth = 1,
+): Promise<any> {
+  if (depth > 3) {
+    // Limiting the depth to 2 (replies and sub-replies)
+    return [];
+  }
+
+  const replies = await db.query.comments.findMany({
+    where: eq(comments.parentId, commentId),
+    limit: 5,
+    with: {
+      author: true,
+      ...(userId && {
+        votes: {
+          where: eq(commentVotes.userId, userId),
+        },
+      }),
+    },
+  });
+
+  const totalAllReplyCount =
+    depth === 1
+      ? await db
+          .select({
+            value: sql`count(${comments.id})`.mapWith(Number),
+          })
+          .from(comments)
+          .where(eq(comments.parentId, commentId))
+      : null;
+
+  for (const reply of replies) {
+    const totalReplyCount = await db
+      .select({
+        value: sql`count(${comments.id})`.mapWith(Number),
+      })
+      .from(comments)
+      .where(eq(comments.parentId, reply.id));
+    reply.replies = await getLimitedReplies(reply.id, userId, depth + 1);
+    reply.netVotes = reply.upvotes - reply.downvotes; // Simple subtraction here
+    reply.totalReplyCount = totalReplyCount?.[0]?.value || 0;
+    reply.remainingReplies = reply.totalReplyCount - reply.replies.length; // New field indicating remaining replies
+  }
+
+  if (depth === 1) {
+    return {
+      replies,
+      totalReplyCount: totalAllReplyCount?.[0]?.value || 0,
+      remainingReplies: (totalAllReplyCount?.[0]?.value || 0) - replies.length,
+    };
+  } else {
+    return replies;
+  }
+}
