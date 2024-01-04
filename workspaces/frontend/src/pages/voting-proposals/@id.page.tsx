@@ -159,8 +159,8 @@ export function Page() {
 
   const votes = useQuery(
     gql(`
-      query VotingProposalsVotes($where: VoteWhere) {
-        votes(where: $where) {
+      query VotingProposalsVotes($first: Int, $where: VoteWhere) {
+        votes(first: $first,where: $where) {
           choice
           voter
           reason
@@ -175,6 +175,7 @@ export function Page() {
     `),
     {
       variables: {
+        first: 250,
         where: {
           proposal: pageContext.routeParams!.id,
         },
@@ -738,7 +739,8 @@ export function Page() {
             >
               Discussion
             </Heading>
-            {/* {user ? (
+            {data?.proposal?.state === "active" ||
+            (data?.proposal?.state === "pending" && user) ? (
               <FormControl id="delegate-statement">
                 <CommentInput
                   onSend={async (comment) => {
@@ -756,20 +758,24 @@ export function Page() {
                   </Box>
                 )}
               </FormControl>
-            ) : (
-              <Box>
-                <FormControl>
-                  <Box onClick={() => setHelpMessage("connectWalletMessage")}>
-                    <CommentInput
-                      onSend={async (comment) => {
-                        console.log(comment);
-                      }}
-                    />
-                  </Box>
-                </FormControl>
-              </Box>
-            )} */}
-            {/* {comments.data && comments.data.length > 0 ? (
+            ) : null}
+
+            {data?.proposal?.state === "active" ||
+              (data?.proposal?.state === "pending" && !user && (
+                <Box>
+                  <FormControl>
+                    <Box onClick={() => setHelpMessage("connectWalletMessage")}>
+                      <CommentInput
+                        onSend={async (comment) => {
+                          console.log(comment);
+                        }}
+                      />
+                    </Box>
+                  </FormControl>
+                </Box>
+              ))}
+
+            {comments.data && comments.data.length > 0 ? (
               <>
                 <AppBar.Root>
                   <AppBar.Group mobileDirection="row" gap="standard.sm">
@@ -800,21 +806,50 @@ export function Page() {
                 <Box mt="standard.xs">
                   <CommentList
                     commentsList={comments.data}
-                    onVote={handleCommentVote}
-                    onDelete={handleCommentDelete}
-                    onReply={handleReplySend}
-                    onEdit={handleCommentEdit}
+                    onVote={
+                      data?.proposal?.state === "active" ||
+                      data?.proposal?.state === "pending"
+                        ? handleCommentVote
+                        : undefined
+                    }
+                    onDelete={
+                      data?.proposal?.state === "active" ||
+                      data?.proposal?.state === "pending"
+                        ? handleCommentDelete
+                        : undefined
+                    }
+                    onReply={
+                      data?.proposal?.state === "active" ||
+                      data?.proposal?.state === "pending"
+                        ? handleReplySend
+                        : undefined
+                    }
+                    onEdit={
+                      data?.proposal?.state === "active" ||
+                      data?.proposal?.state === "pending"
+                        ? handleCommentEdit
+                        : undefined
+                    }
                   />
                 </Box>
               </>
-            ) : (
+            ) : data?.proposal?.state === "active" ? (
               <EmptyState
                 hasBorder={false}
                 type="comments"
                 title="Add the first comment"
               />
-            )} */}
-            <Banner label="Comments are now closed." />
+            ) : (
+              <EmptyState
+                hasBorder={false}
+                type="comments"
+                title="There are no comments."
+              />
+            )}
+
+            {data?.proposal?.state === "closed" && (
+              <Banner label="Comments are closed." />
+            )}
           </VoteLayout.Discussion>
         </VoteLayout.LeftSide>
         <VoteLayout.RightSide>

@@ -525,29 +525,33 @@ const CommentItem: React.FC<CommentProps> = ({
                         setIsEditMode(false);
                       }}
                     >
-                      <IconButton
-                        variant="ghost"
-                        onClick={() => {
-                          setIsEditMode(false);
-                          setError("");
-                          setActiveCommentEditor(comment.id);
-                        }}
-                        aria-label="Reply"
-                        size="condensed"
-                        icon={
-                          <ReplyIcon
-                            width="20px"
-                            height="20px"
-                            color="#4a4a4f"
+                      {onReply !== undefined && (
+                        <>
+                          <IconButton
+                            variant="ghost"
+                            onClick={() => {
+                              setIsEditMode(false);
+                              setError("");
+                              setActiveCommentEditor(comment.id);
+                            }}
+                            aria-label="Reply"
+                            size="condensed"
+                            icon={
+                              <ReplyIcon
+                                width="20px"
+                                height="20px"
+                                color="#4a4a4f"
+                              />
+                            }
                           />
-                        }
-                      />
-                      <Text variant="mediumStrong">Reply</Text>
+                          <Text variant="mediumStrong">Reply</Text>
+                        </>
+                      )}
                     </Flex>
                   )}
                   <Flex alignItems="flex-end">
                     <CommentMoreActions>
-                      {canEdit && (
+                      {canEdit && onReply !== undefined && (
                         <MenuItem
                           onClick={() => {
                             setIsEditMode(true);
@@ -558,7 +562,7 @@ const CommentItem: React.FC<CommentProps> = ({
                           Edit
                         </MenuItem>
                       )}
-                      {canDelete && (
+                      {canDelete && onReply !== undefined && (
                         <MenuItem
                           onClick={() => {
                             setIsDeleteModalActive(true);
