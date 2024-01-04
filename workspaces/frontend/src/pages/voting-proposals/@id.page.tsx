@@ -159,8 +159,8 @@ export function Page() {
 
   const votes = useQuery(
     gql(`
-      query VotingProposalsVotes($where: VoteWhere) {
-        votes(where: $where) {
+      query VotingProposalsVotes($first: Int, $where: VoteWhere) {
+        votes(first: $first,where: $where) {
           choice
           voter
           reason
@@ -175,6 +175,7 @@ export function Page() {
     `),
     {
       variables: {
+        first: 250,
         where: {
           proposal: pageContext.routeParams!.id,
         },
