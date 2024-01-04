@@ -150,8 +150,8 @@ export function Page() {
 
   const votes = useQuery(
     gql(`
-      query VotingProposalsVotes($where: VoteWhere) {
-        votes(where: $where) {
+      query VotingProposalsVotes($first: Int, $where: VoteWhere) {
+        votes(first: $first,where: $where) {
           choice
           voter
           reason
@@ -166,6 +166,7 @@ export function Page() {
     `),
     {
       variables: {
+        first: 250,
         where: {
           proposal: pageContext.routeParams!.id,
         },
@@ -538,6 +539,7 @@ export function Page() {
                   </Text>
                   {/* toDo get user images / display names */}
                   <Username
+                    withCopy
                     src={authorInfo?.profileImage || null}
                     displayName={
                       authorInfo?.username ||
@@ -691,10 +693,10 @@ export function Page() {
                     <Banner
                       label={`You voted ${
                         vote.data.votes[0].choice === 1
-                          ? "For"
+                          ? data?.proposal?.choices?.[0] || "For"
                           : vote.data.votes[0].choice === 2
-                          ? "Against"
-                          : "Abstain"
+                          ? data?.proposal?.choices?.[1] || "Against"
+                          : data?.proposal?.choices?.[2] || "Abstain"
                       } using ${vote.data.votes[0].vp} votes`}
                     />
                     <Divider mb="standard.2xl" />
@@ -766,9 +768,13 @@ export function Page() {
                     const strategies = data?.proposal?.strategies;
                     const scoresByStrategy =
                       data?.proposal?.scores_by_strategy[index];
+                    {
+                      /*console.log(data?.proposal) */
+                    }
                     return (
                       <VoteStat
                         key={choice}
+                        choice={index}
                         // @ts-expect-error todo
                         type={choice}
                         // @ts-expect-error todo

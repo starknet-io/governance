@@ -5,6 +5,7 @@ import { formatVotesAmount } from "src/utils";
 type Props = {
   voteCount?: number;
   totalVotes: number;
+  choice: 0 | 1 | 2;
   userVote: boolean;
   type: string;
   active?: boolean;
@@ -17,19 +18,23 @@ const variant = {
   For: "success",
   Against: "danger",
   Abstain: "neutral",
+  0: "success",
+  1: "danger",
+  2: "neutral",
 };
 
 const formatPercentage = (num: number) => {
   return num % 1 === 0 ? num.toFixed(0) : num.toFixed(2);
 };
 const getVariantKey = (type: string): "For" | "Against" | "Abstain" => {
-  if (type.includes("Yes") || type.includes("For")) return "For";
-  if (type.includes("No") || type.includes("Against")) return "Against";
+  if (type.includes("Yes") || type.includes("For") || type.includes("most"))
+    return "For";
+  if (type.includes("No") || type.includes("Against") || type.includes("least"))
+    return "Against";
   return "Abstain"; // Default case
 };
 
 export const VoteStat = (props: Props) => {
-  console.log(props.type);
   const votePercentage =
     props.totalVotes > 0
       ? ((props.voteCount || 0) / props.totalVotes) * 100
@@ -47,7 +52,7 @@ export const VoteStat = (props: Props) => {
         <Box>
           <Text variant="captionSmallStrong" color="content.default.default">
             {formatPercentage(votePercentage)}% {props.userVote ? "✓" : ""}{" "}
-            {getVariantKey(props.type)}
+            {props.type}
           </Text>
         </Box>
         <Text
@@ -61,7 +66,7 @@ export const VoteStat = (props: Props) => {
       </Flex>
       <Box bg="purple" width="100%">
         <Progress
-          variant={variant[getVariantKey(props.type)]}
+          variant={variant?.[props.choice] || variant[getVariantKey(props.type)]}
           height="4px"
           value={votePercentage}
         />

@@ -12,17 +12,19 @@ import { getUserByJWT } from './utils/helpers';
 import multer from 'multer';
 import { delegateRouter } from './routers/delegates';
 import { notificationsRouter } from './routers/notifications';
-import rateLimit from 'express-rate-limit';
+//import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
 // 15 mins -> 250 reqs
+/*
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 250,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
 });
+ */
 
 dotenv.config();
 
@@ -58,7 +60,7 @@ const fetchUserMiddleware = async (
 app.use(cookieParser());
 app.use(fetchUserMiddleware);
 // Rate limiter
-app.use(limiter);
+//app.use(limiter);
 morgan.token('decoded-url', (req: any) => decodeURIComponent(req.originalUrl));
 
 app.use(

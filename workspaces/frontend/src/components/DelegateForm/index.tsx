@@ -72,10 +72,13 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     trigger,
     clearErrors,
     setError,
+    watch
   } = useForm<FormValues>({
     mode: "onChange",
     shouldFocusError: false,
   });
+  const confirmDelegateAgreement = watch("confirmDelegateAgreement");
+  const customDelegateAgreementContent = watch("customDelegateAgreementContent");
   const {
     isOpen: isDeleteOpen,
     onOpen: onOpenDelete,
@@ -317,7 +320,6 @@ Conflicts of interest
               )}
             />
           </FormControlled>
-          milos
           <FormControlled
             name="interests"
             ref={(ref) => setErrorRef("interests", ref)}
@@ -427,9 +429,12 @@ Conflicts of interest
                 <FormControl id="defaultDelegateAgreement">
                   <Radio
                     value=""
+                    isChecked={!confirmDelegateAgreement && !editorCustomAgreementValue}
                     onChange={() => {
                       setShowCustomAgreementEditor(false);
                       setValue("confirmDelegateAgreement", false);
+                      setValue("customDelegateAgreementContent", '');
+                      handleCustomAgreement([{ children: [{ text: "" }] }]);
                     }}
                   >
                     I don&apos;t need a delegate agreement.
@@ -438,9 +443,11 @@ Conflicts of interest
                 <FormControl id="confirmDelegateAgreement">
                   <Radio
                     value="standard"
+                    isChecked={confirmDelegateAgreement}
                     onChange={() => {
                       setShowCustomAgreementEditor(false);
                       setValue("confirmDelegateAgreement", true);
+                      setValue("customDelegateAgreementContent", "");
                     }}
                   >
                     <Flex gap={1}>
@@ -465,6 +472,7 @@ Conflicts of interest
                 <FormControl id="customDelegateAgreement">
                   <Radio
                     value="custom"
+                    isChecked={!confirmDelegateAgreement && editorCustomAgreementValue}
                     onChange={() => {
                       setShowCustomAgreementEditor(true);
                       setValue("confirmDelegateAgreement", false);

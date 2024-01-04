@@ -54,7 +54,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   handleOpenModal,
   setEditUserProfile,
 }) => {
-  const delegatedToName = delegatedTo.username || delegatedTo.ensName
+  const delegatedToName = delegatedTo?.username || delegatedTo?.ensName;
   return (
     <>
       <Box position="absolute" right="12px" top="12px" zIndex={0}>
@@ -159,6 +159,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
                           <CopyToClipboard text={delegatedTo?.address} />
                         </Flex>
                       ) : delegatedTo &&
+                        delegatedTo.length &&
                         delegatedTo !==
                           "0x0000000000000000000000000000000000000000" ? (
                         <Flex>
