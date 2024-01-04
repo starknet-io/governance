@@ -614,7 +614,7 @@ export function Page() {
               <Divider my="standard.2xl" />
             </Flex>
           </VoteLayout.Content>
-          <VotingProposalComments proposalId={pageContext.routeParams!.id} />
+          <VotingProposalComments proposalId={pageContext.routeParams!.id} proposalState={data?.proposal?.state} />
         </VoteLayout.LeftSide>
         <VoteLayout.RightSide>
           <VoteLayout.VoteWidget>

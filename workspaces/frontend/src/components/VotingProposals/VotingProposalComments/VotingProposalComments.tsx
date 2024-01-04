@@ -27,7 +27,13 @@ const sortByOptions = {
   ],
 };
 
-const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
+const VotingProposalComments = ({
+  proposalId,
+  proposalState,
+}: {
+  proposalId: string;
+  proposalState?: string;
+}) => {
   const [offset, setOffset] = useState(1);
   const [allComments, setAllComments] = useState([]);
   const [sortBy, setSortBy] = useState<"date" | "upvotes">("date");
@@ -371,7 +377,7 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
       >
         Discussion
       </Heading>
-      {user ? (
+      {(proposalState === "active" || proposalState === "pending") && user ? (
         <FormControl id="delegate-statement">
           <CommentInput
             onSend={async (comment) => {
@@ -392,13 +398,17 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
       ) : (
         <Box>
           <FormControl>
-            <Box onClick={() => setHelpMessage("connectWalletMessage")}>
-              <CommentInput
-                onSend={async (comment) => {
-                  console.log(comment);
-                }}
-              />
-            </Box>
+            {proposalState === "active" || proposalState === "pending" ? (
+              <Box onClick={() => setHelpMessage("connectWalletMessage")}>
+                <CommentInput
+                  onSend={async (comment) => {
+                    console.log(comment);
+                  }}
+                />
+              </Box>
+            ) : (
+              <Banner label="Comments are now closed." />
+            )}
           </FormControl>
         </Box>
       )}
@@ -445,7 +455,11 @@ const VotingProposalComments = ({ proposalId }: { proposalId: string }) => {
         <EmptyState
           hasBorder={false}
           type="comments"
-          title="Add the first comment"
+          title={
+            proposalState === "active" || proposalState === "pending"
+              ? "Add the first comment"
+              : "There are no comments"
+          }
         />
       )}
       {/*
