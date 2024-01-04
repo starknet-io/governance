@@ -354,16 +354,20 @@ const VotingProposalComments = ({
 
   useEffect(() => {
     if (sortBy && sortBy.length) {
-      setOffset(1);
+      setAllComments([])
+      setOffset(1)
     }
   }, [sortBy]);
 
   useEffect(() => {
     if (comments.data && comments.data?.comments && !comments.isLoading) {
-      setAllComments((prevComments) => [
-        ...prevComments,
-        ...comments.data?.comments,
-      ]);
+      console.log(allComments)
+      setAllComments((prevComments) => {
+        const newComments = comments.data.comments.filter(
+          (comment) => !prevComments.some((prev) => prev.id === comment.id)
+        );
+        return [...prevComments, ...newComments];
+      });
     }
   }, [comments.data, comments.isLoading]);
 
