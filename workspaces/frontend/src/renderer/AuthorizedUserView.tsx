@@ -9,7 +9,7 @@ import { gql } from "src/gql";
 import { useQuery } from "@apollo/client";
 import { stringToHex } from "viem";
 import { usePageContext } from "./PageContextProvider";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 

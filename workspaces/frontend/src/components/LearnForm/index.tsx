@@ -20,7 +20,7 @@ import {
 import { trpc } from "src/utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";

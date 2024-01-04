@@ -16,7 +16,7 @@ import {
 import { trpc } from "src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 
 export function Page() {
   const {
@@ -137,7 +137,7 @@ export const documentProps = {
 // import { trpc } from "src/utils/trpc";
 // import { useForm } from "react-hook-form";
 // import { RouterInput } from "@yukilabs/governance-backend/src/routers";
-// import { navigate } from "vite-plugin-ssr/client/router";
+// import { navigate } from "vike/client/router";
 // const initialValue = [
 //   {
 //     type: "paragraph",

@@ -1,25 +1,28 @@
 import react from "@vitejs/plugin-react";
-import ssr from "vite-plugin-ssr/plugin";
-import { UserConfig, defineConfig } from "vite";
+import ssr from "vike/plugin";
+import { defineConfig } from "vite";
 import path from "path";
-import tsconfigPaths from "vite-tsconfig-paths";
-import nodePolyfills from "vite-plugin-node-stdlib-browser";
 
-export default defineConfig((env) => {
-  return {
-    publicDir: path.resolve(__dirname, "../../public"),
-    plugins: [tsconfigPaths(), react(), ssr(), nodePolyfills()],
-    build: {
-      emptyOutDir: true,
+export default defineConfig({
+  publicDir: path.resolve(__dirname, "../../public"),
+  plugins: [react(), ssr()],
+  build: {
+    emptyOutDir: true,
+  },
+  ssr: {
+    target: "node",
+    noExternal: [
+      "@apollo/client",
+      "color-hash",
+      "react-use",
+      "react-syntax-highlighter",
+    ],
+  },
+  resolve: {
+    alias: {
+      'src/': path.resolve(__dirname, './src/'),
+      // ... other aliases
     },
-    ssr: {
-      target: "node",
-      noExternal: [
-        "@apollo/client",
-        "color-hash",
-        "react-use",
-        "react-syntax-highlighter",
-      ],
-    },
-  } as UserConfig;
+  },
+  // resolve.alias is omitted as it's not needed
 });

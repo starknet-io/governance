@@ -20,7 +20,7 @@ import {
   flattenTreeItems,
 } from "src/utils/helpers";
 import { trpc } from "src/utils/trpc";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 
 export function Page() {
   const [treeItems, setTreeItems] = useState<TreeItems>([]);

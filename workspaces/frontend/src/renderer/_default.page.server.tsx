@@ -1,4 +1,4 @@
-import { dangerouslySkipEscape, escapeInject } from "vite-plugin-ssr/server";
+import { dangerouslySkipEscape, escapeInject } from "vike/server";
 import { PageContextServer } from "./types";
 import { PageShell } from "./PageShell";
 import { getDefaultPageContext } from "./helpers";
@@ -7,7 +7,7 @@ import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import fetch from "cross-fetch";
 import { TrpcProvider } from "./providers/TrpcProvider";
 
-// See https://vite-plugin-ssr.com/data-fetching
+// See https://vike.dev/data-fetching
 export const passToClient = [
   "hasLayout",
   "routeParams",

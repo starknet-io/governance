@@ -38,7 +38,7 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { useCheckBalance } from "./useCheckBalance";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",

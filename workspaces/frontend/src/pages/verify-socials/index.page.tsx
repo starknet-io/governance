@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { trpc } from "src/utils/trpc";
 import { Flex, Spinner, Stack } from "@chakra-ui/react";
 import { DocumentProps } from "../renderer/types";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { Button, Heading, Text } from "@yukilabs/governance-components";
 

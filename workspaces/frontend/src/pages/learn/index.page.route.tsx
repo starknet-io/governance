@@ -1,4 +1,4 @@
-import { resolveRoute } from "vite-plugin-ssr/routing";
+import { resolveRoute } from "vike/routing";
 
 export default (pageContext: any) => {
   if (pageContext.urlPathname === "/learn") {

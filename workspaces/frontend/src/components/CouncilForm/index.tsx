@@ -21,7 +21,7 @@ import { hasPermission } from "../../utils/helpers";
 import { useForm, Controller } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { ethers } from "ethers";
 import type { Space } from "@yukilabs/governance-backend/src/db/schema/councils";

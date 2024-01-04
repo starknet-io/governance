@@ -7,6 +7,10 @@
     "jsx": "react-jsx",
     "resolveJsonModule": true,
     "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"],
+      // ... other aliases
+    },
     "strict": true
   },
   "include": ["src/**/*"],
