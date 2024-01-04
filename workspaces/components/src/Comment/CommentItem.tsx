@@ -209,23 +209,28 @@ const CommentItem: React.FC<CommentProps> = ({
                 zIndex="0"
               />
               {author?.profileImage || author?.ensAvatar ? (
-                <Avatar
-                  size={"md"}
-                  src={author?.profileImage || (author?.ensAvatar as string)}
-                  sx={{
-                    "&::before": {
-                      content: '""',
-                      display: "block",
-                      position: "absolute",
-                      width: "32px",
-                      height: "54px",
-                      backgroundColor: "surface.bgPage",
-                      top: "-12px",
-                      left: "0",
-                      zIndex: 2
-                    }
-                  }}
-                />
+                <Box sx={{
+                  "&::before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    width: "32px",
+                    height: "54px",
+                    backgroundColor: "surface.bgPage",
+                    top: "-12px",
+                    left: "0",
+                    zIndex: 2
+                  }
+                }}>
+                  <Avatar
+                    size={"md"}
+                    src={author?.profileImage || (author?.ensAvatar as string)}
+                    sx={{
+                      position: "relative",
+                      zIndex: 3
+                    }}
+                  />
+                </Box>
               ) : (
                 <Indenticon size={32} address={author?.address || ""} sx={{
                   "&::before": {
