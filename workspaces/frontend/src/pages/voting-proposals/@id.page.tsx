@@ -189,6 +189,11 @@ export function Page() {
 
   const userBalance = useBalanceData(address);
 
+  const { data: commentCountData } =
+    trpc.proposals.getProposalCommentCount.useQuery({
+      id: pageContext.routeParams!.id,
+    });
+
   async function handleVote(choice: number, reason?: string) {
     try {
       if (walletClient == null) return;
@@ -572,7 +577,10 @@ export function Page() {
                     •
                   </Text>
                   <Stat.Root>
-                    <Stat.Link href="#discussion" label={`${0} comments`} />
+                    <Stat.Link
+                      href="#discussion"
+                      label={`${commentCountData || 0} comments`}
+                    />
                   </Stat.Root>
                   {/* <Text variant="small" color="content.default.default">
                     •
@@ -614,7 +622,10 @@ export function Page() {
               <Divider my="standard.2xl" />
             </Flex>
           </VoteLayout.Content>
-          <VotingProposalComments proposalId={pageContext.routeParams!.id} proposalState={data?.proposal?.state} />
+          <VotingProposalComments
+            proposalId={pageContext.routeParams!.id}
+            proposalState={data?.proposal?.state}
+          />
         </VoteLayout.LeftSide>
         <VoteLayout.RightSide>
           <VoteLayout.VoteWidget>

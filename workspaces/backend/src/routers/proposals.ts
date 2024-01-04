@@ -1,4 +1,4 @@
-import { eq, sql} from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/db';
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { gql, GraphQLClient } from 'graphql-request';
@@ -107,7 +107,9 @@ const GET_PROPOSALS = gql`
   }
 `;
 
-const populateProposalsWithCommentsCount = async (proposals: IProposal[]): Promise<IProposalWithCommentsCount[]> => {
+const populateProposalsWithCommentsCount = async (
+  proposals: IProposal[],
+): Promise<IProposalWithCommentsCount[]> => {
   return Promise.all(
     proposals.map(async (proposal: IProposal) => {
       const commentsCount = await db
@@ -125,7 +127,6 @@ const populateProposalsWithCommentsCount = async (proposals: IProposal[]): Promi
     }),
   );
 };
-
 
 export const proposalsRouter = router({
   createProposal: protectedProcedure
@@ -154,6 +155,21 @@ export const proposalsRouter = router({
       });
 
       return newItem;
+    }),
+
+  getProposalCommentCount: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async (opts) => {
+      const { id } = opts.input;
+      const commentsCount = await db
+        .select({
+          value: sql`count(${comments.id})`.mapWith(Number),
+        })
+        .from(comments)
+        .where(eq(comments.proposalId, id))
+        .then((result) => result[0]?.value || 0);
+
+      return commentsCount || 0
     }),
 
   getProposalById: publicProcedure
