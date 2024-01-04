@@ -34,7 +34,7 @@ const CommentItem: React.FC<CommentProps> = ({
   onVote,
   onEdit,
   onDelete,
-  onFetchMoreReplies,
+  fetchMoreReplies,
   depth = 0,
 }) => {
   const { author, createdAt, content, id, votes } = comment;
@@ -89,11 +89,25 @@ const CommentItem: React.FC<CommentProps> = ({
 
   const renderAuthorOrAddress = () => {
     const content = (
-      <Text as="span" variant="smallStrong" color="content.accent.default">
-        {author?.username ||
-          author?.ensName ||
-          truncateAddress(author ? author.address?.toLowerCase() : "")}
-      </Text>
+      <Flex direction="row" gap="standard.base" alignItems="center">
+        <Text as="span" variant="smallStrong" color="content.accent.default">
+          {author?.username ||
+            author?.ensName ||
+            truncateAddress(author ? author.address?.toLowerCase() : "")}
+        </Text>
+        {(author?.username || author?.ensName) && <>
+          <Text as="span" variant="bodySmall" color="content.accent.default">{`•`}</Text>
+        <Text
+          as="span"
+          variant="smallStrong"
+          color="content.accent.default"
+          borderRadius="standard.base"
+          background="#E2E2E2"
+          padding="standard.base"
+        >
+          {truncateAddress(author ? author.address?.toLowerCase() : "", 4, 2)}
+        </Text></>}
+      </Flex>
     );
 
     return !author?.username && !author?.ensName ? (
@@ -138,7 +152,38 @@ const CommentItem: React.FC<CommentProps> = ({
         </Button>
       </InfoModal>
       {!comment.isDeleted ? (
-        <Stack pl={depth * 8} spacing="0">
+        <Stack pl={depth * 8} spacing="0" position="relative" overflow="hidden">
+          <Box
+            position="absolute"
+            top="0px"
+            bottom="-35px"
+            width="1px"
+            backgroundColor="border.dividers"
+            left={`calc(4rem - 44px)`}
+            zIndex="0"
+          />
+          {depth > 1 && (
+            <Box
+              position="absolute"
+              top="0"
+              bottom="-35px"
+              width="1px"
+              backgroundColor="border.dividers"
+              left={`calc(6rem - 44px)`}
+              zIndex="0"
+            />
+          )}
+          {depth === 3 && (
+            <Box
+              position="absolute"
+              top="0"
+              bottom="-35px"
+              width="1px"
+              backgroundColor="border.dividers"
+              left={`calc(8rem - 44px)`}
+              zIndex="0"
+            />
+          )}
           <Flex gap="standard.base" pt="standard.sm">
             <Box
               display="flex"
@@ -150,13 +195,13 @@ const CommentItem: React.FC<CommentProps> = ({
             >
               <Box
                 position="absolute"
-                top="48px"
+                top="52px"
                 bottom={
                   hasReplies && depth < 3
                     ? numberOfReplies < 3
                       ? "40px"
                       : "6px"
-                    : "8px"
+                    : "0"
                 }
                 width="1px"
                 backgroundColor="border.dividers"
@@ -167,9 +212,34 @@ const CommentItem: React.FC<CommentProps> = ({
                 <Avatar
                   size={"md"}
                   src={author?.profileImage || (author?.ensAvatar as string)}
+                  sx={{
+                    "&::before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      width: "32px",
+                      height: "54px",
+                      backgroundColor: "surface.bgPage",
+                      top: "-12px",
+                      left: "0",
+                      zIndex: 2
+                    }
+                  }}
                 />
               ) : (
-                <Indenticon size={32} address={author?.address || ""} />
+                <Indenticon size={32} address={author?.address || ""} sx={{
+                  "&::before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    width: "32px",
+                    height: "54px",
+                    backgroundColor: "surface.bgPage",
+                    top: "-12px",
+                    left: "0",
+                    zIndex: 2
+                  }
+                }}/>
               )}
               {hasReplies && numberOfReplies <= 2 && depth < 3 ? (
                 <CommentShowMoreReplies
@@ -235,7 +305,7 @@ const CommentItem: React.FC<CommentProps> = ({
                 )}
               </Box>
               <Flex alignItems="center">
-                <Flex alignItems="center" gap={"standard.xs"} height="36px">
+                <Flex alignItems="center" height="36px">
                   <CommentVotes
                     isUser={!!user}
                     isDownvote={isDownvote}
@@ -246,34 +316,27 @@ const CommentItem: React.FC<CommentProps> = ({
                     netVotes={comment.netVotes}
                   />
                   {user && (
-                    <Flex
-                      alignItems="center"
-                      role="button"
-                      gap={1}
+                    <Button
+                      variant="ghost"
                       onClick={() => {
-                        setActiveCommentEditor(comment.id);
                         setIsEditMode(false);
+                        setError("");
+                        setActiveCommentEditor(comment.id);
+                      }}
+                      aria-label="Reply"
+                      size="condensed"
+                      sx={{
+                        gap: "standard.xs",
+                        marginLeft: "standard.xs"
                       }}
                     >
-                      <IconButton
-                        variant="ghost"
-                        onClick={() => {
-                          setIsEditMode(false);
-                          setError("");
-                          setActiveCommentEditor(comment.id);
-                        }}
-                        aria-label="Reply"
-                        size="condensed"
-                        icon={
-                          <ReplyIcon
-                            width="20px"
-                            height="20px"
-                            color="#4a4a4f"
-                          />
-                        }
+                      <ReplyIcon
+                        width="20px"
+                        height="20px"
+                        color="#4a4a4f"
                       />
-                      <Text variant="mediumStrong">Reply</Text>
-                    </Flex>
+                      Reply
+                    </Button>
                   )}
                   <Flex alignItems="flex-end">
                     <CommentMoreActions>
@@ -382,13 +445,14 @@ const CommentItem: React.FC<CommentProps> = ({
             onDelete={onDelete}
             onEdit={onEdit}
             depth={depth < 3 ? depth + 1 : depth}
+            fetchMoreReplies={fetchMoreReplies}
           />
         ))}
       {comment.remainingReplies > 0 && isThreadOpen && (
         <Stack pl={(depth + 0.5) * 8}>
           <FetchMoreRepliesButton
-            onFetchMoreReplies={() => {
-              onFetchMoreReplies(comment.id, comment.replies.length);
+            fetchMoreReplies={() => {
+              fetchMoreReplies(comment.id, comment.replies.length);
             }}
             remainingReplies={comment.remainingReplies}
           />

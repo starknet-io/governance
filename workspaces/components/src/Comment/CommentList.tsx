@@ -22,6 +22,7 @@ export type CommentWithAuthor = Comment & {
 
 export type CommentListProps = {
   commentsList: CommentWithAuthor[];
+  fetchMoreReplies: (commentId: number, repliesCount: number) => void;
 };
 
 const hoverStyles = {
@@ -78,10 +79,10 @@ export function daysAgo(date: Date): string {
 }
 
 export const FetchMoreRepliesButton = ({
-  onFetchMoreReplies,
+  fetchMoreReplies,
   remainingReplies,
 }: any) => (
-  <Button mt={2} variant="ghost" onClick={onFetchMoreReplies} maxW="160px">
+  <Button mt={2} variant="ghost" onClick={fetchMoreReplies} maxW="160px">
     Fetch {remainingReplies} more replies
   </Button>
 );
@@ -102,6 +103,10 @@ export const CommentShowMoreReplies = ({
     onClick={toggleReplies}
     mt={0}
     height="36px"
+    sx={{
+      background: "surface.bgPage",
+      zIndex: "2"
+    }}
   >
     {isThreadOpen ? (
       <MinusCircleIcon boxSize="22px" />
@@ -253,12 +258,12 @@ export const CommentMoreActions = ({ children }: { children: ReactNode }) => (
   <Box style={{ position: "relative" }}>
     <Menu>
       <MenuButton
-        as={IconButton}
-        size="small"
-        icon={<EllipsisIcon boxSize="20px" />}
-        variant="icon"
-      />
-
+        as={Button}
+        variant="ghost"
+        size="condensed"
+      >
+        <EllipsisIcon color="surface.accent.hover" boxSize="20px" width="20px" height="20px" />
+      </MenuButton>
       <Box top="0px" position="relative">
         <MenuList>{children}</MenuList>
       </Box>
@@ -278,6 +283,10 @@ export type CommentProps = {
   depth?: number;
   activeCommentEditor: number | null;
   setActiveCommentEditor: (val: number | null) => void;
+  fetchMoreReplies: (commentId: number, repliesCount: number) => void;
+};
+
+export type CommentItemProps = CommentProps & {
   fetchMoreReplies: (commentId: number, repliesCount: number) => void;
 };
 
@@ -307,7 +316,7 @@ export const CommentList: React.FC<CommentListProps> = ({
       {commentsList.map((comment, index) => (
         <CommentItem
           key={index}
-          onFetchMoreReplies={fetchMoreReplies}
+          fetchMoreReplies={fetchMoreReplies}
           activeCommentEditor={activeCommentEditor}
           setActiveCommentEditor={setActiveCommentEditor}
           comment={comment}
