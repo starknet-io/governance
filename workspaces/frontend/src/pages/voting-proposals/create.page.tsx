@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 
 import {
   Box,
@@ -18,16 +18,16 @@ import {
 } from "@yukilabs/governance-components";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { useWalletClient } from "wagmi";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import { fetchBlockNumber } from "@wagmi/core";
 import { providers } from "ethers";
 import { Proposal } from "@snapshot-labs/snapshot.js/dist/sign/types";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 import { useForm, Controller } from "react-hook-form";
-import { useFileUpload } from "src/hooks/useFileUpload";
+import { useFileUpload } from "#src/hooks/useFileUpload";
 import { useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
-import { FormLayout } from "src/components/FormsCommon/FormLayout";
+import { FormLayout } from "#src/components/FormsCommon/FormLayout";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 interface FieldValues {

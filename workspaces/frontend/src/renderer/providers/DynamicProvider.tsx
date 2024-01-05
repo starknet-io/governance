@@ -4,10 +4,10 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { ZeroDevSmartWalletConnectors } from '@dynamic-labs/ethereum-aa';
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { trpc } from "src/utils/trpc";
-import { cssOverrides } from "src/components/style/overrides";
+import { trpc } from "#src/utils/trpc";
+import { cssOverrides } from "#src/components/style/overrides";
 import { ProfileInfoModal } from "@yukilabs/governance-components";
-import { useFileUpload } from "src/hooks/useFileUpload";
+import { useFileUpload } from "#src/hooks/useFileUpload";
 import { usePageContext } from "../PageContextProvider";
 interface Props {
   // readonly pageContext: PageContext;

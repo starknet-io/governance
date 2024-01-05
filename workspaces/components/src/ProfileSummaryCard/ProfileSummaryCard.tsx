@@ -8,13 +8,13 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import { Heading } from "src/Heading";
-import { IconButton } from "src/IconButton";
+import { Heading } from "#src/Heading";
+import { IconButton } from "#src/IconButton";
 import { Indenticon } from "../Indenticon";
 import { Text } from "../Text";
-import { truncateAddress } from "src/utils";
-import { Button } from "src/Button";
-import { EllipsisIcon } from "src/Icons";
+import { truncateAddress } from "#src/utils";
+import { Button } from "#src/Button";
+import { EllipsisIcon } from "#src/Icons";
 
 type RootProps = {
   children: React.ReactNode;

@@ -1,16 +1,16 @@
 import { DynamicNav, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useRef, useState } from "react";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import { useOutsideClick } from "@chakra-ui/react";
 import { UserProfileMenu } from "@yukilabs/governance-components";
-import { useBalanceData } from "src/utils/hooks";
-import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
-import { gql } from "src/gql";
+import { useBalanceData } from "#src/utils/hooks";
+import { useDelegateRegistryDelegation } from "#src/wagmi/DelegateRegistry";
+import { gql } from "#src/gql";
 import { useQuery } from "@apollo/client";
 import { stringToHex } from "viem";
 import { usePageContext } from "./PageContextProvider";
-import { navigate } from "vite-plugin-ssr/client/router";
-import { useFileUpload } from "src/hooks/useFileUpload";
+import { navigate } from "vike/client/router";
+import { useFileUpload } from "#src/hooks/useFileUpload";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 
 const AuthorizedUserView = () => {

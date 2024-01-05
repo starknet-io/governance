@@ -2,7 +2,7 @@ import { forwardRef, HTMLAttributes } from "react";
 
 import { Handle } from "./Handle";
 import { Button, Flex, Text } from "@chakra-ui/react";
-import { TrashIcon } from "src/Icons";
+import { TrashIcon } from "#src/Icons";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   childCount?: number;

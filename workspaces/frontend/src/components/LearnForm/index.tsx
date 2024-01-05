@@ -17,13 +17,13 @@ import {
   FormControlled,
   useFormErrorHandler,
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
-import { navigate } from "vite-plugin-ssr/client/router";
-import { useFileUpload } from "src/hooks/useFileUpload";
+import { navigate } from "vike/client/router";
+import { useFileUpload } from "#src/hooks/useFileUpload";
 import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
-import { adaptTreeForFrontend, flattenTreeItems } from "src/utils/helpers";
+import { adaptTreeForFrontend, flattenTreeItems } from "#src/utils/helpers";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import slugify from "slugify";
 
@@ -108,7 +108,7 @@ export function LearnForm({ mode }: LearnFormProps) {
             replacement: '_',
             lower: true,
           }) ?? '';
-          
+
           navigate(`/learn/${slug}`);
         },
         onError: (err) => {

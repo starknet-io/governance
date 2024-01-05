@@ -1,6 +1,6 @@
 import { Box, Grid } from "@chakra-ui/react";
-import { Delegates } from "src/components/Delegates";
-import { DocumentProps } from "src/renderer/types";
+import { Delegates } from "#src/components/Delegates";
+import { DocumentProps } from "#src/renderer/types";
 
 export const Page = () => {
   return (

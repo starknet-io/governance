@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 
 export function Page() {
 

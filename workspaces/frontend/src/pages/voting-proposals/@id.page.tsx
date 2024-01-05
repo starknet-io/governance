@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 import React, { useEffect, useState } from "react";
 import {
   AppBar,
@@ -36,18 +36,18 @@ import {
   Username,
 } from "@yukilabs/governance-components";
 import * as VoteLayout from "../../components/VotingProposals/VotingProposal/PageLayout";
-import { gql } from "src/gql";
+import { gql } from "#src/gql";
 import { useQuery } from "@apollo/client";
-import { usePageContext } from "src/renderer/PageContextProvider";
+import { usePageContext } from "#src/renderer/PageContextProvider";
 import { formatDate } from "@yukilabs/governance-components/src/utils/helpers";
 import { useWalletClient } from "wagmi";
 import snapshot from "@snapshot-labs/snapshot.js";
 import { providers } from "ethers";
 import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { trpc } from "src/utils/trpc";
-import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
-import { useBalanceData } from "src/utils/hooks";
+import { trpc } from "#src/utils/trpc";
+import { useDelegateRegistryDelegation } from "#src/wagmi/DelegateRegistry";
+import { useBalanceData } from "#src/utils/hooks";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { stringToHex } from "viem";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "../delegates/profile/@id.page";
@@ -56,8 +56,8 @@ import {
   WalletIcon,
 } from "@yukilabs/governance-components/src/Icons";
 import { Button as ChakraButton, Select } from "@chakra-ui/react";
-import { BackButton } from "src/components/Header/BackButton";
-import { useHelpMessage } from "src/hooks/HelpMessage";
+import { BackButton } from "#src/components/Header/BackButton";
+import { useHelpMessage } from "#src/hooks/HelpMessage";
 import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments/VotingProposalComments";
 
 export function Page() {

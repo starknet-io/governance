@@ -1,5 +1,5 @@
-import { DocumentProps, ROLES } from "src/renderer/types";
-import useIsMobile from "src/hooks/useIsMobile";
+import { DocumentProps, ROLES } from "#src/renderer/types";
+import useIsMobile from "#src/hooks/useIsMobile";
 import {
   Box,
   AppBar,
@@ -19,10 +19,10 @@ import {
   Select
 } from "@yukilabs/governance-components";
 import { Grid } from "@chakra-ui/react";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import { useState } from "react";
-import { usePageContext } from "src/renderer/PageContextProvider";
-import { hasPermission } from "src/utils/helpers";
+import { usePageContext } from "#src/renderer/PageContextProvider";
+import { hasPermission } from "#src/utils/helpers";
 
 interface SkeletonRowProps {
   numItems: number;

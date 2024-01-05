@@ -1,6 +1,6 @@
 export const layout = "LayoutOnboarding";
 
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 import {
   Box,
   Heading,
@@ -9,7 +9,7 @@ import {
 import DelegateForm from "../../../../components/DelegateForm";
 import { trpc } from "../../../../utils/trpc";
 import { usePageContext } from "../../../../renderer/PageContextProvider";
-import { DelegateOnboarding } from "src/components/DelegateOnboarding";
+import { DelegateOnboarding } from "#src/components/DelegateOnboarding";
 
 export function Page() {
   const pageContext = usePageContext();

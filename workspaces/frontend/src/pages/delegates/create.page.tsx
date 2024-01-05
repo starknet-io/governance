@@ -1,6 +1,6 @@
 import { Heading } from "@yukilabs/governance-components";
-import { FormLayout } from "src/components/FormsCommon/FormLayout";
-import { DocumentProps } from "src/renderer/types";
+import { FormLayout } from "#src/components/FormsCommon/FormLayout";
+import { DocumentProps } from "#src/renderer/types";
 import DelegateForm from "../../components/DelegateForm";
 
 export function Page() {

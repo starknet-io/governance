@@ -19,7 +19,7 @@ import {
   WarningIcon,
   Select
 } from "@yukilabs/governance-components";
-import { gql } from "src/gql";
+import { gql } from "#src/gql";
 import { useQuery } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
@@ -27,15 +27,15 @@ import {
   User,
   userRoleEnum,
 } from "@yukilabs/governance-backend/src/db/schema/users";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-import { DocumentProps, ROLES } from "src/renderer/types";
+import { DocumentProps, ROLES } from "#src/renderer/types";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
-import { usePageContext } from "src/renderer/PageContextProvider";
-import { hasPermission } from "src/utils/helpers";
+import { usePageContext } from "#src/renderer/PageContextProvider";
+import { hasPermission } from "#src/utils/helpers";
 import { ethers } from "ethers";
-import { FormLayout } from "src/components/FormsCommon/FormLayout";
+import { FormLayout } from "#src/components/FormsCommon/FormLayout";
 import { Icon, Spinner } from "@chakra-ui/react";
 import {
   BannedIcon,

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { DocumentProps, ROLES } from "src/renderer/types";
+import { DocumentProps, ROLES } from "#src/renderer/types";
 import { Button as ChakraButton } from "@chakra-ui/react";
 import {
   Box,
@@ -24,26 +24,26 @@ import {
   Button,
   Text,
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import React, { useEffect, useState } from "react";
 import { useAccount, useWaitForTransaction } from "wagmi";
-import { usePageContext } from "src/renderer/PageContextProvider";
+import { usePageContext } from "#src/renderer/PageContextProvider";
 import {
   useDelegateRegistryClearDelegate,
   useDelegateRegistryDelegation,
   useDelegateRegistrySetDelegate,
-} from "src/wagmi/DelegateRegistry";
+} from "#src/wagmi/DelegateRegistry";
 import { useQuery } from "@apollo/client";
-import { gql } from "src/gql";
-import { useBalanceData } from "src/utils/hooks";
+import { gql } from "#src/gql";
+import { useBalanceData } from "#src/utils/hooks";
 import { stringToHex } from "viem";
-import { hasPermission } from "src/utils/helpers";
+import { hasPermission } from "#src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import * as ProfilePageLayout from "../../../components/ProfilePageLayout/ProfilePageLayout";
-import { BackButton } from "src/components/Header/BackButton";
-import { useHelpMessage } from "src/hooks/HelpMessage";
-import { delegationAgreement } from "src/utils/data";
+import { BackButton } from "#src/components/Header/BackButton";
+import { useHelpMessage } from "#src/hooks/HelpMessage";
+import { delegationAgreement } from "#src/utils/data";
 import Socials from "../../../components/SocialLogin";
 
 const delegateInterests: Record<string, string> = {

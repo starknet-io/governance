@@ -1,7 +1,7 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 import { Heading } from "@yukilabs/governance-components";
 import CouncilForm from "../../components/CouncilForm";
-import { FormLayout } from "src/components/FormsCommon/FormLayout";
+import { FormLayout } from "#src/components/FormsCommon/FormLayout";
 
 export function Page() {
   return (

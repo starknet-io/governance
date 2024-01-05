@@ -1,4 +1,4 @@
-import { DocumentProps, ROLES } from "src/renderer/types";
+import { DocumentProps, ROLES } from "#src/renderer/types";
 
 import {
   Box,
@@ -19,12 +19,12 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import { useEffect, useMemo, useState } from "react";
 import { Page as PageInterface } from "@yukilabs/governance-backend/src/db/schema/pages";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
-import { usePageContext } from "src/renderer/PageContextProvider";
-import { hasPermission } from "src/utils/helpers";
+import { usePageContext } from "#src/renderer/PageContextProvider";
+import { hasPermission } from "#src/utils/helpers";
 import { PageWithChildren } from "@yukilabs/governance-backend/src/utils/buildLearnHierarchy";
 import {
   EllipsisIcon,
@@ -101,18 +101,18 @@ export function Page() {
 
   function flattenPages(pages) {
     let flatPages = [];
-  
+
     pages.sort((a, b) => a.orderNumber - b.orderNumber).forEach(page => {
       flatPages.push(page);
-  
+
       if (page.children) {
         flatPages = flatPages.concat(flattenPages(page.children));
       }
     });
-  
+
     return flatPages;
   }
-  
+
   useEffect(() => {
     if (selectedPage && pagesTree) {
       const sortedPages = flattenPages(pagesTree);
@@ -122,7 +122,7 @@ export function Page() {
       if (currentPage) {
         const previousPage = currentPageIndex > 0 ? sortedPages[currentPageIndex - 1] : null;
         const nextPage = currentPageIndex < sortedPages.length - 1 ? sortedPages[currentPageIndex + 1] : null;
-  
+
         setPreviousPage(previousPage || null);
         setNextPage(nextPage || null);
       }

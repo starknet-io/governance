@@ -1,8 +1,8 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
 import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
-import { Text } from "src/Text";
-import { Heading } from "src/Heading";
-import { ArrowDownIcon } from "src/Icons";
+import { Text } from "#src/Text";
+import { Heading } from "#src/Heading";
+import { ArrowDownIcon } from "#src/Icons";
 
 type Props = {
   children: React.ReactNode;

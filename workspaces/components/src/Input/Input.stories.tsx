@@ -3,7 +3,7 @@ import { VStack } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
 
 import { ThemeProvider } from "../ThemeProvider";
-import { SearchIcon } from "src/Icons";
+import { SearchIcon } from "#src/Icons";
 
 export default {
   title: "governance-ui/Forms",

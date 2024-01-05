@@ -1,9 +1,9 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 import { Heading } from "@yukilabs/governance-components";
 import DelegateForm from "../../../../components/DelegateForm";
 import { trpc } from "../../../../utils/trpc";
 import { usePageContext } from "../../../../renderer/PageContextProvider";
-import { FormLayout } from "src/components/FormsCommon/FormLayout";
+import { FormLayout } from "#src/components/FormsCommon/FormLayout";
 
 export function Page() {
   const pageContext = usePageContext();

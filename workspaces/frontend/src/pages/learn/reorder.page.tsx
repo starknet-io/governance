@@ -12,15 +12,15 @@ import {
 } from "@yukilabs/governance-components";
 import { TreeItems } from "@yukilabs/governance-components/src/MultiLevelReOrderableList/types";
 import { useEffect, useRef, useState } from "react";
-import { FormLayout } from "src/components/FormsCommon/FormLayout";
-import { DocumentProps } from "src/renderer/types";
+import { FormLayout } from "#src/components/FormsCommon/FormLayout";
+import { DocumentProps } from "#src/renderer/types";
 import {
   adaptTreeForFrontend,
   flattenPageWithChildren,
   flattenTreeItems,
-} from "src/utils/helpers";
-import { trpc } from "src/utils/trpc";
-import { navigate } from "vite-plugin-ssr/client/router";
+} from "#src/utils/helpers";
+import { trpc } from "#src/utils/trpc";
+import { navigate } from "vike/client/router";
 
 export function Page() {
   const [treeItems, setTreeItems] = useState<TreeItems>([]);

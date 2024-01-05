@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 
 import { Flex, Link } from "@chakra-ui/react";
 import {
@@ -14,8 +14,8 @@ import {
   ArrowRightIcon,
 } from "@yukilabs/governance-components";
 
-import { Delegates } from "src/components/Delegates";
-import { trpc } from "src/utils/trpc";
+import { Delegates } from "#src/components/Delegates";
+import { trpc } from "#src/utils/trpc";
 import { Proposal, VotingPropsSkeleton } from "./voting-proposals/index.page";
 // import img from '../images/social-home.png'
 

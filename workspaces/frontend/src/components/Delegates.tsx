@@ -22,23 +22,23 @@ import {
   ArrowRightIcon,
   Select
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import { useEffect, useState } from "react";
-import { useBalanceData } from "src/utils/hooks";
+import { useBalanceData } from "#src/utils/hooks";
 import { ethers } from "ethers";
 import { useAccount, useWaitForTransaction } from "wagmi";
 import { stringToHex } from "viem";
-import { useDelegateRegistrySetDelegate } from "src/wagmi/DelegateRegistry";
-import { usePageContext } from "src/renderer/PageContextProvider";
-import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
+import { useDelegateRegistrySetDelegate } from "#src/wagmi/DelegateRegistry";
+import { usePageContext } from "#src/renderer/PageContextProvider";
+import { MINIMUM_TOKENS_FOR_DELEGATION } from "#src/pages/delegates/profile/@id.page";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { gql } from "src/gql";
+import { gql } from "#src/gql";
 import { useQuery } from "@apollo/client";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
-import { useHelpMessage } from "src/hooks/HelpMessage";
+import { useHelpMessage } from "#src/hooks/HelpMessage";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { useCheckBalance } from "./useCheckBalance";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",

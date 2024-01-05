@@ -3,11 +3,11 @@ import { Meta } from "@storybook/react";
 import * as AppBar from "./AppBar";
 import { ThemeProvider } from "../ThemeProvider";
 
-import { FilterPopoverContent, FilterPopoverIcon } from "src/Filter";
+import { FilterPopoverContent, FilterPopoverIcon } from "#src/Filter";
 
-import { Text } from "src/Text";
-import { Button } from "src/Button";
-import { FiltersIcon } from "src/Icons";
+import { Text } from "#src/Text";
+import { Button } from "#src/Button";
+import { FiltersIcon } from "#src/Icons";
 
 export default {
   title: "governance-ui/AppBar",

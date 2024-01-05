@@ -1,12 +1,12 @@
 import { Meta } from "@storybook/react";
 import { ThemeProvider } from "../ThemeProvider";
-import { Select } from "src/Multiselect";
+import { Select } from "#src/Multiselect";
 import { Box, HStack, Stack, Flex, Textarea, Mark } from "@chakra-ui/react";
-import { FormControlled } from "src/FormControlled";
-import { Heading } from "src/Heading";
-import { Input } from "src/Input";
-import { SearchIcon } from "src/Icons";
-import { MarkdownEditor } from "src/Editor";
+import { FormControlled } from "#src/FormControlled";
+import { Heading } from "#src/Heading";
+import { Input } from "#src/Input";
+import { SearchIcon } from "#src/Icons";
+import { MarkdownEditor } from "#src/Editor";
 
 export default {
   title: "governance-ui/FormControlled",

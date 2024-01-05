@@ -1,7 +1,7 @@
 import { Box, BoxProps } from "@chakra-ui/react";
-import { Heading } from "src/Heading";
-import { Text } from "src/Text";
-import { Link } from "src/Link";
+import { Heading } from "#src/Heading";
+import { Text } from "#src/Text";
+import { Link } from "#src/Link";
 
 type Props = {
   title: string;

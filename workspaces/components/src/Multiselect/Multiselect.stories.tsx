@@ -2,10 +2,10 @@ import { Meta } from "@storybook/react";
 import { ThemeProvider } from "../ThemeProvider";
 import { Select } from "./Select";
 import { Box, HStack, Stack, Flex } from "@chakra-ui/react";
-import { FormControlled } from "src/FormControlled";
-import { Heading } from "src/Heading";
-import { Input } from "src/Input";
-import { SearchIcon } from "src/Icons";
+import { FormControlled } from "#src/FormControlled";
+import { Heading } from "#src/Heading";
+import { Input } from "#src/Input";
+import { SearchIcon } from "#src/Icons";
 
 export default {
   title: "governance-ui/Select",

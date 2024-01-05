@@ -1,6 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { VoteAbstainIcon, VoteAgainstIcon, VoteForIcon } from "src/Icons";
-import { Text } from "src/Text";
+import { VoteAbstainIcon, VoteAgainstIcon, VoteForIcon } from "#src/Icons";
+import { Text } from "#src/Text";
 import {
   VoteAbstainIconFilled,
   VoteAgainstIconFilled,

@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 
 import {
   Box,
@@ -16,8 +16,8 @@ import {
   // MarkdownRenderer,
   // EllipsisIcon,
 } from "@yukilabs/governance-components";
-// import { trpc } from "src/utils/trpc";
-// import { usePageContext } from "src/renderer/PageContextProvider";
+// import { trpc } from "#src/utils/trpc";
+// import { usePageContext } from "#src/renderer/PageContextProvider";
 // import { useDynamicContext } from "@dynamic-labs/sdk-react";
 
 export function Page() {

@@ -22,10 +22,10 @@ import {
   useDisclosure,
   Text
 } from "@yukilabs/governance-components";
-import { useGlobalSearch } from "src/hooks/GlobalSearch";
+import { useGlobalSearch } from "#src/hooks/GlobalSearch";
 import { CommunityLinksIcon } from "@yukilabs/governance-components/src/Icons";
-import { IUser, ROLES } from "src/renderer/types";
-import { hasPermission } from "src/utils/helpers";
+import { IUser, ROLES } from "#src/renderer/types";
+import { hasPermission } from "#src/utils/helpers";
 
 export interface NavigationMenuProps {
   pageContext: any;

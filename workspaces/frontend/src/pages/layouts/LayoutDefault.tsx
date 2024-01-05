@@ -1,5 +1,5 @@
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import useIsMobile from "src/hooks/useIsMobile";
+import useIsMobile from "#src/hooks/useIsMobile";
 export { LayoutDefault };
 import {
   Box,
@@ -17,12 +17,12 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { PageContext } from "../../renderer/types";
-import { useHelpMessage } from "src/hooks/HelpMessage";
+import { useHelpMessage } from "#src/hooks/HelpMessage";
 import React, { useEffect, useState } from "react";
-import { usePageContext } from "src/renderer/PageContextProvider";
-import { trpc } from "src/utils/trpc";
-import { useGlobalSearch } from "src/hooks/GlobalSearch";
-import TallyScript from "src/components/TallyScript";
+import { usePageContext } from "#src/renderer/PageContextProvider";
+import { trpc } from "#src/utils/trpc";
+import { useGlobalSearch } from "#src/hooks/GlobalSearch";
+import TallyScript from "#src/components/TallyScript";
 import {
   HamburgerIcon,
   InfoModal,
@@ -34,10 +34,10 @@ import {
   SearchIcon,
   NotificationsMenu,
 } from "@yukilabs/governance-components";
-import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
-import { NavigationMenu } from "src/components/Navigation";
-import { BackButton } from "src/components/Header/BackButton";
-import { extractAndFormatSlug } from "src/utils/helpers";
+import { DynamicCustomWidget } from "#src/components/DynamicCustomWidget";
+import { NavigationMenu } from "#src/components/Navigation";
+import { BackButton } from "#src/components/Header/BackButton";
+import { extractAndFormatSlug } from "#src/utils/helpers";
 import { CloseIcon } from "@dynamic-labs/sdk-react-core";
 import {
   BannedIcon,

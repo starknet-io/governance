@@ -4,18 +4,18 @@ import React, { ReactNode } from "react";
 import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { Link } from "../Link";
-import { truncateAddress } from "src/utils";
-import { Heading } from "src/Heading";
+import { truncateAddress } from "#src/utils";
+import { Heading } from "#src/Heading";
 import { format } from "date-fns";
-import { CopyToClipboard } from "src/CopyToClipboard";
+import { CopyToClipboard } from "#src/CopyToClipboard";
 import {
   DiscordIcon,
   DiscourseIcon,
   GithubIcon,
   TwitterIcon,
   TelegramIcon,
-} from "src/Icons";
-import { Tooltip } from "src/Tooltip";
+} from "#src/Icons";
+import { Tooltip } from "#src/Tooltip";
 // import type { delegateTypeEnum } from '@yukilabs/governance-backend/src/db/schema/delegates';
 
 type RootProps = {

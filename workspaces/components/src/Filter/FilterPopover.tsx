@@ -22,8 +22,8 @@ import {
 } from "./FilterActionButtons";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 
-import { FiltersIcon } from "src/Icons";
-import { IconButtonWithBadge } from "src/IconButton/IconButton";
+import { FiltersIcon } from "#src/Icons";
+import { IconButtonWithBadge } from "#src/IconButton/IconButton";
 
 type FilterPopoverButtonProps = {
   label: string;

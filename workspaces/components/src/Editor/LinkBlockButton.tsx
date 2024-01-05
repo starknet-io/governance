@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { isBlockActive } from "./hotkeys";
-import { LinkIcon } from "src/Icons";
+import { LinkIcon } from "#src/Icons";
 import {
   Button,
   IconButton,

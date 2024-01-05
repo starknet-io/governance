@@ -16,8 +16,8 @@ import {
   ShareIcon,
   TelegramIcon,
   TwitterIcon,
-} from "src/Icons/UiIcons";
-import { Button } from "src/Button";
+} from "#src/Icons/UiIcons";
+import { Button } from "#src/Button";
 
 export const ShareDialog: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

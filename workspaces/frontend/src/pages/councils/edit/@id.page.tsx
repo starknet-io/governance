@@ -1,12 +1,12 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 import {
   Box,
   Heading,
   ContentContainer,
 } from "@yukilabs/governance-components";
 
-import { trpc } from "src/utils/trpc";
-import { usePageContext } from "src/renderer/PageContextProvider";
+import { trpc } from "#src/utils/trpc";
+import { usePageContext } from "#src/renderer/PageContextProvider";
 import CouncilForm from "../../../components/CouncilForm";
 
 export function Page() {

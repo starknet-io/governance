@@ -1,8 +1,8 @@
 import { Meta } from "@storybook/react";
 import * as Layout from "./RootLayout";
 import { ThemeProvider } from "../ThemeProvider";
-import { NavGroup } from "src/Navigation/NavGroup";
-import { NavItem } from "src/Navigation/NavItem";
+import { NavGroup } from "#src/Navigation/NavGroup";
+import { NavItem } from "#src/Navigation/NavItem";
 
 import {
   BuildersIcon,
@@ -14,16 +14,16 @@ import {
   ProposalsIcon,
   SecurityIcon,
   SettingsIcon,
-} from "src/Icons";
-import { Header } from "src/Header";
+} from "#src/Icons";
+import { Header } from "#src/Header";
 import { Box, Popover, Select, SimpleGrid } from "@chakra-ui/react";
-import { PageTitle } from "src/PageTitle";
-import { Logo } from "src/Logo";
-import { ContentContainer } from "src/ContentContainer";
-import { DelegateCard } from "src/Card/DelegateCard";
-import { Button } from "src/Button";
-import { FilterPopoverContent, FilterPopoverIcon } from "src/Filter";
-import { Text } from "src/Text";
+import { PageTitle } from "#src/PageTitle";
+import { Logo } from "#src/Logo";
+import { ContentContainer } from "#src/ContentContainer";
+import { DelegateCard } from "#src/Card/DelegateCard";
+import { Button } from "#src/Button";
+import { FilterPopoverContent, FilterPopoverIcon } from "#src/Filter";
+import { Text } from "#src/Text";
 import { AppBar } from "../../";
 import delegatesData from "./delegates.json";
 

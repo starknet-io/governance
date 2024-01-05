@@ -1818,26 +1818,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@brillout/json-serializer@npm:^0.5.1, @brillout/json-serializer@npm:^0.5.3":
+"@brillout/json-serializer@npm:^0.5.1":
   version: 0.5.6
   resolution: "@brillout/json-serializer@npm:0.5.6"
   checksum: 5b32a8aa70f9b079e3ee517bc2c2a1e19ad8e91bbae7c8d5224da15ad2c1d0a51e8103586a4283688cc63baaaea42d1a47018a71306bceefa7ee16fba874baf3
   languageName: node
   linkType: hard
 
-"@brillout/picocolors@npm:^1.0.4":
-  version: 1.0.9
-  resolution: "@brillout/picocolors@npm:1.0.9"
-  checksum: 157b3ec0a965244acba0d0c96abb0c7343f115408eddb3563545f2bf5d2a8b3b38d43908af3347b612c908fac50b1707f52296a9c3eaef0a004cd6883aeeb468
+"@brillout/json-serializer@npm:^0.5.6":
+  version: 0.5.8
+  resolution: "@brillout/json-serializer@npm:0.5.8"
+  checksum: 7d737a8a20c04c27a41ecf0c5f8bd60031b7f58d80f76f7bf9719f237b2bcd8dafb4495771638a7546cdadac08c629c3e08be801ea0dd14b70ecf9213e6400fa
   languageName: node
   linkType: hard
 
-"@brillout/vite-plugin-import-build@npm:^0.2.16":
-  version: 0.2.20
-  resolution: "@brillout/vite-plugin-import-build@npm:0.2.20"
+"@brillout/picocolors@npm:^1.0.9":
+  version: 1.0.10
+  resolution: "@brillout/picocolors@npm:1.0.10"
+  checksum: e14436613d6c4c6f3f6921b5244b13f5bd21b69cb8645f4c454961ceba41bc666613ee11d03534000cdfc8da95eb09efb1f90bf8a941f9e37f362359f8b2b4c3
+  languageName: node
+  linkType: hard
+
+"@brillout/require-shim@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@brillout/require-shim@npm:0.1.2"
+  checksum: ea797518054b6a4b9f1b4580e8f32667f6cdd5b7de133b62017bc3b01ea7ff624aac20da9ab947df6f15ac8e3667b146c4674ea767f0fa1bac29182043fc45f4
+  languageName: node
+  linkType: hard
+
+"@brillout/vite-plugin-import-build@npm:^0.2.18":
+  version: 0.2.22
+  resolution: "@brillout/vite-plugin-import-build@npm:0.2.22"
   dependencies:
     "@brillout/import": ^0.2.3
-  checksum: 761d9c8e370f385bc28164091e583a31e9f43437451e186a5ec9c244399988846db4fa8ca7e6582c0f1b5c09461a2840f88d979e82636e030b421e6ca6d1582d
+  checksum: 1ed8f8246d4552688d94ba54f8f455d69e501e56ba5b09b7e02a9cbe5f9ca0a369a751dabc41bdc711b5de5393c2bbb37dd4103a38dd9634efe1d9e9ef82f597
   languageName: node
   linkType: hard
 
@@ -10932,10 +10946,10 @@ __metadata:
     superjson: ^1.13.1
     use-debounce: ^9.0.4
     viem: ^1.5.0
+    vike: 0.4.142
     vite: ^4.3.9
     vite-node: 0.31.1
     vite-plugin-node-stdlib-browser: ^0.2.1
-    vite-plugin-ssr: 0.4.131
     vite-tsconfig-paths: ^4.2.0
     wagmi: ^1.4.12
     zod: ^3.22.3
@@ -14669,17 +14683,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-module-lexer@npm:^0.10.5":
-  version: 0.10.5
-  resolution: "es-module-lexer@npm:0.10.5"
-  checksum: d2f9debd9d913323322095934653e0558bb8220177645eb76d316b4afd911e8d83ffee0b748b0faa9f3ce1560db3eee4a0ac68d6c2f750c11f4250adce84cf02
-  languageName: node
-  linkType: hard
-
 "es-module-lexer@npm:^0.9.3":
   version: 0.9.3
   resolution: "es-module-lexer@npm:0.9.3"
   checksum: 84bbab23c396281db2c906c766af58b1ae2a1a2599844a504df10b9e8dc77ec800b3211fdaa133ff700f5703d791198807bba25d9667392d27a5e9feda344da8
+  languageName: node
+  linkType: hard
+
+"es-module-lexer@npm:^1.3.0":
+  version: 1.4.1
+  resolution: "es-module-lexer@npm:1.4.1"
+  checksum: a11b5a256d4e8e9c7d94c2fd87415ccd1591617b6edd847e064503f8eaece2d25e2e9078a02c5ce3ed5e83bb748f5b4820efbe78072c8beb07ac619c2edec35d
   languageName: node
   linkType: hard
 
@@ -26748,6 +26762,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vike@npm:0.4.142":
+  version: 0.4.142
+  resolution: "vike@npm:0.4.142"
+  dependencies:
+    "@brillout/import": 0.2.3
+    "@brillout/json-serializer": ^0.5.6
+    "@brillout/picocolors": ^1.0.9
+    "@brillout/require-shim": ^0.1.2
+    "@brillout/vite-plugin-import-build": ^0.2.18
+    acorn: ^8.8.2
+    cac: ^6.7.14
+    es-module-lexer: ^1.3.0
+    esbuild: ^0.17.18
+    fast-glob: ^3.2.12
+    sirv: ^2.0.2
+    source-map-support: ^0.5.21
+  peerDependencies:
+    react-streaming: ">=0.3.5"
+    vite: ">=3.1.0"
+  peerDependenciesMeta:
+    react-streaming:
+      optional: true
+  bin:
+    vike: node/cli/bin-entry.js
+  checksum: 27d810b1c7f2be9535cd057d8259b53e2ba35bd83bf23e563dcae780ff554f15d05e17ebc45b77be2e6976c9cdf25e99f4d6c0fbb56806e55e1adebc945e22d0
+  languageName: node
+  linkType: hard
+
 "vite-node@npm:0.31.1":
   version: 0.31.1
   resolution: "vite-node@npm:0.31.1"
@@ -26773,32 +26815,6 @@ __metadata:
     node-stdlib-browser: ^1.2.0
     vite: ^2.0.0 || ^3.0.0 || ^4.0.0
   checksum: 402bf866c10efc5dd1eaaaf66dbca0bf04058080a323654feaf7a26cc6e99ff4eb882f40b319e611b6a7e9b081ee24dddbba8bf18372a2a44c40e22eb6c982fd
-  languageName: node
-  linkType: hard
-
-"vite-plugin-ssr@npm:0.4.131":
-  version: 0.4.131
-  resolution: "vite-plugin-ssr@npm:0.4.131"
-  dependencies:
-    "@brillout/import": 0.2.3
-    "@brillout/json-serializer": ^0.5.3
-    "@brillout/picocolors": ^1.0.4
-    "@brillout/vite-plugin-import-build": ^0.2.16
-    acorn: ^8.8.2
-    cac: ^6.7.14
-    es-module-lexer: ^0.10.5
-    esbuild: ^0.17.18
-    fast-glob: ^3.2.12
-    sirv: ^2.0.2
-  peerDependencies:
-    react-streaming: ">=0.3.5"
-    vite: ">=3.1.0"
-  peerDependenciesMeta:
-    react-streaming:
-      optional: true
-  bin:
-    vite-plugin-ssr: node/cli/bin-entry.js
-  checksum: 8b6298fbe995a31382a99c01a45b29706464b9fc30396f1d9f51df17bd4afb70d86fe8eb5c029ee3d6c5286d6a954923ae5f2135c4781eaa306f9e0229c05ae1
   languageName: node
   linkType: hard
 

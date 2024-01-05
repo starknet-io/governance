@@ -2,7 +2,7 @@ import { HStack } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
 import { DelegateCard as GovernanceDelegateCard } from "./DelegateCard";
 import { ThemeProvider } from "../ThemeProvider";
-import { truncateAddress } from "src/utils";
+import { truncateAddress } from "#src/utils";
 
 export default {
   title: "governance-ui/Cards",

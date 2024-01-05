@@ -19,7 +19,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { CloseIcon, SearchIcon } from "src/Icons/UiIcons";
+import { CloseIcon, SearchIcon } from "#src/Icons/UiIcons";
 import EmptyState from "./assets/no-data-found.png";
 import {
   ISearchItem,
@@ -27,7 +27,7 @@ import {
   getSearchItemHref,
 } from "./utils/buildItems";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { Input } from "src/Input";
+import { Input } from "#src/Input";
 import usePopulateProposals from "./utils/usePopulateProposals";
 import { Modal } from "../Modal";
 

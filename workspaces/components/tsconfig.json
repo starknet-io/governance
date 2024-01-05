@@ -1,6 +1,9 @@
 {
   "extends": "../../tsconfig.projects.json",
   "compilerOptions": {
+    "paths": {
+      "#src/*": ["./src/*"],
+    },
     "outDir": ".types",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": ["vite/client"],

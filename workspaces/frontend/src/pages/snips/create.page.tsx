@@ -1,4 +1,4 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 import {
   Box,
   Button,
@@ -13,10 +13,10 @@ import {
   MarkdownEditor,
   useMarkdownEditor,
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 
 export function Page() {
   const {
@@ -117,7 +117,7 @@ export const documentProps = {
   title: "Snip / Create",
 } satisfies DocumentProps;
 
-// import { DocumentProps } from "src/renderer/types";
+// import { DocumentProps } from "#src/renderer/types";
 // import { useState } from "react";
 // import {
 //   Box,
@@ -134,10 +134,10 @@ export const documentProps = {
 //   EditorTemplate,
 //   useMarkdownEditor,
 // } from "@yukilabs/governance-components";
-// import { trpc } from "src/utils/trpc";
+// import { trpc } from "#src/utils/trpc";
 // import { useForm } from "react-hook-form";
 // import { RouterInput } from "@yukilabs/governance-backend/src/routers";
-// import { navigate } from "vite-plugin-ssr/client/router";
+// import { navigate } from "vike/client/router";
 // const initialValue = [
 //   {
 //     type: "paragraph",

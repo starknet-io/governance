@@ -6,7 +6,7 @@ import {
 } from "@chakra-ui/react";
 import { Modal } from "../Modal";
 import { Button } from "../Button";
-import { SuccessIcon, WarningIcon } from "src/Icons";
+import { SuccessIcon, WarningIcon } from "#src/Icons";
 
 type Props = {
   isOpen: boolean;

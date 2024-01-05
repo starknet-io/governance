@@ -8,16 +8,16 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { Modal } from "src/Modal";
-import { Button } from "src/Button";
+import { Modal } from "#src/Modal";
+import { Button } from "#src/Button";
 import { useEffect, useState } from "react";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
-import { truncateAddress } from "src/utils";
-import { CopyToClipboard } from "src/CopyToClipboard";
-import { AvatarWithText } from "src/AvatarWithText";
-import { IconButton, ProfileInfoModal, Tooltip } from "index";
-import { DisconnectWalletIcon } from "src/Icons/UiIcons";
+import { truncateAddress } from "#src/utils";
+import { CopyToClipboard } from "#src/CopyToClipboard";
+import { AvatarWithText } from "#src/AvatarWithText";
+import { IconButton, ProfileInfoModal, Tooltip } from "../../index";
+import { DisconnectWalletIcon } from "#src/Icons/UiIcons";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 
 interface IUser extends User {

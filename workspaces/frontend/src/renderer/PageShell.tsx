@@ -3,11 +3,11 @@ import { PageContextProvider } from "./PageContextProvider";
 import { ChakraProvider } from "@chakra-ui/react";
 import type { PageContext } from "./types";
 import { ApolloProvider, ApolloClient } from "@apollo/client";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import { theme } from "@yukilabs/governance-components";
 import { MessagesProvider } from "./providers/MessagesProvider";
 import { DynamicProvider } from "./providers/DynamicProvider";
-import { layouts } from "src/pages/layouts";
+import { layouts } from "#src/pages/layouts";
 
 interface Props {
   readonly pageContext: PageContext;

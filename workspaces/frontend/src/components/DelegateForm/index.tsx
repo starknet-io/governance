@@ -31,7 +31,7 @@ import { useFileUpload } from "../../hooks/useFileUpload";
 import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { trpc } from "../../utils/trpc";
 import { usePageContext } from "../../renderer/PageContextProvider";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 import { Spinner } from "@chakra-ui/react";
 import { delegationAgreement } from "../../utils/data";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";

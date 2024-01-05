@@ -1,5 +1,5 @@
 import { isBlockActive } from "./hotkeys";
-import { ImageIcon } from "src/Icons";
+import { ImageIcon } from "#src/Icons";
 import {
   IconButton,
   useDisclosure,

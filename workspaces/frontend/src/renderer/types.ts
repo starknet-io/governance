@@ -1,17 +1,17 @@
 import type {
   PageContextBuiltIn,
   //*
-  // When using Client Routing https://vite-plugin-ssr.com/clientRouting
+  // When using Client Routing https://vike.dev/clientRouting
   PageContextBuiltInClientWithClientRouting as PageContextBuiltInClient,
   /*/
   // When using Server Routing
   PageContextBuiltInClientWithServerRouting as PageContextBuiltInClient
   //*/
-} from "vite-plugin-ssr/types";
+} from "vike/types";
 import { ApolloClient } from "@apollo/client";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
-import { layouts } from "src/pages/layouts";
+import { layouts } from "#src/pages/layouts";
 
 type Page = (pageProps: PageProps) => React.ReactElement;
 

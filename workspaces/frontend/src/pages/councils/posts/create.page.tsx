@@ -1,11 +1,11 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 import {
   Box,
   Heading,
   ContentContainer,
 } from "@yukilabs/governance-components";
 import PostForm from "../../../components/PostForm";
-import { FormLayout } from "src/components/FormsCommon/FormLayout";
+import { FormLayout } from "#src/components/FormsCommon/FormLayout";
 
 export function Page() {
   return (

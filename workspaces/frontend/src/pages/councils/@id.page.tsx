@@ -1,4 +1,4 @@
-import { DocumentProps, ROLES } from "src/renderer/types";
+import { DocumentProps, ROLES } from "#src/renderer/types";
 
 import {
   Box,
@@ -18,14 +18,14 @@ import {
   Skeleton,
   SkeletonCircle,
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
-import { usePageContext } from "src/renderer/PageContextProvider";
+import { trpc } from "#src/utils/trpc";
+import { usePageContext } from "#src/renderer/PageContextProvider";
 import { useEffect, useState } from "react";
 import { MemberType } from "@yukilabs/governance-components/src/MembersList/MembersList";
-import { navigate } from "vite-plugin-ssr/client/router";
-import { gql } from "src/gql";
+import { navigate } from "vike/client/router";
+import { gql } from "#src/gql";
 import { useQuery } from "@apollo/client";
-import { hasPermission } from "src/utils/helpers";
+import { hasPermission } from "#src/utils/helpers";
 import { Flex, Text } from "@chakra-ui/react";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import * as ProfilePageLayout from "../../components/ProfilePageLayout/ProfilePageLayout";

@@ -1,4 +1,4 @@
-import { DocumentProps, ROLES } from "src/renderer/types";
+import { DocumentProps, ROLES } from "#src/renderer/types";
 import {
   Box,
   Heading,
@@ -19,14 +19,14 @@ import {
   EllipsisIcon,
   EmptyState,
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
-import { usePageContext } from "src/renderer/PageContextProvider";
-import { extractAndFormatSlug, hasPermission } from "src/utils/helpers";
+import { trpc } from "#src/utils/trpc";
+import { usePageContext } from "#src/renderer/PageContextProvider";
+import { extractAndFormatSlug, hasPermission } from "#src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { Grid } from "@chakra-ui/react";
-import { BackButton } from "src/components/Header/BackButton";
+import { BackButton } from "#src/components/Header/BackButton";
 import { useState } from "react";
-import { useHelpMessage } from "src/hooks/HelpMessage";
+import { useHelpMessage } from "#src/hooks/HelpMessage";
 
 export function Page() {
   const pageContext = usePageContext();

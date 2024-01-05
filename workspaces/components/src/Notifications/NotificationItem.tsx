@@ -14,7 +14,7 @@ import {
   CommentIcon,
 } from "../Icons";
 import { daysAgo } from "../Comment/CommentList";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 
 type NotificationItemProps = {
   notification: {

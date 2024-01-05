@@ -1,5 +1,5 @@
 import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import AuthorizedUserView from "src/renderer/AuthorizedUserView";
+import AuthorizedUserView from "#src/renderer/AuthorizedUserView";
 
 export const DynamicCustomWidget = () => {
   const { user } = useDynamicContext();

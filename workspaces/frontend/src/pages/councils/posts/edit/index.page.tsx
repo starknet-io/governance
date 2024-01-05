@@ -1,9 +1,9 @@
-import { DocumentProps } from "src/renderer/types";
+import { DocumentProps } from "#src/renderer/types";
 import { Heading } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
-import { usePageContext } from "src/renderer/PageContextProvider";
+import { trpc } from "#src/utils/trpc";
+import { usePageContext } from "#src/renderer/PageContextProvider";
 import PostForm from "../../../../components/PostForm";
-import { FormLayout } from "src/components/FormsCommon/FormLayout";
+import { FormLayout } from "#src/components/FormsCommon/FormLayout";
 
 export function Page() {
   const pageContext = usePageContext();

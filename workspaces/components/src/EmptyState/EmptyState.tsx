@@ -1,6 +1,6 @@
 import { Box, BoxProps, Image } from "@chakra-ui/react";
-// import { NoDelegatesIcon, NoPostsIcon, NoSnipsIcon, VoteIcon } from "src/Icons";
-import { Text } from "src/Text";
+// import { NoDelegatesIcon, NoPostsIcon, NoSnipsIcon, VoteIcon } from "#src/Icons";
+import { Text } from "#src/Text";
 import noVotingProps from "./assets/no-voting-proposals-found.svg";
 import noDelegates from "./assets/no-delegates-found.svg";
 import noPastComments from "./assets/no-past-comments-yet.svg";

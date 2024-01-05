@@ -11,7 +11,7 @@ import { Text } from "../Text";
 import { IconButton } from "../IconButton";
 import { Button } from "../Button";
 
-import { MinusIcon, PlusIcon } from "src/Icons";
+import { MinusIcon, PlusIcon } from "#src/Icons";
 
 export const Timepicker: React.FC<{
   onSelectTime?: (time: string[] | null) => void;

@@ -1,6 +1,6 @@
 import { useToast } from "@chakra-ui/react";
 import { useCallback } from "react";
-import { useBalanceData } from "src/utils/hooks";
+import { useBalanceData } from "#src/utils/hooks";
 
 const DELEGATE_CREATION_MINIMUM = 0.00001;
 const DELEGATE_CREATION_TOKEN = "ETH";

@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import { Dropdown } from "./Dropdown";
 import { ThemeProvider } from "../ThemeProvider";
 
-import { EllipsisIcon } from "src/Icons";
+import { EllipsisIcon } from "#src/Icons";
 
 export default {
   title: "governance-ui/Dropdown",

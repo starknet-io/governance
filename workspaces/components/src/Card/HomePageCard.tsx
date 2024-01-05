@@ -7,7 +7,7 @@ import {
   LinkOverlay,
 } from "@chakra-ui/react";
 
-import { Text } from "src/Text";
+import { Text } from "#src/Text";
 
 type HomePageCardProps = {
   title: string;

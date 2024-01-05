@@ -13,12 +13,12 @@ import {
   FormControlled,
   useFormErrorHandler,
 } from "@yukilabs/governance-components";
-import { trpc } from "src/utils/trpc";
+import { trpc } from "#src/utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
-import { navigate } from "vite-plugin-ssr/client/router";
+import { navigate } from "vike/client/router";
 import type { Post } from "@yukilabs/governance-backend/src/db/schema/posts";
-import { useFileUpload } from "src/hooks/useFileUpload";
+import { useFileUpload } from "#src/hooks/useFileUpload";
 import { usePageContext } from "../../renderer/PageContextProvider";
 
 type PostFormProps = {
