@@ -1,11 +1,11 @@
 import { Avatar, Box, Flex, Menu, MenuItem } from "@chakra-ui/react";
-import { Text } from "..//Text";
-import { Indenticon } from "..//Indenticon";
-import { Heading } from "..//Heading";
-import { Dropdown } from "..//Dropdown";
-import { EllipsisIcon } from "..//Icons";
-import { Tooltip } from "..//Tooltip";
-import { truncateAddress } from "..//utils";
+import { Text } from "../Text";
+import { Indenticon } from "../Indenticon";
+import { Heading } from "../Heading";
+import { Dropdown } from "../Dropdown";
+import { EllipsisIcon } from "../Icons";
+import { Tooltip } from "../Tooltip";
+import { truncateAddress } from "../utils";
 import { CopyToClipboard } from "../CopyToClipboard";
 
 type Props = {

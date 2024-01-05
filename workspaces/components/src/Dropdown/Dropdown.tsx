@@ -7,7 +7,7 @@ import {
   MenuList,
 } from "@chakra-ui/react";
 
-import { EllipsisIcon } from "..//Icons";
+import { EllipsisIcon } from "../Icons";
 import { Portal } from "@chakra-ui/react";
 
 type DropdownProps = {

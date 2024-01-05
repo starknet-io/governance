@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useSlate } from "slate-react";
 import { isBlockActive, toggleBlock } from "./hotkeys";
-import { ExpandIcon, TextTypeIcon } from "..//Icons/ToolbarIcons";
+import { ExpandIcon, TextTypeIcon } from "../Icons/ToolbarIcons";
 import { CustomParagraphTypes } from "./ElementLeaf";
 
 export function TextTypeButton({ format = "heading_one" }) {

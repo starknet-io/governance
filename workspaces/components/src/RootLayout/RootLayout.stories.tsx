@@ -1,7 +1,7 @@
 import { Meta } from "@storybook/react";
 import * as Layout from "./RootLayout";
 import { ThemeProvider } from "../ThemeProvider";
-import { Text } from "..//Text";
+import { Text } from "../Text";
 
 export default {
   title: "governance-ui/Layout",

@@ -9,7 +9,7 @@ import {
   HomeIcon,
   LearnIcon,
   SettingsIcon,
-} from "..//Icons";
+} from "../Icons";
 import { NavGroup } from "../NavGroup";
 
 export default {

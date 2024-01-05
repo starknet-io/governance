@@ -7,7 +7,7 @@ import {
   Input,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { Button } from "..//Button";
+import { Button } from "../Button";
 import * as Swap from "../Swap/Swap";
 import { Text } from "../Text";
 import { ethers } from "ethers";

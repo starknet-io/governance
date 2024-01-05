@@ -1,7 +1,7 @@
 import { Spinner } from "@chakra-ui/react";
 import { useState, FunctionComponent, useRef } from "react";
 import { Button } from "@chakra-ui/react";
-import { ShareIcon } from "..//Icons";
+import { ShareIcon } from "../Icons";
 import { Text } from "../Text";
 
 interface FileUploaderProps {

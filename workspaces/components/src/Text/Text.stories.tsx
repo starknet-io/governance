@@ -1,7 +1,7 @@
 import React from "react";
 import { VStack } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
-import { theme } from "..//style/theme";
+import { theme } from "../style/theme";
 
 import { Text as GovernanceText } from "./Text";
 import { ChakraProvider } from "@chakra-ui/react";

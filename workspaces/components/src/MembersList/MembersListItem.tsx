@@ -2,9 +2,9 @@
 
 import { Box, IconButton } from "@chakra-ui/react";
 import { MembersListItemProps } from "./types";
-import { Username } from "..//Username";
-import { Text } from "..//Text";
-import { TrashIcon } from "..//Icons";
+import { Username } from "../Username";
+import { Text } from "../Text";
+import { TrashIcon } from "../Icons";
 
 export const MembersListItem = ({
   ../,

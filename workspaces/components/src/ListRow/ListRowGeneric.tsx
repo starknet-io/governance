@@ -16,11 +16,11 @@ import {
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
-} from "..//Icons";
-import { MarkdownRenderer } from "..//MarkdownRenderer";
+} from "../Icons";
+import { MarkdownRenderer } from "../MarkdownRenderer";
 import "./styles.css";
-import { formatVotesAmount } from "..//utils";
-import { Tooltip } from "..//Tooltip";
+import { formatVotesAmount } from "../utils";
+import { Tooltip } from "../Tooltip";
 
 type Props = BoxProps & {
   children?: React.ReactNode;

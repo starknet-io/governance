@@ -1,11 +1,11 @@
 import { Avatar, Box, Flex, Icon, Link } from "@chakra-ui/react";
-import { Heading } from "..//Heading";
+import { Heading } from "../Heading";
 import { BookIcon } from "./BookIcon";
-import { Text } from "..//Text";
-import { Button } from "..//Button";
+import { Text } from "../Text";
+import { Button } from "../Button";
 
 import avatar from "./avatar.jpeg";
-import { ArrowRightIcon } from "..//Icons";
+import { ArrowRightIcon } from "../Icons";
 
 const data = {
   title: "Starknet Governance overview",

@@ -1,6 +1,6 @@
-import { MarkdownEditor, useMarkdownEditor } from "..//Editor";
+import { MarkdownEditor, useMarkdownEditor } from "../Editor";
 import "./comment.css";
-import { Button } from "..//Button";
+import { Button } from "../Button";
 import { Box } from "@chakra-ui/react";
 import { useEffect } from "react";
 

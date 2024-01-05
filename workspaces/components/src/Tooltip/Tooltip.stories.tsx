@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 
 import { ThemeProvider } from "../ThemeProvider";
 import { Tooltip } from "./Tooltip";
-import { Text } from "..//Text";
+import { Text } from "../Text";
 
 export default {
   title: "governance-ui/Tooltip",

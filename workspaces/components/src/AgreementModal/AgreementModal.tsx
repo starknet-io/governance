@@ -2,7 +2,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { Modal } from "../Modal";
-import { MarkdownRenderer } from "..//MarkdownRenderer";
+import { MarkdownRenderer } from "../MarkdownRenderer";
 
 type Props = {
   isOpen: boolean;

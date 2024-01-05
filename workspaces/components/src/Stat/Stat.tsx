@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { Text as ChakraText } from "../Text";
 import { format } from "date-fns";
-import { truncateAddress } from "..//utils";
+import { truncateAddress } from "../utils";
 
 // interface Props {
 //   label: string | null;

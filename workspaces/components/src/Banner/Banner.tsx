@@ -6,8 +6,8 @@ import {
   Icon,
   Spinner,
 } from "@chakra-ui/react";
-import { IconButton } from "..//IconButton";
-import { InfoIcon, XIcon, DocumentFileWarning, CommentHidden } from "..//Icons";
+import { IconButton } from "../IconButton";
+import { InfoIcon, XIcon, DocumentFileWarning, CommentHidden } from "../Icons";
 type Props = {
   type?: "info" | "pending" | "error" | "commentHidden";
   variant?: "info" | "error" | "commentHidden";

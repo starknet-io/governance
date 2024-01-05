@@ -10,8 +10,8 @@ import {
   BoldIcon,
   ItalicIcon,
   StrikeThroughIcon,
-} from "..//Icons/ToolbarIcons";
-import { FiltersIcon } from "..//Icons";
+} from "../Icons/ToolbarIcons";
+import { FiltersIcon } from "../Icons";
 
 export default {
   title: "governance-ui/Button/IconButton",

@@ -1,9 +1,9 @@
 import { useSlate } from "slate-react";
 import { IconButton } from "@chakra-ui/react";
-import { Heading2Icon, BulletedListIcon, NumberedListIcon } from "..//Icons";
+import { Heading2Icon, BulletedListIcon, NumberedListIcon } from "../Icons";
 import { isBlockActive, toggleBlock } from "./hotkeys";
 import { CustomParagraphTypes } from "./ElementLeaf";
-import { BlockQuoteIcon } from "..//Icons/ToolbarIcons";
+import { BlockQuoteIcon } from "../Icons/ToolbarIcons";
 
 type BlockButtonProps = {
   format: CustomParagraphTypes;

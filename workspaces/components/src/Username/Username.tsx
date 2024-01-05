@@ -1,9 +1,9 @@
 import { Avatar, Box, Flex } from "@chakra-ui/react";
 import { Text } from "../Text";
 import { Heading } from "../Heading";
-import { Indenticon } from "..//Indenticon";
-import { Tooltip } from "..//Tooltip";
-import { UserIcon } from "..//Icons/UiIcons";
+import { Indenticon } from "../Indenticon";
+import { Tooltip } from "../Tooltip";
+import { UserIcon } from "../Icons/UiIcons";
 import { CopyToClipboard } from "../CopyToClipboard";
 
 type Props = {

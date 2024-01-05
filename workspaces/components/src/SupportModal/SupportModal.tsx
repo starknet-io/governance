@@ -12,7 +12,7 @@ import {
   LearnIcon,
   DiscourseIcon,
   BlogPostsIcon,
-} from "..//Icons";
+} from "../Icons";
 import { Text } from "../Text";
 import React from "react";
 import { Modal } from "../Modal";

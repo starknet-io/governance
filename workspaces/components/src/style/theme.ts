@@ -11,18 +11,18 @@ import { textareaTheme as Textarea } from "../Textarea/TextareaStyles";
 import { ProgressTheme as Progress } from "../Progress/ProgressStyles";
 import { modalTheme as Modal } from "../Modal/ModalStyles";
 import { spinnerTheme as Spinner } from "../Spinner/SpinnerStyles";
-import { menuTheme } from "..//Menu/MenuStyles";
-import { linkTheme } from "..//Link/LinkStyles";
-import { skeletonTheme } from "..//Skeleton/SkeletonStyles";
+import { menuTheme } from "../Menu/MenuStyles";
+import { linkTheme } from "../Link/LinkStyles";
+import { skeletonTheme } from "../Skeleton/SkeletonStyles";
 import { colors, spacing, radii, baseColors } from "./tokens";
-import { checkboxTheme } from "..//Checkbox/CheckboxStyles";
-import { radioTheme } from "..//Radio/RadioStyles";
-import { switchTheme } from "..//Switch/SwitchStyles";
-import { alertTheme } from "..//Banner/AlertStyles";
-import { dividerTheme } from "..//Divider/DividerStyles";
-import { avatarTheme } from "..//Avatar/AvatarStyles";
-import { FormTheme } from "..//FormControlled/Form";
-import { tooltipTheme } from "..//Tooltip/TooltipStyles";
+import { checkboxTheme } from "../Checkbox/CheckboxStyles";
+import { radioTheme } from "../Radio/RadioStyles";
+import { switchTheme } from "../Switch/SwitchStyles";
+import { alertTheme } from "../Banner/AlertStyles";
+import { dividerTheme } from "../Divider/DividerStyles";
+import { avatarTheme } from "../Avatar/AvatarStyles";
+import { FormTheme } from "../FormControlled/Form";
+import { tooltipTheme } from "../Tooltip/TooltipStyles";
 
 const config = {
   initialColorMode: "light",

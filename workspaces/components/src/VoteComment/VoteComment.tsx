@@ -1,15 +1,15 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
-import { Button } from "..//Button";
+import { Button } from "../Button";
 import {
   SignatureIcon,
   VoteAbstainIcon,
   VoteAgainstIcon,
   VoteForIcon,
-} from "..//Icons";
-import { Link } from "..//Link";
-import { Text } from "..//Text";
-import { Tooltip } from "..//Tooltip";
-import { formatVotesAmount, truncateAddress } from "..//utils";
+} from "../Icons";
+import { Link } from "../Link";
+import { Text } from "../Text";
+import { Tooltip } from "../Tooltip";
+import { formatVotesAmount, truncateAddress } from "../utils";
 import { CopyToClipboard } from "../CopyToClipboard";
 
 type Props = {

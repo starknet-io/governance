@@ -2,7 +2,7 @@
 
 import { Meta } from "@storybook/react";
 import { ChakraProvider, Box } from "@chakra-ui/react";
-import { ChakraDatePicker } from "./ChakraDatePicker"; // Adjust the path accordingly
+import { ChakraDatePicker } from "./ChakraDatePicker"../ Adjust the path accordingly
 
 type Story<T = unknown> = ((args: T) => JSX.Element) & { args?: Partial<T> };
 

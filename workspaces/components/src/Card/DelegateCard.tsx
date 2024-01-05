@@ -13,18 +13,18 @@ import {
 import { Tag } from "../Tag";
 import { Button } from "../Button";
 import { MarkdownRenderer } from "../MarkdownRenderer";
-import { formatVotesAmount } from "..//utils";
+import { formatVotesAmount } from "../utils";
 import "./karma.css";
 
-import { AvatarWithText } from "..//AvatarWithText";
-import { Tooltip } from "..//Tooltip";
+import { AvatarWithText } from "../AvatarWithText";
+import { Tooltip } from "../Tooltip";
 import {
   DiscordIcon,
   DiscourseIcon,
   TelegramIcon,
   TwitterIcon,
-} from "..//Icons";
-import { IconButton } from "..//IconButton";
+} from "../Icons";
+import { IconButton } from "../IconButton";
 
 export type DelegateCardProps = {
   statement: string | null;

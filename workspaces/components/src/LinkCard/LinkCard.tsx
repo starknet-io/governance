@@ -1,6 +1,6 @@
 import { Box, Flex, HStack, Image, Link } from "@chakra-ui/react";
-import { ArrowRightLargeIcon } from "..//Icons";
-import { Text } from "..//Text";
+import { ArrowRightLargeIcon } from "../Icons";
+import { Text } from "../Text";
 
 type Props = {
   src?: string;

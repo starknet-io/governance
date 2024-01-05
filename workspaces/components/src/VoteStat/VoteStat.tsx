@@ -1,6 +1,6 @@
 import { Box, Flex, Progress, Stack } from "@chakra-ui/react";
 import { Text } from "../Text";
-import { formatVotesAmount } from "..//utils";
+import { formatVotesAmount } from "../utils";
 
 type Props = {
   voteCount?: number;

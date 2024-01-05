@@ -1,5 +1,5 @@
 import React from "react";
-import { ProfileIcon } from "..//Icons";
+import { ProfileIcon } from "../Icons";
 
 interface ProfileImageProps {
   imageUrl: string | null | undefined;

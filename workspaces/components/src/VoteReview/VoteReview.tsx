@@ -1,7 +1,7 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
-import { VoteAbstainIcon, VoteAgainstIcon, VoteForIcon } from "..//Icons";
-import { Text } from "..//Text";
-import { formatVotesAmount } from "..//utils";
+import { VoteAbstainIcon, VoteAgainstIcon, VoteForIcon } from "../Icons";
+import { Text } from "../Text";
+import { formatVotesAmount } from "../utils";
 
 type Props = {
   choice: number;
