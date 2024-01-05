@@ -1,5 +1,5 @@
 import { Link as ChakraLink, LinkProps } from "@chakra-ui/react";
-import { ExternalLinkIcon } from "#src/Icons";
+import { ExternalLinkIcon } from "..//Icons";
 
 type props = {
   children: React.ReactNode;

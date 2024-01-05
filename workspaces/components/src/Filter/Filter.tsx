@@ -2,7 +2,7 @@ import { Popover } from "@chakra-ui/react";
 import { CheckboxFilter } from "./CheckboxFilter";
 import { FilterPopoverButton, FilterPopoverContent } from "./FilterPopover";
 import { useFilterState } from "./useFilterState";
-import { FiltersIcon } from "#src/Icons";
+import { FiltersIcon } from "..//Icons";
 
 export const blueFilters = {
   defaultValue: ["casio", "fossil"],

@@ -2,12 +2,12 @@
 
 import { Box, IconButton } from "@chakra-ui/react";
 import { MembersListItemProps } from "./types";
-import { Username } from "#src/Username";
-import { Text } from "#src/Text";
-import { TrashIcon } from "#src/Icons";
+import { Username } from "..//Username";
+import { Text } from "..//Text";
+import { TrashIcon } from "..//Icons";
 
 export const MembersListItem = ({
-  src,
+  ../,
   displayName,
   address,
   index,
@@ -29,7 +29,7 @@ export const MembersListItem = ({
       _hover={{ bg: "gray.100" }}
     >
       <Box>
-        <Username address={address} src={src} displayName={displayName} />
+        <Username address={address} src={../} displayName={displayName} />
         {readonly ? null : (
           <IconButton
             aria-label="Delete member"

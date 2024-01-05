@@ -5,7 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@chakra-ui/react";
-import { MoreDotsIcon } from "#src/Icons/ToolbarIcons";
+import { MoreDotsIcon } from "..//Icons/ToolbarIcons";
 import BlockButton from "./BlockButton";
 import MarkButton from "./MarkButton";
 

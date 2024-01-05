@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from "react";
-import { Comment } from "@yukilabs/governance-backend/src/db/schema/comments";
-import { User } from "@yukilabs/governance-backend/src/db/schema/users";
+import { Comment } from "@yukilabs/governance-backend/..//db/schema/comments";
+import { User } from "@yukilabs/governance-backend/..//db/schema/users";
 import { Box, Flex, Menu, MenuButton, MenuList, Text } from "@chakra-ui/react";
 
 import {

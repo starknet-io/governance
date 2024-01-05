@@ -12,14 +12,14 @@ import {
 } from "@chakra-ui/react";
 import { Modal } from "../Modal";
 import "./members-list.css";
-import { Button } from "#src/Button";
-import { TrashIcon, TwitterIcon } from "#src/Icons";
-import { truncateAddress } from "#src/utils";
-import { Username } from "#src/Username";
-import * as ListRow from "#src/ListRow/ListRowGeneric";
+import { Button } from "..//Button";
+import { TrashIcon, TwitterIcon } from "..//Icons";
+import { truncateAddress } from "..//utils";
+import { Username } from "..//Username";
+import * as ListRow from "..//ListRow/ListRowGeneric";
 import { ethers } from "ethers";
-import { FormControlled } from "#src/FormControlled";
-import { Link } from "#src/Link";
+import { FormControlled } from "..//FormControlled";
+import { Link } from "..//Link";
 
 export type MemberType = {
   address: string;

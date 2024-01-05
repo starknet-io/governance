@@ -4,19 +4,19 @@ import React, { ReactNode } from "react";
 import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { Link } from "../Link";
-import { truncateAddress } from "#src/utils";
-import { Heading } from "#src/Heading";
+import { truncateAddress } from "..//utils";
+import { Heading } from "..//Heading";
 import { format } from "date-fns";
-import { CopyToClipboard } from "#src/CopyToClipboard";
+import { CopyToClipboard } from "..//CopyToClipboard";
 import {
   DiscordIcon,
   DiscourseIcon,
   GithubIcon,
   TwitterIcon,
   TelegramIcon,
-} from "#src/Icons";
-import { Tooltip } from "#src/Tooltip";
-// import type { delegateTypeEnum } from '@yukilabs/governance-backend/src/db/schema/delegates';
+} from "..//Icons";
+import { Tooltip } from "..//Tooltip";
+// import type { delegateTypeEnum } from '@yukilabs/governance-backend/..//db/schema/delegates';
 
 type RootProps = {
   children?: ReactNode | undefined;

@@ -12,11 +12,11 @@ import { Modal } from "../Modal";
 import { useForm } from "react-hook-form";
 import { RouterInput } from "@yukilabs/governance-backend/src/routers";
 import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
-import { UploadImage } from "#src/UploadImage";
-import { ProfileImage } from "#src/ProfileImage";
-import { ShareIcon } from "#src/Icons";
-import { Input } from "#src/Input";
-import { FormControlled } from "#src/FormControlled";
+import { UploadImage } from "..//UploadImage";
+import { ProfileImage } from "..//ProfileImage";
+import { ShareIcon } from "..//Icons";
+import { Input } from "..//Input";
+import { FormControlled } from "..//FormControlled";
 
 interface ProfileInfoModalProps {
   isOpen: boolean;

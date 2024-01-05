@@ -15,15 +15,15 @@ import {
 import { ElementType, ReactNode } from "react";
 import {
   Modal
-} from "@yukilabs/governance-components";
+} from "../Modal";
 import {
   FilterActionButtons,
   FilterActionButtonsProps,
 } from "./FilterActionButtons";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 
-import { FiltersIcon } from "#src/Icons";
-import { IconButtonWithBadge } from "#src/IconButton/IconButton";
+import { FiltersIcon } from "..//Icons";
+import { IconButtonWithBadge } from "..//IconButton/IconButton";
 
 type FilterPopoverButtonProps = {
   label: string;

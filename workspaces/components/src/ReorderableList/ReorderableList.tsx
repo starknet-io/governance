@@ -1,8 +1,8 @@
 import { Reorder, useDragControls } from "framer-motion";
 import { Box } from "@yukilabs/governance-components";
 import React from "react";
-import { User } from "@yukilabs/governance-backend/src/db/schema/users";
-import { Page } from "@yukilabs/governance-backend/src/db/schema/pages";
+import { User } from "@yukilabs/governance-backend/..//db/schema/users";
+import { Page } from "@yukilabs/governance-backend/..//db/schema/pages";
 import "./list.css";
 import { ReorderIcon } from "./icon";
 

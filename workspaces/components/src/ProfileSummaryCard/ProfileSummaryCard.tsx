@@ -8,13 +8,13 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import { Heading } from "#src/Heading";
-import { IconButton } from "#src/IconButton";
+import { Heading } from "..//Heading";
+import { IconButton } from "..//IconButton";
 import { Indenticon } from "../Indenticon";
 import { Text } from "../Text";
-import { truncateAddress } from "#src/utils";
-import { Button } from "#src/Button";
-import { EllipsisIcon } from "#src/Icons";
+import { truncateAddress } from "..//utils";
+import { Button } from "..//Button";
+import { EllipsisIcon } from "..//Icons";
 
 type RootProps = {
   children: React.ReactNode;
@@ -55,7 +55,7 @@ const Profile = ({
     >
       {imgUrl ? (
         // debug next line
-        // <Avatar size={size === "lg" ? "lg" || size ==="xs" ? "sm" : "md"} src={imgUrl} />
+        // <Avatar size={size === "lg" ? "lg" || size ==="xs" ? "sm" : "md"} ../={imgUrl} />
 
         <Avatar
           size={size === "lg" ? "lg" : size === "xs" ? "sm" : "md"}

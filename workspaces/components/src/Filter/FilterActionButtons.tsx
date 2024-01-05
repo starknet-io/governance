@@ -1,5 +1,5 @@
 import { HStack } from "@chakra-ui/react";
-import { Button } from "#src/Button";
+import { Button } from "..//Button";
 
 export type FilterActionButtonsProps = {
   onClickCancel?: VoidFunction;

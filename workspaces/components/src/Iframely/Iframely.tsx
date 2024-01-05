@@ -1,6 +1,6 @@
 import { Box, Skeleton } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { LinkCard } from "#src/LinkCard";
+import { LinkCard } from "..//LinkCard";
 
 interface IframelyProps {
   url?: string;

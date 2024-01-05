@@ -8,7 +8,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 
-import { VoteForIcon } from "#src/Icons";
+import { VoteForIcon } from "..//Icons";
 
 export const ReviewForm = (props: React.ComponentProps<"form">) => (
   <form {...props}>

@@ -1,6 +1,6 @@
 // WIP - Not in use yet
 export interface Member {
-  src: string;
+  ../: string;
   displayName: string;
   twitterHandle?: string;
   address: string;

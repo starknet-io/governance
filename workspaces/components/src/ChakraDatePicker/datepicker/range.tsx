@@ -11,7 +11,7 @@ import {
   Portal,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Input } from "#src/Input";
+import { Input } from "../../Input";
 import { CalendarPanel } from "./components/calendarPanel";
 import {
   CalendarConfigs,
@@ -24,7 +24,7 @@ import { format } from "date-fns";
 import FocusLock from "react-focus-lock";
 import { Timepicker } from "../../Timepicker";
 import { Button } from "../../Button";
-import { CalendarIcon } from "#src/Icons";
+import { CalendarIcon } from "../../Icons";
 
 interface RangeCalendarPanelProps {
   dayzedHookProps: DayzedHookProps;

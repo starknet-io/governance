@@ -1,6 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { Badge } from "#src/Badge";
-import { Heading } from "#src/Heading";
+import { Badge } from "../Badge";
+import { Heading } from "../Heading";
 
 type Props = {
   href?: string;

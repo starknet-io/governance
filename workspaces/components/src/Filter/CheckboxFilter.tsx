@@ -11,7 +11,7 @@ import {
   StackProps,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { SearchIcon } from "#src/Icons";
+import { SearchIcon } from "..//Icons";
 
 type CheckboxFilterProps = Omit<CheckboxGroupProps, "onChange"> & {
   hideLabel?: boolean;

@@ -13,7 +13,7 @@ import {
   SecurityIcon,
   SettingsIcon,
   VoteIcon,
-} from "#src/Icons";
+} from "..//Icons";
 import { NavGroup } from "./NavGroup";
 
 export default {

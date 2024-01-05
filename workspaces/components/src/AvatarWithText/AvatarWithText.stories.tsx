@@ -2,10 +2,10 @@ import { Box, Flex, MenuItem, VStack } from "@chakra-ui/react";
 import { Meta } from "@storybook/react";
 import { AvatarWithText } from "./AvatarWithText";
 import { ThemeProvider } from "../ThemeProvider";
-import { formatVotesAmount, truncateAddress } from "#src/utils";
-import { Button } from "#src/Button";
-import { Banner } from "#src/Banner/Banner";
-import * as SummaryItems from "#src/SummaryItems/SummaryItems";
+import { formatVotesAmount, truncateAddress } from "..//utils";
+import { Button } from "..//Button";
+import { Banner } from "..//Banner/Banner";
+import * as SummaryItems from "..//SummaryItems/SummaryItems";
 
 export default {
   title: "governance-ui/AvatarWithText",

@@ -1,7 +1,7 @@
 import { ChangeEvent, FC } from "react";
 import { Icon, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
 
-import { SearchIcon } from "#src/Icons";
+import { SearchIcon } from "..//Icons";
 
 // Define the props that the SearchInput component will accept
 interface SearchInputProps {

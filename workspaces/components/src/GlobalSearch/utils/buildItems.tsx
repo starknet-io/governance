@@ -13,7 +13,7 @@ import LearnIcon from "../assets/learn_icon.svg";
 import { format } from "date-fns";
 import slugify from "slugify";
 import { Indenticon } from "../../Indenticon";
-import { IProposalWithComments } from "@yukilabs/governance-backend/src/routers/proposals";
+import { IProposalWithComments } from "@yukilabs/governance-backend/..//routers/proposals";
 
 export type SearchItemType =
   | "voting_proposal"

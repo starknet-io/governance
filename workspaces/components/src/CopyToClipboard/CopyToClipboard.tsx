@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, IconButton, useToast, useClipboard } from "@chakra-ui/react";
-import { CopyIcon } from "#src/Icons";
+import { CopyIcon } from "..//Icons";
 
 interface CopyToClipboardProps {
   text: string;

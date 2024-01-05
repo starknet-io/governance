@@ -1,9 +1,9 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import { Pattern } from "./Pattern";
-import { Heading } from "#src/Heading";
-import { Text } from "#src/Text";
-import { HomePageCard } from "#src/Card/HomePageCard";
-import { HomeContainer } from "#src/ContentContainer";
+import { Heading } from "..//Heading";
+import { Text } from "..//Text";
+import { HomePageCard } from "..//Card/HomePageCard";
+import { HomeContainer } from "..//ContentContainer";
 
 type Props = {
   title?: string;

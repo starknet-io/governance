@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.projects.json",
   "compilerOptions": {
     "paths": {
-      "#src/*": ["./src/*"],
+      "#src/*": ["./*"]
     },
     "outDir": ".types",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
