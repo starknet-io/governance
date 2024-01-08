@@ -4,8 +4,6 @@ import {
   AppBar,
   Box,
   Button,
-  CommentInput,
-  CommentList,
   ConfirmModal,
   Divider,
   Flex,
@@ -59,6 +57,7 @@ import {
 import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
+import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments/VotingProposalComments";
 import { useProposal } from "../../hooks/snapshotX/useProposal";
 import { useVotes } from "../../hooks/snapshotX/useVotes";
 import { AUTHENTICATORS_ENUM } from "../../hooks/snapshotX/constants";
@@ -75,13 +74,7 @@ import {
   waitForTransaction,
 } from "../../hooks/snapshotX/helpers";
 import { useStarknetDelegates } from "../../wagmi/StarknetDelegationRegistry";
-const sortByOptions = {
-  defaultValue: "date",
-  options: [
-    { label: "Date", value: "date" },
-    { label: "Upvotes", value: "upvotes" },
-  ],
-};
+
 
 export function Page() {
   const pageContext = usePageContext();
@@ -125,6 +118,11 @@ export function Page() {
   });
 
   const userBalance = useBalanceData(address);
+
+  const { data: commentCountData } =
+    trpc.proposals.getProposalCommentCount.useQuery({
+      id: pageContext.routeParams!.id,
+    });
 
   async function handleVote(choice: number, reason?: string) {
     try {
@@ -209,13 +207,11 @@ export function Page() {
   const [isSuccessModalOpen, setisSuccessModalOpen] = useState(false);
   const [currentChoice, setcurrentChoice] = useState<number>(0);
   const [comment, setComment] = useState("");
-  const [sortBy, setSortBy] = useState<"date" | "upvotes">("date");
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
-  const [commentError, setCommentError] = useState("");
   const hasVoted = vote.data && vote.data.votes?.[0];
   const canVote =
     data?.proposal?.state === "active" && votingPower > 0 && !hasVoted;
@@ -245,123 +241,20 @@ export function Page() {
           : {},
     };
   });
-  const comments = trpc.comments.getProposalComments.useQuery({
-    proposalId: data?.proposal?.id?.toString() ?? "",
-    sort: sortBy,
-  });
-  const commentCount = comments?.data?.length || 0;
+
+  /*
 
   useEffect(() => {
     comments.refetch();
   }, [user?.isAuthenticatedWithAWallet]);
+
+   */
 
   useEffect(() => {
     if (user) {
       setIsConnectedModal(false);
     }
   }, [user]);
-
-  const saveComment = trpc.comments.saveComment.useMutation({
-    onSuccess: () => {
-      comments.refetch();
-    },
-  });
-
-  const editComment = trpc.comments.editComment.useMutation({
-    onSuccess: () => {
-      comments.refetch();
-    },
-  });
-
-  const deleteComment = trpc.comments.deleteComment.useMutation({
-    onSuccess: () => {
-      comments.refetch();
-    },
-  });
-
-  const voteComment = trpc.comments.voteComment.useMutation({
-    onSuccess: () => {
-      comments.refetch();
-    },
-  });
-
-  const handleCommentSend = async (value: string) => {
-    try {
-      await saveComment.mutateAsync({
-        content: value,
-        proposalId: data?.proposal?.id?.toString(),
-      });
-    } catch (error) {
-      // Handle error
-      throw error;
-    }
-  };
-
-  const handleCommentEdit = async ({
-    content,
-    commentId,
-  }: {
-    content: string;
-    commentId: number;
-  }) => {
-    try {
-      await editComment.mutateAsync({
-        content,
-        id: commentId,
-      });
-    } catch (error) {
-      // Handle error
-      throw error;
-    }
-  };
-
-  const handleCommentDelete = async ({ commentId }: { commentId: number }) => {
-    try {
-      await deleteComment.mutateAsync({
-        id: commentId,
-      });
-    } catch (error) {
-      // Handle error
-      console.log(error);
-    }
-  };
-
-  const handleReplySend = async ({
-    content,
-    parentId,
-  }: {
-    content: string;
-    parentId: number;
-  }) => {
-    try {
-      await saveComment.mutateAsync({
-        content,
-        parentId,
-        proposalId: data?.proposal?.id?.toString(),
-      });
-    } catch (error) {
-      // Handle error
-      throw error;
-    }
-  };
-
-  const handleCommentVote = async ({
-    commentId,
-    voteType,
-  }: {
-    commentId: number;
-    voteType: "upvote" | "downvote";
-  }) => {
-    try {
-      await voteComment.mutateAsync({
-        commentId,
-        voteType,
-      });
-    } catch (error) {
-      // Handle error
-      console.log(error);
-    }
-  };
 
   type MoreActionsProps = {
     children: React.ReactNode;
@@ -595,6 +488,7 @@ export function Page() {
                   </Text>
                   {/* toDo get user images / display names */}
                   <Username
+                    withCopy
                     src={authorInfo?.profileImage || null}
                     displayName={
                       authorInfo?.username ||
@@ -629,7 +523,7 @@ export function Page() {
                   <Stat.Root>
                     <Stat.Link
                       href="#discussion"
-                      label={`${commentCount} comments`}
+                      label={`${commentCountData || 0} comments`}
                     />
                   </Stat.Root>
                   {/* <Text variant="small" color="content.default.default">
@@ -650,7 +544,7 @@ export function Page() {
                 </Link>
               </Box>
 
-              {data?.proposal?.discussion &&
+              {data?.proposal?.discussion !== "" &&
               data?.proposal?.discussion.length ? (
                 <Box
                   height="110px!important"
@@ -672,92 +566,10 @@ export function Page() {
               <Divider my="standard.2xl" />
             </Flex>
           </VoteLayout.Content>
-          <VoteLayout.Discussion>
-            <Heading
-              color="content.accent.default"
-              variant="h3"
-              mb="standard.2xl"
-              id="discussion"
-            >
-              Discussion
-            </Heading>
-            {user ? (
-              <FormControl id="delegate-statement">
-                <CommentInput
-                  onSend={async (comment) => {
-                    try {
-                      await handleCommentSend(comment);
-                      setCommentError("");
-                    } catch (err) {
-                      setCommentError(err?.message || "");
-                    }
-                  }}
-                />
-                {commentError && commentError.length && (
-                  <Box mb={6}>
-                    <Banner type="error" variant="error" label={commentError} />
-                  </Box>
-                )}
-              </FormControl>
-            ) : (
-              <Box>
-                <FormControl>
-                  <Box onClick={() => setHelpMessage("connectWalletMessage")}>
-                    <CommentInput
-                      onSend={async (comment) => {
-                        console.log(comment);
-                      }}
-                    />
-                  </Box>
-                </FormControl>
-              </Box>
-            )}
-            {comments.data && comments.data.length > 0 ? (
-              <>
-                <AppBar.Root>
-                  <AppBar.Group mobileDirection="row">
-                    <Box minWidth={"52px"}>
-                      <Text variant="mediumStrong">Sort by</Text>
-                    </Box>
-                    <Select
-                      size="sm"
-                      aria-label="Sort by"
-                      focusBorderColor={"red"}
-                      rounded="md"
-                      value={sortBy}
-                      onChange={(e) =>
-                        setSortBy(e.target.value as "upvotes" | "date")
-                      }
-                    >
-                      <option selected hidden disabled value="">
-                        Sort by
-                      </option>
-                      {sortByOptions.options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </Select>
-                  </AppBar.Group>
-                </AppBar.Root>
-                <Box mt="standard.xs">
-                  <CommentList
-                    commentsList={comments.data}
-                    onVote={handleCommentVote}
-                    onDelete={handleCommentDelete}
-                    onReply={handleReplySend}
-                    onEdit={handleCommentEdit}
-                  />
-                </Box>
-              </>
-            ) : (
-              <EmptyState
-                hasBorder={false}
-                type="comments"
-                title="Add the first comment"
-              />
-            )}
-          </VoteLayout.Discussion>
+          <VotingProposalComments
+            proposalId={pageContext.routeParams!.id}
+            proposalState={data?.proposal?.state}
+          />
         </VoteLayout.LeftSide>
         <VoteLayout.RightSide>
           <VoteLayout.VoteWidget>
@@ -835,10 +647,10 @@ export function Page() {
                     <Banner
                       label={`You voted ${
                         vote.data.votes[0].choice === 1
-                          ? "For"
+                          ? data?.proposal?.choices?.[0] || "For"
                           : vote.data.votes[0].choice === 2
-                          ? "Against"
-                          : "Abstain"
+                          ? data?.proposal?.choices?.[1] || "Against"
+                          : data?.proposal?.choices?.[2] || "Abstain"
                       } using ${vote.data.votes[0].vp} votes`}
                     />
                     <Divider mb="standard.2xl" />
@@ -908,9 +720,15 @@ export function Page() {
                     const voteCount = data?.proposal?.scores![index];
                     const userVote = false;
                     const strategies = data?.proposal?.strategies;
+                    const scoresByStrategy =
+                      data?.proposal?.scores_by_strategy[index];
+                    {
+                      /*console.log(data?.proposal) */
+                    }
                     return (
                       <VoteStat
                         key={choice}
+                        choice={index}
                         // @ts-expect-error todo
                         type={choice}
                         // @ts-expect-error todo

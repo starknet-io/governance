@@ -38,6 +38,13 @@ const propsConfig = {
       _hover: {
         background: "#23192D1A",
       },
+      _disabled: {
+        color: "#1A1523",
+        cursor: "not-allowed",
+        _hover: {
+          background: "transparent"
+        }
+      }
     },
     isInRangeBtnProps: {
       borderRadius: "0",

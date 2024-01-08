@@ -3,14 +3,14 @@ export function truncateAddress(
   frontLength = 6,
   backLength = 4,
 ): string {
-  if (str?.length <= frontLength + backLength) {
+  if (String(str)?.length <= frontLength + backLength) {
     // If the string is short enough, no need to truncate
-    return str;
+    return String(str);
   }
 
   // Otherwise, truncate
-  const start = str.substring(0, frontLength);
-  const end = str.substring(str.length - backLength);
+  const start = String(str)?.substring(0, frontLength);
+  const end = String(str)?.substring(String(str).length - backLength);
   return `${start}...${end}`;
 }
 

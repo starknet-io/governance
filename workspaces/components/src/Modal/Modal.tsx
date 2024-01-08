@@ -16,6 +16,7 @@ interface CustomModalProps extends Omit<ModalProps, 'children'> {
   fixedHeader?: boolean;
   overflowY?: 'hidden' | 'auto' | 'scroll' | undefined;
   mobile?: "full" | "auto";
+  maxHeight?: string;
 }
 interface CustomModalFooterProps {
   children?: React.ReactNode;
@@ -25,7 +26,7 @@ const Footer: React.FC<CustomModalFooterProps> = ({ children }) => (
   <ModalFooter p="0">{children}</ModalFooter>
 );
 
-  export const Modal = ({ title, children, fixedHeader = false, mobile = "auto", overflowY = "auto", ...modalProps }: CustomModalProps) => {
+  export const Modal = ({ title, children, fixedHeader = false, mobile = "auto", overflowY = "auto", maxHeight, ...modalProps }: CustomModalProps) => {
     return (
       <ChakraModal
         motionPreset="slideInBottom"
@@ -38,7 +39,7 @@ const Footer: React.FC<CustomModalFooterProps> = ({ children }) => (
         <ModalContent
           borderRadius="standard.lg"
           mx={{ base: "2.5", lg: "16" }}
-          maxHeight={{ base: "100%", md: "80%", lg: "60%" }}
+          maxHeight={maxHeight ? maxHeight : { base: "100%", md: "80%", lg: "60%" }}
           overflowY={overflowY}
           sx={{
             '@media (max-width: 768px)': {

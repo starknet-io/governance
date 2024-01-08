@@ -122,4 +122,13 @@ padding-inline-end:0;
 .evm-network-control__arrow-icon.icon--color-text-primary.icon--size-small  {
   display:none;
 }
+
+.button.button--padding-large.button--primary.connect-button {
+  box-shadow: none !important;
+}
+.button.button--padding-large.button--primary.connect-button:hover {
+
+   background-color:rgba(55, 22, 55, 0.0300)
+}
+
 `;
