@@ -479,10 +479,11 @@ export const buttonTheme = {
     },
     fill: {
       position: "relative",
-      borderWidth: "10px",
+      borderWidth: "0px",
       borderColor: "transparent",
       color: "content.default.default",
       px: "standard.lg",
+      minHeight: "46px",
       py: "standard.sm",
       background: "white",
       svg: {
@@ -495,7 +496,7 @@ export const buttonTheme = {
         color: "content.default.hover",
         svg: {
           fill: "content.default.default",
-        }
+        },
       },
       _active: {
         outlineWidth: 0,
@@ -503,7 +504,7 @@ export const buttonTheme = {
         bg: "surface.forms.selected",
         svg: {
           fill: "content.default.default",
-        }
+        },
       },
       _disabled: {
         bg: "surface.accent.disabled",
@@ -517,10 +518,10 @@ export const buttonTheme = {
           color: "content.onSurfaceInverted.default",
           svg: {
             fill: "content.onSurfaceInverted.default",
-          }
-        }
-      }
+          },
+        },
+      },
     },
   },
   defaultProps: { size: "standard", variant: "primary" },
-}
+};

@@ -2,7 +2,7 @@ import { DynamicNav, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "src/utils/trpc";
 import { useOutsideClick } from "@chakra-ui/react";
-import { UserProfileMenu } from "@yukilabs/governance-components";
+import { UserProfileMenu } from "../components/UserProfile";
 import { useBalanceData } from "src/utils/hooks";
 import { useStarknetDelegates } from "../wagmi/StarknetDelegationRegistry";
 import { usePageContext } from "./PageContextProvider";
