@@ -1,4 +1,4 @@
-import { desc, eq, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/db';
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { GraphQLClient } from 'graphql-request';
@@ -36,8 +36,6 @@ export interface IProposalWithCommentsCount extends IProposal {
   commentsCount: number;
 }
 
-const endpoint = `https://hub.snapshot.org/graphql`;
-const space = process.env.SNAPSHOT_SPACE;
 
 const graphQLClient = new GraphQLClient(endpoint, {
   headers: {

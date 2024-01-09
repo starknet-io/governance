@@ -201,6 +201,8 @@ export function Page() {
     }
   }
 
+  console.log(data?.proposal)
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
   const [isConfirmOpen, setisConfirmOpen] = useState(false);
@@ -543,9 +545,8 @@ export function Page() {
                   View Snapshot info
                 </Link>
               </Box>
-
-              {data?.proposal?.discussion !== "" &&
-              data?.proposal?.discussion.length ? (
+              {data?.proposal?.metadata?.discussion &&
+              data?.proposal?.metadata?.discussion.length ? (
                 <Box
                   height="110px!important"
                   overflow="hidden"
@@ -720,8 +721,6 @@ export function Page() {
                     const voteCount = data?.proposal?.scores![index];
                     const userVote = false;
                     const strategies = data?.proposal?.strategies;
-                    const scoresByStrategy =
-                      data?.proposal?.scores_by_strategy[index];
                     {
                       /*console.log(data?.proposal) */
                     }
