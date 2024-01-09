@@ -5,6 +5,9 @@ export const cssOverrides = `
     border-radius: 4px;
     height:36px!important;
   }
+  .non-network-switching-supported-control {
+    height: 36px!important;
+  }
 .evm-network-control__network-name {
   display:none!important;
 }
@@ -70,6 +73,17 @@ padding-inline-end:0;
 
 }
  .dynamic-widget-inline-controls__network-picker.evm-network-control__container::after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 20px;
+  position: absolute;
+  background:#DCDBDD;
+  top: 8px;
+  right: 0px;
+  pointer-events: none;
+ }
+ .dynamic-widget-inline-controls__network-picker.non-network-switching-supported-control::after {
   content: "";
   display: block;
   width: 1px;
