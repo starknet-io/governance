@@ -1,9 +1,8 @@
-import { forwardRef, RefObject } from "react";
+import { forwardRef } from "react";
 import {
   Box,
   Flex,
   Link,
-  Spacer,
   StackDivider,
   Text,
   VStack,
@@ -39,7 +38,6 @@ interface UserProfileMenuProps {
   }) => Promise<any>;
   vp: number;
   isMenuOpen?: boolean;
-  userBalance: any;
   delegatedTo: any;
   onModalStateChange?: (isOpen: boolean) => void;
   handleUpload?: (file: File) => Promise<string | void> | void;
@@ -48,17 +46,26 @@ interface UserProfileMenuProps {
   handleOpenModal?: () => void;
   setEditUserProfile?: (value: boolean) => void;
   setIsMenuOpen?: (value: boolean) => void;
+  ethBalance?: {
+    symbol: string | null;
+    balance: number | bigint | null;
+  };
+  starknetBalance?: {
+    symbol: string | null;
+    balance: string | null;
+  };
 }
 
 export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   onDisconnect,
   user,
   vp,
-  userBalance,
+  ethBalance,
+  starknetBalance,
   delegatedTo,
   handleOpenModal,
   setEditUserProfile,
-}) => {
+}: UserProfileMenuProps) => {
   const delegatedToName = delegatedTo?.username || delegatedTo?.ensName;
   return (
     <>
@@ -115,14 +122,27 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
             <Flex mb="standard.sm">
               <Box width="50%">
                 <Text variant="smallStrong" color="content.support.default">
-                  STRK token balance
+                  L1 token balance
                 </Text>
               </Box>
 
               <Box width="50%">
                 <Text variant="smallStrong" color="content.default.default">
-                  {new Intl.NumberFormat().format(userBalance?.balance)}{" "}
-                  {userBalance?.symbol}
+                  {new Intl.NumberFormat().format(ethBalance?.balance)}{" "}
+                  {ethBalance?.symbol}
+                </Text>
+              </Box>
+            </Flex>
+            <Flex mb="standard.sm">
+              <Box width="50%">
+                <Text variant="smallStrong" color="content.support.default">
+                  L2 token balance
+                </Text>
+              </Box>
+
+              <Box width="50%">
+                <Text variant="smallStrong" color="content.default.default">
+                  {starknetBalance?.balance}{" "}{starknetBalance?.symbol}
                 </Text>
               </Box>
             </Flex>
@@ -220,17 +240,18 @@ const UserProfileMenuComponent = (
     user,
     onSave,
     vp,
-    userBalance,
+    ethBalance,
+    starknetBalance,
     delegatedTo,
     onModalStateChange,
     handleUpload,
     userExistsError = false,
     setUsernameErrorFalse,
     setIsMenuOpen,
-  },
+  }: UserProfileMenuProps,
   ref,
 ) => {
-  const [isModalOpen, setIsModalOpen] = useState(isMenuOpen);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(isMenuOpen);
   useEffect(() => {
     setIsModalOpen(isMenuOpen);
   }, [isMenuOpen]);
@@ -288,7 +309,8 @@ const UserProfileMenuComponent = (
             user={user}
             onSave={onSave}
             vp={vp}
-            userBalance={userBalance}
+            starknetBalance={starknetBalance}
+            ethBalance={ethBalance}
             delegatedTo={delegatedTo}
             handleOpenModal={handleOpenModal}
             setEditUserProfile={setEditUserProfile}
@@ -314,7 +336,8 @@ const UserProfileMenuComponent = (
               user={user}
               onSave={onSave}
               vp={vp}
-              userBalance={userBalance}
+              ethBalance={ethBalance}
+              starknetBalance={starknetBalance}
               delegatedTo={delegatedTo}
               onModalStateChange={onModalStateChange}
               setEditUserProfile={setEditUserProfile}

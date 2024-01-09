@@ -1,4 +1,8 @@
-import { DynamicNav, useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import {
+  DynamicNav,
+  useDynamicContext,
+  useUserWallets,
+} from "@dynamic-labs/sdk-react-core";
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "src/utils/trpc";
 import { useOutsideClick } from "@chakra-ui/react";
@@ -9,13 +13,26 @@ import { usePageContext } from "./PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { useVotingPower } from "../hooks/snapshotX/useVotingPower";
+import { WalletChain, WalletChainKey } from "../utils/constants";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
+import { findMatchingWallet } from "../utils/helpers";
+import {starkProvider} from "../clients/clients";
+import {Contract, stark} from "starknet";
+import {ethers} from "ethers";
+import {useStarknetBalance} from "../hooks/starknet/useStarknetBalance";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userExistsError, setUserExistsError] = useState(false);
   const utils = trpc.useContext();
+  const wallets = useUserWallets();
+
+  const ethAddress =
+    findMatchingWallet(wallets, WalletChainKey.EVM)?.address || undefined;
+  const starknetAddress =
+    findMatchingWallet(wallets, WalletChainKey.STARKNET)?.address || undefined;
+
 
   const [isUserModalOpen, setIsModalOpen] = useState(false);
   const { handleLogOut } = useDynamicContext();
@@ -27,13 +44,12 @@ const AuthorizedUserView = () => {
     address: user?.address,
   });
 
-  const userBalance = useBalanceData(user?.address as `0x${string}`);
+  const ethBalance = useBalanceData(ethAddress as `0x${string}`);
+  const { balance: starknetBalance } = useStarknetBalance({ starknetAddress })
 
   const { data: delegationData, isLoading } = useStarknetDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
-    args: [
-      user?.address as `0x${string}`,
-    ],
+    args: [user?.address as `0x${string}`],
     watch: true,
     enabled: user?.address != null,
   });
@@ -170,6 +186,8 @@ const AuthorizedUserView = () => {
     }
   }
 
+  console.log(starknetBalance)
+
   return (
     <>
       <div className="user-menu" ref={navRef}>
@@ -183,7 +201,8 @@ const AuthorizedUserView = () => {
           user={user}
           onSave={handleSave}
           vp={votingPower ?? 0}
-          userBalance={userBalance}
+          ethBalance={ethBalance}
+          starknetBalance={starknetBalance}
           onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}
           handleUpload={handleUpload}
           userExistsError={userExistsError}
