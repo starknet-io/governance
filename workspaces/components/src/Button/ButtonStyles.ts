@@ -477,6 +477,50 @@ export const buttonTheme = {
         opacity: 0.8,
       },
     },
+    fill: {
+      position: "relative",
+      borderWidth: "10px",
+      borderColor: "transparent",
+      color: "content.default.default",
+      px: "standard.lg",
+      py: "standard.sm",
+      background: "white",
+      svg: {
+        fill: "content.default.default",
+      },
+      boxShadow: "0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
+      _hover: {
+        bg: "surface.forms.hover",
+        opacity: 1,
+        color: "content.default.hover",
+        svg: {
+          fill: "content.default.default",
+        }
+      },
+      _active: {
+        outlineWidth: 0,
+        color: "content.default.selected",
+        bg: "surface.forms.selected",
+        svg: {
+          fill: "content.default.default",
+        }
+      },
+      _disabled: {
+        bg: "surface.accent.disabled",
+        color: "content.default.disabled",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          }
+        }
+      }
+    },
   },
   defaultProps: { size: "standard", variant: "primary" },
-};
+}
