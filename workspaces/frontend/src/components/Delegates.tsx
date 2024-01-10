@@ -28,8 +28,8 @@ import { useBalanceData } from "src/utils/hooks";
 import { ethers } from "ethers";
 import {useAccount, useWaitForTransaction} from "wagmi";
 import {
-  useStarknetDelegate,
-} from "../wagmi/StarknetDelegationRegistry";
+  useL1StarknetDelegationDelegate,
+} from "../wagmi/L1StarknetDelegation";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -204,7 +204,7 @@ export function Delegates({
   const [allDelegates, setAllDelegates] = useState([]);
   const [hasMoreDelegates, setHasMoreDelegates] = useState(true);
 
-  const { isLoading, writeAsync } = useStarknetDelegate({
+  const { isLoading, writeAsync } = useL1StarknetDelegationDelegate({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY! as `0x${string}`,
   });
 

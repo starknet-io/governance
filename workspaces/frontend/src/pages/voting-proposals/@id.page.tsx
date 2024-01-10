@@ -36,19 +36,14 @@ import {
   Username,
 } from "@yukilabs/governance-components";
 import * as VoteLayout from "../../components/VotingProposals/VotingProposal/PageLayout";
-import { gql } from "src/gql";
-import { useQuery } from "@apollo/client";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { formatDate } from "@yukilabs/governance-components/src/utils/helpers";
 import { useWalletClient } from "wagmi";
 import { providers } from "ethers";
-import { Vote } from "@snapshot-labs/snapshot.js/dist/sign/types";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { trpc } from "src/utils/trpc";
-import { useDelegateRegistryDelegation } from "src/wagmi/DelegateRegistry";
 import { useBalanceData } from "src/utils/hooks";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
-import { stringToHex } from "viem";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "../delegates/profile/@id.page";
 import {
   SuccessIcon,
@@ -73,7 +68,7 @@ import {
   prepareStrategiesForSignature,
   waitForTransaction,
 } from "../../hooks/snapshotX/helpers";
-import { useStarknetDelegates } from "../../wagmi/StarknetDelegationRegistry";
+import { useL1StarknetDelegationDelegates } from "../../wagmi/L1StarknetDelegation";
 
 
 export function Page() {
@@ -110,7 +105,7 @@ export function Page() {
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
-  const delegation = useStarknetDelegates({
+  const delegation = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
     args: [address!],
     watch: true,

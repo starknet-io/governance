@@ -8,7 +8,7 @@ import { trpc } from "src/utils/trpc";
 import { useOutsideClick } from "@chakra-ui/react";
 import { UserProfileMenu } from "../components/UserProfile";
 import { useBalanceData } from "src/utils/hooks";
-import { useStarknetDelegates } from "../wagmi/StarknetDelegationRegistry";
+import { useL1StarknetDelegationDelegates } from "../wagmi/L1StarknetDelegation";
 import { usePageContext } from "./PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
@@ -47,7 +47,7 @@ const AuthorizedUserView = () => {
   const ethBalance = useBalanceData(ethAddress as `0x${string}`);
   const { balance: starknetBalance } = useStarknetBalance({ starknetAddress });
 
-  const { data: delegationData, isLoading } = useStarknetDelegates({
+  const { data: delegationData, isLoading } = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
     args: [user?.address as `0x${string}`],
     watch: true,
