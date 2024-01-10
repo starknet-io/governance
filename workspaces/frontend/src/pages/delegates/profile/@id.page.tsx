@@ -64,7 +64,7 @@ const delegateInterests: Record<string, string> = {
 };
 
 // Extract this to some constants file
-export const MINIMUM_TOKENS_FOR_DELEGATION = 1;
+export const MINIMUM_TOKENS_FOR_DELEGATION = 0;
 
 export function Page() {
   const pageContext = usePageContext();

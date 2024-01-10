@@ -20,25 +20,27 @@ import {
   StatusModal,
   Flex,
   ArrowRightIcon,
-  Select
+  Select,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
 import { ethers } from "ethers";
-import {useAccount, useWaitForTransaction} from "wagmi";
-import {
-  useL1StarknetDelegationDelegate,
-} from "../wagmi/L1StarknetDelegation";
+import { useAccount, useWaitForTransaction } from "wagmi";
+import { useL1StarknetDelegationDelegate } from "../wagmi/L1StarknetDelegation";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
-import {useVotingPower} from "../hooks/snapshotX/useVotingPower";
+import { useVotingPower } from "../hooks/snapshotX/useVotingPower";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { useCheckBalance } from "./useCheckBalance";
 import { navigate } from "vite-plugin-ssr/client/router";
+import { useStarknetDelegate } from "../hooks/starknet/useStarknetDelegation";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { useWallets } from "../hooks/useWallets";
+import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -194,10 +196,15 @@ export function Delegates({
 }: DelegatesProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
+  const { starknetWallet, ethWallet } = useWallets();
+  const { primaryWallet } = useDynamicContext();
   const [inputAddress, setInputAddress] = useState("");
   const receiverData = useBalanceData(inputAddress as `0x${string}`);
   const [isValidAddress, setIsValidAddress] = useState(true);
   const senderData = useBalanceData(address);
+  const senderDataL2 = useStarknetBalance({
+    starknetAddress: starknetWallet?.address,
+  });
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
@@ -220,17 +227,23 @@ export function Delegates({
     isSuccess: isDelegationSuccess,
     error: delegationError,
   } = useWaitForTransaction({ hash: txHash as `0x${string}` });
-  // handle delegation cases
+
+  const {
+    delegate: delegateL2,
+    loading: isDelegationL2Loading,
+    error: delegationL2Error,
+    success: isDelegationL2Success,
+  } = useStarknetDelegate();
 
   // handle delegation cases
   useEffect(() => {
-    if (isDelegationLoading) {
+    if (isDelegationLoading || isDelegationL2Loading) {
       setIsStatusModalOpen(true);
       setStatusTitle("Delegating voting power");
       setStatusDescription("");
     }
 
-    if (isDelegationError) {
+    if (isDelegationError || delegationL2Error) {
       setIsStatusModalOpen(true);
       setStatusTitle("Delegating voting power failed");
       setStatusDescription(
@@ -238,16 +251,23 @@ export function Delegates({
       );
     }
 
-    if (isDelegationSuccess) {
+    if (isDelegationSuccess || isDelegationL2Success) {
       setIsStatusModalOpen(true);
       setStatusTitle("Voting power delegated successfully");
       setStatusDescription("");
     }
-  }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
+  }, [
+    isDelegationLoading,
+    isDelegationError,
+    isDelegationSuccess,
+    isDelegationL2Success,
+    isDelegationL2Loading,
+    delegationL2Error,
+  ]);
 
   const { data: votingPower } = useVotingPower({
-    address: inputAddress
-  })
+    address: inputAddress,
+  });
 
   const state = useFilterState({
     defaultValue: delegateFilters.defaultValue,
@@ -431,17 +451,13 @@ export function Delegates({
           setIsOpen(false);
           setInputAddress("");
         }}
-        isConnected={isConnected}
-        isValidCustomAddress={isValidAddress}
+        isLayer2Delegation={primaryWallet?.id === starknetWallet?.id}
+        isConnected={primaryWallet !== null}
         receiverData={
           !inputAddress.length ? undefined : addVotingPowerToReceiver()
         }
         onContinue={(address) => {
-          const isValid = ethers.utils.isAddress(address);
-          setIsValidAddress(isValid);
-          if (isValid) {
-            setInputAddress(address);
-          }
+          setInputAddress(address);
         }}
         senderData={senderData}
         delegateTokens={() => {
@@ -453,24 +469,37 @@ export function Delegates({
             );
             setIsOpen(false);
           } else {
-            writeAsync?.({
-              args: [
-                inputAddress as `0x${string}`,
-              ],
-            })
-              .then((tx) => {
-                setTxHash(tx.hash);
+            if (primaryWallet?.id === starknetWallet?.id) {
+              delegateL2(starknetWallet.address!, inputAddress!)
+                .then()
+                .catch((err) => {
+                  setIsStatusModalOpen(true);
+                  setStatusTitle("Delegating voting power failed");
+                  setStatusDescription(
+                    err.shortMessage ||
+                      err.message ||
+                      err.name ||
+                      "An error occurred",
+                  );
+                });
+            } else {
+              writeAsync?.({
+                args: [inputAddress as `0x${string}`],
               })
-              .catch((err) => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Delegating voting power failed");
-                setStatusDescription(
-                  err.shortMessage ||
-                    err.message ||
-                    err.name ||
-                    "An error occurred",
-                );
-              });
+                .then((tx) => {
+                  setTxHash(tx.hash);
+                })
+                .catch((err) => {
+                  setIsStatusModalOpen(true);
+                  setStatusTitle("Delegating voting power failed");
+                  setStatusDescription(
+                    err.shortMessage ||
+                      err.message ||
+                      err.name ||
+                      "An error occurred",
+                  );
+                });
+            }
             setIsOpen(false);
           }
         }}
@@ -478,10 +507,10 @@ export function Delegates({
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
       <StatusModal
         isOpen={isStatusModalOpen}
-        isPending={isDelegationLoading}
-        isSuccess={isDelegationSuccess}
+        isPending={isDelegationLoading || isDelegationL2Loading}
+        isSuccess={isDelegationSuccess || isDelegationL2Success}
         isFail={
-          isDelegationError ||
+          isDelegationError || delegationL2Error ||
           !!((!txHash || !txHash.length) && statusDescription?.length)
         }
         onClose={() => {
@@ -556,8 +585,7 @@ export function Delegates({
                 options={sortByOptions.options.map((option) => ({
                   value: option.value,
                   label: option.label,
-                }
-                ))}
+                }))}
               />
               <Popover placement="bottom-start">
                 <FilterPopoverIcon

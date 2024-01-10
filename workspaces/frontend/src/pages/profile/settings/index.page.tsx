@@ -125,8 +125,6 @@ export const WalletButtons = ({
   const userWallets = useUserWallets();
   const { setPrimaryWallet, primaryWallet } = useDynamicContext();
 
-  console.log(primaryWallet);
-
   const findMatchingWallet = (wallets: any[], key: "EVM" | "STARKNET") => {
     return wallets.find((wallet) => wallet.chain === Chain[key]);
   };
