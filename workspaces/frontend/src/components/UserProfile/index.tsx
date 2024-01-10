@@ -32,7 +32,8 @@ interface UserProfileMenuProps {
   votingPowerEth: number;
   votingPowerStark: number;
   isMenuOpen?: boolean;
-  delegatedTo: any;
+  delegatedToL1: any;
+  delegatedToL2: any;
   onModalStateChange?: (isOpen: boolean) => void;
   handleUpload?: (file: File) => Promise<string | void> | void;
   userExistsError?: boolean;
@@ -112,11 +113,13 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   votingPowerStark,
   ethBalance,
   starknetBalance,
-  delegatedTo,
+  delegatedToL1,
+  delegatedToL2,
   handleOpenModal,
   setEditUserProfile,
 }: UserProfileMenuProps) => {
-  const delegatedToName = delegatedTo?.username || delegatedTo?.ensName;
+  const delegatedToL1Name = delegatedToL1?.username || delegatedToL1?.ensName;
+  const delegatedToL2Name = delegatedToL2?.username || delegatedToL2?.ensName;
   return (
     <>
       <Box position="absolute" right="12px" top="12px" zIndex={0}>
@@ -185,8 +188,8 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
                 </Text>
               </Box>
               <DelegationComponent
-                delegatedTo={delegatedTo}
-                delegatedToName={delegatedToName}
+                delegatedTo={delegatedToL1}
+                delegatedToName={delegatedToL1Name}
               />
             </Flex>
           </Flex>
@@ -223,11 +226,10 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
                   L2 Delegated to
                 </Text>
               </Box>
-              <Box width="50%">
-                <Text variant="smallStrong" color="content.default.default">
-                  /
-                </Text>
-              </Box>
+              <DelegationComponent
+                delegatedTo={delegatedToL2}
+                delegatedToName={delegatedToL2Name}
+              />
             </Flex>
           </Flex>
         </VStack>
@@ -257,7 +259,8 @@ const UserProfileMenuComponent = (
     vp,
     ethBalance,
     starknetBalance,
-    delegatedTo,
+    delegatedToL1,
+    delegatedToL2,
     onModalStateChange,
     handleUpload,
     userExistsError = false,
@@ -329,7 +332,8 @@ const UserProfileMenuComponent = (
             votingPowerStark={votingPowerStark}
             starknetBalance={starknetBalance}
             ethBalance={ethBalance}
-            delegatedTo={delegatedTo}
+            delegatedToL1={delegatedToL1}
+            delegatedToL2={delegatedToL2}
             handleOpenModal={handleOpenModal}
             setEditUserProfile={setEditUserProfile}
           />
@@ -357,7 +361,8 @@ const UserProfileMenuComponent = (
               votingPowerStark={votingPowerStark}
               ethBalance={ethBalance}
               starknetBalance={starknetBalance}
-              delegatedTo={delegatedTo}
+              delegatedToL1={delegatedToL1}
+              delegatedToL2={delegatedToL2}
               onModalStateChange={onModalStateChange}
               setEditUserProfile={setEditUserProfile}
             />
