@@ -1,12 +1,5 @@
 import { forwardRef } from "react";
-import {
-  Box,
-  Flex,
-  Link,
-  StackDivider,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Flex, Link, StackDivider, Text, VStack } from "@chakra-ui/react";
 import {
   Modal,
   Button,
@@ -36,7 +29,8 @@ interface UserProfileMenuProps {
     starknetAddress: string;
     profileImage: string | null;
   }) => Promise<any>;
-  vp: number;
+  votingPowerEth: number;
+  votingPowerStark: number;
   isMenuOpen?: boolean;
   delegatedTo: any;
   onModalStateChange?: (isOpen: boolean) => void;
@@ -56,10 +50,66 @@ interface UserProfileMenuProps {
   };
 }
 
+const DelegationComponent = ({
+  delegatedTo,
+  delegatedToName,
+}: {
+  delegatedTo: any;
+  delegatedToName: string;
+}) => {
+  return (
+    <Box width="50%">
+      <Text variant="smallStrong" color="content.default.default">
+        {delegatedTo?.delegationStatement ? (
+          <Flex>
+            <Link
+              fontSize="small"
+              fontWeight="normal"
+              href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
+            >
+              {delegatedToName ? (
+                truncateAddress(delegatedToName || "")
+              ) : (
+                <Tooltip label={delegatedTo?.address || ""}>
+                  {truncateAddress(delegatedTo?.address || "")}
+                </Tooltip>
+              )}
+            </Link>
+            <CopyToClipboard text={delegatedTo?.address} />
+          </Flex>
+        ) : (
+          <>
+            {delegatedTo?.address ? (
+              <Flex>
+                <Tooltip label={delegatedTo?.address}>
+                  <Text>{truncateAddress(delegatedTo?.address || "")}</Text>
+                </Tooltip>
+                <CopyToClipboard text={delegatedTo?.address} />
+              </Flex>
+            ) : delegatedTo &&
+              delegatedTo.length &&
+              delegatedTo !== "0x0000000000000000000000000000000000000000" ? (
+              <Flex>
+                <Tooltip label={delegatedTo}>
+                  <Text>{truncateAddress(delegatedTo || "")}</Text>
+                </Tooltip>
+                <CopyToClipboard text={delegatedTo} />
+              </Flex>
+            ) : (
+              "-"
+            )}
+          </>
+        )}
+      </Text>
+    </Box>
+  );
+};
+
 export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   onDisconnect,
   user,
-  vp,
+  votingPowerEth,
+  votingPowerStark,
   ethBalance,
   starknetBalance,
   delegatedTo,
@@ -91,38 +141,20 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           subheaderText={truncateAddress(user?.address || "")}
           src={user?.profileImage ?? user?.ensAvatar ?? null}
         />
+        <Box mt="standard.md" mb="standard.sm">
+          <WalletButtons selectable profileVariant />
+        </Box>
 
         <VStack
           divider={<StackDivider mb="standard.md" />}
           align="stretch"
           mt="standard.md"
         >
-          <WalletButtons selectable profileVariant />
-          <Flex justifyContent="flex-start">
-            <Box width="50%">
-              <Text variant="smallStrong" color="content.support.default">
-                Starknet address
-              </Text>
-            </Box>
-            <Box width="50%">
-              {user?.starknetAddress ? (
-                <Tooltip label={user.starknetAddress}>
-                  <Text variant="smallStrong" color="content.default.default">
-                    {truncateAddress(user.starknetAddress)}
-                  </Text>
-                </Tooltip>
-              ) : (
-                <Text variant="smallStrong" color="content.default.default">
-                  {truncateAddress(user?.starknetAddress || "")}
-                </Text>
-              )}
-            </Box>
-          </Flex>
           <Flex direction="column">
             <Flex mb="standard.sm">
               <Box width="50%">
                 <Text variant="smallStrong" color="content.support.default">
-                  L1 token balance
+                  L1 balance
                 </Text>
               </Box>
 
@@ -136,84 +168,67 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
             <Flex mb="standard.sm">
               <Box width="50%">
                 <Text variant="smallStrong" color="content.support.default">
-                  L2 token balance
+                  L1 voting power
                 </Text>
               </Box>
 
-              <Box width="50%">
+              <Box>
                 <Text variant="smallStrong" color="content.default.default">
-                  {starknetBalance?.balance}{" "}{starknetBalance?.symbol}
+                  {new Intl.NumberFormat().format(votingPowerEth)}
                 </Text>
               </Box>
             </Flex>
             <Flex>
               <Box width="50%">
                 <Text variant="smallStrong" color="content.support.default">
-                  Delegated to
+                  L1 Delegated to
+                </Text>
+              </Box>
+              <DelegationComponent
+                delegatedTo={delegatedTo}
+                delegatedToName={delegatedToName}
+              />
+            </Flex>
+          </Flex>
+          <Flex direction="column">
+            <Flex mb="standard.sm">
+              <Box width="50%">
+                <Text variant="smallStrong" color="content.support.default">
+                  L2 balance
                 </Text>
               </Box>
 
               <Box width="50%">
                 <Text variant="smallStrong" color="content.default.default">
-                  {delegatedTo?.delegationStatement ? (
-                    <Flex>
-                      <Link
-                        fontSize="small"
-                        fontWeight="normal"
-                        href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
-                      >
-                        {delegatedToName ? (
-                          truncateAddress(delegatedToName || "")
-                        ) : (
-                          <Tooltip label={delegatedTo?.address || ""}>
-                            {truncateAddress(delegatedTo?.address || "")}
-                          </Tooltip>
-                        )}
-                      </Link>
-                      <CopyToClipboard text={delegatedTo?.address} />
-                    </Flex>
-                  ) : (
-                    <>
-                      {delegatedTo?.address ? (
-                        <Flex>
-                          <Tooltip label={delegatedTo?.address}>
-                            <Text>
-                              {truncateAddress(delegatedTo?.address || "")}
-                            </Text>
-                          </Tooltip>
-                          <CopyToClipboard text={delegatedTo?.address} />
-                        </Flex>
-                      ) : delegatedTo &&
-                        delegatedTo.length &&
-                        delegatedTo !==
-                          "0x0000000000000000000000000000000000000000" ? (
-                        <Flex>
-                          <Tooltip label={delegatedTo}>
-                            <Text>{truncateAddress(delegatedTo || "")}</Text>
-                          </Tooltip>
-                          <CopyToClipboard text={delegatedTo} />
-                        </Flex>
-                      ) : (
-                        "-"
-                      )}
-                    </>
-                  )}
+                  {starknetBalance?.balance} {starknetBalance?.symbol}
                 </Text>
               </Box>
             </Flex>
-          </Flex>
-          <Flex>
-            <Box width="50%">
-              <Text variant="smallStrong" color="content.support.default">
-                My voting power
-              </Text>
-            </Box>
+            <Flex mb="standard.sm">
+              <Box width="50%">
+                <Text variant="smallStrong" color="content.support.default">
+                  L2 voting power
+                </Text>
+              </Box>
 
-            <Box>
-              <Text variant="smallStrong" color="content.default.default">
-                {new Intl.NumberFormat().format(vp)}
-              </Text>
-            </Box>
+              <Box>
+                <Text variant="smallStrong" color="content.default.default">
+                  {new Intl.NumberFormat().format(votingPowerStark)}
+                </Text>
+              </Box>
+            </Flex>
+            <Flex>
+              <Box width="50%">
+                <Text variant="smallStrong" color="content.support.default">
+                  L2 Delegated to
+                </Text>
+              </Box>
+              <Box width="50%">
+                <Text variant="smallStrong" color="content.default.default">
+                  /
+                </Text>
+              </Box>
+            </Flex>
           </Flex>
         </VStack>
         <Flex direction="column" mt="standard.md">
@@ -248,6 +263,8 @@ const UserProfileMenuComponent = (
     userExistsError = false,
     setUsernameErrorFalse,
     setIsMenuOpen,
+    votingPowerEth,
+    votingPowerStark,
   }: UserProfileMenuProps,
   ref,
 ) => {
@@ -308,7 +325,8 @@ const UserProfileMenuComponent = (
             onDisconnect={onDisconnect}
             user={user}
             onSave={onSave}
-            vp={vp}
+            votingPowerEth={votingPowerEth}
+            votingPowerStark={votingPowerStark}
             starknetBalance={starknetBalance}
             ethBalance={ethBalance}
             delegatedTo={delegatedTo}
@@ -335,7 +353,8 @@ const UserProfileMenuComponent = (
               onDisconnect={onDisconnect}
               user={user}
               onSave={onSave}
-              vp={vp}
+              votingPowerEth={votingPowerEth}
+              votingPowerStark={votingPowerStark}
               ethBalance={ethBalance}
               starknetBalance={starknetBalance}
               delegatedTo={delegatedTo}

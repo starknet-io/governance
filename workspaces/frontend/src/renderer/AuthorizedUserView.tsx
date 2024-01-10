@@ -13,13 +13,10 @@ import { usePageContext } from "./PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { useVotingPower } from "../hooks/snapshotX/useVotingPower";
-import { WalletChain, WalletChainKey } from "../utils/constants";
+import { WalletChainKey } from "../utils/constants";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { findMatchingWallet } from "../utils/helpers";
-import {starkProvider} from "../clients/clients";
-import {Contract, stark} from "starknet";
-import {ethers} from "ethers";
-import {useStarknetBalance} from "../hooks/starknet/useStarknetBalance";
+import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -33,19 +30,22 @@ const AuthorizedUserView = () => {
   const starknetAddress =
     findMatchingWallet(wallets, WalletChainKey.STARKNET)?.address || undefined;
 
-
   const [isUserModalOpen, setIsModalOpen] = useState(false);
   const { handleLogOut } = useDynamicContext();
   const { handleUpload } = useFileUpload();
   const { user } = usePageContext();
   const { isMobile } = useIsMobile();
 
-  const { data: votingPower } = useVotingPower({
-    address: user?.address,
+  const { data: votingPowerEthereum } = useVotingPower({
+    address: ethAddress,
+  });
+
+  const { data: votingPowerStarknet } = useVotingPower({
+    address: starknetAddress,
   });
 
   const ethBalance = useBalanceData(ethAddress as `0x${string}`);
-  const { balance: starknetBalance } = useStarknetBalance({ starknetAddress })
+  const { balance: starknetBalance } = useStarknetBalance({ starknetAddress });
 
   const { data: delegationData, isLoading } = useStarknetDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
@@ -186,8 +186,6 @@ const AuthorizedUserView = () => {
     }
   }
 
-  console.log(starknetBalance)
-
   return (
     <>
       <div className="user-menu" ref={navRef}>
@@ -200,7 +198,8 @@ const AuthorizedUserView = () => {
           onDisconnect={handleDisconnect}
           user={user}
           onSave={handleSave}
-          vp={votingPower ?? 0}
+          votingPowerEth={votingPowerEthereum}
+          votingPowerStark={votingPowerStarknet}
           ethBalance={ethBalance}
           starknetBalance={starknetBalance}
           onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}

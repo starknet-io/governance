@@ -189,6 +189,14 @@ export const getVotingPowerCalculation = async (
         strategiesMetadata[i].payload,
       );
 
+      console.log('________________')
+      console.log('Address: ', address);
+      console.log('Voter Address: ', voterAddress);
+      console.log('Strategy metadata: ', strategyMetadata);
+      console.log('Timestamp: ', timestamp);
+      console.log('Strategy params ', strategiesParams[i].split(','));
+      console.log('________________')
+
       const value = await strategy.getVotingPower(
         address,
         voterAddress,
@@ -228,3 +236,13 @@ export const parseStrategiesMetadata = (strategies) => {
     return `${strategy?.data?.name} - ${strategy?.data?.symbol}`
   })
 }
+
+export function parseVotingPowerInDecimals(value: string | bigint, decimals = 18) {
+  const raw = BigInt(value);
+  const parsed = Number(raw) / 10 ** decimals;
+  if (raw !== 0n && parsed < 0.001) return `~0`;
+
+  const formatter = new Intl.NumberFormat('en', { maximumFractionDigits: 3 });
+  return formatter.format(parsed);
+}
+

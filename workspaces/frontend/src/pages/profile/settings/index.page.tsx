@@ -352,7 +352,7 @@ export function Page() {
                   onChange={setUsernameErrorFalse}
                 />
               </FormControlled>
-              <WalletButtons withLabel selectable />
+              <WalletButtons withLabel />
               <Button onClick={handleSave} maxW="140px" type="submit">
                 {loading ? (
                   <Flex gap={1.5} alignItems="center">
