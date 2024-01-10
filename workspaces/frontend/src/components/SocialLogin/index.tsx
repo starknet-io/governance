@@ -89,7 +89,6 @@ const Socials = ({
               isLoading={isUserDelegateCheckLoading}
             />
           )}
-          <Divider mt="standard.xl" mb="standard.xl" />
         </SummaryItems.Root>
       </>
     );
@@ -132,7 +131,6 @@ const Socials = ({
           delagateId={delegateId}
         />
       </Flex>
-      <Divider mt="standard.xl" mb="standard.xl" />
     </SummaryItems.Root>
   );
 };
