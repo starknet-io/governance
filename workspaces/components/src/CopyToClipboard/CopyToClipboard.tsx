@@ -6,12 +6,14 @@ interface CopyToClipboardProps {
   text: string;
   children?: React.ReactNode;
   iconSize?: string;
+  noPadding?: boolean;
 }
 
 export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
   text,
   children,
   iconSize = "13px",
+  noPadding = false,
 }) => {
   const { onCopy } = useClipboard(text);
   const toast = useToast();
@@ -38,7 +40,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
         borderRadius={0}
         width="auto"
         minWidth="auto"
-        pl="8px"
+        pl={noPadding ? "0px": "8px"}
         py="0"
         height="auto "
         onClick={handleCopy}

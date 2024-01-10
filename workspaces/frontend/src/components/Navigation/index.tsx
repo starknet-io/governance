@@ -19,6 +19,7 @@ import {
   FeedbackIcon,
   Button,
   StarknetCommunityIcon,
+  useDisclosure,
   Text
 } from "@yukilabs/governance-components";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
@@ -42,7 +43,11 @@ export const NavigationMenu = ({
   user,
 }: NavigationMenuProps) => {
   const { globalSearchResults, handleGlobalSearchItems } = useGlobalSearch();
-  const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
+  const {
+    isOpen: isGlobalSearchOpen,
+    onOpen: onGlobalSearchOpen,
+    onClose: onGlobalSearchClose,
+  } = useDisclosure();
   const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
   return (
     <>
@@ -57,7 +62,8 @@ export const NavigationMenu = ({
                 searchResults={globalSearchResults}
                 onSearchItems={handleGlobalSearchItems}
                 isOpen={isGlobalSearchOpen}
-                setIsSearchModalOpen={setIsGlobalSearchOpen}
+                onGlobalSearchOpen={onGlobalSearchOpen}
+                onGlobalSearchClose={onGlobalSearchClose}
               />
             </Box>
           </Show>
@@ -154,7 +160,7 @@ export const NavigationMenu = ({
               />
             ))}
 
-            {!hasPermission(userRole, [
+            {hasPermission(userRole, [
               ROLES.ADMIN,
               ROLES.MODERATOR,
               ROLES.SUPERADMIN,

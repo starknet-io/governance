@@ -93,10 +93,10 @@ export function extractParagraph(
         currentLength += paragraph.length;
       }
     });
-    return concatenatedParagraphs.trim().substring(0, charLimit);
+    return concatenatedParagraphs.trim()?.substring(0, charLimit);
   } else {
     // For text without clear Markdown formatting
-    return markdownContent.substring(0, charLimit);
+    return markdownContent?.substring(0, charLimit);
   }
 }
 

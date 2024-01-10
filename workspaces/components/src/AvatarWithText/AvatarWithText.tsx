@@ -7,6 +7,7 @@ import { EllipsisIcon } from "src/Icons";
 import { Tooltip } from "src/Tooltip";
 import { Badge } from "src/Badge";
 import { truncateAddress } from "src/utils";
+import { CopyToClipboard } from "../CopyToClipboard";
 
 type Props = {
   size?: "condensed" | "standard";
@@ -19,10 +20,12 @@ type Props = {
   subheaderTooltipContent?: string; // Tooltip for subheaderText
   status?: string | null;
   delegateProfile?: boolean;
+  withCopy?: boolean;
 };
 
 export const AvatarWithText = ({
   size,
+  withCopy,
   headerText,
   subheaderText,
   address,
@@ -53,9 +56,19 @@ export const AvatarWithText = ({
     );
 
     return headerTooltipContent ? (
-      <Tooltip label={headerTooltipContent} aria-label="Header Text">
-        {content}
-      </Tooltip>
+      <>
+        <Tooltip label={headerTooltipContent} aria-label="Header Text">
+          {content}
+        </Tooltip>
+        {withCopy && !subheaderText && (
+          <Flex alignItems="center" gap={0.5}>
+            <CopyToClipboard noPadding text={address || ""} />
+            <Text as="span" color="content.default.default" variant="small">
+              Copy
+            </Text>
+          </Flex>
+        )}
+      </>
     ) : (
       content
     );
@@ -90,11 +103,25 @@ export const AvatarWithText = ({
       );
 
     return subheaderTooltipContent ? (
-      <Box as="span">
-        <Tooltip label={subheaderTooltipContent} aria-label="Subheader Text">
-          {content}
-        </Tooltip>
-      </Box>
+      withCopy ? (
+        <Box as="span">
+          <CopyToClipboard text={subheaderTooltipContent} iconSize="12px">
+            <Tooltip
+              shouldWrapChildren={false}
+              label={subheaderTooltipContent}
+              aria-label="Subheader Text"
+            >
+              {content}
+            </Tooltip>
+          </CopyToClipboard>
+        </Box>
+      ) : (
+        <Box as="span">
+          <Tooltip label={subheaderTooltipContent} aria-label="Subheader Text">
+            {content}
+          </Tooltip>
+        </Box>
+      )
     ) : (
       content
     );

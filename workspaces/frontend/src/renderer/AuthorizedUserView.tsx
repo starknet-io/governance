@@ -1,21 +1,35 @@
-import { DynamicNav, useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import {
+  DynamicNav,
+  useDynamicContext,
+  useUserWallets,
+} from "@dynamic-labs/sdk-react-core";
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "src/utils/trpc";
 import { useOutsideClick } from "@chakra-ui/react";
-import { UserProfileMenu } from "@yukilabs/governance-components";
+import { UserProfileMenu } from "../components/UserProfile";
 import { useBalanceData } from "src/utils/hooks";
-import { useStarknetDelegates } from "../wagmi/StarknetDelegationRegistry";
+import { useL1StarknetDelegationDelegates } from "../wagmi/L1StarknetDelegation";
 import { usePageContext } from "./PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { useVotingPower } from "../hooks/snapshotX/useVotingPower";
+import { WalletChainKey } from "../utils/constants";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
+import { findMatchingWallet } from "../utils/helpers";
+import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
+import {useStarknetDelegates} from "../hooks/starknet/useStarknetDelegates";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userExistsError, setUserExistsError] = useState(false);
   const utils = trpc.useContext();
+  const wallets = useUserWallets();
+
+  const ethAddress =
+    findMatchingWallet(wallets, WalletChainKey.EVM)?.address || undefined;
+  const starknetAddress =
+    findMatchingWallet(wallets, WalletChainKey.STARKNET)?.address || undefined;
 
   const [isUserModalOpen, setIsModalOpen] = useState(false);
   const { handleLogOut } = useDynamicContext();
@@ -23,24 +37,50 @@ const AuthorizedUserView = () => {
   const { user } = usePageContext();
   const { isMobile } = useIsMobile();
 
-  const { data: votingPower } = useVotingPower({
-    address: user?.address,
+  const { data: votingPowerEthereum } = useVotingPower({
+    address: ethAddress,
   });
 
-  const userBalance = useBalanceData(user?.address as `0x${string}`);
+  const { data: votingPowerStarknet } = useVotingPower({
+    address: starknetAddress,
+  });
 
-  const { data: delegationData } = useStarknetDelegates({
+  const ethBalance = useBalanceData(ethAddress as `0x${string}`);
+  const { balance: starknetBalance } = useStarknetBalance({ starknetAddress });
+
+  const { data: delegationData, isLoading } = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
-    args: [
-      user?.address as `0x${string}`,
-    ],
+    args: [user?.address as `0x${string}`],
     watch: true,
     enabled: user?.address != null,
   });
 
-  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegationData ? delegationData.toLowerCase() : "",
-  });
+  const { delegates: delegationDataL2, loading: isLoadingL2Delegation } = useStarknetDelegates({
+    starknetAddress,
+  })
+
+  const hasDelegationData =
+    !isLoading && delegationData && delegationData.length;
+  const hasDelegationDataL2 =
+    !!(!isLoadingL2Delegation && delegationDataL2 && delegationDataL2.length)
+
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery(
+    {
+      address: delegationData ? delegationData.toLowerCase() : "",
+    },
+    {
+      enabled: !!hasDelegationData,
+    },
+  );
+
+  const delegatedToL2 = trpc.delegates.getDelegateByAddress.useQuery(
+    {
+      address: delegationDataL2 ? delegationDataL2.toLowerCase() : "",
+    },
+    {
+      enabled: !!hasDelegationDataL2,
+    },
+  );
 
   const editUserProfile = trpc.users.editUserProfile.useMutation();
 
@@ -170,14 +210,15 @@ const AuthorizedUserView = () => {
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}
           ref={userProfileMenuRef}
-          delegatedTo={
-            delegatedTo?.data ? delegatedTo?.data : delegationData
-          }
+          delegatedToL1={delegatedTo?.data ? delegatedTo?.data : delegationData}
+          delegatedToL2={delegatedToL2?.data ? delegatedToL2?.data : delegationDataL2}
           onDisconnect={handleDisconnect}
           user={user}
           onSave={handleSave}
-          vp={votingPower ?? 0}
-          userBalance={userBalance}
+          votingPowerEth={votingPowerEthereum}
+          votingPowerStark={votingPowerStarknet}
+          ethBalance={ethBalance}
+          starknetBalance={starknetBalance}
           onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}
           handleUpload={handleUpload}
           userExistsError={userExistsError}

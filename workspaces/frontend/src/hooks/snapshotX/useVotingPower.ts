@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_SPACE } from "./queries";
-import { getVotingPowerCalculation } from "./helpers";
+import {getVotingPowerCalculation, parseVotingPowerInDecimals} from "./helpers";
 
 export function useVotingPower({
   address,
@@ -44,16 +44,16 @@ export function useVotingPower({
           spaceObj.space.strategies_params,
           strategiesMetadata,
           address,
-          timestamp ? timestamp : Math.floor(Date.now() / 1000),
+          timestamp ? timestamp : null,
         );
-        console.log(vpData)
-        const parsedData = vpData
-          ? vpData.reduce((acc, strategy) => {
-              let toAdd = BigInt(strategy.value);
-              acc += toAdd;
-              return acc;
-            }, 0n)
-          : 0n;
+        //console.log(vpData)
+        const parsedData = vpData.reduce((acc: any, strategy: any) => {
+          const valueWithDecimals = BigInt(strategy.value) / BigInt(10 ** strategy.decimals);
+          acc += valueWithDecimals;
+          return acc;
+        }, 0n);
+        //console.log(parsedData)
+        //const formattedData = parseVotingPowerInDecimals(parsedData)
         setData(parsedData);
       } catch (e) {
         console.warn("Failed to load voting power", e);

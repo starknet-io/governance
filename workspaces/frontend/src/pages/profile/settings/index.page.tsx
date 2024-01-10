@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { DocumentProps } from "../../../renderer/types";
 import {
   Box,
-  Button,
   Flex,
   Icon,
   Spinner,
   Stack,
   Text,
   useDisclosure,
+  useToast,
+  Button,
 } from "@chakra-ui/react";
 import {
   FormControlled,
@@ -20,6 +21,7 @@ import {
   StarknetIcon,
   UploadImage,
   EthereumIcon,
+  Button as GovernanceButton,
 } from "@yukilabs/governance-components";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useForm } from "react-hook-form";
@@ -56,6 +58,7 @@ enum Chain {
 const WalletDisplay = ({
   wallet,
   icon,
+  profileVariant,
   isSelectable,
   onClick,
   isActive,
@@ -65,16 +68,25 @@ const WalletDisplay = ({
   isSelectable?: boolean;
   onClick: () => void;
   isActive?: boolean;
+  profileVariant?: boolean;
 }) => {
   return wallet ? (
     isSelectable ? (
-      <Button variant="secondary" onClick={onClick} type="button">
+      <GovernanceButton
+        variant={isActive && profileVariant ? "fill" : "secondary"}
+        onClick={onClick}
+        type="button"
+      >
         <Flex gap="standard.xs" alignItems="center">
           <Icon as={icon} />
-          <Text variant="medium">{truncateAddress(wallet.address)}</Text>
-          <Icon as={CheckIcon} />
+          <Text variant={"mediumStrong"}>
+            {profileVariant
+              ? truncateAddress(wallet.address, 4, 3)
+              : truncateAddress(wallet.address)}
+          </Text>
+          {!profileVariant && <Icon as={CheckIcon} />}
         </Flex>
-      </Button>
+      </GovernanceButton>
     ) : (
       <Flex gap="standard.xs" alignItems="center">
         <Icon as={icon} />
@@ -101,20 +113,21 @@ const WalletDisplay = ({
   );
 };
 
-const WalletButtons = ({
+export const WalletButtons = ({
   withLabel,
   selectable,
+  profileVariant,
 }: {
   withLabel?: boolean;
   selectable?: boolean;
+  profileVariant?: boolean;
 }) => {
   const userWallets = useUserWallets();
-  const { setPrimaryWallet } = useDynamicContext();
+  const { setPrimaryWallet, primaryWallet } = useDynamicContext();
 
   const findMatchingWallet = (wallets: any[], key: "EVM" | "STARKNET") => {
     return wallets.find((wallet) => wallet.chain === Chain[key]);
   };
-  console.log(userWallets);
 
   const starknetWallet = findMatchingWallet(userWallets, "STARKNET");
   const ethWallet = findMatchingWallet(userWallets, "EVM");
@@ -126,7 +139,9 @@ const WalletButtons = ({
           <Text variant="mediumStrong">Connect Starknet wallet</Text>
         )}
         <WalletDisplay
+          profileVariant={profileVariant}
           wallet={starknetWallet}
+          isActive={primaryWallet?.id === starknetWallet?.id}
           icon={StarknetIcon}
           isSelectable={selectable}
           onClick={async () => {
@@ -143,8 +158,10 @@ const WalletButtons = ({
           <Text variant="mediumStrong">Connect Ethereum wallet</Text>
         )}
         <WalletDisplay
+          profileVariant={profileVariant}
           wallet={ethWallet}
           icon={EthereumIcon}
+          isActive={primaryWallet?.id === ethWallet?.id}
           isSelectable={selectable}
           onClick={async () => {
             try {
@@ -163,6 +180,8 @@ export function Page() {
   const { user } = usePageContext();
   const { handleUpload } = useFileUpload();
   const utils = trpc.useContext();
+
+  const toast = useToast();
 
   const {
     handleSubmit,
@@ -203,7 +222,8 @@ export function Page() {
     setValue("username", user?.username);
   }, [user]);
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     await handleSubmit(async (data) => {
       const saveProfileData: any = {};
       saveProfileData.username = data.username;
@@ -224,6 +244,13 @@ export function Page() {
             onSuccess: () => {
               utils.auth.currentUser.invalidate();
               setLoading(false);
+              toast({
+                title: "Profile Updated",
+                status: "success",
+                position: "top-right",
+                duration: 3000,
+                isClosable: true,
+              });
               return true;
             },
             onError: (error) => {
@@ -323,7 +350,7 @@ export function Page() {
                   onChange={setUsernameErrorFalse}
                 />
               </FormControlled>
-              <WalletButtons withLabel selectable />
+              <WalletButtons withLabel />
               <Button onClick={handleSave} maxW="140px" type="submit">
                 {loading ? (
                   <Flex gap={1.5} alignItems="center">

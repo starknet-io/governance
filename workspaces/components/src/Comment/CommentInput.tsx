@@ -57,7 +57,6 @@ export const CommentInput = ({
         <Button
           className="cancel-button"
           variant="ghost"
-          size="sm"
           onClick={() => {
             if (onCancel) {
               onCancel();
@@ -70,9 +69,9 @@ export const CommentInput = ({
       <Button
         className="submit-button"
         variant="primary"
-        size="sm"
         onClick={handleSend}
         disabled={isSendDisabled}
+        marginLeft="standard.base"
       >
         {isEdit ? "Save" : "Send"}
       </Button>

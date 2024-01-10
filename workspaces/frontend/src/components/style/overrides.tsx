@@ -5,6 +5,9 @@ export const cssOverrides = `
     border-radius: 4px;
     height:36px!important;
   }
+  .non-network-switching-supported-control {
+    height: 36px!important;
+  }
 .evm-network-control__network-name {
   display:none!important;
 }
@@ -80,6 +83,17 @@ padding-inline-end:0;
   right: 0px;
   pointer-events: none;
  }
+ .dynamic-widget-inline-controls__network-picker.non-network-switching-supported-control::after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 20px;
+  position: absolute;
+  background:#DCDBDD;
+  top: 8px;
+  right: 0px;
+  pointer-events: none;
+ }
  .account-control__container.account-control__container--multiwallet-disabled.dynamic-widget-inline-controls__account-control {
 
   height:31px;
@@ -122,4 +136,13 @@ padding-inline-end:0;
 .evm-network-control__arrow-icon.icon--color-text-primary.icon--size-small  {
   display:none;
 }
+
+.button.button--padding-large.button--primary.connect-button {
+  box-shadow: none !important;
+}
+.button.button--padding-large.button--primary.connect-button:hover {
+
+   background-color:rgba(55, 22, 55, 0.0300)
+}
+
 `;

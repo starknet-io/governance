@@ -15,6 +15,7 @@ export const starkProvider = new RpcProvider({
   }`,
 });
 
+
 export const clientConfig = {
   starkProvider,
   manaUrl,

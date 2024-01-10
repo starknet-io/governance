@@ -4,6 +4,7 @@ import { Heading } from "../Heading";
 import { Indenticon } from "src/Indenticon";
 import { Tooltip } from "src/Tooltip";
 import { UserIcon } from "src/Icons/UiIcons";
+import { CopyToClipboard } from "../CopyToClipboard";
 
 type Props = {
   src?: string | null;
@@ -13,10 +14,12 @@ type Props = {
   showTooltip?: boolean;
   tooltipContent?: string;
   isMemberType?: boolean;
+  withCopy?: boolean;
 };
 
 export const Username = ({
   src,
+  withCopy,
   displayName,
   size = "condensed",
   address,
@@ -36,13 +39,17 @@ export const Username = ({
         </Heading>
       );
 
+    const contentWithCopy = (
+      <CopyToClipboard text={address}> {content} </CopyToClipboard>
+    );
+
     return showTooltip ? (
       <Tooltip
         hasArrow
         label={tooltipContent || displayName}
         aria-label="Display Name"
       >
-        {content}
+        {withCopy ? contentWithCopy : content}
       </Tooltip>
     ) : (
       content

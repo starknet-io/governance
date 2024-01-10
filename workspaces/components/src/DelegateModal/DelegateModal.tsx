@@ -12,6 +12,7 @@ import * as Swap from "../Swap/Swap";
 import { Text } from "../Text";
 import { ethers } from "ethers";
 import { Modal } from "../Modal";
+import {validateStarknetAddress} from "@yukilabs/governance-frontend/src/utils/helpers";
 
 type Props = {
   isOpen: boolean;
@@ -32,8 +33,9 @@ type Props = {
   onClose: () => void;
   delegateTokens: () => void;
   onContinue?: (address: string) => void;
-  isValidCustomAddress?: boolean;
   isUndelegation?: boolean;
+  isLayer1Delegation?: boolean;
+  isLayer2Delegation?: boolean;
 };
 
 export const DelegateModal = ({
@@ -44,10 +46,13 @@ export const DelegateModal = ({
   onClose,
   delegateTokens,
   onContinue,
-  isValidCustomAddress,
   isUndelegation,
+  isLayer1Delegation,
+  isLayer2Delegation,
 }: Props) => {
   const [customAddress, setCustomAddress] = useState("");
+  const l1Delegation = isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation)
+  const l2Delegation = !l1Delegation
   const getTotalVotingPower = () => {
     return receiverData?.vp || receiverData?.vp === 0
       ? receiverData.vp.toString()
@@ -64,12 +69,20 @@ export const DelegateModal = ({
     }
   }, [customAddress]);
 
-  const isValidAddress = (address: string) => {
+  const isValidEthAddress = (address: string) => {
     try {
       const checksumAddress = ethers.utils.getAddress(address);
       return ethers.utils.isAddress(checksumAddress);
     } catch (error) {
       return false;
+    }
+  }
+
+  const isValidAddress = (address: string) => {
+    if (l2Delegation) {
+      return validateStarknetAddress(address)
+    } else {
+      return isValidEthAddress(address)
     }
   };
 

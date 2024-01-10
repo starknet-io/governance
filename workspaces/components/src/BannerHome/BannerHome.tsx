@@ -127,7 +127,8 @@ export const BannerHome = ({
                 display: "none",
               },
               scrollbarWidth: "none",
-              "-ms-overflow-style": "none",
+              overflowStyle: "none",
+              msOverflowStyle: "none",
             }}
           >
             {homeLinks.map((link) => (

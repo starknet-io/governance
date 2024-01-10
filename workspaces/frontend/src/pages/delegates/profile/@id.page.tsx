@@ -28,14 +28,11 @@ import { trpc } from "src/utils/trpc";
 import React, { useEffect, useState } from "react";
 import { useAccount, useWaitForTransaction } from "wagmi";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { useDelegateRegistryClearDelegate } from "src/wagmi/DelegateRegistry";
 import {
-  useStarknetDelegate,
-  useStarknetDelegates,
-} from "../../../wagmi/StarknetDelegationRegistry";
-import { gql } from "src/gql";
+  useL1StarknetDelegationDelegate,
+  useL1StarknetDelegationDelegates,
+} from "../../../wagmi/L1StarknetDelegation";
 import { useBalanceData } from "src/utils/hooks";
-import { stringToHex } from "viem";
 import { hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
@@ -67,7 +64,7 @@ const delegateInterests: Record<string, string> = {
 };
 
 // Extract this to some constants file
-export const MINIMUM_TOKENS_FOR_DELEGATION = 1;
+export const MINIMUM_TOKENS_FOR_DELEGATION = 0;
 
 export function Page() {
   const pageContext = usePageContext();
@@ -128,11 +125,11 @@ export function Page() {
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
-  const { isLoading, writeAsync } = useStarknetDelegate({
+  const { isLoading, writeAsync } = useL1StarknetDelegationDelegate({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY! as `0x${string}`,
   });
 
-  const delegation = useStarknetDelegates({
+  const delegation = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
     args: [address!],
     watch: true,
@@ -142,7 +139,7 @@ export function Page() {
   const {
     isLoading: isLoadingUndelegation,
     writeAsync: writeAsyncUndelegation,
-  } = useStarknetDelegate({
+  } = useL1StarknetDelegationDelegate({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
   });
 
@@ -419,6 +416,7 @@ export function Page() {
                 delegate?.author?.ensName ||
                 truncateAddress(delegateAddress)
               }
+              withCopy
               address={delegateAddress}
               dropdownChildren={<ActionButtons />}
               headerTooltipContent={
