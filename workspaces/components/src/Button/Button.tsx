@@ -17,12 +17,14 @@ export type props = {
   toId?: string;
   href?: string;
   isExternal?: boolean;
+  isActive?: boolean;
   target?: ButtonProps["formTarget"];
   disabled?: boolean;
+  sx?: any;
 } & ButtonProps;
 
 export const Button = forwardRef<HTMLButtonElement, props>(
-  ({ children, toId, href, disabled = false, variant, ...rest }, ref) => {
+  ({ children, toId, href, disabled = false, sx, variant, isActive, ...rest }, ref) => {
     const handleOnClick = () => {
       if (!toId) {
         return;
@@ -81,12 +83,13 @@ export const Button = forwardRef<HTMLButtonElement, props>(
               justifyContent: "center",
             },
           },
+          ...sx
         }}
       >
         {variant === "fill" ? (
           <>
-            <div className="gradient-border" />
-            <Box zIndex={1}>{children}</Box>
+            {isActive ? <div className="gradient-border" /> : null}
+            <Box zIndex={1} w="100%">{children}</Box>
           </>
         ) : (
           children

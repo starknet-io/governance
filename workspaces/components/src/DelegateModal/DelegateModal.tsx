@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import {
   Stack,
   FormControl,
@@ -53,6 +53,11 @@ export const DelegateModal = ({
   const [customAddress, setCustomAddress] = useState("");
   const l1Delegation = isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation)
   const l2Delegation = !l1Delegation
+  const [selectedAddress, setSelectedAddress] = useState("");
+
+  const handleSelect = (address: string | undefined) => {
+    setSelectedAddress(address);
+  };
   const getTotalVotingPower = () => {
     return receiverData?.vp || receiverData?.vp === 0
       ? receiverData.vp.toString()
@@ -103,6 +108,19 @@ export const DelegateModal = ({
               balance={senderData.balance}
               symbol={senderData.symbol}
               isSender
+              isSelected={selectedAddress === senderData.address}
+              onClick={() => handleSelect(senderData.address)}
+            />
+            <Swap.UserSummary
+              address="Starknet Mainnet"
+              balance="10000000"
+              symbol="STRK"
+              isSender
+              isSelected={selectedAddress === "Starknet Mainnet"}
+              onClick={() => handleSelect("Starknet Mainnet")}
+              sx={{
+                marginTop: "standard.xs"
+              }}
             />
             {receiverData ? (
               <>
