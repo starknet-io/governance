@@ -79,15 +79,19 @@ export const DelegateModal = ({
       : receiverData?.balance?.toString() || "0";
   };
 
-  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isValidAddress(customAddress)) {
-      setIsError(false);
+    if (!isValidAddress(customAddress)) {
+      if (l2Delegation) {
+        setError("Not a valid starknet address")
+      } else {
+        setError("Not a valid ethereum address")
+      }
     } else {
-      setIsError(true);
+      setError(null);
     }
-  }, [customAddress]);
+  }, [customAddress, activeAddress]);
 
   const isValidEthAddress = (address: string) => {
     try {
@@ -179,9 +183,9 @@ export const DelegateModal = ({
                       value={customAddress}
                       onChange={(e) => setCustomAddress(e.target.value)}
                     />
-                    {isError && customAddress !== "" && (
+                    {error && customAddress !== "" && (
                       <FormErrorMessage>
-                        Not a valid ethereum address
+                        {error}
                       </FormErrorMessage>
                     )}
                   </FormControl>
@@ -206,7 +210,7 @@ export const DelegateModal = ({
             <Button
               variant="primary"
               type="submit"
-              isDisabled={!customAddress || isError}
+              isDisabled={!customAddress || !!error}
               onClick={() => {
                 if (onContinue) {
                   onContinue(customAddress);

@@ -250,12 +250,14 @@ export function Delegates({
       setStatusDescription(
         "An error occurred while processing your transaction.",
       );
+      setInputAddress("")
     }
 
     if (isDelegationSuccess || isDelegationL2Success) {
       setIsStatusModalOpen(true);
       setStatusTitle("Voting power delegated successfully");
       setStatusDescription("");
+      setInputAddress("")
     }
   }, [
     isDelegationLoading,
