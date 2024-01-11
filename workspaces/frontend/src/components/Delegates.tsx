@@ -41,6 +41,7 @@ import { useStarknetDelegate } from "../hooks/starknet/useStarknetDelegation";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useWallets } from "../hooks/useWallets";
 import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
+import {findMatchingWallet} from "../utils/helpers";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -197,7 +198,7 @@ export function Delegates({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
   const { starknetWallet, ethWallet } = useWallets();
-  const { primaryWallet } = useDynamicContext();
+  const { primaryWallet, setPrimaryWallet } = useDynamicContext();
   const [inputAddress, setInputAddress] = useState("");
   const receiverData = useBalanceData(inputAddress as `0x${string}`);
   const [isValidAddress, setIsValidAddress] = useState(true);
@@ -459,7 +460,16 @@ export function Delegates({
         onContinue={(address) => {
           setInputAddress(address);
         }}
+        handleWalletSelect={async (address) => {
+          if (address === starknetWallet?.address) {
+            await setPrimaryWallet(starknetWallet?.id)
+          } else {
+            await setPrimaryWallet(ethWallet?.id)
+          }
+        }}
+        activeAddress={primaryWallet?.address}
         senderData={senderData}
+        senderDataL2={senderDataL2?.balance}
         delegateTokens={() => {
           if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
             setIsStatusModalOpen(true);
