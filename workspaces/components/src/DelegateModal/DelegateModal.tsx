@@ -214,7 +214,7 @@ export const DelegateModal = ({
               </>
             )}
           </Swap.Root>
-          {!canBeDelegatedOnSpecifiedLayer && (
+          {!canBeDelegatedOnSpecifiedLayer && (receiverDataL2 || receiverData) && (
             <Banner
               label={`Delegate has only ${
                 l1Delegation ? "Starknet" : "Ethereum"
@@ -241,7 +241,7 @@ export const DelegateModal = ({
               variant="primary"
               type="submit"
               isDisabled={
-                !customAddress || !!error || !canBeDelegatedOnSpecifiedLayer
+                !customAddress || !!error || (!canBeDelegatedOnSpecifiedLayer && (receiverDataL2 || receiverData))
               }
               onClick={() => {
                 if (onContinue) {

@@ -255,13 +255,14 @@ export function Delegates({
         "An error occurred while processing your transaction.",
       );
       setInputAddress("");
+      setL2InputAddress("");
     }
 
     if (isDelegationSuccess || isDelegationL2Success) {
       setIsStatusModalOpen(true);
       setStatusTitle("Voting power delegated successfully");
       setStatusDescription("");
-      setInputAddress("");
+      setL2InputAddress("");
     }
   }, [
     isDelegationLoading,
@@ -468,7 +469,11 @@ export function Delegates({
           !l2InputAddress?.length ? undefined : addVotingPowerToReceiverL2()
         }
         onContinue={(address) => {
-          setInputAddress(address);
+          if (primaryWallet?.id === starknetWallet?.id) {
+            setL2InputAddress(address)
+          } else {
+            setInputAddress(address);
+          }
         }}
         handleWalletSelect={async (address) => {
           if (address === starknetWallet?.address) {
@@ -490,7 +495,7 @@ export function Delegates({
             setIsOpen(false);
           } else {
             if (primaryWallet?.id === starknetWallet?.id) {
-              delegateL2(starknetWallet.address!, inputAddress!)
+              delegateL2(starknetWallet.address!, l2InputAddress!)
                 .then()
                 .catch((err) => {
                   setIsStatusModalOpen(true);

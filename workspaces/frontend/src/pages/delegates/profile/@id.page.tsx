@@ -44,6 +44,8 @@ import { useVotes } from "../../../hooks/snapshotX/useVotes";
 import { useVotingPower } from "../../../hooks/snapshotX/useVotingPower";
 import { useProposals } from "../../../hooks/snapshotX/useProposals";
 import Socials from "../../../components/SocialLogin";
+import {useStarknetBalance} from "../../../hooks/starknet/useStarknetBalance";
+import {useWallets} from "../../../hooks/useWallets";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
@@ -77,6 +79,7 @@ export function Page() {
   const { address } = useAccount();
   const { user } = usePageContext();
   const { user: dynamicUser, walletConnector } = useDynamicContext();
+  const { ethWallet, starknetWallet } = useWallets();
 
   // get delegation hash
   const [txHash, setTxHash] = useState("");
@@ -155,15 +158,20 @@ export function Page() {
 
   const delegate = delegateResponse.data;
   const delegateAddress = delegate?.author?.address as `0x${string}`;
+  const starknetAddress = delegate?.author?.starknetAddress as `0x${string}`;
 
   const { data: votesData, loading: votesLoading } = useVotes({
     voter: delegateAddress,
     skipField: "voter",
   });
 
-  const gqlResponse = useVotingPower({
+  const votingPower = useVotingPower({
     address: delegateAddress,
   });
+
+  const votingPowerL2 = useVotingPower({
+    address: starknetAddress
+  })
 
   const gqlResponseProposalsByUser = useProposals();
 
@@ -174,6 +182,12 @@ export function Page() {
 
   const senderData = useBalanceData(address);
   const receiverData = useBalanceData(delegateAddress);
+  const senderDataL2 = useStarknetBalance({
+    starknetAddress: starknetWallet?.address,
+  });
+  const receiverDataL2 = useStarknetBalance({
+    starknetAddress: starknetAddress,
+  });
 
   const allVotes = votesData?.votes || [];
 
@@ -293,7 +307,7 @@ export function Page() {
 
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingSocials = !delegateResponse.isFetched;
-  const isLoadingGqlResponse = gqlResponse.isLoading;
+  const isLoadingGqlResponse = votingPower.isLoading;
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
@@ -312,7 +326,11 @@ export function Page() {
         senderData={senderData}
         receiverData={{
           ...receiverData,
-          vp: gqlResponse?.data,
+          vp: votingPower?.data,
+        }}
+        receiverDataL2={{
+          ...receiverDataL2?.balance,
+          vp: votingPowerL2?.data,
         }}
         delegateTokens={() => {
           if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
@@ -523,7 +541,7 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Delegated votes"
-              value={(gqlResponse.data || 0).toLocaleString()}
+              value={(votingPower.data || 0).toLocaleString()}
             />
             <SummaryItems.Item
               isLoading={!delegateCommentsResponse.isFetched}
