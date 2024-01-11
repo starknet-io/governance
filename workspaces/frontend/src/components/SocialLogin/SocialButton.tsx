@@ -31,18 +31,18 @@ export const SocialButton = ({
   }
   const label =
     provider === "twitter"
-      ? "Twitter"
+      ? ""
       : provider === "discord"
-      ? "Discord"
+      ? ""
       : provider === "telegram"
-      ? "Telegram"
+      ? ""
       : provider === "discourse"
-      ? "Discourse"
-      : "Twitter";
+      ? ""
+      : "";
   if (isLoading) {
     return (
       <SummaryItems.Socials
-        label={provider}
+        label={undefined}
         value={undefined}
         isLoading={true}
       />

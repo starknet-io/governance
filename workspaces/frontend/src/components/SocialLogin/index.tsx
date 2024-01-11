@@ -97,7 +97,6 @@ const Socials = ({
   return (
     <SummaryItems.Root direction={"column"}>
       <Flex direction="column" gap="standard.xs">
-        <Text variant="bodySmallStrong">Social networks</Text>
         <DiscordLogin
           username={socialsDelegate?.data?.discord?.username}
           redirectUrl={socialsDelegate?.data?.discord?.redirectUrl}

@@ -19,10 +19,11 @@ export type props = {
   isExternal?: boolean;
   target?: ButtonProps["formTarget"];
   disabled?: boolean;
+  sx?: any;
 } & ButtonProps;
 
 export const Button = forwardRef<HTMLButtonElement, props>(
-  ({ children, toId, href, disabled = false, variant, ...rest }, ref) => {
+  ({ children, toId, href, disabled = false, variant, sx, ...rest }, ref) => {
     const handleOnClick = () => {
       if (!toId) {
         return;
@@ -81,6 +82,7 @@ export const Button = forwardRef<HTMLButtonElement, props>(
               justifyContent: "center",
             },
           },
+          ...sx
         }}
       >
         {variant === "fill" ? (
