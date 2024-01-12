@@ -183,7 +183,7 @@ export function Page() {
   }, {});
 
   const renderAgreementValue = () => {
-    if (!delegate?.confirmDelegateAgreement) {
+    if (delegate?.confirmDelegateAgreement) {
       return (
         <Flex gap={1}>
           <Text variant="small" fontWeight="600" color="content.accent.default">
