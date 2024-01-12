@@ -57,6 +57,7 @@ export const useStarknetBalance = ({
           balance: commifiedBalance,
           decimals,
           symbol: symbolString,
+          address: starknetAddress,
         });
       } catch (err) {
         setError(err);

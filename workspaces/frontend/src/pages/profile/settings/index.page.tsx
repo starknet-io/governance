@@ -74,6 +74,7 @@ const WalletDisplay = ({
     isSelectable ? (
       <GovernanceButton
         variant={isActive && profileVariant ? "fill" : "secondary"}
+        isActive={isActive && profileVariant}
         onClick={onClick}
         type="button"
       >

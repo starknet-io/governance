@@ -26,7 +26,7 @@ export function useVotingPower({
 
   useEffect(() => {
     async function fetchVotingPower() {
-      if (!address || !spaceObj?.space) {
+      if (!address || !spaceObj?.space || !address.length) {
         setData(0);
         setIsLoading(false);
         return;

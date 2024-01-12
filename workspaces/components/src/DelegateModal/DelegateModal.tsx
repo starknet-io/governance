@@ -12,7 +12,8 @@ import * as Swap from "../Swap/Swap";
 import { Text } from "../Text";
 import { ethers } from "ethers";
 import { Modal } from "../Modal";
-import {validateStarknetAddress} from "@yukilabs/governance-frontend/src/utils/helpers";
+import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
+import { Banner } from "../Banner/Banner";
 
 type Props = {
   isOpen: boolean;
@@ -23,10 +24,21 @@ type Props = {
     ethAddress: string | undefined;
     symbol: string;
   };
+  senderDataL2: {
+    address: string | undefined;
+    balance: string | undefined;
+    symbol: string;
+  };
   receiverData?: {
     address: string | undefined | null;
     balance: string | undefined;
     ethAddress: string | undefined | null;
+    symbol: string;
+    vp?: number | undefined | null;
+  };
+  receiverDataL2?: {
+    address: string | undefined | null;
+    balance: string | undefined;
     symbol: string;
     vp?: number | undefined | null;
   };
@@ -35,39 +47,57 @@ type Props = {
   onContinue?: (address: string) => void;
   isUndelegation?: boolean;
   isLayer1Delegation?: boolean;
+  handleWalletSelect?: (address: string) => void;
   isLayer2Delegation?: boolean;
+  activeAddress?: string;
 };
 
 export const DelegateModal = ({
   isOpen = false,
   isConnected = false,
   senderData,
+  senderDataL2,
+  activeAddress,
   receiverData,
+  receiverDataL2,
   onClose,
   delegateTokens,
   onContinue,
   isUndelegation,
   isLayer1Delegation,
   isLayer2Delegation,
+  handleWalletSelect,
 }: Props) => {
   const [customAddress, setCustomAddress] = useState("");
-  const l1Delegation = isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation)
-  const l2Delegation = !l1Delegation
-  const getTotalVotingPower = () => {
+  const l1Delegation =
+    isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation);
+  const l2Delegation = !l1Delegation;
+
+  const handleSelect = (address: string) => {
+    if (handleWalletSelect) {
+      handleWalletSelect(address);
+    }
+  };
+  const getTotalVotingPower = (receiverData: any) => {
     return receiverData?.vp || receiverData?.vp === 0
       ? receiverData.vp.toString()
       : receiverData?.balance?.toString() || "0";
   };
 
-  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isValidAddress(customAddress)) {
-      setIsError(false);
+    console.log(l1Delegation, l2Delegation);
+    if (!isValidAddress(customAddress)) {
+      if (l2Delegation) {
+        setError("Not a valid starknet address");
+      } else {
+        setError("Not a valid ethereum address");
+      }
     } else {
-      setIsError(true);
+      setError(null);
     }
-  }, [customAddress]);
+  }, [customAddress, activeAddress]);
 
   const isValidEthAddress = (address: string) => {
     try {
@@ -76,24 +106,28 @@ export const DelegateModal = ({
     } catch (error) {
       return false;
     }
-  }
+  };
 
   const isValidAddress = (address: string) => {
     if (l2Delegation) {
-      return validateStarknetAddress(address)
+      return validateStarknetAddress(address);
     } else {
-      return isValidEthAddress(address)
+      return isValidEthAddress(address);
     }
   };
 
+  const canBeDelegatedOnSpecifiedLayer =
+    (receiverData && l1Delegation) || (receiverDataL2 && l2Delegation);
+
   return (
     <Modal
+      maxHeight={"80%"}
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      title={isUndelegation
-        ? "Undelegate voting power"
-        : "Delegate voting power"}
+      title={
+        isUndelegation ? "Undelegate voting power" : "Delegate voting power"
+      }
     >
       <Stack spacing="6">
         <Stack spacing="standard.xl">
@@ -103,19 +137,52 @@ export const DelegateModal = ({
               balance={senderData.balance}
               symbol={senderData.symbol}
               isSender
+              isSelected={senderData.address === activeAddress}
+              onClick={() => handleSelect(senderData.address!)}
             />
-            {receiverData ? (
+            <Box mt="standard.xs">
+              {senderDataL2 ? (
+                <Swap.UserSummary
+                  address={senderDataL2.address}
+                  balance={senderDataL2.balance}
+                  symbol={senderDataL2.symbol}
+                  isSender
+                  isSelected={senderDataL2.address === activeAddress}
+                  onClick={() => handleSelect(senderDataL2.address!)}
+                  sx={{
+                    marginTop: "standard.xs",
+                  }}
+                />
+              ) : (
+                <Banner label="Delegate only has an Ethereum address currently. Please connect an Ethereum address to your account to delegate to this address." />
+              )}
+            </Box>
+            {receiverData && l1Delegation ? (
               <>
                 <Swap.Arrow />
                 <Swap.UserSummary
                   address={receiverData.address}
-                  balance={getTotalVotingPower()}
+                  balance={getTotalVotingPower(receiverData)}
                   symbol={receiverData.symbol}
                   isReceiver
                   text={"To"}
                 />
               </>
-            ) : (
+            ) : null}
+            {receiverDataL2 && l2Delegation ? (
+              <>
+                <Swap.Arrow />
+                <Swap.UserSummary
+                  address={receiverDataL2.address}
+                  balance={getTotalVotingPower(receiverDataL2)}
+                  symbol={receiverDataL2.symbol}
+                  isReceiver
+                  text={"To"}
+                />
+              </>
+            ) : null}
+            {!receiverData}
+            {!receiverData && !receiverDataL2 && (
               <>
                 <Swap.Arrow />
                 <Box
@@ -139,17 +206,24 @@ export const DelegateModal = ({
                       value={customAddress}
                       onChange={(e) => setCustomAddress(e.target.value)}
                     />
-                    {isError && customAddress !== "" && (
-                      <FormErrorMessage>
-                        Not a valid ethereum address
-                      </FormErrorMessage>
+                    {error && customAddress !== "" && (
+                      <FormErrorMessage>{error}</FormErrorMessage>
                     )}
                   </FormControl>
                 </Box>
               </>
             )}
           </Swap.Root>
-          {receiverData ? (
+          {!canBeDelegatedOnSpecifiedLayer && (
+            <Banner
+              label={`Delegate has only ${
+                l1Delegation ? "Starknet" : "Ethereum"
+              } address connected. You can delegate only from ${
+                l1Delegation ? "Starknet" : "Ethereum"
+              } wallet`}
+            />
+          )}
+          {canBeDelegatedOnSpecifiedLayer ? (
             isConnected && (
               <Button
                 type="submit"
@@ -166,7 +240,9 @@ export const DelegateModal = ({
             <Button
               variant="primary"
               type="submit"
-              isDisabled={!customAddress || isError}
+              isDisabled={
+                !customAddress || !!error || !canBeDelegatedOnSpecifiedLayer
+              }
               onClick={() => {
                 if (onContinue) {
                   onContinue(customAddress);

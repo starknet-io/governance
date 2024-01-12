@@ -30,7 +30,7 @@ export const Indenticon = ({ address, size = 60, sx }: Props) => {
   }, []);
 
   if (!isMounted) {
-    return <SkeletonCircle size={`${size?.toString()}px` || "60px"} />;
+    return <SkeletonCircle size={`${size?.toString()}px` || "12"} />;
   }
 
   return (
@@ -48,7 +48,7 @@ export const Indenticon = ({ address, size = 60, sx }: Props) => {
             colors={brandColors}
           />
         </Box>
-      </Suspense>
+      </>
     </Box>
   );
 };
