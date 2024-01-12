@@ -679,6 +679,7 @@ export function Delegates({
                 {allDelegates && allDelegates.length > 0 ? (
                   transformData?.(allDelegates)?.map((delegate) => (
                     <DelegateCard
+                      status={delegate.status}
                       onDelegateClick={() => {
                         if (user) {
                           if (

@@ -1,6 +1,6 @@
-import { Box, Flex, Icon, Skeleton, SystemStyleObject } from "@chakra-ui/react";
+import { Box, Flex, Icon, Skeleton, SystemStyleObject, useDisclosure } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
-
+import { IconButton } from "../IconButton";
 import { Text } from "../Text";
 import { Tag } from "../Tag";
 import { Link } from "../Link";
@@ -32,6 +32,7 @@ const Root = ({ children, direction = "column", style }: RootProps) => {
       flexDirection={direction}
       flexWrap={direction === "row" ? "wrap" : "nowrap"}
       justifyContent="flex-start"
+      width="100%"
       sx={{ ...style }}
     >
       {children}
@@ -42,22 +43,30 @@ const Root = ({ children, direction = "column", style }: RootProps) => {
 type ItemProps = {
   label: string;
   value?: string | null | React.ReactNode;
+  additionalValue?: string | null | React.ReactNode;
   children?: React.ReactNode;
   isTruncated?: boolean;
   isCopiable?: boolean;
   isLoading?: boolean;
+  isExtendable?: boolean;
 };
 
 const Item = (props: ItemProps) => {
-  const { label, isLoading, value, children, isTruncated, isCopiable } = props;
+  const { label, isLoading, value, children, isTruncated, isCopiable, isExtendable, additionalValue } = props;
+  const { isOpen, onOpen, onClose } = useDisclosure();
   if (isLoading) {
     return (
       <Flex justify="flex-start" gap="4px" alignItems="center">
-        <Box width="50%">
+        <Flex width="50%" justifyContent="center" alignItems="flex-start" direction="column">
           <Text variant="small" color="content.default.default">
             {label}
           </Text>
-        </Box>
+          {isExtendable && isOpen ? <Box>
+            <svg width="19" height="11" viewBox="0 0 19 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path id="Rectangle 5597" d="M1 0V2C1 6.41828 4.58172 10 9 10H19" stroke="#DCDBDD"/>
+            </svg>Voting power
+          </Box> : null}
+        </Flex>
         <Skeleton height="14px" position="relative" top="4px" width="50%" />
       </Flex>
     );
@@ -82,12 +91,46 @@ const Item = (props: ItemProps) => {
 
   return (
     <Flex justify="flex-start" gap="4px">
-      <Box width="50%">
+      <Flex width="50%" justifyContent="center" alignItems="flex-start" direction="column">
         <Text variant="small" color="content.default.default">
           {label}
         </Text>
-      </Box>
-      <Box width="50%">{value ? renderValue() : children}</Box>
+        {isExtendable && isOpen ? <Flex direction="row" mt="5px">
+            <svg width="19" height="11" viewBox="0 0 19 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path id="Rectangle 5597" d="M1 0V2C1 6.41828 4.58172 10 9 10H19" stroke="#DCDBDD"/>
+            </svg> <Text variant="small" color="content.default.default" ml="4px">
+          Voting power
+        </Text>
+          </Flex> : null}
+      </Flex>
+      <Flex width="50%" direction="column">
+        <Flex direction="row" justifyContent="space-between" gap="standard.base">
+          {value ? renderValue() : children} {isExtendable && additionalValue ? <IconButton
+            aria-label="close"
+            onClick={() => isOpen ? onClose() : onOpen()}
+            color="#4A4A4F"
+            variant="ghost"
+            size="xs"
+            width="20px"
+            height="20px"
+            sx={{
+              borderRadius: "standard.base",
+              border: "1px solid rgba(35, 25, 45, 0.10)",
+              transform: isOpen ? "none" : "rotate(180deg)"
+            }}
+            icon={
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="wrapper">
+                <path id="Union" fillRule="evenodd" clipRule="evenodd" d="M8.53033 4.96967C8.23744 4.67678 7.76256 4.67678 7.46967 4.96967L2.46967 9.96967C2.17678 10.2626 2.17678 10.7374 2.46967 11.0303C2.76256 11.3232 3.23744 11.3232 3.53033 11.0303L8 6.56066L12.4697 11.0303C12.7626 11.3232 13.2374 11.3232 13.5303 11.0303C13.8232 10.7374 13.8232 10.2626 13.5303 9.96967L8.53033 4.96967Z" fill="#86848D"/>
+                </g>
+              </svg>
+            }
+          /> : null}
+        </Flex>
+        {additionalValue && isOpen ? <Text variant="small" color="content.accent.default" mt="5px">
+          {additionalValue}
+        </Text> : null}
+      </Flex>
     </Flex>
   );
 };
@@ -183,27 +226,9 @@ const Socials = (props: SocialsProps) => {
   const link = value ? `${platformBaseUrl[label]}${value}` : "";
 
   return (
-    <Flex gap="8px" w={{ base: "48%" }} alignItems="center">
-      <Icon
-        as={
-          label === "twitter"
-            ? TwitterIcon
-            : label === "github"
-            ? GithubIcon
-            : label === "discourse"
-            ? DiscourseIcon
-            : label === "discord"
-            ? DiscordIcon
-            : label === "telegram"
-            ? TelegramIcon
-            : TwitterIcon
-        }
-        w={"20px"}
-        h={"20px"}
-        color="#4A4A4F"
-      />
+    <Flex gap="8px" alignItems="center" width="25%">
       {isLoading ? (
-        <Skeleton height="20px" width="80%" />
+        <Skeleton height="20px" width="70%" />
       ) : value ? (
         <Link
           href={link}
@@ -212,8 +237,30 @@ const Socials = (props: SocialsProps) => {
           fontSize="12px"
           letterSpacing={"0.12px"}
           hasArrow={false}
+          sx={{
+            _hover: {
+              textDecoration: "none"
+            }
+          }}
         >
-          {value}
+          <Icon
+            as={
+              label === "twitter"
+                ? TwitterIcon
+                : label === "github"
+                ? GithubIcon
+                : label === "discourse"
+                ? DiscourseIcon
+                : label === "discord"
+                ? DiscordIcon
+                : label === "telegram"
+                ? TelegramIcon
+                : TwitterIcon
+            }
+            w={"20px"}
+            h={"20px"}
+            color="#4A4A4F"
+          />
         </Link>
       ) : (
         children

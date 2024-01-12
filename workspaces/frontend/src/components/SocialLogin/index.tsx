@@ -1,5 +1,5 @@
 import {
-  Divider,
+  Box,
   Flex,
   SummaryItems,
   Text,
@@ -59,46 +59,52 @@ const Socials = ({
     isUserDelegateCheckLoading
   ) {
     return (
-      <>
-        <SummaryItems.Root direction="row">
-          {socials?.twitter && (
-            <SummaryItems.Socials
-              label="twitter"
-              value={socials?.twitter}
-              isLoading={isUserDelegateCheckLoading}
-            />
-          )}
-          {socials?.discord && (
-            <SummaryItems.Socials
-              label="discord"
-              value={socials?.discord}
-              isLoading={isUserDelegateCheckLoading}
-            />
-          )}
-          {socials?.telegram && (
-            <SummaryItems.Socials
-              label="telegram"
-              value={socials?.telegram}
-              isLoading={isUserDelegateCheckLoading}
-            />
-          )}
-          {socials?.discourse && (
-            <SummaryItems.Socials
-              label="discourse"
-              value={socials?.discourse}
-              isLoading={isUserDelegateCheckLoading}
-            />
-          )}
-          <Divider mt="standard.xl" mb="standard.xl" />
-        </SummaryItems.Root>
-      </>
+      <Flex justify="flex-start" gap="4px">
+        <Box width="50%">
+          <Text variant="small" color="content.default.default">
+            Strategies
+          </Text>
+        </Box>
+        <Box width="50%">
+          <SummaryItems.Root direction="row">
+            {socials?.twitter && (
+              <SummaryItems.Socials
+                label="twitter"
+                value={socials?.twitter}
+                isLoading={isUserDelegateCheckLoading}
+              />
+            )}
+            {socials?.discord && (
+              <SummaryItems.Socials
+                label="discord"
+                value={socials?.discord}
+                isLoading={isUserDelegateCheckLoading}
+              />
+            )}
+            {socials?.telegram && (
+              <SummaryItems.Socials
+                label="telegram"
+                value={socials?.telegram}
+                isLoading={isUserDelegateCheckLoading}
+              />
+            )}
+            {socials?.discourse && (
+              <SummaryItems.Socials
+                label="discourse"
+                value={socials?.discourse}
+                isLoading={isUserDelegateCheckLoading}
+              />
+            )}
+          </SummaryItems.Root>
+        </Box>
+      </Flex>
     );
   }
 
   return (
     <SummaryItems.Root direction={"column"}>
       <Flex direction="column" gap="standard.xs">
-        <Text variant="bodySmallStrong">Social networks</Text>
+        <Text variant="small" color="content.default.default">Social networks</Text>
         <DiscordLogin
           username={socialsDelegate?.data?.discord?.username}
           redirectUrl={socialsDelegate?.data?.discord?.redirectUrl}
@@ -132,7 +138,6 @@ const Socials = ({
           delagateId={delegateId}
         />
       </Flex>
-      <Divider mt="standard.xl" mb="standard.xl" />
     </SummaryItems.Root>
   );
 };

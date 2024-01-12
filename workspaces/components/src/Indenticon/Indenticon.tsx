@@ -1,8 +1,7 @@
 import React, { Suspense, useState, useEffect } from "react";
 import { Box, SkeletonCircle } from "@chakra-ui/react";
-import AvatarLazy from "yuki-ultra-boring-avatars"
 
-//const AvatarLazy = React.lazy(() => import("yuki-ultra-boring-avatars"));
+const AvatarLazy = React.lazy(() => import("yuki-ultra-boring-avatars"));
 
 type Props = {
   address?: string | null;
@@ -31,19 +30,19 @@ export const Indenticon = ({ address, size = 60, sx }: Props) => {
   }, []);
 
   if (!isMounted) {
-    return <SkeletonCircle size={size?.toString() || "12"} />;
+    return <SkeletonCircle size={`${size?.toString()}px` || "12"} />;
   }
 
   return (
     <Box overflow="hidden" width={`${size}px`} height={`${size}px`} sx={{...sx}}>
-      <>
+      <Suspense fallback={<SkeletonCircle size={`${size?.toString()}px` || "60"} />}>
         <Box
           sx={{
             position: "relative",
             zIndex: 3
           }}>
           <AvatarLazy
-            size={size}
+            size={`${size}px`}
             name={address}
             variant="beam"
             colors={brandColors}
