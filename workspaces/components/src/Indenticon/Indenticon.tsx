@@ -30,19 +30,19 @@ export const Indenticon = ({ address, size = 60, sx }: Props) => {
   }, []);
 
   if (!isMounted) {
-    return <SkeletonCircle size={size?.toString() || "60"} />;
+    return <SkeletonCircle size={`${size?.toString()}px` || "60px"} />;
   }
 
   return (
     <Box overflow="hidden" width={`${size}px`} height={`${size}px`} sx={{...sx}}>
-      <Suspense fallback={<SkeletonCircle size={size?.toString() || "60"} />}>
+      <Suspense fallback={<SkeletonCircle size={`${size?.toString()}px` || "60"} />}>
         <Box
           sx={{
             position: "relative",
             zIndex: 3
           }}>
           <AvatarLazy
-            size={size}
+            size={`${size}px`}
             name={address}
             variant="beam"
             colors={brandColors}
