@@ -165,11 +165,11 @@ export function Page() {
     skipField: "voter",
   });
 
-  const votingPower = useVotingPower({
+  const { data: votingPower, isLoading: isLoadingVotingPower } = useVotingPower({
     address: delegateAddress,
   });
 
-  const votingPowerL2 = useVotingPower({
+  const { data: votingPowerL2, isLoading: isLoadingVotingPowerL2 } = useVotingPower({
     address: starknetAddress
   })
 
@@ -315,7 +315,8 @@ export function Page() {
 
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingSocials = !delegateResponse.isFetched;
-  const isLoadingGqlResponse = votingPower.isLoading;
+  const isLoadingGqlResponse = isLoadingVotingPower || isLoadingVotingPowerL2;
+  console.log(votingPower, votingPowerL2)
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
@@ -334,11 +335,11 @@ export function Page() {
         senderData={senderData}
         receiverData={{
           ...receiverData,
-          vp: votingPower?.data,
+          vp: votingPower,
         }}
         receiverDataL2={{
           ...receiverDataL2?.balance,
-          vp: votingPowerL2?.data,
+          vp: votingPowerL2,
         }}
         delegateTokens={() => {
           if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
@@ -540,17 +541,11 @@ export function Page() {
           <SummaryItems.Root>
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
-              label="Voting power"
-              value={votesData?.votingPower}
-            />
-            <SummaryItems.Item
-              isLoading={isLoadingGqlResponse}
               label="Proposals voted on"
               value={allVotes?.length.toString() || "0"}
             />
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
-              label="Delegated votes"
               label="Votes breakdown"
               value={
                 stats
@@ -610,16 +605,16 @@ export function Page() {
               isTruncated={!!delegate?.author?.starknetAddress}
               label="Starknet address"
               value={delegate?.author?.starknetAddress || "None"}
-              additionalValue={delegate?.author?.starknetAddress}
+              additionalValue={votingPowerL2?.toString() || "0"}
               isExtendable={true}
             />
             <SummaryItems.Item
               isLoading={!delegateResponse.isFetched}
-              isCopiable={!!delegate?.author?.ethereumAddress}
-              isTruncated={!!delegate?.author?.ethereumAddress}
+              isCopiable={!!delegate?.author?.address}
+              isTruncated={!!delegate?.author?.address}
               label="Ethereum address"
-              value={delegate?.author?.ethereumAddress || "None"}
-              additionalValue={delegate?.author?.ethereumAddress}
+              value={delegate?.author?.address || "None"}
+              additionalValue={votingPower?.toString() || "0"}
               isExtendable={true}
             />
             <SummaryItems.Item

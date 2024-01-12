@@ -62,6 +62,7 @@ const WalletDisplay = ({
   isSelectable,
   onClick,
   isActive,
+  saveStarknetAddress,
 }: {
   wallet: Wallet;
   icon: any;
@@ -69,6 +70,7 @@ const WalletDisplay = ({
   onClick: () => void;
   isActive?: boolean;
   profileVariant?: boolean;
+  saveStarknetAddress?: (starknetAddress: string) => Promise<any>;
 }) => {
   return wallet ? (
     isSelectable ? (
@@ -124,7 +126,16 @@ export const WalletButtons = ({
   profileVariant?: boolean;
 }) => {
   const userWallets = useUserWallets();
+  const { user } = usePageContext();
   const { setPrimaryWallet, primaryWallet } = useDynamicContext();
+  const editUser = trpc.users.editUserProfile.useMutation();
+
+  const saveStarknetAddress = async (starknetAddress: string) => {
+    await editUser.mutateAsync({
+      starknetAddress,
+      id: user.id!,
+    });
+  };
 
   const findMatchingWallet = (wallets: any[], key: "EVM" | "STARKNET") => {
     return wallets.find((wallet) => wallet.chain === Chain[key]);
@@ -142,6 +153,7 @@ export const WalletButtons = ({
         <WalletDisplay
           profileVariant={profileVariant}
           wallet={starknetWallet}
+          saveStarknetAddress={saveStarknetAddress}
           isActive={primaryWallet?.id === starknetWallet?.id}
           icon={StarknetIcon}
           isSelectable={selectable}

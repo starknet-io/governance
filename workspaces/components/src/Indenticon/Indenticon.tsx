@@ -34,13 +34,21 @@ export const Indenticon = ({ address, size = 60, sx }: Props) => {
   }
 
   return (
-    <Box overflow="hidden" width={`${size}px`} height={`${size}px`} sx={{...sx}}>
-      <Suspense fallback={<SkeletonCircle size={`${size?.toString()}px` || "60"} />}>
+    <Box
+      overflow="hidden"
+      width={`${size}px`}
+      height={`${size}px`}
+      sx={{ ...sx }}
+    >
+      <Suspense
+        fallback={<SkeletonCircle size={`${size?.toString()}px` || "60"} />}
+      >
         <Box
           sx={{
             position: "relative",
-            zIndex: 3
-          }}>
+            zIndex: 3,
+          }}
+        >
           <AvatarLazy
             size={`${size}px`}
             name={address}
@@ -48,7 +56,7 @@ export const Indenticon = ({ address, size = 60, sx }: Props) => {
             colors={brandColors}
           />
         </Box>
-      </>
+      </Suspense>
     </Box>
   );
 };
