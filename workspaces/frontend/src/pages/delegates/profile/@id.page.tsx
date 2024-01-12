@@ -609,9 +609,7 @@ export function Page() {
             />
           </SummaryItems.Root>
           <Divider mt="standard.sm" mb="standard.sm" />
-          <SummaryItems.Item
-            label="Social networks"
-            value={<Socials
+          <Socials
               delegateId={delegateId}
               socials={{
                 twitter: "https://twitter.com/0xStarknet",
@@ -619,8 +617,7 @@ export function Page() {
                 discourse: "https://forum.starknet.io/",
                 telegram: "https://t.me/starknet_io",
               }}
-            />}
-          />
+            />
           <Divider mt="standard.sm" mb="standard.sm" />
           <SummaryItems.Root>
             {isLoadingProfile ? (
