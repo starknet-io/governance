@@ -118,7 +118,6 @@ export const DelegateModal = ({
 
   const canBeDelegatedOnSpecifiedLayer =
     (receiverData && l1Delegation) || (receiverDataL2 && l2Delegation);
-
   return (
     <Modal
       maxHeight={"80%"}
@@ -137,6 +136,7 @@ export const DelegateModal = ({
               balance={senderData.balance}
               symbol={senderData.symbol}
               isSender
+              text="Ethereum"
               isSelected={senderData.address === activeAddress}
               onClick={() => handleSelect(senderData.address!)}
             />
@@ -147,6 +147,7 @@ export const DelegateModal = ({
                   balance={senderDataL2.balance}
                   symbol={senderDataL2.symbol}
                   isSender
+                  text="Starknet"
                   isSelected={senderDataL2.address === activeAddress}
                   onClick={() => handleSelect(senderDataL2.address!)}
                   sx={{

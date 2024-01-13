@@ -68,15 +68,13 @@ const UserSummary = ({
         width="100%"
       >
         <Flex flexDirection="column" gap="standard.2xs">
-          <Text color="content.default.default" variant="bodyMediumStrong" as="span">
-            {text}
-          </Text>
           <ProfileSummaryCard.Root>
             <ProfileSummaryCard.Profile
               size="xs"
               ensName={ethAddress}
               address={shortAddress(address)}
               avatarString={address}
+              text={text}
             ></ProfileSummaryCard.Profile>
           </ProfileSummaryCard.Root>
         </Flex>
