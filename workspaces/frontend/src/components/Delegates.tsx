@@ -41,6 +41,7 @@ import { useStarknetDelegate } from "../hooks/starknet/useStarknetDelegation";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useWallets } from "../hooks/useWallets";
 import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
+import { findMatchingWallet } from "../utils/helpers";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -197,9 +198,13 @@ export function Delegates({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
   const { starknetWallet, ethWallet } = useWallets();
-  const { primaryWallet } = useDynamicContext();
+  const { primaryWallet, setPrimaryWallet } = useDynamicContext();
   const [inputAddress, setInputAddress] = useState("");
+  const [l2InputAddress, setL2InputAddress] = useState<string>("");
   const receiverData = useBalanceData(inputAddress as `0x${string}`);
+  const receiverDataL2 = useStarknetBalance({
+    starknetAddress: l2InputAddress,
+  });
   const [isValidAddress, setIsValidAddress] = useState(true);
   const senderData = useBalanceData(address);
   const senderDataL2 = useStarknetBalance({
@@ -249,12 +254,14 @@ export function Delegates({
       setStatusDescription(
         "An error occurred while processing your transaction.",
       );
+      setInputAddress("");
     }
 
     if (isDelegationSuccess || isDelegationL2Success) {
       setIsStatusModalOpen(true);
       setStatusTitle("Voting power delegated successfully");
       setStatusDescription("");
+      setInputAddress("");
     }
   }, [
     isDelegationLoading,
@@ -267,6 +274,10 @@ export function Delegates({
 
   const { data: votingPower } = useVotingPower({
     address: inputAddress,
+  });
+
+  const { data: l2VotingPower } = useVotingPower({
+    address: l2InputAddress,
   });
 
   const state = useFilterState({
@@ -287,26 +298,23 @@ export function Delegates({
   });
 
   const addVotingPowerToReceiver = () => {
-    if (delegates.data && delegates.data.length > 0) {
-      const foundDelegate = delegates.data.find(
-        (delegate) => delegate.author.address === receiverData.address,
-      );
-      if (votingPower) {
-        return {
-          ...receiverData,
-          vp: votingPower,
-        };
-      }
-      if (!foundDelegate) {
-        return receiverData;
-      } else {
-        return {
-          ...receiverData,
-          vp: foundDelegate.votingInfo.votingPower,
-        };
-      }
+    if (votingPower) {
+      return {
+        ...receiverData,
+        vp: votingPower,
+      };
     }
     return receiverData;
+  };
+
+  const addVotingPowerToReceiverL2 = () => {
+    if (l2VotingPower) {
+      return {
+        ...receiverDataL2?.balance,
+        vp: l2VotingPower,
+      };
+    }
+    return receiverDataL2?.balance;
   };
 
   const delegates =
@@ -456,10 +464,22 @@ export function Delegates({
         receiverData={
           !inputAddress.length ? undefined : addVotingPowerToReceiver()
         }
+        receiverDataL2={
+          !l2InputAddress?.length ? undefined : addVotingPowerToReceiverL2()
+        }
         onContinue={(address) => {
           setInputAddress(address);
         }}
+        handleWalletSelect={async (address) => {
+          if (address === starknetWallet?.address) {
+            await setPrimaryWallet(starknetWallet?.id);
+          } else {
+            await setPrimaryWallet(ethWallet?.id);
+          }
+        }}
+        activeAddress={primaryWallet?.address}
         senderData={senderData}
+        senderDataL2={senderDataL2?.balance}
         delegateTokens={() => {
           if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
             setIsStatusModalOpen(true);
@@ -510,7 +530,8 @@ export function Delegates({
         isPending={isDelegationLoading || isDelegationL2Loading}
         isSuccess={isDelegationSuccess || isDelegationL2Success}
         isFail={
-          isDelegationError || delegationL2Error ||
+          isDelegationError ||
+          delegationL2Error ||
           !!((!txHash || !txHash.length) && statusDescription?.length)
         }
         onClose={() => {
@@ -658,7 +679,9 @@ export function Delegates({
                         if (user) {
                           if (
                             parseFloat(senderData?.balance) <
-                            MINIMUM_TOKENS_FOR_DELEGATION
+                              MINIMUM_TOKENS_FOR_DELEGATION &&
+                            parseFloat(senderDataL2?.balance) <
+                              MINIMUM_TOKENS_FOR_DELEGATION
                           ) {
                             setIsStatusModalOpen(true);
                             setStatusTitle("No voting power");
@@ -669,6 +692,9 @@ export function Delegates({
                           } else {
                             setIsOpen(true);
                             setInputAddress(delegate?.author?.address);
+                            setL2InputAddress(
+                              delegate?.author?.starknetAddress,
+                            );
                           }
                         } else {
                           setHelpMessage("connectWalletMessage");

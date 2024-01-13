@@ -3,6 +3,7 @@ import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
 import { Text } from "src/Text";
 import { Heading } from "src/Heading";
 import { ArrowDownIcon } from "src/Icons";
+import { Button } from "src/Button";
 
 type Props = {
   children: React.ReactNode;
@@ -26,6 +27,9 @@ type UserSummaryProps = {
   symbol?: string;
   isSender?: boolean;
   isReceiver?: boolean;
+  isSelected?: boolean;
+  sx?: any;
+  onClick?: () => void;
 };
 const UserSummary = ({
   address = "0x23423423423423423423423432",
@@ -35,44 +39,59 @@ const UserSummary = ({
   balance = "100,000",
   text = "From",
   symbol = "STRK",
+  isSelected = false,
+  sx,
+  onClick
 }: UserSummaryProps) => {
   return (
-    <Box
-      fontSize="14px"
-      bg="surface.forms.default"
-      p="standard.md"
+    <Button
+      variant="fill"
+      isActive={isSelected}
+      boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.04)"
       border="1px solid"
       borderColor="border.forms"
       borderRadius="8px"
-      color="#6C6C75"
-      display="flex"
-      justifyContent="space-between"
-      boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.04)"
+      bg="surface.forms.default"
+      onClick={onClick}
+      sx={{
+        padding: 0,
+        width: "100%",
+        ...sx
+      }}
     >
-      <Flex flexDirection="column" gap="standard.2xs">
-        <Text color="content.default.default" variant="bodyMediumStrong" as="span">
-          {text}
-        </Text>
-        <ProfileSummaryCard.Root>
-          <ProfileSummaryCard.Profile
-            size="xs"
-            ensName={ethAddress}
-            address={shortAddress(address)}
-            avatarString={address}
-          ></ProfileSummaryCard.Profile>
-        </ProfileSummaryCard.Root>
+      <Flex
+        fontSize="14px"
+        p="standard.md"
+        color="#6C6C75"
+        display="flex"
+        justifyContent="space-between"
+        width="100%"
+      >
+        <Flex flexDirection="column" gap="standard.2xs">
+          <Text color="content.default.default" variant="bodyMediumStrong" as="span">
+            {text}
+          </Text>
+          <ProfileSummaryCard.Root>
+            <ProfileSummaryCard.Profile
+              size="xs"
+              ensName={ethAddress}
+              address={shortAddress(address)}
+              avatarString={address}
+            ></ProfileSummaryCard.Profile>
+          </ProfileSummaryCard.Root>
+        </Flex>
+        <Flex flexDirection={"column"} alignItems="flex-end" gap="standard.xs">
+          <Text color="content.default.default" variant="bodyMediumStrong" as="span">
+            {isSender && "Available votes"}
+            {isReceiver && !isSender && "Delegated votes"}
+          </Text>
+          <Heading
+            variant="h5">
+            {balance} {symbol}
+          </Heading>
+        </Flex>
       </Flex>
-      <Flex flexDirection={"column"} alignItems="flex-end" gap="standard.xs">
-        <Text color="content.default.default" variant="bodyMediumStrong" as="span">
-          {isSender && "Available votes"}
-          {isReceiver && !isSender && "Delegated votes"}
-        </Text>
-        <Heading
-          variant="h5">
-          {balance} {symbol}
-        </Heading>
-      </Flex>
-    </Box>
+    </Button>
   );
 };
 
