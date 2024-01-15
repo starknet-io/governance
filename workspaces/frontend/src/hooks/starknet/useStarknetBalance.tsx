@@ -55,6 +55,7 @@ export const useStarknetBalance = ({
 
         setBalance({
           balance: commifiedBalance,
+          rawBalance: formattedBalance,
           decimals,
           symbol: symbolString,
           address: starknetAddress,

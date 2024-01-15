@@ -46,6 +46,7 @@ import { useProposals } from "../../../hooks/snapshotX/useProposals";
 import { useStarknetBalance } from "../../../hooks/starknet/useStarknetBalance";
 import { useStarknetDelegates } from "../../../hooks/starknet/useStarknetDelegates";
 import { useWallets } from "../../../hooks/useWallets";
+import { useStarknetDelegate } from "../../../hooks/starknet/useStarknetDelegation";
 import { delegationAgreement } from "src/utils/data";
 
 const delegateInterests: Record<string, string> = {
@@ -97,6 +98,13 @@ export function Page() {
   const delegateAddress = delegate?.author?.address as `0x${string}`;
   const starknetAddress = delegate?.author?.starknetAddress as `0x${string}`;
 
+  const {
+    delegate: delegateL2,
+    loading: isDelegationL2Loading,
+    error: delegationL2Error,
+    success: isDelegationL2Success,
+  } = useStarknetDelegate();
+
   // get delegation hash
   const [txHash, setTxHash] = useState("");
   // listen to txn with delegation hash
@@ -109,7 +117,7 @@ export function Page() {
   // handle delegation cases
 
   useEffect(() => {
-    if (isDelegationLoading && dynamicUser) {
+    if ((isDelegationLoading || isDelegationL2Loading) && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
@@ -119,7 +127,7 @@ export function Page() {
       setStatusDescription("");
     }
 
-    if (isDelegationError && dynamicUser) {
+    if ((isDelegationError || delegationL2Error) && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
@@ -132,7 +140,7 @@ export function Page() {
       );
     }
 
-    if (isDelegationSuccess && dynamicUser) {
+    if ((isDelegationSuccess || isDelegationL2Success) && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
@@ -142,7 +150,14 @@ export function Page() {
       setStatusDescription("");
       setIsUndelegation(false);
     }
-  }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
+  }, [
+    isDelegationLoading,
+    isDelegationError,
+    isDelegationSuccess,
+    isDelegationL2Success,
+    isDelegationL2Loading,
+    delegationL2Error,
+  ]);
 
   const { isLoading, writeAsync } = useL1StarknetDelegationDelegate({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY! as `0x${string}`,
@@ -170,9 +185,9 @@ export function Page() {
   const hasDelegatedOnL1 =
     delegationDataL1 &&
     delegationDataL1.length &&
-    delegationDataL1.toLowerCase() === delegate?.author?.address?.toLowerCase() &&
-    delegationDataL1 !== "0x0000000000000000000000000000000000000000"
-
+    delegationDataL1.toLowerCase() ===
+      delegate?.author?.address?.toLowerCase() &&
+    delegationDataL1 !== "0x0000000000000000000000000000000000000000";
 
   const {
     isLoading: isLoadingUndelegation,
@@ -352,7 +367,6 @@ export function Page() {
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingSocials = !delegateResponse.isFetched;
   const isLoadingGqlResponse = isLoadingVotingPower || isLoadingVotingPowerL2;
-  console.log(votingPower, votingPowerL2);
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
@@ -361,12 +375,94 @@ export function Page() {
     delegateAddress &&
     delegateAddress?.toLowerCase() === address?.toLowerCase();
   const [helpMessage, setHelpMessage] = useHelpMessage();
+
+  const showNoVotingPowerMessaging = () => {
+    setIsStatusModalOpen(true);
+    setStatusTitle("No voting power");
+    setStatusDescription(
+      `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to delegate.`,
+    );
+    setIsOpen(false);
+    return;
+  };
+
+  const handleDelegation = async ({
+    layer,
+    isDelegation,
+    isUndelegation,
+  }: {
+    layer?: 1 | 2 | null;
+    isDelegation?: boolean;
+    isUndelegation?: boolean;
+  }) => {
+    if (layer === 1) {
+      if (isDelegation || (!isDelegation && !isUndelegation)) {
+        if (
+          parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION &&
+          !hasDelegatedOnL1
+        ) {
+          showNoVotingPowerMessaging();
+          return;
+        }
+        setIsUndelegation(false);
+        await setPrimaryWallet(ethWallet?.id);
+        setIsOpen(true);
+      } else if (isUndelegation && hasDelegatedOnL1) {
+        await setPrimaryWallet(ethWallet?.id);
+        writeAsyncUndelegation?.({
+          args: ["0x0000000000000000000000000000000000000000"],
+        })
+          .then((tx) => {
+            setTxHash(tx.hash);
+          })
+          .catch((err) => {
+            setIsStatusModalOpen(true);
+            setStatusTitle("Undelegating voting power failed");
+            setStatusDescription(err.shortMessage);
+          });
+        setIsOpen(false);
+      } else {
+        setIsUndelegation(false);
+      }
+    } else if (layer === 2) {
+      if (isDelegation) {
+        if (
+          parseFloat(senderDataL2?.balance?.balance) <
+            MINIMUM_TOKENS_FOR_DELEGATION &&
+          !hasDelegatedOnL2
+        ) {
+          showNoVotingPowerMessaging();
+          return;
+        }
+        setIsUndelegation(false);
+        setIsOpen(true);
+        await setPrimaryWallet(starknetWallet?.id);
+      } else if (isUndelegation) {
+        await setPrimaryWallet(starknetWallet?.id);
+        delegateL2(starknetWallet.address!, "0x0")
+          .then()
+          .catch((err) => {
+            setIsStatusModalOpen(true);
+            setStatusTitle("Undelegating voting power failed");
+            setStatusDescription(
+              err.shortMessage ||
+                err.message ||
+                err.name ||
+                "An error occurred",
+            );
+          });
+      }
+    } else {
+      setIsOpen(true);
+    }
+  };
+
   return (
     <ProfilePageLayout.Root>
       <DelegateModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        isConnected
+        isConnected={primaryWallet !== null}
         isLayer2Delegation={primaryWallet?.id === starknetWallet?.id}
         isLayer1Delegation={primaryWallet?.id === ethWallet?.id}
         isUndelegation={isUndelegation}
@@ -389,7 +485,17 @@ export function Page() {
         }}
         activeAddress={primaryWallet?.address}
         delegateTokens={() => {
-          if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
+          const l1Balance = senderData?.balance;
+          const l2Balance = senderDataL2?.balance?.rawBalance;
+          const isL1Delegation = primaryWallet?.id === ethWallet?.id;
+          const isL2Delegation = primaryWallet?.id === starknetWallet?.id;
+          const isEligibleL1 =
+            parseFloat(l1Balance) > MINIMUM_TOKENS_FOR_DELEGATION &&
+            isL1Delegation;
+          const isEligibleL2 =
+            parseFloat(l2Balance) > MINIMUM_TOKENS_FOR_DELEGATION &&
+            isL2Delegation;
+          if (!isEligibleL2 && !isEligibleL1) {
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
             setStatusDescription(
@@ -401,22 +507,37 @@ export function Page() {
             if (deeplink) {
               window.location.href = deeplink;
             }
-            writeAsync?.({
-              args: [delegateAddress],
-            })
-              .then((tx) => {
-                setTxHash(tx.hash);
+            if (isL1Delegation) {
+              writeAsync?.({
+                args: [delegateAddress],
               })
-              .catch((err) => {
-                setIsStatusModalOpen(true);
-                setStatusTitle("Delegating voting power failed");
-                setStatusDescription(
-                  err.shortMessage ||
-                    err.message ||
-                    err.name ||
-                    "An error occurred",
-                );
-              });
+                .then((tx) => {
+                  setTxHash(tx.hash);
+                })
+                .catch((err) => {
+                  setIsStatusModalOpen(true);
+                  setStatusTitle("Delegating voting power failed");
+                  setStatusDescription(
+                    err.shortMessage ||
+                      err.message ||
+                      err.name ||
+                      "An error occurred",
+                  );
+                });
+            } else if (isL2Delegation) {
+              delegateL2(starknetWallet.address!, starknetAddress!)
+                .then()
+                .catch((err) => {
+                  setIsStatusModalOpen(true);
+                  setStatusTitle("Delegating voting power failed");
+                  setStatusDescription(
+                    err.shortMessage ||
+                      err.message ||
+                      err.name ||
+                      "An error occurred",
+                  );
+                });
+            }
             setIsOpen(false);
           }
         }}
@@ -436,10 +557,11 @@ export function Page() {
       />
       <StatusModal
         isOpen={isStatusModalOpen}
-        isPending={isDelegationLoading}
-        isSuccess={isDelegationSuccess}
+        isPending={isDelegationLoading || isDelegationL2Loading}
+        isSuccess={isDelegationSuccess || isDelegationL2Success}
         isFail={
           isDelegationError ||
+          delegationL2Error ||
           !!((!txHash || !txHash.length) && statusDescription?.length)
         }
         onClose={() => {
@@ -507,52 +629,96 @@ export function Page() {
           </>
         )}
 
-        {user && !delegateOwnProfile ? (
-          <Button
-            mt={{ base: "standard.2xl" }}
-            mb="0"
-            width={{ base: "100%" }}
-            variant="primary"
-            size="standard"
-            onClick={() => {
-              if (
-                parseFloat(senderData?.balance) <
-                  MINIMUM_TOKENS_FOR_DELEGATION &&
-                !hasUserDelegatedTokensToThisDelegate
-              ) {
-                setIsStatusModalOpen(true);
-                setStatusTitle("No voting power");
-                setStatusDescription(
-                  `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to delegate.`,
-                );
-                setIsOpen(false);
-                return;
+        {user && hasDelegatedOnL1 && !hasDelegatedOnL2 && (
+          <>
+            <Button
+              variant="secondary"
+              mt={{ base: "standard.2xl" }}
+              mb="0"
+              width={{ base: "100%" }}
+              onClick={() =>
+                handleDelegation({ layer: 1, isUndelegation: true })
               }
-              setIsOpen(true);
-              if (hasUserDelegatedTokensToThisDelegate) {
-                setIsUndelegation(true);
-                writeAsyncUndelegation?.({
-                  args: ["0x0000000000000000000000000000000000000000"],
-                })
-                  .then((tx) => {
-                    setTxHash(tx.hash);
-                  })
-                  .catch((err) => {
-                    setIsStatusModalOpen(true);
-                    setStatusTitle("Undelegating voting power failed");
-                    setStatusDescription(err.shortMessage);
-                  });
-                setIsOpen(false);
-              } else {
-                setIsUndelegation(false);
+            >
+              Undelegate on L1
+            </Button>
+            <Button
+              variant="primary"
+              mt={{ base: "standard.md" }}
+              mb="0"
+              width={{ base: "100%" }}
+              onClick={() => handleDelegation({ layer: 2, isDelegation: true })}
+            >
+              Delegate on L2
+            </Button>
+          </>
+        )}
+        {user && !hasDelegatedOnL1 && hasDelegatedOnL2 && (
+          <>
+            <Button
+              variant="secondary"
+              mt={{ base: "standard.2xl" }}
+              mb="0"
+              width={{ base: "100%" }}
+              onClick={() =>
+                handleDelegation({ layer: 2, isUndelegation: true })
               }
-            }}
-          >
-            {hasDelegatedOnL1
-              ? "Undelegate voting power"
-              : "Delegate voting power"}
-          </Button>
-        ) : !user ? (
+            >
+              Undelegate on L2
+            </Button>
+            <Button
+              variant="primary"
+              mt={{ base: "standard.md" }}
+              mb="0"
+              width={{ base: "100%" }}
+              onClick={() => handleDelegation({ layer: 1, isDelegation: true })}
+            >
+              Delegate on L1
+            </Button>
+          </>
+        )}
+        {user && !hasDelegatedOnL1 && !hasDelegatedOnL2 && (
+          <>
+            <Button
+              variant="primary"
+              mt={{ base: "standard.2xl" }}
+              mb="0"
+              width={{ base: "100%" }}
+              onClick={() => handleDelegation({ layer: null })}
+            >
+              Delegate
+            </Button>
+          </>
+        )}
+
+        {user && hasDelegatedOnL1 && hasDelegatedOnL2 && (
+          <>
+            <Button
+              variant="secondary"
+              mt={{ base: "standard.2xl" }}
+              mb="0"
+              width={{ base: "100%" }}
+              onClick={() =>
+                handleDelegation({ layer: 1, isUndelegation: true })
+              }
+            >
+              Undelegate on L1
+            </Button>
+            <Button
+              variant="secondary"
+              mt={{ base: "standard.md" }}
+              mb="0"
+              width={{ base: "100%" }}
+              onClick={() =>
+                handleDelegation({ layer: 2, isUndelegation: true })
+              }
+            >
+              Undelegate on L2
+            </Button>
+          </>
+        )}
+
+        {!user && (
           <Button
             mt={{ base: "standard.2xl" }}
             mb="0"
@@ -563,16 +729,22 @@ export function Page() {
           >
             Delegate voting power
           </Button>
-        ) : null}
+        )}
 
-        {delegation.isFetched &&
-          delegation.data?.toLowerCase() === delegateAddress?.toLowerCase() && (
-            <Box mt="standard.md">
-              <Banner
-                label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
-              />
-            </Box>
-          )}
+        {hasDelegatedOnL1 && (
+          <Box mt="standard.md">
+            <Banner
+              label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
+            />
+          </Box>
+        )}
+        {hasDelegatedOnL2 && (
+          <Box mt="standard.md">
+            <Banner
+              label={`Your voting power of ${senderDataL2.balance?.balance} ${senderDataL2?.balance?.symbol} is currently assigned to this delegate.`}
+            />
+          </Box>
+        )}
         {/*
         {delegateResponse.isFetched &&
           address?.toLowerCase() === delegateAddress?.toLowerCase() && (
@@ -712,10 +884,10 @@ export function Page() {
           <Socials
             delegateId={delegateId}
             socials={{
-              twitter: "https://twitter.com/0xStarknet",
-              discord: "https://discord.gg/9zJp8QZ8",
-              discourse: "https://forum.starknet.io/",
-              telegram: "https://t.me/starknet_io",
+              twitter: delegate?.twitter,
+              discord: delegate?.discord,
+              discourse: delegate?.discourse,
+              telegram: delegate?.telegram,
             }}
           />
           <Divider mt="standard.sm" mb="standard.sm" />
