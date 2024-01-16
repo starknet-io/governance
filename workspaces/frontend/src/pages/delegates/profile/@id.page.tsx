@@ -122,9 +122,7 @@ export function Page() {
     if (isDelegationL2Loading && dynamicUser && isL2Delegation) {
       setIsStatusModalOpen(true);
       setStatusTitle(
-        hasDelegatedOnL2
-          ? "Undelegating your votes"
-          : "Delegating your votes",
+        hasDelegatedOnL2 ? "Undelegating your votes" : "Delegating your votes",
       );
       setStatusDescription("");
     }
@@ -206,17 +204,24 @@ export function Page() {
       starknetAddress: starknetWallet?.address,
     });
 
+  const delegateOwnProfileL1 =
+    delegationDataL1?.toLowerCase() === ethWallet?.address?.toLowerCase();
+  const delegateOwnProfileL2 =
+    delegationDataL2?.toLowerCase() === starknetWallet?.address?.toLowerCase();
+
   const hasDelegatedOnL2 =
     delegationDataL2 &&
     delegationDataL2.length &&
     delegationDataL2.toLowerCase() ===
-      delegate?.author?.starknetAddress?.toLowerCase();
+      delegate?.author?.starknetAddress?.toLowerCase() &&
+    !delegateOwnProfileL2;
   const hasDelegatedOnL1 =
     delegationDataL1 &&
     delegationDataL1.length &&
     delegationDataL1.toLowerCase() ===
       delegate?.author?.address?.toLowerCase() &&
-    delegationDataL1 !== "0x0000000000000000000000000000000000000000";
+    delegationDataL1 !== "0x0000000000000000000000000000000000000000" &&
+    !delegateOwnProfileL1;
 
   const {
     isLoading: isLoadingUndelegation,
@@ -403,9 +408,6 @@ export function Page() {
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
 
-  const delegateOwnProfile =
-    delegateAddress &&
-    delegateAddress?.toLowerCase() === address?.toLowerCase();
   const [helpMessage, setHelpMessage] = useHelpMessage();
 
   const showNoVotingPowerMessaging = () => {
@@ -473,7 +475,7 @@ export function Page() {
       } else if (isUndelegation) {
         await setPrimaryWallet(starknetWallet?.id);
         setIsUndelegation(true);
-        delegateL2(starknetWallet.address!, "0x0")
+        delegateL2(starknetWallet.address!, starknetWallet.address!)
           .then(() => {
             if (typeof window !== "undefined") {
               window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
