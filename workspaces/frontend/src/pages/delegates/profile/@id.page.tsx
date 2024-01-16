@@ -119,16 +119,16 @@ export function Page() {
   // handle delegation cases
 
   useEffect(() => {
-    if (isDelegationL2Loading && dynamicUser) {
+    if (isDelegationL2Loading && dynamicUser && isL2Delegation) {
       setIsStatusModalOpen(true);
       setStatusTitle(
-        hasUserDelegatedTokensToThisDelegate
+        hasDelegatedOnL2
           ? "Undelegating your votes"
           : "Delegating your votes",
       );
       setStatusDescription("");
     }
-    if (delegationL2Error && dynamicUser) {
+    if (delegationL2Error && dynamicUser && isL2Delegation) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
@@ -140,7 +140,7 @@ export function Page() {
         "An error occurred while processing your transaction.",
       );
     }
-    if (isDelegationL2Success && dynamicUser) {
+    if (isDelegationL2Success && dynamicUser && isL2Delegation) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
@@ -153,7 +153,7 @@ export function Page() {
   }, [isDelegationL2Success, delegationL2Error, isDelegationL2Loading]);
 
   useEffect(() => {
-    if (isDelegationLoading && dynamicUser) {
+    if (isDelegationLoading && dynamicUser && isL1Delegation) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
@@ -163,7 +163,7 @@ export function Page() {
       setStatusDescription("");
     }
 
-    if (isDelegationError && dynamicUser) {
+    if (isDelegationError && dynamicUser && isL1Delegation) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
@@ -176,7 +176,7 @@ export function Page() {
       );
     }
 
-    if (isDelegationSuccess && dynamicUser) {
+    if (isDelegationSuccess && dynamicUser && isL1Delegation) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
@@ -478,7 +478,6 @@ export function Page() {
             if (typeof window !== "undefined") {
               window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
             }
-            setIsUndelegation(false);
           })
           .catch((err) => {
             setIsStatusModalOpen(true);
