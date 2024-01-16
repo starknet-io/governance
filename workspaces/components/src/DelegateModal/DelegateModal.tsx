@@ -131,15 +131,17 @@ export const DelegateModal = ({
       <Stack spacing="6">
         <Stack spacing="standard.xl">
           <Swap.Root>
-            <Swap.UserSummary
-              address={senderData.address}
-              balance={senderData.balance}
-              symbol={senderData.symbol}
-              isSender
-              text="Ethereum"
-              isSelected={senderData.address === activeAddress}
-              onClick={() => handleSelect(senderData.address!)}
-            />
+            {senderData ? (
+              <Swap.UserSummary
+                address={senderData.address}
+                balance={senderData.balance}
+                symbol={senderData.symbol}
+                isSender
+                text="Ethereum"
+                isSelected={senderData.address === activeAddress}
+                onClick={() => handleSelect(senderData.address!)}
+              />
+            ) : null}
             <Box mt="standard.xs">
               {senderDataL2 ? (
                 <Swap.UserSummary

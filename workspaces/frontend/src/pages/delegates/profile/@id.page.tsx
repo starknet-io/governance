@@ -507,8 +507,8 @@ export function Page() {
         isLayer2Delegation={primaryWallet?.id === starknetWallet?.id}
         isLayer1Delegation={primaryWallet?.id === ethWallet?.id}
         isUndelegation={isUndelegation}
-        senderData={senderData}
-        senderDataL2={senderDataL2?.balance}
+        senderData={!hasDelegatedOnL1 ? senderData : null}
+        senderDataL2={!hasDelegatedOnL2 ? senderDataL2?.balance : null}
         handleWalletSelect={async (address) => {
           if (address === starknetWallet?.address) {
             await setPrimaryWallet(starknetWallet?.id);
@@ -789,17 +789,24 @@ export function Page() {
           </Button>
         )}
 
-        {hasDelegatedOnL1 && (
+        {hasDelegatedOnL1 && !hasDelegatedOnL2 && (
           <Box mt="standard.md">
             <Banner
               label={`Your voting power of ${senderData.balance} ${senderData.symbol} is currently assigned to this delegate.`}
             />
           </Box>
         )}
-        {hasDelegatedOnL2 && (
+        {!hasDelegatedOnL1 && hasDelegatedOnL2 && (
           <Box mt="standard.md">
             <Banner
               label={`Your voting power of ${senderDataL2.balance?.balance} ${senderDataL2?.balance?.symbol} is currently assigned to this delegate.`}
+            />
+          </Box>
+        )}
+        {hasDelegatedOnL1 && hasDelegatedOnL2 && (
+          <Box mt="standard.md">
+            <Banner
+              label={`Your voting power of ${senderDataL2.balance?.balance} ${senderDataL2?.balance?.symbol} on L2 and ${senderData.balance} ${senderData.symbol} on L1 is currently assigned to this delegate.`}
             />
           </Box>
         )}
