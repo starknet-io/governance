@@ -24,6 +24,7 @@ export const useStarknetDelegate = () => {
     }
 
     setIsSubmitting(true);
+    setSuccess(false)
     setError(null);
 
     try {

@@ -49,6 +49,8 @@ import { useWallets } from "../../../hooks/useWallets";
 import { useStarknetDelegate } from "../../../hooks/starknet/useStarknetDelegation";
 import { delegationAgreement } from "src/utils/data";
 
+const DELEGATION_SUCCESS_EVENT = "delegationSuccess";
+
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
   daos: "DAOs",
@@ -117,7 +119,41 @@ export function Page() {
   // handle delegation cases
 
   useEffect(() => {
-    if ((isDelegationLoading || isDelegationL2Loading) && dynamicUser) {
+    if (isDelegationL2Loading && dynamicUser) {
+      setIsStatusModalOpen(true);
+      setStatusTitle(
+        hasUserDelegatedTokensToThisDelegate
+          ? "Undelegating your votes"
+          : "Delegating your votes",
+      );
+      setStatusDescription("");
+    }
+    if (delegationL2Error && dynamicUser) {
+      setIsStatusModalOpen(true);
+      setStatusTitle(
+        isUndelegation
+          ? "Undelegating voting power failed"
+          : "Delegating voting power failed",
+      );
+      setIsUndelegation(false);
+      setStatusDescription(
+        "An error occurred while processing your transaction.",
+      );
+    }
+    if (isDelegationL2Success && dynamicUser) {
+      setIsStatusModalOpen(true);
+      setStatusTitle(
+        isUndelegation
+          ? "Votes undelegated successfully"
+          : "Votes delegated successfully",
+      );
+      setStatusDescription("");
+      setIsUndelegation(false);
+    }
+  }, [isDelegationL2Success, delegationL2Error, isDelegationL2Loading]);
+
+  useEffect(() => {
+    if (isDelegationLoading && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         hasUserDelegatedTokensToThisDelegate
@@ -127,7 +163,7 @@ export function Page() {
       setStatusDescription("");
     }
 
-    if ((isDelegationError || delegationL2Error) && dynamicUser) {
+    if (isDelegationError && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
@@ -140,7 +176,7 @@ export function Page() {
       );
     }
 
-    if ((isDelegationSuccess || isDelegationL2Success) && dynamicUser) {
+    if (isDelegationSuccess && dynamicUser) {
       setIsStatusModalOpen(true);
       setStatusTitle(
         isUndelegation
@@ -150,14 +186,7 @@ export function Page() {
       setStatusDescription("");
       setIsUndelegation(false);
     }
-  }, [
-    isDelegationLoading,
-    isDelegationError,
-    isDelegationSuccess,
-    isDelegationL2Success,
-    isDelegationL2Loading,
-    delegationL2Error,
-  ]);
+  }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
   const { isLoading, writeAsync } = useL1StarknetDelegationDelegate({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY! as `0x${string}`,
@@ -229,6 +258,9 @@ export function Page() {
   });
 
   const allVotes = votesData?.votes || [];
+
+  const isL1Delegation = primaryWallet?.id === ethWallet?.id;
+  const isL2Delegation = primaryWallet?.id === starknetWallet?.id;
 
   const stats = allVotes.reduce((acc: { [key: string]: number }, vote) => {
     acc[vote!.choice] = (acc[vote!.choice] || 0) + 1;
@@ -409,6 +441,7 @@ export function Page() {
         setIsOpen(true);
       } else if (isUndelegation && hasDelegatedOnL1) {
         await setPrimaryWallet(ethWallet?.id);
+        setIsUndelegation(true);
         writeAsyncUndelegation?.({
           args: ["0x0000000000000000000000000000000000000000"],
         })
@@ -439,8 +472,14 @@ export function Page() {
         await setPrimaryWallet(starknetWallet?.id);
       } else if (isUndelegation) {
         await setPrimaryWallet(starknetWallet?.id);
+        setIsUndelegation(true);
         delegateL2(starknetWallet.address!, "0x0")
-          .then()
+          .then(() => {
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
+            }
+            setIsUndelegation(false);
+          })
           .catch((err) => {
             setIsStatusModalOpen(true);
             setStatusTitle("Undelegating voting power failed");
@@ -450,6 +489,7 @@ export function Page() {
                 err.name ||
                 "An error occurred",
             );
+            setIsUndelegation(false);
           });
       }
     } else {
@@ -487,8 +527,6 @@ export function Page() {
         delegateTokens={() => {
           const l1Balance = senderData?.balance;
           const l2Balance = senderDataL2?.balance?.rawBalance;
-          const isL1Delegation = primaryWallet?.id === ethWallet?.id;
-          const isL2Delegation = primaryWallet?.id === starknetWallet?.id;
           const isEligibleL1 =
             parseFloat(l1Balance) > MINIMUM_TOKENS_FOR_DELEGATION &&
             isL1Delegation;
@@ -526,7 +564,11 @@ export function Page() {
                 });
             } else if (isL2Delegation) {
               delegateL2(starknetWallet.address!, starknetAddress!)
-                .then()
+                .then(() => {
+                  if (typeof window !== "undefined") {
+                    window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
+                  }
+                })
                 .catch((err) => {
                   setIsStatusModalOpen(true);
                   setStatusTitle("Delegating voting power failed");
@@ -557,12 +599,19 @@ export function Page() {
       />
       <StatusModal
         isOpen={isStatusModalOpen}
-        isPending={isDelegationLoading || isDelegationL2Loading}
-        isSuccess={isDelegationSuccess || isDelegationL2Success}
+        isPending={
+          (isDelegationLoading && isL1Delegation) ||
+          (isDelegationL2Loading && isL2Delegation)
+        }
+        isSuccess={
+          (isDelegationSuccess && isL1Delegation) ||
+          (isDelegationL2Success && isL2Delegation)
+        }
         isFail={
-          isDelegationError ||
-          delegationL2Error ||
-          !!((!txHash || !txHash.length) && statusDescription?.length)
+          (isDelegationError && isL1Delegation) ||
+          (delegationL2Error && isL2Delegation) ||
+          (isL1Delegation &&
+            !!((!txHash || !txHash.length) && statusDescription?.length))
         }
         onClose={() => {
           setIsStatusModalOpen(false);

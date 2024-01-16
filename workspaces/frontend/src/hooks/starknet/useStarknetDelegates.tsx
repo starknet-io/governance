@@ -2,17 +2,11 @@ import { useState, useEffect } from "react";
 import { Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
-import {BigNumber} from "ethers";
-import {hexToString} from "viem";
+import { BigNumber } from "ethers";
 
-const starkContract =
-  "0x05936cbb910e8f16a670e26f1ae3d91925be439b597b4e5e5b0c674ddd7149fa";
+const starkContract = "0x05936cbb910e8f16a670e26f1ae3d91925be439b597b4e5e5b0c674ddd7149fa";
 
-export const useStarknetDelegates = ({
-  starknetAddress,
-}: {
-  starknetAddress: string;
-}) => {
+export const useStarknetDelegates = ({ starknetAddress } : { starknetAddress: string }) => {
   const [delegates, setDelegates] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -36,14 +30,9 @@ export const useStarknetDelegates = ({
       try {
         const provider = starkProvider;
         const contractAddress = starkContract;
-        const { abi: starknetContractAbi } =
-          await starkProvider.getClassAt(contractAddress);
+        const { abi: starknetContractAbi } = await starkProvider.getClassAt(contractAddress);
 
-        const contract = new Contract(
-          starknetContractAbi,
-          contractAddress,
-          provider,
-        );
+        const contract = new Contract(starknetContractAbi, contractAddress, provider);
 
         // Assuming 'delegates_of' is the method name; replace with the actual method name
         const delegatesData = await contract.delegates(starknetAddress);
@@ -57,6 +46,18 @@ export const useStarknetDelegates = ({
     };
 
     fetchDelegates();
+
+    // Event listener to re-fetch delegates when delegation is successful
+    const onDelegationSuccess = () => {
+      fetchDelegates();
+    };
+
+    window.addEventListener("delegationSuccess", onDelegationSuccess);
+
+    // Cleanup the event listener
+    return () => {
+      window.removeEventListener("delegationSuccess", onDelegationSuccess);
+    };
   }, [starknetAddress]);
 
   return { delegates, loading, error };
