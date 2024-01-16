@@ -642,15 +642,19 @@ export function Page() {
             >
               Undelegate on L1
             </Button>
-            <Button
-              variant="primary"
-              mt={{ base: "standard.md" }}
-              mb="0"
-              width={{ base: "100%" }}
-              onClick={() => handleDelegation({ layer: 2, isDelegation: true })}
-            >
-              Delegate on L2
-            </Button>
+            {starknetWallet && (
+              <Button
+                variant="primary"
+                mt={{ base: "standard.md" }}
+                mb="0"
+                width={{ base: "100%" }}
+                onClick={() =>
+                  handleDelegation({ layer: 2, isDelegation: true })
+                }
+              >
+                Delegate on L2
+              </Button>
+            )}
           </>
         )}
         {user && !hasDelegatedOnL1 && hasDelegatedOnL2 && (
@@ -666,15 +670,19 @@ export function Page() {
             >
               Undelegate on L2
             </Button>
-            <Button
-              variant="primary"
-              mt={{ base: "standard.md" }}
-              mb="0"
-              width={{ base: "100%" }}
-              onClick={() => handleDelegation({ layer: 1, isDelegation: true })}
-            >
-              Delegate on L1
-            </Button>
+            {ethWallet && (
+              <Button
+                variant="primary"
+                mt={{ base: "standard.md" }}
+                mb="0"
+                width={{ base: "100%" }}
+                onClick={() =>
+                  handleDelegation({ layer: 1, isDelegation: true })
+                }
+              >
+                Delegate on L1
+              </Button>
+            )}
           </>
         )}
         {user && !hasDelegatedOnL1 && !hasDelegatedOnL2 && (

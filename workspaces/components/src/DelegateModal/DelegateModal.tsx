@@ -154,9 +154,7 @@ export const DelegateModal = ({
                     marginTop: "standard.xs",
                   }}
                 />
-              ) : (
-                <Banner label="Delegate only has an Ethereum address currently. Please connect an Ethereum address to your account to delegate to this address." />
-              )}
+              ) : null}
             </Box>
             {receiverData && l1Delegation ? (
               <>
@@ -215,15 +213,16 @@ export const DelegateModal = ({
               </>
             )}
           </Swap.Root>
-          {!canBeDelegatedOnSpecifiedLayer && (receiverDataL2 || receiverData) && (
-            <Banner
-              label={`Delegate has only ${
-                l1Delegation ? "Starknet" : "Ethereum"
-              } address connected. You can delegate only from ${
-                l1Delegation ? "Starknet" : "Ethereum"
-              } wallet`}
-            />
-          )}
+          {!canBeDelegatedOnSpecifiedLayer &&
+            (receiverDataL2 || receiverData) && (
+              <Banner
+                label={`Delegate has only ${
+                  l1Delegation ? "Starknet" : "Ethereum"
+                } address connected. You can delegate only from ${
+                  l1Delegation ? "Starknet" : "Ethereum"
+                } wallet`}
+              />
+            )}
           {canBeDelegatedOnSpecifiedLayer ? (
             isConnected && (
               <Button
@@ -242,7 +241,10 @@ export const DelegateModal = ({
               variant="primary"
               type="submit"
               isDisabled={
-                !customAddress || !!error || (!canBeDelegatedOnSpecifiedLayer && (receiverDataL2 || receiverData))
+                !customAddress ||
+                !!error ||
+                (!canBeDelegatedOnSpecifiedLayer &&
+                  (receiverDataL2 || receiverData))
               }
               onClick={() => {
                 if (onContinue) {
