@@ -763,14 +763,10 @@ export function Page() {
                       <VoteStat
                         key={choice}
                         choice={index}
-                        // @ts-expect-error todo
                         type={choice}
-                        // @ts-expect-error todo
                         totalVotes={totalVotes}
-                        // @ts-expect-error todo
                         voteCount={voteCount}
                         userVote={userVote}
-                        // @ts-expect-error todo
                         strategies={strategies}
                         delegationSymbol={
                           import.meta.env.VITE_APP_DELEGATION_SYMBOL
