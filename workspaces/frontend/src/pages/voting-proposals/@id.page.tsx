@@ -766,6 +766,7 @@ export function Page() {
                           vote?.author?.ensName ||
                           null
                         }
+                        userDetails={vote?.author}
                         address={vote?.voter as string}
                         voted={
                           vote?.choice === 1

@@ -3,7 +3,7 @@ import { usePageContext } from "@yukilabs/governance-frontend/src/renderer/PageC
 import { hasPermission } from "@yukilabs/governance-frontend/src/utils/helpers";
 import { ROLES } from "@yukilabs/governance-frontend/src/renderer/types";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { Avatar, Box, Flex, MenuItem, Stack, Text } from "@chakra-ui/react";
+import { Avatar, Box, Flex, MenuItem, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import { truncateAddress } from "../utils";
 import { Tooltip } from "../Tooltip";
 import { InfoModal } from "../InfoModal";
@@ -13,9 +13,9 @@ import { Indenticon } from "../Indenticon";
 import { CommentInput } from "./CommentInput";
 import { Banner } from "../Banner/Banner";
 import { MarkdownRenderer } from "../MarkdownRenderer";
-import { IconButton } from "../IconButton";
 import { ReplyIcon } from "../Icons/UiIcons";
-import { Button as ChakraButton } from "@chakra-ui/react";
+import { UserDetails } from "../AvatarWithText/UserDetails";
+import { Button as ChakraButton, Popover, PopoverTrigger, PopoverContent, PopoverBody } from "@chakra-ui/react";
 import {
   CommentMoreActions,
   CommentProps,
@@ -37,6 +37,7 @@ const CommentItem: React.FC<CommentProps> = ({
   fetchMoreReplies,
   depth = 0,
 }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { author, createdAt, content, id, votes } = comment;
   const { user } = usePageContext();
   const canEdit = comment.userId === user?.id;
@@ -90,11 +91,32 @@ const CommentItem: React.FC<CommentProps> = ({
   const renderAuthorOrAddress = () => {
     const content = (
       <Flex direction="row" gap="standard.base" alignItems="center">
-        <Text as="span" variant="smallStrong" color="content.accent.default">
-          {author?.username ||
-            author?.ensName ||
-            truncateAddress(author ? author.address?.toLowerCase() : "")}
-        </Text>
+        <Popover isLazy trigger="hover" placement="top">
+          <PopoverTrigger>
+            <Text as="span" variant="smallStrong" color="content.accent.default" onMouseEnter={onOpen} sx={{cursor: "default"}}>
+              {author?.username ||
+                author?.ensName ||
+                truncateAddress(author ? author.address?.toLowerCase() : "")}
+            </Text>
+          </PopoverTrigger>
+          <PopoverContent
+          sx={{
+            border: "1px solid",
+            borderColor: "border.forms",
+            borderRadius: "8px",
+            boxShadow: "0px 9px 30px 0px rgba(51, 51, 62, 0.08), 1px 2px 2px 0px rgba(51, 51, 62, 0.10)",
+            zIndex: 2,
+            minWidth: "348px",
+            padding: "standard.lg"
+          }}>
+            <PopoverBody
+            sx={{
+              padding: 0
+            }}>
+              <UserDetails user={author}/>
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
         {(author?.username || author?.ensName) && <>
           <Text as="span" variant="bodySmall" color="content.accent.default">{`•`}</Text>
         <Text
@@ -152,7 +174,7 @@ const CommentItem: React.FC<CommentProps> = ({
         </Button>
       </InfoModal>
       {!comment.isDeleted ? (
-        <Stack pl={depth * 8} spacing="0" position="relative" overflow="hidden">
+        <Stack pl={depth * 8} spacing="0" position="relative">
           <Box
             position="absolute"
             top="0px"
@@ -166,7 +188,7 @@ const CommentItem: React.FC<CommentProps> = ({
             <Box
               position="absolute"
               top="0"
-              bottom="-35px"
+              bottom="0"
               width="1px"
               backgroundColor="border.dividers"
               left={`calc(6rem - 44px)`}

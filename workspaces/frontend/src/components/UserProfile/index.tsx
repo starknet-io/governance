@@ -136,13 +136,16 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
         <AvatarWithText
           size="condensed"
           address={user?.address}
+          showUserTooltip={false}
           headerText={
             user?.username ||
             user?.ensName ||
             truncateAddress(user?.address || "")
           }
+          headerHref={`/profile/${user?.address}`}
           subheaderText={truncateAddress(user?.address || "")}
           src={user?.profileImage ?? user?.ensAvatar ?? null}
+          userDetails={user}
         />
         <Box mt="standard.md" mb="standard.sm">
           <WalletButtons selectable profileVariant />

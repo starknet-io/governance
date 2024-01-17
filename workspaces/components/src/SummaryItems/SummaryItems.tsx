@@ -44,6 +44,7 @@ type ItemProps = {
   label: string;
   value?: string | null | React.ReactNode;
   additionalValue?: string | null | React.ReactNode;
+  delegatedToValue?: string | null | React.ReactNode;
   children?: React.ReactNode;
   isTruncated?: boolean;
   isCopiable?: boolean;
@@ -52,7 +53,7 @@ type ItemProps = {
 };
 
 const Item = (props: ItemProps) => {
-  const { label, isLoading, value, children, isTruncated, isCopiable, isExtendable, additionalValue } = props;
+  const { label, isLoading, value, children, isTruncated, isCopiable, isExtendable, additionalValue, delegatedToValue } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   if (isLoading) {
     return (
@@ -95,13 +96,19 @@ const Item = (props: ItemProps) => {
         <Text variant="small" color="content.default.default">
           {label}
         </Text>
-        {isExtendable && isOpen ? <Flex direction="row" mt="5px">
+        {isExtendable && isOpen ? <Flex direction="column">
+          <Flex direction="row" mt="5px">
             <svg width="19" height="11" viewBox="0 0 19 11" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path id="Rectangle 5597" d="M1 0V2C1 6.41828 4.58172 10 9 10H19" stroke="#DCDBDD"/>
-            </svg> <Text variant="small" color="content.default.default" ml="4px">
-          Voting power
-        </Text>
-          </Flex> : null}
+            </svg>
+            <Text variant="small" color="content.default.default" ml="4px">
+              Voting power
+            </Text>
+          </Flex>
+          {delegatedToValue ? <Text variant="small" color="content.default.default" ml="23px">
+            Delegated to
+          </Text> : null}
+        </Flex> : null}
       </Flex>
       <Flex width="50%" direction="column">
         <Flex direction="row" justifyContent="space-between" gap="standard.base">
@@ -127,9 +134,14 @@ const Item = (props: ItemProps) => {
             }
           /> : null}
         </Flex>
-        {additionalValue && isOpen ? <Text variant="small" color="content.accent.default" mt="5px">
-          {additionalValue}
-        </Text> : null}
+        {additionalValue && isOpen ? <Flex direction="column">
+          <Text variant="small" color="content.accent.default" mt="5px">
+            {additionalValue}
+          </Text>
+          {delegatedToValue ? <Text variant="small" color="content.accent.default" mt="5px">
+            {delegatedToValue}
+          </Text> : null}
+        </Flex> : null}
       </Flex>
     </Flex>
   );

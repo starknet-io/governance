@@ -169,7 +169,8 @@ export const DelegateCard = ({
   discord,
   discourse,
   telegram,
-  status
+  status,
+  userDetails
 }: DelegateCardProps) => {
   const votesFormatted = formatVotesAmount(votingPower) + " delegated votes";
   const formattedDelegateStatement = extractParagraph(statement || "");
@@ -190,6 +191,7 @@ export const DelegateCard = ({
             address={address}
             src={src}
             status={status}
+            userDetails={userDetails}
           />
         </LinkOverlay>
       </CardHeader>

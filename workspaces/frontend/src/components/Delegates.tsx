@@ -725,6 +725,7 @@ export function Delegates({
                         delegate.author?.ensName ??
                         truncateAddress(delegate.author?.address)
                       }
+                      userDetails={delegate.author}
                       key={delegate?.id}
                       twitter={delegate?.twitter}
                       discord={delegate?.discord}

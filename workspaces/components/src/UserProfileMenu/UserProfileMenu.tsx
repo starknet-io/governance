@@ -1,4 +1,5 @@
 import { forwardRef, RefObject } from "react";
+import { navigate } from "vite-plugin-ssr/client/router";
 import {
   Box,
   Flex,
@@ -72,9 +73,12 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           size="condensed"
           address={user?.address}
           headerText={
-            user?.username ||
+            <Link
+              href={`/${user?.address}`}
+              // onClick={() => navigate(`/${user?.address}`)}
+            >{user?.username ||
             user?.ensName ||
-            truncateAddress(user?.address || "")
+            truncateAddress(user?.address || "")}</Link>
           }
           subheaderText={truncateAddress(user?.address || "")}
           src={user?.profileImage ?? user?.ensAvatar ?? null}
@@ -191,16 +195,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           </Flex>
         </VStack>
         <Flex direction="column" mt="standard.md">
-          <Button
-            variant="secondary"
-            size="condensed"
-            onClick={(e) => {
-              setEditUserProfile && setEditUserProfile(true);
-              handleOpenModal && handleOpenModal();
-            }}
-          >
-            Edit user profile
-          </Button>
+          
         </Flex>
       </VStack>
     </>
