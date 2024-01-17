@@ -7,7 +7,7 @@ import {
 } from "starknet";
 import { create } from "ipfs-http-client";
 import { pin } from "@snapshot-labs/pineapple";
-import {STRATEGIES_ENUM} from "./constants";
+import { STRATEGIES_ENUM } from "./constants";
 
 const client = create({ url: "https://api.thegraph.com/ipfs/api/v0" });
 
@@ -96,18 +96,21 @@ export const transformProposal = (proposal) => {
     ipfs: proposal?.metadata?.id,
     choices: ["For", "Against", "Abstain"],
     scores: [
-      parseFloat(proposal.scores_1),
-      parseFloat(proposal.scores_2),
-      parseFloat(proposal.scores_3),
+      BigInt(proposal.scores_1 || 0n) / BigInt(10 ** 18),
+      BigInt(proposal.scores_2 || 0n) / BigInt(10 ** 18),
+      BigInt(proposal.scores_3 || 0n) / BigInt(10 ** 18),
     ],
     state: getProposalState(proposal, timeNow),
   };
 };
 
-export const transformVote = (vote) => {
+export const transformVote = (vote: any) => {
+  const { vp } = vote;
+  const valueWithDecimals = vp ? BigInt(vp) / BigInt(10 ** 18) : 0n;
   return {
     ...vote,
     voter: vote.voter.id,
+    vp: valueWithDecimals,
   };
 };
 
@@ -189,13 +192,13 @@ export const getVotingPowerCalculation = async (
         strategiesMetadata[i].payload,
       );
 
-      console.log('________________')
-      console.log('Address: ', address);
-      console.log('Voter Address: ', voterAddress);
-      console.log('Strategy metadata: ', strategyMetadata);
-      console.log('Timestamp: ', timestamp);
-      console.log('Strategy params ', strategiesParams[i].split(','));
-      console.log('________________')
+      console.log("________________");
+      console.log("Address: ", address);
+      console.log("Voter Address: ", voterAddress);
+      console.log("Strategy metadata: ", strategyMetadata);
+      console.log("Timestamp: ", timestamp);
+      console.log("Strategy params ", strategiesParams[i].split(","));
+      console.log("________________");
 
       const value = await strategy.getVotingPower(
         address,
@@ -221,28 +224,30 @@ export const getVotingPowerCalculation = async (
 };
 
 export const parseStrategiesToHumanReadableFormat = (strategies = []) => {
-  console.log(strategies)
+  console.log(strategies);
   return strategies.map((strategy) => {
     if (STRATEGIES_ENUM?.[strategy]) {
-      return STRATEGIES_ENUM?.[strategy]
+      return STRATEGIES_ENUM?.[strategy];
     } else {
-      return ""
+      return "";
     }
-  })
-}
+  });
+};
 
 export const parseStrategiesMetadata = (strategies) => {
   return strategies.map((strategy) => {
-    return `${strategy?.data?.name} - ${strategy?.data?.symbol}`
-  })
-}
+    return `${strategy?.data?.name} - ${strategy?.data?.symbol}`;
+  });
+};
 
-export function parseVotingPowerInDecimals(value: string | bigint, decimals = 18) {
+export function parseVotingPowerInDecimals(
+  value: string | bigint,
+  decimals = 18,
+) {
   const raw = BigInt(value);
   const parsed = Number(raw) / 10 ** decimals;
   if (raw !== 0n && parsed < 0.001) return `~0`;
 
-  const formatter = new Intl.NumberFormat('en', { maximumFractionDigits: 3 });
+  const formatter = new Intl.NumberFormat("en", { maximumFractionDigits: 3 });
   return formatter.format(parsed);
 }
-

@@ -69,12 +69,17 @@ import {
   waitForTransaction,
 } from "../../hooks/snapshotX/helpers";
 import { useL1StarknetDelegationDelegates } from "../../wagmi/L1StarknetDelegation";
-
+import { useWallets } from "../../hooks/useWallets";
 
 export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
   const [helpMessage, setHelpMessage] = useHelpMessage();
+  const { ethWallet, starknetWallet } = useWallets();
+  const { primaryWallet } = useDynamicContext();
+
+  const isL1Voting = ethWallet?.id === primaryWallet?.id;
+  const isL2Voting = starknetWallet?.id === primaryWallet?.id;
 
   const { data, refetch } = useProposal({
     proposal: pageContext.routeParams!.id
@@ -85,9 +90,18 @@ export function Page() {
   });
 
   const { data: votingPower, isLoading: votingPowerLoading } = useVotingPower({
-    address: walletClient?.account.address as string,
-    timestamp: data?.proposal?.created || null,
+    address: ethWallet?.address as string,
+    timestamp: data?.proposal?.snapshot || null,
   });
+
+  const { data: votingPowerL2, isLoading: votingPowerLoadingL2 } =
+    useVotingPower({
+      address: starknetWallet?.address as string,
+      timestamp: data?.proposal?.snapshot || null,
+    });
+
+  console.log(votingPower);
+  console.log(votingPowerL2);
 
   const vote = useVotes({
     proposal: pageContext.routeParams!.id,
@@ -96,12 +110,16 @@ export function Page() {
   });
 
   const space = useSpace();
-  const parsedVotingStrategies = parseStrategiesMetadata(space?.data?.strategies_parsed_metadata || [])
+  const parsedVotingStrategies = parseStrategiesMetadata(
+    space?.data?.strategies_parsed_metadata || [],
+  );
 
   const votes = useVotes({
     proposal: pageContext.routeParams!.id,
     skipField: "proposal",
   });
+
+  console.log(votes)
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -122,7 +140,10 @@ export function Page() {
   async function handleVote(choice: number, reason?: string) {
     try {
       if (walletClient == null) return;
-      if ((votingPower || 0) < MINIMUM_TOKENS_FOR_DELEGATION) {
+      if (
+        (isL1Voting && votingPower < MINIMUM_TOKENS_FOR_DELEGATION) ||
+        (isL2Voting && votingPowerL2 < MINIMUM_TOKENS_FOR_DELEGATION)
+      ) {
         setIsStatusModalOpen(true);
         setStatusTitle("No voting power");
         setStatusDescription(
@@ -155,7 +176,10 @@ export function Page() {
       }
 
       const params = {
-        authenticator: AUTHENTICATORS_ENUM.EVM_SIGNATURE,
+        authenticator:
+          primaryWallet?.id === ethWallet?.id
+            ? AUTHENTICATORS_ENUM.EVM_SIGNATURE
+            : AUTHENTICATORS_ENUM.STARKNET_SIGNATURE,
         space: space.data.id,
         proposal: pageContext.routeParams.id!,
         choice: convertedChoice,
@@ -164,15 +188,26 @@ export function Page() {
       };
 
       const web3 = new providers.Web3Provider(walletClient.transport);
+      const starknetProvider = starkProvider;
 
       const deeplink = walletConnector?.getDeepLink();
       if (deeplink) {
         window.location.href = deeplink;
       }
-      const receipt = await ethSigClient.vote({
-        signer: web3.getSigner(),
-        data: params,
-      });
+      let receipt = null;
+      if (primaryWallet?.id === ethWallet?.id) {
+        receipt = await ethSigClient.vote({
+          signer: web3.getSigner(),
+          data: params,
+        });
+      } else {
+        if (typeof window !== "undefined") {
+          receipt = await starkSigClient.vote({
+            signer: window.starknet.account,
+            data: params,
+          });
+        }
+      }
       const transaction = await starkSigClient.send(receipt);
       if (!transaction.transaction_hash) {
         setStatusTitle("Voting failed");
@@ -187,6 +222,7 @@ export function Page() {
       await votes.refetch();
     } catch (error: any) {
       // Handle error
+      console.error(error)
       setIsStatusModalOpen(true);
       setStatusTitle("Voting failed");
       setStatusDescription(
@@ -196,7 +232,7 @@ export function Page() {
     }
   }
 
-  console.log(data?.proposal)
+  console.log(data?.proposal);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
@@ -209,9 +245,11 @@ export function Page() {
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
-  const hasVoted = vote.data && vote.data.votes?.[0];
-  const canVote =
-    data?.proposal?.state === "active" && votingPower > 0 && !hasVoted;
+  //const hasVoted = vote.data && vote.data.votes?.[0];
+  const hasVoted = false
+  const canVote = true
+  //const canVote =
+  //  data?.proposal?.state === "active" && votingPower > 0 && !hasVoted;
   const hasDelegated =
     delegation.isFetched &&
     userBalance.isFetched &&
@@ -590,6 +628,7 @@ export function Page() {
                     Cast your vote
                   </Heading>
                 ) : null}
+                {/*
                 {votingPower === 0 &&
                   user &&
                   !votingPowerLoading &&
@@ -599,6 +638,7 @@ export function Page() {
                       <Divider mb="standard.2xl" />
                     </>
                   )}
+                  */}
 
                 {shouldShowHasDelegated &&
                   data?.proposal?.state !== "closed" && (
@@ -711,7 +751,7 @@ export function Page() {
                   {data?.proposal?.choices.map((choice, index) => {
                     const totalVotes = data?.proposal?.scores?.reduce(
                       (a, b) => a! + b!,
-                      0,
+                      0n,
                     );
                     const voteCount = data?.proposal?.scores![index];
                     const userVote = false;

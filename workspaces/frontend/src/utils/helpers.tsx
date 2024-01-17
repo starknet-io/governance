@@ -120,4 +120,3 @@ export function extractAndFormatSlug(
 export const findMatchingWallet = (wallets: any[], key: "EVM" | "STARKNET") => {
   return wallets.find((wallet) => wallet.chain === WalletChain[key]);
 };
-

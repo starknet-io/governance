@@ -4,7 +4,7 @@ import { formatVotesAmount } from "src/utils";
 
 type Props = {
   voteCount?: number;
-  totalVotes: number;
+  totalVotes: bigint;
   choice: 0 | 1 | 2;
   userVote: boolean;
   type: string;
@@ -23,8 +23,25 @@ const variant = {
   2: "neutral",
 };
 
-const formatPercentage = (num: number) => {
-  return num % 1 === 0 ? num.toFixed(0) : num.toFixed(2);
+const formatPercentage = (voteCount: bigint, totalVotes: bigint) => {
+  if (totalVotes === 0n) {
+    return '0'; // Avoid division by zero
+  }
+
+  // Calculate percentage parts
+  const percentage = (voteCount * 100n * 100n) / totalVotes;
+  const wholePart = percentage / 100n;
+  const fractionalPart = percentage % 100n;
+
+  // Format fractional part (ensure it has two digits)
+  const formattedFractionalPart = fractionalPart < 10n ? `0${fractionalPart}` : `${fractionalPart}`;
+
+  // Construct final formatted percentage string
+  if (formattedFractionalPart === '00') {
+    return `${wholePart}`; // No decimal places needed
+  } else {
+    return `${wholePart}.${formattedFractionalPart}`;
+  }
 };
 const getVariantKey = (type: string): "For" | "Against" | "Abstain" => {
   if (type.includes("Yes") || type.includes("For") || type.includes("most"))
@@ -35,11 +52,20 @@ const getVariantKey = (type: string): "For" | "Against" | "Abstain" => {
 };
 
 export const VoteStat = (props: Props) => {
-  const votePercentage =
-    props.totalVotes > 0
-      ? ((props.voteCount || 0) / props.totalVotes) * 100
-      : 0;
-  const voteCountFormatted = formatVotesAmount(props.voteCount || 0);
+  // Ensure voteCount is treated as a regular number, default to 0 if undefined
+  const voteCount = props.voteCount || 0;
+
+  // Calculate votePercentage
+  const votePercentageBigInt = props.totalVotes > 0n
+    ? (BigInt(voteCount) * 100n * 100n) / props.totalVotes
+    : 0n;
+
+  const votePercentage = Number(votePercentageBigInt) / 100; // Convert to Number and adjust for two decimal places
+
+  // Format voteCount and votePercentage
+  const voteCountFormatted = formatVotesAmount(voteCount);
+  const percentageText = formatPercentage(BigInt(voteCount), props.totalVotes); // Use BigInt for voteCount here
+
 
   return (
     <Stack mb="condensed.sm" spacing="0" textTransform="uppercase">
@@ -51,7 +77,7 @@ export const VoteStat = (props: Props) => {
       >
         <Box>
           <Text variant="captionSmallStrong" color="content.default.default">
-            {formatPercentage(votePercentage)}% {props.userVote ? "✓" : ""}{" "}
+            {percentageText}% {props.userVote ? "✓" : ""}{" "}
             {props.type}
           </Text>
         </Box>
@@ -68,9 +94,10 @@ export const VoteStat = (props: Props) => {
         <Progress
           variant={variant?.[props.choice] || variant[getVariantKey(props.type)]}
           height="4px"
-          value={votePercentage}
+          value={votePercentage} // Ensure this is a Number
         />
       </Box>
     </Stack>
   );
 };
+
