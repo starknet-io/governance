@@ -353,7 +353,6 @@ export function Page() {
   const isLoadingProfile = !delegateResponse.isFetched;
   const isLoadingSocials = !delegateResponse.isFetched;
   const isLoadingGqlResponse = isLoadingVotingPower || isLoadingVotingPowerL2;
-  console.log(votingPower, votingPowerL2);
   const hasUserDelegatedTokensToThisDelegate =
     delegation.isFetched &&
     delegation.data?.toLowerCase() === delegateAddress?.toLowerCase();
