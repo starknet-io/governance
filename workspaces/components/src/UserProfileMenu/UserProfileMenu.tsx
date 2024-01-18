@@ -75,7 +75,6 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           headerText={
             <Link
               href={`/${user?.address}`}
-              // onClick={() => navigate(`/${user?.address}`)}
             >{user?.username ||
             user?.ensName ||
             truncateAddress(user?.address || "")}</Link>

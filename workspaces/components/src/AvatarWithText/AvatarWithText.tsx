@@ -15,7 +15,7 @@ import { EthereumIcon, StarknetIcon, LikeIcon, DislikeIcon, ReactionIcon } from 
 type Props = {
   size?: "condensed" | "standard";
   userDetails?: User | null;
-  headerText?: string | null;
+  headerText?: string | Element | null;
   subheaderText?: string | null;
   address?: string | null;
   src?: string | null;
