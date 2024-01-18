@@ -79,11 +79,7 @@ export function Page() {
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { address } = useAccount();
   const { user } = usePageContext();
-  const usersResp = trpc.users.getAll.useQuery();
   const userResp = trpc.users.getUser.useQuery({ address: pageContext.routeParams.id });
-  console.log('pageContext je ', pageContext)
-  console.log('userResp je ', userResp.data)
-  console.log('usersResp je ', usersResp.data)
   const { user: dynamicUser, walletConnector } = useDynamicContext();
   const { ethWallet, starknetWallet } = useWallets();
   const { primaryWallet, setPrimaryWallet } = useDynamicContext();

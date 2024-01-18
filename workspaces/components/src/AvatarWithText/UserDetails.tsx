@@ -12,6 +12,7 @@ import { navigate } from "vite-plugin-ssr/client/router";
 import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 
 export const UserDetails = ({user}: any) => {
+  console.log('user ', user)
   return (
     <Flex gap="standard.sm" direction="column">
       <Flex gap="standard.sm" alignItems="center">
