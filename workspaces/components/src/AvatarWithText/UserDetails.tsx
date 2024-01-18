@@ -15,7 +15,7 @@ export const UserDetails = ({user}: any) => {
           {user?.avatarSrc !== null ? (
             <Avatar size="lg" sx={{ width: "56px", height: "56px" }} src={user?.avatarSrc} />
           ) : (
-            <Indenticon size={56} address={user?.address} />
+            <Indenticon size={56} address={user?.address || user?.profileImage} />
           )}
         </Box>
         <Box
