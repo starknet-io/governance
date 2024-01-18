@@ -81,6 +81,9 @@ import {
   EthereumIcon,
   CommunityLinksIcon,
   BlogPostsIcon,
+  LikeIcon,
+  DislikeIcon,
+  ReactionIcon
 } from "./UiIcons";
 
 export {
@@ -164,4 +167,7 @@ export {
   UserIcon,
   BlogPostsIcon,
   EthereumIcon,
+  LikeIcon,
+  DislikeIcon,
+  ReactionIcon
 };
