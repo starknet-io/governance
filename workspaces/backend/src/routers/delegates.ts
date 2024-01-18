@@ -21,9 +21,19 @@ import { db } from '../db/db';
 import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
 import { socials } from '../db/schema/socials';
-import {profanity} from "@2toad/profanity";
+import { profanity } from '@2toad/profanity';
 
 const delegateInsertSchema = createInsertSchema(delegates);
+
+const AddressInputSchema = z
+  .object({
+    address: z.string().optional(),
+    starknetAddress: z.string().optional(),
+  })
+  .refine((data) => data.address || data.starknetAddress, {
+    message:
+      "Either 'address' or 'starknetAddress' must be provided, but not both.",
+  });
 
 export const delegateRouter = router({
   getAll: publicProcedure.query(
@@ -53,7 +63,9 @@ export const delegateRouter = router({
       }
 
       if (profanity.exists(opts.input.statement)) {
-        throw new Error('Your delegate statement contains inappropriate language.');
+        throw new Error(
+          'Your delegate statement contains inappropriate language.',
+        );
       }
 
       const user = await db.query.users.findFirst({
@@ -236,7 +248,9 @@ export const delegateRouter = router({
       }
 
       if (profanity.exists(opts.input.statement)) {
-        throw new Error('Your delegate statement contains inappropriate language.');
+        throw new Error(
+          'Your delegate statement contains inappropriate language.',
+        );
       }
       // Determine the agreement value
       // const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
@@ -326,14 +340,18 @@ export const delegateRouter = router({
     }),
 
   getDelegateByAddress: publicProcedure
-    .input(
-      z.object({
-        address: z.string(),
-      }),
-    )
+    .input(AddressInputSchema)
     .query(async (opts) => {
+      const condition = opts.input.address
+        ? eq(users.address, opts.input.address)
+        : opts.input.starknetAddress
+        ? eq(users.starknetAddress, opts.input.starknetAddress)
+        : null;
+      if (!condition) {
+        throw new Error('Delegate not found');
+      }
       const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.address),
+        where: condition,
         with: {
           delegationStatement: {
             with: {

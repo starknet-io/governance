@@ -70,6 +70,8 @@ import {
 } from "../../hooks/snapshotX/helpers";
 import { useL1StarknetDelegationDelegates } from "../../wagmi/L1StarknetDelegation";
 import { useWallets } from "../../hooks/useWallets";
+import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
+import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -91,24 +93,26 @@ export function Page() {
 
   const { data: votingPower, isLoading: votingPowerLoading } = useVotingPower({
     address: ethWallet?.address as string,
-    timestamp: data?.proposal?.snapshot || null,
+    proposal: data?.proposal?.id,
   });
 
   const { data: votingPowerL2, isLoading: votingPowerLoadingL2 } =
     useVotingPower({
       address: starknetWallet?.address as string,
-      timestamp: data?.proposal?.snapshot || null,
+      proposal: data?.proposal?.id,
     });
-
-  console.log(votingPower);
-  console.log(votingPowerL2);
 
   const vote = useVotes({
     proposal: pageContext.routeParams!.id,
-    voter: walletClient?.account.address as any,
+    voter: ethWallet?.address as any,
     skipField: "voter",
   });
 
+  const voteL2 = useVotes({
+    proposal: pageContext.routeParams!.id,
+    voter: starknetWallet?.address as any,
+    skipField: "voter",
+  });
   const space = useSpace();
   const parsedVotingStrategies = parseStrategiesMetadata(
     space?.data?.strategies_parsed_metadata || [],
@@ -119,7 +123,7 @@ export function Page() {
     skipField: "proposal",
   });
 
-  console.log(votes)
+  console.log(votes);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -130,7 +134,16 @@ export function Page() {
     enabled: address != null,
   });
 
+  const delegationDataL1 = delegation?.data;
+
+  const { delegates: delegationDataL2 } = useStarknetDelegates({
+    starknetAddress: starknetWallet?.address,
+  });
+
   const userBalance = useBalanceData(address);
+  const starknetBalance = useStarknetBalance({
+    starknetAddress: starknetWallet?.address,
+  });
 
   const { data: commentCountData } =
     trpc.proposals.getProposalCommentCount.useQuery({
@@ -222,7 +235,7 @@ export function Page() {
       await votes.refetch();
     } catch (error: any) {
       // Handle error
-      console.error(error)
+      console.error(error);
       setIsStatusModalOpen(true);
       setStatusTitle("Voting failed");
       setStatusDescription(
@@ -246,15 +259,37 @@ export function Page() {
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
   //const hasVoted = vote.data && vote.data.votes?.[0];
-  const hasVoted = false
-  const canVote = true
+  const hasVoted = false;
+  const canVote = true;
   //const canVote =
   //  data?.proposal?.state === "active" && votingPower > 0 && !hasVoted;
-  const hasDelegated =
-    delegation.isFetched &&
-    userBalance.isFetched &&
-    delegation.data &&
-    delegation.data != "0x0000000000000000000000000000000000000000";
+
+  const delegateOwnProfileL1 =
+    delegationDataL1?.toLowerCase() === ethWallet?.address?.toLowerCase();
+  const delegateOwnProfileL2 =
+    delegationDataL2?.toLowerCase() === starknetWallet?.address?.toLowerCase();
+  const hasDelegatedOnL2 =
+    delegationDataL2 && delegationDataL2.length && !delegateOwnProfileL2;
+  const hasDelegatedOnL1 =
+    delegationDataL1 &&
+    delegationDataL1.length &&
+    delegationDataL1 !== "0x0000000000000000000000000000000000000000" &&
+    !delegateOwnProfileL1;
+  const hasVotedL1 = vote.data && vote.data.votes?.[0];
+  const hasVotedL2 = voteL2.data && voteL2.data.votes?.[0];
+
+  const canVoteL1 =
+    data?.proposal?.state === "active" &&
+    votingPower > 0 &&
+    !hasVotedL1 &&
+    !hasDelegatedOnL1;
+  const canVoteL2 =
+    data?.proposal?.state === "active" &&
+    votingPowerL2 > 0 &&
+    !hasVotedL2 &&
+    !hasDelegatedOnL2;
+
+  const hasDelegated = false;
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
   const showPastVotes = votes?.data?.votes && votes?.data?.votes.length > 0;
   const pastVotes = votes?.data?.votes || [];
@@ -309,10 +344,75 @@ export function Page() {
   };
 
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegation?.data ? delegation?.data?.toLowerCase() : "",
+    address: delegationDataL1,
   });
+  const delegatedToL2 = trpc.delegates.getDelegateByAddress.useQuery(
+    {
+      address: delegationDataL2,
+    },
+    {
+      enabled: !!delegationDataL2,
+    },
+  );
 
   if (data == null) return null;
+
+  const renderBannerBasedOnDelegation = () => {
+    if (hasDelegatedOnL1 && !hasDelegatedOnL2) {
+      return (
+        <>
+          Your voting power of {userBalance.balance} {userBalance.symbol} is
+          currently assigned to delegate{" "}
+          <Link
+            fontSize="small"
+            fontWeight="normal"
+            href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
+          >
+            {truncateAddress(delegation.data! || "")}
+          </Link>
+        </>
+      );
+    } else if (hasDelegatedOnL2 && !hasDelegatedOnL2) {
+      return (
+        <>
+          Your voting power of {starknetBalance?.balance?.balance}{" "}
+          {starknetBalance?.balance?.symbol} is currently assigned to delegate{" "}
+          <Link
+            fontSize="small"
+            fontWeight="normal"
+            href={`/delegates/profile/${delegatedToL2?.data?.delegationStatement?.id}`}
+          >
+            {truncateAddress(delegationDataL2 || "")}
+          </Link>
+        </>
+      );
+    } else if (hasDelegatedOnL2 && hasDelegatedOnL1) {
+      return (
+        <>
+          Your voting power of {starknetBalance?.balance?.balance}{" "}
+          {starknetBalance?.balance?.symbol} is currently assigned to delegate{" "}
+          <Link
+            fontSize="small"
+            fontWeight="normal"
+            href={`/delegates/profile/${delegatedToL2?.data?.delegationStatement?.id}`}
+          >
+            {truncateAddress(delegationDataL2 || "")}
+          </Link>{" "}
+          and {userBalance.balance} {userBalance.symbol} is currently assigned
+          to delegate{" "}
+          <Link
+            fontSize="small"
+            fontWeight="normal"
+            href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
+          >
+            {truncateAddress(delegation.data! || "")}
+          </Link>
+        </>
+      );
+    } else {
+      return <></>;
+    }
+  };
 
   return (
     <>
@@ -619,7 +719,7 @@ export function Page() {
                     Cast your vote
                   </Heading>
                 )}
-                {!hasVoted && canVote ? (
+                {(!hasVotedL1 && canVoteL1) || (!hasVotedL2 && canVoteL2) ? (
                   <Heading
                     color="content.accent.default"
                     variant="h4"
@@ -628,8 +728,9 @@ export function Page() {
                     Cast your vote
                   </Heading>
                 ) : null}
-                {/*
-                {votingPower === 0 &&
+                {((votingPower === 0 && primaryWallet?.id === ethWallet?.id) ||
+                  (votingPowerL2 === 0 &&
+                    primaryWallet?.id === starknetWallet?.id)) &&
                   user &&
                   !votingPowerLoading &&
                   !shouldShowHasDelegated && (
@@ -638,9 +739,8 @@ export function Page() {
                       <Divider mb="standard.2xl" />
                     </>
                   )}
-                  */}
 
-                {shouldShowHasDelegated &&
+                {(hasDelegatedOnL1 || hasDelegatedOnL2) &&
                   data?.proposal?.state !== "closed" && (
                     <>
                       <Heading
@@ -650,22 +750,7 @@ export function Page() {
                       >
                         Your vote
                       </Heading>
-                      <Banner
-                        label={
-                          <>
-                            Your voting power of {userBalance.balance}{" "}
-                            {userBalance.symbol} is currently assigned to
-                            delegate{" "}
-                            <Link
-                              fontSize="small"
-                              fontWeight="normal"
-                              href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
-                            >
-                              {truncateAddress(delegation.data! || "")}
-                            </Link>
-                          </>
-                        }
-                      />
+                      <Banner label={renderBannerBasedOnDelegation()} />
 
                       <Divider mb="standard.2xl" />
                     </>
@@ -692,7 +777,29 @@ export function Page() {
                     <Divider mb="standard.2xl" />
                   </>
                 )}
-                {(hasVoted || (canVote && user)) &&
+                {voteL2.data && voteL2.data.votes?.[0] && (
+                  <>
+                    <Heading
+                      color="content.accent.default"
+                      variant="h4"
+                      mb="standard.md"
+                    >
+                      Your vote
+                    </Heading>
+                    <Banner
+                      label={`You voted ${
+                        voteL2.data.votes[0].choice === 1
+                          ? data?.proposal?.choices?.[0] || "For"
+                          : voteL2.data.votes[0].choice === 2
+                          ? data?.proposal?.choices?.[1] || "Against"
+                          : data?.proposal?.choices?.[2] || "Abstain"
+                      } using ${voteL2.data.votes[0].vp} votes`}
+                    />
+                    <Divider mb="standard.2xl" />
+                  </>
+                )}
+                {(canVoteL2 || canVoteL1) &&
+                user &&
                 data?.proposal?.state !== "closed" ? (
                   <Flex
                     mb="40px"

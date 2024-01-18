@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_SPACE } from "./queries";
-import { getVotingPowerCalculation, parseVotingPowerInDecimals } from "./helpers";
+import { getVotingPowerCalculation } from "./helpers";
 
-export function useVotingPower({ address, proposal, timestamp }) {
+export function useVotingPower({ address, proposal, timestamp }: {
+  address: string,
+  proposal?: number,
+  timestamp?: number,
+}) {
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
 
   const [data, setData] = useState(0);
