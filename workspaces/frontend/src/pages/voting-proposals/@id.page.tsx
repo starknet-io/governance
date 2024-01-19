@@ -473,7 +473,7 @@ export function Page() {
                 <BackButton
                   buttonText="Voting proposals"
                   urlStart={["/voting-proposals/"]}
-                  href="/voting-proposals "
+                  href="/voting-proposals"
                   pageContext={pageContext}
                 />
               </Box>
