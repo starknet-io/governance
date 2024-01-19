@@ -32,7 +32,6 @@ export function useVotingPower({ address, proposal, timestamp }: {
         ...strategy.data,
       }),
     );
-
     try {
       const vpData = await getVotingPowerCalculation(
         spaceObj.space.strategies,
@@ -62,6 +61,7 @@ export function useVotingPower({ address, proposal, timestamp }: {
 
     // Event listener to re-fetch voting power when delegation is successful
     const onDelegationSuccess = () => {
+      debugger
       fetchVotingPower();
     };
 

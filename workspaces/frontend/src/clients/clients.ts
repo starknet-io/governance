@@ -1,5 +1,5 @@
 import {
-  starknetGoerli1,
+  starknetGoerli,
   clients,
   getStarknetStrategy,
 } from "@snapshot-labs/sx";
@@ -20,7 +20,7 @@ export const clientConfig = {
   starkProvider,
   manaUrl,
   ethUrl,
-  networkConfig: starknetGoerli1,
+  networkConfig: starknetGoerli,
 };
 
 export const starknetEvmClient = new clients.StarknetTx(clientConfig);

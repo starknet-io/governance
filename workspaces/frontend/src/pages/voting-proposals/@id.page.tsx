@@ -207,6 +207,7 @@ export function Page() {
       if (deeplink) {
         window.location.href = deeplink;
       }
+      debugger;
       let receipt = null;
       if (primaryWallet?.id === ethWallet?.id) {
         receipt = await ethSigClient.vote({
@@ -354,8 +355,6 @@ export function Page() {
       enabled: !!delegationDataL2,
     },
   );
-
-  if (data == null) return null;
 
   const renderBannerBasedOnDelegation = () => {
     if (hasDelegatedOnL1 && !hasDelegatedOnL2) {
@@ -728,11 +727,14 @@ export function Page() {
                     Cast your vote
                   </Heading>
                 ) : null}
-                {((votingPower === 0 && primaryWallet?.id === ethWallet?.id) ||
-                  (votingPowerL2 === 0 &&
-                    primaryWallet?.id === starknetWallet?.id)) &&
+                {votingPower === 0 &&
+                  votingPowerL2 === 0 &&
                   user &&
+                  data?.proposal?.state !== "closed" &&
                   !votingPowerLoading &&
+                  !votingPowerLoadingL2 &&
+                  !hasVotedL2 &&
+                  !hasVotedL1 &&
                   !shouldShowHasDelegated && (
                     <>
                       <Banner label="You cannot vote as it seems you didn’t have any voting power when this Snapshot was taken." />
@@ -772,7 +774,7 @@ export function Page() {
                           : vote.data.votes[0].choice === 2
                           ? data?.proposal?.choices?.[1] || "Against"
                           : data?.proposal?.choices?.[2] || "Abstain"
-                      } using ${vote.data.votes[0].vp} votes`}
+                      } using ${vote.data.votes[0].vp} votes on Ethereum (L1)`}
                     />
                     <Divider mb="standard.2xl" />
                   </>
@@ -793,7 +795,9 @@ export function Page() {
                           : voteL2.data.votes[0].choice === 2
                           ? data?.proposal?.choices?.[1] || "Against"
                           : data?.proposal?.choices?.[2] || "Abstain"
-                      } using ${voteL2.data.votes[0].vp} votes`}
+                      } using ${
+                        voteL2.data.votes[0].vp
+                      } votes on Starknet (L2)`}
                     />
                     <Divider mb="standard.2xl" />
                   </>
