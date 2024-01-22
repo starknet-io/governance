@@ -117,7 +117,7 @@ export function Page() {
   const space = useSpace();
   const parsedVotingStrategies = parseStrategiesMetadata(
     space?.data?.strategies_parsed_metadata || [],
-  );
+  ).join(", ");
 
   const votes = useVotes({
     proposal: pageContext.routeParams!.id,
@@ -358,6 +358,7 @@ export function Page() {
   );
 
   const renderBannerBasedOnDelegation = () => {
+    debugger
     if (hasDelegatedOnL1 && !hasDelegatedOnL2) {
       return (
         <>
@@ -372,7 +373,7 @@ export function Page() {
           </Link>
         </>
       );
-    } else if (hasDelegatedOnL2 && !hasDelegatedOnL2) {
+    } else if (hasDelegatedOnL2 && !hasDelegatedOnL1) {
       return (
         <>
           Your voting power of {starknetBalance?.balance?.balance}{" "}
@@ -428,7 +429,7 @@ export function Page() {
             voteCount={votingPower as number}
             choice={vote.data.votes[0].choice}
           />
-        ) : (
+        ) : canVoteL1 ? (
           <VoteReview
             choice={currentChoice}
             isSelected={primaryWallet?.id === ethWallet?.id}
@@ -437,14 +438,14 @@ export function Page() {
               await setPrimaryWallet(ethWallet?.id);
             }}
           />
-        )}
+        ) : null}
         {hasVotedL2 ? (
           <PastVote
             isStarknet
             voteCount={votingPowerL2 as number}
             choice={voteL2.data.votes[0].choice}
           />
-        ) : (
+        ) : canVoteL2 ? (
           <VoteReview
             choice={currentChoice}
             isSelected={primaryWallet?.id === starknetWallet?.id}
@@ -454,7 +455,7 @@ export function Page() {
               await setPrimaryWallet(starknetWallet?.id);
             }}
           />
-        )}
+        ) : null}
         <FormControl id="comment" mt="standard.xl">
           <FormLabel fontSize="14px" color={"content.default.default"}>
             Reason{" "}
@@ -512,11 +513,9 @@ export function Page() {
         size="standard"
       >
         <SummaryItems.Root>
-          <SummaryItems.StrategySummary
-            strategies={
-              //parseStrategiesToHumanReadableFormat(data?.proposal?.strategies || [])
-              []
-            }
+          <SummaryItems.Item
+            label="Strategies"
+            value={parsedVotingStrategies}
           />
           <SummaryItems.LinkItem
             label="IPFS #"
@@ -526,7 +525,7 @@ export function Page() {
           />
           <SummaryItems.Item
             label="Voting system"
-            value={parsedVotingStrategies}
+            value={"Basic Voting"}
           />
           <SummaryItems.CustomDate
             label="Start date"
@@ -778,13 +777,6 @@ export function Page() {
                 {(hasDelegatedOnL1 || hasDelegatedOnL2) &&
                   data?.proposal?.state !== "closed" && (
                     <>
-                      <Heading
-                        color="content.accent.default"
-                        variant="h4"
-                        mb="standard.md"
-                      >
-                        Your vote
-                      </Heading>
                       <Banner label={renderBannerBasedOnDelegation()} />
 
                       <Divider mb="standard.2xl" />
@@ -793,13 +785,6 @@ export function Page() {
 
                 {vote.data && vote.data.votes?.[0] && (
                   <>
-                    <Heading
-                      color="content.accent.default"
-                      variant="h4"
-                      mb="standard.md"
-                    >
-                      Your vote
-                    </Heading>
                     <Banner
                       label={`You voted ${
                         vote.data.votes[0].choice === 1
@@ -814,13 +799,6 @@ export function Page() {
                 )}
                 {voteL2.data && voteL2.data.votes?.[0] && (
                   <>
-                    <Heading
-                      color="content.accent.default"
-                      variant="h4"
-                      mb="standard.md"
-                    >
-                      Your vote
-                    </Heading>
                     <Banner
                       label={`You voted ${
                         voteL2.data.votes[0].choice === 1
@@ -848,8 +826,22 @@ export function Page() {
                     {data.proposal?.choices.map((choice, index) => (
                       <VoteButton
                         key={choice}
-                        onClick={() => {
+                        onClick={async () => {
                           setcurrentChoice(index + 1);
+                          if (
+                            hasVotedL1 &&
+                            starknetWallet?.id &&
+                            primaryWallet?.id !== starknetWallet?.id
+                          ) {
+                            await setPrimaryWallet(starknetWallet?.id);
+                          }
+                          if (
+                            hasVotedL2 &&
+                            ethWallet?.id &&
+                            primaryWallet?.id !== ethWallet?.id
+                          ) {
+                            await setPrimaryWallet(ethWallet?.id);
+                          }
                           setIsOpen(true);
                         }}
                         active={vote?.data?.votes?.[0]?.choice === index + 1}
