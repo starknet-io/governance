@@ -22,6 +22,7 @@ export { VoteModal } from "./src/VoteModal";
 export { InfoModal } from "./src/InfoModal";
 export { PlaceholderImage } from "./src/PlaceholderImage";
 export { VoteReview } from "./src/VoteReview";
+export { PastVote } from "./src/PastVote";
 export { DelegateModal } from "./src/DelegateModal";
 export { AgreementModal } from "./src/AgreementModal";
 export { ConfirmModal } from "./src/ConfirmModal";

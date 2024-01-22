@@ -34,6 +34,7 @@ import {
   MenuList,
   MenuItem,
   Username,
+  PastVote,
 } from "@yukilabs/governance-components";
 import * as VoteLayout from "../../components/VotingProposals/VotingProposal/PageLayout";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -78,7 +79,7 @@ export function Page() {
   const { data: walletClient } = useWalletClient();
   const [helpMessage, setHelpMessage] = useHelpMessage();
   const { ethWallet, starknetWallet } = useWallets();
-  const { primaryWallet } = useDynamicContext();
+  const { primaryWallet, setPrimaryWallet } = useDynamicContext();
 
   const isL1Voting = ethWallet?.id === primaryWallet?.id;
   const isL2Voting = starknetWallet?.id === primaryWallet?.id;
@@ -418,10 +419,42 @@ export function Page() {
       <Modal
         title="Confirm Vote"
         isOpen={isOpen}
+        maxHeight={"80%"}
         onClose={() => setIsOpen(false)}
         size="md"
       >
-        <VoteReview choice={currentChoice} voteCount={votingPower as number} />
+        {hasVotedL1 ? (
+          <PastVote
+            voteCount={votingPower as number}
+            choice={vote.data.votes[0].choice}
+          />
+        ) : (
+          <VoteReview
+            choice={currentChoice}
+            isSelected={primaryWallet?.id === ethWallet?.id}
+            voteCount={votingPower as number}
+            setWalletCallback={async () => {
+              await setPrimaryWallet(ethWallet?.id);
+            }}
+          />
+        )}
+        {hasVotedL2 ? (
+          <PastVote
+            isStarknet
+            voteCount={votingPowerL2 as number}
+            choice={voteL2.data.votes[0].choice}
+          />
+        ) : (
+          <VoteReview
+            choice={currentChoice}
+            isSelected={primaryWallet?.id === starknetWallet?.id}
+            voteCount={votingPowerL2 as number}
+            isStarknet
+            setWalletCallback={async () => {
+              await setPrimaryWallet(starknetWallet?.id);
+            }}
+          />
+        )}
         <FormControl id="comment" mt="standard.xl">
           <FormLabel fontSize="14px" color={"content.default.default"}>
             Reason{" "}
