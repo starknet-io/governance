@@ -23,7 +23,6 @@ import { trpc } from "src/utils/trpc";
 import { useState } from "react";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { hasPermission } from "src/utils/helpers";
-import { useProposals } from "../../hooks/snapshotX/useProposals";
 
 interface SkeletonRowProps {
   numItems: number;
@@ -306,9 +305,10 @@ export function Page() {
                   setSortBy(e as unknown as SortingTypes);
                   setFiltersState((prevState) => ({
                     ...prevState,
+
                     sortBy: e as unknown as SortingTypes,
                   }));
-                  refetch();
+                  //refetch();
                 }}
                 options={SORTING_OPTIONS.map((option) => ({
                   value: option.value,

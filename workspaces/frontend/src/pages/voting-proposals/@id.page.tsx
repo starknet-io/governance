@@ -358,7 +358,6 @@ export function Page() {
   );
 
   const renderBannerBasedOnDelegation = () => {
-    debugger
     if (hasDelegatedOnL1 && !hasDelegatedOnL2) {
       return (
         <>
