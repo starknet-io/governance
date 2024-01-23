@@ -59,3 +59,10 @@ jobs:
             VITE_APP_ALGOLIA_PUBLIC_API_KEY=${{ secrets.VITE_APP_ALGOLIA_PUBLIC_API_KEY }}
             VITE_APP_ALGOLIA_INDEX=${{ vars.VITE_APP_ALGOLIA_INDEX }}
             VITE_APP_TELEGRAM_BOT_KEY=${{ secrets.VITE_APP_TELEGRAM_BOT_KEY }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v0.4.0
+        with:
+          service: governance
+          image: europe-west9-docker.pkg.dev/governance-development/governance/dev:${{ steps.meta.outputs.tags }}
+          region: europe-west9
