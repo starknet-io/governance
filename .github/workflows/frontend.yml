@@ -3,9 +3,9 @@ name: front deployment
 on:
   push:
     branches: ['dev', 'snapshot']
-    #paths:
-    #  - 'workspaces/frontend/**'
-    #  - 'workspaces/components/**'
+    paths:
+      - 'workspaces/frontend/**'
+      - 'workspaces/components/**'
   workflow_dispatch:
 
 jobs:
