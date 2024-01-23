@@ -53,6 +53,6 @@ jobs:
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v0.4.0
         with:
-          service: governance
+          service: api
           image: ${{ steps.meta.outputs.tags }}
           region: europe-west9
