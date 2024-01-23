@@ -41,3 +41,5 @@ RUN NODE_OPTIONS="--max-old-space-size=8192" yarn workspace @yukilabs/governance
 WORKDIR /app/workspaces/frontend
 EXPOSE 3000
 ENTRYPOINT [ "node", "./src/server/index.cjs" ]
+
+
