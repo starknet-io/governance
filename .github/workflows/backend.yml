@@ -3,13 +3,38 @@ name: back deployment
 on:
   push:
     branches: ['dev', 'snapshot']
-    #paths:
-    #  - 'workspaces/backend/**'
+    paths:
+      - 'workspaces/backend/**'
   workflow_dispatch:
 
 jobs:
+  codeql-analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    defaults:
+      run:
+        working-directory: workspaces/backend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+      - name: Install dependencies
+        run: |
+          yarn install
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"
   Build:
     runs-on: ubuntu-latest
+    needs: codeql-analysis
     outputs:
       tag: ${{ steps.meta.outputs.version }}
     steps:
