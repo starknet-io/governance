@@ -23,6 +23,7 @@ jobs:
             type=ref,suffix=-{{sha}},event=pr
 
       - uses: 'google-github-actions/auth@v2'
+        id: auth
         with:
             project_id: 'governance-development'
             credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
