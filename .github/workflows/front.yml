@@ -1,0 +1,21 @@
+name: front
+
+on:
+  push:
+    branches: ['dev']
+    paths:
+      - 'workspaces/frontend/**'
+      - 'workspaces/components/**'
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: 'google-github-actions/auth@v2'
+        with:
+            project_id: 'governance-development'
+            credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
