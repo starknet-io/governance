@@ -91,9 +91,12 @@ app.use(checkOriginMiddleware);
 
 // Headers
 app.use(helmet());
+const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:3000'
+const clientOrigin2 = 'https://kolkata.goerli.sw-dev.io'
+
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
+    origin: [clientOrigin, clientOrigin2],
     credentials: true,
   }),
 );
