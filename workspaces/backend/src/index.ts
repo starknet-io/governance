@@ -91,15 +91,14 @@ app.use(checkOriginMiddleware);
 
 // Headers
 app.use(helmet());
-const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:3000'
-const clientOrigin2 = 'https://kolkata.goerli.sw-dev.io'
 
 app.use(
   cors({
-    origin: [clientOrigin, clientOrigin2],
+    origin: true,
     credentials: true,
   }),
 );
+
 
 app.get('/health', (req, res) => res.sendStatus(200));
 
