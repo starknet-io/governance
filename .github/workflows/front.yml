@@ -27,10 +27,10 @@ jobs:
             project_id: 'governance-development'
             credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
-      - name: Login to DO Container Registry
+      - name: Login to GAR
         uses: docker/login-action@v3
         with:
-          registry: registry.digitalocean.com
+          registry: europe-west9-docker.pkg.dev
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.access_token }}
 
