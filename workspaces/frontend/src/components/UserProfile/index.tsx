@@ -61,61 +61,6 @@ interface UserProfileMenuProps {
   };
 }
 
-const DelegationComponent = ({
-  delegatedTo,
-  delegatedToName,
-}: {
-  delegatedTo: any;
-  delegatedToName: string;
-}) => {
-  return (
-    <Box width="50%">
-      <Text variant="smallStrong" color="content.default.default">
-        {delegatedTo?.delegationStatement ? (
-          <Flex>
-            <Link
-              fontSize="small"
-              fontWeight="normal"
-              href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
-            >
-              {delegatedToName ? (
-                truncateAddress(delegatedToName || "")
-              ) : (
-                <Tooltip label={delegatedTo?.address || ""}>
-                  {truncateAddress(delegatedTo?.address || "")}
-                </Tooltip>
-              )}
-            </Link>
-            <CopyToClipboard text={delegatedTo?.address} />
-          </Flex>
-        ) : (
-          <>
-            {delegatedTo?.address ? (
-              <Flex>
-                <Tooltip label={delegatedTo?.address}>
-                  <Text>{truncateAddress(delegatedTo?.address || "")}</Text>
-                </Tooltip>
-                <CopyToClipboard text={delegatedTo?.address} />
-              </Flex>
-            ) : delegatedTo &&
-              delegatedTo.length &&
-              delegatedTo !== "0x0000000000000000000000000000000000000000" ? (
-              <Flex>
-                <Tooltip label={delegatedTo}>
-                  <Text>{truncateAddress(delegatedTo || "")}</Text>
-                </Tooltip>
-                <CopyToClipboard text={delegatedTo} />
-              </Flex>
-            ) : (
-              "-"
-            )}
-          </>
-        )}
-      </Text>
-    </Box>
-  );
-};
-
 export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   onDisconnect,
   user,
@@ -166,6 +111,10 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
         <VotingPowerModal
           isOpen={isOpen}
           onClose={onClose}
+          delegatedToL1={delegatedToL1}
+          delegatedToL2={delegatedToL2}
+          delegatedToL1Name={delegatedToL1Name}
+          delegatedToL2Name={delegatedToL2Name}
           balanceEth={`${new Intl.NumberFormat().format(
             ethBalance?.balance,
           )} ${ethBalance?.symbol}`}
@@ -173,93 +122,6 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
         />
-        {/*
-        <VStack
-          divider={<StackDivider mb="standard.md" />}
-          align="stretch"
-          mt="standard.md"
-        >
-          <Flex direction="column">
-            <Flex mb="standard.sm">
-              <Box width="50%">
-                <Text variant="smallStrong" color="content.support.default">
-                  L1 balance
-                </Text>
-              </Box>
-
-              <Box width="50%">
-                <Text variant="smallStrong" color="content.default.default">
-                  {new Intl.NumberFormat().format(ethBalance?.balance)}{" "}
-                  {ethBalance?.symbol}
-                </Text>
-              </Box>
-            </Flex>
-            <Flex mb="standard.sm">
-              <Box width="50%">
-                <Text variant="smallStrong" color="content.support.default">
-                  L1 voting power
-                </Text>
-              </Box>
-
-              <Box>
-                <Text variant="smallStrong" color="content.default.default">
-                  {new Intl.NumberFormat().format(votingPowerEth)}
-                </Text>
-              </Box>
-            </Flex>
-            <Flex>
-              <Box width="50%">
-                <Text variant="smallStrong" color="content.support.default">
-                  L1 Delegated to
-                </Text>
-              </Box>
-              <DelegationComponent
-                delegatedTo={delegatedToL1}
-                delegatedToName={delegatedToL1Name}
-              />
-            </Flex>
-          </Flex>
-          <Flex direction="column">
-            <Flex mb="standard.sm">
-              <Box width="50%">
-                <Text variant="smallStrong" color="content.support.default">
-                  L2 balance
-                </Text>
-              </Box>
-
-              <Box width="50%">
-                <Text variant="smallStrong" color="content.default.default">
-                  {starknetBalance?.balance} {starknetBalance?.symbol}
-                </Text>
-              </Box>
-            </Flex>
-            <Flex mb="standard.sm">
-              <Box width="50%">
-                <Text variant="smallStrong" color="content.support.default">
-                  L2 voting power
-                </Text>
-              </Box>
-
-              <Box>
-                <Text variant="smallStrong" color="content.default.default">
-                  {new Intl.NumberFormat().format(votingPowerStark)}
-                </Text>
-              </Box>
-            </Flex>
-            <Flex>
-              <Box width="50%">
-                <Text variant="smallStrong" color="content.support.default">
-                  L2 Delegated to
-                </Text>
-              </Box>
-              <DelegationComponent
-                delegatedTo={delegatedToL2}
-                delegatedToName={delegatedToL2Name}
-              />
-            </Flex>
-          </Flex>
-        </VStack>
-        */}
         <Flex direction="column" mt="standard.md">
           <Button
             variant="secondary"
