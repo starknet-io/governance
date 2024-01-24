@@ -20,7 +20,7 @@ import {
   StatusModal,
   Flex,
   ArrowRightIcon,
-  Select,
+  Select, VotingPowerModal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
@@ -529,6 +529,7 @@ export function Delegates({
           }
         }}
       />
+      <VotingPowerModal isOpen={true} onClose={() => {}} />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
       <StatusModal
         isOpen={isStatusModalOpen}

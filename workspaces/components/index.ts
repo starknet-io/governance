@@ -24,6 +24,7 @@ export { PlaceholderImage } from "./src/PlaceholderImage";
 export { VoteReview } from "./src/VoteReview";
 export { PastVote } from "./src/PastVote";
 export { DelegateModal } from "./src/DelegateModal";
+export { VotingPowerModal } from "./src/VotingPowerModal";
 export { AgreementModal } from "./src/AgreementModal";
 export { ConfirmModal } from "./src/ConfirmModal";
 export { ChakraDatePicker } from "./src/ChakraDatePicker";
