@@ -2,10 +2,6 @@ import { forwardRef } from "react";
 import {
   Box,
   Flex,
-  Link,
-  StackDivider,
-  Text,
-  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import {
@@ -13,8 +9,6 @@ import {
   Button,
   IconButton,
   ProfileInfoModal,
-  Tooltip,
-  CopyToClipboard,
   AvatarWithText,
   VotingPowerModal,
 } from "@yukilabs/governance-components";
@@ -33,6 +27,7 @@ interface IUser extends User {
 
 interface UserProfileMenuProps {
   onDisconnect: () => void;
+  onVotingPowerModalOpen: () => void;
   user: IUser | null;
   onSave: (data: {
     username: string;
@@ -63,19 +58,13 @@ interface UserProfileMenuProps {
 
 export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   onDisconnect,
+  onVotingPowerModalOpen,
   user,
   votingPowerEth,
   votingPowerStark,
-  ethBalance,
-  starknetBalance,
-  delegatedToL1,
-  delegatedToL2,
   handleOpenModal,
   setEditUserProfile,
 }: UserProfileMenuProps) => {
-  const delegatedToL1Name = delegatedToL1?.username || delegatedToL1?.ensName;
-  const delegatedToL2Name = delegatedToL2?.username || delegatedToL2?.ensName;
-  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
       <Box position="absolute" right="12px" top="12px" zIndex={0}>
@@ -106,21 +95,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
         <VotingPowerBreakdown
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
-          onToggleExpand={onOpen}
-        />
-        <VotingPowerModal
-          isOpen={isOpen}
-          onClose={onClose}
-          delegatedToL1={delegatedToL1}
-          delegatedToL2={delegatedToL2}
-          delegatedToL1Name={delegatedToL1Name}
-          delegatedToL2Name={delegatedToL2Name}
-          balanceEth={`${new Intl.NumberFormat().format(
-            ethBalance?.balance,
-          )} ${ethBalance?.symbol}`}
-          balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
-          votingPowerEth={votingPowerEth}
-          votingPowerStark={votingPowerStark}
+          onToggleExpand={onVotingPowerModalOpen}
         />
         <Flex direction="column" mt="standard.md">
           <Button
@@ -145,7 +120,6 @@ const UserProfileMenuComponent = (
     onDisconnect,
     user,
     onSave,
-    vp,
     ethBalance,
     starknetBalance,
     delegatedToL1,
@@ -171,6 +145,9 @@ const UserProfileMenuComponent = (
   };
   const handleOpenModal = () => setIsModalOpen(true);
   const [editUserProfile, setEditUserProfile] = useState(false);
+  const delegatedToL1Name = delegatedToL1?.username || delegatedToL1?.ensName;
+  const delegatedToL2Name = delegatedToL2?.username || delegatedToL2?.ensName;
+  const [isVotingPowerModalOpen, setIsVotingPowerModalOpen] = useState(false);
 
   useEffect(() => {
     onModalStateChange && onModalStateChange(isModalOpen);
@@ -190,6 +167,20 @@ const UserProfileMenuComponent = (
 
   return (
     <div ref={ref}>
+      <VotingPowerModal
+        isOpen={isVotingPowerModalOpen}
+        onClose={() => setIsVotingPowerModalOpen(false)}
+        delegatedToL1={delegatedToL1}
+        delegatedToL2={delegatedToL2}
+        delegatedToL1Name={delegatedToL1Name}
+        delegatedToL2Name={delegatedToL2Name}
+        balanceEth={`${new Intl.NumberFormat().format(
+          ethBalance?.balance,
+        )} ${ethBalance?.symbol}`}
+        balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
+        votingPowerEth={votingPowerEth}
+        votingPowerStark={votingPowerStark}
+      />
       <ProfileInfoModal
         isOpen={editUserProfile}
         onClose={() => {
@@ -217,6 +208,7 @@ const UserProfileMenuComponent = (
             onDisconnect={onDisconnect}
             user={user}
             onSave={onSave}
+            onVotingPowerModalOpen={() => setIsVotingPowerModalOpen(true)}
             votingPowerEth={votingPowerEth}
             votingPowerStark={votingPowerStark}
             starknetBalance={starknetBalance}
@@ -246,6 +238,7 @@ const UserProfileMenuComponent = (
               onDisconnect={onDisconnect}
               user={user}
               onSave={onSave}
+              onVotingPowerModalOpen={() => setIsVotingPowerModalOpen(true)}
               votingPowerEth={votingPowerEth}
               votingPowerStark={votingPowerStark}
               ethBalance={ethBalance}
