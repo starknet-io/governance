@@ -529,7 +529,6 @@ export function Delegates({
           }
         }}
       />
-      <VotingPowerModal isOpen={true} onClose={() => {}} />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
       <StatusModal
         isOpen={isStatusModalOpen}

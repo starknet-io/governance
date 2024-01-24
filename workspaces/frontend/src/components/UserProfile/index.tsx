@@ -1,5 +1,13 @@
 import { forwardRef } from "react";
-import { Box, Flex, Link, StackDivider, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Link,
+  StackDivider,
+  Text,
+  useDisclosure,
+  VStack,
+} from "@chakra-ui/react";
 import {
   Modal,
   Button,
@@ -8,6 +16,7 @@ import {
   Tooltip,
   CopyToClipboard,
   AvatarWithText,
+  VotingPowerModal,
 } from "@yukilabs/governance-components";
 import { DisconnectWalletIcon } from "@yukilabs/governance-components";
 import { useEffect, useState } from "react";
@@ -16,6 +25,7 @@ import { User } from "@yukilabs/governance-backend/src/db/schema/users";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { WalletButtons } from "../../pages/profile/settings/index.page";
+import { VotingPowerBreakdown } from "@yukilabs/governance-components/src/VotingPowerModal";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -120,6 +130,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
 }: UserProfileMenuProps) => {
   const delegatedToL1Name = delegatedToL1?.username || delegatedToL1?.ensName;
   const delegatedToL2Name = delegatedToL2?.username || delegatedToL2?.ensName;
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
       <Box position="absolute" right="12px" top="12px" zIndex={0}>
@@ -147,7 +158,22 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
         <Box mt="standard.md" mb="standard.sm">
           <WalletButtons selectable profileVariant />
         </Box>
-
+        <VotingPowerBreakdown
+          votingPowerEth={votingPowerEth}
+          votingPowerStark={votingPowerStark}
+          onToggleExpand={onOpen}
+        />
+        <VotingPowerModal
+          isOpen={isOpen}
+          onClose={onClose}
+          balanceEth={`${new Intl.NumberFormat().format(
+            ethBalance?.balance,
+          )} ${ethBalance?.symbol}`}
+          balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
+          votingPowerEth={votingPowerEth}
+          votingPowerStark={votingPowerStark}
+        />
+        {/*
         <VStack
           divider={<StackDivider mb="standard.md" />}
           align="stretch"
@@ -233,6 +259,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
             </Flex>
           </Flex>
         </VStack>
+        */}
         <Flex direction="column" mt="standard.md">
           <Button
             variant="secondary"
