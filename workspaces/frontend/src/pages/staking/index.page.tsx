@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DocumentProps } from "../../renderer/types";
 import { FormLayout } from "../../components/FormsCommon/FormLayout";
 import {
@@ -6,6 +6,8 @@ import {
   PageTitle,
   Text,
   Slider,
+  Input,
+  StarknetIcon,
 } from "@yukilabs/governance-components";
 import { Box, Divider, Flex, Icon } from "@chakra-ui/react";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
@@ -35,9 +37,25 @@ export function Page() {
   const { balance: starknetBalance } = useStarknetBalance({ starknetAddress });
   const [sliderValue, setSliderValue] = useState(50);
   const [activeTab, setActiveTab] = useState(0);
+  const [starkToWrap, setStarkToWrap] = useState(0);
+
+  useEffect(() => {
+    if (starknetBalance?.balance?.rawBalance) {
+      setStarkToWrap(parseFloat(starknetBalance?.balance?.rawBalance) / 2);
+    }
+  }, [starknetBalance?.balance?.rawBalance]);
   const handleSliderChange = (val) => {
     setSliderValue(val);
+    const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
+    setStarkToWrap(Math.floor((val / 100) * rawBalance));
   };
+  const handleStarkToWrapAmount = (amount: number) => {
+    const toSet = Math.min(amount, starknetBalance?.rawBalance);
+    const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
+    setStarkToWrap(toSet);
+    setSliderValue(Math.min(Math.floor((toSet / rawBalance * 100)), 100));
+  };
+  console.log(sliderValue, starkToWrap)
   return (
     <FormLayout>
       <Box width="100%">
@@ -147,14 +165,28 @@ export function Page() {
                 label="Unwrap"
               />
             </Flex>
-            <Box mb="standard.md">
+            <Flex mb="standard.md" gap="standard.sm" flexDirection="column">
               <Text variant="mediumStrong" color="content.default.default">
                 How much STRK do you want to stake?
               </Text>
-            </Box>
+              <Input
+                type="number"
+                rightContent={
+                  <Text color="content.support.default" variant="mediumStrong">
+                    STRK
+                  </Text>
+                }
+                placeholder="0"
+                icon={<StarknetIcon />}
+                value={starkToWrap}
+                onChange={(e) => {
+                  handleStarkToWrapAmount(e.target.value);
+                }}
+              />
+            </Flex>
 
             <Box mb="standard.md">
-              <Slider value={sliderValue} onChange={handleSliderChange} />
+              <Slider sliderValue={sliderValue} setSliderValue={handleSliderChange} />
             </Box>
             <Box>
               <Flex gap="8px" alignItems="center">
