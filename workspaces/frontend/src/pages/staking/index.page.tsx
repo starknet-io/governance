@@ -177,7 +177,7 @@ export function Page() {
                     fontSize: "12px",
                     _hover: {
                       color: "content.support.hover",
-                      background: tabClicked === 1 ? "transparent" : "surface.forms.selected",
+                      background: tabClicked === 0 ? "transparent" : "surface.forms.selected",
                     }
                   }}
                   onClick={() => setTabClicked(1)}
