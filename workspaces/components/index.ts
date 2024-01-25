@@ -40,6 +40,7 @@ export { AvatarWithText } from "./src/AvatarWithText";
 export { Dropdown } from "./src/Dropdown";
 export { FormControlled, useFormErrorHandler } from "./src/FormControlled";
 export { Tooltip } from "./src/Tooltip";
+export { Tabs } from "./src/Tabs"
 export { Select } from "./src/Select";
 export { Multiselect } from "./src/Multiselect";
 export { NotificationsMenu, NotificationItem } from "./src/Notifications";

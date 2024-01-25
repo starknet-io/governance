@@ -4,6 +4,7 @@ import { ExpandIcon, ThunderIcon } from "../Icons";
 import { Button } from "../Button";
 import React from "react";
 import { Link } from "../Link";
+import { ethers } from "ethers";
 
 type Props = {
   showBreakdown?: boolean;
@@ -35,9 +36,7 @@ export const VotingPowerBreakdown = ({
               Total voting power
             </Text>
             <Text variant="largeStrong" color="content.accent.default">
-              {new Intl.NumberFormat().format(
-                votingPowerEth + votingPowerStark,
-              )}
+              {ethers.utils.commify(votingPowerEth + votingPowerStark)}
             </Text>
           </Box>
           {showBreakdown ? (

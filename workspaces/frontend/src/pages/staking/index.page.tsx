@@ -1,6 +1,11 @@
 import { DocumentProps } from "../../renderer/types";
 import { FormLayout } from "../../components/FormsCommon/FormLayout";
-import { Heading, PageTitle, Text } from "@yukilabs/governance-components";
+import {
+  Heading,
+  PageTitle,
+  Tabs,
+  Text,
+} from "@yukilabs/governance-components";
 import { Box, Divider, Flex } from "@chakra-ui/react";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import { useBalanceData } from "../../utils/hooks";
@@ -114,6 +119,9 @@ export function Page() {
             <Heading variant="h3" mb="24px" textAlign="center">
               Starknet wallet balance
             </Heading>
+            <Box>
+              <Tabs tabs={[]} />
+            </Box>
           </Box>
         </Flex>
       </Box>
