@@ -1,10 +1,12 @@
+import React, { useState, useEffect } from "react";
 import { DocumentProps } from "../../renderer/types";
 import { FormLayout } from "../../components/FormsCommon/FormLayout";
 import {
   Heading,
   PageTitle,
-  Tabs,
   Text,
+  Slider,
+  Button
 } from "@yukilabs/governance-components";
 import { Box, Divider, Flex } from "@chakra-ui/react";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
@@ -13,7 +15,6 @@ import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 import { findMatchingWallet } from "../../utils/helpers";
 import { WalletChainKey } from "../../utils/constants";
 import { useUserWallets } from "@dynamic-labs/sdk-react-core";
-import React from "react";
 
 export function Page() {
   const wallets = useUserWallets();
@@ -32,6 +33,11 @@ export function Page() {
 
   const ethBalance = useBalanceData(ethAddress as `0x${string}`);
   const { balance: starknetBalance } = useStarknetBalance({ starknetAddress });
+  const [sliderValue, setSliderValue] = useState(50);
+  const [tabClicked, setTabClicked] = useState(0);
+  const handleSliderChange = (val) => {
+    setSliderValue(val);
+  }
   return (
     <FormLayout>
       <Box width="100%">
@@ -120,7 +126,66 @@ export function Page() {
               Starknet wallet balance
             </Heading>
             <Box>
-              <Tabs tabs={[]} />
+              <Flex
+                padding="standard.base"
+                alignItems="center"
+                gap="standard.xs"
+                alignSelf="stretch"
+              >
+                <Button
+                  variant="primary"
+                  size="condensed"
+                  sx={{
+                    display: "flex",
+                    minWidth: "48px",
+                    py: "4px",
+                    px: "16px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "standard.base",
+                    flex: "1 0 0",
+                    borderRadius: "999px",
+                    background: tabClicked === 1 ? "transparent" : "surface.forms.selected",
+                    height: "28px",
+                    minHeight: "28px",
+                    color: tabClicked === 1 ? "content.support.default" : "content.support.hover",
+                    fontSize: "12px",
+                    _hover: {
+                      color: "content.support.hover",
+                      background: tabClicked === 1 ? "transparent" : "surface.forms.selected",
+                    }
+                  }}
+                  onClick={() => setTabClicked(0)}
+                >Wrap</Button>
+                <Button
+                  variant="primary"
+                  size="condensed"
+                  sx={{
+                    display: "flex",
+                    minWidth: "48px",
+                    py: "4px",
+                    px: "16px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "standard.base",
+                    flex: "1 0 0",
+                    borderRadius: "999px",
+                    background: tabClicked === 0 ? "transparent" : "surface.forms.selected",
+                    height: "28px",
+                    minHeight: "28px",
+                    color: tabClicked === 0 ? "content.support.default" : "content.support.hover",
+                    fontSize: "12px",
+                    _hover: {
+                      color: "content.support.hover",
+                      background: tabClicked === 1 ? "transparent" : "surface.forms.selected",
+                    }
+                  }}
+                  onClick={() => setTabClicked(1)}
+                >Unwrap</Button>
+              </Flex>
+              <Box p="standard.md">
+                <Slider value={sliderValue} onChange={handleSliderChange} />
+              </Box>
             </Box>
           </Box>
         </Flex>
