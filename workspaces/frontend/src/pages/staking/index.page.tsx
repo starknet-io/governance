@@ -41,6 +41,25 @@ export function Page() {
   const [activeTab, setActiveTab] = useState(0);
   const [starkToWrap, setStarkToWrap] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState("");
+
+  const wrapTokens = () => {
+    onOpen();
+    setDescription(`
+            You're wrapping ${starkToWrap} STRK.
+            You'll receive ${starkToWrap} vSTRK`);
+    setTitle("Wrapping...");
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setDescription(`Successfully received ${starkToWrap} vSTRK`);
+      setTitle("All done!");
+      setIsSuccess(true);
+    }, 4000);
+  };
 
   useEffect(() => {
     if (starknetBalance?.balance?.rawBalance) {
@@ -232,7 +251,7 @@ export function Page() {
                 variant="primary"
                 w="100%"
                 disabled={starkToWrap === 0}
-                onClick={onOpen}
+                onClick={wrapTokens}
               >
                 Wrap
               </Button>
@@ -242,16 +261,14 @@ export function Page() {
       </Box>
       <StatusModal
         isOpen={isOpen}
-        isPending={true}
-        isSuccess={false}
+        isPending={isLoading}
+        isSuccess={isSuccess}
         isFail={false}
         onClose={() => {
           onClose();
         }}
-        description={`
-            You're wrapping ${starkToWrap} STRK.
-            You'll receive ${starkToWrap} vSTRK`}
-        title={"Wrapping Stark Tokens"}
+        description={description}
+        title={title}
       />
     </FormLayout>
   );
