@@ -241,6 +241,55 @@ export const FiltersIcon = ({ color, ...rest }: UiIconProps) => (
   </Icon>
 );
 
+export const GasIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 22 20" {...rest}>
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M5.5 5H11.5V9H5.5V5Z"
+      stroke="#4A4A4F"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M6.5 13H10.5"
+      stroke="#4A4A4F"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M2.5 19V3C2.5 1.895 3.395 1 4.5 1H12.5C13.605 1 14.5 1.895 14.5 3V19"
+      stroke="#4A4A4F"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M18.5 3L19.914 4.414C20.289 4.789 20.5 5.298 20.5 5.828V15.5C20.5 16.328 19.828 17 19 17V17C18.172 17 17.5 16.328 17.5 15.5V14C17.5 13.448 17.052 13 16.5 13H14.5"
+      stroke="#4A4A4F"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M20.5 10H18.633C18.032 10 17.566 9.473 17.641 8.876L17.891 6.876C17.953 6.376 18.378 6 18.883 6H20.5"
+      stroke="#4A4A4F"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M1.5 19H15.5"
+      stroke="#4A4A4F"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </Icon>
+);
+
 export const NoDelegatesIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 128 128" {...rest}>
     <path
