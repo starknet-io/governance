@@ -124,6 +124,7 @@ export {
 } from "./src/Filter/";
 export { MarkdownEditor } from "./src/Editor";
 export { ShareDialog } from "./src/ShareDialog";
+export { Slider } from "./src/Slider";
 export { SupportModal } from "./src/SupportModal";
 export { StatusModal } from "./src/StatusModal";
 export { FormModal } from "./src/FormModal";
