@@ -19,6 +19,7 @@ import { findMatchingWallet } from "../../utils/helpers";
 import { WalletChainKey } from "../../utils/constants";
 import { GasIcon, useUserWallets } from "@dynamic-labs/sdk-react-core";
 import TabButton from "../../components/TabButton";
+import * as Swap from "@yukilabs/governance-components/src/Swap/Swap";
 
 export function Page() {
   const wallets = useUserWallets();
@@ -62,10 +63,10 @@ export function Page() {
   };
 
   useEffect(() => {
-    if (starknetBalance?.balance?.rawBalance) {
-      setStarkToWrap(parseFloat(starknetBalance?.balance?.rawBalance) / 2);
+    if (starknetBalance?.rawBalance) {
+      setStarkToWrap(parseFloat(starknetBalance?.rawBalance) / 2);
     }
-  }, [starknetBalance?.balance?.rawBalance]);
+  }, [starknetBalance?.rawBalance]);
   const handleSliderChange = (val) => {
     setSliderValue(val);
     const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
@@ -174,7 +175,7 @@ export function Page() {
               border="1px solid"
               p="4px"
               borderColor="border.dividers"
-              mb="standard.md"
+              mb="standard.lg"
             >
               <TabButton
                 onSelect={() => setActiveTab(0)}
@@ -208,13 +209,17 @@ export function Page() {
               />
             </Flex>
 
-            <Box mb="standard.md">
+            <Box>
               <Slider
                 sliderValue={sliderValue}
                 setSliderValue={handleSliderChange}
               />
             </Box>
-            <Flex mb="standard.md" gap="standard.sm" flexDirection="column">
+            <Box mb="standard.sm">
+              <Swap.Arrow py="standard.ms" />
+            </Box>
+
+            <Flex mb="standard.xl" gap="standard.sm" flexDirection="column">
               <Text variant="mediumStrong" color="content.default.default">
                 Receiving
               </Text>
@@ -238,7 +243,7 @@ export function Page() {
                 </Text>
               </Flex>
             </Flex>
-            <Box mb="standard.md">
+            <Box mb="standard.xl">
               <Flex gap="8px" alignItems="center">
                 <Icon as={GasIcon} color="content.default.default" />
                 <Text variant="mediumStrong" color="content.default.default">

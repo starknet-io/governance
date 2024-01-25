@@ -41,7 +41,7 @@ const UserSummary = ({
   symbol = "STRK",
   isSelected = false,
   sx,
-  onClick
+  onClick,
 }: UserSummaryProps) => {
   return (
     <Button
@@ -56,7 +56,7 @@ const UserSummary = ({
       sx={{
         padding: 0,
         width: "100%",
-        ...sx
+        ...sx,
       }}
     >
       <Flex
@@ -79,12 +79,15 @@ const UserSummary = ({
           </ProfileSummaryCard.Root>
         </Flex>
         <Flex flexDirection={"column"} alignItems="flex-end" gap="standard.xs">
-          <Text color="content.default.default" variant="bodyMediumStrong" as="span">
+          <Text
+            color="content.default.default"
+            variant="bodyMediumStrong"
+            as="span"
+          >
             {isSender && "Available votes"}
             {isReceiver && !isSender && "Delegated votes"}
           </Text>
-          <Heading
-            variant="h5">
+          <Heading variant="h5">
             {balance} {symbol}
           </Heading>
         </Flex>
@@ -93,14 +96,14 @@ const UserSummary = ({
   );
 };
 
-const Arrow = () => {
+const Arrow = ({ py = "standard.xl" }) => {
   return (
     <Box
       display="flex"
       justifyContent="center"
       alignItems="center"
       width="100%"
-      py="standard.xl"
+      py={py}
     >
       <Icon as={ArrowDownIcon} color="#6C6C75" boxSize="24px" />
     </Box>
