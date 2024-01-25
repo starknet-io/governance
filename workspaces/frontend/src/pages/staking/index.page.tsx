@@ -8,8 +8,10 @@ import {
   Slider,
   Input,
   StarknetIcon,
+  Button,
+  StatusModal,
 } from "@yukilabs/governance-components";
-import { Box, Divider, Flex, Icon } from "@chakra-ui/react";
+import { Box, Divider, Flex, Icon, useDisclosure } from "@chakra-ui/react";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import { useBalanceData } from "../../utils/hooks";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
@@ -38,6 +40,7 @@ export function Page() {
   const [sliderValue, setSliderValue] = useState(50);
   const [activeTab, setActiveTab] = useState(0);
   const [starkToWrap, setStarkToWrap] = useState(0);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     if (starknetBalance?.balance?.rawBalance) {
@@ -53,9 +56,9 @@ export function Page() {
     const toSet = Math.min(amount, starknetBalance?.rawBalance);
     const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
     setStarkToWrap(toSet);
-    setSliderValue(Math.min(Math.floor((toSet / rawBalance * 100)), 100));
+    setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
   };
-  console.log(sliderValue, starkToWrap)
+  console.log(sliderValue, starkToWrap);
   return (
     <FormLayout>
       <Box width="100%">
@@ -77,7 +80,7 @@ export function Page() {
             border="1px solid"
             borderColor="border.dividers"
             borderRadius="4px"
-            w="238px"
+            minW="206px"
           >
             <Box
               borderBottom="1px solid"
@@ -176,6 +179,7 @@ export function Page() {
                     STRK
                   </Text>
                 }
+                size="standard"
                 placeholder="0"
                 icon={<StarknetIcon />}
                 value={starkToWrap}
@@ -186,9 +190,36 @@ export function Page() {
             </Flex>
 
             <Box mb="standard.md">
-              <Slider sliderValue={sliderValue} setSliderValue={handleSliderChange} />
+              <Slider
+                sliderValue={sliderValue}
+                setSliderValue={handleSliderChange}
+              />
             </Box>
-            <Box>
+            <Flex mb="standard.md" gap="standard.sm" flexDirection="column">
+              <Text variant="mediumStrong" color="content.default.default">
+                Receiving
+              </Text>
+              <Flex
+                alignItems="center"
+                justifyContent="space-between"
+                px="standard.sm"
+                py="standard.xs"
+                border="1px solid"
+                borderColor="border.dividers"
+                borderRadius="4px"
+              >
+                <Flex alignItems="center" gap="10px">
+                  <Icon as={StarknetIcon} width="20px" height="20px" />
+                  <Text variant="mediumStrong" color="content.default.default">
+                    {starkToWrap}
+                  </Text>
+                </Flex>
+                <Text color="content.support.default" variant="mediumStrong">
+                  STRK
+                </Text>
+              </Flex>
+            </Flex>
+            <Box mb="standard.md">
               <Flex gap="8px" alignItems="center">
                 <Icon as={GasIcon} color="content.default.default" />
                 <Text variant="mediumStrong" color="content.default.default">
@@ -196,9 +227,32 @@ export function Page() {
                 </Text>
               </Flex>
             </Box>
+            <Box w="100%">
+              <Button
+                variant="primary"
+                w="100%"
+                disabled={starkToWrap === 0}
+                onClick={onOpen}
+              >
+                Wrap
+              </Button>
+            </Box>
           </Box>
         </Flex>
       </Box>
+      <StatusModal
+        isOpen={isOpen}
+        isPending={true}
+        isSuccess={false}
+        isFail={false}
+        onClose={() => {
+          onClose();
+        }}
+        description={`
+            You're wrapping ${starkToWrap} STRK.
+            You'll receive ${starkToWrap} vSTRK`}
+        title={"Wrapping Stark Tokens"}
+      />
     </FormLayout>
   );
 }
