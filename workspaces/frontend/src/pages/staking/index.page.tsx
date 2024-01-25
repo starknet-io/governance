@@ -97,12 +97,12 @@ export function Page() {
             mb={0}
           />
         </Flex>
-        <Flex alignItems="flex-start" justifyContent="space-between" gap="24px">
+        <Flex alignItems="flex-start" justifyContent="space-between" gap="24px" direction={{ base: "column", md: "row" }}>
           <Box
             border="1px solid"
             borderColor="border.dividers"
             borderRadius="4px"
-            minW="206px"
+            minW={{ base: "100%", md: "206px" }}
           >
             <Box
               borderBottom="1px solid"
@@ -204,7 +204,7 @@ export function Page() {
                 size="standard"
                 placeholder="0"
                 icon={<StarknetIcon />}
-                value={starkToWrap}
+                value={starkToWrap > 0 ? starkToWrap : ""}
                 onChange={(e) => {
                   handleStarkToWrapAmount(e.target.value);
                 }}
