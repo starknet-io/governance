@@ -50,9 +50,11 @@ export function Page() {
   const wrapTokens = () => {
     onOpen();
     setDescription(`
-            You're wrapping ${starkToWrap} STRK.
+            You're ${
+              activeTab === 0 ? "wrapping" : "unwrapping"
+            } ${starkToWrap} STRK.
             You'll receive ${starkToWrap} vSTRK`);
-    setTitle("Wrapping...");
+    setTitle(activeTab === 0 ? "Wrapping..." : "Unwrapping...");
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -258,7 +260,7 @@ export function Page() {
                 disabled={starkToWrap === 0}
                 onClick={wrapTokens}
               >
-                Wrap
+                {activeTab === 0 ? "Wrap" : "Unwrap"}
               </Button>
             </Box>
           </Box>
