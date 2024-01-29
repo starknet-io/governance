@@ -2,7 +2,7 @@ name: back deployment
 
 on:
   push:
-    branches: ['dev', 'snapshot']
+    branches: ['dev']
     paths:
       - 'workspaces/backend/**'
   workflow_dispatch:
@@ -75,9 +75,44 @@ jobs:
           secrets: |
             "certificate=${{ secrets.CERTIFICATE }}"
 
+  Deploy-dev:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+    needs: Build
+    runs-on: ubuntu-latest
+    env:
+      tag: ${{ needs.Build.outputs.tag }}
+    environment:
+      name: development-backend
+      url: https://api-dev.yuki-labs.dev
+    steps:
+      - run: echo ${{ env.tag }}
+      - uses: 'google-github-actions/auth@v2'
+        id: auth
+        with:
+          token_format: access_token
+          project_id: 'governance-development'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v0.4.0
         with:
           service: api
           image: ${{ steps.meta.outputs.tags }}
           region: europe-west9
+
+  Deploy-snapshot:
+      if: github.event_name != 'pull_request' && github.ref == 'refs/heads/snapshot'
+      needs: Build
+      runs-on: ubuntu-latest
+      env:
+        tag: ${{ needs.Build.outputs.tag }}
+      environment:
+        name: snapshot-backend
+        url: https://api-snapshot.yuki-labs.dev
+      steps:
+        - name: DigitalOcean App Platform deployment
+          uses: digitalocean/app_action@v1.1.5
+          with:
+            app_name: backend-snapshot
+            token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+            images: '[{"name": "backend","image":{"registry_type": "DOCR","repository": "backend","tag": "${{ env.tag }}"}}]'
