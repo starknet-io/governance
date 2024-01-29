@@ -66,6 +66,7 @@ jobs:
           TAGS=$(doctl registry repository lt cron | tail -n +5 | awk '{print $1}')
           [[ -n $TAGS ]] && doctl registry repository dt cron $TAGS --force
           echo Tags removed: $TAGS
+
   cron_prod_cleanup:
     runs-on: ubuntu-latest
     steps:
