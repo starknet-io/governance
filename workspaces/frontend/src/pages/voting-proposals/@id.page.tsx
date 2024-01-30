@@ -73,6 +73,7 @@ import { useL1StarknetDelegationDelegates } from "../../wagmi/L1StarknetDelegati
 import { useWallets } from "../../hooks/useWallets";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
+import { getChecksumAddress } from "starknet";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -269,7 +270,8 @@ export function Page() {
   const delegateOwnProfileL1 =
     delegationDataL1?.toLowerCase() === ethWallet?.address?.toLowerCase();
   const delegateOwnProfileL2 =
-    delegationDataL2?.toLowerCase() === starknetWallet?.address?.toLowerCase();
+    getChecksumAddress(delegationDataL2?.toLowerCase() || "") ===
+    getChecksumAddress(starknetWallet?.address?.toLowerCase() || "");
   const hasDelegatedOnL2 =
     delegationDataL2 && delegationDataL2.length && !delegateOwnProfileL2;
   const hasDelegatedOnL1 =
@@ -522,10 +524,7 @@ export function Page() {
             linkLabel={data?.proposal?.ipfs?.slice(0, 7) || ""}
             isExternal={true}
           />
-          <SummaryItems.Item
-            label="Voting system"
-            value={"Basic Voting"}
-          />
+          <SummaryItems.Item label="Voting system" value={"Basic Voting"} />
           <SummaryItems.CustomDate
             label="Start date"
             value={data?.proposal?.start || null}

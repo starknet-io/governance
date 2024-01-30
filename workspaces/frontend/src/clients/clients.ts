@@ -5,7 +5,7 @@ import {
 
 import { RpcProvider, constants } from "starknet";
 
-const ethUrl = "https://rpcs.snapshotx.xyz/1";
+const ethUrl = "https://rpcs.snapshotx.xyz/11155111";
 const manaUrl = "https://mana.pizza";
 
 export const starkProvider = new RpcProvider({
