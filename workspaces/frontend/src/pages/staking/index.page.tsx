@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DocumentProps } from "../../renderer/types";
 import { FormLayout } from "../../components/FormsCommon/FormLayout";
 import {
@@ -9,8 +9,9 @@ import {
   Input,
   StarknetIcon,
   Button,
-  StatusModal,
+  Modal
 } from "@yukilabs/governance-components";
+import { WalletIcon, SuccessIcon } from "@yukilabs/governance-components/src/Icons";
 import { Box, Divider, Flex, Icon, useDisclosure } from "@chakra-ui/react";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import { useBalanceData } from "../../utils/hooks";
@@ -266,17 +267,61 @@ export function Page() {
           </Box>
         </Flex>
       </Box>
-      <StatusModal
-        isOpen={isOpen}
-        isPending={isLoading}
-        isSuccess={isSuccess}
-        isFail={false}
+      <Modal
+        motionPreset="slideInBottom"
+        isOpen={isOpen && isSuccess}
         onClose={() => {
           onClose();
         }}
-        description={description}
-        title={title}
-      />
+        isCentered
+      >
+        <Flex alignItems="center" direction="column" gap="standard.xl">
+            <Flex alignItems="center" direction="column" gap="standard.xs">
+              <SuccessIcon boxSize="104px" color="#29AB87" />
+              <Heading variant="h3">All done!</Heading>
+              <Text variant="bodyMedium" color="content.default.default">You wrapped {starkToWrap} STRK</Text>
+              <Text variant="bodyMedium" color="content.default.default">You received {starkToWrap} vSTRK</Text>
+              <Text variant="bodyMedium" color="content.default.default">Review transaction details </Text>
+            </Flex>
+            <Flex
+          alignItems="center"
+          gap="standard.xs"
+          alignSelf="stretch"
+          p="0"
+        >
+          <Text
+            variant="bodySmall"
+            color="content.accent.default"
+            sx={{
+              flex: "1 0 0",
+              textWrap: "wrap",
+              textAlign: "left"
+            }}
+          >
+          Add the vSTRK token to your wallet to track your balance.
+          </Text>
+          <Button
+            variant="outline"
+            onClick={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('Manage vSTRK')
+            }}
+          ><WalletIcon mr="standard.xs" />Add to wallet</Button>
+        </Flex>
+          </Flex>
+          <Modal.Footer>
+            <Button
+              type="button"
+              variant="primary"
+              size="standard"
+              onClick={() => console.log('Continue to delegate')}
+              width="100%"
+            >
+              Continue to delegate
+            </Button>
+          </Modal.Footer>
+      </Modal>
     </FormLayout>
   );
 }
