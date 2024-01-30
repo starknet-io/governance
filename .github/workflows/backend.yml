@@ -12,7 +12,7 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.meta.outputs.tags }}
+      image: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,12 +56,12 @@ jobs:
     needs: Build
     runs-on: ubuntu-latest
     env:
-      tag: ${{ needs.Build.outputs.tag }}
+      image: ${{ needs.Build.outputs.image }}
     environment:
       name: development-backend
       url: https://api-dev.yuki-labs.dev
     steps:
-      - run: echo ${{ env.tag }}
+      - run: echo ${{ env.image }}
       - uses: 'google-github-actions/auth@v2'
         id: auth
         with:
@@ -73,7 +73,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v0.4.0
         with:
           service: api
-          image: ${{ steps.meta.outputs.tags }}
+          image: ${{ env.image }}
           region: europe-west9
 
   Deploy-snapshot:
