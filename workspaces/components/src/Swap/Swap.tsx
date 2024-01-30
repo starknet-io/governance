@@ -5,6 +5,7 @@ import { Heading } from "src/Heading";
 import { ArrowDownIcon, InfoCircleIcon } from "src/Icons";
 import { Button } from "src/Button";
 import { Tooltip } from "src/Tooltip";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 type Props = {
   children: React.ReactNode;
@@ -128,7 +129,7 @@ const UserSummary = ({
           onClick={e => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Manage vSTRK')
+            navigate('/staking')
           }}
         >Manage vSTRK</Button>
       </Flex>: null}

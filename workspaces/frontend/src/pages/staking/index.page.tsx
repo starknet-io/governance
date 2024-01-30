@@ -11,8 +11,9 @@ import {
   Button,
   Modal
 } from "@yukilabs/governance-components";
-import { WalletIcon, SuccessIcon } from "@yukilabs/governance-components/src/Icons";
-import { Box, Divider, Flex, Icon, useDisclosure } from "@chakra-ui/react";
+import { navigate } from "vite-plugin-ssr/client/router";
+import { WalletIcon, SuccessIcon, WarningIcon } from "@yukilabs/governance-components/src/Icons";
+import { Box, Divider, Flex, Icon, useDisclosure, Spinner } from "@chakra-ui/react";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import { useBalanceData } from "../../utils/hooks";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
@@ -61,7 +62,11 @@ export function Page() {
       setIsLoading(false);
       setDescription(`Successfully received ${starkToWrap} vSTRK`);
       setTitle("All done!");
-      setIsSuccess(true);
+      if (Math.random() < 0.7) {
+        setIsSuccess(true);
+       } else {
+        setIsSuccess(false);
+       }
     }, 4000);
   };
 
@@ -269,7 +274,7 @@ export function Page() {
       </Box>
       <Modal
         motionPreset="slideInBottom"
-        isOpen={isOpen && isSuccess}
+        isOpen={isOpen}
         onClose={() => {
           onClose();
         }}
@@ -277,50 +282,61 @@ export function Page() {
       >
         <Flex alignItems="center" direction="column" gap="standard.xl">
             <Flex alignItems="center" direction="column" gap="standard.xs">
+            {isLoading && <Spinner size="xxl" />}
+            {!isSuccess && !isLoading && (
+              <WarningIcon boxSize="104px" color="#E54D66" />
+            )}
+            {isSuccess && !isLoading && (
               <SuccessIcon boxSize="104px" color="#29AB87" />
-              <Heading variant="h3">All done!</Heading>
-              <Text variant="bodyMedium" color="content.default.default">You wrapped {starkToWrap} STRK</Text>
-              <Text variant="bodyMedium" color="content.default.default">You received {starkToWrap} vSTRK</Text>
-              <Text variant="bodyMedium" color="content.default.default">Review transaction details </Text>
+            )}
+              <Heading variant="h3">{isSuccess ? `All done!` : `Something went wrong`}</Heading>
+              {isSuccess ?
+                <>
+                <Text variant="bodyMedium" color="content.default.default">You wrapped {starkToWrap} STRK</Text>
+                <Text variant="bodyMedium" color="content.default.default">You received {starkToWrap} vSTRK</Text>
+                <Text variant="bodyMedium" color="content.default.default">Review transaction details </Text>
+                </> :
+              null}
             </Flex>
-            <Flex
-          alignItems="center"
-          gap="standard.xs"
-          alignSelf="stretch"
-          p="0"
-        >
-          <Text
-            variant="bodySmall"
-            color="content.accent.default"
-            sx={{
-              flex: "1 0 0",
-              textWrap: "wrap",
-              textAlign: "left"
-            }}
-          >
-          Add the vSTRK token to your wallet to track your balance.
-          </Text>
-          <Button
-            variant="outline"
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('Manage vSTRK')
-            }}
-          ><WalletIcon mr="standard.xs" />Add to wallet</Button>
-        </Flex>
+            {isSuccess ?
+                <Flex
+              alignItems="center"
+              gap="standard.xs"
+              alignSelf="stretch"
+              p="0"
+            >
+            <Text
+              variant="bodySmall"
+              color="content.accent.default"
+              sx={{
+                flex: "1 0 0",
+                textWrap: "wrap",
+                textAlign: "left"
+              }}
+            >
+            Add the vSTRK token to your wallet to track your balance.
+            </Text>
+            <Button
+              variant="outline"
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Manage vSTRK')
+              }}
+            ><WalletIcon mr="standard.xs" />Add to wallet</Button>
+          </Flex> : null}
           </Flex>
-          <Modal.Footer>
+          {isSuccess ? <Modal.Footer>
             <Button
               type="button"
               variant="primary"
               size="standard"
-              onClick={() => console.log('Continue to delegate')}
+              onClick={() => navigate('/delegates')}
               width="100%"
             >
               Continue to delegate
             </Button>
-          </Modal.Footer>
+          </Modal.Footer> : null}
       </Modal>
     </FormLayout>
   );
