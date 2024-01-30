@@ -59,7 +59,7 @@ const Profile = ({
       sx={{
         "& svg": {
           width: "32px",
-          height: "32px" 
+          height: "32px"
         }
       }}
     >
@@ -83,22 +83,22 @@ const Profile = ({
       )}
       <Stack spacing={size === "lg" ? "4px" : "2px"}>
         <Text
-          color="content.default.default"
-          variant="bodySmall"
+          color="content.suport.default"
+          variant="small"
           as="span"
           textAlign="left"
         >
           {text}
         </Text>
-        <Heading
-          variant="h5"
+        <Text
+          variant="mediumStrong"
           fontSize={size === "lg" ? "20px" : "14px"}
-          color="content.accent.default"
+          color="content.default.default"
           lineHeight={size === "lg" ? "24px" : "20px"}
           textAlign="left"
         >
           {formattedAddress}
-        </Heading>
+        </Text>
         <Text
           variant="captionSmallUppercase"
           color="content.support.default"

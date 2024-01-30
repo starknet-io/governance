@@ -121,7 +121,7 @@ export const DelegateModal = ({
     (receiverData && l1Delegation) || (receiverDataL2 && l2Delegation);
   return (
     <Modal
-      maxHeight={"80%"}
+      maxHeight={"85%"}
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
@@ -132,7 +132,7 @@ export const DelegateModal = ({
       <Stack spacing="6">
         <Stack spacing="standard.xl">
           <Swap.Root>
-            <Text variant="bodyMedium" color="content.accent.default" mb="standard.xs">From your wallet</Text>
+            <Text variant="mediumStrong" color="content.support.default" mb="standard.xs">From your wallet</Text>
             {senderData ? (
               <Swap.UserSummary
                 address={senderData.address}
@@ -163,7 +163,7 @@ export const DelegateModal = ({
             {receiverData && l1Delegation ? (
               <>
                 <Swap.Arrow />
-                <Text variant="bodyMedium" color="content.accent.default" mb="standard.xs">To delegate</Text>
+                <Text variant="mediumStrong" color="content.support.default" mb="standard.xs">To delegate</Text>
                 <Swap.UserSummary
                   address={receiverData.address}
                   balance={getTotalVotingPower(receiverData)}
@@ -176,7 +176,7 @@ export const DelegateModal = ({
             {receiverDataL2 && l2Delegation ? (
               <>
                 <Swap.Arrow />
-                <Text variant="bodyMedium" color="content.accent.default" mb="standard.xs">To delegate</Text>
+                <Text variant="mediumStrong" color="content.support.default" mb="standard.xs">To delegate</Text>
                 <Swap.UserSummary
                   address={receiverDataL2.address}
                   balance={getTotalVotingPower(receiverDataL2)}
@@ -190,7 +190,7 @@ export const DelegateModal = ({
             {!receiverData && !receiverDataL2 && (
               <>
                 <Swap.Arrow />
-                <Text variant="bodyMedium" color="content.accent.default" mb="standard.xs">To delegate</Text>
+                <Text variant="mediumStrong" color="content.support.default" mb="standard.xs">To delegate</Text>
                 <Box
                   fontSize="14px"
                   bg="#FAFAFA"

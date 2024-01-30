@@ -80,18 +80,18 @@ const UserSummary = ({
             ></ProfileSummaryCard.Profile>
           </ProfileSummaryCard.Root>
         </Flex>
-        <Flex flexDirection={"column"} alignItems="flex-end" gap="standard.xs">
+        <Flex flexDirection={"column"} alignItems="flex-end" gap="2px">
           <Text
-            color="content.default.default"
-            variant="bodySmall"
+            color="content.support.default"
+            variant="small"
             as="span"
           >
             {isSender && "Available balance"}
             {isReceiver && !isSender && "Voting power"}
           </Text>
-          <Heading variant="h5">
+          <Text variant="mediumStrong" color="content.default.default">
             {balance} {symbol}
-          </Heading>
+          </Text>
         </Flex>
       </Flex>
       {text === "Starknet Mainnet" ? <Flex
@@ -102,12 +102,13 @@ const UserSummary = ({
         pt="0"
       >
         <Text
-          variant="bodySmall"
+          variant="bodySmallStrong"
           color="content.accent.default"
           sx={{
             flex: "1 0 0",
             textWrap: "wrap",
-            textAlign: "left"
+            textAlign: "left",
+            fontWeight: 500,
           }}
         >
         You must stake STRK for vSTRK in order to delegate <Tooltip label="Tooltip" aria-label="Tooltip Text"><Box

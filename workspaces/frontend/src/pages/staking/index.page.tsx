@@ -9,11 +9,22 @@ import {
   Input,
   StarknetIcon,
   Button,
-  Modal
+  Modal,
 } from "@yukilabs/governance-components";
 import { navigate } from "vite-plugin-ssr/client/router";
-import { WalletIcon, SuccessIcon, WarningIcon } from "@yukilabs/governance-components/src/Icons";
-import { Box, Divider, Flex, Icon, useDisclosure, Spinner } from "@chakra-ui/react";
+import {
+  WalletIcon,
+  SuccessIcon,
+  WarningIcon,
+} from "@yukilabs/governance-components/src/Icons";
+import {
+  Box,
+  Divider,
+  Flex,
+  Icon,
+  useDisclosure,
+  Spinner,
+} from "@chakra-ui/react";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import { useBalanceData } from "../../utils/hooks";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
@@ -46,10 +57,13 @@ export function Page() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setError] = useState(false);
   const [description, setDescription] = useState("");
   const [title, setTitle] = useState("");
 
   const wrapTokens = () => {
+    setIsSuccess(false);
+    setError(false);
     onOpen();
     setDescription(`
             You're ${
@@ -64,9 +78,11 @@ export function Page() {
       setTitle("All done!");
       if (Math.random() < 0.7) {
         setIsSuccess(true);
-       } else {
+        setError(false);
+      } else {
         setIsSuccess(false);
-       }
+        setError(true);
+      }
     }, 4000);
   };
 
@@ -103,7 +119,12 @@ export function Page() {
             mb={0}
           />
         </Flex>
-        <Flex alignItems="flex-start" justifyContent="space-between" gap="24px" direction={{ base: "column", md: "row" }}>
+        <Flex
+          alignItems="flex-start"
+          justifyContent="space-between"
+          gap="24px"
+          direction={{ base: "column", md: "row" }}
+        >
           <Box
             border="1px solid"
             borderColor="border.dividers"
@@ -281,62 +302,81 @@ export function Page() {
         isCentered
       >
         <Flex alignItems="center" direction="column" gap="standard.xl">
-            <Flex alignItems="center" direction="column" gap="standard.xs">
-            {isLoading && <Spinner size="xxl" />}
-            {!isSuccess && !isLoading && (
+          <Flex alignItems="center" direction="column" gap="standard.xs">
+            {isLoading && (
+              <Flex direction="column" gap="standard.lg" alignItems="center">
+                <Heading variant="h3">{title}</Heading>
+                <Spinner size="xxl" />
+              </Flex>
+            )}
+            {isError && !isLoading && (
               <WarningIcon boxSize="104px" color="#E54D66" />
             )}
             {isSuccess && !isLoading && (
               <SuccessIcon boxSize="104px" color="#29AB87" />
             )}
-              <Heading variant="h3">{isSuccess ? `All done!` : `Something went wrong`}</Heading>
-              {isSuccess ?
-                <>
-                <Text variant="bodyMedium" color="content.default.default">You wrapped {starkToWrap} STRK</Text>
-                <Text variant="bodyMedium" color="content.default.default">You received {starkToWrap} vSTRK</Text>
-                <Text variant="bodyMedium" color="content.default.default">Review transaction details </Text>
-                </> :
-              null}
-            </Flex>
-            {isSuccess ?
-                <Flex
+            <Heading variant="h3">
+              {isSuccess ? `All done!` : isError ? `Something went wrong` : ""}
+            </Heading>
+            {isSuccess ? (
+              <>
+                <Text variant="bodyMedium" color="content.default.default">
+                  You wrapped {starkToWrap} STRK
+                </Text>
+                <Text variant="bodyMedium" color="content.default.default">
+                  You received {starkToWrap} vSTRK
+                </Text>
+                <Text variant="bodyMedium" color="content.default.default">
+                  Review transaction details{" "}
+                </Text>
+              </>
+            ) : null}
+          </Flex>
+          {isSuccess ? (
+            <Flex
               alignItems="center"
               gap="standard.xs"
               alignSelf="stretch"
               p="0"
             >
-            <Text
-              variant="bodySmall"
-              color="content.accent.default"
-              sx={{
-                flex: "1 0 0",
-                textWrap: "wrap",
-                textAlign: "left"
-              }}
-            >
-            Add the vSTRK token to your wallet to track your balance.
-            </Text>
-            <Button
-              variant="outline"
-              onClick={e => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Manage vSTRK')
-              }}
-            ><WalletIcon mr="standard.xs" />Add to wallet</Button>
-          </Flex> : null}
-          </Flex>
-          {isSuccess ? <Modal.Footer>
+              <Text
+                variant="bodySmall"
+                color="content.accent.default"
+                sx={{
+                  flex: "1 0 0",
+                  textWrap: "wrap",
+                  textAlign: "left",
+                }}
+              >
+                Add the vSTRK token to your wallet to track your balance.
+              </Text>
+              <Button
+                variant="outline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("Manage vSTRK");
+                }}
+              >
+                <WalletIcon mr="standard.xs" />
+                Add to wallet
+              </Button>
+            </Flex>
+          ) : null}
+        </Flex>
+        {isSuccess ? (
+          <Modal.Footer>
             <Button
               type="button"
               variant="primary"
               size="standard"
-              onClick={() => navigate('/delegates')}
+              onClick={() => navigate("/delegates")}
               width="100%"
             >
               Continue to delegate
             </Button>
-          </Modal.Footer> : null}
+          </Modal.Footer>
+        ) : null}
       </Modal>
     </FormLayout>
   );
