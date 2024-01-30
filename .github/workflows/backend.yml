@@ -3,8 +3,8 @@ name: back deployment
 on:
   push:
     branches: ['dev', 'snapshot']
-    # paths:
-    #   - 'workspaces/backend/**'
+    paths:
+      - 'workspaces/backend/**'
   workflow_dispatch:
 
 jobs:
