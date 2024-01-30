@@ -1119,6 +1119,15 @@ export const InfoIcon = ({ color, ...rest }: UiIconProps) => (
     </g>
   </Icon>
 );
+
+export const InfoCircleIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 16 16" {...rest} style={{ fill: "none" }}>
+    <circle cx="8" cy="8" r="7.125" stroke="#86848D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M8.84375 10.625H8V7.4375H7.15625" stroke="#86848D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7.75451 5.05537L7.75484 5.05504C7.82796 4.98211 7.94635 4.98222 8.01934 5.05529C8.09232 5.12837 8.09228 5.24676 8.01925 5.31979C7.94622 5.39282 7.82783 5.39286 7.75475 5.31987C7.68168 5.24689 7.68157 5.1285 7.75451 5.05537" stroke="#86848D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </Icon>
+);
+
 export const EllipsisIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <path
@@ -1141,43 +1150,9 @@ export const SignatureIcon = ({ color, ...rest }: UiIconProps) => (
   </Icon>
 );
 
-export const WalletIcon = ({ ...rest }: UiIconProps) => (
-  <Icon viewBox="0 0 104 104" width="104" height="104" fill="none" {...rest}>
-    <path
-      d="M12.9839 30.3242H82.3461C87.1346 30.3242 91.0164 34.206 91.0164 38.9945V80.1783C91.0164 86.1639 86.1641 91.0162 80.1785 91.0162H56.3353"
-      stroke="#4A4A4F"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M73.6758 30.3243V25.9891C73.6758 21.2007 69.794 17.3188 65.0056 17.3188H23.8217C17.8362 17.3188 12.9839 22.1711 12.9839 28.1567V65.0054"
-      stroke="#4A4A4F"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M43.3299 82.3459H12.9839"
-      stroke="#4A4A4F"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M34.6597 91.0162L43.3299 82.3459L34.6597 73.6757"
-      stroke="#4A4A4F"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M73.6757 60.6703H65.0054"
-      stroke="#4A4A4F"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+export const WalletIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 20 20" width="29" height="20" fill="none" {...rest}>
+    <path xmlns="http://www.w3.org/2000/svg" id="Union" fillRule="evenodd" clipRule="evenodd" d="M4.58127 2.58008C3.01599 2.58008 1.74707 3.84899 1.74707 5.41428V5.83112V15.4184C1.74707 16.9837 3.01599 18.2526 4.58127 18.2526H15.4191C16.9844 18.2526 18.2533 16.9837 18.2533 15.4184V7.49848C18.2533 6.16341 17.171 5.08112 15.836 5.08112H14.9186V4.99744C14.9186 3.66237 13.8363 2.58008 12.5012 2.58008H4.58127ZM3.24707 15.4184V6.58112H14.1686H15.836C16.3426 6.58112 16.7533 6.99184 16.7533 7.49848V15.4184C16.7533 16.1553 16.156 16.7526 15.4191 16.7526H4.58127C3.84441 16.7526 3.24707 16.1553 3.24707 15.4184ZM3.289 5.08112H13.4186V4.99744C13.4186 4.49079 13.0079 4.08008 12.5012 4.08008H4.58127C3.95945 4.08008 3.43698 4.50547 3.289 5.08112ZM12.5012 10.9169C12.087 10.9169 11.7512 11.2527 11.7512 11.6669C11.7512 12.0811 12.087 12.4169 12.5012 12.4169H14.1686C14.5828 12.4169 14.9186 12.0811 14.9186 11.6669C14.9186 11.2527 14.5828 10.9169 14.1686 10.9169H12.5012Z" fill={color ? color : "#4A4A4F"}/>
   </Icon>
 );
 

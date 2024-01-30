@@ -20,8 +20,10 @@ import {
   StatusModal,
   Flex,
   ArrowRightIcon,
-  Select, VotingPowerModal,
+  Select,
+  Modal
 } from "@yukilabs/governance-components";
+import { WalletIcon, SuccessIcon, WarningIcon } from "@yukilabs/governance-components/src/Icons";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
@@ -530,6 +532,65 @@ export function Delegates({
         }}
       />
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
+      <Modal
+        motionPreset="slideInBottom"
+        isOpen={false}
+        onClose={() => console.log('close')}
+        isCentered
+      >
+        <Flex alignItems="center" direction="column" gap="standard.xl">
+            <Flex alignItems="center" direction="column" gap="standard.xs">
+            {/* {isFail && !isPending && (
+              <WarningIcon boxSize="104px" color="#E54D66" />
+            )} */}
+            {/* {isSuccess && !isPending && ( */}
+            {true && (
+              <SuccessIcon boxSize="104px" color="#29AB87" />
+            )}
+              <Heading variant="h3">All done!</Heading>
+              <Text variant="bodyMedium" color="content.default.default">You wraped 0.00000100 STRK</Text>
+              <Text variant="bodyMedium" color="content.default.default">You received 0.00000100 vSTRK</Text>
+              <Text variant="bodyMedium" color="content.default.default">Review transaction details </Text>
+            </Flex>
+            <Flex
+          alignItems="center"
+          gap="standard.xs"
+          alignSelf="stretch"
+          p="0"
+        >
+          <Text
+            variant="bodySmall"
+            color="content.accent.default"
+            sx={{
+              flex: "1 0 0",
+              textWrap: "wrap",
+              textAlign: "left"
+            }}
+          >
+          Add the vSTRK token to your wallet to track your balance.
+          </Text>
+          <Button
+            variant="outline"
+            onClick={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('Manage vSTRK')
+            }}
+          ><WalletIcon mr="standard.xs" />Add to wallet</Button>
+        </Flex>
+          </Flex>
+          <Modal.Footer>
+            <Button
+              type="button"
+              variant="primary"
+              size="standard"
+              onClick={() => console.log('Continue to delegate')}
+              width="100%"
+            >
+              Continue to delegate
+            </Button>
+          </Modal.Footer>
+      </Modal>
       <StatusModal
         isOpen={isStatusModalOpen}
         isPending={isDelegationLoading || isDelegationL2Loading}

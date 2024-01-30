@@ -2,8 +2,9 @@ import { Box, Flex, Icon } from "@chakra-ui/react";
 import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
 import { Text } from "src/Text";
 import { Heading } from "src/Heading";
-import { ArrowDownIcon } from "src/Icons";
+import { ArrowDownIcon, InfoCircleIcon } from "src/Icons";
 import { Button } from "src/Button";
+import { Tooltip } from "src/Tooltip";
 
 type Props = {
   children: React.ReactNode;
@@ -81,22 +82,61 @@ const UserSummary = ({
         <Flex flexDirection={"column"} alignItems="flex-end" gap="standard.xs">
           <Text
             color="content.default.default"
-            variant="bodyMediumStrong"
+            variant="bodySmall"
             as="span"
           >
-            {isSender && "Available votes"}
-            {isReceiver && !isSender && "Delegated votes"}
+            {isSender && "Available balance"}
+            {isReceiver && !isSender && "Voting power"}
           </Text>
           <Heading variant="h5">
             {balance} {symbol}
           </Heading>
         </Flex>
       </Flex>
+      {text === "Starknet Mainnet" ? <Flex
+        alignItems="center"
+        gap="standard.xs"
+        alignSelf="stretch"
+        padding="standard.md"
+        pt="0"
+      >
+        <Text
+          variant="bodySmall"
+          color="content.accent.default"
+          sx={{
+            flex: "1 0 0",
+            textWrap: "wrap",
+            textAlign: "left"
+          }}
+        >
+        You must stake STRK for vSTRK in order to delegate <Tooltip label="Tooltip" aria-label="Tooltip Text"><Box
+          sx={{
+            display: "inline-block",
+            width: "14px",
+            height: "14px",
+            verticalAlign: "text-top",
+            "& svg": {
+              width: "14px",
+              height: "14px",
+              verticalAlign: "top"
+            }
+          }}><InfoCircleIcon /></Box></Tooltip>
+        </Text>
+        <Button
+          variant="primary"
+          size="condensed"
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Manage vSTRK')
+          }}
+        >Manage vSTRK</Button>
+      </Flex>: null}
     </Button>
   );
 };
 
-const Arrow = ({ py = "standard.xl" }) => {
+const Arrow = ({ py = "standard.sm" }) => {
   return (
     <Box
       display="flex"
