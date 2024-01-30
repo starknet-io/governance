@@ -1,4 +1,4 @@
-import { defaultNetwork, getStarknetStrategy } from "@snapshot-labs/sx";
+import { defaultNetwork, starknetSepolia, getStarknetStrategy } from "@snapshot-labs/sx";
 import { clientConfig, starkProvider as provider } from "../../clients/clients";
 import {
   constants as starknetConstants,
@@ -184,7 +184,7 @@ export const getVotingPowerCalculation = async (
 ): Promise<any> => {
   return Promise.all(
     strategiesAddresses.map(async (address, i) => {
-      const strategy = getStarknetStrategy(address, defaultNetwork);
+      const strategy = getStarknetStrategy(address, starknetSepolia);
       if (!strategy)
         return { address, value: 0n, decimals: 0, token: null, symbol: "" };
 
@@ -208,7 +208,7 @@ export const getVotingPowerCalculation = async (
         strategiesParams[i].split(","),
         {
           ...clientConfig,
-          networkConfig: defaultNetwork,
+          networkConfig: starknetSepolia,
         },
       );
 

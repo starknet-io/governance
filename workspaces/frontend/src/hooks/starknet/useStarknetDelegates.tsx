@@ -4,7 +4,7 @@ import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { BigNumber } from "ethers";
 
-const starkContract = "0x05936cbb910e8f16a670e26f1ae3d91925be439b597b4e5e5b0c674ddd7149fa";
+const starkContract = import.meta.env.VITE_APP_STARKNET_L2_CONTRACT;
 
 export const useStarknetDelegates = ({ starknetAddress } : { starknetAddress: string }) => {
   const [delegates, setDelegates] = useState<any>(null);

@@ -66,7 +66,7 @@ export const VotingPowerBreakdown = ({
                 Starknet voting power
               </Text>
               <Text color="content.accent.default" variant="mediumStrong">
-                {new Intl.NumberFormat().format(votingPowerEth)}
+                {new Intl.NumberFormat().format(votingPowerStark)}
               </Text>
             </Box>
             <Box p="standard.sm">
@@ -74,7 +74,7 @@ export const VotingPowerBreakdown = ({
                 Ethereum voting power
               </Text>
               <Text color="content.accent.default" variant="mediumStrong">
-                {new Intl.NumberFormat().format(votingPowerStark)}
+                {new Intl.NumberFormat().format(votingPowerEth)}
               </Text>
             </Box>
           </Box>

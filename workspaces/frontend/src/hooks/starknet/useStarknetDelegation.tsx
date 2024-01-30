@@ -2,10 +2,9 @@ import { useState } from "react";
 import { Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
-import {waitForTransaction} from "../snapshotX/helpers";
+import { waitForTransaction } from "../snapshotX/helpers";
 
-const starkContract =
-  "0x05936cbb910e8f16a670e26f1ae3d91925be439b597b4e5e5b0c674ddd7149fa";
+const starkContract = import.meta.env.VITE_APP_STARKNET_L2_CONTRACT;
 
 export const useStarknetDelegate = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,18 +12,24 @@ export const useStarknetDelegate = () => {
   const [success, setSuccess] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
 
-  const delegate = async (starknetAddress: string, delegateToAddress: string) => {
-    if (!validateStarknetAddress(starknetAddress) || !validateStarknetAddress(delegateToAddress)) {
+  const delegate = async (
+    starknetAddress: string,
+    delegateToAddress: string,
+  ) => {
+    if (
+      !validateStarknetAddress(starknetAddress) ||
+      !validateStarknetAddress(delegateToAddress)
+    ) {
       setError("Invalid StarkNet address");
       return;
     }
 
     if (!window.starknet) {
-      return "Starknet not found"
+      return "Starknet not found";
     }
 
     setIsSubmitting(true);
-    setSuccess(false)
+    setSuccess(false);
     setError(null);
 
     try {
@@ -42,12 +47,12 @@ export const useStarknetDelegate = () => {
       await window.starknet.enable();
 
       const account = window.starknet.account;
-      contract.connect(account)
+      contract.connect(account);
 
       const txResponse = await contract.delegate(delegateToAddress);
       setTransactionHash(txResponse.transaction_hash);
-      await waitForTransaction(txResponse.transaction_hash)
-      setSuccess(true)
+      await waitForTransaction(txResponse.transaction_hash);
+      setSuccess(true);
     } catch (err) {
       setError(err);
       setTransactionHash(null);
