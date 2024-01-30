@@ -10,6 +10,7 @@ import {
 import { Button } from "src/Button";
 import * as Swap from "../Swap/Swap";
 import { Text } from "../Text";
+import { Heading } from "../Heading";
 import { ethers } from "ethers";
 import { Modal } from "../Modal";
 import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
@@ -70,7 +71,7 @@ export const DelegateModal = ({
 }: Props) => {
   const [customAddress, setCustomAddress] = useState("");
   const l1Delegation =
-    isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation);
+  isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation);
   const l2Delegation = !l1Delegation;
 
   const handleSelect = (address: string) => {
@@ -125,31 +126,32 @@ export const DelegateModal = ({
       isOpen={isOpen}
       onClose={onClose}
       title={
-        isUndelegation ? "Undelegate voting power" : "Delegate voting power"
+        isUndelegation ? "Undelegate votes" : "Delegate votes"
       }
     >
       <Stack spacing="6">
         <Stack spacing="standard.xl">
           <Swap.Root>
+            <Text variant="bodyMedium" color="content.accent.default" mb="standard.xs">From your wallet</Text>
             {senderData ? (
               <Swap.UserSummary
                 address={senderData.address}
                 balance={senderData.balance}
                 symbol={senderData.symbol}
                 isSender
-                text="Ethereum"
+                text="Ethereum Mainnet"
                 isSelected={senderData.address === activeAddress}
                 onClick={() => handleSelect(senderData.address!)}
               />
             ) : null}
-            <Box mt="standard.xs">
+            <Box>
               {senderDataL2 ? (
                 <Swap.UserSummary
                   address={senderDataL2.address}
                   balance={senderDataL2.balance}
                   symbol={senderDataL2.symbol}
                   isSender
-                  text="Starknet"
+                  text="Starknet Mainnet"
                   isSelected={senderDataL2.address === activeAddress}
                   onClick={() => handleSelect(senderDataL2.address!)}
                   sx={{
@@ -161,6 +163,7 @@ export const DelegateModal = ({
             {receiverData && l1Delegation ? (
               <>
                 <Swap.Arrow />
+                <Text variant="bodyMedium" color="content.accent.default" mb="standard.xs">To delegate</Text>
                 <Swap.UserSummary
                   address={receiverData.address}
                   balance={getTotalVotingPower(receiverData)}
@@ -173,6 +176,7 @@ export const DelegateModal = ({
             {receiverDataL2 && l2Delegation ? (
               <>
                 <Swap.Arrow />
+                <Text variant="bodyMedium" color="content.accent.default" mb="standard.xs">To delegate</Text>
                 <Swap.UserSummary
                   address={receiverDataL2.address}
                   balance={getTotalVotingPower(receiverDataL2)}
@@ -186,6 +190,7 @@ export const DelegateModal = ({
             {!receiverData && !receiverDataL2 && (
               <>
                 <Swap.Arrow />
+                <Text variant="bodyMedium" color="content.accent.default" mb="standard.xs">To delegate</Text>
                 <Box
                   fontSize="14px"
                   bg="#FAFAFA"
@@ -234,8 +239,8 @@ export const DelegateModal = ({
                 onClick={delegateTokens}
               >
                 {isUndelegation
-                  ? "Undelegate voting power"
-                  : "Delegate voting power"}
+                  ? "Undelegate votes"
+                  : "Delegate votes"}
               </Button>
             )
           ) : (

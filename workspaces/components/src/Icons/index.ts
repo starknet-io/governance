@@ -85,6 +85,7 @@ import {
   EthereumIcon,
   CommunityLinksIcon,
   BlogPostsIcon,
+  InfoCircleIcon
 } from "./UiIcons";
 
 export {
@@ -172,4 +173,5 @@ export {
   UserIcon,
   BlogPostsIcon,
   EthereumIcon,
+  InfoCircleIcon
 };

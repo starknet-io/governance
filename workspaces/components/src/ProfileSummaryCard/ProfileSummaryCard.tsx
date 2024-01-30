@@ -56,6 +56,12 @@ const Profile = ({
       display="flex"
       alignItems="center"
       gap={size === "lg" ? "16px" : size === "xs" ? "standard.sm" : "16px"}
+      sx={{
+        "& svg": {
+          width: "32px",
+          height: "32px" 
+        }
+      }}
     >
       {text && text === "Ethereum" ? (
         <Icon as={EthereumIcon} />
@@ -78,8 +84,9 @@ const Profile = ({
       <Stack spacing={size === "lg" ? "4px" : "2px"}>
         <Text
           color="content.default.default"
-          variant="bodyMediumStrong"
+          variant="bodySmall"
           as="span"
+          textAlign="left"
         >
           {text}
         </Text>
