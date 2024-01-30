@@ -20,6 +20,7 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { WalletButtons } from "../../pages/profile/settings/index.page";
 import { VotingPowerBreakdown } from "@yukilabs/governance-components/src/VotingPowerModal";
+import {navigate} from "vite-plugin-ssr/client/router";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -102,8 +103,9 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
             variant="secondary"
             size="condensed"
             onClick={(e) => {
-              setEditUserProfile && setEditUserProfile(true);
-              handleOpenModal && handleOpenModal();
+              //setEditUserProfile && setEditUserProfile(true);
+              //handleOpenModal && handleOpenModal();
+              navigate("/profile/settings")
             }}
           >
             Edit user profile

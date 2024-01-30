@@ -22,6 +22,8 @@ import {
   UploadImage,
   EthereumIcon,
   Button as GovernanceButton,
+  IconButton,
+  XIcon,
 } from "@yukilabs/governance-components";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useForm } from "react-hook-form";
@@ -35,7 +37,7 @@ import {
   CheckIcon,
   DynamicConnectButton,
   useDynamicContext,
-  useUserWallets,
+  useUserWallets, useWalletConnectorEvent,
 } from "@dynamic-labs/sdk-react-core";
 
 import type { WalletConnector } from "@dynamic-labs/wallet-connector-core";
@@ -62,7 +64,7 @@ const WalletDisplay = ({
   isSelectable,
   onClick,
   isActive,
-  saveStarknetAddress,
+  handleUnlinkWallet,
 }: {
   wallet: Wallet;
   icon: any;
@@ -70,7 +72,7 @@ const WalletDisplay = ({
   onClick: () => void;
   isActive?: boolean;
   profileVariant?: boolean;
-  saveStarknetAddress?: (starknetAddress: string) => Promise<any>;
+  handleUnlinkWallet?: any;
 }) => {
   return wallet ? (
     isSelectable ? (
@@ -95,6 +97,12 @@ const WalletDisplay = ({
         <Icon as={icon} />
         <Text variant="medium">{truncateAddress(wallet.address)}</Text>
         <Icon as={CheckIcon} />
+        <IconButton
+          variant="ghost"
+          aria-label={"unlink"}
+          icon={<XIcon />}
+          onClick={() => handleUnlinkWallet(wallet?.id)}
+        />
       </Flex>
     )
   ) : (
@@ -126,16 +134,20 @@ export const WalletButtons = ({
   profileVariant?: boolean;
 }) => {
   const userWallets = useUserWallets();
+  const walletConnectors = userWallets.map(({ connector }) => connector);
   const { user } = usePageContext();
-  const { setPrimaryWallet, primaryWallet } = useDynamicContext();
+  const { setPrimaryWallet, primaryWallet, handleUnlinkWallet } =
+    useDynamicContext();
   const editUser = trpc.users.editUserProfile.useMutation();
 
-  const saveStarknetAddress = async (starknetAddress: string) => {
-    await editUser.mutateAsync({
-      starknetAddress,
-      id: user.id!,
-    });
-  };
+  useWalletConnectorEvent(
+    primaryWallet?.connector,
+    'accountChange',
+    ({ accounts }, connector) => {
+      // We will need this to detect account change in dynamic
+    },
+  );
+
 
   const findMatchingWallet = (wallets: any[], key: "EVM" | "STARKNET") => {
     return wallets.find((wallet) => wallet.chain === Chain[key]);
@@ -153,8 +165,8 @@ export const WalletButtons = ({
         <WalletDisplay
           profileVariant={profileVariant}
           wallet={starknetWallet}
-          saveStarknetAddress={saveStarknetAddress}
           isActive={primaryWallet?.id === starknetWallet?.id}
+          handleUnlinkWallet={handleUnlinkWallet}
           icon={StarknetIcon}
           isSelectable={selectable}
           onClick={async () => {

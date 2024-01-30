@@ -186,6 +186,7 @@ export const usersRouter = router({
         id: z.string(),
         username: z.optional(z.any()),
         starknetAddress: z.optional(z.any()),
+        ethereumAddress: z.optional(z.any()),
         profileImage: z.optional(z.any()),
       }),
     )
