@@ -12,26 +12,33 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.meta.outputs.version }}
+      image: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: registry.digitalocean.com/governance/backend-prod
+          images: europe-west9-docker.pkg.dev/governance-production/api/prod
           flavor: latest=false
           tags: |
             type=ref,event=tag
 
-      - name: Login to DO Container Registry
-        uses: docker/login-action@v2
+      - uses: 'google-github-actions/auth@v2'
+        id: auth
         with:
-          registry: registry.digitalocean.com
-          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          token_format: access_token
+          project_id: 'governance-production'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS_PROD }}'
+
+      - name: Login to GAR
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west9-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
 
       - name: Build and push
         uses: docker/build-push-action@v4
@@ -47,14 +54,21 @@ jobs:
     needs: Build
     runs-on: ubuntu-latest
     env:
-      tag: ${{ needs.Build.outputs.tag }}
+      image: ${{ needs.Build.outputs.image }}
     environment:
       name: production-backend
       url: https://api.yuki-labs.dev
     steps:
-      - name: DigitalOcean App Platform deployment
-        uses: digitalocean/app_action@v1.1.5
+      - uses: 'google-github-actions/auth@v2'
+        id: auth
         with:
-          app_name: backend-production
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "backend","image":{"registry_type": "DOCR","repository": "backend-prod","tag": "${{ env.tag }}"}}]'
+          token_format: access_token
+          project_id: 'governance-production'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS_PROD }}'
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v0.4.0
+        with:
+          service: api
+          image: ${{ env.image }}
+          region: europe-west9
