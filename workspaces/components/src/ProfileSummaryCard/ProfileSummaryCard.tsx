@@ -56,17 +56,11 @@ const Profile = ({
       display="flex"
       alignItems="center"
       gap={size === "lg" ? "16px" : size === "xs" ? "standard.sm" : "16px"}
-      sx={{
-        "& svg": {
-          width: "32px",
-          height: "32px"
-        }
-      }}
     >
       {text && text === "Ethereum" ? (
-        <Icon as={EthereumIcon} />
+        <Icon as={EthereumIcon} width="32px" height="32px" />
       ) : text === "Starknet" ? (
-        <Icon as={StarknetIcon} />
+        <Icon as={StarknetIcon} width="32px" height="32px" />
       ) : imgUrl ? (
         // debug next line
         // <Avatar size={size === "lg" ? "lg" || size ==="xs" ? "sm" : "md"} src={imgUrl} />

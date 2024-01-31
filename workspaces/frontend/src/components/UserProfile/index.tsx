@@ -1,9 +1,5 @@
 import { forwardRef } from "react";
-import {
-  Box,
-  Flex,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Flex, VStack } from "@chakra-ui/react";
 import {
   Modal,
   Button,
@@ -20,7 +16,8 @@ import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { WalletButtons } from "../../pages/profile/settings/index.page";
 import { VotingPowerBreakdown } from "@yukilabs/governance-components/src/VotingPowerModal";
-import {navigate} from "vite-plugin-ssr/client/router";
+import { navigate } from "vite-plugin-ssr/client/router";
+import { useWallets } from "../../hooks/useWallets";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -66,6 +63,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   handleOpenModal,
   setEditUserProfile,
 }: UserProfileMenuProps) => {
+  const { ethWallet, starknetWallet } = useWallets();
   return (
     <>
       <Box position="absolute" right="12px" top="12px" zIndex={0}>
@@ -94,6 +92,8 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           <WalletButtons selectable profileVariant />
         </Box>
         <VotingPowerBreakdown
+          hasEthWallet={!!ethWallet?.id}
+          hasStarkWallet={!!starknetWallet?.id}
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
           onToggleExpand={onVotingPowerModalOpen}
@@ -105,7 +105,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
             onClick={(e) => {
               //setEditUserProfile && setEditUserProfile(true);
               //handleOpenModal && handleOpenModal();
-              navigate("/profile/settings")
+              navigate("/profile/settings");
             }}
           >
             Edit user profile
@@ -137,6 +137,7 @@ const UserProfileMenuComponent = (
   ref,
 ) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(isMenuOpen);
+  const { ethWallet, starknetWallet } = useWallets();
   useEffect(() => {
     setIsModalOpen(isMenuOpen);
   }, [isMenuOpen]);
@@ -176,6 +177,8 @@ const UserProfileMenuComponent = (
         delegatedToL2={delegatedToL2}
         delegatedToL1Name={delegatedToL1Name}
         delegatedToL2Name={delegatedToL2Name}
+        hasEthWallet={!!ethWallet?.id}
+        hasStarkWallet={!!starknetWallet?.id}
         balanceEth={`${new Intl.NumberFormat().format(
           ethBalance?.balance,
         )} ${ethBalance?.symbol}`}

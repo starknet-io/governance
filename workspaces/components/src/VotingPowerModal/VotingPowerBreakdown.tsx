@@ -9,16 +9,24 @@ import { ethers } from "ethers";
 type Props = {
   showBreakdown?: boolean;
   onToggleExpand?: () => void;
-  votingPowerEth: number;
-  votingPowerStark: number;
+  votingPowerEth: bigint;
+  votingPowerStark: bigint;
+  hasEthWallet?: boolean;
+  hasStarkWallet?: boolean;
 };
 
 export const VotingPowerBreakdown = ({
   showBreakdown = false,
   onToggleExpand,
-  votingPowerEth = 0,
-  votingPowerStark = 0,
+  votingPowerEth = 0n,
+  votingPowerStark = 0n,
+  hasEthWallet,
+  hasStarkWallet,
 }: Props) => {
+  const totalValue = ethers.utils.commify(
+    (hasEthWallet ? votingPowerEth : 0n) +
+      (hasStarkWallet ? votingPowerStark : 0n),
+  );
   return (
     <Box border="1px solid" borderColor="border.dividers" borderRadius="4px">
       <Box
@@ -36,7 +44,7 @@ export const VotingPowerBreakdown = ({
               Total voting power
             </Text>
             <Text variant="largeStrong" color="content.accent.default">
-              {ethers.utils.commify(votingPowerEth + votingPowerStark)}
+              {totalValue}
             </Text>
           </Box>
           {showBreakdown ? (
@@ -61,33 +69,45 @@ export const VotingPowerBreakdown = ({
       <Box>
         <Flex alignItems="flex-start" justifyContent="space-between">
           <Box>
-            <Box p="standard.sm">
-              <Text variant="small" color="content.support.default">
-                Starknet voting power
-              </Text>
-              <Text color="content.accent.default" variant="mediumStrong">
-                {new Intl.NumberFormat().format(votingPowerStark)}
-              </Text>
-            </Box>
-            <Box p="standard.sm">
-              <Text variant="small" color="content.support.default">
-                Ethereum voting power
-              </Text>
-              <Text color="content.accent.default" variant="mediumStrong">
-                {new Intl.NumberFormat().format(votingPowerEth)}
-              </Text>
-            </Box>
+            {hasStarkWallet && (
+              <Box p="standard.sm">
+                <Text variant="small" color="content.support.default">
+                  Starknet voting power
+                </Text>
+                <Text color="content.accent.default" variant="mediumStrong">
+                  {new Intl.NumberFormat().format(votingPowerStark)}
+                </Text>
+              </Box>
+            )}
+            {hasEthWallet && (
+              <Box p="standard.sm">
+                <Text variant="small" color="content.support.default">
+                  Ethereum voting power
+                </Text>
+                <Text color="content.accent.default" variant="mediumStrong">
+                  {new Intl.NumberFormat().format(votingPowerEth)}
+                </Text>
+              </Box>
+            )}
           </Box>
-          {!showBreakdown ? (
-            <Box p="standard.sm">
-              <Link href="/staking" size="small" color="content.links.default">
-                Manage vSTRK
-              </Link>
-            </Box>
-          ) : (
-            <Box p="standard.sm">
-              <Button size="condensed">Manage vSTRK</Button>
-            </Box>
+          {hasStarkWallet && (
+            <>
+              {!showBreakdown ? (
+                <Box p="standard.sm">
+                  <Link
+                    href="/staking"
+                    size="small"
+                    color="content.links.default"
+                  >
+                    Manage vSTRK
+                  </Link>
+                </Box>
+              ) : (
+                <Box p="standard.sm">
+                  <Button size="condensed">Manage vSTRK</Button>
+                </Box>
+              )}
+            </>
           )}
         </Flex>
       </Box>

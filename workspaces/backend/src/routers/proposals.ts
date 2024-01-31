@@ -148,8 +148,6 @@ export const proposalsRouter = router({
         .optional(),
     )
     .query(async (opts) => {
-      const limit = 20;
-      const offset = 0;
 
       const orderDirection =
         opts.input?.sortBy && opts.input?.sortBy !== 'most_discussed'
