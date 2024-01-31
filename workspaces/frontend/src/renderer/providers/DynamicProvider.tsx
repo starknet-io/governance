@@ -1,4 +1,7 @@
 import {
+  FilterWallets,
+  RemoveWallets,
+  useDynamicContext,
   UserProfile,
   Wallet,
   WalletConnector,
@@ -8,7 +11,7 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { StarknetWalletConnectors } from "@dynamic-labs/starknet";
 import { ZeroDevSmartWalletConnectors } from "@dynamic-labs/ethereum-aa";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { trpc } from "src/utils/trpc";
 import { cssOverrides } from "src/components/style/overrides";
@@ -32,9 +35,10 @@ interface AuthSuccessParams {
 export const DynamicProvider = (props: Props) => {
   const { children } = props;
   const [authUser, setAuthUser] = useState<AuthSuccessParams | null>(null);
-  const [secondaryWallet, setSecondaryWallet] = useState<anyl>(null);
+  const [secondaryWallet, setSecondaryWallet] = useState<any>(null);
   const [userExistsError, setUserExistsError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [currentWallet, setCurrentWallet] = useState<string | null>(null);
   const authMutation = trpc.auth.authUser.useMutation();
   const logoutMutation = trpc.auth.logout.useMutation();
 
@@ -67,6 +71,30 @@ export const DynamicProvider = (props: Props) => {
       });
     }
   };
+
+  useEffect(() => {
+    // Function to check and load the current wallet from localStorage
+    const loadCurrentWalletFromLocalStorage = () => {
+      const walletInfo = localStorage.getItem("dynamic_authenticated_user"); // Replace with your actual key
+
+      if (walletInfo) {
+        const wallet = JSON.parse(walletInfo);
+
+        if (wallet.chain === "eip155") {
+          setCurrentWallet("ethereum");
+        } else if (wallet.chain === "starknet") {
+          setCurrentWallet("starknet");
+        } else {
+          setCurrentWallet(null);
+        }
+      } else {
+        setCurrentWallet(null);
+      }
+    };
+
+    // Call the function to load the current wallet from localStorage
+    loadCurrentWalletFromLocalStorage();
+  }, []);
 
   useEffect(() => {
     if (authUser && !hasCalledAuthenticateUser.current) {
@@ -131,6 +159,24 @@ export const DynamicProvider = (props: Props) => {
       },
     });
   };
+
+  const starknetWallets = ["argentx", "braavos"];
+
+  const walletToShow = useMemo(() => {
+    if (!currentWallet) {
+      return RemoveWallets([]);
+    } else if (currentWallet === "ethereum") {
+      return FilterWallets(starknetWallets);
+    } else if (currentWallet === "starknet") {
+      return RemoveWallets(starknetWallets);
+    } else {
+      return RemoveWallets([]);
+    }
+  }, [currentWallet]);
+
+  //const { walletConnectorOptions } = useDynamicContext();
+  //console.log(walletConnectorOptions.map((wallet) => wallet.key));
+
   return (
     <>
       <ProfileInfoModal
@@ -145,6 +191,7 @@ export const DynamicProvider = (props: Props) => {
       />
       <DynamicContextProvider
         settings={{
+          ...(currentWallet ? { walletsFilter: walletToShow } : {}),
           walletConnectors: [
             EthereumWalletConnectors,
             ZeroDevSmartWalletConnectors,
@@ -153,6 +200,14 @@ export const DynamicProvider = (props: Props) => {
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {
+              const primaryWalletChain = params?.primaryWallet?.chain;
+              if (primaryWalletChain === "eip155") {
+                setCurrentWallet("ethereum");
+              } else if (primaryWalletChain === "starknet") {
+                setCurrentWallet("starknet");
+              } else {
+                setCurrentWallet(null);
+              }
               setAuthUser(params);
             },
             onLinkSuccess: (params) => {
@@ -160,6 +215,9 @@ export const DynamicProvider = (props: Props) => {
               if (user && wallet) {
                 setSecondaryWallet(wallet);
               }
+            },
+            onDisconnect: () => {
+              setCurrentWallet(null)
             },
             onLogout: () => handleDynamicLogout(),
           },
