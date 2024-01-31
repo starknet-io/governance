@@ -10,7 +10,7 @@ export function useVotingPower({ address, proposal, timestamp }: {
 }) {
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
 
-  const [data, setData] = useState(0);
+  const [data, setData] = useState(0n);
   const [isLoading, setIsLoading] = useState(true);
 
   const { data: spaceObj, loading: spaceLoading } = useQuery(GET_SPACE, {
@@ -22,7 +22,7 @@ export function useVotingPower({ address, proposal, timestamp }: {
 
   const fetchVotingPower = async () => {
     if (!address || !spaceObj?.space || !address.length) {
-      setData(0);
+      setData(0n);
       setIsLoading(false);
       return;
     }
@@ -50,7 +50,7 @@ export function useVotingPower({ address, proposal, timestamp }: {
       setData(parsedData);
     } catch (e) {
       console.warn("Failed to load voting power", e);
-      setData(0);
+      setData(0n);
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +61,6 @@ export function useVotingPower({ address, proposal, timestamp }: {
 
     // Event listener to re-fetch voting power when delegation is successful
     const onDelegationSuccess = () => {
-      debugger
       fetchVotingPower();
     };
 
