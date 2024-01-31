@@ -31,6 +31,7 @@ export const SearchInput: FC<SearchInputProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        paddingLeft="calc(12px + 20px + 8px)"
         // Add other props...
       />
     </InputGroup>

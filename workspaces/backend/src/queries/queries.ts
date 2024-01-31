@@ -10,6 +10,7 @@ export const GET_PROPOSALS_QUERY = gql`
         space: $space
       }
       orderDirection: $orderDirection
+      orderBy: start
     ) {
       snapshot
       id

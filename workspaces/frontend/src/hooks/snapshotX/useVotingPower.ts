@@ -3,14 +3,10 @@ import { useQuery } from "@apollo/client";
 import { GET_SPACE } from "./queries";
 import { getVotingPowerCalculation } from "./helpers";
 
-export function useVotingPower({
-  address,
-  proposal,
-  timestamp,
-}: {
-  address?: string | null;
-  proposal?: string;
-  timestamp?: number | null;
+export function useVotingPower({ address, proposal, timestamp }: {
+  address: string,
+  proposal?: number,
+  timestamp?: number,
 }) {
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
 
@@ -24,45 +20,57 @@ export function useVotingPower({
     context: { clientName: "snapshotX" },
   });
 
-  useEffect(() => {
-    async function fetchVotingPower() {
-      if (!address || !spaceObj?.space) {
-        setData(0);
-        setIsLoading(false);
-        return;
-      }
-
-      const strategiesMetadata = spaceObj.space.strategies_parsed_metadata.map(
-        (strategy) => ({
-          ...strategy.data,
-        }),
-      );
-
-      try {
-        const vpData = await getVotingPowerCalculation(
-          spaceObj.space.strategies,
-          spaceObj.space.strategies_params,
-          strategiesMetadata,
-          address,
-          timestamp ? timestamp : Math.floor(Date.now() / 1000),
-        );
-        const parsedData = vpData
-          ? vpData.reduce((acc, strategy) => {
-              let toAdd = BigInt(strategy.value);
-              acc += toAdd;
-              return acc;
-            }, 0n)
-          : 0n;
-        setData(parsedData);
-      } catch (e) {
-        console.warn("Failed to load voting power", e);
-        setData(0);
-      } finally {
-        setIsLoading(false);
-      }
+  const fetchVotingPower = async () => {
+    if (!address || !spaceObj?.space || !address.length) {
+      setData(0);
+      setIsLoading(false);
+      return;
     }
 
+    const strategiesMetadata = spaceObj.space.strategies_parsed_metadata.map(
+      (strategy) => ({
+        ...strategy.data,
+      }),
+    );
+    try {
+      const vpData = await getVotingPowerCalculation(
+        spaceObj.space.strategies,
+        spaceObj.space.strategies_params,
+        strategiesMetadata,
+        address,
+        timestamp ? timestamp : null,
+      );
+
+      const parsedData = vpData.reduce((acc, strategy) => {
+        const valueWithDecimals = BigInt(strategy.value) / BigInt(10 ** strategy.decimals);
+        acc += valueWithDecimals;
+        return acc;
+      }, 0n);
+
+      setData(parsedData);
+    } catch (e) {
+      console.warn("Failed to load voting power", e);
+      setData(0);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchVotingPower();
+
+    // Event listener to re-fetch voting power when delegation is successful
+    const onDelegationSuccess = () => {
+      debugger
+      fetchVotingPower();
+    };
+
+    window.addEventListener("delegationSuccess", onDelegationSuccess);
+
+    // Cleanup the event listener
+    return () => {
+      window.removeEventListener("delegationSuccess", onDelegationSuccess);
+    };
   }, [address, spaceObj, timestamp]);
 
   return {

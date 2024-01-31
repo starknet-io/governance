@@ -6,3 +6,7 @@
 .markdown-body h4:first-child {
   margin-top: 0;
 }
+
+.markdown-body-comments p {
+  margin-bottom: 12px;
+}

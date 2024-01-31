@@ -103,6 +103,8 @@ export const GET_SPACE = gql`
           name
           symbol
           payload
+          decimals
+          token
         }
       }
       authenticators

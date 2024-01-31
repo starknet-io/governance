@@ -70,7 +70,13 @@ export const theme = extendTheme({
     Spinner,
     Divider: dividerTheme,
     ...FormTheme,
-
+    Popover: {
+      baseStyle: {
+        content: {
+          p: "standard.md"
+        },
+      },
+    },
     fonts: {
       heading: `'Poppins', sans-serif`,
       body: `'Inter Variable', sans-serif`,

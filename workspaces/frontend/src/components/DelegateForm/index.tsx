@@ -16,7 +16,7 @@ import {
   useDisclosure,
   useMarkdownEditor,
   FormControlled,
-  Select,
+  Multiselect,
   useFormErrorHandler,
   RadioGroup,
   Radio,
@@ -34,6 +34,7 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { Spinner } from "@chakra-ui/react";
 import { delegationAgreement } from "../../utils/data";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { useCheckBalance } from "../useCheckBalance";
 
 interface DelegateFormProps {
@@ -71,10 +72,13 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     trigger,
     clearErrors,
     setError,
+    watch
   } = useForm<FormValues>({
     mode: "onChange",
     shouldFocusError: false,
   });
+  const confirmDelegateAgreement = watch("confirmDelegateAgreement");
+  const customDelegateAgreementContent = watch("customDelegateAgreementContent");
   const {
     isOpen: isDeleteOpen,
     onOpen: onOpenDelete,
@@ -261,6 +265,8 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     }
   };
 
+  const { isMobile } = useIsMobile();
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmitHandler, onErrorSubmit)} noValidate>
@@ -328,9 +334,9 @@ Conflicts of interest
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
-                <Select
+                <Multiselect
+                  size="md"
                   isInvalid={!!errors.interests}
-                  isMulti
                   options={interestsValues.map((option) => ({
                     value: option,
                     label: delegateNames?.[option] ?? option,
@@ -423,9 +429,12 @@ Conflicts of interest
                 <FormControl id="defaultDelegateAgreement">
                   <Radio
                     value=""
+                    isChecked={!confirmDelegateAgreement && !editorCustomAgreementValue}
                     onChange={() => {
                       setShowCustomAgreementEditor(false);
                       setValue("confirmDelegateAgreement", false);
+                      setValue("customDelegateAgreementContent", '');
+                      handleCustomAgreement([{ children: [{ text: "" }] }]);
                     }}
                   >
                     I don&apos;t need a delegate agreement.
@@ -434,9 +443,11 @@ Conflicts of interest
                 <FormControl id="confirmDelegateAgreement">
                   <Radio
                     value="standard"
+                    isChecked={confirmDelegateAgreement}
                     onChange={() => {
                       setShowCustomAgreementEditor(false);
                       setValue("confirmDelegateAgreement", true);
+                      setValue("customDelegateAgreementContent", "");
                     }}
                   >
                     <Flex gap={1}>
@@ -461,6 +472,7 @@ Conflicts of interest
                 <FormControl id="customDelegateAgreement">
                   <Radio
                     value="custom"
+                    isChecked={!confirmDelegateAgreement && editorCustomAgreementValue}
                     onChange={() => {
                       setShowCustomAgreementEditor(true);
                       setValue("confirmDelegateAgreement", false);
@@ -540,12 +552,28 @@ Conflicts of interest
               </Button>
             </Flex>
           ) : mode === "edit" ? (
-            <Flex justifyContent="flex-end" gap="16px">
+            <Flex
+              justifyContent="flex-end"
+              gap="16px"
+              sx={{
+                '@media (max-width: 768px)': {
+                  gap: "0px",
+                  flexDirection: "column"
+                }
+              }}
+            >
               <Button
                 size="condensed"
                 variant="danger"
                 onClick={onOpenDelete}
                 mr="auto"
+                sx={{
+                  '@media (max-width: 768px)': {
+                    order: 3,
+                    width: "100%",
+                    marginRight: "0"
+                  }
+                }}
               >
                 Delete
               </Button>
@@ -554,11 +582,29 @@ Conflicts of interest
                 size="condensed"
                 variant="ghost"
                 href={`/delegates/profile/${pageContext.routeParams!.id}`}
+                sx={{
+                  '@media (max-width: 768px)': {
+                    marginBottom: "standard.lg",
+                    width: "100%",
+                    order: 2
+                  }
+                }}
               >
                 Cancel
               </Button>
-              <Button type="submit" size="condensed" variant="primary">
-                <Flex alignItems="center" gap={2}>
+              <Button
+                type="submit"
+                size="condensed"
+                variant="primary"
+                sx={{
+                  '@media (max-width: 768px)': {
+                    marginBottom: "standard.sm",
+                    order: 1,
+                    width: "100%"
+                  }
+                }}
+              >
+                 <Flex alignItems="center" gap={2}>
                   {isSubmitting && <Spinner size="sm" />}
                   <div>Save</div>
                 </Flex>

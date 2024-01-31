@@ -25,12 +25,12 @@ import { useFileUpload } from "src/hooks/useFileUpload";
 import { useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
-import { useDynamicContext } from "@dynamic-labs/sdk-react";
 import {AUTHENTICATORS_ENUM} from "../../hooks/snapshotX/constants";
 import {useSpace} from "../../hooks/snapshotX/useSpace";
 import {pinPineapple, prepareStrategiesForSignature, waitForTransaction} from "../../hooks/snapshotX/helpers";
 import {ethSigClient, starkProvider, starkSigClient} from "../../clients/clients";
 import {useProposals} from "../../hooks/snapshotX/useProposals";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 interface FieldValues {
   // type: ProposalType;
@@ -113,13 +113,13 @@ export function Page() {
         if (!pinned || !pinned.cid) return false;
         console.log('IPFS', pinned);
         // PREPARE DATA HERE
-        const strategiesMetadata = space.data.strategies_parsed_metadata.map(
+        const strategiesMetadata = space.data.voting_power_validation_strategies_parsed_metadata.map(
           (strategy) => ({
             ...strategy.data,
           }),
         );
         const preparedStrategies = await prepareStrategiesForSignature(
-          space.data.strategies as string[],
+          space.data.voting_power_validation_strategy_strategies as string[],
           strategiesMetadata as any[],
         );
 
@@ -314,8 +314,8 @@ Links
               <Select
                 size="md"
                 isReadOnly
-                defaultValue="option1"
-                options={[{ label: "Basic", value: "desc" }]}
+                defaultValue="basic"
+                options={[{ label: "Basic", value: "basic" }]}
                 onChange={() => console.log("changed")}
                 placeholder="Basic"
               />
@@ -326,10 +326,10 @@ Links
               <Select
                 size="md"
                 isReadOnly
-                defaultValue="option1"
-                options={[{ label: "Basic", value: "desc" }]}
+                defaultValue="basic"
+                options={[{ label: "Basic", value: "basic" }]}
                 onChange={() => console.log("changed")}
-                placeholder="For"
+                placeholder="Basic"
               />
             </FormControlled>
 

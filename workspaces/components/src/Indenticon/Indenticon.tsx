@@ -6,9 +6,10 @@ const AvatarLazy = React.lazy(() => import("yuki-ultra-boring-avatars"));
 type Props = {
   address?: string | null;
   size?: number;
+  sx?: any;
 };
 
-export const Indenticon = ({ address, size = 60 }: Props) => {
+export const Indenticon = ({ address, size = 60, sx }: Props) => {
   const [isMounted, setIsMounted] = useState(false);
   const brandColors = [
     "#3F8CFF",
@@ -29,18 +30,32 @@ export const Indenticon = ({ address, size = 60 }: Props) => {
   }, []);
 
   if (!isMounted) {
-    return <SkeletonCircle size={size?.toString() || "60"} />;
+    return <SkeletonCircle size={`${size?.toString()}px` || "12"} />;
   }
 
   return (
-    <Box overflow="hidden" width={`${size}px`} height={`${size}px`}>
-      <Suspense fallback={<SkeletonCircle size={size?.toString() || "60"} />}>
-        <AvatarLazy
-          size={size}
-          name={address}
-          variant="beam"
-          colors={brandColors}
-        />
+    <Box
+      overflow="hidden"
+      width={`${size}px`}
+      height={`${size}px`}
+      sx={{ ...sx }}
+    >
+      <Suspense
+        fallback={<SkeletonCircle size={`${size?.toString()}px` || "60"} />}
+      >
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 3,
+          }}
+        >
+          <AvatarLazy
+            size={`${size}px`}
+            name={address}
+            variant="beam"
+            colors={brandColors}
+          />
+        </Box>
       </Suspense>
     </Box>
   );

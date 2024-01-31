@@ -21,8 +21,19 @@ import { db } from '../db/db';
 import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
 import { socials } from '../db/schema/socials';
+import { profanity } from '@2toad/profanity';
 
 const delegateInsertSchema = createInsertSchema(delegates);
+
+const AddressInputSchema = z
+  .object({
+    address: z.string().optional(),
+    starknetAddress: z.string().optional(),
+  })
+  .refine((data) => data.address || data.starknetAddress, {
+    message:
+      "Either 'address' or 'starknetAddress' must be provided, but not both.",
+  });
 
 export const delegateRouter = router({
   getAll: publicProcedure.query(
@@ -49,6 +60,12 @@ export const delegateRouter = router({
       const userAddress = opts.ctx.user?.address;
       if (!userAddress) {
         throw new Error('User not found');
+      }
+
+      if (profanity.exists(opts.input.statement)) {
+        throw new Error(
+          'Your delegate statement contains inappropriate language.',
+        );
       }
 
       const user = await db.query.users.findFirst({
@@ -227,12 +244,18 @@ export const delegateRouter = router({
         userRole !== 'superadmin' &&
         userRole !== 'moderator'
       ) {
-        if (delegate.userId !== userId) throw new Error('Unauthorizeds');
+        if (delegate.userId !== userId) throw new Error('Unauthorized');
+      }
+
+      if (profanity.exists(opts.input.statement)) {
+        throw new Error(
+          'Your delegate statement contains inappropriate language.',
+        );
       }
       // Determine the agreement value
-      const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
-        ? null
-        : opts.input.confirmDelegateAgreement; // Use true or appropriate value for standard agreement
+      // const confirmDelegateAgreement = opts.input.customDelegateAgreementContent
+      //   ? null
+      //   : opts.input.confirmDelegateAgreement; // Use true or appropriate value for standard agreement
       const updatedDelegate = await db
         .update(delegates)
         .set({
@@ -296,7 +319,7 @@ export const delegateRouter = router({
             updatedAt: new Date(),
           });
         }
-      } else if (confirmDelegateAgreement) {
+      } else {
         // If the standard agreement is selected, remove any existing custom agreement
         await db
           .delete(customDelegateAgreement)
@@ -317,14 +340,18 @@ export const delegateRouter = router({
     }),
 
   getDelegateByAddress: publicProcedure
-    .input(
-      z.object({
-        address: z.string(),
-      }),
-    )
+    .input(AddressInputSchema)
     .query(async (opts) => {
+      const condition = opts.input.address
+        ? eq(users.address, opts.input.address)
+        : opts.input.starknetAddress
+        ? eq(users.starknetAddress, opts.input.starknetAddress)
+        : null;
+      if (!condition) {
+        throw new Error('Delegate not found');
+      }
       const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.address),
+        where: condition,
         with: {
           delegationStatement: {
             with: {
@@ -381,7 +408,7 @@ export const delegateRouter = router({
         }
         const interests = JSON.stringify(appliedInterests);
 
-        let query = db
+        let query: any = db
           .select()
           .from(delegates)
           .leftJoin(delegateVotes, eq(delegateVotes.delegateId, delegates.id))
@@ -450,8 +477,11 @@ export const delegateRouter = router({
 
         query.orderBy(orderBy, desc(delegates.id));
 
-        if (opts.input.limit !== undefined && opts.input.offset !== undefined) {
+        // Apply pagination
+        if (typeof opts.input.offset === 'number') {
           query = query.offset(opts.input.offset);
+        }
+        if (typeof opts.input.limit === 'number') {
           query = query.limit(opts.input.limit);
         }
 

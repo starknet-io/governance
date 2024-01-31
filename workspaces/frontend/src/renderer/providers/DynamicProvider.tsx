@@ -1,8 +1,15 @@
-import { UserProfile, Wallet, WalletConnector } from "@dynamic-labs/sdk-react";
+import {
+  UserProfile,
+  Wallet,
+  WalletConnector,
+} from "@dynamic-labs/sdk-react-core";
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+import { StarknetWalletConnectors } from "@dynamic-labs/starknet";
+import { ZeroDevSmartWalletConnectors } from "@dynamic-labs/ethereum-aa";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { navigate } from "vite-plugin-ssr/client/router";
 import { trpc } from "src/utils/trpc";
 import { cssOverrides } from "src/components/style/overrides";
 import { ProfileInfoModal } from "@yukilabs/governance-components";
@@ -25,6 +32,7 @@ interface AuthSuccessParams {
 export const DynamicProvider = (props: Props) => {
   const { children } = props;
   const [authUser, setAuthUser] = useState<AuthSuccessParams | null>(null);
+  const [secondaryWallet, setSecondaryWallet] = useState<anyl>(null);
   const [userExistsError, setUserExistsError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const authMutation = trpc.auth.authUser.useMutation();
@@ -39,7 +47,7 @@ export const DynamicProvider = (props: Props) => {
   const authenticateUser = useCallback(
     async (params: AuthSuccessParams) => {
       if (params?.user?.newUser) {
-        setModalOpen(true);
+        navigate("/profile/settings");
       }
       await authMutation.mutateAsync({
         authToken: params.authToken,
@@ -51,6 +59,15 @@ export const DynamicProvider = (props: Props) => {
     [authMutation],
   );
 
+  const handleLinkEvent = async (walletAddress: string) => {
+    if (user) {
+      await editUserProfile.mutateAsync({
+        id: user.id,
+        starknetAddress: walletAddress,
+      });
+    }
+  };
+
   useEffect(() => {
     if (authUser && !hasCalledAuthenticateUser.current) {
       authenticateUser(authUser);
@@ -59,6 +76,14 @@ export const DynamicProvider = (props: Props) => {
       hasCalledAuthenticateUser.current = false; // Reset for next time
     }
   }, [authUser, authenticateUser]);
+
+  useEffect(() => {
+    if (secondaryWallet && secondaryWallet.address && user) {
+      if (secondaryWallet.chain === "starknet") {
+        handleLinkEvent(secondaryWallet.address);
+      }
+    }
+  }, [secondaryWallet]);
 
   async function handleSave(data: {
     username: string;
@@ -98,7 +123,6 @@ export const DynamicProvider = (props: Props) => {
   const handleModalClose = () => {
     setModalOpen(false);
   };
-
   const handleDynamicLogout = () => {
     logoutMutation.mutateAsync(undefined, {
       onSuccess: () => {
@@ -121,11 +145,21 @@ export const DynamicProvider = (props: Props) => {
       />
       <DynamicContextProvider
         settings={{
-          walletConnectors: [EthereumWalletConnectors],
+          walletConnectors: [
+            EthereumWalletConnectors,
+            ZeroDevSmartWalletConnectors,
+            StarknetWalletConnectors,
+          ],
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {
               setAuthUser(params);
+            },
+            onLinkSuccess: (params) => {
+              const wallet = params?.wallet;
+              if (user && wallet) {
+                setSecondaryWallet(wallet);
+              }
             },
             onLogout: () => handleDynamicLogout(),
           },

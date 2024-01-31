@@ -32,6 +32,7 @@ export type DelegateCardProps = {
   votingPower: number;
   voteCount?: number;
   onDelegateClick?: () => void;
+  onDelegateCardClick?: () => void;
   profileURL?: string;
   address: string | null | undefined;
   user?: string | null;
@@ -42,6 +43,7 @@ export type DelegateCardProps = {
   discord?: string;
   discourse?: string;
   telegram?: string;
+  status?: string | null;
 };
 
 const delegateInterests: Record<string, string> = {
@@ -66,16 +68,38 @@ export function extractParagraph(
   markdownContent: string,
   charLimit = 300,
 ): string {
-  // Remove headings
-  const noHeadings = markdownContent.replace(/#+ .+\n/g, "").trim();
+  // Remove Markdown headings and section titles
+  const noTitles = markdownContent
+    .replace(/#+ .+\n/g, "")
+    .replace(/.+\n[-*=_]{3,}\n/g, "")
+    .trim();
 
-  const firstParagraphMatch = noHeadings.match(/(?:\n|^)([^#].+?)(?:\n|$)/);
-  if (firstParagraphMatch && firstParagraphMatch[1]) {
-    const firstParagraph = firstParagraphMatch[1];
-    return firstParagraph.substring(0, charLimit);
+  // Replace Markdown links with just the link text
+  const noMarkdownLinks = noTitles.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+
+  // Remove Markdown list item markers
+  const noListMarkers = noMarkdownLinks.replace(/^\s*[*-]\s+/gm, "");
+
+  // Split content into paragraphs or lines
+  const paragraphs = noListMarkers.split("\n");
+
+  // Concatenate paragraphs up to the character limit or return the beginning of the text
+  if (paragraphs.length > 1) {
+    let concatenatedParagraphs = "";
+    let currentLength = 0;
+    paragraphs.forEach((paragraph) => {
+      if (currentLength + paragraph.length <= charLimit) {
+        concatenatedParagraphs += paragraph + " ";
+        currentLength += paragraph.length;
+      }
+    });
+    return concatenatedParagraphs.trim()?.substring(0, charLimit);
+  } else {
+    // For text without clear Markdown formatting
+    return markdownContent?.substring(0, charLimit);
   }
-  return "";
 }
+
 const DelegateTags = ({
   type,
 }: {
@@ -137,6 +161,7 @@ export const DelegateCard = ({
   address,
   user,
   onDelegateClick,
+  onDelegateCardClick,
   profileURL,
   isDelegationLoading,
   headerTooltipContent,
@@ -144,6 +169,7 @@ export const DelegateCard = ({
   discord,
   discourse,
   telegram,
+  status
 }: DelegateCardProps) => {
   const votesFormatted = formatVotesAmount(votingPower) + " delegated votes";
   const formattedDelegateStatement = extractParagraph(statement || "");
@@ -151,7 +177,11 @@ export const DelegateCard = ({
   return (
     <LinkBox as={Card} variant="delegate">
       <CardHeader>
-        <LinkOverlay href={profileURL}>
+        <LinkOverlay
+          href={!onDelegateCardClick ? profileURL : undefined}
+          onClick={onDelegateCardClick ? (e) => { e.preventDefault(); onDelegateCardClick(); } : undefined}
+          sx={{ cursor: onDelegateCardClick || profileURL ? "pointer" : "default"}}
+        >
           <AvatarWithText
             size="condensed"
             headerText={user}
@@ -159,6 +189,7 @@ export const DelegateCard = ({
             subheaderText={votesFormatted}
             address={address}
             src={src}
+            status={status}
           />
         </LinkOverlay>
       </CardHeader>
@@ -241,7 +272,6 @@ export const DelegateCard = ({
                 size="condensed"
                 variant="secondary"
                 as="a"
-                telegram
                 target="_blank"
                 icon={<DiscordIcon />}
                 {...({

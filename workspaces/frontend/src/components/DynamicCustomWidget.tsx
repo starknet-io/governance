@@ -1,5 +1,4 @@
-import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react";
-import { Button } from "@yukilabs/governance-components";
+import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import AuthorizedUserView from "src/renderer/AuthorizedUserView";
 
 export const DynamicCustomWidget = () => {
@@ -10,13 +9,7 @@ export const DynamicCustomWidget = () => {
     <AuthorizedUserView />
   ) : (
     <DynamicWidget
-      innerButtonComponent={
-        <Button size="condensed" variant="primary">
-          Connect
-        </Button>
-      }
-      // innerButtonComponent="Connect"
-      // buttonClassName="connect-button"
+      innerButtonComponent="Connect"
       buttonContainerClassName="connect-button-container"
     />
   );

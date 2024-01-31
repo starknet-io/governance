@@ -18,15 +18,17 @@ export const useCheckBalance = (userAaddress: string) => {
     }) => {
       if (userBalance.isFetched) {
         if (parseFloat(userBalance?.balance) < DELEGATE_CREATION_MINIMUM) {
-          toast({
-            position: "top-right",
-            title: `Insufficient Balance`,
-            description: `You must have at least ${DELEGATE_CREATION_MINIMUM} ${DELEGATE_CREATION_TOKEN} to create a delegate profile`,
-            status: "error",
-            duration: 9000,
-            isClosable: true,
-          });
-          onFail?.();
+          // toast({
+          //   position: "top-right",
+          //   title: `Insufficient Balance`,
+          //   description: `You must have at least ${DELEGATE_CREATION_MINIMUM} ${DELEGATE_CREATION_TOKEN} to create a delegate profile`,
+          //   status: "error",
+          //   duration: 9000,
+          //   isClosable: true,
+          // });
+          onSuccess?.();
+
+          // onFail?.();
         } else {
           onSuccess?.();
         }

@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   Box,
   Text,
@@ -5,8 +6,6 @@ import {
   InputLeftElement,
   InputRightElement,
   ModalBody,
-  ModalOverlay,
-  ModalContent,
   ModalHeader,
   ModalFooter,
   Flex,
@@ -14,10 +13,9 @@ import {
   Show,
 } from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
+import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import {
   ChangeEvent,
-  Dispatch,
-  SetStateAction,
   useEffect,
   useState,
 } from "react";
@@ -37,19 +35,28 @@ interface Props {
   isOpen?: boolean;
   searchResults: ISearchItem[];
   onSearchItems: (searchText: string) => void;
-  setIsSearchModalOpen: Dispatch<SetStateAction<boolean>>;
+  onGlobalSearchOpen: () => void;
+  onGlobalSearchClose: () => void;
 }
 
 export function GlobalSearch({
   searchResults,
   onSearchItems,
   isOpen = false,
-  setIsSearchModalOpen,
+  onGlobalSearchOpen,
+  onGlobalSearchClose,
 }: Props) {
+  const [searchResultsState, setSearchResultsState] = useState(searchResults);
+  useEffect(() => {
+    setSearchResultsState(searchResults);
+  }, [searchResults])
+  const searchResultsStateRef = useRef(searchResultsState);
+  searchResultsStateRef.current = searchResultsState;
   const [searchText, setSearchText] = useState("");
   const [highlightIndex, setHighlightIndex] = useState(0);
-  const h = searchResults?.[highlightIndex];
-  const populatedSearchResults = usePopulateProposals(searchResults);
+  const highlightIndexRef = useRef(highlightIndex);
+  highlightIndexRef.current = highlightIndex;
+  const populatedSearchResults = usePopulateProposals(searchResultsState);
 
   const handleSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -58,12 +65,21 @@ export function GlobalSearch({
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "/") {
-      setIsSearchModalOpen((condition) => !condition);
+      const activeElement = document.activeElement;
+      const tagName = activeElement?.tagName.toLowerCase();
+      if ((activeElement?.role !== 'textbox' && tagName !== 'input' && tagName !== 'textarea') || activeElement?.parentElement?.parentElement?.tagName?.toLowerCase() === "header") {
+        if (isOpen) {
+          onGlobalSearchClose();
+        } else {
+          onGlobalSearchOpen();
+        }
+      }
     }
 
     if (e.key === "ArrowDown") {
-      console.log("ArrowDown");
-      setHighlightIndex((i) => (i + 1 === searchResults.length ? i : i + 1));
+      setHighlightIndex((i) => {
+        return i + 1 === searchResultsStateRef.current.length ? i : i + 1;
+      });
     }
 
     if (e.key === "ArrowUp") {
@@ -74,18 +90,18 @@ export function GlobalSearch({
   };
 
   const handleEnterPress = () => {
-    if (h) {
-      let path = getSearchItemHref(h?.type, h?.refID);
-      setIsSearchModalOpen(false);
-      if (h?.type === "delegate") {
+    if (searchResultsStateRef.current?.[highlightIndexRef.current]) {
+      let path = getSearchItemHref(searchResultsStateRef.current?.[highlightIndexRef.current]?.type, searchResultsStateRef.current?.[highlightIndexRef.current]?.refID, searchResultsStateRef.current?.[highlightIndexRef.current]?.name);
+      onGlobalSearchClose();
+      if (searchResultsStateRef.current?.[highlightIndexRef.current]?.type === "delegate") {
         path = path.replace("/delegates/", "/delegates/profile/");
       }
-      navigate(path);
+      window.location.href = path;
     }
   };
 
   const handleSearchClick = () => {
-    setIsSearchModalOpen(true);
+    onGlobalSearchOpen();
   };
 
   // Using setTimeout here to remove "/" upon clicking it
@@ -106,85 +122,87 @@ export function GlobalSearch({
     };
   }, []);
 
-  const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
+  const { isMobile, isTablet } = useIsMobile();
 
   return (
     <Box onClick={handleSearchClick} cursor="pointer">
-      <Show breakpoint="(min-width: 567px)">
-        <InputGroup
-          color="content.support.default"
-          _hover={{
-            color: "content.support.hover",
-          }}
+      <InputGroup
+        color="content.support.default"
+        _hover={{
+          color: "content.support.hover",
+        }}
+      >
+        <InputLeftElement
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          pointerEvents="none"
+          height={isTablet ? "44px" : "36px"}
+          width="auto"
+          pl="standard.sm"
+          color="inherit"
         >
-          <InputLeftElement
+          <SearchIcon color="currentColor" width="20px" height="20px" />
+        </InputLeftElement>
+        <Input
+          placeholder="Search"
+          width={isTablet ? "100%" : "237px"}
+          height={isTablet ? "44px" : "36px"}
+          pointerEvents="none"
+          paddingLeft="calc(12px + 20px + 8px)" // icon left p 12px, 20px icon width, 8px gap
+          borderRadius="4px"
+          _groupHover={{
+            _placeholder: {
+              color: "content.support.hover",
+            },
+          }}
+        />
+        {!isTablet ? <InputRightElement
+          width="32px"
+          borderRadius="4px"
+          overflow="hidden"
+          top="2px"
+          height="32px"
+          right="2px"
+          pointerEvents="none"
+        >
+          <Box
+            position="relative"
+            height="32px"
+            p="standard.xs"
+            backgroundColor="surface.overlay"
             display="flex"
             alignItems="center"
             justifyContent="center"
-            pointerEvents="none"
-            height="36px"
-            width="auto"
-            pl="standard.sm"
-            color="inherit"
-          >
-            <SearchIcon color="currentColor" width="20px" height="20px" />
-          </InputLeftElement>
-          <Input
-            placeholder="Search"
-            width="237px"
-            height="36px"
-            pointerEvents="none"
-            paddingLeft="calc(12px + 20px + 8px)" // icon left p 12px, 20px icon width, 8px gap
             borderRadius="4px"
-            _groupHover={{
-              _placeholder: {
-                color: "content.support.hover",
-              },
-            }}
-          />
-          <InputRightElement
-            width="32px"
-            borderRadius="4px"
-            overflow="hidden"
-            top="2px"
-            height="32px"
-            right="2px"
-            pointerEvents="none"
           >
-            <Box
-              position="relative"
-              height="32px"
-              p="standard.xs"
-              backgroundColor="surface.overlay"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              borderRadius="4px"
+            <Text
+              fontSize="16px"
+              lineHeight={1}
+              color="inherit"
+              fontWeight="500"
+              w="16px"
+              textAlign="center"
             >
-              <Text
-                fontSize="16px"
-                lineHeight={1}
-                color="inherit"
-                fontWeight="500"
-                w="16px"
-                textAlign="center"
-              >
-                /
-              </Text>
-            </Box>
-          </InputRightElement>
-        </InputGroup>
-      </Show>
+              /
+            </Text>
+          </Box>
+        </InputRightElement> : null}
+      </InputGroup>
 
       <Modal
         isOpen={isOpen}
-        onClose={() => setIsSearchModalOpen(false)}
-        autoFocus={false}
+        onClose={onGlobalSearchClose}
         size={isMobile ? "full" : "3xl"}
+        maxHeight="100%"
       >
-        <ModalOverlay />
-        <ModalContent height="672px" borderRadius="lg">
-          <ModalHeader p="0" borderBottom="1px solid #23192D1A">
+        <Flex
+          height={isMobile ? "100vh" : "672px"}
+          overflow="auto"
+          borderRadius="lg"
+          direction="column"
+        >
+          <ModalHeader mt={isMobile ? "60px" : "0"} p="0" borderBottom="1px solid #23192D1A">
             <Input placeholder="" hidden />
             <InputGroup
               color="content.support.default"
@@ -212,20 +230,20 @@ export function GlobalSearch({
                 paddingLeft="2.5rem"
               />
               <Show breakpoint="(max-width: 567px)">
-                <InputRightElement onClick={() => setIsSearchModalOpen(false)}>
+                <InputRightElement onClick={onGlobalSearchClose}>
                   <CloseIcon />
                 </InputRightElement>
               </Show>
             </InputGroup>
           </ModalHeader>
 
-          {!!searchResults.length && (
+          {!!searchResultsState.length && (
             <ModalBody overflowY="scroll" pb="0" px="0px" pt="standard.xs">
-              {buildSearchItems(populatedSearchResults, "grouped-items", h)}
+              {buildSearchItems(populatedSearchResults, "grouped-items", searchResultsState?.[highlightIndex])}
             </ModalBody>
           )}
 
-          {!searchResults.length && (
+          {!searchResultsState.length && (
             <ModalBody
               display="flex"
               alignItems="center"
@@ -282,7 +300,7 @@ export function GlobalSearch({
               </Flex>
             </ModalFooter>
           </Show>
-        </ModalContent>
+        </Flex>
       </Modal>
     </Box>
   );

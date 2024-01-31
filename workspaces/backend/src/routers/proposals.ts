@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/db';
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { GraphQLClient } from 'graphql-request';
@@ -32,6 +32,10 @@ export interface IProposalWithComments extends IProposal {
 
 const endpoint = process.env.SNAPSHOT_X_ENDPOINT! as string;
 const space = process.env.SNAPSHOT_X_SPACE;
+export interface IProposalWithCommentsCount extends IProposal {
+  commentsCount: number;
+}
+
 
 const graphQLClient = new GraphQLClient(endpoint, {
   headers: {
@@ -40,25 +44,22 @@ const graphQLClient = new GraphQLClient(endpoint, {
   },
 });
 
-const populateProposalsWithComments = async (
+const populateProposalsWithCommentsCount = async (
   proposals: IProposal[],
-  limit: number,
-  offset: number,
-) => {
-  return await Promise.all<IProposalWithComments>(
-    proposals.map(async (i: IProposal) => {
-      const commentList = await db.query.comments.findMany({
-        where: eq(comments.proposalId, i.id),
-        orderBy: [desc(comments.createdAt)],
-        with: {
-          author: true,
-        },
-        limit,
-        offset,
-      });
+): Promise<IProposalWithCommentsCount[]> => {
+  return Promise.all(
+    proposals.map(async (proposal: IProposal) => {
+      const commentsCount = await db
+        .select({
+          value: sql`count(${comments.id})`.mapWith(Number),
+        })
+        .from(comments)
+        .where(eq(comments.proposalId, proposal.id))
+        .then((result) => result[0]?.value || 0);
+
       return {
-        ...i,
-        comments: commentList,
+        ...proposal,
+        commentsCount,
       };
     }),
   );
@@ -91,6 +92,21 @@ export const proposalsRouter = router({
       });
 
       return newItem;
+    }),
+
+  getProposalCommentCount: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async (opts) => {
+      const { id } = opts.input;
+      const commentsCount = await db
+        .select({
+          value: sql`count(${comments.id})`.mapWith(Number),
+        })
+        .from(comments)
+        .where(eq(comments.proposalId, id))
+        .then((result) => result[0]?.value || 0);
+
+      return commentsCount || 0
     }),
 
   getProposalById: publicProcedure
@@ -154,7 +170,7 @@ export const proposalsRouter = router({
         orderDirection,
       })) as { proposals: IProposal[] };
 
-      const queriedProposals = transformProposalData(data || []);
+      const queriedProposals = transformProposalData(data || []) || [];
 
       // Merge category data into the proposals array
       mappedProposals = queriedProposals.map((proposal: any) => ({
@@ -167,12 +183,12 @@ export const proposalsRouter = router({
         );
       }
 
-      let proposalsWithComments: IProposalWithComments[] =
-        await populateProposalsWithComments(mappedProposals, limit, offset);
+      let proposalsWithComments: IProposalWithCommentsCount[] =
+        await populateProposalsWithCommentsCount(mappedProposals);
 
       if (opts?.input?.sortBy === 'most_discussed') {
         proposalsWithComments = proposalsWithComments.sort(
-          (a, b) => (b?.comments?.length || 0) - (a?.comments?.length || 0),
+          (a, b) => (b?.commentsCount || 0) - (a?.commentsCount || 0),
         );
       }
       return proposalsWithComments;

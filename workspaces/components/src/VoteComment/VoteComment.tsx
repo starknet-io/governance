@@ -10,6 +10,7 @@ import { Link } from "src/Link";
 import { Text } from "src/Text";
 import { Tooltip } from "src/Tooltip";
 import { formatVotesAmount, truncateAddress } from "src/utils";
+import { CopyToClipboard } from "../CopyToClipboard";
 
 type Props = {
   address: string;
@@ -40,9 +41,11 @@ export const VoteComment = ({
 
   const renderAuthorOrAddress = () => {
     const content = (
-      <Text variant="smallStrong" color="content.accent.default">
-        {author || (ethAddress ? ethAddress : truncateAddress(address))}
-      </Text>
+      <CopyToClipboard text={address}>
+        <Text variant="smallStrong" color="content.accent.default">
+          {author || (ethAddress ? ethAddress : truncateAddress(address))}
+        </Text>
+      </CopyToClipboard>
     );
 
     return !author ? (

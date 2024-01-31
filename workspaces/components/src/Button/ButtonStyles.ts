@@ -25,9 +25,9 @@ export const buttonTheme = {
     },
     condensed: {
       minWidth: "36px",
-      px: "condensed.lg",
+      px: "standard.sm",
       borderRadius: "condensed.base",
-      py: "condensed.sm",
+      py: "standard.xs",
       height: "36px",
       maxWidth: "100%",
       svg: {
@@ -139,22 +139,24 @@ export const buttonTheme = {
       },
       boxShadow: " 0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
       _hover: {
-        bg: "#E8E6E8",
+        bg: "surface.forms.hover",
         opacity: 1,
+        color: "content.default.hover",
         svg: {
           fill: "content.default.default",
         },
       },
       _active: {
         outlineWidth: 0,
-        bg: "surface.forms.default",
+        color: "content.default.selected",
+        bg: "surface.forms.selected",
         svg: {
           fill: "content.default.default",
         },
       },
       _disabled: {
         bg: "surface.accent.disabled",
-        color: "content.onSurfaceInverted.default",
+        color: "content.default.disabled",
         svg: {
           fill: "content.onSurfaceInverted.default",
         },
@@ -177,21 +179,23 @@ export const buttonTheme = {
         fill: "content.default.default",
       },
       _hover: {
+        color: "content.default.hover",
         bg: "surface.forms.hover",
         svg: {
           fill: "content.default.default",
         },
       },
       _active: {
+        color: "content.default.selected",
         outlineWidth: 0,
-        bg: "surface.forms.default",
+        bg: "surface.forms.selected",
         svg: {
           fill: "content.default.default",
         },
       },
       _disabled: {
         bg: "surface.accent.disabled",
-        color: "content.onSurfaceInverted.default",
+        color: "content.default.disabled",
         svg: {
           fill: "content.onSurfaceInverted.default",
         },
@@ -213,6 +217,7 @@ export const buttonTheme = {
       },
       bg: "transparent",
       _hover: {
+        color: "content.default.hover",
         bg: "surface.forms.hover",
         svg: {
           fill: "content.default.default",
@@ -228,7 +233,7 @@ export const buttonTheme = {
       },
       _disabled: {
         bg: "surface.accent.disabled",
-        color: "content.onSurfaceInverted.default",
+        color: "content.default.disabled",
         svg: {
           fill: "content.onSurfaceInverted.default",
         },
@@ -253,14 +258,16 @@ export const buttonTheme = {
       _hover: {
         bg: "surface.danger.default",
         color: "content.onSurfaceInverted.default",
+        borderColor: "border.danger",
         svg: {
           fill: "content.onSurfaceInverted.default",
         },
       },
       _active: {
         outlineWidth: 0,
-        bg: "surface.danger.default",
+        bg: "surface.danger.selected",
         color: "content.onSurfaceInverted.default",
+        borderColor: "border.danger",
         svg: {
           fill: "content.onSurfaceInverted.default",
         },
@@ -468,6 +475,51 @@ export const buttonTheme = {
       minHeight: "10px",
       _hover: {
         opacity: 0.8,
+      },
+    },
+    fill: {
+      position: "relative",
+      borderWidth: "0px",
+      borderColor: "transparent",
+      color: "content.default.default",
+      px: "standard.lg",
+      minHeight: "46px",
+      py: "standard.sm",
+      background: "white",
+      svg: {
+        fill: "content.default.default",
+      },
+      boxShadow: "0px 1px 1px 0px rgba(0, 0, 0, 0.05)",
+      _hover: {
+        bg: "surface.forms.hover",
+        opacity: 1,
+        color: "content.default.hover",
+        svg: {
+          fill: "content.default.default",
+        },
+      },
+      _active: {
+        outlineWidth: 0,
+        color: "content.default.selected",
+        bg: "surface.forms.selected",
+        svg: {
+          fill: "content.default.default",
+        },
+      },
+      _disabled: {
+        bg: "surface.accent.disabled",
+        color: "content.default.disabled",
+        svg: {
+          fill: "content.onSurfaceInverted.default",
+        },
+        pointerEvents: "none",
+        _hover: {
+          bg: "surface.accent.disabled",
+          color: "content.onSurfaceInverted.default",
+          svg: {
+            fill: "content.onSurfaceInverted.default",
+          },
+        },
       },
     },
   },

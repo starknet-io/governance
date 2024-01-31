@@ -1,11 +1,13 @@
-import { Avatar, Box, Flex, Menu, MenuItem } from "@chakra-ui/react";
+import { Avatar, Box, Flex } from "@chakra-ui/react";
 import { Text } from "src/Text";
 import { Indenticon } from "src/Indenticon";
 import { Heading } from "src/Heading";
 import { Dropdown } from "src/Dropdown";
 import { EllipsisIcon } from "src/Icons";
 import { Tooltip } from "src/Tooltip";
+import { Badge } from "src/Badge";
 import { truncateAddress } from "src/utils";
+import { CopyToClipboard } from "../CopyToClipboard";
 
 type Props = {
   size?: "condensed" | "standard";
@@ -16,10 +18,14 @@ type Props = {
   dropdownChildren?: React.ReactNode;
   headerTooltipContent?: string; // Tooltip for headerText
   subheaderTooltipContent?: string; // Tooltip for subheaderText
+  status?: string | null;
+  delegateProfile?: boolean;
+  withCopy?: boolean;
 };
 
 export const AvatarWithText = ({
   size,
+  withCopy,
   headerText,
   subheaderText,
   address,
@@ -27,15 +33,18 @@ export const AvatarWithText = ({
   dropdownChildren,
   headerTooltipContent,
   subheaderTooltipContent,
+  status,
+  delegateProfile = false,
 }: Props) => {
-  const renderHeaderText = () => {
+  const renderHeaderText = (status: string | null | undefined, delegateProfile: boolean | null = false) => {
     const content = (
       <Heading
         color="content.accent.default"
         lineHeight="24px"
         variant={size === "condensed" ? "h4" : "h3"}
         mb="standard.2xs"
-        width={size === "condensed" ? undefined : { base: "100%", lg: "80%" }}
+        width={size === "condensed" || delegateProfile ? undefined : { base: "100%", lg: "80%" }}
+        maxWidth={"100%"}
         style={{
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -47,9 +56,19 @@ export const AvatarWithText = ({
     );
 
     return headerTooltipContent ? (
-      <Tooltip label={headerTooltipContent} aria-label="Header Text">
-        {content}
-      </Tooltip>
+      <>
+        <Tooltip label={headerTooltipContent} aria-label="Header Text">
+          {content}
+        </Tooltip>
+        {withCopy && !subheaderText && (
+          <Flex alignItems="center" gap={0.5}>
+            <CopyToClipboard noPadding text={address || ""} />
+            <Text as="span" color="content.default.default" variant="small">
+              Copy
+            </Text>
+          </Flex>
+        )}
+      </>
     ) : (
       content
     );
@@ -84,11 +103,25 @@ export const AvatarWithText = ({
       );
 
     return subheaderTooltipContent ? (
-      <Box as="span">
-        <Tooltip label={subheaderTooltipContent} aria-label="Subheader Text">
-          {content}
-        </Tooltip>
-      </Box>
+      withCopy ? (
+        <Box as="span">
+          <CopyToClipboard text={subheaderTooltipContent} iconSize="12px">
+            <Tooltip
+              shouldWrapChildren={false}
+              label={subheaderTooltipContent}
+              aria-label="Subheader Text"
+            >
+              {content}
+            </Tooltip>
+          </CopyToClipboard>
+        </Box>
+      ) : (
+        <Box as="span">
+          <Tooltip label={subheaderTooltipContent} aria-label="Subheader Text">
+            {content}
+          </Tooltip>
+        </Box>
+      )
     ) : (
       content
     );
@@ -106,13 +139,25 @@ export const AvatarWithText = ({
         </Box>
         <Box
           position="relative"
-          flexDirection={"column"}
-          justifyContent={"center"}
+          justifyContent={"space-between"}
           flex={1}
           gap="0"
+          display="flex"
+          flexDirection={delegateProfile ? "column" : "row"}
+          alignItems="flex-start"
+          width={delegateProfile ? "100%" : "calc(100% - 60px)"}
         >
-          <Box height="24px">{renderHeaderText()}</Box>
-          <Box mt="-4px">{renderSubheaderText()}</Box>
+          <Box maxWidth={status && !delegateProfile ? "calc(100% - 80px)" : "calc(100% - 40px)"} {...(delegateProfile ? { order: "2" } : {})}>
+            <Box height="24px">{renderHeaderText(status)}</Box>
+            {!delegateProfile ? <Box mt="-4px">{renderSubheaderText()}</Box> : null}
+          </Box>
+          {status ? <Badge
+            variant={status}
+            size="condensed"
+            sx={{
+              order: delegateProfile ? "1" : "2"
+            }}
+          >{status}</Badge> : null}
         </Box>
       </Flex>
     );
@@ -133,11 +178,26 @@ export const AvatarWithText = ({
         )}
       </Box>
 
-      <Flex flexDirection={"column"} justifyContent={"center"} flex={1}>
-        {renderHeaderText()}
-        {renderSubheaderText()}
-      </Flex>
-
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="flex-start"
+        alignItems="flex-start"
+        gap="standard.base"
+        width="80%"
+      >
+        <Flex flexDirection={"column"} justifyContent={"center"} flex={1}  maxWidth={status && !delegateProfile ? "calc(100% - 80px)" : "calc(100% - 40px)"} {...(delegateProfile ? { order: "2" } : {})}>
+          {renderHeaderText(status, delegateProfile)}
+          {!delegateProfile ? renderSubheaderText() : null}
+        </Flex>
+        {status ? <Badge
+            variant={status}
+            size="condensed"
+            sx={{
+              order: delegateProfile ? "1" : "2"
+            }}
+          >{status}</Badge> : null}
+      </Box>
       <Box width="44px" height="44px" position="absolute" top="0" right="0">
         {dropdownChildren === null ? null : (
           <Dropdown buttonIcon={<EllipsisIcon boxSize="20px" />}>

@@ -11,12 +11,14 @@ type Props = {
   startingHeight?: number;
   threshold?: number;
   children?: React.ReactNode;
+  height?: number;
 };
 
 export const Collapse = ({
   startingHeight = 20,
   threshold = 50,
   children,
+  height = 60
 }: Props) => {
   const [show, setShow] = React.useState(false);
   const contentRef = React.useRef<HTMLDivElement>(null);
@@ -55,14 +57,14 @@ export const Collapse = ({
           position="relative"
           mt="-44px"
           spacing="0"
-          h="100px"
-          bgGradient="linear-gradient(to top, #F9F8F9, rgba(249, 248, 249, 0.8), rgba(249, 248, 249, 0.6), transparent)"
+          h={height}
+          bgGradient="linear-gradient(0deg, #F9F8F9 0%, rgba(249, 248, 249, 0.50) 100%)"
         >
           <Divider />
           <Button
             minWidth="85px"
             variant="secondary"
-            size="condensed"
+            size="standard"
             onClick={handleToggle}
           >
             View {show ? "Less" : "all"}
