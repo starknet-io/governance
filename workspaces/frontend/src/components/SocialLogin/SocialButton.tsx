@@ -31,18 +31,18 @@ export const SocialButton = ({
   }
   const label =
     provider === "twitter"
-      ? "Twitter"
+      ? ""
       : provider === "discord"
-      ? "Discord"
+      ? ""
       : provider === "telegram"
-      ? "Telegram"
+      ? ""
       : provider === "discourse"
-      ? "Discourse"
-      : "Twitter";
+      ? ""
+      : "";
   if (isLoading) {
     return (
       <SummaryItems.Socials
-        label={provider}
+        label={undefined}
         value={undefined}
         isLoading={true}
       />
@@ -52,22 +52,6 @@ export const SocialButton = ({
   return (
     <Flex alignItems="center" justifyContent="space-between">
       <Flex gap="standard.xs" alignItems="center">
-        <Icon
-          as={
-            provider === "twitter"
-              ? TwitterIcon
-              : provider === "discourse"
-              ? DiscourseIcon
-              : provider === "discord"
-              ? DiscordIcon
-              : provider === "telegram"
-              ? TelegramIcon
-              : TwitterIcon
-          }
-          w={"20px"}
-          h={"20px"}
-          color="#4A4A4F"
-        />
         <Text variant="bodySmall">
           {label} {username && <span> - </span>}
         </Text>
@@ -102,8 +86,24 @@ export const SocialButton = ({
           Disconnect
         </Button>
       ) : !readonly ? (
-        <Button variant="outline" onClick={onConnect}>
-          Connect
+        <Button variant="outline" onClick={onConnect} width="full" gap='standard.xs'>
+          <Icon
+            as={
+              provider === "twitter"
+                ? TwitterIcon
+                : provider === "discourse"
+                ? DiscourseIcon
+                : provider === "discord"
+                ? DiscordIcon
+                : provider === "telegram"
+                ? TelegramIcon
+                : TwitterIcon
+            }
+            w={"20px"}
+            h={"20px"}
+            color="#4A4A4F"
+          />
+          <Box textTransform="capitalize">Connect {provider === "twitter" ? `X (${provider})` : provider}</Box>
         </Button>
       ) : (
         <Box p={6} />

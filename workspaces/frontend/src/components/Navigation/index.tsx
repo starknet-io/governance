@@ -20,10 +20,13 @@ import {
   Button,
   StarknetCommunityIcon,
   useDisclosure,
-  Text
+  Text,
 } from "@yukilabs/governance-components";
 import { useGlobalSearch } from "src/hooks/GlobalSearch";
-import { CommunityLinksIcon } from "@yukilabs/governance-components/src/Icons";
+import {
+  CommunityLinksIcon,
+  MoneyIcon,
+} from "@yukilabs/governance-components/src/Icons";
 import { IUser, ROLES } from "src/renderer/types";
 import { hasPermission } from "src/utils/helpers";
 
@@ -51,7 +54,13 @@ export const NavigationMenu = ({
   const isMobile = typeof window !== "undefined" && window?.screen?.width < 567;
   return (
     <>
-      <Flex flexDirection={"column"} justifyContent="space-between" height="100%" overflowY={isMobile ? "scroll" : "auto"} flex={1}>
+      <Flex
+        flexDirection={"column"}
+        justifyContent="space-between"
+        height="100%"
+        overflowY={isMobile ? "scroll" : "auto"}
+        flex={1}
+      >
         <NavGroup align="start">
           <Show breakpoint="(max-width: 1078px)">
             <Box alignItems={"flex-start"} justifyContent={"center"}>
@@ -111,13 +120,14 @@ export const NavigationMenu = ({
                     )
                   }
                   label={council.name ?? "Unknown"}
-                  href={council.slug ? `/councils/${council.slug}` : "/councils"}
+                  href={
+                    council.slug ? `/councils/${council.slug}` : "/councils"
+                  }
                   active={pageContext.urlOriginal.startsWith(
                     `/councils/${council.slug}`,
                   )}
                 />
-              ))
-            }
+              ))}
           </Box>
           {hasPermission(userRole, [
             ROLES.ADMIN,
@@ -144,6 +154,13 @@ export const NavigationMenu = ({
 
         <Box py="standard.xs" px="standard.sm">
           <NavGroup align="end">
+            {user ? (
+              <NavItem
+                href="/staking"
+                icon={<MoneyIcon />}
+                label="Manage vSTRK"
+              />
+            ) : null}
             {[
               {
                 href: "/learn",
@@ -191,7 +208,7 @@ export const NavigationMenu = ({
               </Button>
             </Box>
           </NavGroup>
-          </Box>
+        </Box>
       </Flex>
     </>
   );

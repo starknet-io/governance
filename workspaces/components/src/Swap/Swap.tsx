@@ -2,7 +2,10 @@ import { Box, Flex, Icon } from "@chakra-ui/react";
 import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
 import { Text } from "src/Text";
 import { Heading } from "src/Heading";
-import { ArrowDownIcon } from "src/Icons";
+import { ArrowDownIcon, InfoCircleIcon } from "src/Icons";
+import { Button } from "src/Button";
+import { Tooltip } from "src/Tooltip";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 type Props = {
   children: React.ReactNode;
@@ -26,6 +29,9 @@ type UserSummaryProps = {
   symbol?: string;
   isSender?: boolean;
   isReceiver?: boolean;
+  isSelected?: boolean;
+  sx?: any;
+  onClick?: () => void;
 };
 const UserSummary = ({
   address = "0x23423423423423423423423432",
@@ -35,55 +41,111 @@ const UserSummary = ({
   balance = "100,000",
   text = "From",
   symbol = "STRK",
+  isSelected = false,
+  sx,
+  onClick,
 }: UserSummaryProps) => {
   return (
-    <Box
-      fontSize="14px"
-      bg="surface.forms.default"
-      p="standard.md"
+    <Button
+      variant="fill"
+      isActive={isSelected}
+      boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.04)"
       border="1px solid"
       borderColor="border.forms"
       borderRadius="8px"
-      color="#6C6C75"
-      display="flex"
-      justifyContent="space-between"
-      boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.04)"
+      bg="surface.forms.default"
+      onClick={onClick}
+      sx={{
+        padding: 0,
+        width: "100%",
+        ...sx,
+      }}
     >
-      <Flex flexDirection="column" gap="standard.2xs">
-        <Text color="content.default.default" variant="bodyMediumStrong" as="span">
-          {text}
-        </Text>
-        <ProfileSummaryCard.Root>
-          <ProfileSummaryCard.Profile
-            size="xs"
-            ensName={ethAddress}
-            address={shortAddress(address)}
-            avatarString={address}
-          ></ProfileSummaryCard.Profile>
-        </ProfileSummaryCard.Root>
+      <Flex
+        fontSize="14px"
+        p="standard.md"
+        color="#6C6C75"
+        display="flex"
+        justifyContent="space-between"
+        width="100%"
+      >
+        <Flex flexDirection="column" gap="standard.2xs">
+          <ProfileSummaryCard.Root>
+            <ProfileSummaryCard.Profile
+              size="xs"
+              ensName={ethAddress}
+              address={shortAddress(address)}
+              avatarString={address}
+              text={text}
+            ></ProfileSummaryCard.Profile>
+          </ProfileSummaryCard.Root>
+        </Flex>
+        <Flex flexDirection={"column"} alignItems="flex-end" gap="2px">
+          <Text
+            color="content.support.default"
+            variant="small"
+            as="span"
+          >
+            {isSender && "Available balance"}
+            {isReceiver && !isSender && "Voting power"}
+          </Text>
+          <Text variant="mediumStrong" color="content.default.default">
+            {balance} {symbol}
+          </Text>
+        </Flex>
       </Flex>
-      <Flex flexDirection={"column"} alignItems="flex-end" gap="standard.xs">
-        <Text color="content.default.default" variant="bodyMediumStrong" as="span">
-          {isSender && "Available votes"}
-          {isReceiver && !isSender && "Delegated votes"}
+      {text === "Starknet Mainnet" ? <Flex
+        alignItems="center"
+        gap="standard.xs"
+        alignSelf="stretch"
+        padding="standard.md"
+        pt="0"
+      >
+        <Text
+          variant="bodySmallStrong"
+          color="content.accent.default"
+          sx={{
+            flex: "1 0 0",
+            textWrap: "wrap",
+            textAlign: "left",
+            fontWeight: 500,
+          }}
+        >
+        You must stake STRK for vSTRK in order to delegate <Tooltip label="Tooltip" aria-label="Tooltip Text"><Box
+          sx={{
+            display: "inline-block",
+            width: "14px",
+            height: "14px",
+            verticalAlign: "text-top",
+            "& svg": {
+              width: "14px",
+              height: "14px",
+              verticalAlign: "top"
+            }
+          }}><InfoCircleIcon /></Box></Tooltip>
         </Text>
-        <Heading
-          variant="h5">
-          {balance} {symbol}
-        </Heading>
-      </Flex>
-    </Box>
+        <Button
+          variant="primary"
+          size="condensed"
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            navigate('/staking')
+          }}
+        >Manage vSTRK</Button>
+      </Flex>: null}
+    </Button>
   );
 };
 
-const Arrow = () => {
+const Arrow = ({ py = "standard.sm" }) => {
   return (
     <Box
       display="flex"
       justifyContent="center"
       alignItems="center"
       width="100%"
-      py="standard.xl"
+      py={py}
     >
       <Icon as={ArrowDownIcon} color="#6C6C75" boxSize="24px" />
     </Box>

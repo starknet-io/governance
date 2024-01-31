@@ -15,6 +15,7 @@ import {
   BuildersIcon,
   DelegatesIcon,
   FeedbackIcon,
+  GasIcon,
   LearnIcon,
   EmailSubscribeIcon,
   SecurityIcon,
@@ -44,6 +45,8 @@ import {
   ShareIcon,
   ProfileIcon,
   HamburgerIcon,
+  ThunderIcon,
+  ExpandIcon,
   PlusIcon,
   SortIcon,
   EllipsisIcon,
@@ -74,12 +77,15 @@ import {
   DocumentFileWarning,
   ExternalLinkLargeIcon,
   ArrowRightLargeIcon,
+  MoneyIcon,
   StarknetOutlineIcon,
   CalendarIcon,
   DisconnectWalletIcon,
   UserIcon,
+  EthereumIcon,
   CommunityLinksIcon,
   BlogPostsIcon,
+  InfoCircleIcon
 } from "./UiIcons";
 
 export {
@@ -107,9 +113,12 @@ export {
   NoPostsIcon,
   NoSnipsIcon,
   PencilIcon,
+  ExpandIcon,
   NotificationVotingProposalIcon,
   TrashIcon,
   FiltersIcon,
+  MoneyIcon,
+  ThunderIcon,
   SuccessIcon,
   TrashWarningIcon,
   VoteIcon,
@@ -117,6 +126,7 @@ export {
   ExternalLinkIcon,
   VoteAbstainIcon,
   VoteAgainstIcon,
+  GasIcon,
   BellIcon,
   VoteForIcon,
   StarknetCommunityIcon,
@@ -162,4 +172,6 @@ export {
   CommunityLinksIcon,
   UserIcon,
   BlogPostsIcon,
+  EthereumIcon,
+  InfoCircleIcon
 };

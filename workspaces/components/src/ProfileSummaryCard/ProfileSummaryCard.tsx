@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Flex,
+  Icon,
   Menu,
   MenuButton,
   MenuList,
@@ -14,7 +15,8 @@ import { Indenticon } from "../Indenticon";
 import { Text } from "../Text";
 import { truncateAddress } from "src/utils";
 import { Button } from "src/Button";
-import { EllipsisIcon } from "src/Icons";
+import { EllipsisIcon, EthereumIcon, StarknetIcon } from "src/Icons";
+import { Logo } from "src/Logo";
 
 type RootProps = {
   children: React.ReactNode;
@@ -35,6 +37,7 @@ type ProfileProps = {
   size?: "xs" | "sm" | "lg";
   avatarString?: string | null;
   ensName?: string | null;
+  text?: string | null;
 };
 const Profile = ({
   imgUrl,
@@ -44,6 +47,7 @@ const Profile = ({
   avatarString,
   size = "lg",
   ensName,
+  text,
 }: ProfileProps) => {
   const formattedAddress = ensName || (address && truncateAddress(address));
 
@@ -52,8 +56,18 @@ const Profile = ({
       display="flex"
       alignItems="center"
       gap={size === "lg" ? "16px" : size === "xs" ? "standard.sm" : "16px"}
+      sx={{
+        "& svg": {
+          width: "32px",
+          height: "32px"
+        }
+      }}
     >
-      {imgUrl ? (
+      {text && text === "Ethereum" ? (
+        <Icon as={EthereumIcon} />
+      ) : text === "Starknet" ? (
+        <Icon as={StarknetIcon} />
+      ) : imgUrl ? (
         // debug next line
         // <Avatar size={size === "lg" ? "lg" || size ==="xs" ? "sm" : "md"} src={imgUrl} />
 
@@ -68,14 +82,23 @@ const Profile = ({
         />
       )}
       <Stack spacing={size === "lg" ? "4px" : "2px"}>
-        <Heading
-          variant="h5"
+        <Text
+          color="content.suport.default"
+          variant="small"
+          as="span"
+          textAlign="left"
+        >
+          {text}
+        </Text>
+        <Text
+          variant="mediumStrong"
           fontSize={size === "lg" ? "20px" : "14px"}
-          color="content.accent.default"
+          color="content.default.default"
           lineHeight={size === "lg" ? "24px" : "20px"}
+          textAlign="left"
         >
           {formattedAddress}
-        </Heading>
+        </Text>
         <Text
           variant="captionSmallUppercase"
           color="content.support.default"

@@ -1,0 +1,82 @@
+name: front deployment
+
+on:
+  push:
+    branches: ['snapshotx-dev']
+    paths:
+      - 'workspaces/frontend/**'
+      - 'workspaces/components/**'
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.version }}
+    environment:
+      name: snapshot-frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: registry.digitalocean.com/governance/frontend
+          flavor: latest=false
+          tags: |
+            type=ref,suffix=-{{sha}},event=branch
+            type=ref,suffix=-{{sha}},event=pr
+
+      - name: Login to DO Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: registry.digitalocean.com
+          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          file: frontend.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_APP_GOOGLE_TAG_ID=${{ secrets.VITE_APP_GOOGLE_TAG_ID }}
+            VITE_APP_SNAPSHOT_SPACE=${{ vars.VITE_APP_SNAPSHOT_SPACE }}
+            VITE_APP_SNAPSHOT_CHAIN_ID=${{ vars.VITE_APP_SNAPSHOT_CHAIN_ID }}
+            VITE_APP_DELEGATION_TOKEN=${{ secrets.VITE_APP_DELEGATION_TOKEN }}
+            VITE_APP_DYNAMIC_ID=${{ secrets.VITE_APP_DYNAMIC_ID }}
+            VITE_APP_IFRAMELY_ID=${{ secrets.VITE_APP_IFRAMELY_ID }}
+            VITE_APP_TRPC_URL=${{ vars.VITE_APP_TRPC_URL }}
+            VITE_APP_DELEGATION_SYMBOL=${{ vars.VITE_APP_DELEGATION_SYMBOL }}
+            VITE_APP_SNAPSHOT_URL=${{ vars.VITE_APP_SNAPSHOT_URL }}
+            VITE_APP_DELEGATION_REGISTRY=${{ vars.VITE_APP_DELEGATION_REGISTRY }}
+            VITE_APP_DELEGATION_CHAIN_ID=${{ vars.VITE_APP_DELEGATION_CHAIN_ID }}
+            VITE_APP_ALGOLIA_APP_ID=${{ secrets.VITE_APP_ALGOLIA_APP_ID }}
+            VITE_APP_ALGOLIA_PUBLIC_API_KEY=${{ secrets.VITE_APP_ALGOLIA_PUBLIC_API_KEY }}
+            VITE_APP_ALGOLIA_INDEX=${{ vars.VITE_APP_ALGOLIA_INDEX }}
+            VITE_APP_STARKNET_REGISTRY=${{ vars.VITE_APP_STARKNET_REGISTRY }}
+            VITE_APP_SNAPSHOTX_SPACE=${{ vars.VITE_APP_SNAPSHOTX_SPACE }}
+            VITE_APP_SNAPSHOTX_URL=${{ vars.VITE_APP_SNAPSHOTX_URL }}
+            VITE_APP_IPFS_GATEWAY=${{ vars.VITE_APP_IPFS_GATEWAY }}
+            VITE_APP_INFURA_API_KEY=${{ secrets.VITE_APP_INFURA_API_KEY }}
+
+  Deploy-snapshotx:
+    needs: Build
+    runs-on: ubuntu-latest
+    env:
+      tag: ${{ needs.Build.outputs.tag }}
+    environment:
+      name: snapshot-frontend
+      url: https://snapshot.yuki-labs.dev
+    steps:
+      - name: DigitalOcean App Platform deployment
+        uses: digitalocean/app_action@v1.1.5
+        with:
+          app_name: frontend-snapshot
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend","tag": "${{ env.tag }}"}}]'
+

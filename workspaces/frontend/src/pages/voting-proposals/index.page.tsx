@@ -236,7 +236,13 @@ export function Page() {
 
   const { isMobile } = useIsMobile();
   function ActionButtons() {
-    if (!hasPermission(user?.role, [ROLES.ADMIN, ROLES.SUPERADMIN, ROLES.MODERATOR])) {
+    if (
+      !hasPermission(user?.role, [
+        ROLES.ADMIN,
+        ROLES.SUPERADMIN,
+        ROLES.MODERATOR,
+      ])
+    ) {
       return null;
     }
     return (
@@ -253,6 +259,8 @@ export function Page() {
       </>
     );
   }
+
+  const newProposals = data;
 
   return (
     <Grid
@@ -297,9 +305,10 @@ export function Page() {
                   setSortBy(e as unknown as SortingTypes);
                   setFiltersState((prevState) => ({
                     ...prevState,
+
                     sortBy: e as unknown as SortingTypes,
                   }));
-                  refetch();
+                  //refetch();
                 }}
                 options={SORTING_OPTIONS.map((option) => ({
                   value: option.value,
@@ -353,8 +362,10 @@ export function Page() {
                     </Button>
                   }
                 />
-              ) : data.length > 0 ? (
-                data.map((item: any) => <Proposal key={item?.id} data={item} />)
+              ) : newProposals && newProposals?.length > 0 ? (
+                newProposals.map((item: any) => (
+                  <Proposal key={item?.id} data={item} />
+                ))
               ) : (
                 <Box position="absolute" inset="0">
                   <EmptyState

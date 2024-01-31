@@ -144,6 +144,7 @@ export const DelegatesPage = () => (
                     address={delegate?.author?.address}
                     ensAvatar={delegate?.author?.ensAvatar}
                     ensName={delegate?.author?.ensName}
+                    status="active"
                   />
                 ))}
               </SimpleGrid>

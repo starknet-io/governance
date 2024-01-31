@@ -22,7 +22,9 @@ export { VoteModal } from "./src/VoteModal";
 export { InfoModal } from "./src/InfoModal";
 export { PlaceholderImage } from "./src/PlaceholderImage";
 export { VoteReview } from "./src/VoteReview";
+export { PastVote } from "./src/PastVote";
 export { DelegateModal } from "./src/DelegateModal";
+export { VotingPowerModal } from "./src/VotingPowerModal";
 export { AgreementModal } from "./src/AgreementModal";
 export { ConfirmModal } from "./src/ConfirmModal";
 export { ChakraDatePicker } from "./src/ChakraDatePicker";
@@ -38,6 +40,7 @@ export { AvatarWithText } from "./src/AvatarWithText";
 export { Dropdown } from "./src/Dropdown";
 export { FormControlled, useFormErrorHandler } from "./src/FormControlled";
 export { Tooltip } from "./src/Tooltip";
+export { Tabs } from "./src/Tabs"
 export { Select } from "./src/Select";
 export { Multiselect } from "./src/Multiselect";
 export { NotificationsMenu, NotificationItem } from "./src/Notifications";
@@ -48,6 +51,7 @@ export {
   BoldIcon,
   ItalicIcon,
   UnderlineIcon,
+  EthereumIcon,
   Heading2Icon,
   NumberedListIcon,
   BulletedListIcon,
@@ -121,6 +125,7 @@ export {
 } from "./src/Filter/";
 export { MarkdownEditor } from "./src/Editor";
 export { ShareDialog } from "./src/ShareDialog";
+export { Slider } from "./src/Slider";
 export { SupportModal } from "./src/SupportModal";
 export { StatusModal } from "./src/StatusModal";
 export { FormModal } from "./src/FormModal";

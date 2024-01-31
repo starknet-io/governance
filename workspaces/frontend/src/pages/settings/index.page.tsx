@@ -43,59 +43,10 @@ import {
 } from "@yukilabs/governance-components/src/Icons";
 import snapshot from "@snapshot-labs/snapshot.js";
 
-const hub = "https://hub.snapshot.org"; // or https://testnet.snapshot.org for testnet
-const client = new snapshot.Client712(hub);
 import { Web3Provider } from "@ethersproject/providers";
+import {useSpace} from "../../hooks/snapshotX/useSpace";
 
 const userRoleValues = userRoleEnum.enumValues;
-
-const GET_SPACE_QUERY = gql(`
-  query GetSpaceQuery(
-    $space: String!
-  ) {
-    space(id: $space) {
-      name
-      about
-      network
-      symbol
-      website
-      private
-      admins
-      moderators
-      members
-      categories
-      plugins
-      children {
-        name
-      }
-      voting {
-        hideAbstain
-      }
-      strategies {
-        name
-        network
-        params
-      }
-      validation {
-        name
-        params
-      }
-      voteValidation {
-        name
-        params
-      }
-      filters {
-        minScore
-        onlyMembers
-      }
-      treasuries {
-        name
-        address
-        network
-      }
-    }
-  }
-`);
 
 export function Page() {
   const {
@@ -126,11 +77,7 @@ export function Page() {
 
   const { user } = usePageContext();
 
-  const { data: space } = useQuery(GET_SPACE_QUERY, {
-    variables: {
-      space: import.meta.env.VITE_APP_SNAPSHOT_SPACE,
-    },
-  });
+  const { data: space } = useSpace()
 
   const getEditRolesBasedOnUserRole = () => {
     if (!user?.role) {
@@ -186,9 +133,6 @@ export function Page() {
   const editRoles = trpc.users.editRoles.useMutation();
   const users = trpc.users.getAll.useQuery();
 
-  const web3 =
-    typeof window !== "undefined" ? new Web3Provider(window.ethereum) : null;
-
   useEffect(() => {
     if (!imageChanged) {
       setImageUrl(user?.profileImage ?? null);
@@ -196,63 +140,7 @@ export function Page() {
   }, [user, imageChanged]);
 
   const tryToUpdateSpace = async () => {
-    if (web3 && space?.space) {
-      const [account] = await web3.listAccounts();
-      console.log(space);
-      const spaceToEdit = {
-        ...space.space,
-      };
-      const allUsers = users?.data || [];
-      if ([ROLES.SUPERADMIN].includes(user?.role)) {
-        const superAdmin = allUsers.find(
-          (user) => user.role === ROLES.SUPERADMIN,
-        );
-        spaceToEdit.admins = allUsers
-          .filter((user) => user.role === ROLES.ADMIN)
-          .map((user) => user.address);
-        spaceToEdit.admins.unshift(superAdmin?.address);
-      }
-      if ([ROLES.SUPERADMIN, ROLES.ADMIN].includes(user?.role)) {
-        spaceToEdit.moderators = allUsers
-          .filter((user) => user.role === ROLES.MODERATOR)
-          .map((user) => user.address);
-      }
-      if ([ROLES.SUPERADMIN, ROLES.ADMIN, ROLES.AUTHOR].includes(user?.role)) {
-        spaceToEdit.members = allUsers
-          .filter((user) => user.role === ROLES.AUTHOR)
-          .map((user) => user.address);
-      }
 
-      function removeTypename<T>(obj: T): T {
-        if (Array.isArray(obj)) {
-          return obj.map((item) => removeTypename(item)) as any;
-        } else if (obj !== null && typeof obj === "object") {
-          const newObj: Record<string, unknown> = {};
-          for (const key in obj) {
-            if (key !== "__typename") {
-              newObj[key] = removeTypename(
-                (obj as Record<string, unknown>)[key],
-              );
-            }
-          }
-          return newObj as T;
-        }
-        return obj as T;
-      }
-      const cleanedSpace = removeTypename(spaceToEdit);
-      console.log(cleanedSpace);
-
-      try {
-        const receipt = await client.space(web3, account, {
-          space: "robwalsh.eth",
-          settings: JSON.stringify(cleanedSpace),
-        });
-        onSyncingSuccessOpen();
-      } catch (err) {
-        setSyncError(err.error_description || "An error occurred");
-        onSyncingErrorOpen();
-      }
-    }
   };
 
   const onSubmitAdd = handleAddSubmit(async (data) => {
@@ -618,11 +506,13 @@ export function Page() {
               <Heading variant="h3" mb="24px" fontSize="28px">
                 Users
               </Heading>
+              {/*
               {[ROLES.SUPERADMIN, ROLES.ADMIN].includes(user?.role) ? (
                 <Button onClick={tryToUpdateSpace} variant="primary">
                   Sync with Snapshot
                 </Button>
               ) : null}
+              */}
               <ListRow.Container>
                 {sortedUsersList.map((data) => (
                   <ListRow.Root key={data.id}>

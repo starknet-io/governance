@@ -8,6 +8,7 @@ import {
   validateAndParseAddress,
   validateChecksumAddress,
 } from "starknet";
+import {WalletChain} from "./constants";
 
 export type PageDnD = {
   id: number;
@@ -115,3 +116,7 @@ export function extractAndFormatSlug(
 
   return formatSlug(slug);
 }
+
+export const findMatchingWallet = (wallets: any[], key: "EVM" | "STARKNET") => {
+  return wallets.find((wallet) => wallet.chain === WalletChain[key]);
+};
