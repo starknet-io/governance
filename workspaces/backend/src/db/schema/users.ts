@@ -30,6 +30,9 @@ export const users = pgTable('users', {
   miniBio: text('miniBio'),
   username: text('username'),
   starknetAddress: text('starknetAddress'),
+  ethAddress: text('ethAddress'),
+  isOnboarded: boolean('isOnboarded'),
+  hasConnectedSecondaryWallet: boolean('hasConnectedSecondaryWallet'),
   profileImage: text('profileImage'),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
