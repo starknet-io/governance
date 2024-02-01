@@ -76,12 +76,19 @@ export const DynamicProvider = (props: Props) => {
     [authMutation],
   );
 
-  const handleLinkEvent = async (walletAddress: string) => {
+  const handleLinkEvent = async (walletAddress: string, isEth: boolean) => {
     if (user) {
-      await editUserProfile.mutateAsync({
-        id: user.id,
-        starknetAddress: walletAddress,
-      });
+      if (!isEth) {
+        await editUserProfile.mutateAsync({
+          id: user.id,
+          starknetAddress: walletAddress,
+        });
+      } else {
+        await editUserProfile.mutateAsync({
+          id: user.id,
+          ethereumAddress: walletAddress,
+        });
+      }
     }
   };
 
@@ -122,6 +129,8 @@ export const DynamicProvider = (props: Props) => {
     if (secondaryWallet && secondaryWallet.address && user) {
       if (secondaryWallet.chain === "starknet") {
         handleLinkEvent(secondaryWallet.address);
+      } else {
+        handleLinkEvent(secondaryWallet, true);
       }
     }
   }, [secondaryWallet]);
@@ -139,7 +148,6 @@ export const DynamicProvider = (props: Props) => {
         {
           id: user.id,
           username: data.username !== user?.username ? data.username : null,
-          starknetAddress: data.starknetAddress,
           profileImage: data.profileImage,
         },
         {
