@@ -15,6 +15,7 @@ export { Tag } from "./src/Tag";
 export { ContentContainer, HomeContainer } from "./src/ContentContainer";
 export { IconButton, IconButtonWithBadge } from "./src/IconButton";
 export { Collapse } from "./src/Collapse";
+export { DelegateOnboardingModalBasic } from "./src/DelegateOnboardingModalBasic"
 export { VoteButton } from "./src/VoteButton";
 export { VoteStat } from "./src/VoteStat";
 export { VoteComment } from "./src/VoteComment";
