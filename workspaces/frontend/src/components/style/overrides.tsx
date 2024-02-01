@@ -4,6 +4,7 @@ export const cssOverrides = `
     padding: 0.74rem 1rem;
     border-radius: 4px;
     height:36px!important;
+    width: 100%;
   }
   .non-network-switching-supported-control {
     height: 36px!important;
@@ -135,6 +136,10 @@ padding-inline-end:0;
 //   }
 .evm-network-control__arrow-icon.icon--color-text-primary.icon--size-small  {
   display:none;
+}
+
+.dynamic-custom-button {
+  background: red!important;
 }
 
 .button.button--padding-large.button--primary.connect-button {
