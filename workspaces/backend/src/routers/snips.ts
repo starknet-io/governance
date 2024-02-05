@@ -1,4 +1,4 @@
-import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
+import {router, publicProcedure, protectedProcedure, isAdmin} from '../utils/trpc';
 import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
 import { desc, eq } from 'drizzle-orm';
@@ -42,6 +42,7 @@ export const snipsRouter = router({
 
   createSNIP: protectedProcedure
     .input(snipInsertSchema.omit({ id: true, type: true, status: true }))
+    .use(isAdmin)
     .mutation(async (opts) => {
       const insertedSnip = await db
         .insert(snips)
@@ -57,8 +58,9 @@ export const snipsRouter = router({
       return insertedSnip[0];
     }),
 
-  editProposal: publicProcedure
+  editProposal: protectedProcedure
     .input(snipInsertSchema.required({ id: true }))
+    .use(isAdmin)
     .mutation(async (opts) => {
       const updatedSnip = await db
         .update(snips)
@@ -69,8 +71,9 @@ export const snipsRouter = router({
       return updatedSnip[0];
     }),
 
-  deleteProposal: publicProcedure
+  deleteProposal: protectedProcedure
     .input(snipInsertSchema.required({ id: true }).pick({ id: true }))
+    .use(isAdmin)
     .mutation(async (opts) => {
       await db
         .delete(snips)

@@ -1,4 +1,4 @@
-import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
+import {router, publicProcedure, protectedProcedure, isAdmin} from '../utils/trpc';
 import { councils } from '../db/schema/councils';
 import { db } from '../db/db';
 import { and, desc, eq } from 'drizzle-orm';
@@ -208,6 +208,7 @@ export const councilsRouter = router({
 
   deleteUserFromCouncil: protectedProcedure
     .input(z.object({ id: z.number(), councilId: z.number() }))
+    .use(isAdmin)
     .mutation(async (opts) => {
       const user = await db.query.members.findFirst({
         where: eq(members.id, opts.input.id),
