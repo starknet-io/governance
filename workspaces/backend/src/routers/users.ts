@@ -1,4 +1,4 @@
-import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
+import {router, publicProcedure, protectedProcedure, isAdmin, hasPermission} from '../utils/trpc';
 import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
@@ -15,7 +15,7 @@ export const usersRouter = router({
     }),
   ),
 
-  saveUser: publicProcedure
+  saveUser: protectedProcedure
     .input(
       z.object({
         address: z.string(),
@@ -25,6 +25,7 @@ export const usersRouter = router({
         dynamicId: z.string(),
       }),
     )
+    .use(isAdmin)
     .mutation(async (opts) => {
       const insertedUser = await db
         .insert(users)
@@ -102,12 +103,13 @@ export const usersRouter = router({
       return user;
     }),
 
-  deleteUser: publicProcedure
+  deleteUser: protectedProcedure
     .input(
       z.object({
         id: z.string(),
       }),
     )
+    .use(isAdmin)
     .mutation(async (opts) => {
       await db.delete(users).where(eq(users.id, opts.input.id)).execute();
     }),
@@ -119,6 +121,7 @@ export const usersRouter = router({
         role: z.any(),
       }),
     )
+    .use(isAdmin)
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),
@@ -141,10 +144,12 @@ export const usersRouter = router({
   editRoles: protectedProcedure
     .input(
       z.object({
+        id: z.string(),
         address: z.string(),
         role: z.any(),
       }),
     )
+    .use(hasPermission)
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),
@@ -189,6 +194,7 @@ export const usersRouter = router({
         profileImage: z.optional(z.any()),
       }),
     )
+    .use(hasPermission)
     .mutation(async (opts) => {
       const { id, username, starknetAddress, profileImage } = opts.input;
 
@@ -307,6 +313,7 @@ export const usersRouter = router({
         starknetAddress: z.string().optional(),
       }),
     )
+    .use(hasPermission)
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),

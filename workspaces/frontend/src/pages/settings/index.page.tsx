@@ -275,6 +275,7 @@ export function Page() {
   const onSubmitEdit = handleEditSubmit(async (values) => {
     try {
       const data = {
+        id: selectedUser?.id as string,
         address: selectedUser?.address as string,
         role: (editUserRole || selectedUser?.role || "user") as string,
       };
