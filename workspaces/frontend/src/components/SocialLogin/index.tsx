@@ -32,9 +32,11 @@ const Socials = ({
     userId: user?.id || "",
   });
   const socialsDelegate = trpc.socials.initiateSocialAuth.useQuery({
-    id: user!.id as string,
+    id: user?.id as string,
     delegateId,
     origin: "discord",
+  }, {
+    enabled: user?.id != null,
   });
   const unlinkSocialDelegate = trpc.socials.unlinkDelegateSocial.useMutation({
     onSuccess: () => {
