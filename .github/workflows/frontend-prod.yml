@@ -22,7 +22,7 @@ jobs:
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: europe-west9-docker.pkg.dev/governance-production/governance/prod
           flavor: latest=false
