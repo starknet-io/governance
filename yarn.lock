@@ -7743,9 +7743,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@snapshot-labs/sx@npm:^0.1.0-beta.57":
-  version: 0.1.0-beta.57
-  resolution: "@snapshot-labs/sx@npm:0.1.0-beta.57"
+"@snapshot-labs/sx@npm:^0.1.0-beta.58":
+  version: 0.1.0-beta.58
+  resolution: "@snapshot-labs/sx@npm:0.1.0-beta.58"
   dependencies:
     "@ethersproject/abi": ^5.7.0
     "@ethersproject/abstract-signer": ^5.7.0
@@ -7766,7 +7766,7 @@ __metadata:
     randombytes: ^2.1.0
     snake-case: ^3.0.4
     starknet: 5.25.0
-  checksum: 8e1025f53cf69cfb3b6451d6297ba8999b4a4a4855158bc5fadad12082daaec59b93a735d55241c5ef49a4fd8e3c9c3fe87a600e57ad63b29cc87a3266109e15
+  checksum: 24b0f294aae3fd721f9434ebea7d3daf83244bd843c17909a9b7f1deac53199ed224e513f44f8d797115c67c6bc50c98cf96b25a020286982941b1c705ddf6c1
   languageName: node
   linkType: hard
 
@@ -11154,7 +11154,7 @@ __metadata:
     "@hookform/resolvers": ^3.3.1
     "@snapshot-labs/pineapple": ^1.1.0
     "@snapshot-labs/snapshot.js": ^0.8.0
-    "@snapshot-labs/sx": ^0.1.0-beta.57
+    "@snapshot-labs/sx": ^0.1.0-beta.58
     "@tanstack/react-query": ^4.32.0
     "@trpc/client": ^10.36.0
     "@trpc/react-query": ^10.36.0
