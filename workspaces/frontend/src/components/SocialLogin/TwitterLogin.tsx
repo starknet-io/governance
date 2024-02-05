@@ -6,7 +6,8 @@ const TwitterLogin = ({
   isLoading,
   isError,
   onDisconnect,
-  delegateId
+  delegateId,
+  userId
 }: {
   delegateId: string,
   username: string | null | undefined;
@@ -14,8 +15,10 @@ const TwitterLogin = ({
   isLoading?: boolean;
   isError?: any;
   onDisconnect: () => void;
+  userId: string;
 }) => {
   const redirectUrl = trpc.socials.getTwitterAuthUrl.useQuery({
+    id: userId,
     delegateId,
   });
   const handleTwitterLogin = async () => {

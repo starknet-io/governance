@@ -42,7 +42,7 @@ const hasPermission = t.middleware(({ next, ctx, rawInput }) => {
   const userId = input?.id; // Adjust according to your input structure
   const sessionUserId = ctx?.user?.id; // Adjust according to your session structure
   const userRole = ctx?.user?.role;
-
+  console.log(ctx?.user)
   if (
     sessionUserId !== userId &&
     userRole !== 'admin' &&

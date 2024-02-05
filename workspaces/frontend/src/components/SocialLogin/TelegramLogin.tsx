@@ -7,11 +7,13 @@ const TelegramLogin = ({
   delegateId,
   onDisconnect,
   onSuccess,
+  userId,
 }: {
   username: string | null | undefined;
   delegateId: string;
   onDisconnect: () => void;
   onSuccess: () => any;
+  userId: string;
 }) => {
   const telegramButtonContainerRef = useRef(null);
   const verifyTelegram = trpc.socials.verifyTelegram.useMutation();
@@ -50,6 +52,7 @@ const TelegramLogin = ({
           verifyTelegram.mutateAsync(
             {
               delegateId,
+              id: userId,
               telegramData: data,
             },
             {

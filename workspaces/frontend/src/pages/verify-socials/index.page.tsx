@@ -33,6 +33,7 @@ export function Page() {
         verifyDiscord.mutateAsync(
           {
             delegateId: stateObject.delegateId,
+            id: stateObject.id,
             code: code,
           },
           {

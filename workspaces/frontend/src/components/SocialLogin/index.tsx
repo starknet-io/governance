@@ -32,6 +32,7 @@ const Socials = ({
     userId: user?.id || "",
   });
   const socialsDelegate = trpc.socials.initiateSocialAuth.useQuery({
+    id: user!.id as string,
     delegateId,
     origin: "discord",
   });
@@ -48,6 +49,7 @@ const Socials = ({
   ) => {
     unlinkSocialDelegate.mutateAsync({
       delegateId: delegateId,
+      id: user!.id,
       origin,
     });
   };
@@ -108,6 +110,7 @@ const Socials = ({
         />
         <TwitterLogin
           delegateId={delegateId}
+          userId={user!.id}
           username={socialsDelegate?.data?.twitter?.username}
           isLoading={socialsDelegate?.isLoading}
           isError={socialsDelegate?.isError}
@@ -115,6 +118,7 @@ const Socials = ({
         />
         <TelegramLogin
           delegateId={delegateId}
+          userId={user!.id}
           username={socialsDelegate?.data?.telegram?.username}
           onSuccess={socialsDelegate.refetch}
           onDisconnect={() => unlinkSocial("telegram")}
@@ -128,6 +132,7 @@ const Socials = ({
         <DiscourseFormModal
           isOpen={showDiscourse}
           onClose={closeDiscourseModal}
+          userId={user!.id}
           onSuccess={socialsDelegate.refetch}
           delagateId={delegateId}
         />
