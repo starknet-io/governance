@@ -21,7 +21,7 @@ const isAuthed = t.middleware(({ next, ctx }) => {
 });
 
 const isAdmin = t.middleware(({ next, ctx }) => {
-  const userRole = ctx.user?.role; // Adjust according to your session structure
+  const userRole = ctx.user?.role;
 
   if (userRole !== 'admin' && userRole !== 'superadmin') {
     throw new TRPCError({
@@ -39,8 +39,8 @@ type EditUserInput = {
 
 const hasPermission = t.middleware(({ next, ctx, rawInput }) => {
   const input = rawInput as EditUserInput;
-  const userId = input?.id; // Adjust according to your input structure
-  const sessionUserId = ctx?.user?.id; // Adjust according to your session structure
+  const userId = input?.id;
+  const sessionUserId = ctx?.user?.id;
   const userRole = ctx?.user?.role;
   if (
     sessionUserId !== userId &&
