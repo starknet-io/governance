@@ -1,5 +1,9 @@
 {
   "extends": "../../tsconfig.projects.json",
+  "exclude": [
+    "node_modules/abi-wan-kanabi-v2/index.ts",
+    "node_modules/abi-wan-kanabi-v2/kanabi.ts"
+  ],
   "compilerOptions": {
     "target": "ESNext",
     "module": "commonjs",
