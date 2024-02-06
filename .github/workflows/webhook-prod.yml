@@ -19,7 +19,7 @@ jobs:
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: registry.digitalocean.com/governance/webhook-prod
           flavor: latest=false
@@ -34,7 +34,7 @@ jobs:
           password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           file: workspaces/snapshot-webhook/webhook.Dockerfile
           context: workspaces/snapshot-webhook
