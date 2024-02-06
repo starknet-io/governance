@@ -209,7 +209,6 @@ export function Page() {
       if (deeplink) {
         window.location.href = deeplink;
       }
-      debugger;
       let receipt = null;
       if (primaryWallet?.id === ethWallet?.id) {
         receipt = await ethSigClient.vote({

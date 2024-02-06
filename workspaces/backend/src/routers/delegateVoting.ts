@@ -3,6 +3,7 @@ import { db } from '../db/db';
 import { delegateVotes } from '../db/schema/delegatesVotes';
 import { eq } from 'drizzle-orm';
 import axios from 'axios';
+import { getChecksumAddress } from 'starknet';
 
 const graphQLClientL2 = new GraphQLClient(
   'https://starknet-delegates.checkpoint.fyi',
@@ -27,7 +28,8 @@ export async function saveDelegateVotes(delegateData: any) {
         .update(delegateVotes)
         .set({
           votingPower: delegateData.votingPower,
-          totalVotes: delegateData.totalVotes,
+          votingPowerLayerOne: delegateData.votingPowerLayerOne,
+          votingPowerLayerTwo: delegateData.votingPowerLayerTwo,
           updatedAt: new Date(),
         })
         .where(eq(delegateVotes.delegateId, delegateData.delegateId));
@@ -35,8 +37,9 @@ export async function saveDelegateVotes(delegateData: any) {
       await db.insert(delegateVotes).values({
         delegateId: delegateData.delegateId,
         address: delegateData.address,
+        votingPowerLayerOne: delegateData.votingPowerLayerOne,
+        votingPowerLayerTwo: delegateData.votingPowerLayerTwo,
         votingPower: delegateData.votingPower,
-        totalVotes: delegateData.totalVotes,
         updatedAt: new Date(),
       });
     }
@@ -176,9 +179,6 @@ export async function delegateVoting() {
   const delegatesSnapshotL2: DelegateDataSnapshot[] =
     await fetchAllDelegatesFromSnapshot({ isL2: true });
 
-  console.log(delegatesSnapshotL1);
-  console.log(delegatesSnapshotL2);
-
   while (hasMore) {
     const localDelegatesBatch = await fetchAllDelegatesPaginated(
       pageSize,
@@ -195,7 +195,8 @@ export async function delegateVoting() {
       );
       const l2Delegate = delegatesSnapshotL2.find(
         (d) =>
-          d.id.toLowerCase() === localDelegate.starknetAddress?.toLowerCase(),
+          getChecksumAddress(d.id || '') ===
+          getChecksumAddress(localDelegate.starknetAddress || ''),
       );
 
       const votingPowerL1 = l1Delegate
@@ -204,6 +205,13 @@ export async function delegateVoting() {
       const votingPowerL2 = l2Delegate
         ? parseInt(l2Delegate.delegatedVotes)
         : 0;
+
+      if (votingPowerL1 > 0) {
+        console.log(localDelegate.ethAddress, 'L1', votingPowerL1);
+      }
+      if (votingPowerL2 > 0) {
+        console.log(localDelegate.starknetAddress, 'L2', votingPowerL2);
+      }
 
       // Combine the logic for saving/updating the delegate votes here
       ///console.log({...localDelegate, votingPowerL1, votingPowerL2});
