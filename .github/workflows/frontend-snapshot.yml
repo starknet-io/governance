@@ -2,7 +2,7 @@ name: front deployment
 
 on:
   push:
-    branches: ['snapshot']
+    branches: ['snapshotx-dev']
     paths:
       - 'workspaces/frontend/**'
       - 'workspaces/components/**'
