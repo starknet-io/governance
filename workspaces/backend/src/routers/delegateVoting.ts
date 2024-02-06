@@ -49,13 +49,6 @@ export async function saveDelegateVotes(delegateData: any) {
   }
 }
 
-interface DelegateData {
-  delegateId: string;
-  votingPower: number;
-  totalVotes: number;
-  address: string;
-}
-
 interface DelegateDataSnapshot {
   delegatedVotes: string;
   id: string;
@@ -99,33 +92,6 @@ async function fetchAllDelegatesFromSnapshot({
     } else {
       return [];
     }
-  } catch (error) {
-    console.log('Error fetching delegates:', error);
-    throw error;
-  }
-}
-
-async function fetchAllDelegates() {
-  try {
-    const delegates: any = await db.query.delegates.findMany({
-      columns: {
-        id: true,
-      },
-      with: {
-        author: {
-          columns: {
-            address: true,
-            ethereumAddress: true,
-            starknetAddress: true,
-          },
-        },
-      },
-    });
-    const parsedDelegates = delegates.map((delegate: any) => ({
-      id: delegate.id,
-      address: delegate?.author?.address || '',
-    }));
-    return parsedDelegates;
   } catch (error) {
     console.log('Error fetching delegates:', error);
     throw error;
