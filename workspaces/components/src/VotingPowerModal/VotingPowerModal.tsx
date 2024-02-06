@@ -6,6 +6,7 @@ import { VotingPowerBreakdown } from "./VotingPowerBreakdown";
 import { truncateAddress } from "../utils";
 import { Tooltip } from "../Tooltip";
 import { CopyToClipboard } from "../CopyToClipboard";
+import {getChecksumAddress} from "starknet";
 
 type Props = {
   isOpen: boolean;
@@ -143,8 +144,8 @@ export const VotingPowerModal = ({
                   </Text>
                 </Box>
                 <DelegationComponent
-                  delegatedTo={delegatedToL1}
-                  delegatedToName={delegatedToL1Name}
+                  delegatedTo={delegatedToL2}
+                  delegatedToName={delegatedToL2Name}
                 />
               </Flex>
             </Flex>
@@ -173,8 +174,8 @@ export const VotingPowerModal = ({
                   </Text>
                 </Box>
                 <DelegationComponent
-                  delegatedTo={delegatedToL2}
-                  delegatedToName={delegatedToL2Name}
+                  delegatedTo={delegatedToL1}
+                  delegatedToName={delegatedToL1Name}
                 />
               </Flex>
             </Flex>

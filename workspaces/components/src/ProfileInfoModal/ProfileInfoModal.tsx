@@ -75,7 +75,6 @@ export const ProfileInfoModal = ({
     handleSubmit((data) => {
       const saveProfileData: any = {};
       saveProfileData.username = data.username;
-      saveProfileData.starknetAddress = data.starknetAddress;
       saveProfileData.profileImage = imageUrl;
       saveData?.(saveProfileData);
     })();

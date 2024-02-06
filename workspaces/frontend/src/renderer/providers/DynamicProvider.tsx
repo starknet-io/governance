@@ -15,9 +15,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { trpc } from "src/utils/trpc";
 import { cssOverrides } from "src/components/style/overrides";
-import { ProfileInfoModal } from "@yukilabs/governance-components";
+import {
+  DelegateOnboardingModalBasic,
+  ProfileInfoModal,
+} from "@yukilabs/governance-components";
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { usePageContext } from "../PageContextProvider";
+import ConnectSecondaryWalletModal from "../../components/ConnectSecondaryWalletModal/ConnectSecondaryWalletModal";
 interface Props {
   // readonly pageContext: PageContext;
   readonly children: React.ReactNode;
@@ -36,6 +40,10 @@ export const DynamicProvider = (props: Props) => {
   const { children } = props;
   const [authUser, setAuthUser] = useState<AuthSuccessParams | null>(null);
   const [secondaryWallet, setSecondaryWallet] = useState<any>(null);
+  const [isOpenSecondaryWalletModal, setIsOpenSecondaryWalletModal] =
+    useState(false);
+  const [isOpenDelegateOnboarding, setIsOpenDelegateOnboarding] =
+    useState(false);
   const [userExistsError, setUserExistsError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentWallet, setCurrentWallet] = useState<string | null>(null);
@@ -48,10 +56,15 @@ export const DynamicProvider = (props: Props) => {
   const { user } = usePageContext();
   const { handleUpload } = useFileUpload();
 
+  const handleClose = () => {
+    setIsOpenSecondaryWalletModal(false);
+    setIsOpenDelegateOnboarding(true);
+  };
+
   const authenticateUser = useCallback(
     async (params: AuthSuccessParams) => {
       if (params?.user?.newUser) {
-        navigate("/profile/settings");
+        setIsOpenSecondaryWalletModal(true);
       }
       await authMutation.mutateAsync({
         authToken: params.authToken,
@@ -63,12 +76,19 @@ export const DynamicProvider = (props: Props) => {
     [authMutation],
   );
 
-  const handleLinkEvent = async (walletAddress: string) => {
+  const handleLinkEvent = async (walletAddress: string, isEth: boolean) => {
     if (user) {
-      await editUserProfile.mutateAsync({
-        id: user.id,
-        starknetAddress: walletAddress,
-      });
+      if (!isEth) {
+        await editUserProfile.mutateAsync({
+          id: user.id,
+          starknetAddress: walletAddress,
+        });
+      } else {
+        await editUserProfile.mutateAsync({
+          id: user.id,
+          ethereumAddress: walletAddress,
+        });
+      }
     }
   };
 
@@ -109,6 +129,8 @@ export const DynamicProvider = (props: Props) => {
     if (secondaryWallet && secondaryWallet.address && user) {
       if (secondaryWallet.chain === "starknet") {
         handleLinkEvent(secondaryWallet.address);
+      } else {
+        handleLinkEvent(secondaryWallet, true);
       }
     }
   }, [secondaryWallet]);
@@ -126,7 +148,6 @@ export const DynamicProvider = (props: Props) => {
         {
           id: user.id,
           username: data.username !== user?.username ? data.username : null,
-          starknetAddress: data.starknetAddress,
           profileImage: data.profileImage,
         },
         {
@@ -189,6 +210,10 @@ export const DynamicProvider = (props: Props) => {
         userExistsError={userExistsError}
         setUsernameErrorFalse={() => setUserExistsError(false)}
       />
+      <DelegateOnboardingModalBasic
+        isOpen={isOpenDelegateOnboarding}
+        onClose={() => setIsOpenDelegateOnboarding(false)}
+      />
       <DynamicContextProvider
         settings={{
           ...(currentWallet ? { walletsFilter: walletToShow } : {}),
@@ -217,7 +242,7 @@ export const DynamicProvider = (props: Props) => {
               }
             },
             onDisconnect: () => {
-              setCurrentWallet(null)
+              setCurrentWallet(null);
             },
             onLogout: () => handleDynamicLogout(),
           },
@@ -227,6 +252,16 @@ export const DynamicProvider = (props: Props) => {
         <DynamicWagmiConnector>
           {children}
           {/* <LayoutDefault pageContext={pageContext}>{children}</LayoutDefault> */}
+          <>
+            <ConnectSecondaryWalletModal
+              isOpen={isOpenSecondaryWalletModal}
+              onClose={handleClose}
+              onNext={handleClose}
+              shouldConnectStarknet={currentWallet === "ethereum"}
+              shouldConnectEthereum={currentWallet === "starknet"}
+              withSkip
+            />
+          </>
         </DynamicWagmiConnector>
       </DynamicContextProvider>
     </>

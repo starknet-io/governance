@@ -17,7 +17,7 @@ import { WalletChainKey } from "../utils/constants";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { findMatchingWallet } from "../utils/helpers";
 import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
-import {useStarknetDelegates} from "../hooks/starknet/useStarknetDelegates";
+import { useStarknetDelegates } from "../hooks/starknet/useStarknetDelegates";
 
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -55,14 +55,18 @@ const AuthorizedUserView = () => {
     enabled: user?.address != null,
   });
 
-  const { delegates: delegationDataL2, loading: isLoadingL2Delegation } = useStarknetDelegates({
-    starknetAddress,
-  })
+  const { delegates: delegationDataL2, loading: isLoadingL2Delegation } =
+    useStarknetDelegates({
+      starknetAddress,
+    });
 
   const hasDelegationData =
     !isLoading && delegationData && delegationData.length;
-  const hasDelegationDataL2 =
-    !!(!isLoadingL2Delegation && delegationDataL2 && delegationDataL2.length)
+  const hasDelegationDataL2 = !!(
+    !isLoadingL2Delegation &&
+    delegationDataL2 &&
+    delegationDataL2.length
+  );
 
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery(
     {
@@ -75,7 +79,7 @@ const AuthorizedUserView = () => {
 
   const delegatedToL2 = trpc.delegates.getDelegateByAddress.useQuery(
     {
-      address: delegationDataL2 ? delegationDataL2.toLowerCase() : "",
+      starknetAddress: delegationDataL2 ? delegationDataL2.toLowerCase() : "",
     },
     {
       enabled: !!hasDelegationDataL2,
@@ -211,7 +215,9 @@ const AuthorizedUserView = () => {
           setIsMenuOpen={setIsMenuOpen}
           ref={userProfileMenuRef}
           delegatedToL1={delegatedTo?.data ? delegatedTo?.data : delegationData}
-          delegatedToL2={delegatedToL2?.data ? delegatedToL2?.data : delegationDataL2}
+          delegatedToL2={
+            delegatedToL2?.data ? delegatedToL2?.data : delegationDataL2
+          }
           onDisconnect={handleDisconnect}
           user={user}
           onSave={handleSave}

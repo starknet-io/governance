@@ -20,7 +20,7 @@ import {
   StatusModal,
   Flex,
   ArrowRightIcon,
-  Select
+  Select,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import { useEffect, useState } from "react";
@@ -470,7 +470,7 @@ export function Delegates({
         }
         onContinue={(address) => {
           if (primaryWallet?.id === starknetWallet?.id) {
-            setL2InputAddress(address)
+            setL2InputAddress(address);
           } else {
             setInputAddress(address);
           }
