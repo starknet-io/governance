@@ -11062,7 +11062,7 @@ __metadata:
     oauth: ^0.10.0
     pg: ^8.11.2
     slugify: ^1.6.6
-    starknet: ^5.25.0
+    starknet: ^5.19.5
     superjson: ^1.13.1
     trpc: ^0.11.3
     ts-jest: ^29.1.1
