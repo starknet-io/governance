@@ -445,7 +445,7 @@ export function Page() {
         await setPrimaryWallet(ethWallet?.id);
         setIsUndelegation(true);
         writeAsyncUndelegation?.({
-          args: ["0x0000000000000000000000000000000000000000"],
+          args: [ethWallet?.address],
         })
           .then((tx) => {
             setTxHash(tx.hash);
