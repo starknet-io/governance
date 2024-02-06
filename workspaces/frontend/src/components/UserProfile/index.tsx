@@ -18,6 +18,7 @@ import { WalletButtons } from "../../pages/profile/settings/index.page";
 import { VotingPowerBreakdown } from "@yukilabs/governance-components/src/VotingPowerModal";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useWallets } from "../../hooks/useWallets";
+import { getChecksumAddress } from "starknet";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -168,13 +169,38 @@ const UserProfileMenuComponent = (
     }
   }
 
+  const checkIfL2DelegatedToSelf = () => {
+    if (delegatedToL2?.delegationStatement) {
+      if (delegatedToL2?.delegationStatement?.starknetAddress) {
+        return (
+          getChecksumAddress(starknetWallet.address || "") ===
+          getChecksumAddress(
+            delegatedToL2?.delegationStatement?.starknetAddress || "",
+          )
+        );
+      } else {
+        return false;
+      }
+    }
+    if (starknetWallet?.address && delegatedToL2) {
+      return (
+        getChecksumAddress(starknetWallet.address || "") ===
+        getChecksumAddress(delegatedToL2 || "")
+      );
+    } else {
+      return false;
+    }
+  };
+
+  const l2DelegatedToSelf = checkIfL2DelegatedToSelf();
+
   return (
     <div ref={ref}>
       <VotingPowerModal
         isOpen={isVotingPowerModalOpen}
         onClose={() => setIsVotingPowerModalOpen(false)}
         delegatedToL1={delegatedToL1}
-        delegatedToL2={delegatedToL2}
+        delegatedToL2={!l2DelegatedToSelf ? delegatedToL2 : null}
         delegatedToL1Name={delegatedToL1Name}
         delegatedToL2Name={delegatedToL2Name}
         hasEthWallet={!!ethWallet?.id}

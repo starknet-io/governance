@@ -22,6 +22,7 @@ import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
 import { socials } from '../db/schema/socials';
 import { profanity } from '@2toad/profanity';
+import {getChecksumAddress} from "starknet";
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -345,7 +346,7 @@ export const delegateRouter = router({
       const condition = opts.input.address
         ? eq(users.address, opts.input.address)
         : opts.input.starknetAddress
-        ? eq(users.starknetAddress, opts.input.starknetAddress)
+        ? eq(users.starknetAddress, getChecksumAddress(opts.input.starknetAddress))
         : null;
       if (!condition) {
         throw new Error('Delegate not found');

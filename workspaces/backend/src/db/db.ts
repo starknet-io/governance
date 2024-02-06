@@ -28,9 +28,9 @@ dotenv.config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
- // ssl: {
- //   ca: fs.readFileSync('ca-certificate.crt').toString(),
- // },
+  ssl: {
+    ca: fs.readFileSync('ca-certificate.crt').toString(),
+  },
 });
 
 const db = drizzle(pool, {
