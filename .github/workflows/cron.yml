@@ -2,7 +2,7 @@ name: cron deployment
 
 on:
   push:
-    branches: ['dev']
+    branches: ['dev', 'snapshot']
     paths:
       - 'workspaces/cron/**'
   workflow_dispatch:
@@ -68,5 +68,19 @@ jobs:
         uses: digitalocean/app_action@v1.1.5
         with:
           app_name: backend-development
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[{"name": "cron","image":{"registry_type": "DOCR","repository": "cron","tag": "${{ env.tag }}"}}]'
+
+  Deploy-snapshot:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/snapshot'
+    needs: Build
+    runs-on: ubuntu-latest
+    env:
+      tag: ${{ needs.Build.outputs.tag }}
+    steps:
+      - name: DigitalOcean App Platform deployment
+        uses: digitalocean/app_action@v1.1.5
+        with:
+          app_name: backend-snapshot
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           images: '[{"name": "cron","image":{"registry_type": "DOCR","repository": "cron","tag": "${{ env.tag }}"}}]'
