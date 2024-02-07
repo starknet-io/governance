@@ -14,39 +14,53 @@ export function truncateAddress(
   return `${start}...${end}`;
 }
 
-export function formatVotesAmount(number: number | bigint | null | undefined): string {
+export function formatVotesAmount(number: bigint | number | undefined | null) {
   if (number === undefined || number === null) {
     return "0";
   }
 
-  // Define thresholds as BigInts
+  // For bigint calculations, explicitly define thresholds
   const billion = BigInt(1e9);
   const million = BigInt(1e6);
   const thousand = BigInt(1e3);
 
-  // Handle bigint separately
-  if (typeof number === 'bigint') {
+  if (typeof number === "bigint") {
+    // Determine if the number is a multiple of thousand, million, or billion
+    const isMultipleOfBillion = number % billion === BigInt(0);
+    const isMultipleOfMillion = number % million === BigInt(0);
+    const isMultipleOfThousand = number % thousand === BigInt(0);
+
     if (number >= billion) {
-      return `${(number / billion)}b`;
+      return isMultipleOfBillion
+        ? `${number / billion}b`
+        : `${(Number(number) / 1e9).toFixed(1).replace(/\.0$/, "")}b`;
     } else if (number >= million) {
-      return `${(number / million)}m`;
+      return isMultipleOfMillion
+        ? `${number / million}m`
+        : `${(Number(number) / 1e6).toFixed(1).replace(/\.0$/, "")}m`;
     } else if (number >= thousand) {
-      return `${(number / thousand)}k`;
+      return isMultipleOfThousand
+        ? `${number / thousand}k`
+        : `${(Number(number) / 1e3).toFixed(1).replace(/\.0$/, "")}k`;
     } else {
       return `${number}`;
     }
-  }
-  // Handle numbers
-  else {
+  } else {
+    // For non-bigint numbers, the logic remains unchanged
     if (number >= 1e9) {
-      return `${(number / 1e9).toFixed(1).replace(".0", "")}b`;
+      return number % 1e9 === 0
+        ? `${number / 1e9}b`
+        : `${(number / 1e9).toFixed(1).replace(/\.0$/, "")}b`;
     } else if (number >= 1e6) {
-      return `${(number / 1e6).toFixed(1).replace(".0", "")}m`;
+      return number % 1e6 === 0
+        ? `${number / 1e6}m`
+        : `${(number / 1e6).toFixed(1).replace(/\.0$/, "")}m`;
     } else if (number >= 1e3) {
-      return `${(number / 1e3).toFixed(1).replace(".0", "")}k`;
+      return number % 1e3 === 0
+        ? `${number / 1e3}k`
+        : `${(number / 1e3).toFixed(1).replace(/\.0$/, "")}k`;
     } else {
       return `${number}`;
     }
   }
 }
-

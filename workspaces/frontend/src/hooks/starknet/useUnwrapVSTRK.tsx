@@ -8,7 +8,7 @@ const starkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
 export const useWrapVSTRK = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<any>(null);
   const [success, setSuccess] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
 

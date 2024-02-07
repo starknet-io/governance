@@ -189,7 +189,6 @@ export function Page() {
       if (choice === 3) {
         convertedChoice = 2;
       }
-
       const params = {
         authenticator:
           primaryWallet?.id === ethWallet?.id
@@ -246,8 +245,6 @@ export function Page() {
       setisConfirmOpen(false);
     }
   }
-
-  console.log(data?.proposal);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
