@@ -283,7 +283,9 @@ export function Page() {
     } else if (vSTRKBalance?.rawBalance && isUnwrap) {
       setStarkToWrap(parseFloat(vSTRKBalance?.rawBalance) / 2);
     }
+    setSliderValue(50)
   }, [starknetBalance?.rawBalance, vSTRKBalance?.rawBalance, isUnwrap]);
+
   const handleSliderChange = (val) => {
     setSliderValue(val);
     if (isUnwrap) {
@@ -428,7 +430,7 @@ export function Page() {
                 type="number"
                 rightContent={
                   <Text color="content.support.default" variant="mediumStrong">
-                    STRK
+                    {!isUnwrap ? "STRK" : "vSTRK"}
                   </Text>
                 }
                 size="standard"
@@ -475,7 +477,7 @@ export function Page() {
                   </Text>
                 </Flex>
                 <Text color="content.support.default" variant="mediumStrong">
-                  STRK
+                  {isUnwrap ? "STRK" : "vSTRK"}
                 </Text>
               </Flex>
             </Flex>
