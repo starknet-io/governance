@@ -4,7 +4,7 @@ import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { waitForTransaction } from "../snapshotX/helpers";
 
-const starkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
+const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 
 export const useWrapVSTRK = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +48,9 @@ export const useWrapVSTRK = () => {
       const account = window.starknet.account;
       contract.connect(account);
 
-      const txResponse = await contract.lock(amount);
+      const amountWithDecimals = BigInt(amount) * 1000000000000000000n
+
+      const txResponse = await contract.lock_and_delegate(starknetAddress, amountWithDecimals);
       setTransactionHash(txResponse.transaction_hash);
       await waitForTransaction(txResponse.transaction_hash);
       setSuccess(true);

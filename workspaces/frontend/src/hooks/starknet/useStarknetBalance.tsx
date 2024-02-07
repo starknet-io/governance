@@ -5,12 +5,14 @@ import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { hexToString } from "viem";
 
-const starkContract = import.meta.env.VITE_APP_STARKNET_L2_CONTRACT;
+const starknetContract = import.meta.env.VITE_APP_STARKNET_L2_CONTRACT;
 
 export const useStarknetBalance = ({
   starknetAddress,
+  starkContract = starknetContract,
 }: {
   starknetAddress: string;
+  starkContract?: string;
 }) => {
   const [balance, setBalance] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -51,6 +53,8 @@ export const useStarknetBalance = ({
         const symbolString = hexToString(hex as `0x${string}`);
         const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
         const commifiedBalance = ethers.utils.commify(formattedBalance);
+
+        console.log(symbolString, decimals, rawBalance)
 
         setBalance({
           balance: commifiedBalance,

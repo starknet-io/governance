@@ -33,6 +33,12 @@ import { WalletChainKey } from "../../utils/constants";
 import { GasIcon, useUserWallets } from "@dynamic-labs/sdk-react-core";
 import TabButton from "../../components/TabButton";
 import * as Swap from "@yukilabs/governance-components/src/Swap/Swap";
+import { useStarknetDelegate } from "../../hooks/starknet/useStarknetDelegation";
+import { useWrapVSTRK } from "../../hooks/starknet/useWrapVSTRK";
+import { useUnwrapVSTRK } from "../../hooks/starknet/useUnwrapVSTRK";
+
+const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
+const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
 export function Page() {
   const wallets = useUserWallets();
@@ -48,9 +54,15 @@ export function Page() {
   const { data: votingPowerStarknet } = useVotingPower({
     address: starknetAddress,
   });
-
   const ethBalance = useBalanceData(ethAddress as `0x${string}`);
-  const { balance: starknetBalance } = useStarknetBalance({ starknetAddress });
+  const { balance: starknetBalance } = useStarknetBalance({
+    starknetAddress,
+    starkContract: starkContract,
+  });
+  const { balance: vSTRKBalance } = useStarknetBalance({
+    starknetAddress,
+    starkContract: vStarkContract,
+  });
   const [sliderValue, setSliderValue] = useState(50);
   const [activeTab, setActiveTab] = useState(0);
   const [starkToWrap, setStarkToWrap] = useState(0);
@@ -61,29 +73,33 @@ export function Page() {
   const [description, setDescription] = useState("");
   const [title, setTitle] = useState("");
 
-  const wrapTokens = () => {
-    setIsSuccess(false);
-    setError(false);
+  const isUnwrap = activeTab === 1;
+
+  const {
+    wrap,
+    loading: isWrapLoading,
+    error: wrapError,
+    success: isWrapSuccess,
+  } = useWrapVSTRK();
+
+  const {
+    unwrap,
+    loading: isUnwrapLoading,
+    error: unwrapError,
+    success: isUnwrapSuccess,
+  } = useUnwrapVSTRK();
+
+  const wrapTokens = async () => {
     onOpen();
-    setDescription(`
-            You're ${
-              activeTab === 0 ? "wrapping" : "unwrapping"
-            } ${starkToWrap} STRK.
-            You'll receive ${starkToWrap} vSTRK`);
-    setTitle(activeTab === 0 ? "Wrapping..." : "Unwrapping...");
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setDescription(`Successfully received ${starkToWrap} vSTRK`);
-      setTitle("All done!");
-      if (Math.random() < 0.7) {
-        setIsSuccess(true);
-        setError(false);
-      } else {
-        setIsSuccess(false);
-        setError(true);
-      }
-    }, 4000);
+
+    try {
+      const methodToCall = activeTab === 0 ? wrap : unwrap;
+
+      await methodToCall(starknetAddress, starkToWrap);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -161,7 +177,7 @@ export function Page() {
                   vSTRK on Starknet
                 </Text>
                 <Text color="content.accent.default" variant="mediumStrong">
-                  0
+                  {vSTRKBalance?.balance || 0} {vSTRKBalance?.symbol || "STRK"}
                 </Text>
               </Box>
               <Box mt="standard.sm">
@@ -303,28 +319,43 @@ export function Page() {
       >
         <Flex alignItems="center" direction="column" gap="standard.xl">
           <Flex alignItems="center" direction="column" gap="standard.xs">
-            {isLoading && (
+            {isWrapLoading && (
               <Flex direction="column" gap="standard.lg" alignItems="center">
                 <Heading variant="h3">{title}</Heading>
                 <Spinner size="xxl" />
               </Flex>
             )}
-            {isError && !isLoading && (
+            {wrapError && !isWrapLoading && (
               <WarningIcon boxSize="104px" color="#E54D66" />
             )}
-            {isSuccess && !isLoading && (
+            {wrapError && (
+              <Text>
+                {wrapError?.message || wrapError}
+              </Text>
+            )}
+            {isWrapSuccess && !isWrapLoading && (
               <SuccessIcon boxSize="104px" color="#29AB87" />
             )}
             <Heading variant="h3">
-              {isSuccess ? `All done!` : isError ? `Something went wrong` : ""}
+              {isWrapSuccess
+                ? `All done!`
+                : isError
+                ? `Something went wrong`
+                : ""}
             </Heading>
-            {isSuccess ? (
+            {isWrapSuccess ? (
               <>
                 <Text variant="bodyMedium" color="content.default.default">
-                  You wrapped {starkToWrap} STRK
+                  You{" "}
+                  {isUnwrap
+                    ? `unwrapped ${starkToWrap} vSTRK`
+                    : `wrapped ${starkToWrap} STRK`}
                 </Text>
                 <Text variant="bodyMedium" color="content.default.default">
-                  You received {starkToWrap} vSTRK
+                  You{" "}
+                  {isUnwrap
+                    ? `received ${starkToWrap} STRK`
+                    : `received ${starkToWrap} vSTRK`}
                 </Text>
                 <Text variant="bodyMedium" color="content.default.default">
                   Review transaction details{" "}
@@ -364,7 +395,7 @@ export function Page() {
             </Flex>
           ) : null}
         </Flex>
-        {isSuccess ? (
+        {isWrapSuccess ? (
           <Modal.Footer>
             <Button
               type="button"

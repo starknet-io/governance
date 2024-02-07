@@ -6,7 +6,7 @@ import { waitForTransaction } from "../snapshotX/helpers";
 
 const starkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
-export const useWrapVSTRK = () => {
+export const useUnwrapVSTRK = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<any>(null);
   const [success, setSuccess] = useState(false);
