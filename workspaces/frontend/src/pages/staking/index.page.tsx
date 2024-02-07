@@ -74,7 +74,7 @@ const WrapModal = ({
           {isLoading && (
             <Flex direction="column" gap="standard.xs" alignItems="center">
               <Spinner size="xxl" />
-              <Heading variant="h3">
+              <Heading variant="h3" mt="standard.sm">
                 {!isUnwrap ? "Wrapping..." : "Unwrapping..."}
               </Heading>
               <Text variant="mediumStrong" color="content.default.default">

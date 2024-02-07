@@ -4,7 +4,7 @@ import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { waitForTransaction } from "../snapshotX/helpers";
 
-const starkContract = import.meta.env.VITE_APP_STARKNET_L2_CONTRACT;
+const starkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
 export const useStarknetDelegate = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);

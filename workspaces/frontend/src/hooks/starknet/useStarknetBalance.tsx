@@ -5,7 +5,7 @@ import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { hexToString } from "viem";
 
-const starknetContract = import.meta.env.VITE_APP_STARKNET_L2_CONTRACT;
+const starknetContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
 export const useStarknetBalance = ({
   starknetAddress,

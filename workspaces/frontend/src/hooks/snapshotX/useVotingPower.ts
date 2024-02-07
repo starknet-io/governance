@@ -3,10 +3,14 @@ import { useQuery } from "@apollo/client";
 import { GET_SPACE } from "./queries";
 import { getVotingPowerCalculation } from "./helpers";
 
-export function useVotingPower({ address, proposal, timestamp }: {
-  address: string,
-  proposal?: number,
-  timestamp?: number,
+export function useVotingPower({
+  address,
+  proposal,
+  timestamp,
+}: {
+  address: string;
+  proposal?: number;
+  timestamp?: number;
 }) {
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
 
@@ -42,7 +46,8 @@ export function useVotingPower({ address, proposal, timestamp }: {
       );
 
       const parsedData = vpData.reduce((acc, strategy) => {
-        const valueWithDecimals = BigInt(strategy.value) / BigInt(10 ** strategy.decimals);
+        const valueWithDecimals =
+          BigInt(strategy.value) / BigInt(10 ** strategy.decimals);
         acc += valueWithDecimals;
         return acc;
       }, 0n);
@@ -65,10 +70,12 @@ export function useVotingPower({ address, proposal, timestamp }: {
     };
 
     window.addEventListener("delegationSuccess", onDelegationSuccess);
+    window.addEventListener("wrapSuccess", onDelegationSuccess);
 
     // Cleanup the event listener
     return () => {
       window.removeEventListener("delegationSuccess", onDelegationSuccess);
+      window.removeEventListener("wrapSuccess", onDelegationSuccess);
     };
   }, [address, spaceObj, timestamp]);
 

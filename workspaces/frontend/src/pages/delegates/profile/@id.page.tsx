@@ -48,6 +48,7 @@ import { useStarknetDelegates } from "../../../hooks/starknet/useStarknetDelegat
 import { useWallets } from "../../../hooks/useWallets";
 import { useStarknetDelegate } from "../../../hooks/starknet/useStarknetDelegation";
 import { delegationAgreement } from "src/utils/data";
+import { getChecksumAddress } from "starknet";
 
 const DELEGATION_SUCCESS_EVENT = "delegationSuccess";
 
@@ -207,14 +208,11 @@ export function Page() {
   const delegateOwnProfileL1 =
     delegationDataL1?.toLowerCase() === ethWallet?.address?.toLowerCase();
   const delegateOwnProfileL2 =
-    delegationDataL2?.toLowerCase() === starknetWallet?.address?.toLowerCase();
+    getChecksumAddress(delegationDataL2?.toLowerCase() || "") ===
+    getChecksumAddress(starknetWallet?.address?.toLowerCase() || "");
 
   const hasDelegatedOnL2 =
-    delegationDataL2 &&
-    delegationDataL2.length &&
-    delegationDataL2.toLowerCase() ===
-      delegate?.author?.starknetAddress?.toLowerCase() &&
-    !delegateOwnProfileL2;
+    delegationDataL2 && delegationDataL2.length && !delegateOwnProfileL2;
   const hasDelegatedOnL1 =
     delegationDataL1 &&
     delegationDataL1.length &&
