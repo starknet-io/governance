@@ -18,7 +18,7 @@ export const useUnwrapVSTRK = () => {
       return;
     }
 
-    if (!amount || amount < 10) {
+    if (!amount || amount < 1) {
       setError("Amount must be greater than 0");
       return;
     }
@@ -48,7 +48,9 @@ export const useUnwrapVSTRK = () => {
       const account = window.starknet.account;
       contract.connect(account);
 
-      const txResponse = await contract.unlock(amount);
+      const amountWithDecimals = BigInt(amount) * 1000000000000000000n
+
+      const txResponse = await contract.unlock(amountWithDecimals);
       setTransactionHash(txResponse.transaction_hash);
       await waitForTransaction(txResponse.transaction_hash);
       setSuccess(true);

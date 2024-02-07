@@ -71,6 +71,17 @@ export const useStarknetBalance = ({
     };
 
     fetchBalance();
+
+    const onWrapSuccess = () => {
+      fetchBalance();
+    };
+
+    window.addEventListener("wrapSuccess", onWrapSuccess);
+
+    // Cleanup the event listener
+    return () => {
+      window.removeEventListener("wrapSuccess", onWrapSuccess);
+    };
   }, [starknetAddress]);
 
   return { balance, loading, error };

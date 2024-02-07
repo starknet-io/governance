@@ -13,13 +13,19 @@ export const useWrapVSTRK = () => {
   const [transactionHash, setTransactionHash] = useState(null);
 
   const wrap = async (starknetAddress: string, amount: number) => {
+    setIsSubmitting(true); // Start submitting
+    setError(null); // Reset error at the start
+    setSuccess(false); // Reset success state
+
     if (!validateStarknetAddress(starknetAddress)) {
       setError("Invalid StarkNet address");
+      setIsSubmitting(false)
       return;
     }
 
-    if (!amount || amount < 10) {
+    if (!amount || amount < 1) {
       setError("Amount must be greater than 0");
+      setIsSubmitting(false)
       return;
     }
 
@@ -27,7 +33,6 @@ export const useWrapVSTRK = () => {
       return "Starknet not found";
     }
 
-    setIsSubmitting(true);
     setSuccess(false);
     setError(null);
 

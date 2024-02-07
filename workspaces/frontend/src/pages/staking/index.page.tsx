@@ -10,6 +10,7 @@ import {
   StarknetIcon,
   Button,
   Modal,
+  Link,
 } from "@yukilabs/governance-components";
 import { navigate } from "vite-plugin-ssr/client/router";
 import {
@@ -33,12 +34,151 @@ import { WalletChainKey } from "../../utils/constants";
 import { GasIcon, useUserWallets } from "@dynamic-labs/sdk-react-core";
 import TabButton from "../../components/TabButton";
 import * as Swap from "@yukilabs/governance-components/src/Swap/Swap";
-import { useStarknetDelegate } from "../../hooks/starknet/useStarknetDelegation";
 import { useWrapVSTRK } from "../../hooks/starknet/useWrapVSTRK";
 import { useUnwrapVSTRK } from "../../hooks/starknet/useUnwrapVSTRK";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
+
+const WrapModal = ({
+  isOpen,
+  onClose,
+  isUnwrap,
+  isLoading,
+  isSuccess,
+  starkToWrap,
+  error,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  isUnwrap?: boolean;
+  isLoading: boolean;
+  isSuccess: boolean;
+  starkToWrap: number;
+  error: any;
+}) => {
+  console.log("Loading, ", isLoading);
+  console.log("Success, ", isSuccess);
+  console.log("Error, ", error);
+  return (
+    <Modal
+      motionPreset="slideInBottom"
+      isOpen={isOpen}
+      onClose={() => {
+        onClose();
+      }}
+      isCentered
+    >
+      <Flex alignItems="center" direction="column" gap="standard.xl">
+        <Flex alignItems="center" direction="column" gap="standard.xs">
+          {isLoading && (
+            <Flex direction="column" gap="standard.xs" alignItems="center">
+              <Spinner size="xxl" />
+              <Heading variant="h3">
+                {!isUnwrap ? "Wrapping..." : "Unwrapping..."}
+              </Heading>
+              <Text variant="mediumStrong" color="content.default.default">
+                {isUnwrap
+                  ? `You are unwrapping ${starkToWrap} vSTRK`
+                  : `You are wrapping ${starkToWrap} STRK`}
+              </Text>
+              <Text variant="mediumStrong" color="content.default.default">
+                {isUnwrap
+                  ? `You will receive ${starkToWrap} STRK`
+                  : `You will receive ${starkToWrap} vSTRK`}
+              </Text>
+            </Flex>
+          )}
+          {error && (
+            <>
+              <WarningIcon boxSize="104px" color="#E54D66" />
+              <Heading variant="h3">Error</Heading>
+              <Text variant="mediumStrong" color="content.default.default">
+                {error?.message || error}
+              </Text>
+            </>
+          )}
+          {isSuccess && (
+            <>
+              <SuccessIcon boxSize="104px" color="#30B37C" />
+              <Heading variant="h3">All done!</Heading>
+              <Flex
+                mb="standard.lg"
+                flexDirection="column"
+                alignItems="center"
+                gap="standard.xs"
+              >
+                <Text variant="mediumStrong" color="content.default.default">
+                  You{" "}
+                  {isUnwrap
+                    ? `unwrapped ${starkToWrap} vSTRK`
+                    : `wrapped ${starkToWrap} STRK`}
+                </Text>
+                <Text variant="mediumStrong" color="content.default.default">
+                  You{" "}
+                  {isUnwrap
+                    ? `received ${starkToWrap} STRK`
+                    : `received ${starkToWrap} vSTRK`}
+                </Text>
+                <Link
+                  isExternal
+                  href={`https://sepolia.starkscan.co`}
+                  variant="secondary"
+                  size="small"
+                  color="content.support.default"
+                >
+                  Review transaction details{" "}
+                </Link>
+              </Flex>
+              <Flex
+                alignItems="center"
+                gap="standard.xs"
+                alignSelf="stretch"
+                p="0"
+              >
+                <Text
+                  variant="mediumStrong"
+                  color="content.default.default"
+                  sx={{
+                    flex: "1 0 0",
+                    textWrap: "wrap",
+                    textAlign: "left",
+                  }}
+                >
+                  Add the vSTRK token to your wallet to track your balance.
+                </Text>
+                <Button
+                  variant="outline"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("Manage vSTRK");
+                  }}
+                >
+                  <WalletIcon mr="standard.xs" />
+                  Add to wallet
+                </Button>
+              </Flex>
+            </>
+          )}
+        </Flex>
+      </Flex>
+      {isSuccess ? (
+        <Modal.Footer>
+          <Button
+            type="button"
+            variant="primary"
+            size="standard"
+            onClick={() => navigate("/delegates")}
+            width="100%"
+          >
+            Continue to delegate
+          </Button>
+        </Modal.Footer>
+      ) : null}
+    </Modal>
+  );
+};
 
 export function Page() {
   const wallets = useUserWallets();
@@ -66,14 +206,36 @@ export function Page() {
   const [sliderValue, setSliderValue] = useState(50);
   const [activeTab, setActiveTab] = useState(0);
   const [starkToWrap, setStarkToWrap] = useState(0);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isError, setError] = useState(false);
-  const [description, setDescription] = useState("");
-  const [title, setTitle] = useState("");
-
+  const [wrappedStark, setWrappedStark] = useState(0);
   const isUnwrap = activeTab === 1;
+
+  const {
+    isOpen: isWrapOpen,
+    onOpen: onWrapOpen,
+    onClose: onWrapClose,
+  } = useDisclosure();
+  const {
+    isOpen: isUnwrapOpen,
+    onOpen: onUnwrapOpen,
+    onClose: onUnwrapClose,
+  } = useDisclosure();
+
+  const addToWallet = async () => {
+    if (!window.starknet) {
+      console.error("Argent Wallet is not detected!");
+      return;
+    }
+
+    try {
+      // Check if the StarkNet provider is available
+
+      /* to implement */
+
+      console.log("Token successfully added to Argent Wallet!");
+    } catch (error) {
+      console.error("Failed to add token to Argent Wallet:", error);
+    }
+  };
 
   const {
     wrap,
@@ -90,27 +252,47 @@ export function Page() {
   } = useUnwrapVSTRK();
 
   const wrapTokens = async () => {
-    onOpen();
-    setIsLoading(true);
+    if (!isUnwrap) {
+      onWrapOpen();
+    } else {
+      onUnwrapOpen();
+    }
 
     try {
-      const methodToCall = activeTab === 0 ? wrap : unwrap;
-
-      await methodToCall(starknetAddress, starkToWrap);
+      if (!isUnwrap) {
+        setWrappedStark(starkToWrap);
+        await wrap(starknetAddress, starkToWrap);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("wrapSuccess"));
+        }
+      } else {
+        setWrappedStark(starkToWrap);
+        await unwrap(starknetAddress, starkToWrap);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("wrapSuccess"));
+        }
+      }
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
-    if (starknetBalance?.rawBalance) {
+    if (starknetBalance?.rawBalance && !isUnwrap) {
       setStarkToWrap(parseFloat(starknetBalance?.rawBalance) / 2);
+    } else if (vSTRKBalance?.rawBalance && isUnwrap) {
+      setStarkToWrap(parseFloat(vSTRKBalance?.rawBalance) / 2);
     }
-  }, [starknetBalance?.rawBalance]);
+  }, [starknetBalance?.rawBalance, vSTRKBalance?.rawBalance, isUnwrap]);
   const handleSliderChange = (val) => {
     setSliderValue(val);
-    const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
-    setStarkToWrap(Math.floor((val / 100) * rawBalance));
+    if (isUnwrap) {
+      const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
+      setStarkToWrap(Math.floor((val / 100) * rawBalance));
+    } else {
+      const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
+      setStarkToWrap(Math.floor((val / 100) * rawBalance));
+    }
   };
   const handleStarkToWrapAmount = (amount: number) => {
     const toSet = Math.min(amount, starknetBalance?.rawBalance);
@@ -118,7 +300,12 @@ export function Page() {
     setStarkToWrap(toSet);
     setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
   };
-  console.log(sliderValue, starkToWrap);
+  const handleStarkToUnWrapAmount = (amount: number) => {
+    const toSet = Math.min(amount, vSTRKBalance?.rawBalance);
+    const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
+    setStarkToWrap(toSet);
+    setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
+  };
   return (
     <FormLayout>
       <Box width="100%">
@@ -249,7 +436,11 @@ export function Page() {
                 icon={<StarknetIcon />}
                 value={starkToWrap > 0 ? starkToWrap : ""}
                 onChange={(e) => {
-                  handleStarkToWrapAmount(e.target.value);
+                  if (isUnwrap) {
+                    handleStarkToUnWrapAmount(e.target.value);
+                  } else {
+                    handleStarkToWrapAmount(e.target.value);
+                  }
                 }}
               />
             </Flex>
@@ -309,106 +500,23 @@ export function Page() {
           </Box>
         </Flex>
       </Box>
-      <Modal
-        motionPreset="slideInBottom"
-        isOpen={isOpen}
-        onClose={() => {
-          onClose();
-        }}
-        isCentered
-      >
-        <Flex alignItems="center" direction="column" gap="standard.xl">
-          <Flex alignItems="center" direction="column" gap="standard.xs">
-            {isWrapLoading && (
-              <Flex direction="column" gap="standard.lg" alignItems="center">
-                <Heading variant="h3">{title}</Heading>
-                <Spinner size="xxl" />
-              </Flex>
-            )}
-            {wrapError && !isWrapLoading && (
-              <WarningIcon boxSize="104px" color="#E54D66" />
-            )}
-            {wrapError && (
-              <Text>
-                {wrapError?.message || wrapError}
-              </Text>
-            )}
-            {isWrapSuccess && !isWrapLoading && (
-              <SuccessIcon boxSize="104px" color="#29AB87" />
-            )}
-            <Heading variant="h3">
-              {isWrapSuccess
-                ? `All done!`
-                : isError
-                ? `Something went wrong`
-                : ""}
-            </Heading>
-            {isWrapSuccess ? (
-              <>
-                <Text variant="bodyMedium" color="content.default.default">
-                  You{" "}
-                  {isUnwrap
-                    ? `unwrapped ${starkToWrap} vSTRK`
-                    : `wrapped ${starkToWrap} STRK`}
-                </Text>
-                <Text variant="bodyMedium" color="content.default.default">
-                  You{" "}
-                  {isUnwrap
-                    ? `received ${starkToWrap} STRK`
-                    : `received ${starkToWrap} vSTRK`}
-                </Text>
-                <Text variant="bodyMedium" color="content.default.default">
-                  Review transaction details{" "}
-                </Text>
-              </>
-            ) : null}
-          </Flex>
-          {isSuccess ? (
-            <Flex
-              alignItems="center"
-              gap="standard.xs"
-              alignSelf="stretch"
-              p="0"
-            >
-              <Text
-                variant="bodySmall"
-                color="content.accent.default"
-                sx={{
-                  flex: "1 0 0",
-                  textWrap: "wrap",
-                  textAlign: "left",
-                }}
-              >
-                Add the vSTRK token to your wallet to track your balance.
-              </Text>
-              <Button
-                variant="outline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log("Manage vSTRK");
-                }}
-              >
-                <WalletIcon mr="standard.xs" />
-                Add to wallet
-              </Button>
-            </Flex>
-          ) : null}
-        </Flex>
-        {isWrapSuccess ? (
-          <Modal.Footer>
-            <Button
-              type="button"
-              variant="primary"
-              size="standard"
-              onClick={() => navigate("/delegates")}
-              width="100%"
-            >
-              Continue to delegate
-            </Button>
-          </Modal.Footer>
-        ) : null}
-      </Modal>
+      <WrapModal
+        isOpen={isWrapOpen}
+        onClose={onWrapClose}
+        isLoading={isWrapLoading}
+        isSuccess={isWrapSuccess}
+        starkToWrap={wrappedStark}
+        error={wrapError}
+      />
+      <WrapModal
+        isOpen={isUnwrapOpen}
+        onClose={onUnwrapClose}
+        isUnwrap
+        isLoading={isUnwrapLoading}
+        isSuccess={isUnwrapSuccess}
+        starkToWrap={wrappedStark}
+        error={unwrapError}
+      />
     </FormLayout>
   );
 }
