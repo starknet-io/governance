@@ -57,9 +57,6 @@ const WrapModal = ({
   starkToWrap: number;
   error: any;
 }) => {
-  console.log("Loading, ", isLoading);
-  console.log("Success, ", isSuccess);
-  console.log("Error, ", error);
   return (
     <Modal
       motionPreset="slideInBottom"
