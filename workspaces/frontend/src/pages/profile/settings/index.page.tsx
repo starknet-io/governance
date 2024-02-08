@@ -37,10 +37,12 @@ import {
   CheckIcon,
   DynamicConnectButton,
   useDynamicContext,
-  useUserWallets, useWalletConnectorEvent,
+  useUserWallets,
+  useWalletConnectorEvent,
 } from "@dynamic-labs/sdk-react-core";
 
 import type { WalletConnector } from "@dynamic-labs/wallet-connector-core";
+import { getChecksumAddress } from "starknet";
 
 type Wallet = {
   address: string;
@@ -142,12 +144,11 @@ export const WalletButtons = ({
 
   useWalletConnectorEvent(
     primaryWallet?.connector,
-    'accountChange',
+    "accountChange",
     ({ accounts }, connector) => {
       // We will need this to detect account change in dynamic
     },
   );
-
 
   const findMatchingWallet = (wallets: any[], key: "EVM" | "STARKNET") => {
     return wallets.find((wallet) => wallet.chain === Chain[key]);
@@ -171,6 +172,18 @@ export const WalletButtons = ({
           isSelectable={selectable}
           onClick={async () => {
             try {
+              if (typeof window !== "undefined") {
+                if (
+                  getChecksumAddress(
+                    window?.starknet?.account?.address || "",
+                  ) !== getChecksumAddress(starknetWallet?.address || "")
+                ) {
+                  alert(
+                    `Your Starknet wallet does not have the correct account active. Please switch to ${starknetWallet?.address}`,
+                  );
+                  return;
+                }
+              }
               await setPrimaryWallet(starknetWallet.id);
             } catch (err) {
               console.error(err);

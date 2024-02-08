@@ -76,7 +76,7 @@ export const DynamicProvider = (props: Props) => {
     [authMutation],
   );
 
-  const handleLinkEvent = async (walletAddress: string, isEth: boolean) => {
+  const handleLinkEvent = async (walletAddress: string, isEth?: boolean) => {
     if (user) {
       if (!isEth) {
         await editUserProfile.mutateAsync({
