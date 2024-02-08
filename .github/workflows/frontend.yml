@@ -73,6 +73,8 @@ jobs:
             VITE_APP_IPFS_GATEWAY=${{ vars.VITE_APP_IPFS_GATEWAY }}
             VITE_APP_INFURA_API_KEY=${{ secrets.VITE_APP_INFURA_API_KEY }}
             VITE_APP_PASS_CORS_KEY=${{ vars.VITE_APP_PASS_CORS_KEY }}
+            VITE_APP_VSTRK_CONTRACT=${{ vars.VITE_APP_VSTRK_CONTRACT }}
+            VITE_APP_STRK_CONTRACT=${{ vars.VITE_APP_STRK_CONTRACT }}
             VITE_APP_TW_CLIENT_ID=${{ vars.VITE_APP_TW_CLIENT_ID }}
   Deploy-dev:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
