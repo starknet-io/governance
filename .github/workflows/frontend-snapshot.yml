@@ -62,6 +62,8 @@ jobs:
             VITE_APP_SNAPSHOTX_SPACE=${{ vars.VITE_APP_SNAPSHOTX_SPACE }}
             VITE_APP_SNAPSHOTX_URL=${{ vars.VITE_APP_SNAPSHOTX_URL }}
             VITE_APP_IPFS_GATEWAY=${{ vars.VITE_APP_IPFS_GATEWAY }}
+            VITE_APP_VSTRK_CONTRACT=${{ vars.VITE_APP_VSTRK_CONTRACT }}
+            VITE_APP_STRK_CONTRACT=${{ vars.VITE_APP_STRK_CONTRACT }}
             VITE_APP_INFURA_API_KEY=${{ secrets.VITE_APP_INFURA_API_KEY }}
 
   Deploy-snapshotx:

@@ -31,7 +31,6 @@ import {
   SupportModal,
   Text,
   GlobalSearch,
-  SearchIcon,
   NotificationsMenu,
 } from "@yukilabs/governance-components";
 import { DynamicCustomWidget } from "src/components/DynamicCustomWidget";
@@ -43,6 +42,8 @@ import {
   BannedIcon,
   ConnectWalletIcon,
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
+import { useWallets } from "../../hooks/useWallets";
+import ConnectSecondaryWalletModal from "../../components/ConnectSecondaryWalletModal/ConnectSecondaryWalletModal";
 
 export interface Props {
   readonly pageContext: PageContext;
@@ -50,14 +51,25 @@ export interface Props {
 }
 function LayoutDefault(props: Props) {
   const [helpMessage, setHelpMessage] = useHelpMessage();
+  const { starknetWallet, ethWallet } = useWallets();
   const { children, pageContext } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user } = usePageContext();
+  const { data: userDelegate } = trpc.users.isDelegate.useQuery(
+    {
+      userId: user?.id,
+    },
+    {
+      enabled: !!user?.id,
+    },
+  );
   const councilResp = trpc.councils.getAll.useQuery();
   const [renderDone, setRenderDone] = useState(false);
-  const { user } = usePageContext();
   const { handleLogOut, setShowAuthFlow } = useDynamicContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBannedModalOpen, setIsBannedModalOpen] = useState(false);
+  const [showEthModal, setShowEthModal] = useState(false);
+  const [showStarkModal, setShowStarkModal] = useState(false);
 
   useEffect(() => {
     if (user?.banned) {
@@ -65,6 +77,24 @@ function LayoutDefault(props: Props) {
       handleLogOut();
     }
   }, [user?.banned]);
+
+  useEffect(() => {
+    if (userDelegate && user) {
+      if (!ethWallet?.address && starknetWallet?.address) {
+        setShowEthModal(true);
+        setShowStarkModal(false);
+      } else if (!starknetWallet?.address && ethWallet?.address) {
+        setShowStarkModal(true);
+        setShowEthModal(false);
+      } else {
+        setShowStarkModal(false);
+        setShowEthModal(false);
+      }
+    } else {
+      setShowStarkModal(false);
+      setShowEthModal(false);
+    }
+  }, [userDelegate, starknetWallet?.address, ethWallet?.address]);
 
   useEffect(() => {
     setRenderDone(true);
@@ -102,8 +132,8 @@ function LayoutDefault(props: Props) {
       setWindowHeight(window?.innerHeight.toString());
     };
     checkWindowHeight();
-    window.addEventListener('resize', checkWindowHeight);
-    return () => window.removeEventListener('resize', checkWindowHeight);
+    window.addEventListener("resize", checkWindowHeight);
+    return () => window.removeEventListener("resize", checkWindowHeight);
   }, []);
 
   return (
@@ -112,6 +142,19 @@ function LayoutDefault(props: Props) {
       <SupportModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+      <ConnectSecondaryWalletModal
+        isOpen={showEthModal || showStarkModal}
+        onClose={() => {
+          setShowStarkModal(false);
+          setShowEthModal(false);
+        }}
+        onNext={() => {
+          setShowStarkModal(false);
+          setShowEthModal(false);
+        }}
+        shouldConnectStarknet={showStarkModal}
+        shouldConnectEthereum={showEthModal}
       />
       <InfoModal
         isOpen={isBannedModalOpen}
@@ -181,7 +224,14 @@ function LayoutDefault(props: Props) {
           <Box display={{ base: "none", lg: "flex" }}>
             {renderDone ? <DynamicCustomWidget /> : <Spinner size="sm" />}
           </Box>
-          <DrawerBody p="0" mt={{base: "60px", md: "68px"}} height={{base: `calc(${windowHeight}px - 60px)`, md: `calc(${windowHeight}px - 68px)`}}>
+          <DrawerBody
+            p="0"
+            mt={{ base: "60px", md: "68px" }}
+            height={{
+              base: `calc(${windowHeight}px - 60px)`,
+              md: `calc(${windowHeight}px - 68px)`,
+            }}
+          >
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
@@ -192,7 +242,12 @@ function LayoutDefault(props: Props) {
         </DrawerContent>
       </Drawer>
 
-      <Flex width="100%" minHeight="100vh" direction="row" pt={{ base: "60px", lg: "0" }}>
+      <Flex
+        width="100%"
+        minHeight="100vh"
+        direction="row"
+        pt={{ base: "60px", lg: "0" }}
+      >
         <Box
           bg="surface.forms.default"
           width="234px"
@@ -208,11 +263,7 @@ function LayoutDefault(props: Props) {
           borderColor="border.forms"
         >
           <Logo href="/" />
-          <Flex
-            flexDirection={"column"}
-            flex={1}
-            pb="standard.xs"
-          >
+          <Flex flexDirection={"column"} flex={1} pb="standard.xs">
             <NavigationMenu
               pageContext={pageContext}
               userRole={user?.role}
@@ -258,9 +309,7 @@ function LayoutDefault(props: Props) {
                   variant="ghost"
                 />
                 <Show breakpoint="(max-width: 567px)">
-                  {user && (
-                    <NotificationsMenu />
-                  )}
+                  {user && <NotificationsMenu />}
                 </Show>
                 {/* <Show breakpoint="(max-width: 567px)">
                   <IconButton
@@ -301,9 +350,7 @@ function LayoutDefault(props: Props) {
                   <ShareDialog />
                 </Box>
                 <Show breakpoint="(min-width: 568px)">
-                  {user && (
-                    <NotificationsMenu />
-                  )}
+                  {user && <NotificationsMenu />}
                 </Show>
                 <Show breakpoint="(min-width: 1079px)">
                   <GlobalSearch
@@ -332,4 +379,3 @@ function LayoutDefault(props: Props) {
     </>
   );
 }
-

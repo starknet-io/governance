@@ -78,6 +78,7 @@ export const DynamicProvider = (props: Props) => {
 
   const handleLinkEvent = async (walletAddress: string, isEth?: boolean) => {
     if (user) {
+      handleClose()
       if (!isEth) {
         await editUserProfile.mutateAsync({
           id: user.id,
