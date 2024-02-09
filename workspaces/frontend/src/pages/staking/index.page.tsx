@@ -48,6 +48,7 @@ const WrapModal = ({
   isSuccess,
   starkToWrap,
   error,
+  txHash = "",
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -56,6 +57,7 @@ const WrapModal = ({
   isSuccess: boolean;
   starkToWrap: number;
   error: any;
+  txHash: string | null;
 }) => {
   return (
     <Modal
@@ -119,7 +121,7 @@ const WrapModal = ({
                 </Text>
                 <Link
                   isExternal
-                  href={`https://sepolia.starkscan.co`}
+                  href={`https://sepolia.starkscan.co/tx/${txHash || ""}`}
                   variant="secondary"
                   size="small"
                   color="content.support.default"
@@ -239,6 +241,7 @@ export function Page() {
     loading: isWrapLoading,
     error: wrapError,
     success: isWrapSuccess,
+    transactionHash: wrapTxHash,
   } = useWrapVSTRK();
 
   const {
@@ -246,6 +249,7 @@ export function Page() {
     loading: isUnwrapLoading,
     error: unwrapError,
     success: isUnwrapSuccess,
+    transactionHash: unwrapTxHash,
   } = useUnwrapVSTRK();
 
   const wrapTokens = async () => {
@@ -280,7 +284,7 @@ export function Page() {
     } else if (vSTRKBalance?.rawBalance && isUnwrap) {
       setStarkToWrap(parseFloat(vSTRKBalance?.rawBalance) / 2);
     }
-    setSliderValue(50)
+    setSliderValue(50);
   }, [starknetBalance?.rawBalance, vSTRKBalance?.rawBalance, isUnwrap]);
 
   const handleSliderChange = (val) => {
@@ -506,6 +510,7 @@ export function Page() {
         isSuccess={isWrapSuccess}
         starkToWrap={wrappedStark}
         error={wrapError}
+        txHash={wrapTxHash}
       />
       <WrapModal
         isOpen={isUnwrapOpen}
@@ -515,6 +520,7 @@ export function Page() {
         isSuccess={isUnwrapSuccess}
         starkToWrap={wrappedStark}
         error={unwrapError}
+        txHash={unwrapTxHash}
       />
     </FormLayout>
   );
