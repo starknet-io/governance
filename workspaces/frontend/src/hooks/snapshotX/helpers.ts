@@ -192,13 +192,6 @@ export const getVotingPowerCalculation = async (
         strategiesMetadata[i].payload,
       );
 
-      console.log("________________");
-      console.log("Address: ", address);
-      console.log("Voter Address: ", voterAddress);
-      console.log("Strategy metadata: ", strategyMetadata);
-      console.log("Timestamp: ", timestamp);
-      console.log("Strategy params ", strategiesParams[i].split(","));
-      console.log("________________");
 
       const value = await strategy.getVotingPower(
         address,
@@ -224,7 +217,6 @@ export const getVotingPowerCalculation = async (
 };
 
 export const parseStrategiesToHumanReadableFormat = (strategies = []) => {
-  console.log(strategies);
   return strategies.map((strategy) => {
     if (STRATEGIES_ENUM?.[strategy]) {
       return STRATEGIES_ENUM?.[strategy];

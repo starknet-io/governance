@@ -130,7 +130,7 @@ const UserSummary = ({
           onClick={e => {
             e.preventDefault();
             e.stopPropagation();
-            navigate('/staking')
+            navigate('/manage-vstrk')
           }}
         >Manage vSTRK</Button>
       </Flex>: null}

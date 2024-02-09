@@ -95,7 +95,7 @@ export const VotingPowerBreakdown = ({
               {!showBreakdown ? (
                 <Box p="standard.sm">
                   <Link
-                    href="/staking"
+                    href="/manage-vstrk"
                     size="small"
                     color="content.links.default"
                   >

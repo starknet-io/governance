@@ -17,9 +17,11 @@ type Props = {
   withSkip?: boolean;
   shouldConnectStarknet?: boolean;
   shouldConnectEthereum?: boolean;
+  isDelegate?: boolean;
 };
 const ConnectSecondaryWalletModal = ({
   isOpen,
+  isDelegate,
   onClose,
   shouldConnectStarknet,
   shouldConnectEthereum,
@@ -31,6 +33,7 @@ const ConnectSecondaryWalletModal = ({
       useInert={false}
       isOpen={isOpen}
       isCentered
+      withCloseButton={!isDelegate}
       onClose={onClose}
       title={`Connect ${
         shouldConnectEthereum ? "Ethereum" : "Starknet"
@@ -69,7 +72,7 @@ const ConnectSecondaryWalletModal = ({
             </Flex>
           </Button>
         </DynamicConnectButton>
-        {withSkip && (
+        {withSkip && !isDelegate && (
           <Button onClick={onNext} w="100%" mt="standard.sm">
             Skip
           </Button>
