@@ -48,7 +48,7 @@ export const useUnwrapVSTRK = () => {
       const account = window.starknet.account;
       contract.connect(account);
 
-      const amountWithDecimals = BigInt(amount) * 1000000000000000000n
+      const amountWithDecimals = BigInt(Math.floor(amount * 1e18)).toString(); // Convert to string to avoid precision issues
 
       const txResponse = await contract.unlock(amountWithDecimals);
       setTransactionHash(txResponse.transaction_hash);

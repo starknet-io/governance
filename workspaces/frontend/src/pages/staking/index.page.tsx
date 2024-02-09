@@ -439,7 +439,9 @@ export function Page() {
             </Flex>
             <Flex mb="standard.md" gap="standard.sm" flexDirection="column">
               <Text variant="mediumStrong" color="content.default.default">
-                How much STRK do you want to stake?
+                {isUnwrap
+                  ? "How much vSTRK do you want to unstake?"
+                  : "How much STRK do you want to stake?"}
               </Text>
               <Input
                 type="number"
