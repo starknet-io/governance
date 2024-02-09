@@ -156,7 +156,7 @@ export const NavigationMenu = ({
           <NavGroup align="end">
             {user ? (
               <NavItem
-                href="/staking"
+                href="/manage-vstrk"
                 icon={<MoneyIcon />}
                 label="Manage vSTRK"
               />
