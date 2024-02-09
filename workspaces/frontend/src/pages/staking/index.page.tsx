@@ -36,6 +36,7 @@ import TabButton from "../../components/TabButton";
 import * as Swap from "@yukilabs/governance-components/src/Swap/Swap";
 import { useWrapVSTRK } from "../../hooks/starknet/useWrapVSTRK";
 import { useUnwrapVSTRK } from "../../hooks/starknet/useUnwrapVSTRK";
+import { useWallets } from "../../hooks/useWallets";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -49,6 +50,7 @@ const WrapModal = ({
   starkToWrap,
   error,
   txHash = "",
+  handleAddToWallet,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -58,6 +60,7 @@ const WrapModal = ({
   starkToWrap: number;
   error: any;
   txHash: string | null;
+  handleAddToWallet: () => Promise<any>;
 }) => {
   return (
     <Modal
@@ -149,9 +152,7 @@ const WrapModal = ({
                 <Button
                   variant="outline"
                   onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log("Manage vSTRK");
+                    handleAddToWallet();
                   }}
                 >
                   <WalletIcon mr="standard.xs" />
@@ -181,6 +182,7 @@ const WrapModal = ({
 
 export function Page() {
   const wallets = useUserWallets();
+  const { starknetWallet } = useWallets();
 
   const ethAddress =
     findMatchingWallet(wallets, WalletChainKey.EVM)?.address || undefined;
@@ -218,23 +220,6 @@ export function Page() {
     onOpen: onUnwrapOpen,
     onClose: onUnwrapClose,
   } = useDisclosure();
-
-  const addToWallet = async () => {
-    if (!window.starknet) {
-      console.error("Argent Wallet is not detected!");
-      return;
-    }
-
-    try {
-      // Check if the StarkNet provider is available
-
-      /* to implement */
-
-      console.log("Token successfully added to Argent Wallet!");
-    } catch (error) {
-      console.error("Failed to add token to Argent Wallet:", error);
-    }
-  };
 
   const {
     wrap,
@@ -309,6 +294,35 @@ export function Page() {
     setStarkToWrap(toSet);
     setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
   };
+
+  const handleAddToWallet = async () => {
+    const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
+
+    const data: any = {
+      type: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: vStarkContract,
+          name: "Starknet Voting Token",
+          symbol: "vSTRK",
+          decimals: "18",
+          network: "sepolia",
+        },
+      },
+    };
+
+    if (typeof window !== "undefined") {
+      if (window.starknet) {
+        if (starknetWallet?.connector?.name === "Braavos") {
+          await window.starknet_braavos.request(data);
+        } else if (window?.starknet?.id === "argentX") {
+          await window.starknet.request(data);
+        }
+      }
+    }
+  };
+
   return (
     <FormLayout>
       <Box width="100%">
@@ -337,6 +351,7 @@ export function Page() {
             borderRadius="4px"
             minW={{ base: "100%", md: "206px" }}
           >
+            <Button onClick={handleAddToWallet}> click me </Button>
             <Box
               borderBottom="1px solid"
               borderColor="border.dividers"
@@ -510,6 +525,7 @@ export function Page() {
         isSuccess={isWrapSuccess}
         starkToWrap={wrappedStark}
         error={wrapError}
+        handleAddToWallet={handleAddToWallet}
         txHash={wrapTxHash}
       />
       <WrapModal
@@ -520,6 +536,7 @@ export function Page() {
         isSuccess={isUnwrapSuccess}
         starkToWrap={wrappedStark}
         error={unwrapError}
+        handleAddToWallet={handleAddToWallet}
         txHash={unwrapTxHash}
       />
     </FormLayout>
