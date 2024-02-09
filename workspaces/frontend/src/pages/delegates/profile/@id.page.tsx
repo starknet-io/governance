@@ -695,7 +695,7 @@ export function Page() {
                 handleDelegation({ layer: 1, isUndelegation: true })
               }
             >
-              Undelegate on L1
+              Undelegate on Ethereum
             </Button>
             {starknetWallet && (
               <Button
@@ -707,7 +707,7 @@ export function Page() {
                   handleDelegation({ layer: 2, isDelegation: true })
                 }
               >
-                Delegate on L2
+                Delegate on Starknet
               </Button>
             )}
           </>
@@ -723,7 +723,7 @@ export function Page() {
                 handleDelegation({ layer: 2, isUndelegation: true })
               }
             >
-              Undelegate on L2
+              Undelegate on Starknet
             </Button>
             {ethWallet && (
               <Button
@@ -735,7 +735,7 @@ export function Page() {
                   handleDelegation({ layer: 1, isDelegation: true })
                 }
               >
-                Delegate on L1
+                Delegate on Ethereum
               </Button>
             )}
           </>
@@ -765,7 +765,7 @@ export function Page() {
                 handleDelegation({ layer: 1, isUndelegation: true })
               }
             >
-              Undelegate on L1
+              Undelegate on Ethereum
             </Button>
             <Button
               variant="secondary"
@@ -776,7 +776,7 @@ export function Page() {
                 handleDelegation({ layer: 2, isUndelegation: true })
               }
             >
-              Undelegate on L2
+              Undelegate on Starknet
             </Button>
           </>
         )}

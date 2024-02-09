@@ -24,6 +24,7 @@ import {
   Button as GovernanceButton,
   IconButton,
   XIcon,
+  StatusModal
 } from "@yukilabs/governance-components";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useForm } from "react-hook-form";
@@ -156,7 +157,7 @@ export const WalletButtons = ({
 
   const starknetWallet = findMatchingWallet(userWallets, "STARKNET");
   const ethWallet = findMatchingWallet(userWallets, "EVM");
-
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   return (
     <Flex justifyContent="space-between">
       <Flex direction="column" gap="standard.xl">
@@ -184,9 +185,7 @@ export const WalletButtons = ({
                     window?.starknet?.account?.address || "",
                   ) !== getChecksumAddress(starknetWallet?.address || "")
                 ) {
-                  alert(
-                    `Your Starknet wallet does not have the correct account active. Please switch to ${starknetWallet?.address}`,
-                  );
+                  setIsStatusModalOpen(true);
                   return;
                 }
               }
@@ -222,6 +221,19 @@ export const WalletButtons = ({
           }}
         />
       </Flex>
+      <StatusModal
+        isOpen={isStatusModalOpen}
+        isPending={false}
+        isSuccess={false}
+        isFail={
+          true
+        }
+        onClose={() => {
+          setIsStatusModalOpen(false);
+        }}
+        title="Incorrect Starknet account"
+        description={`Your Starknet wallet does not have the correct account active. Please switch to ${starknetWallet?.address}`}
+      />
     </Flex>
   );
 };
