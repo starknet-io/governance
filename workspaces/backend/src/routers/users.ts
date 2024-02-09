@@ -184,6 +184,7 @@ export const usersRouter = router({
     .input(
       z.object({
         id: z.string(),
+        hasConnectedSecondaryWallet: z.optional(z.boolean()),
         username: z.optional(z.any()),
         starknetAddress: z.optional(z.any()),
         ethereumAddress: z.optional(z.any()),
@@ -191,14 +192,21 @@ export const usersRouter = router({
       }),
     )
     .mutation(async (opts) => {
-      const { id, username, starknetAddress, profileImage } = opts.input;
+      const {
+        id,
+        username,
+        starknetAddress,
+        ethereumAddress,
+        hasConnectedSecondaryWallet,
+        profileImage,
+      } = opts.input;
 
       // Fetch the user by ID once instead of twice.
       const userById = await db.query.users.findFirst({
         where: eq(users.id, id),
       });
 
-      // Ensure the user exists by ID.
+      // Ensure the user exists.
       if (!userById) {
         throw new Error('User not found');
       }
@@ -214,23 +222,24 @@ export const usersRouter = router({
         }
       }
 
-      // Handle potential nulls for updated fields.
-      const updatedUsername =
-        username === '' ? null : username || userById.username;
-      const updatedAddress =
-        starknetAddress !== undefined && starknetAddress !== ''
-          ? starknetAddress
-          : null;
+      // Prepare updates, conditionally including fields if they are provided.
+      const updates = {
+        username: username === '' ? null : username || userById.username,
+        profileImage: profileImage || userById.profileImage,
+        // Only include starknetAddress and ethereumAddress in the update if they are explicitly provided.
+        ...(starknetAddress !== undefined
+          ? { starknetAddress: starknetAddress !== '' ? starknetAddress : null }
+          : {}),
+        ...(ethereumAddress !== undefined
+          ? { ethereumAddress: ethereumAddress !== '' ? ethereumAddress : null }
+          : {}),
+        // Conditionally include hasConnectedSecondaryWallet if it's provided.
+        ...(hasConnectedSecondaryWallet !== undefined
+          ? { hasConnectedSecondaryWallet }
+          : {}),
+      };
 
-      await db
-        .update(users)
-        .set({
-          username: updatedUsername,
-          starknetAddress: updatedAddress,
-          profileImage: profileImage || userById.profileImage,
-        })
-        .where(eq(users.id, id))
-        .returning();
+      await db.update(users).set(updates).where(eq(users.id, id)).returning();
 
       const foundUser = await db.query.users.findFirst({
         where: eq(users.id, id),
@@ -239,6 +248,7 @@ export const usersRouter = router({
         },
       });
 
+      // Additional logic to handle Algolia update and delegate lookup remains unchanged.
       if (foundUser) {
         const delegate = await db.query.delegates.findFirst({
           where: eq(delegates.userId, id),

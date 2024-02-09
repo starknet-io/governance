@@ -211,8 +211,15 @@ export function Page() {
     getChecksumAddress(delegationDataL2?.toLowerCase() || "") ===
     getChecksumAddress(starknetWallet?.address?.toLowerCase() || "");
 
+  const delegatedToDelegateL2 =
+    getChecksumAddress(delegationDataL2?.toLowerCase() || "") ===
+    getChecksumAddress(delegate?.author?.starknetAddress?.toLowerCase() || "");
+
   const hasDelegatedOnL2 =
-    delegationDataL2 && delegationDataL2.length && !delegateOwnProfileL2;
+    delegationDataL2 &&
+    delegationDataL2.length &&
+    delegatedToDelegateL2 &&
+    !delegateOwnProfileL2;
   const hasDelegatedOnL1 =
     delegationDataL1 &&
     delegationDataL1.length &&

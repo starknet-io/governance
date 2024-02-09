@@ -52,7 +52,6 @@ export const delegateRouter = router({
         statement: z.string(),
         interests: z.any(),
         understandRole: z.boolean(),
-        starknetAddress: z.string(),
         customDelegateAgreementContent: z.optional(z.string()), // Optionally add custom agreement content
         confirmDelegateAgreement: z.optional(z.boolean()),
       }),
@@ -108,14 +107,6 @@ export const delegateRouter = router({
       });
 
       const insertedDelegateRecord = insertedDelegate[0];
-      if (insertedDelegate[0].userId) {
-        await db
-          .update(users)
-          .set({
-            starknetAddress: opts.input.starknetAddress,
-          })
-          .where(eq(users.id, insertedDelegate[0].userId));
-      }
       if (insertedDelegateRecord?.id) {
         await db.insert(delegateVotes).values({
           delegateId: insertedDelegateRecord.id,
@@ -224,7 +215,6 @@ export const delegateRouter = router({
   editDelegate: protectedProcedure
     .input(
       delegateInsertSchema.required({ id: true }).extend({
-        starknetAddress: z.string() || z.null(),
         id: z.string(),
         customDelegateAgreementContent: z.optional(z.string()),
       }),
@@ -327,14 +317,6 @@ export const delegateRouter = router({
           .where(
             eq(customDelegateAgreement.delegateId, updatedDelegateRecord.id),
           );
-      }
-      if (updatedDelegate[0].userId) {
-        await db
-          .update(users)
-          .set({
-            starknetAddress: opts.input.starknetAddress,
-          })
-          .where(eq(users.id, updatedDelegate[0].userId));
       }
 
       return updatedDelegateRecord;

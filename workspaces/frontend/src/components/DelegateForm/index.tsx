@@ -26,7 +26,6 @@ import {
 import type { Delegate } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { Controller, useForm } from "react-hook-form";
 import { delegateNames } from "../Delegates";
-import { validateStarknetAddress } from "../../utils/helpers";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import { interestsEnum } from "@yukilabs/governance-backend/src/db/schema/delegates";
 import { trpc } from "../../utils/trpc";
@@ -36,6 +35,8 @@ import { Spinner } from "@chakra-ui/react";
 import { delegationAgreement } from "../../utils/data";
 import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { useCheckBalance } from "../useCheckBalance";
+import { WalletButtons } from "../../pages/profile/settings/index.page";
+import { useWallets } from "../../hooks/useWallets";
 
 interface DelegateFormProps {
   mode: "create" | "edit";
@@ -51,7 +52,6 @@ type FormValues = {
   interests: string[];
   confirmDelegateAgreement: boolean;
   customDelegateAgreementContent?: string;
-  starknetAddress: string;
   understandRole: boolean;
 };
 
@@ -72,13 +72,15 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     trigger,
     clearErrors,
     setError,
-    watch
+    watch,
   } = useForm<FormValues>({
     mode: "onChange",
     shouldFocusError: false,
   });
   const confirmDelegateAgreement = watch("confirmDelegateAgreement");
-  const customDelegateAgreementContent = watch("customDelegateAgreementContent");
+  const customDelegateAgreementContent = watch(
+    "customDelegateAgreementContent",
+  );
   const {
     isOpen: isDeleteOpen,
     onOpen: onOpenDelete,
@@ -121,18 +123,11 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
       ),
     );
     setValue("interests", delegateData.interests as string[]);
-    setValue("starknetAddress", delegateData?.author?.starknetAddress ?? "");
     setValue("understandRole", delegateData.understandRole as boolean);
     setValue(
       "confirmDelegateAgreement",
       delegateData.confirmDelegateAgreement as boolean,
     );
-    if (!validateStarknetAddress(delegateData?.author?.starknetAddress)) {
-      setError("starknetAddress", {
-        type: "manual",
-        message: "Invalid Starknet address.",
-      });
-    }
     if (delegate?.confirmDelegateAgreement) {
       setAgreementType("standard");
     } else if (delegate?.customAgreement) {
@@ -147,6 +142,7 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
 
   const { data: user } = trpc.users.me.useQuery();
   const { checkUserBalance } = useCheckBalance(user?.address as `0x${string}`);
+  const { starknetWallet, ethWallet } = useWallets();
 
   useEffect(() => {
     checkUserBalance({
@@ -181,11 +177,20 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const { setErrorRef, scrollToError } = useFormErrorHandler([
     "statement",
     "interests",
-    "starknetAddress",
   ]);
 
   const onSubmitHandler = async (data) => {
     try {
+      setErrorField("");
+
+      if (!starknetWallet?.id) {
+        setErrorField("Connect Starknet wallet in order to become delegate");
+        return;
+      }
+      if (!ethWallet?.id) {
+        setErrorField("Connect Ethereum wallet in order to become delegate");
+        return;
+      }
       data.statement = editorValue;
       // checking if onboarding is true and setting isKarmaDelegate to false and isGovernanceDelegate to true
       if (isOnboarding) {
@@ -222,18 +227,6 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
       scrollToError(errors);
     }
   };
-
-  useEffect(() => {
-    if (user?.starknetAddress) {
-      setValue("starknetAddress", user.starknetAddress);
-      if (!validateStarknetAddress(user.starknetAddress)) {
-        setError("starknetAddress", {
-          type: "manual",
-          message: "Invalid Starknet address.",
-        });
-      }
-    }
-  }, [user]);
 
   const onDelete = async () => {
     if (!delegate?.id) return;
@@ -348,28 +341,7 @@ Conflicts of interest
               )}
             />
           </FormControlled>
-          <FormControlled
-            name="starknetAddress"
-            ref={(ref) => setErrorRef("starknetAddress", ref)}
-            isRequired
-            id="starknet-wallet-address"
-            label="Starknet wallet address"
-            isInvalid={!!errors.starknetAddress}
-            errorMessage={
-              errors.starknetAddress?.message || "Not a valid Starknet address"
-            }
-          >
-            <Input
-              size="standard"
-              variant="primary"
-              placeholder="0x..."
-              {...register("starknetAddress", {
-                required: true,
-                validate: (value) =>
-                  validateStarknetAddress(value) || "Invalid Starknet address",
-              })}
-            />
-          </FormControlled>
+          <WalletButtons withLabel />
           <Divider />
           <Box>
             <Heading variant="h3" display="flex" mb="standard.base">
@@ -429,11 +401,13 @@ Conflicts of interest
                 <FormControl id="defaultDelegateAgreement">
                   <Radio
                     value=""
-                    isChecked={!confirmDelegateAgreement && !editorCustomAgreementValue}
+                    isChecked={
+                      !confirmDelegateAgreement && !editorCustomAgreementValue
+                    }
                     onChange={() => {
                       setShowCustomAgreementEditor(false);
                       setValue("confirmDelegateAgreement", false);
-                      setValue("customDelegateAgreementContent", '');
+                      setValue("customDelegateAgreementContent", "");
                       handleCustomAgreement([{ children: [{ text: "" }] }]);
                     }}
                   >
@@ -472,7 +446,9 @@ Conflicts of interest
                 <FormControl id="customDelegateAgreement">
                   <Radio
                     value="custom"
-                    isChecked={!confirmDelegateAgreement && editorCustomAgreementValue}
+                    isChecked={
+                      !confirmDelegateAgreement && editorCustomAgreementValue
+                    }
                     onChange={() => {
                       setShowCustomAgreementEditor(true);
                       setValue("confirmDelegateAgreement", false);
@@ -556,10 +532,10 @@ Conflicts of interest
               justifyContent="flex-end"
               gap="16px"
               sx={{
-                '@media (max-width: 768px)': {
+                "@media (max-width: 768px)": {
                   gap: "0px",
-                  flexDirection: "column"
-                }
+                  flexDirection: "column",
+                },
               }}
             >
               <Button
@@ -568,11 +544,11 @@ Conflicts of interest
                 onClick={onOpenDelete}
                 mr="auto"
                 sx={{
-                  '@media (max-width: 768px)': {
+                  "@media (max-width: 768px)": {
                     order: 3,
                     width: "100%",
-                    marginRight: "0"
-                  }
+                    marginRight: "0",
+                  },
                 }}
               >
                 Delete
@@ -583,11 +559,11 @@ Conflicts of interest
                 variant="ghost"
                 href={`/delegates/profile/${pageContext.routeParams!.id}`}
                 sx={{
-                  '@media (max-width: 768px)': {
+                  "@media (max-width: 768px)": {
                     marginBottom: "standard.lg",
                     width: "100%",
-                    order: 2
-                  }
+                    order: 2,
+                  },
                 }}
               >
                 Cancel
@@ -597,14 +573,14 @@ Conflicts of interest
                 size="condensed"
                 variant="primary"
                 sx={{
-                  '@media (max-width: 768px)': {
+                  "@media (max-width: 768px)": {
                     marginBottom: "standard.sm",
                     order: 1,
-                    width: "100%"
-                  }
+                    width: "100%",
+                  },
                 }}
               >
-                 <Flex alignItems="center" gap={2}>
+                <Flex alignItems="center" gap={2}>
                   {isSubmitting && <Spinner size="sm" />}
                   <div>Save</div>
                 </Flex>

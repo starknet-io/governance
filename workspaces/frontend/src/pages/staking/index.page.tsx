@@ -36,6 +36,7 @@ import TabButton from "../../components/TabButton";
 import * as Swap from "@yukilabs/governance-components/src/Swap/Swap";
 import { useWrapVSTRK } from "../../hooks/starknet/useWrapVSTRK";
 import { useUnwrapVSTRK } from "../../hooks/starknet/useUnwrapVSTRK";
+import { useWallets } from "../../hooks/useWallets";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -48,6 +49,8 @@ const WrapModal = ({
   isSuccess,
   starkToWrap,
   error,
+  txHash = "",
+  handleAddToWallet,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -56,6 +59,8 @@ const WrapModal = ({
   isSuccess: boolean;
   starkToWrap: number;
   error: any;
+  txHash: string | null;
+  handleAddToWallet: () => Promise<any>;
 }) => {
   return (
     <Modal
@@ -119,7 +124,7 @@ const WrapModal = ({
                 </Text>
                 <Link
                   isExternal
-                  href={`https://sepolia.starkscan.co`}
+                  href={`https://sepolia.starkscan.co/tx/${txHash || ""}`}
                   variant="secondary"
                   size="small"
                   color="content.support.default"
@@ -147,9 +152,7 @@ const WrapModal = ({
                 <Button
                   variant="outline"
                   onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log("Manage vSTRK");
+                    handleAddToWallet();
                   }}
                 >
                   <WalletIcon mr="standard.xs" />
@@ -179,6 +182,7 @@ const WrapModal = ({
 
 export function Page() {
   const wallets = useUserWallets();
+  const { starknetWallet } = useWallets();
 
   const ethAddress =
     findMatchingWallet(wallets, WalletChainKey.EVM)?.address || undefined;
@@ -217,28 +221,12 @@ export function Page() {
     onClose: onUnwrapClose,
   } = useDisclosure();
 
-  const addToWallet = async () => {
-    if (!window.starknet) {
-      console.error("Argent Wallet is not detected!");
-      return;
-    }
-
-    try {
-      // Check if the StarkNet provider is available
-
-      /* to implement */
-
-      console.log("Token successfully added to Argent Wallet!");
-    } catch (error) {
-      console.error("Failed to add token to Argent Wallet:", error);
-    }
-  };
-
   const {
     wrap,
     loading: isWrapLoading,
     error: wrapError,
     success: isWrapSuccess,
+    transactionHash: wrapTxHash,
   } = useWrapVSTRK();
 
   const {
@@ -246,6 +234,7 @@ export function Page() {
     loading: isUnwrapLoading,
     error: unwrapError,
     success: isUnwrapSuccess,
+    transactionHash: unwrapTxHash,
   } = useUnwrapVSTRK();
 
   const wrapTokens = async () => {
@@ -280,7 +269,7 @@ export function Page() {
     } else if (vSTRKBalance?.rawBalance && isUnwrap) {
       setStarkToWrap(parseFloat(vSTRKBalance?.rawBalance) / 2);
     }
-    setSliderValue(50)
+    setSliderValue(50);
   }, [starknetBalance?.rawBalance, vSTRKBalance?.rawBalance, isUnwrap]);
 
   const handleSliderChange = (val) => {
@@ -305,6 +294,35 @@ export function Page() {
     setStarkToWrap(toSet);
     setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
   };
+
+  const handleAddToWallet = async () => {
+    const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
+
+    const data: any = {
+      type: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: vStarkContract,
+          name: "Starknet Voting Token",
+          symbol: "vSTRK",
+          decimals: "18",
+          network: "sepolia",
+        },
+      },
+    };
+
+    if (typeof window !== "undefined") {
+      if (window.starknet) {
+        if (starknetWallet?.connector?.name === "Braavos") {
+          await window.starknet_braavos.request(data);
+        } else if (window?.starknet?.id === "argentX") {
+          await window.starknet.request(data);
+        }
+      }
+    }
+  };
+
   return (
     <FormLayout>
       <Box width="100%">
@@ -421,7 +439,9 @@ export function Page() {
             </Flex>
             <Flex mb="standard.md" gap="standard.sm" flexDirection="column">
               <Text variant="mediumStrong" color="content.default.default">
-                How much STRK do you want to stake?
+                {isUnwrap
+                  ? "How much vSTRK do you want to unstake?"
+                  : "How much STRK do you want to stake?"}
               </Text>
               <Input
                 type="number"
@@ -506,6 +526,8 @@ export function Page() {
         isSuccess={isWrapSuccess}
         starkToWrap={wrappedStark}
         error={wrapError}
+        handleAddToWallet={handleAddToWallet}
+        txHash={wrapTxHash}
       />
       <WrapModal
         isOpen={isUnwrapOpen}
@@ -515,6 +537,8 @@ export function Page() {
         isSuccess={isUnwrapSuccess}
         starkToWrap={wrappedStark}
         error={unwrapError}
+        handleAddToWallet={handleAddToWallet}
+        txHash={unwrapTxHash}
       />
     </FormLayout>
   );
