@@ -161,7 +161,13 @@ export const WalletButtons = ({
     <Flex justifyContent="space-between">
       <Flex direction="column" gap="standard.xl">
         {withLabel && (
-          <Text variant="mediumStrong">Connect Starknet wallet</Text>
+          <Text
+            variant="mediumStrong"
+            color="content.default.default"
+            sx={{ fontWeight: 600 }}
+          >
+            Connect Starknet wallet
+          </Text>
         )}
         <WalletDisplay
           profileVariant={profileVariant}
@@ -193,7 +199,13 @@ export const WalletButtons = ({
       </Flex>
       <Flex direction="column" gap="standard.xl">
         {withLabel && (
-          <Text variant="mediumStrong">Connect Ethereum wallet</Text>
+          <Text
+            variant="mediumStrong"
+            color="content.default.default"
+            sx={{ fontWeight: 600 }}
+          >
+            Connect Ethereum wallet
+          </Text>
         )}
         <WalletDisplay
           profileVariant={profileVariant}
