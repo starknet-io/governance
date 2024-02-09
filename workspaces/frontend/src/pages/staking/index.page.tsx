@@ -351,7 +351,6 @@ export function Page() {
             borderRadius="4px"
             minW={{ base: "100%", md: "206px" }}
           >
-            <Button onClick={handleAddToWallet}> click me </Button>
             <Box
               borderBottom="1px solid"
               borderColor="border.dividers"
