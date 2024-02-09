@@ -56,19 +56,6 @@ export const DynamicProvider = (props: Props) => {
   const { user } = usePageContext();
   const { handleUpload } = useFileUpload();
 
-  const checkIfDelegateModalShouldShow = () => {
-    if (!userDelegate?.id) {
-      return false;
-    }
-    if (user?.hasConnectedSecondaryWallet) {
-      return false;
-    }
-    if (secondaryWallet?.address) {
-      return false;
-    }
-    return true;
-  };
-
   const { data: userDelegate } = trpc.users.isDelegate.useQuery(
     {
       userId: user?.id || "",
@@ -78,25 +65,11 @@ export const DynamicProvider = (props: Props) => {
     },
   );
 
-  console.log(userDelegate);
-
-  useEffect(() => {
-    if (checkIfDelegateModalShouldShow()) {
-      setIsOpenSecondaryWalletModal(true);
-    } else {
-      setIsOpenSecondaryWalletModal(false);
-    }
-  }, [userDelegate?.id]);
 
   const handleClose = () => {
-    if (checkIfDelegateModalShouldShow()) {
-      return;
-    }
     setIsOpenSecondaryWalletModal(false);
     setIsOpenDelegateOnboarding(true);
   };
-
-  console.log(userDelegate);
 
   const authenticateUser = useCallback(
     async (params: AuthSuccessParams) => {
