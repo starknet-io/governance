@@ -11,6 +11,7 @@
     "seed": "ts-node --transpile-only src/delegatesMigration/index.ts",
     "sync-with-snapshot": "ts-node --transpile-only src/scripts/syncSnapshotUsers.ts",
     "migrate-karma-discourses": "ts-node --transpile-only src/scripts/migrateKarmaDiscourses.ts",
+    "process-old-votes": "ts-node --transpile-only src/scripts/fetchAndSaveOldVotes.ts",
     "delete-notifications": "ts-node --transpile-only src/scripts/deleteNotifications.ts",
     "insert-custom-delegate": "ts-node --transpile-only src/scripts/insertCustomDelegate.ts",
     "update-algolia-delegates": "ts-node --transpile-only src/scripts/updateDelegateUsernames.ts",

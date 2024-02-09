@@ -14298,8 +14298,8 @@ __metadata:
   linkType: hard
 
 "drizzle-orm@npm:^0.29.1":
-  version: 0.29.1
-  resolution: "drizzle-orm@npm:0.29.1"
+  version: 0.29.3
+  resolution: "drizzle-orm@npm:0.29.3"
   peerDependencies:
     "@aws-sdk/client-rds-data": ">=3"
     "@cloudflare/workers-types": ">=3"
@@ -14309,15 +14309,18 @@ __metadata:
     "@planetscale/database": ">=1"
     "@types/better-sqlite3": "*"
     "@types/pg": "*"
+    "@types/react": ">=18"
     "@types/sql.js": "*"
     "@vercel/postgres": "*"
     better-sqlite3: ">=7"
     bun-types: "*"
+    expo-sqlite: ">=13.2.0"
     knex: "*"
     kysely: "*"
     mysql2: ">=2"
     pg: ">=8"
     postgres: ">=3"
+    react: ">=18"
     sql.js: ">=1"
     sqlite3: ">=5"
   peerDependenciesMeta:
@@ -14337,6 +14340,8 @@ __metadata:
       optional: true
     "@types/pg":
       optional: true
+    "@types/react":
+      optional: true
     "@types/sql.js":
       optional: true
     "@vercel/postgres":
@@ -14344,6 +14349,8 @@ __metadata:
     better-sqlite3:
       optional: true
     bun-types:
+      optional: true
+    expo-sqlite:
       optional: true
     knex:
       optional: true
@@ -14355,11 +14362,13 @@ __metadata:
       optional: true
     postgres:
       optional: true
+    react:
+      optional: true
     sql.js:
       optional: true
     sqlite3:
       optional: true
-  checksum: a80bb1ac0b974acd4dcf57d50897065ea6e0a6e5cf4481b130ea2880304b2d1bededace9f532e66b39ab2b30ce4ef1feafbf60cb9c4ddc2b00fff2a7cd4d118f
+  checksum: 506aaab8407cca38afe60a15eefe10234e1242093fbfaf655c4a522e66b7c4ec462113475a4d153b006eb24a28cfdc3ad20f0bbbb149e4a8ccfd45235aae8d2f
   languageName: node
   linkType: hard
 
