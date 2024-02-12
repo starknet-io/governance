@@ -49,6 +49,7 @@ import { useWallets } from "../../../hooks/useWallets";
 import { useStarknetDelegate } from "../../../hooks/starknet/useStarknetDelegation";
 import { delegationAgreement } from "src/utils/data";
 import { getChecksumAddress } from "starknet";
+import { ethers } from "ethers";
 
 const DELEGATION_SUCCESS_EVENT = "delegationSuccess";
 
@@ -255,6 +256,10 @@ export function Page() {
     useVotingPower({
       address: starknetAddress,
     });
+
+  const totalVotingPower = ethers.utils.commify(
+    (votingPower || 0n) + (votingPowerL2 || 0n),
+  );
 
   const gqlResponseProposalsByUser = useProposals();
 
@@ -672,7 +677,6 @@ export function Page() {
                 delegate?.author?.ensName ||
                 truncateAddress(delegateAddress)
               }
-              withCopy
               address={delegateAddress}
               dropdownChildren={<ActionButtons />}
               headerTooltipContent={
@@ -700,7 +704,7 @@ export function Page() {
                 handleDelegation({ layer: 1, isUndelegation: true })
               }
             >
-              Undelegate on L1
+              Undelegate on Ethereum
             </Button>
             {starknetWallet && (
               <Button
@@ -712,7 +716,7 @@ export function Page() {
                   handleDelegation({ layer: 2, isDelegation: true })
                 }
               >
-                Delegate on L2
+                Delegate on Starknet
               </Button>
             )}
           </>
@@ -728,7 +732,7 @@ export function Page() {
                 handleDelegation({ layer: 2, isUndelegation: true })
               }
             >
-              Undelegate on L2
+              Undelegate on Starknet
             </Button>
             {ethWallet && (
               <Button
@@ -740,7 +744,7 @@ export function Page() {
                   handleDelegation({ layer: 1, isDelegation: true })
                 }
               >
-                Delegate on L1
+                Delegate on Ethereum
               </Button>
             )}
           </>
@@ -770,7 +774,7 @@ export function Page() {
                 handleDelegation({ layer: 1, isUndelegation: true })
               }
             >
-              Undelegate on L1
+              Undelegate on Ethereum
             </Button>
             <Button
               variant="secondary"
@@ -781,7 +785,7 @@ export function Page() {
                 handleDelegation({ layer: 2, isUndelegation: true })
               }
             >
-              Undelegate on L2
+              Undelegate on Starknet
             </Button>
           </>
         )}
@@ -816,7 +820,7 @@ export function Page() {
         {hasDelegatedOnL1 && hasDelegatedOnL2 && (
           <Box mt="standard.md">
             <Banner
-              label={`Your voting power of ${senderDataL2.balance?.balance} ${senderDataL2?.balance?.symbol} on L2 and ${senderData.balance} ${senderData.symbol} on L1 is currently assigned to this delegate.`}
+              label={`Your voting power of ${senderDataL2.balance?.balance} ${senderDataL2?.balance?.symbol} on Starknet and ${senderData.balance} ${senderData.symbol} on Ethereum is currently assigned to this delegate.`}
             />
           </Box>
         )}
@@ -831,6 +835,11 @@ export function Page() {
 
         <Box mt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
+            <SummaryItems.Item
+              isLoading={isLoadingVotingPower || isLoadingVotingPowerL2}
+              label="Voting Power"
+              value={totalVotingPower || "0"}
+            />
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Proposals voted on"

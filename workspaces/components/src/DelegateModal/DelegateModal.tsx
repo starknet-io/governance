@@ -211,6 +211,7 @@ export const DelegateModal = ({
                       placeholder="0x..."
                       value={customAddress}
                       onChange={(e) => setCustomAddress(e.target.value)}
+                      isInvalid={customAddress !== '' && !!error}
                     />
                     {error && customAddress !== "" && (
                       <FormErrorMessage>{error}</FormErrorMessage>

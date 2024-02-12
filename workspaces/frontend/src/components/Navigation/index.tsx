@@ -77,13 +77,25 @@ export const NavigationMenu = ({
             </Box>
           </Show>
           <Box py="standard.xs" px="standard.sm">
+            <NavItem
+              active={
+                pageContext.urlOriginal === "/"
+              }
+              icon={<HomeIcon />}
+              label="Home"
+              href="/"
+            />
+            {user ? (
+              <NavItem
+                active={
+                  pageContext.urlOriginal === "/manage-vstrk"
+                }
+                icon={<MoneyIcon />}
+                label="Manage vSTRK"
+                href="/manage-vstrk"
+              />
+            ) : null}
             {[
-              {
-                href: "/",
-                label: "Home",
-                icon: <HomeIcon />,
-                exact: true,
-              },
               {
                 href: "/voting-proposals",
                 label: "Voting proposals",
@@ -154,13 +166,6 @@ export const NavigationMenu = ({
 
         <Box py="standard.xs" px="standard.sm">
           <NavGroup align="end">
-            {user ? (
-              <NavItem
-                href="/manage-vstrk"
-                icon={<MoneyIcon />}
-                label="Manage vSTRK"
-              />
-            ) : null}
             {[
               {
                 href: "/learn",
