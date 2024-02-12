@@ -42,7 +42,14 @@ export const DelegateOnboardingModalBasic = ({ isOpen, onClose }: Props) => {
             delegation.
           </Text>
         </Flex>
-        <Button onClick={() => navigate("/delegates")}>View delegates</Button>
+        <Button
+          onClick={() => {
+            navigate("/delegates");
+            onClose()
+          }}
+        >
+          View delegates
+        </Button>
       </Flex>
     </Modal>
   );

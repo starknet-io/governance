@@ -66,9 +66,11 @@ export const DynamicProvider = (props: Props) => {
   );
 
 
-  const handleClose = () => {
+  const handleClose = (showDelegateOnboarding = true) => {
     setIsOpenSecondaryWalletModal(false);
-    setIsOpenDelegateOnboarding(true);
+    if (!showDelegateOnboarding) {
+      setIsOpenDelegateOnboarding(true);
+    }
   };
 
   const authenticateUser = useCallback(
@@ -80,6 +82,8 @@ export const DynamicProvider = (props: Props) => {
         authToken: params.authToken,
         ensName: params.user.ens?.name,
         ensAvatar: params.user.ens?.avatar,
+        isEth: params?.primaryWallet?.chain === "eip155",
+        isStarknet: params?.primaryWallet?.chain === "starknet",
       });
       utils.auth.currentUser.invalidate();
     },
@@ -88,7 +92,7 @@ export const DynamicProvider = (props: Props) => {
 
   const handleLinkEvent = async (walletAddress: string, isEth?: boolean) => {
     if (user) {
-      handleClose()
+      handleClose(false)
       if (!isEth) {
         await editUserProfile.mutateAsync(
           {

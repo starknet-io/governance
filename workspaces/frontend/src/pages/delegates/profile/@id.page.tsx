@@ -98,7 +98,8 @@ export function Page() {
   });
 
   const delegate = delegateResponse.data;
-  const delegateAddress = delegate?.author?.address as `0x${string}`;
+  const ethAddress = delegate?.author?.ethAddress || delegate?.author?.address;
+  const delegateAddress = ethAddress as `0x${string}`;
   const starknetAddress = delegate?.author?.starknetAddress as `0x${string}`;
 
   const {
@@ -197,7 +198,6 @@ export function Page() {
     watch: true,
     enabled: address != null,
   });
-
   const delegationDataL1 = delegation?.data;
 
   const { delegates: delegationDataL2, loading: isLoadingL2Delegation } =
@@ -216,11 +216,16 @@ export function Page() {
     getChecksumAddress(delegate?.author?.starknetAddress?.toLowerCase() || "");
 
   const hasDelegatedOnL2 =
+    starknetWallet?.id &&
+    delegate?.author?.starknetAddress &&
     delegationDataL2 &&
     delegationDataL2.length &&
     delegatedToDelegateL2 &&
     !delegateOwnProfileL2;
+
   const hasDelegatedOnL1 =
+    ethWallet?.id &&
+    ethAddress &&
     delegationDataL1 &&
     delegationDataL1.length &&
     delegationDataL1.toLowerCase() ===
@@ -938,10 +943,10 @@ export function Page() {
             />
             <SummaryItems.Item
               isLoading={!delegateResponse.isFetched}
-              isCopiable={!!delegate?.author?.address}
-              isTruncated={!!delegate?.author?.address}
+              isCopiable={!!ethAddress}
+              isTruncated={!!ethAddress}
               label="Ethereum address"
-              value={delegate?.author?.address || "None"}
+              value={ethAddress || "None"}
               additionalValue={votingPower?.toString() || "0"}
               isExtendable={true}
             />
