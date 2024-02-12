@@ -667,7 +667,6 @@ export function Page() {
                 delegate?.author?.ensName ||
                 truncateAddress(delegateAddress)
               }
-              withCopy
               address={delegateAddress}
               dropdownChildren={<ActionButtons />}
               headerTooltipContent={
