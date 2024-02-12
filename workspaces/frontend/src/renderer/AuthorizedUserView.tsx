@@ -218,6 +218,8 @@ const AuthorizedUserView = () => {
           delegatedToL2={
             delegatedToL2?.data ? delegatedToL2?.data : delegationDataL2
           }
+          delegatedToL1Loading={delegatedTo.isLoading}
+          delegatedToL2Loading={delegatedToL2.isLoading}
           onDisconnect={handleDisconnect}
           user={user}
           onSave={handleSave}

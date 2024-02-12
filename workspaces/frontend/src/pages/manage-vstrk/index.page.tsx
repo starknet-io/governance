@@ -11,6 +11,7 @@ import {
   Button,
   Modal,
   Link,
+  Skeleton
 } from "@yukilabs/governance-components";
 import { navigate } from "vite-plugin-ssr/client/router";
 import {
@@ -188,19 +189,19 @@ export function Page() {
     findMatchingWallet(wallets, WalletChainKey.EVM)?.address || undefined;
   const starknetAddress =
     findMatchingWallet(wallets, WalletChainKey.STARKNET)?.address || undefined;
-  const { data: votingPowerEthereum } = useVotingPower({
+  const { data: votingPowerEthereum, isLoading: isVotingPowerEthereumLoading } = useVotingPower({
     address: ethAddress,
   });
 
-  const { data: votingPowerStarknet } = useVotingPower({
+  const { data: votingPowerStarknet, isLoading: isVotingPowerStarknetLoading } = useVotingPower({
     address: starknetAddress,
   });
-  const ethBalance = useBalanceData(ethAddress as `0x${string}`);
-  const { balance: starknetBalance } = useStarknetBalance({
+  const { balance: ethBalance, symbol: ethBalanceSymbol, isFetched: isEthBalanceFetched } = useBalanceData(ethAddress as `0x${string}`);
+  const { balance: starknetBalance, loading: isStarknetBalanceLoading } = useStarknetBalance({
     starknetAddress,
     starkContract: starkContract,
   });
-  const { balance: vSTRKBalance } = useStarknetBalance({
+  const { balance: vSTRKBalance, loading: isvSTRKBalanceLoading } = useStarknetBalance({
     starknetAddress,
     starkContract: vStarkContract,
   });
@@ -362,7 +363,7 @@ export function Page() {
               }}
             >
               <Flex justifyContent="space-between" alignItems="center">
-                <Box>
+              {!isVotingPowerEthereumLoading && !isVotingPowerStarknetLoading ? <Box>
                   <Text variant="mediumStrong" color="content.default.default">
                     Total voting power
                   </Text>
@@ -372,19 +373,27 @@ export function Page() {
                         parseInt(votingPowerStarknet.toString()),
                     )}
                   </Text>
-                </Box>
+                </Box> :
+                <Box>
+                  <Skeleton height="16px" width="50%" borderRadius="md" />
+                  <Skeleton height="16px" width="50%" borderRadius="md" />
+                </Box>}
               </Flex>
             </Box>
             <Box py="standard.sm" px="standard.md">
-              <Box>
+              {!isvSTRKBalanceLoading ? <Box>
                 <Text variant="small" color="content.support.default">
                   vSTRK on Starknet
                 </Text>
                 <Text color="content.accent.default" variant="mediumStrong">
                   {vSTRKBalance?.balance || 0} {vSTRKBalance?.symbol || "STRK"}
-                </Text>
-              </Box>
-              <Box mt="standard.sm">
+                </Text> 
+              </Box> :
+              <Box>
+                <Skeleton height="16px" mb="4px" width="60%" borderRadius="md" />
+                <Skeleton height="16px" width="50%" borderRadius="md" />
+              </Box>}
+              {!isStarknetBalanceLoading ? <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
                   STRK on Starknet
                 </Text>
@@ -392,17 +401,26 @@ export function Page() {
                   {starknetBalance?.balance || 0}{" "}
                   {starknetBalance?.symbol || "STRK"}
                 </Text>
-              </Box>
-              <Divider my="standard.sm" />
+              </Box> :
               <Box mt="standard.sm">
-                <Text variant="small" color="content.support.default">
-                  STRK on Ethereum
-                </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
-                  {new Intl.NumberFormat().format(ethBalance.balance)}{" "}
-                  {ethBalance.symbol}
-                </Text>
-              </Box>
+                <Skeleton height="16px" mb="4px" width="60%" borderRadius="md" />
+                <Skeleton height="16px" width="50%" borderRadius="md" />
+              </Box>}
+              <Divider my="standard.sm" />
+              {isEthBalanceFetched ?
+                <Box mt="standard.sm">
+                  <Text variant="small" color="content.support.default">
+                    STRK on Ethereum
+                  </Text>
+                  <Text color="content.accent.default" variant="mediumStrong">
+                    {new Intl.NumberFormat().format(Number(ethBalance))}{" "}
+                    {ethBalanceSymbol}
+                  </Text>
+                </Box> :
+                <Box>
+                  <Skeleton height="16px" mb="4px" width="60%" borderRadius="md" />
+                  <Skeleton height="16px" width="50%" borderRadius="md" />
+                </Box>}
             </Box>
           </Box>
           <Box

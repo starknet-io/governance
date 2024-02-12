@@ -1,7 +1,6 @@
-import React from "react";
 import { Modal } from "../Modal";
 import { Text } from "../Text";
-import { Box, Flex, Link } from "@chakra-ui/react";
+import { Box, Flex, Link, Skeleton } from "@chakra-ui/react";
 import { VotingPowerBreakdown } from "./VotingPowerBreakdown";
 import { truncateAddress } from "../utils";
 import { Tooltip } from "../Tooltip";
@@ -13,6 +12,7 @@ type Props = {
   onClose: () => void;
   title?: string;
   balanceEth: string;
+  isBalanceEthFetched: boolean;
   balanceStark: string;
   votingPowerEth: number;
   votingPowerStark: number;
@@ -22,6 +22,8 @@ type Props = {
   delegatedToL2: any;
   delegatedToL1Name: string | undefined;
   delegatedToL2Name: string | undefined;
+  delegatedToL1Loading: boolean;
+  delegatedToL2Loading: boolean;
 };
 
 const DelegationComponent = ({
@@ -86,12 +88,15 @@ export const VotingPowerModal = ({
   votingPowerStark,
   hasEthWallet,
   hasStarkWallet,
-  balanceEth = 0,
-  balanceStark = 0,
+  balanceEth = "0",
+  isBalanceEthFetched,
+  balanceStark = "0",
   delegatedToL1,
   delegatedToL2,
   delegatedToL1Name,
   delegatedToL2Name,
+  delegatedToL1Loading,
+  delegatedToL2Loading
 }: Props) => {
   return (
     <Modal
@@ -113,7 +118,7 @@ export const VotingPowerModal = ({
           <Box>
             <Text variant="bodyMediumStrong">Starknet</Text>
             <Flex direction="column" gap="standard.xs" mt="standard.sm">
-              <Flex>
+              {balanceStark ? <Flex>
                 <Box width="50%">
                   <Text variant="small" color="content.support.default">
                     STRK balance
@@ -124,7 +129,15 @@ export const VotingPowerModal = ({
                     {balanceStark}
                   </Text>
                 </Box>
-              </Flex>
+              </Flex> :
+              <Flex>
+                <Box width="50%">
+                  <Skeleton height="24px" width="50%" borderRadius="md" />
+                </Box>
+                <Box width="50%">
+                  <Skeleton height="24px" width="30%" borderRadius="md" />
+                </Box>
+              </Flex>}
               <Flex>
                 <Box width="50%">
                   <Text variant="small" color="content.support.default">
@@ -137,7 +150,7 @@ export const VotingPowerModal = ({
                   </Text>
                 </Box>
               </Flex>
-              <Flex>
+              {!delegatedToL2Loading ? <Flex>
                 <Box width="50%">
                   <Text variant="smallStrong" color="content.support.default">
                     Delegated to
@@ -147,7 +160,13 @@ export const VotingPowerModal = ({
                   delegatedTo={delegatedToL2}
                   delegatedToName={delegatedToL2Name}
                 />
-              </Flex>
+              </Flex> :
+              <Flex>
+                <Box width="50%">
+                  <Skeleton height="16px" width="50%" borderRadius="md" />
+                </Box>
+                  <Skeleton height="16px" width="30%" borderRadius="md" />
+              </Flex>}
             </Flex>
           </Box>
         )}
@@ -155,7 +174,7 @@ export const VotingPowerModal = ({
           <Box mt="standard.lg">
             <Text variant="bodyMediumStrong">Ethereum</Text>
             <Flex direction="column" gap="standard.xs" mt="standard.sm">
-              <Flex>
+              {isBalanceEthFetched ? <Flex>
                 <Box width="50%">
                   <Text variant="small" color="content.support.default">
                     STRK balance
@@ -166,8 +185,16 @@ export const VotingPowerModal = ({
                     {balanceEth}
                   </Text>
                 </Box>
-              </Flex>
+              </Flex> :
               <Flex>
+                <Box width="50%">
+                  <Skeleton height="16px" width="50%" borderRadius="md" />
+                </Box>
+                <Box width="50%">
+                  <Skeleton height="16px" width="30%" borderRadius="md" />
+                </Box>
+              </Flex>}
+              {!delegatedToL1Loading ? <Flex>
                 <Box width="50%">
                   <Text variant="smallStrong" color="content.support.default">
                     Delegated to
@@ -177,7 +204,15 @@ export const VotingPowerModal = ({
                   delegatedTo={delegatedToL1}
                   delegatedToName={delegatedToL1Name}
                 />
-              </Flex>
+              </Flex> :
+              <Flex>
+                <Box width="50%">
+                  <Skeleton height="16px" width="50%" borderRadius="md" />
+                </Box>
+                <Box width="50%">
+                  <Skeleton height="16px" width="30%" borderRadius="md" />
+                </Box>
+              </Flex>}
             </Flex>
           </Box>
         )}

@@ -38,6 +38,8 @@ interface UserProfileMenuProps {
   isMenuOpen?: boolean;
   delegatedToL1: any;
   delegatedToL2: any;
+  delegatedToL1Loading: boolean;
+  delegatedToL2Loading: boolean;
   onModalStateChange?: (isOpen: boolean) => void;
   handleUpload?: (file: File) => Promise<string | void> | void;
   userExistsError?: boolean;
@@ -48,6 +50,7 @@ interface UserProfileMenuProps {
   ethBalance?: {
     symbol: string | null;
     balance: number | bigint | null;
+    isFetched: boolean;
   };
   starknetBalance?: {
     symbol: string | null;
@@ -128,6 +131,8 @@ const UserProfileMenuComponent = (
     starknetBalance,
     delegatedToL1,
     delegatedToL2,
+    delegatedToL1Loading,
+    delegatedToL2Loading,
     onModalStateChange,
     handleUpload,
     userExistsError = false,
@@ -209,6 +214,9 @@ const UserProfileMenuComponent = (
         balanceEth={`${new Intl.NumberFormat().format(
           ethBalance?.balance,
         )} ${ethBalance?.symbol}`}
+        isBalanceEthFetched={ethBalance?.isFetched}
+        delegatedToL1Loading={delegatedToL1Loading}
+        delegatedToL2Loading={delegatedToL2Loading}
         balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
         votingPowerEth={votingPowerEth}
         votingPowerStark={votingPowerStark}

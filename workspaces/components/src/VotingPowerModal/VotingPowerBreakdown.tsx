@@ -2,7 +2,6 @@ import { Box, Flex, Icon } from "@chakra-ui/react";
 import { Text } from "../Text";
 import { ExpandIcon, ThunderIcon } from "../Icons";
 import { Button } from "../Button";
-import React from "react";
 import { Link } from "../Link";
 import { ethers } from "ethers";
 
