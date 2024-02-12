@@ -38,6 +38,7 @@ interface AuthSuccessParams {
 
 export const DynamicProvider = (props: Props) => {
   const { children } = props;
+  const pageContext = usePageContext();
   const [authUser, setAuthUser] = useState<AuthSuccessParams | null>(null);
   const [secondaryWallet, setSecondaryWallet] = useState<any>(null);
   const [isOpenSecondaryWalletModal, setIsOpenSecondaryWalletModal] =
@@ -65,10 +66,14 @@ export const DynamicProvider = (props: Props) => {
     },
   );
 
+  const checkIfDelegateModalShouldAppear = () => {
+    return !pageContext.urlOriginal.startsWith("/delegates");
+  };
 
-  const handleClose = (showDelegateOnboarding = true) => {
+  const handleClose = () => {
     setIsOpenSecondaryWalletModal(false);
-    if (!showDelegateOnboarding) {
+    const delegateModalCheck = checkIfDelegateModalShouldAppear();
+    if (delegateModalCheck) {
       setIsOpenDelegateOnboarding(true);
     }
   };
@@ -92,7 +97,7 @@ export const DynamicProvider = (props: Props) => {
 
   const handleLinkEvent = async (walletAddress: string, isEth?: boolean) => {
     if (user) {
-      handleClose(false)
+      handleClose(true);
       if (!isEth) {
         await editUserProfile.mutateAsync(
           {
@@ -125,9 +130,9 @@ export const DynamicProvider = (props: Props) => {
 
   useEffect(() => {
     if (secondaryWallet?.address) {
-      handleClose()
+      handleClose();
     }
-  }, [secondaryWallet?.address])
+  }, [secondaryWallet?.address]);
 
   useEffect(() => {
     // Function to check and load the current wallet from localStorage
@@ -213,6 +218,7 @@ export const DynamicProvider = (props: Props) => {
     logoutMutation.mutateAsync(undefined, {
       onSuccess: () => {
         utils.auth.currentUser.invalidate();
+        setSecondaryWallet(null);
         setAuthUser(null);
       },
     });
@@ -280,6 +286,7 @@ export const DynamicProvider = (props: Props) => {
             },
             onDisconnect: () => {
               setCurrentWallet(null);
+              setSecondaryWallet(null);
             },
             onLogout: () => handleDynamicLogout(),
           },

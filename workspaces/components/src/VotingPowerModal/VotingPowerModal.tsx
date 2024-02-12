@@ -6,7 +6,7 @@ import { VotingPowerBreakdown } from "./VotingPowerBreakdown";
 import { truncateAddress } from "../utils";
 import { Tooltip } from "../Tooltip";
 import { CopyToClipboard } from "../CopyToClipboard";
-import {getChecksumAddress} from "starknet";
+import { getChecksumAddress } from "starknet";
 
 type Props = {
   isOpen: boolean;
@@ -88,6 +88,7 @@ export const VotingPowerModal = ({
   hasStarkWallet,
   balanceEth = 0,
   balanceStark = 0,
+  balanceVStark = 0,
   delegatedToL1,
   delegatedToL2,
   delegatedToL1Name,
@@ -133,7 +134,7 @@ export const VotingPowerModal = ({
                 </Box>
                 <Box width="50%">
                   <Text variant="smallStrong" color="content.default.default">
-                    0
+                    {balanceVStark}
                   </Text>
                 </Box>
               </Flex>

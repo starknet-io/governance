@@ -53,6 +53,10 @@ interface UserProfileMenuProps {
     symbol: string | null;
     balance: string | null;
   };
+  vSTRKBalance?: {
+    symbol: string | null;
+    balance: string | null;
+  };
 }
 
 export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
@@ -126,6 +130,7 @@ const UserProfileMenuComponent = (
     onSave,
     ethBalance,
     starknetBalance,
+    vSTRKBalance,
     delegatedToL1,
     delegatedToL2,
     onModalStateChange,
@@ -209,6 +214,7 @@ const UserProfileMenuComponent = (
         balanceEth={`${new Intl.NumberFormat().format(
           ethBalance?.balance,
         )} ${ethBalance?.symbol}`}
+        balanceVStark={`${vSTRKBalance?.balance} ${vSTRKBalance?.symbol}`}
         balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
         votingPowerEth={votingPowerEth}
         votingPowerStark={votingPowerStark}
@@ -244,6 +250,7 @@ const UserProfileMenuComponent = (
             votingPowerEth={votingPowerEth}
             votingPowerStark={votingPowerStark}
             starknetBalance={starknetBalance}
+            vSTRKBalance={vSTRKBalance}
             ethBalance={ethBalance}
             delegatedToL1={delegatedToL1}
             delegatedToL2={delegatedToL2}
@@ -275,6 +282,7 @@ const UserProfileMenuComponent = (
               votingPowerStark={votingPowerStark}
               ethBalance={ethBalance}
               starknetBalance={starknetBalance}
+              vSTRKBalance={vSTRKBalance}
               delegatedToL1={delegatedToL1}
               delegatedToL2={delegatedToL2}
               onModalStateChange={onModalStateChange}
