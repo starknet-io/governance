@@ -19,6 +19,8 @@ import { findMatchingWallet } from "../utils/helpers";
 import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
 import { useStarknetDelegates } from "../hooks/starknet/useStarknetDelegates";
 
+const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
+
 const AuthorizedUserView = () => {
   const navRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -45,8 +47,11 @@ const AuthorizedUserView = () => {
     address: starknetAddress,
   });
 
+  console.log(votingPowerEthereum, votingPowerStarknet)
+
   const ethBalance = useBalanceData(ethAddress as `0x${string}`);
-  const { balance: starknetBalance } = useStarknetBalance({ starknetAddress });
+  const { balance: vSTRKBalance } = useStarknetBalance({ starknetAddress });
+  const { balance: starknetBalance } = useStarknetBalance({ starknetAddress, starkContract });
 
   const { data: delegationData, isLoading } = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
@@ -226,6 +231,7 @@ const AuthorizedUserView = () => {
           votingPowerEth={votingPowerEthereum}
           votingPowerStark={votingPowerStarknet}
           ethBalance={ethBalance}
+          vSTRKBalance={vSTRKBalance}
           starknetBalance={starknetBalance}
           onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}
           handleUpload={handleUpload}

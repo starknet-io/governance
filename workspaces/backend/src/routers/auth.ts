@@ -32,6 +32,8 @@ export const authRouter = router({
         authToken: z.string(),
         ensName: z.string().optional(),
         ensAvatar: z.string().optional(),
+        isEth: z.boolean().optional(),
+        isStarknet: z.boolean().optional(),
       }),
     )
     .mutation(async (opts) => {
@@ -56,6 +58,21 @@ export const authRouter = router({
             where: eq(users.address, lowerCaseAddress),
           });
 
+          let ethAddress = null;
+          let starknetAddress = null;
+
+          // Iterate over verified credentials to find eth and starknet addresses
+          decodedToken.verified_credentials?.forEach(credential => {
+            if (credential.chain === 'eip155') { // Ethereum address
+              ethAddress = credential.address.toLowerCase();
+            } else if (credential.chain === 'starknet') { // StarkNet address
+              starknetAddress = credential.address.toLowerCase();
+            }
+          });
+
+          console.log(ethAddress)
+          console.log(starknetAddress)
+
           if (!user) {
             await db.insert(users).values({
               address: lowerCaseAddress, // save address as lowercase
@@ -64,6 +81,8 @@ export const authRouter = router({
                 decodedToken.verified_credentials?.[0].wallet_provider,
               publicIdentifier:
                 decodedToken.verified_credentials?.[0].public_identifier,
+              ethAddress: ethAddress,
+              starknetAddress: starknetAddress,
               dynamicId: decodedToken.verified_credentials?.[0].id,
               ensName: opts.input.ensName,
               ensAvatar: opts.input.ensAvatar,
@@ -79,6 +98,8 @@ export const authRouter = router({
                 publicIdentifier:
                   decodedToken.verified_credentials?.[0].public_identifier,
                 dynamicId: decodedToken.verified_credentials?.[0].id,
+                ethAddress: ethAddress,
+                starknetAddress: starknetAddress,
                 ensName: opts.input.ensName,
                 ensAvatar: opts.input.ensAvatar,
                 updatedAt: new Date(),

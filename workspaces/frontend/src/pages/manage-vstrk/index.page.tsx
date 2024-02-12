@@ -170,10 +170,10 @@ const WrapModal = ({
             type="button"
             variant="primary"
             size="standard"
-            onClick={() => navigate("/delegates")}
+            onClick={onClose}
             width="100%"
           >
-            Continue to delegate
+            Close
           </Button>
         </Modal.Footer>
       ) : null}

@@ -3,6 +3,7 @@ import { Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { waitForTransaction } from "../snapshotX/helpers";
+import { useWallets } from "../useWallets";
 
 const starkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
@@ -11,6 +12,10 @@ export const useStarknetDelegate = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
+
+  const { starknetWallet } = useWallets();
+
+  const isBraavos = starknetWallet?.connector?.name === "Braavos";
 
   const delegate = async (
     starknetAddress: string,
@@ -44,9 +49,17 @@ export const useStarknetDelegate = () => {
         provider,
       );
 
-      await window.starknet.enable();
+      const starknetObject = isBraavos
+        ? window.starknet_braavos
+        : window.starknet;
 
-      const account = window.starknet.account;
+      if (!starknetObject) {
+        return;
+      }
+
+      await starknetObject.enable();
+
+      const account = starknetObject.account;
       contract.connect(account);
 
       const txResponse = await contract.delegate(delegateToAddress);

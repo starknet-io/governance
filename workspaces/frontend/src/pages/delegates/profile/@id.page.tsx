@@ -49,6 +49,7 @@ import { useWallets } from "../../../hooks/useWallets";
 import { useStarknetDelegate } from "../../../hooks/starknet/useStarknetDelegation";
 import { delegationAgreement } from "src/utils/data";
 import { getChecksumAddress } from "starknet";
+import { ethers } from "ethers";
 
 const DELEGATION_SUCCESS_EVENT = "delegationSuccess";
 
@@ -81,7 +82,6 @@ export function Page() {
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
-  const { address } = useAccount();
   const { user } = usePageContext();
   const { user: dynamicUser, walletConnector } = useDynamicContext();
   const { ethWallet, starknetWallet } = useWallets();
@@ -98,7 +98,8 @@ export function Page() {
   });
 
   const delegate = delegateResponse.data;
-  const delegateAddress = delegate?.author?.address as `0x${string}`;
+  const ethAddress = delegate?.author?.ethAddress || delegate?.author?.address;
+  const delegateAddress = ethAddress as `0x${string}`;
   const starknetAddress = delegate?.author?.starknetAddress as `0x${string}`;
 
   const {
@@ -193,11 +194,10 @@ export function Page() {
 
   const delegation = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
-    args: [address!],
+    args: [(ethWallet?.address || "")],
     watch: true,
-    enabled: address != null,
+    enabled: ethWallet?.address != null,
   });
-
   const delegationDataL1 = delegation?.data;
 
   const { delegates: delegationDataL2, loading: isLoadingL2Delegation } =
@@ -216,11 +216,16 @@ export function Page() {
     getChecksumAddress(delegate?.author?.starknetAddress?.toLowerCase() || "");
 
   const hasDelegatedOnL2 =
+    starknetWallet?.id &&
+    delegate?.author?.starknetAddress &&
     delegationDataL2 &&
     delegationDataL2.length &&
     delegatedToDelegateL2 &&
     !delegateOwnProfileL2;
+
   const hasDelegatedOnL1 =
+    ethWallet?.id &&
+    ethAddress &&
     delegationDataL1 &&
     delegationDataL1.length &&
     delegationDataL1.toLowerCase() ===
@@ -251,6 +256,10 @@ export function Page() {
       address: starknetAddress,
     });
 
+  const totalVotingPower = ethers.utils.commify(
+    (votingPower || 0n) + (votingPowerL2 || 0n),
+  );
+
   const gqlResponseProposalsByUser = useProposals();
 
   const proposals = gqlResponseProposalsByUser?.data || [];
@@ -258,7 +267,7 @@ export function Page() {
   const findProposalTitleByVote = (proposalId) =>
     proposals?.find((proposal) => proposal.id === proposalId)?.title || "";
 
-  const senderData = useBalanceData(address);
+  const senderData = useBalanceData(ethWallet?.address);
   const receiverData = useBalanceData(delegateAddress);
   const senderDataL2 = useStarknetBalance({
     starknetAddress: starknetWallet?.address,
@@ -826,6 +835,11 @@ export function Page() {
         <Box mt="standard.2xl" pb="standard.2xl">
           <SummaryItems.Root>
             <SummaryItems.Item
+              isLoading={isLoadingVotingPower || isLoadingVotingPowerL2}
+              label="Voting Power"
+              value={totalVotingPower || "0"}
+            />
+            <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
               label="Proposals voted on"
               value={allVotes?.length.toString() || "0"}
@@ -937,10 +951,10 @@ export function Page() {
             />
             <SummaryItems.Item
               isLoading={!delegateResponse.isFetched}
-              isCopiable={!!delegate?.author?.address}
-              isTruncated={!!delegate?.author?.address}
+              isCopiable={!!ethAddress}
+              isTruncated={!!ethAddress}
               label="Ethereum address"
-              value={delegate?.author?.address || "None"}
+              value={ethAddress || "None"}
               additionalValue={votingPower?.toString() || "0"}
               isExtendable={true}
             />

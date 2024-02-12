@@ -38,6 +38,7 @@ interface AuthSuccessParams {
 
 export const DynamicProvider = (props: Props) => {
   const { children } = props;
+  const pageContext = usePageContext();
   const [authUser, setAuthUser] = useState<AuthSuccessParams | null>(null);
   const [secondaryWallet, setSecondaryWallet] = useState<any>(null);
   const [isOpenSecondaryWalletModal, setIsOpenSecondaryWalletModal] =
@@ -56,19 +57,6 @@ export const DynamicProvider = (props: Props) => {
   const { user } = usePageContext();
   const { handleUpload } = useFileUpload();
 
-  const checkIfDelegateModalShouldShow = () => {
-    if (!userDelegate?.id) {
-      return false;
-    }
-    if (user?.hasConnectedSecondaryWallet) {
-      return false;
-    }
-    if (secondaryWallet?.address) {
-      return false;
-    }
-    return true;
-  };
-
   const { data: userDelegate } = trpc.users.isDelegate.useQuery(
     {
       userId: user?.id || "",
@@ -78,25 +66,17 @@ export const DynamicProvider = (props: Props) => {
     },
   );
 
-  console.log(userDelegate);
-
-  useEffect(() => {
-    if (checkIfDelegateModalShouldShow()) {
-      setIsOpenSecondaryWalletModal(true);
-    } else {
-      setIsOpenSecondaryWalletModal(false);
-    }
-  }, [userDelegate?.id]);
-
-  const handleClose = () => {
-    if (checkIfDelegateModalShouldShow()) {
-      return;
-    }
-    setIsOpenSecondaryWalletModal(false);
-    setIsOpenDelegateOnboarding(true);
+  const checkIfDelegateModalShouldAppear = () => {
+    return !pageContext.urlOriginal.startsWith("/delegates");
   };
 
-  console.log(userDelegate);
+  const handleClose = () => {
+    setIsOpenSecondaryWalletModal(false);
+    const delegateModalCheck = checkIfDelegateModalShouldAppear();
+    if (delegateModalCheck) {
+      setIsOpenDelegateOnboarding(true);
+    }
+  };
 
   const authenticateUser = useCallback(
     async (params: AuthSuccessParams) => {
@@ -107,6 +87,8 @@ export const DynamicProvider = (props: Props) => {
         authToken: params.authToken,
         ensName: params.user.ens?.name,
         ensAvatar: params.user.ens?.avatar,
+        isEth: params?.primaryWallet?.chain === "eip155",
+        isStarknet: params?.primaryWallet?.chain === "starknet",
       });
       utils.auth.currentUser.invalidate();
     },
@@ -115,7 +97,7 @@ export const DynamicProvider = (props: Props) => {
 
   const handleLinkEvent = async (walletAddress: string, isEth?: boolean) => {
     if (user) {
-      handleClose()
+      handleClose(true);
       if (!isEth) {
         await editUserProfile.mutateAsync(
           {
@@ -148,9 +130,9 @@ export const DynamicProvider = (props: Props) => {
 
   useEffect(() => {
     if (secondaryWallet?.address) {
-      handleClose()
+      handleClose();
     }
-  }, [secondaryWallet?.address])
+  }, [secondaryWallet?.address]);
 
   useEffect(() => {
     // Function to check and load the current wallet from localStorage
@@ -236,6 +218,7 @@ export const DynamicProvider = (props: Props) => {
     logoutMutation.mutateAsync(undefined, {
       onSuccess: () => {
         utils.auth.currentUser.invalidate();
+        setSecondaryWallet(null);
         setAuthUser(null);
       },
     });
@@ -303,6 +286,7 @@ export const DynamicProvider = (props: Props) => {
             },
             onDisconnect: () => {
               setCurrentWallet(null);
+              setSecondaryWallet(null);
             },
             onLogout: () => handleDynamicLogout(),
           },

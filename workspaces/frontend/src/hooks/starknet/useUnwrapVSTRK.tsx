@@ -3,6 +3,7 @@ import { Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { waitForTransaction } from "../snapshotX/helpers";
+import {useWallets} from "../useWallets";
 
 const starkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
@@ -11,6 +12,10 @@ export const useUnwrapVSTRK = () => {
   const [error, setError] = useState<any>(null);
   const [success, setSuccess] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
+
+  const { starknetWallet } = useWallets();
+
+  const isBraavos = starknetWallet?.connector?.name === "Braavos";
 
   const unwrap = async (starknetAddress: string, amount: number) => {
     if (!validateStarknetAddress(starknetAddress)) {
@@ -43,9 +48,17 @@ export const useUnwrapVSTRK = () => {
         provider,
       );
 
-      await window.starknet.enable();
+      const starknetObject = isBraavos
+        ? window.starknet_braavos
+        : window.starknet;
 
-      const account = window.starknet.account;
+      if (!starknetObject) {
+        return;
+      }
+
+      await starknetObject.enable();
+
+      const account = starknetObject.account;
       contract.connect(account);
 
       const amountWithDecimals = BigInt(Math.floor(amount * 1e18)).toString(); // Convert to string to avoid precision issues

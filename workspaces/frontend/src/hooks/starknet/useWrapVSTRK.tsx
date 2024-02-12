@@ -3,6 +3,7 @@ import { Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { waitForTransaction } from "../snapshotX/helpers";
+import {useWallets} from "../useWallets";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 
@@ -11,6 +12,7 @@ export const useWrapVSTRK = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
+  const { starknetWallet } = useWallets();
 
   const wrap = async (starknetAddress: string, amount: number) => {
     setIsSubmitting(true); // Start submitting
@@ -19,13 +21,13 @@ export const useWrapVSTRK = () => {
 
     if (!validateStarknetAddress(starknetAddress)) {
       setError("Invalid StarkNet address");
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       return;
     }
 
     if (!amount || amount < 1) {
       setError("Amount must be greater than 0");
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       return;
     }
 
@@ -48,14 +50,27 @@ export const useWrapVSTRK = () => {
         provider,
       );
 
-      await window.starknet.enable();
+      const isBraavos = starknetWallet?.connector?.name === "Braavos";
 
-      const account = window.starknet.account;
+      const starknetObject = isBraavos
+        ? window.starknet_braavos
+        : window.starknet;
+
+      if (!starknetObject) {
+        return;
+      }
+
+      await starknetObject.enable();
+
+      const account = starknetObject.account;
       contract.connect(account);
 
       const amountWithDecimals = BigInt(Math.floor(amount * 1e18)).toString(); // Convert to string to avoid precision issues
 
-      const txResponse = await contract.lock_and_delegate(starknetAddress, amountWithDecimals);
+      const txResponse = await contract.lock_and_delegate(
+        starknetAddress,
+        amountWithDecimals,
+      );
       setTransactionHash(txResponse.transaction_hash);
       await waitForTransaction(txResponse.transaction_hash);
       setSuccess(true);
