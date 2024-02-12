@@ -82,7 +82,6 @@ export function Page() {
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
-  const { address } = useAccount();
   const { user } = usePageContext();
   const { user: dynamicUser, walletConnector } = useDynamicContext();
   const { ethWallet, starknetWallet } = useWallets();
@@ -195,9 +194,9 @@ export function Page() {
 
   const delegation = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
-    args: [address!],
+    args: [(ethWallet?.address || "")],
     watch: true,
-    enabled: address != null,
+    enabled: ethWallet?.address != null,
   });
   const delegationDataL1 = delegation?.data;
 
@@ -268,7 +267,7 @@ export function Page() {
   const findProposalTitleByVote = (proposalId) =>
     proposals?.find((proposal) => proposal.id === proposalId)?.title || "";
 
-  const senderData = useBalanceData(address);
+  const senderData = useBalanceData(ethWallet?.address);
   const receiverData = useBalanceData(delegateAddress);
   const senderDataL2 = useStarknetBalance({
     starknetAddress: starknetWallet?.address,
