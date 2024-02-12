@@ -811,7 +811,7 @@ export function Page() {
         {hasDelegatedOnL1 && hasDelegatedOnL2 && (
           <Box mt="standard.md">
             <Banner
-              label={`Your voting power of ${senderDataL2.balance?.balance} ${senderDataL2?.balance?.symbol} on L2 and ${senderData.balance} ${senderData.symbol} on L1 is currently assigned to this delegate.`}
+              label={`Your voting power of ${senderDataL2.balance?.balance} ${senderDataL2?.balance?.symbol} on Starknet and ${senderData.balance} ${senderData.symbol} on Ethereum is currently assigned to this delegate.`}
             />
           </Box>
         )}
