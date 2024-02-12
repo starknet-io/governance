@@ -334,7 +334,7 @@ export function Page() {
           <PageTitle
             learnMoreLink={"/learn"}
             title="Manage vSTRK"
-            description="Stake STRK for vSTRK to vote and delegate on the Starknet network in the Governance Hub."
+            description="Wrap STRK for vSTRK to vote and delegate on the Starknet network in the Governance Hub."
             maxW={undefined}
             mb={0}
           />
@@ -412,9 +412,6 @@ export function Page() {
             w="100%"
             borderRadius="4px"
           >
-            <Heading variant="h3" mb="24px" textAlign="center">
-              Starknet wallet balance
-            </Heading>
             <Flex
               borderRadius="999px"
               padding="standard.base"
@@ -440,8 +437,8 @@ export function Page() {
             <Flex mb="standard.md" gap="standard.sm" flexDirection="column">
               <Text variant="mediumStrong" color="content.default.default">
                 {isUnwrap
-                  ? "How much vSTRK do you want to unstake?"
-                  : "How much STRK do you want to stake?"}
+                  ? "How much vSTRK do you want to unwrap?"
+                  : "How much STRK do you want to wrap?"}
               </Text>
               <Input
                 type="number"
