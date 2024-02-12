@@ -196,7 +196,6 @@ export function Delegates({
   transformData = transformDataDefault,
 }: DelegatesProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { address, isConnected } = useAccount();
   const { starknetWallet, ethWallet } = useWallets();
   const { primaryWallet, setPrimaryWallet } = useDynamicContext();
   const [inputAddress, setInputAddress] = useState("");
@@ -206,7 +205,7 @@ export function Delegates({
     starknetAddress: l2InputAddress,
   });
   const [isValidAddress, setIsValidAddress] = useState(true);
-  const senderData = useBalanceData(address);
+  const senderData = useBalanceData(ethWallet?.address);
   const senderDataL2 = useStarknetBalance({
     starknetAddress: starknetWallet?.address,
   });
