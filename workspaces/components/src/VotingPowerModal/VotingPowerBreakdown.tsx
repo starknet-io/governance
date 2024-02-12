@@ -5,6 +5,7 @@ import { Button } from "../Button";
 import React from "react";
 import { Link } from "../Link";
 import { ethers } from "ethers";
+import { navigate } from "vite-plugin-ssr/client/router";
 
 type Props = {
   showBreakdown?: boolean;
@@ -13,10 +14,12 @@ type Props = {
   votingPowerStark: bigint;
   hasEthWallet?: boolean;
   hasStarkWallet?: boolean;
+  onClose?: () => void;
 };
 
 export const VotingPowerBreakdown = ({
   showBreakdown = false,
+  onClose,
   onToggleExpand,
   votingPowerEth = 0n,
   votingPowerStark = 0n,
@@ -104,7 +107,17 @@ export const VotingPowerBreakdown = ({
                 </Box>
               ) : (
                 <Box p="standard.sm">
-                  <Button size="condensed">Manage vSTRK</Button>
+                  <Button
+                    size="condensed"
+                    onClick={(e) => {
+                      navigate("/manage-vstrk");
+                      if (onClose) {
+                        onClose()
+                      }
+                    }}
+                  >
+                    Manage vSTRK
+                  </Button>
                 </Box>
               )}
             </>

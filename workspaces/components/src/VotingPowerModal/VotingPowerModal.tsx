@@ -103,6 +103,7 @@ export const VotingPowerModal = ({
       title={"Voting Power"}
     >
       <VotingPowerBreakdown
+        onClose={onClose}
         showBreakdown
         hasEthWallet={hasEthWallet}
         hasStarkWallet={hasStarkWallet}

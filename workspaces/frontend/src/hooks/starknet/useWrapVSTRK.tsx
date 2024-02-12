@@ -19,13 +19,13 @@ export const useWrapVSTRK = () => {
 
     if (!validateStarknetAddress(starknetAddress)) {
       setError("Invalid StarkNet address");
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       return;
     }
 
     if (!amount || amount < 1) {
       setError("Amount must be greater than 0");
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       return;
     }
 
@@ -48,14 +48,25 @@ export const useWrapVSTRK = () => {
         provider,
       );
 
-      await window.starknet.enable();
+      const starknetObject = isBraavos
+        ? window.starknet_braavos
+        : window.starknet;
 
-      const account = window.starknet.account;
+      if (!starknetObject) {
+        return;
+      }
+
+      await starknetObject.enable();
+
+      const account = starknetObject.account;
       contract.connect(account);
 
       const amountWithDecimals = BigInt(Math.floor(amount * 1e18)).toString(); // Convert to string to avoid precision issues
 
-      const txResponse = await contract.lock_and_delegate(starknetAddress, amountWithDecimals);
+      const txResponse = await contract.lock_and_delegate(
+        starknetAddress,
+        amountWithDecimals,
+      );
       setTransactionHash(txResponse.transaction_hash);
       await waitForTransaction(txResponse.transaction_hash);
       setSuccess(true);
