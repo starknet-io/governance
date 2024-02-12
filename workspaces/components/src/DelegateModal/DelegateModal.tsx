@@ -133,7 +133,7 @@ export const DelegateModal = ({
         <Stack spacing="standard.xl">
           <Swap.Root>
             <Text variant="mediumStrong" color="content.support.default" mb="standard.xs">From your wallet</Text>
-            {senderData ? (
+            {senderData?.address ? (
               <Swap.UserSummary
                 address={senderData.address}
                 balance={senderData.balance}

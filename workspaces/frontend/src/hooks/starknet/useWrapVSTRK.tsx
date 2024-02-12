@@ -3,6 +3,7 @@ import { Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { waitForTransaction } from "../snapshotX/helpers";
+import {useWallets} from "../useWallets";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 
@@ -11,6 +12,7 @@ export const useWrapVSTRK = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
+  const { starknetWallet } = useWallets();
 
   const wrap = async (starknetAddress: string, amount: number) => {
     setIsSubmitting(true); // Start submitting
@@ -47,6 +49,8 @@ export const useWrapVSTRK = () => {
         contractAddress,
         provider,
       );
+
+      const isBraavos = starknetWallet?.connector?.name === "Braavos";
 
       const starknetObject = isBraavos
         ? window.starknet_braavos
