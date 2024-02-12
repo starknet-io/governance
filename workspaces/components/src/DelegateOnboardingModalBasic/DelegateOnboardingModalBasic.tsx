@@ -10,6 +10,10 @@ type Props = {
   onClose: () => void;
 };
 export const DelegateOnboardingModalBasic = ({ isOpen, onClose }: Props) => {
+  const handleViewDelegates = () => {
+    navigate("/delegates");
+    onClose();
+  }
   return (
     <Modal
       isOpen={isOpen}
@@ -42,7 +46,7 @@ export const DelegateOnboardingModalBasic = ({ isOpen, onClose }: Props) => {
             delegation.
           </Text>
         </Flex>
-        <Button onClick={() => navigate("/delegates")}>View delegates</Button>
+        <Button onClick={handleViewDelegates}>View delegates</Button>
       </Flex>
     </Modal>
   );
