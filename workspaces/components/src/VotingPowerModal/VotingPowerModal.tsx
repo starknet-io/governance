@@ -66,7 +66,7 @@ const DelegationComponent = ({
               </Flex>
             ) : delegatedTo &&
               delegatedTo.length &&
-              delegatedTo !== "0x0000000000000000000000000000000000000000" ? (
+              delegatedTo !== "0x0000000000000000000000000000000000000000" && delegatedTo !== "0x00" ? (
               <Flex>
                 <Tooltip label={delegatedTo}>
                   <Text>{truncateAddress(delegatedTo || "")}</Text>

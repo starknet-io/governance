@@ -86,7 +86,6 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           zIndex={2}
         />
       </Box>
-      {console.log(user)}
       <VStack spacing={"spacing.md"} align="stretch">
         <AvatarWithText
           size="condensed"
@@ -255,7 +254,6 @@ const UserProfileMenuComponent = (
           isOpen={isModalOpen}
           onClose={() => {
             handleCloseModal();
-            console.log("false 2");
             setEditUserProfile(false);
           }}
           size="md"

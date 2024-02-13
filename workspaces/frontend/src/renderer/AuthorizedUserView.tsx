@@ -47,7 +47,6 @@ const AuthorizedUserView = () => {
     address: starknetAddress,
   });
 
-  console.log(votingPowerEthereum, votingPowerStarknet)
 
   const ethBalance = useBalanceData(ethAddress as `0x${string}`);
   const { balance: vSTRKBalance, loading: isvSTRKBalanceLoading } = useStarknetBalance({ starknetAddress });
@@ -65,7 +64,7 @@ const AuthorizedUserView = () => {
       starknetAddress,
     });
 
-  const hasDelegationData =
+    const hasDelegationData =
     !isLoading && delegationData && delegationData.length;
   const hasDelegationDataL2 = !!(
     !isLoadingL2Delegation &&

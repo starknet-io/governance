@@ -26,7 +26,7 @@ export const VoteReview = ({
   isStarknet,
 }: Props) => {
   const formattedCount = formatVotesAmount(voteCount);
-  console.log(formattedCount, voteCount)
+
   return (
     <Button
       variant="fill"
