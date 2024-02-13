@@ -39,19 +39,18 @@ const AuthorizedUserView = () => {
   const { user } = usePageContext();
   const { isMobile } = useIsMobile();
 
-  const { data: votingPowerEthereum } = useVotingPower({
+  const { data: votingPowerEthereum, isLoading: isVotingPowerEthLoading } = useVotingPower({
     address: ethAddress,
   });
 
-  const { data: votingPowerStarknet } = useVotingPower({
+  const { data: votingPowerStarknet, isLoading: isVotingPowerStarknetLoading } = useVotingPower({
     address: starknetAddress,
   });
 
-  console.log(votingPowerEthereum, votingPowerStarknet)
 
   const ethBalance = useBalanceData(ethAddress as `0x${string}`);
-  const { balance: vSTRKBalance } = useStarknetBalance({ starknetAddress });
-  const { balance: starknetBalance } = useStarknetBalance({ starknetAddress, starkContract });
+  const { balance: vSTRKBalance, loading: isvSTRKBalanceLoading } = useStarknetBalance({ starknetAddress });
+  const { balance: starknetBalance, loading: isStarknetBalanceLoading } = useStarknetBalance({ starknetAddress, starkContract });
 
   const { data: delegationData, isLoading } = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
@@ -65,7 +64,7 @@ const AuthorizedUserView = () => {
       starknetAddress,
     });
 
-  const hasDelegationData =
+    const hasDelegationData =
     !isLoading && delegationData && delegationData.length;
   const hasDelegationDataL2 = !!(
     !isLoadingL2Delegation &&
@@ -223,14 +222,20 @@ const AuthorizedUserView = () => {
           delegatedToL2={
             delegatedToL2?.data ? delegatedToL2?.data : delegationDataL2
           }
+          delegatedToL1Loading={delegatedTo.isLoading}
+          delegatedToL2Loading={delegatedToL2.isLoading}
           onDisconnect={handleDisconnect}
           user={user}
           onSave={handleSave}
           votingPowerEth={votingPowerEthereum}
           votingPowerStark={votingPowerStarknet}
+          isVotingPowerEthLoading={isVotingPowerEthLoading}
+          isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
           ethBalance={ethBalance}
           vSTRKBalance={vSTRKBalance}
           starknetBalance={starknetBalance}
+          isvSTRKBalanceLoading={isvSTRKBalanceLoading}
+          isStarknetBalanceLoading={isStarknetBalanceLoading}
           onModalStateChange={(isOpen: boolean) => setIsModalOpen(isOpen)}
           handleUpload={handleUpload}
           userExistsError={userExistsError}

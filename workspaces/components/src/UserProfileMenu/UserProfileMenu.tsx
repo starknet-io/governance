@@ -272,7 +272,6 @@ const UserProfileMenuComponent = (
           isOpen={isModalOpen}
           onClose={() => {
             handleCloseModal();
-            console.log("false 2");
             setEditUserProfile(false);
           }}
           size="md"

@@ -38,6 +38,10 @@ interface UserProfileMenuProps {
   isMenuOpen?: boolean;
   delegatedToL1: any;
   delegatedToL2: any;
+  delegatedToL1Loading: boolean;
+  delegatedToL2Loading: boolean;
+  isVotingPowerEthLoading: boolean;
+  isVotingPowerStarknetLoading: boolean;
   onModalStateChange?: (isOpen: boolean) => void;
   handleUpload?: (file: File) => Promise<string | void> | void;
   userExistsError?: boolean;
@@ -48,6 +52,7 @@ interface UserProfileMenuProps {
   ethBalance?: {
     symbol: string | null;
     balance: number | bigint | null;
+    isFetched: boolean;
   };
   starknetBalance?: {
     symbol: string | null;
@@ -81,7 +86,6 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           zIndex={2}
         />
       </Box>
-      {console.log(user)}
       <VStack spacing={"spacing.md"} align="stretch">
         <AvatarWithText
           size="condensed"
@@ -130,9 +134,15 @@ const UserProfileMenuComponent = (
     onSave,
     ethBalance,
     starknetBalance,
+    isvSTRKBalanceLoading,
+    isStarknetBalanceLoading,
     vSTRKBalance,
     delegatedToL1,
     delegatedToL2,
+    delegatedToL1Loading,
+    delegatedToL2Loading,
+    isVotingPowerEthLoading,
+    isVotingPowerStarknetLoading,
     onModalStateChange,
     handleUpload,
     userExistsError = false,
@@ -214,8 +224,15 @@ const UserProfileMenuComponent = (
         balanceEth={`${new Intl.NumberFormat().format(
           ethBalance?.balance,
         )} ${ethBalance?.symbol}`}
+        isBalanceEthFetched={ethBalance?.isFetched}
+        delegatedToL1Loading={delegatedToL1Loading}
+        delegatedToL2Loading={delegatedToL2Loading}
+        isVotingPowerEthLoading={isVotingPowerEthLoading}
+        isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
         balanceVStark={`${vSTRKBalance?.balance} ${vSTRKBalance?.symbol}`}
         balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
+        isvSTRKBalanceLoading={isvSTRKBalanceLoading}
+        isStarknetBalanceLoading={isStarknetBalanceLoading}
         votingPowerEth={votingPowerEth}
         votingPowerStark={votingPowerStark}
       />
@@ -237,7 +254,6 @@ const UserProfileMenuComponent = (
           isOpen={isModalOpen}
           onClose={() => {
             handleCloseModal();
-            console.log("false 2");
             setEditUserProfile(false);
           }}
           size="md"

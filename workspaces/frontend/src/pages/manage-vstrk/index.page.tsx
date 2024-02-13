@@ -11,6 +11,7 @@ import {
   Button,
   Modal,
   Link,
+  Skeleton
 } from "@yukilabs/governance-components";
 import { navigate } from "vite-plugin-ssr/client/router";
 import {
@@ -51,6 +52,7 @@ const WrapModal = ({
   error,
   txHash = "",
   handleAddToWallet,
+  isArgentX
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -61,6 +63,7 @@ const WrapModal = ({
   error: any;
   txHash: string | null;
   handleAddToWallet: () => Promise<any>;
+  isArgentX?: boolean;
 }) => {
   return (
     <Modal
@@ -132,7 +135,7 @@ const WrapModal = ({
                   Review transaction details{" "}
                 </Link>
               </Flex>
-              <Flex
+              {!isArgentX ? <Flex
                 alignItems="center"
                 gap="standard.xs"
                 alignSelf="stretch"
@@ -158,7 +161,7 @@ const WrapModal = ({
                   <WalletIcon mr="standard.xs" />
                   Add to wallet
                 </Button>
-              </Flex>
+              </Flex> : null}
             </>
           )}
         </Flex>
@@ -183,24 +186,24 @@ const WrapModal = ({
 export function Page() {
   const wallets = useUserWallets();
   const { starknetWallet } = useWallets();
-
+  const isArgentX = starknetWallet?.connector?.name === "ArgentX";
   const ethAddress =
     findMatchingWallet(wallets, WalletChainKey.EVM)?.address || undefined;
   const starknetAddress =
     findMatchingWallet(wallets, WalletChainKey.STARKNET)?.address || undefined;
-  const { data: votingPowerEthereum } = useVotingPower({
+  const { data: votingPowerEthereum, isLoading: isVotingPowerEthereumLoading } = useVotingPower({
     address: ethAddress,
   });
 
-  const { data: votingPowerStarknet } = useVotingPower({
+  const { data: votingPowerStarknet, isLoading: isVotingPowerStarknetLoading } = useVotingPower({
     address: starknetAddress,
   });
-  const ethBalance = useBalanceData(ethAddress as `0x${string}`);
-  const { balance: starknetBalance } = useStarknetBalance({
+  const { balance: ethBalance, symbol: ethBalanceSymbol, isFetched: isEthBalanceFetched } = useBalanceData(ethAddress as `0x${string}`);
+  const { balance: starknetBalance, loading: isStarknetBalanceLoading } = useStarknetBalance({
     starknetAddress,
     starkContract: starkContract,
   });
-  const { balance: vSTRKBalance } = useStarknetBalance({
+  const { balance: vSTRKBalance, loading: isvSTRKBalanceLoading } = useStarknetBalance({
     starknetAddress,
     starkContract: vStarkContract,
   });
@@ -362,16 +365,16 @@ export function Page() {
               }}
             >
               <Flex justifyContent="space-between" alignItems="center">
-                <Box>
+              <Box>
                   <Text variant="mediumStrong" color="content.default.default">
                     Total voting power
                   </Text>
-                  <Text variant="largeStrong" color="content.accent.default">
+                  {!isVotingPowerEthereumLoading && !isVotingPowerStarknetLoading ? <Text variant="largeStrong" color="content.accent.default">
                     {new Intl.NumberFormat().format(
                       parseInt(votingPowerEthereum.toString()) +
                         parseInt(votingPowerStarknet.toString()),
                     )}
-                  </Text>
+                  </Text> : <Skeleton height="16px" width="50%" borderRadius="md" />}
                 </Box>
               </Flex>
             </Box>
@@ -380,29 +383,29 @@ export function Page() {
                 <Text variant="small" color="content.support.default">
                   vSTRK on Starknet
                 </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
+                {!isvSTRKBalanceLoading ? <Text color="content.accent.default" variant="mediumStrong">
                   {vSTRKBalance?.balance || 0} {vSTRKBalance?.symbol || "STRK"}
-                </Text>
+                </Text> : <Skeleton height="16px" width="60%" borderRadius="md" />}
               </Box>
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
                   STRK on Starknet
                 </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
+                {!isStarknetBalanceLoading ? <Text color="content.accent.default" variant="mediumStrong">
                   {starknetBalance?.balance || 0}{" "}
                   {starknetBalance?.symbol || "STRK"}
-                </Text>
+                </Text> : <Skeleton height="16px" width="60%" borderRadius="md" />}
               </Box>
               <Divider my="standard.sm" />
               <Box mt="standard.sm">
-                <Text variant="small" color="content.support.default">
-                  STRK on Ethereum
-                </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
-                  {new Intl.NumberFormat().format(ethBalance.balance)}{" "}
-                  {ethBalance.symbol}
-                </Text>
-              </Box>
+                  <Text variant="small" color="content.support.default">
+                    STRK on Ethereum
+                  </Text>
+                  {isEthBalanceFetched ? <Text color="content.accent.default" variant="mediumStrong">
+                    {new Intl.NumberFormat().format(Number(ethBalance))}{" "}
+                    {ethBalanceSymbol}
+                  </Text> : <Skeleton height="16px" width="60%" borderRadius="md" />}
+                </Box>
             </Box>
           </Box>
           <Box
@@ -525,6 +528,7 @@ export function Page() {
         error={wrapError}
         handleAddToWallet={handleAddToWallet}
         txHash={wrapTxHash}
+        isArgentX={isArgentX}
       />
       <WrapModal
         isOpen={isUnwrapOpen}
@@ -536,6 +540,7 @@ export function Page() {
         error={unwrapError}
         handleAddToWallet={handleAddToWallet}
         txHash={unwrapTxHash}
+        isArgentX={isArgentX}
       />
     </FormLayout>
   );

@@ -1,8 +1,7 @@
-import { Box, Flex, Icon } from "@chakra-ui/react";
+import { Box, Flex, Icon, Skeleton } from "@chakra-ui/react";
 import { Text } from "../Text";
 import { ExpandIcon, ThunderIcon } from "../Icons";
 import { Button } from "../Button";
-import React from "react";
 import { Link } from "../Link";
 import { ethers } from "ethers";
 import { navigate } from "vite-plugin-ssr/client/router";
@@ -15,6 +14,8 @@ type Props = {
   hasEthWallet?: boolean;
   hasStarkWallet?: boolean;
   onClose?: () => void;
+  isVotingPowerEthLoading: boolean;
+  isVotingPowerStarknetLoading: boolean;
 };
 
 export const VotingPowerBreakdown = ({
@@ -25,6 +26,8 @@ export const VotingPowerBreakdown = ({
   votingPowerStark = 0n,
   hasEthWallet,
   hasStarkWallet,
+  isVotingPowerEthLoading,
+  isVotingPowerStarknetLoading
 }: Props) => {
   const totalValue = ethers.utils.commify(
     (hasEthWallet ? votingPowerEth : 0n) +
@@ -46,9 +49,9 @@ export const VotingPowerBreakdown = ({
             <Text variant="mediumStrong" color="content.default.default">
               Total voting power
             </Text>
-            <Text variant="largeStrong" color="content.accent.default">
+            {!String(totalValue) ? <Skeleton height="24px" width="50%" borderRadius="md" /> : <Text variant="largeStrong" color="content.accent.default">
               {totalValue}
-            </Text>
+            </Text>}
           </Box>
           {showBreakdown ? (
             <Icon as={ThunderIcon} fill="transparent" w="48px" h="48px" />
@@ -77,9 +80,9 @@ export const VotingPowerBreakdown = ({
                 <Text variant="small" color="content.support.default">
                   Starknet voting power
                 </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
+                {!isVotingPowerStarknetLoading ? <Text color="content.accent.default" variant="mediumStrong">
                   {new Intl.NumberFormat().format(votingPowerStark)}
-                </Text>
+                </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
               </Box>
             )}
             {hasEthWallet && (
@@ -87,9 +90,9 @@ export const VotingPowerBreakdown = ({
                 <Text variant="small" color="content.support.default">
                   Ethereum voting power
                 </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
+                {!isVotingPowerEthLoading ? <Text color="content.accent.default" variant="mediumStrong">
                   {new Intl.NumberFormat().format(votingPowerEth)}
-                </Text>
+                </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
               </Box>
             )}
           </Box>
