@@ -91,7 +91,7 @@ export const authRouter = router({
               );
           }
         }
-        opts.ctx.res.cookie('JWT', opts.input.authToken, { httpOnly: true });
+        opts.ctx.res.cookie('JWT', opts.input.authToken, { httpOnly: true, sameSite: 'none', secure: true });
         return;
       } catch (err) {
         console.error(err);
