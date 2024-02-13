@@ -24,6 +24,8 @@ type Props = {
   delegatedToL2Name: string | undefined;
   delegatedToL1Loading: boolean;
   delegatedToL2Loading: boolean;
+  isVotingPowerEthLoading: boolean;
+  isVotingPowerStarknetLoading: boolean;
 };
 
 const DelegationComponent = ({
@@ -92,12 +94,16 @@ export const VotingPowerModal = ({
   balanceEth = 0,
   balanceStark = 0,
   balanceVStark = 0,
+  isvSTRKBalanceLoading,
+  isStarknetBalanceLoading,
   delegatedToL1,
   delegatedToL2,
   delegatedToL1Name,
   delegatedToL2Name,
   delegatedToL1Loading,
-  delegatedToL2Loading
+  delegatedToL2Loading,
+  isVotingPowerEthLoading,
+  isVotingPowerStarknetLoading
 }: Props) => {
   return (
     <Modal
@@ -114,32 +120,26 @@ export const VotingPowerModal = ({
         hasStarkWallet={hasStarkWallet}
         votingPowerEth={votingPowerEth}
         votingPowerStark={votingPowerStark}
+        isVotingPowerEthLoading={isVotingPowerEthLoading}
+        isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
       />
       <Box gap="standard.md">
         {hasStarkWallet && (
           <Box>
             <Text variant="bodyMediumStrong">Starknet</Text>
             <Flex direction="column" gap="standard.xs" mt="standard.sm">
-              {balanceStark ? <Flex>
+              <Flex>
                 <Box width="50%">
                   <Text variant="small" color="content.support.default">
                     STRK balance
                   </Text>
                 </Box>
                 <Box width="50%">
-                  <Text variant="smallStrong" color="content.default.default">
+                {!isStarknetBalanceLoading ? <Text variant="smallStrong" color="content.default.default">
                     {balanceStark}
-                  </Text>
+                  </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
                 </Box>
-              </Flex> :
-              <Flex>
-                <Box width="50%">
-                  <Skeleton height="24px" width="50%" borderRadius="md" />
-                </Box>
-                <Box width="50%">
-                  <Skeleton height="24px" width="30%" borderRadius="md" />
-                </Box>
-              </Flex>}
+              </Flex>
               <Flex>
                 <Box width="50%">
                   <Text variant="small" color="content.support.default">
@@ -147,28 +147,24 @@ export const VotingPowerModal = ({
                   </Text>
                 </Box>
                 <Box width="50%">
-                  <Text variant="smallStrong" color="content.default.default">
+                  {!isvSTRKBalanceLoading ? <Text variant="smallStrong" color="content.default.default">
                     {balanceVStark}
-                  </Text>
+                  </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
                 </Box>
               </Flex>
-              {!delegatedToL2Loading ? <Flex>
+              <Flex>
                 <Box width="50%">
                   <Text variant="smallStrong" color="content.support.default">
                     Delegated to
                   </Text>
                 </Box>
-                <DelegationComponent
+                {!delegatedToL2Loading ? <DelegationComponent
                   delegatedTo={delegatedToL2}
                   delegatedToName={delegatedToL2Name}
-                />
-              </Flex> :
-              <Flex>
-                <Box width="50%">
-                  <Skeleton height="16px" width="50%" borderRadius="md" />
-                </Box>
-                  <Skeleton height="16px" width="30%" borderRadius="md" />
-              </Flex>}
+                /> :  <Box width="50%">
+                <Skeleton height="16px" width="50%" borderRadius="md" />
+              </Box>}
+              </Flex>
             </Flex>
           </Box>
         )}
@@ -176,45 +172,31 @@ export const VotingPowerModal = ({
           <Box mt="standard.lg">
             <Text variant="bodyMediumStrong">Ethereum</Text>
             <Flex direction="column" gap="standard.xs" mt="standard.sm">
-              {isBalanceEthFetched ? <Flex>
+              <Flex>
                 <Box width="50%">
                   <Text variant="small" color="content.support.default">
                     STRK balance
                   </Text>
                 </Box>
                 <Box width="50%">
-                  <Text variant="smallStrong" color="content.default.default">
+                {isBalanceEthFetched ? <Text variant="smallStrong" color="content.default.default">
                     {balanceEth}
-                  </Text>
+                  </Text> : <Skeleton height="16px" width="50%" borderRadius="md" />}
                 </Box>
-              </Flex> :
+              </Flex>
               <Flex>
-                <Box width="50%">
-                  <Skeleton height="16px" width="50%" borderRadius="md" />
-                </Box>
-                <Box width="50%">
-                  <Skeleton height="16px" width="30%" borderRadius="md" />
-                </Box>
-              </Flex>}
-              {!delegatedToL1Loading ? <Flex>
                 <Box width="50%">
                   <Text variant="smallStrong" color="content.support.default">
                     Delegated to
                   </Text>
                 </Box>
-                <DelegationComponent
+                {!delegatedToL1Loading ? <DelegationComponent
                   delegatedTo={delegatedToL1}
                   delegatedToName={delegatedToL1Name}
-                />
-              </Flex> :
-              <Flex>
-                <Box width="50%">
-                  <Skeleton height="16px" width="50%" borderRadius="md" />
-                </Box>
-                <Box width="50%">
-                  <Skeleton height="16px" width="30%" borderRadius="md" />
-                </Box>
-              </Flex>}
+                /> : <Box width="50%">
+                <Skeleton height="16px" width="50%" borderRadius="md" />
+              </Box>}
+              </Flex>
             </Flex>
           </Box>
         )}

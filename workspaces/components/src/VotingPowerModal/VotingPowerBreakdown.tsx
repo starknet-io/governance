@@ -1,4 +1,4 @@
-import { Box, Flex, Icon } from "@chakra-ui/react";
+import { Box, Flex, Icon, Skeleton } from "@chakra-ui/react";
 import { Text } from "../Text";
 import { ExpandIcon, ThunderIcon } from "../Icons";
 import { Button } from "../Button";
@@ -14,6 +14,8 @@ type Props = {
   hasEthWallet?: boolean;
   hasStarkWallet?: boolean;
   onClose?: () => void;
+  isVotingPowerEthLoading: boolean;
+  isVotingPowerStarknetLoading: boolean;
 };
 
 export const VotingPowerBreakdown = ({
@@ -24,6 +26,8 @@ export const VotingPowerBreakdown = ({
   votingPowerStark = 0n,
   hasEthWallet,
   hasStarkWallet,
+  isVotingPowerEthLoading,
+  isVotingPowerStarknetLoading
 }: Props) => {
   const totalValue = ethers.utils.commify(
     (hasEthWallet ? votingPowerEth : 0n) +
@@ -76,9 +80,9 @@ export const VotingPowerBreakdown = ({
                 <Text variant="small" color="content.support.default">
                   Starknet voting power
                 </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
+                {!isVotingPowerStarknetLoading ? <Text color="content.accent.default" variant="mediumStrong">
                   {new Intl.NumberFormat().format(votingPowerStark)}
-                </Text>
+                </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
               </Box>
             )}
             {hasEthWallet && (
@@ -86,9 +90,9 @@ export const VotingPowerBreakdown = ({
                 <Text variant="small" color="content.support.default">
                   Ethereum voting power
                 </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
+                {!isVotingPowerEthLoading ? <Text color="content.accent.default" variant="mediumStrong">
                   {new Intl.NumberFormat().format(votingPowerEth)}
-                </Text>
+                </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
               </Box>
             )}
           </Box>

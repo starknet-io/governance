@@ -40,6 +40,8 @@ interface UserProfileMenuProps {
   delegatedToL2: any;
   delegatedToL1Loading: boolean;
   delegatedToL2Loading: boolean;
+  isVotingPowerEthLoading: boolean;
+  isVotingPowerStarknetLoading: boolean;
   onModalStateChange?: (isOpen: boolean) => void;
   handleUpload?: (file: File) => Promise<string | void> | void;
   userExistsError?: boolean;
@@ -133,11 +135,15 @@ const UserProfileMenuComponent = (
     onSave,
     ethBalance,
     starknetBalance,
+    isvSTRKBalanceLoading,
+    isStarknetBalanceLoading,
     vSTRKBalance,
     delegatedToL1,
     delegatedToL2,
     delegatedToL1Loading,
     delegatedToL2Loading,
+    isVotingPowerEthLoading,
+    isVotingPowerStarknetLoading,
     onModalStateChange,
     handleUpload,
     userExistsError = false,
@@ -222,8 +228,12 @@ const UserProfileMenuComponent = (
         isBalanceEthFetched={ethBalance?.isFetched}
         delegatedToL1Loading={delegatedToL1Loading}
         delegatedToL2Loading={delegatedToL2Loading}
+        isVotingPowerEthLoading={isVotingPowerEthLoading}
+        isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
         balanceVStark={`${vSTRKBalance?.balance} ${vSTRKBalance?.symbol}`}
         balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
+        isvSTRKBalanceLoading={isvSTRKBalanceLoading}
+        isStarknetBalanceLoading={isStarknetBalanceLoading}
         votingPowerEth={votingPowerEth}
         votingPowerStark={votingPowerStark}
       />
