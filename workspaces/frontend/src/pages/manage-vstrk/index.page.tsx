@@ -52,6 +52,7 @@ const WrapModal = ({
   error,
   txHash = "",
   handleAddToWallet,
+  isArgentX
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -62,6 +63,7 @@ const WrapModal = ({
   error: any;
   txHash: string | null;
   handleAddToWallet: () => Promise<any>;
+  isArgentX?: boolean;
 }) => {
   return (
     <Modal
@@ -133,7 +135,7 @@ const WrapModal = ({
                   Review transaction details{" "}
                 </Link>
               </Flex>
-              <Flex
+              {!isArgentX ? <Flex
                 alignItems="center"
                 gap="standard.xs"
                 alignSelf="stretch"
@@ -159,7 +161,7 @@ const WrapModal = ({
                   <WalletIcon mr="standard.xs" />
                   Add to wallet
                 </Button>
-              </Flex>
+              </Flex> : null}
             </>
           )}
         </Flex>
@@ -184,7 +186,7 @@ const WrapModal = ({
 export function Page() {
   const wallets = useUserWallets();
   const { starknetWallet } = useWallets();
-
+  const isArgentX = starknetWallet?.connector?.name === "ArgentX";
   const ethAddress =
     findMatchingWallet(wallets, WalletChainKey.EVM)?.address || undefined;
   const starknetAddress =
@@ -543,6 +545,7 @@ export function Page() {
         error={wrapError}
         handleAddToWallet={handleAddToWallet}
         txHash={wrapTxHash}
+        isArgentX={isArgentX}
       />
       <WrapModal
         isOpen={isUnwrapOpen}
@@ -554,6 +557,7 @@ export function Page() {
         error={unwrapError}
         handleAddToWallet={handleAddToWallet}
         txHash={unwrapTxHash}
+        isArgentX={isArgentX}
       />
     </FormLayout>
   );

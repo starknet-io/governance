@@ -27,9 +27,7 @@ export const DelegateOnboardingModalBasic = ({ isOpen, onClose }: Props) => {
             Vote Yourself
           </Text>
           <Text variant="small" color="content.default.default">
-            Delegate your STRK to yourself in the delegates section in order to
-            vote. Each Ethereum and Starknet address requires its own
-            delegation.
+            Delegate your STRK to yourself in the delegates section in order to vote. If you hold STRK tokens on both Starknet and Ethereum, you're required to delegate them separately on each network.
           </Text>
         </Flex>
         <Flex flexDirection="column" gap="standard.xs">
@@ -37,9 +35,7 @@ export const DelegateOnboardingModalBasic = ({ isOpen, onClose }: Props) => {
             Delegate to a community member
           </Text>
           <Text variant="small" color="content.default.default">
-            Prefer not to vote? Delegate your STRK voting power to a community
-            member. Each Ethereum and Starknet address requires its own
-            delegation.
+            Prefer not to vote? Delegate your STRK voting power to a community member. If you hold STRK tokens on both Starknet and Ethereum, you're required to delegate them separately on each network.
           </Text>
         </Flex>
         <Button
