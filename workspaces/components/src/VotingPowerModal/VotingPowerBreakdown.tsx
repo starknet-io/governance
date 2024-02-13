@@ -49,9 +49,9 @@ export const VotingPowerBreakdown = ({
             <Text variant="mediumStrong" color="content.default.default">
               Total voting power
             </Text>
-            <Text variant="largeStrong" color="content.accent.default">
+            {!String(totalValue) ? <Skeleton height="24px" width="50%" borderRadius="md" /> : <Text variant="largeStrong" color="content.accent.default">
               {totalValue}
-            </Text>
+            </Text>}
           </Box>
           {showBreakdown ? (
             <Icon as={ThunderIcon} fill="transparent" w="48px" h="48px" />
