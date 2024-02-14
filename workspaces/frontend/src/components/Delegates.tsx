@@ -682,6 +682,15 @@ export function Delegates({
                       onDelegateClick={() => {
                         if (user) {
                           if (
+                            delegate?.author?.address && !delegate?.author?.starknetAddress && starknetWallet?.address && !ethWallet?.address
+                          ) {
+                            setIsStatusModalOpen(true);
+                            setStatusTitle("Delegation is not possible");
+                            setStatusDescription(
+                              `This delegate hasn't linked a Starknet address to their profile. Currently, you can only delegate to them using an Ethereum wallet.`,
+                            );
+                            setIsOpen(false);
+                          } else if (
                             parseFloat(senderData?.balance) <
                               MINIMUM_TOKENS_FOR_DELEGATION &&
                             parseFloat(senderDataL2?.balance) <
