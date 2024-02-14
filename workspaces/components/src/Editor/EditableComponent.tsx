@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Editable } from "slate-react";
 import { useSlate } from "slate-react";
 import { useCallback, ClipboardEvent } from "react";
-import { RenderElementProps, RenderLeafProps } from "slate-react";
-
+import { RenderElementProps, RenderLeafProps, ReactEditor } from "slate-react";
+import { Editor, Transforms, Range, Element as SlateElement, Path } from 'slate';
 import { Element, Leaf } from "./ElementLeaf";
 import { toggleMark, HOTKEYS } from "./hotkeys";
 import isHotkey from "is-hotkey";
@@ -51,8 +51,6 @@ export const EditableComponent = ({
     minHeight: `${minHeight}px`,
     outline: `1px solid ${isInvalid ? "#E53E3E" : "transparent"}`,
     "--slate-placeholder-margin-top": offsetPlaceholder,
-
-    // Adjust outline based on focus state
   };
   return (
     <Editable
@@ -63,14 +61,34 @@ export const EditableComponent = ({
       spellCheck
       autoFocus={autoFocus}
       onPaste={onPaste}
-      onFocus={() => setIsFocused(true)} // Set focus state to true
-      onBlur={() => setIsFocused(false)} // Set focus state to false
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
       onKeyDown={(event) => {
         if (event.key === "Enter") {
           event.preventDefault();
+          const match = Editor.above(editor, {
+            match: n => Editor.isBlock(editor, n),
+          })
+      
+          if (match) {
+            const [node, path] = match
+            if (SlateElement.isElement(node) && node.type === 'list_item' && Range.isCollapsed(editor.selection)) {
+              if (Editor.string(editor, path) === '') {
+                const parent = Editor.parent(editor, path);
+                if (parent[0].children.length === 1) {
+                  Transforms.removeNodes(editor, { at: parent[1] });
+                  const paragraph = { type: 'paragraph', children: [{ text: '' }] };
+                  Transforms.insertNodes(editor, paragraph);
+                } else {
+                  Transforms.setNodes(editor, { type: 'paragraph' }, { at: path })
+                  Transforms.liftNodes(editor, { match: n => n.type === 'paragraph' });
+                }
+                return
+              }
+            }
+          }
           editor.insertBreak();
         }
-
         for (const hotkey in HOTKEYS) {
           if (isHotkey(hotkey, event as any)) {
             event.preventDefault();
