@@ -194,7 +194,7 @@ export function Page() {
 
   const delegation = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
-    args: [(ethWallet?.address || "")],
+    args: [ethWallet?.address || ""],
     watch: true,
     enabled: ethWallet?.address != null,
   });
@@ -260,12 +260,9 @@ export function Page() {
     (votingPower || 0n) + (votingPowerL2 || 0n),
   );
 
-  const gqlResponseProposalsByUser = useProposals();
+  const gqlResponseProposalsByUser = trpc.proposals.getProposals.useQuery();
 
   const proposals = gqlResponseProposalsByUser?.data || [];
-
-  const findProposalTitleByVote = (proposalId) =>
-    proposals?.find((proposal) => proposal.id === proposalId)?.title || "";
 
   const senderData = useBalanceData(ethWallet?.address);
   const receiverData = useBalanceData(delegateAddress);
@@ -276,7 +273,7 @@ export function Page() {
     starknetAddress: starknetAddress,
   });
 
-  const allVotes = votesData?.votes || [];
+  const allVotes = delegateResponse?.data?.pastVotes || [];
 
   const isL1Delegation = primaryWallet?.id === ethWallet?.id;
   const isL2Delegation = primaryWallet?.id === starknetWallet?.id;
@@ -511,6 +508,15 @@ export function Page() {
       setIsOpen(true);
     }
   };
+
+  const votesBreakdown = allVotes.reduce((acc, vote) => {
+    acc[vote.votePreference] = (acc[vote.votePreference] || 0) + 1;
+    return acc;
+  }, {
+    [1]: 0,
+    [2]: 0,
+    [3]: 0,
+  });
 
   return (
     <ProfilePageLayout.Root>
@@ -874,7 +880,7 @@ export function Page() {
                         />
                       </svg>
                       <Text variant="small" color="content.accent.default">
-                        {stats[1] ?? 0}
+                        {votesBreakdown[1] ?? 0}
                       </Text>
                     </Flex>
                     <Flex
@@ -897,7 +903,7 @@ export function Page() {
                         />
                       </svg>
                       <Text variant="small" color="content.accent.default">
-                        {stats[2] ?? 0}
+                        {votesBreakdown[2] ?? 0}
                       </Text>
                     </Flex>
                     <Flex
@@ -920,7 +926,7 @@ export function Page() {
                         />
                       </svg>
                       <Text variant="small" color="content.accent.default">
-                        {stats[3] ?? 0}
+                        {votesBreakdown[3] ?? 0}
                       </Text>
                     </Flex>
                   </Flex>
@@ -1029,7 +1035,7 @@ export function Page() {
             <Heading color="content.accent.default" variant="h3">
               Past Votes
             </Heading>
-            {votesLoading ? (
+            {delegateResponse?.isLoading ? (
               // Skeleton representation for loading state
               <Box display="flex" flexDirection="column" gap="20px" mt="16px">
                 <Skeleton height="60px" width="100%" />
@@ -1040,23 +1046,23 @@ export function Page() {
               <ListRow.Container mt="0">
                 {allVotes.map((vote) => (
                   <Link
-                    href={`/voting-proposals/${vote!.proposal}`}
+                    href={`/voting-proposals/${vote!.proposalId}`}
                     key={vote!.id}
                     _hover={{ textDecoration: "none" }} // disable underline on hover for the Link itself
                   >
                     <ListRow.Root>
                       <ListRow.PastVotes
-                        title={findProposalTitleByVote(vote.proposal)}
+                        title={vote.title}
                         votePreference={
-                          vote!.choice === 1
+                          vote!.votePreference === 1
                             ? "for"
-                            : vote.choice === 2
+                            : vote.votePreference === 2
                             ? "against"
                             : "abstain"
                         }
-                        voteCount={vote!.vp}
+                        voteCount={vote!.voteCount}
                         // body={vote?.proposal?.body}
-                        body={vote?.reason}
+                        body={vote?.body}
                       />
                     </ListRow.Root>
                   </Link>

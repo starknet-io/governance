@@ -31,9 +31,9 @@ export const votesRouter = router({
                 address: true,
                 ethAddress: true,
                 starknetAddress: true,
-              }
-            }
-          }
+              },
+            },
+          },
         },
         limit: 50,
       });
@@ -44,48 +44,11 @@ export const votesRouter = router({
 
       const parsedVotes = votes.map((vote: any) => ({
         ...vote,
-        voter: vote?.author?.author?.address || "",
-      }))
+        voter: vote?.author?.author?.address || '',
+      }));
 
       return parsedVotes;
     }),
-
-  getOldVotesForDelegate: publicProcedure
-    .input(
-      z.object({
-        delegateId: z.string(),
-      }),
-    )
-    .query(async (opts) => {
-      const { delegateId } = opts.input;
-      const votes = await db.query.oldVotes.findMany({
-        where: eq(oldVotes.delegateId, delegateId),
-        with: {
-          author: {
-            with: {
-              author: {
-                address: true,
-                ethAddress: true,
-                starknetAddress: true,
-              }
-            }
-          }
-        },
-        limit: 50,
-      });
-
-      if (!votes) {
-        return [];
-      }
-
-      const parsedVotes = votes.map((vote: any) => ({
-        ...vote,
-        voter: vote?.author?.author?.address || "",
-      }))
-
-      return parsedVotes;
-    }),
-
   saveVote: publicProcedure
     .input(voteInsertSchema.omit({ id: true }))
     .mutation(async (opts) => {
