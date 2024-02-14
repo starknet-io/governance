@@ -486,6 +486,7 @@ export function Page() {
                 border="1px solid"
                 borderColor="border.dividers"
                 borderRadius="4px"
+                gap="standard.xs"
               >
                 <Flex alignItems="center" gap="10px">
                   <Icon as={StarknetIcon} width="20px" height="20px" />

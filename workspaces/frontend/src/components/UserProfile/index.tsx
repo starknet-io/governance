@@ -19,6 +19,8 @@ import { VotingPowerBreakdown } from "@yukilabs/governance-components/src/Voting
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useWallets } from "../../hooks/useWallets";
 import { getChecksumAddress } from "starknet";
+import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
+import { useBalanceData } from "src/utils/hooks";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -74,6 +76,10 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   setEditUserProfile,
 }: UserProfileMenuProps) => {
   const { ethWallet, starknetWallet } = useWallets();
+  const starknetBalance = useStarknetBalance({
+    starknetAddress: starknetWallet?.address,
+  });
+  const ethBalance = useBalanceData(ethWallet.address as `0x${string}`);
   return (
     <>
       <Box position="absolute" right="12px" top="12px" zIndex={0}>
@@ -86,7 +92,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           zIndex={2}
         />
       </Box>
-      <VStack spacing={"spacing.md"} align="stretch">
+      <VStack spacing={"standard.sm"} align="stretch">
         <AvatarWithText
           size="condensed"
           address={user?.address}
@@ -98,7 +104,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           subheaderText={truncateAddress(user?.address || "")}
           src={user?.profileImage ?? user?.ensAvatar ?? null}
         />
-        <Box mt="standard.md" mb="standard.sm">
+        <Box>
           <WalletButtons selectable profileVariant />
         </Box>
         <VotingPowerBreakdown
@@ -107,8 +113,12 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
           onToggleExpand={onVotingPowerModalOpen}
+          balanceStark={`${starknetBalance?.balance?.balance} ${starknetBalance?.balance?.symbol}`}
+          balanceEth={`${new Intl.NumberFormat().format(
+            ethBalance?.balance,
+          )} ${ethBalance?.symbol}`}
         />
-        <Flex direction="column" mt="standard.md">
+        <Flex direction="column">
           <Button
             variant="secondary"
             size="condensed"

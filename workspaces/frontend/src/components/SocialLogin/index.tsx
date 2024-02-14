@@ -62,7 +62,7 @@ const Socials = ({
       <Flex justify="flex-start" gap="4px">
         <Box width="50%">
           <Text variant="small" color="content.default.default">
-            Strategies
+            Socials
           </Text>
         </Box>
         <Box width="50%">

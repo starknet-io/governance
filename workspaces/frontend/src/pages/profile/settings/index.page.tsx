@@ -159,8 +159,8 @@ export const WalletButtons = ({
   const ethWallet = findMatchingWallet(userWallets, "EVM");
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   return (
-    <Flex justifyContent="space-between">
-      <Flex direction="column" gap="standard.xl">
+    <Flex justifyContent="space-between" gap="standard.xs">
+      <Flex direction="column" gap="standard.xl" flex="1">
         {withLabel && (
           <Text
             variant="mediumStrong"
@@ -196,7 +196,7 @@ export const WalletButtons = ({
           }}
         />
       </Flex>
-      <Flex direction="column" gap="standard.xl">
+      <Flex direction="column" gap="standard.xl" flex="1">
         {withLabel && (
           <Text
             variant="mediumStrong"

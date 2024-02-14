@@ -1,11 +1,12 @@
 import { Modal } from "../Modal";
 import { Text } from "../Text";
-import { Box, Flex, Link, Skeleton } from "@chakra-ui/react";
+import { Box, Flex, Link, Skeleton, Icon } from "@chakra-ui/react";
 import { VotingPowerBreakdown } from "./VotingPowerBreakdown";
 import { truncateAddress } from "../utils";
 import { Tooltip } from "../Tooltip";
 import { CopyToClipboard } from "../CopyToClipboard";
 import { getChecksumAddress } from "starknet";
+import { InfoCircleIcon } from "src/Icons";
 
 type Props = {
   isOpen: boolean;
@@ -122,6 +123,8 @@ export const VotingPowerModal = ({
         votingPowerStark={votingPowerStark}
         isVotingPowerEthLoading={isVotingPowerEthLoading}
         isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
+        balanceStark={balanceStark}
+        balanceEth={balanceEth}
       />
       <Box gap="standard.md">
         {hasStarkWallet && (
@@ -144,6 +147,9 @@ export const VotingPowerModal = ({
                 <Box width="50%">
                   <Text variant="small" color="content.support.default">
                     vSTRK balance
+                    <Tooltip label="Tooltip">
+                      <Icon color="#1A1523" ml="standard.xs" as={InfoCircleIcon} />
+                    </Tooltip>
                   </Text>
                 </Box>
                 <Box width="50%">
@@ -154,8 +160,26 @@ export const VotingPowerModal = ({
               </Flex>
               <Flex>
                 <Box width="50%">
+                  <Flex direction="row">
+                    <svg width="19" height="11" viewBox="0 0 19 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path id="Rectangle 5597" d="M1 0V2C1 6.41828 4.58172 10 9 10H19" stroke="#DCDBDD"/>
+                    </svg>
+                    <Text variant="smallStrong" color="content.support.default" ml="8px">
+                      Delegated to
+                    </Text>
+                  </Flex>
+                </Box>
+                {!delegatedToL2Loading ? <DelegationComponent
+                  delegatedTo={delegatedToL2}
+                  delegatedToName={delegatedToL2Name}
+                /> : <Box width="50%">
+                <Skeleton height="16px" width="50%" borderRadius="md" />
+              </Box>}
+              </Flex>
+              <Flex>
+                <Box width="50%">
                   <Text variant="smallStrong" color="content.support.default">
-                    Delegated to
+                    STRK delegated to me
                   </Text>
                 </Box>
                 {!delegatedToL2Loading ? <DelegationComponent
@@ -186,14 +210,32 @@ export const VotingPowerModal = ({
               </Flex>
               <Flex>
                 <Box width="50%">
-                  <Text variant="smallStrong" color="content.support.default">
-                    Delegated to
-                  </Text>
+                  <Flex direction="row">
+                    <svg width="19" height="11" viewBox="0 0 19 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path id="Rectangle 5597" d="M1 0V2C1 6.41828 4.58172 10 9 10H19" stroke="#DCDBDD"/>
+                    </svg>
+                    <Text variant="smallStrong" color="content.support.default" ml="8px">
+                      Delegated to
+                    </Text>
+                  </Flex>
                 </Box>
                 {!delegatedToL1Loading ? <DelegationComponent
                   delegatedTo={delegatedToL1}
                   delegatedToName={delegatedToL1Name}
                 /> : <Box width="50%">
+                <Skeleton height="16px" width="50%" borderRadius="md" />
+              </Box>}
+              </Flex>
+              <Flex>
+                <Box width="50%">
+                  <Text variant="smallStrong" color="content.support.default">
+                    STRK delegated to me
+                  </Text>
+                </Box>
+                {!delegatedToL2Loading ? <DelegationComponent
+                  delegatedTo={delegatedToL2}
+                  delegatedToName={delegatedToL2Name}
+                /> :  <Box width="50%">
                 <Skeleton height="16px" width="50%" borderRadius="md" />
               </Box>}
               </Flex>
