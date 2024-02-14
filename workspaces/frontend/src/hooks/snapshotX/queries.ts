@@ -133,7 +133,7 @@ export const GET_SPACE = gql`
 
 export const GET_SNAPSHOT_PROPOSAL_QUERY = gql`
   query SnapshotProposal($id: String!) {
-    proposal(id: $id ) {
+    proposal(id: $id) {
       id
       title
       body
@@ -149,6 +149,22 @@ export const GET_SNAPSHOT_PROPOSAL_QUERY = gql`
         id
         name
       }
+    }
+  }
+`;
+
+export const GET_OLD_VOTES_QUERY = gql`
+  query VoteQuery($where: VoteWhere) {
+    votes(where: $where) {
+      choice
+      voter
+      reason
+      metadata
+      created
+      ipfs
+      vp
+      vp_by_strategy
+      vp_state
     }
   }
 `;

@@ -74,6 +74,7 @@ import { useWallets } from "../../hooks/useWallets";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 import { getChecksumAddress } from "starknet";
+import {useOldVotes} from "../../hooks/snapshotX/useOldVotes";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -100,9 +101,9 @@ export function Page() {
       proposal: data?.proposal?.id,
     });
 
-  const vote = useVotes({
-    proposal: pageContext.routeParams!.id,
-    voter: ethWallet?.address as any,
+  const vote = useOldVotes({
+    proposal: pageContext.routeParams!.id.toString(),
+    voter: ethWallet?.address,
     skipField: "voter",
   });
 
@@ -130,9 +131,13 @@ export function Page() {
   console.log(votes);
    */
 
-  const votes = { data: [] }; /*trpc.votes.getOldVotesForProposal.useQuery({
+  console.log(vote)
+
+  const votes = trpc.votes.getOldVotesForProposal.useQuery({
     proposalId: pageContext.routeParams!.id
-  })*/
+  })
+
+  console.log(votes?.data)
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -301,23 +306,14 @@ export function Page() {
   const hasDelegated = false;
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
   const showPastVotes = votes?.data && votes?.data?.length > 0;
-  const pastVotes = votes?.data?.votes || [];
-  const userAddresses =
-    pastVotes.map((pastVote) => pastVote?.voter?.toLowerCase() || "") || [];
+  const pastVotes = votes?.data || [];
   const { data: authorInfo } = trpc.users.getUser.useQuery({
     address: data?.proposal?.author || "",
   });
-  const { data: usersByAddresses } =
-    trpc.users.getUsersInfoByAddresses.useQuery({
-      addresses: userAddresses || [],
-    });
   const pastVotesWithUserInfo = pastVotes.map((pastVote) => {
     return {
       ...pastVote,
-      author:
-        pastVote?.voter && usersByAddresses?.[pastVote.voter.toLowerCase()]
-          ? usersByAddresses[pastVote.voter.toLowerCase()]
-          : {},
+      author: pastVote?.author?.author || {}
     };
   });
 
@@ -943,14 +939,14 @@ export function Page() {
                         }
                         address={vote?.voter as string}
                         voted={
-                          vote?.choice === 1
+                          vote?.votePreference === 1
                             ? "For"
-                            : vote?.choice === 2
+                            : vote?.votePreference === 2
                             ? "Against"
                             : "Abstain"
                         }
-                        comment={vote?.reason as string}
-                        voteCount={vote?.vp as number}
+                        comment={vote?.body as string}
+                        voteCount={vote?.voteCount as number}
                         signature={vote?.ipfs as string}
                       />
                     ))
