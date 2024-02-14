@@ -141,6 +141,7 @@ export const delegateRouter = router({
         where: eq(delegates.id, opts.input.id),
         with: {
           author: true,
+          pastVotes: true,
         },
       });
 
