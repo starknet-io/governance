@@ -93,9 +93,7 @@ export const GET_VOTING_POWER_QUERY = gql`
 
 export const GET_SPACE = gql`
   query spaceQuery($space: String!) {
-    space(
-      id: $space
-    ) {
+    space(id: $space) {
       id
       vote_count
       voting_power_validation_strategies_parsed_metadata {
@@ -129,6 +127,28 @@ export const GET_SPACE = gql`
       }
       voting_power_validation_strategy_strategies
       voting_power_validation_strategy_strategies_params
+    }
+  }
+`;
+
+export const GET_SNAPSHOT_PROPOSAL_QUERY = gql`
+  query SnapshotProposal($id: String!) {
+    proposal(id: $id ) {
+      id
+      title
+      body
+      choices
+      start
+      end
+      snapshot
+      state
+      scores
+      scores_total
+      author
+      space {
+        id
+        name
+      }
     }
   }
 `;

@@ -5,6 +5,6 @@ const endpoint = 'https://hub.snapshot.org/graphql';
 
 export const graphqlClient = new GraphQLClient(endpoint, {
   headers: {
-    'x-api-key': process.env.SNAPSHOT_API_KEY!,
+    //'x-api-key': process.env.SNAPSHOT_API_KEY!,
   },
 });
