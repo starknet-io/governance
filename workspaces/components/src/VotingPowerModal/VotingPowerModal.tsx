@@ -182,12 +182,7 @@ export const VotingPowerModal = ({
                     STRK delegated to me
                   </Text>
                 </Box>
-                {!delegatedToL2Loading ? <DelegationComponent
-                  delegatedTo={delegatedToL2}
-                  delegatedToName={delegatedToL2Name}
-                /> :  <Box width="50%">
-                <Skeleton height="16px" width="50%" borderRadius="md" />
-              </Box>}
+                <Text variant="smallStrong" color="content.support.default">{Number(votingPowerStark) - Number(balanceStark.split(" ")[0])} {balanceStark.split(" ")[1]}</Text>
               </Flex>
             </Flex>
           </Box>
@@ -232,12 +227,7 @@ export const VotingPowerModal = ({
                     STRK delegated to me
                   </Text>
                 </Box>
-                {!delegatedToL2Loading ? <DelegationComponent
-                  delegatedTo={delegatedToL2}
-                  delegatedToName={delegatedToL2Name}
-                /> :  <Box width="50%">
-                <Skeleton height="16px" width="50%" borderRadius="md" />
-              </Box>}
+                <Text variant="smallStrong" color="content.support.default">{Number(votingPowerEth) - Number(balanceEth.split(" ")[0])} {balanceEth.split(" ")[1]}</Text>
               </Flex>
             </Flex>
           </Box>
