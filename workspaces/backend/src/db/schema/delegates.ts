@@ -12,6 +12,7 @@ import { users } from './users';
 import {customDelegateAgreement} from "./customDelegateAgreement";
 import { delegateVotes } from "./delegatesVotes";
 import {socials} from "./socials";
+import {oldVotes} from "./oldVotes";
 
 export const interestsEnum = pgEnum('interests', [
   // 'Cairo Dev',
@@ -68,7 +69,7 @@ export const delegates = pgTable('delegates', {
     .defaultNow(),
 });
 
-export const delegateRelations = relations(delegates, ({ one }) => ({
+export const delegateRelations = relations(delegates, ({ one, many }) => ({
   author: one(users, {
     fields: [delegates.userId],
     references: [users.id],
@@ -84,7 +85,8 @@ export const delegateRelations = relations(delegates, ({ one }) => ({
   socials: one(socials, {
     fields: [delegates.id],
     references: [socials.delegateId]
-  })
+  }),
+  pastVotes: many(oldVotes),
 }));
 
 export type Delegate = InferModel<typeof delegates>;

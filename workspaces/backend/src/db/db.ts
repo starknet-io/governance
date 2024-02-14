@@ -23,14 +23,15 @@ import * as customDelegateAgreement from './schema/customDelegateAgreement';
 import * as notificationUsers from './schema/notificationUsers';
 import * as socials from './schema/socials';
 import * as oauthTokens from './schema/oauthTokens';
+import * as oldVotes from './schema/oldVotes';
 
 dotenv.config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    ca: fs.readFileSync('ca-certificate.crt').toString(),
-  },
+  // ssl: {
+  //   ca: fs.readFileSync('ca-certificate.crt').toString(),
+  // },
 });
 
 const db = drizzle(pool, {
@@ -54,6 +55,7 @@ const db = drizzle(pool, {
     ...members,
     ...socials,
     ...oauthTokens,
+    ...oldVotes
   },
 });
 

@@ -1,6 +1,6 @@
 {
-  "id": "140c59ea-02f3-4193-8994-e8477bbe009e",
-  "prevId": "db528f14-deda-424c-8c6a-dbab17fe7374",
+  "id": "850889c5-b9b1-4e97-8250-217c8ad321a2",
+  "prevId": "b9a37225-46ce-40f3-b03f-819fa7acb6f7",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -866,6 +866,86 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "old_votes": {
+      "name": "old_votes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "delegateId": {
+          "name": "delegateId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "proposalId": {
+          "name": "proposalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "body": {
+          "name": "body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "votePreference": {
+          "name": "votePreference",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "voteCount": {
+          "name": "voteCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "old_votes_delegateId_delegates_id_fk": {
+          "name": "old_votes_delegateId_delegates_id_fk",
+          "tableFrom": "old_votes",
+          "tableTo": "delegates",
+          "columnsFrom": [
+            "delegateId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "pages": {
       "name": "pages",
       "schema": "",
@@ -1267,7 +1347,7 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true,
-          "default": "'84e51f0b-5fe0-4995-8705-68f36af3f193'"
+          "default": "'1780a0fc-d5c2-42a0-8e93-f8d6e9379883'"
         },
         "isConfirmed": {
           "name": "isConfirmed",
