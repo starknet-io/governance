@@ -48,6 +48,7 @@ type Props = {
   onContinue?: (address: string) => void;
   isUndelegation?: boolean;
   isLayer1Delegation?: boolean;
+  isSelfDelegation?: boolean;
   handleWalletSelect?: (address: string) => void;
   isLayer2Delegation?: boolean;
   activeAddress?: string;
@@ -55,6 +56,7 @@ type Props = {
 
 export const DelegateModal = ({
   isOpen = false,
+  isSelfDelegation = false,
   isConnected = false,
   senderData,
   senderDataL2,
@@ -71,7 +73,7 @@ export const DelegateModal = ({
 }: Props) => {
   const [customAddress, setCustomAddress] = useState("");
   const l1Delegation =
-  isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation);
+    isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation);
   const l2Delegation = !l1Delegation;
 
   const handleSelect = (address: string) => {
@@ -125,14 +127,18 @@ export const DelegateModal = ({
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
-      title={
-        isUndelegation ? "Undelegate votes" : "Delegate votes"
-      }
+      title={isUndelegation ? "Undelegate votes" : "Delegate votes"}
     >
       <Stack spacing="6">
         <Stack spacing="standard.xl">
           <Swap.Root>
-            <Text variant="mediumStrong" color="content.support.default" mb="standard.xs">From your wallet</Text>
+            <Text
+              variant="mediumStrong"
+              color="content.support.default"
+              mb="standard.xs"
+            >
+              From your wallet
+            </Text>
             {senderData?.address ? (
               <Swap.UserSummary
                 address={senderData.address}
@@ -160,10 +166,16 @@ export const DelegateModal = ({
                 />
               ) : null}
             </Box>
-            {receiverData && l1Delegation ? (
+            {receiverData && l1Delegation && !isSelfDelegation ? (
               <>
                 <Swap.Arrow />
-                <Text variant="mediumStrong" color="content.support.default" mb="standard.xs">To delegate</Text>
+                <Text
+                  variant="mediumStrong"
+                  color="content.support.default"
+                  mb="standard.xs"
+                >
+                  To delegate
+                </Text>
                 <Swap.UserSummary
                   address={receiverData.address}
                   balance={getTotalVotingPower(receiverData)}
@@ -173,10 +185,16 @@ export const DelegateModal = ({
                 />
               </>
             ) : null}
-            {receiverDataL2 && l2Delegation ? (
+            {receiverDataL2 && l2Delegation && !isSelfDelegation ? (
               <>
                 <Swap.Arrow />
-                <Text variant="mediumStrong" color="content.support.default" mb="standard.xs">To delegate</Text>
+                <Text
+                  variant="mediumStrong"
+                  color="content.support.default"
+                  mb="standard.xs"
+                >
+                  To delegate
+                </Text>
                 <Swap.UserSummary
                   address={receiverDataL2.address}
                   balance={getTotalVotingPower(receiverDataL2)}
@@ -187,10 +205,16 @@ export const DelegateModal = ({
               </>
             ) : null}
             {!receiverData}
-            {!receiverData && !receiverDataL2 && (
+            {!receiverData && !receiverDataL2 && !isSelfDelegation && (
               <>
                 <Swap.Arrow />
-                <Text variant="mediumStrong" color="content.support.default" mb="standard.xs">To delegate</Text>
+                <Text
+                  variant="mediumStrong"
+                  color="content.support.default"
+                  mb="standard.xs"
+                >
+                  To delegate
+                </Text>
                 <Box
                   fontSize="14px"
                   bg="#FAFAFA"
@@ -211,7 +235,7 @@ export const DelegateModal = ({
                       placeholder="0x..."
                       value={customAddress}
                       onChange={(e) => setCustomAddress(e.target.value)}
-                      isInvalid={customAddress !== '' && !!error}
+                      isInvalid={customAddress !== "" && !!error}
                     />
                     {error && customAddress !== "" && (
                       <FormErrorMessage>{error}</FormErrorMessage>
@@ -231,7 +255,7 @@ export const DelegateModal = ({
                 } wallet`}
               />
             )}
-          {canBeDelegatedOnSpecifiedLayer ? (
+          {(canBeDelegatedOnSpecifiedLayer || isSelfDelegation) ? (
             isConnected && (
               <Button
                 type="submit"
@@ -239,9 +263,7 @@ export const DelegateModal = ({
                 size="lg"
                 onClick={delegateTokens}
               >
-                {isUndelegation
-                  ? "Undelegate votes"
-                  : "Delegate votes"}
+                {isUndelegation ? "Undelegate votes" : "Delegate votes"}
               </Button>
             )
           ) : (
@@ -249,10 +271,11 @@ export const DelegateModal = ({
               variant="primary"
               type="submit"
               isDisabled={
-                !customAddress ||
-                !!error ||
-                (!canBeDelegatedOnSpecifiedLayer &&
-                  (receiverDataL2 || receiverData))
+                (!customAddress ||
+                  !!error ||
+                  (!canBeDelegatedOnSpecifiedLayer &&
+                    (receiverDataL2 || receiverData))) &&
+                !isSelfDelegation
               }
               onClick={() => {
                 if (onContinue) {

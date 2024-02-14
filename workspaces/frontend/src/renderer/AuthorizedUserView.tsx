@@ -18,6 +18,7 @@ import useIsMobile from "@yukilabs/governance-frontend/src/hooks/useIsMobile";
 import { findMatchingWallet } from "../utils/helpers";
 import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
 import { useStarknetDelegates } from "../hooks/starknet/useStarknetDelegates";
+import { useWallets } from "../hooks/useWallets";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 
@@ -26,12 +27,10 @@ const AuthorizedUserView = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userExistsError, setUserExistsError] = useState(false);
   const utils = trpc.useContext();
-  const wallets = useUserWallets();
+  const { ethWallet, starknetWallet } = useWallets();
 
-  const ethAddress =
-    findMatchingWallet(wallets, WalletChainKey.EVM)?.address || undefined;
-  const starknetAddress =
-    findMatchingWallet(wallets, WalletChainKey.STARKNET)?.address || undefined;
+  const ethAddress = ethWallet?.address;
+  const starknetAddress = starknetWallet?.address;
 
   const [isUserModalOpen, setIsModalOpen] = useState(false);
   const { handleLogOut } = useDynamicContext();
@@ -39,18 +38,21 @@ const AuthorizedUserView = () => {
   const { user } = usePageContext();
   const { isMobile } = useIsMobile();
 
-  const { data: votingPowerEthereum, isLoading: isVotingPowerEthLoading } = useVotingPower({
-    address: ethAddress,
-  });
+  const { data: votingPowerEthereum, isLoading: isVotingPowerEthLoading } =
+    useVotingPower({
+      address: ethAddress,
+    });
 
-  const { data: votingPowerStarknet, isLoading: isVotingPowerStarknetLoading } = useVotingPower({
-    address: starknetAddress,
-  });
-
+  const { data: votingPowerStarknet, isLoading: isVotingPowerStarknetLoading } =
+    useVotingPower({
+      address: starknetAddress,
+    });
 
   const ethBalance = useBalanceData(ethAddress as `0x${string}`);
-  const { balance: vSTRKBalance, loading: isvSTRKBalanceLoading } = useStarknetBalance({ starknetAddress });
-  const { balance: starknetBalance, loading: isStarknetBalanceLoading } = useStarknetBalance({ starknetAddress, starkContract });
+  const { balance: vSTRKBalance, loading: isvSTRKBalanceLoading } =
+    useStarknetBalance({ starknetAddress });
+  const { balance: starknetBalance, loading: isStarknetBalanceLoading } =
+    useStarknetBalance({ starknetAddress, starkContract });
 
   const { data: delegationData, isLoading } = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
@@ -64,7 +66,7 @@ const AuthorizedUserView = () => {
       starknetAddress,
     });
 
-    const hasDelegationData =
+  const hasDelegationData =
     !isLoading && delegationData && delegationData.length;
   const hasDelegationDataL2 = !!(
     !isLoadingL2Delegation &&
@@ -227,6 +229,8 @@ const AuthorizedUserView = () => {
           onDisconnect={handleDisconnect}
           user={user}
           onSave={handleSave}
+          ethAddress={ethAddress}
+          starknetAddress={starknetAddress}
           votingPowerEth={votingPowerEthereum}
           votingPowerStark={votingPowerStarknet}
           isVotingPowerEthLoading={isVotingPowerEthLoading}

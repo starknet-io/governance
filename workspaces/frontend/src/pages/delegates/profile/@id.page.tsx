@@ -51,7 +51,7 @@ import { delegationAgreement } from "src/utils/data";
 import { getChecksumAddress } from "starknet";
 import { ethers } from "ethers";
 
-const DELEGATION_SUCCESS_EVENT = "delegationSuccess";
+export const DELEGATION_SUCCESS_EVENT = "delegationSuccess";
 
 const delegateInterests: Record<string, string> = {
   cairo_dev: "Cairo Dev",
