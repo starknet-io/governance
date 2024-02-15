@@ -11,7 +11,7 @@ import {
   Button,
   Modal,
   Link,
-  Skeleton
+  Skeleton,
 } from "@yukilabs/governance-components";
 import { navigate } from "vite-plugin-ssr/client/router";
 import {
@@ -38,6 +38,8 @@ import * as Swap from "@yukilabs/governance-components/src/Swap/Swap";
 import { useWrapVSTRK } from "../../hooks/starknet/useWrapVSTRK";
 import { useUnwrapVSTRK } from "../../hooks/starknet/useUnwrapVSTRK";
 import { useWallets } from "../../hooks/useWallets";
+import { usePageContext } from "../../renderer/PageContextProvider";
+import { useHelpMessage } from "../../hooks/HelpMessage";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -52,7 +54,7 @@ const WrapModal = ({
   error,
   txHash = "",
   handleAddToWallet,
-  isArgentX
+  isArgentX,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -135,33 +137,35 @@ const WrapModal = ({
                   Review transaction details{" "}
                 </Link>
               </Flex>
-              {!isArgentX ? <Flex
-                alignItems="center"
-                gap="standard.xs"
-                alignSelf="stretch"
-                p="0"
-              >
-                <Text
-                  variant="mediumStrong"
-                  color="content.default.default"
-                  sx={{
-                    flex: "1 0 0",
-                    textWrap: "wrap",
-                    textAlign: "left",
-                  }}
+              {!isArgentX ? (
+                <Flex
+                  alignItems="center"
+                  gap="standard.xs"
+                  alignSelf="stretch"
+                  p="0"
                 >
-                  Add the vSTRK token to your wallet to track your balance.
-                </Text>
-                <Button
-                  variant="outline"
-                  onClick={(e) => {
-                    handleAddToWallet();
-                  }}
-                >
-                  <WalletIcon mr="standard.xs" />
-                  Add to wallet
-                </Button>
-              </Flex> : null}
+                  <Text
+                    variant="mediumStrong"
+                    color="content.default.default"
+                    sx={{
+                      flex: "1 0 0",
+                      textWrap: "wrap",
+                      textAlign: "left",
+                    }}
+                  >
+                    Add the vSTRK token to your wallet to track your balance.
+                  </Text>
+                  <Button
+                    variant="outline"
+                    onClick={(e) => {
+                      handleAddToWallet();
+                    }}
+                  >
+                    <WalletIcon mr="standard.xs" />
+                    Add to wallet
+                  </Button>
+                </Flex>
+              ) : null}
             </>
           )}
         </Flex>
@@ -185,29 +189,39 @@ const WrapModal = ({
 
 export function Page() {
   const wallets = useUserWallets();
+  const { user } = usePageContext();
   const { starknetWallet } = useWallets();
   const isArgentX = starknetWallet?.connector?.name === "ArgentX";
   const ethAddress =
     findMatchingWallet(wallets, WalletChainKey.EVM)?.address || undefined;
   const starknetAddress =
     findMatchingWallet(wallets, WalletChainKey.STARKNET)?.address || undefined;
-  const { data: votingPowerEthereum, isLoading: isVotingPowerEthereumLoading } = useVotingPower({
-    address: ethAddress,
-  });
+  const { data: votingPowerEthereum, isLoading: isVotingPowerEthereumLoading } =
+    useVotingPower({
+      address: ethAddress,
+    });
 
-  const { data: votingPowerStarknet, isLoading: isVotingPowerStarknetLoading } = useVotingPower({
-    address: starknetAddress,
-  });
-  const { balance: ethBalance, symbol: ethBalanceSymbol, isFetched: isEthBalanceFetched } = useBalanceData(ethAddress as `0x${string}`);
-  const { balance: starknetBalance, loading: isStarknetBalanceLoading } = useStarknetBalance({
-    starknetAddress,
-    starkContract: starkContract,
-  });
-  const { balance: vSTRKBalance, loading: isvSTRKBalanceLoading } = useStarknetBalance({
-    starknetAddress,
-    starkContract: vStarkContract,
-  });
+  const { data: votingPowerStarknet, isLoading: isVotingPowerStarknetLoading } =
+    useVotingPower({
+      address: starknetAddress,
+    });
+  const {
+    balance: ethBalance,
+    symbol: ethBalanceSymbol,
+    isFetched: isEthBalanceFetched,
+  } = useBalanceData(ethAddress as `0x${string}`);
+  const { balance: starknetBalance, loading: isStarknetBalanceLoading } =
+    useStarknetBalance({
+      starknetAddress,
+      starkContract: starkContract,
+    });
+  const { balance: vSTRKBalance, loading: isvSTRKBalanceLoading } =
+    useStarknetBalance({
+      starknetAddress,
+      starkContract: vStarkContract,
+    });
   const [sliderValue, setSliderValue] = useState(50);
+  const [helpMessage, setHelpMessage] = useHelpMessage();
   const [activeTab, setActiveTab] = useState(0);
   const [starkToWrap, setStarkToWrap] = useState(0);
   const [wrappedStark, setWrappedStark] = useState(0);
@@ -241,6 +255,10 @@ export function Page() {
   } = useUnwrapVSTRK();
 
   const wrapTokens = async () => {
+    if (!user) {
+      setHelpMessage("connectWalletMessage");
+      return;
+    }
     if (!isUnwrap) {
       onWrapOpen();
     } else {
@@ -277,6 +295,10 @@ export function Page() {
 
   const handleSliderChange = (val) => {
     setSliderValue(val);
+    if (!user) {
+      setHelpMessage("connectWalletMessage");
+      return;
+    }
     if (isUnwrap) {
       const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
       setStarkToWrap(Math.floor((val / 100) * rawBalance));
@@ -365,16 +387,21 @@ export function Page() {
               }}
             >
               <Flex justifyContent="space-between" alignItems="center">
-              <Box>
+                <Box>
                   <Text variant="mediumStrong" color="content.default.default">
                     Total voting power
                   </Text>
-                  {!isVotingPowerEthereumLoading && !isVotingPowerStarknetLoading ? <Text variant="largeStrong" color="content.accent.default">
-                    {new Intl.NumberFormat().format(
-                      parseInt(votingPowerEthereum.toString()) +
-                        parseInt(votingPowerStarknet.toString()),
-                    )}
-                  </Text> : <Skeleton height="16px" width="50%" borderRadius="md" />}
+                  {!isVotingPowerEthereumLoading &&
+                  !isVotingPowerStarknetLoading ? (
+                    <Text variant="largeStrong" color="content.accent.default">
+                      {new Intl.NumberFormat().format(
+                        parseInt(votingPowerEthereum.toString()) +
+                          parseInt(votingPowerStarknet.toString()),
+                      )}
+                    </Text>
+                  ) : (
+                    <Skeleton height="16px" width="50%" borderRadius="md" />
+                  )}
                 </Box>
               </Flex>
             </Box>
@@ -383,29 +410,42 @@ export function Page() {
                 <Text variant="small" color="content.support.default">
                   vSTRK on Starknet
                 </Text>
-                {!isvSTRKBalanceLoading ? <Text color="content.accent.default" variant="mediumStrong">
-                  {vSTRKBalance?.balance || 0} {vSTRKBalance?.symbol || "STRK"}
-                </Text> : <Skeleton height="16px" width="60%" borderRadius="md" />}
+                {!isvSTRKBalanceLoading ? (
+                  <Text color="content.accent.default" variant="mediumStrong">
+                    {vSTRKBalance?.balance || 0}{" "}
+                    {vSTRKBalance?.symbol || "STRK"}
+                  </Text>
+                ) : (
+                  <Skeleton height="16px" width="60%" borderRadius="md" />
+                )}
               </Box>
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
                   STRK on Starknet
                 </Text>
-                {!isStarknetBalanceLoading ? <Text color="content.accent.default" variant="mediumStrong">
-                  {starknetBalance?.balance || 0}{" "}
-                  {starknetBalance?.symbol || "STRK"}
-                </Text> : <Skeleton height="16px" width="60%" borderRadius="md" />}
+                {!isStarknetBalanceLoading ? (
+                  <Text color="content.accent.default" variant="mediumStrong">
+                    {starknetBalance?.balance || 0}{" "}
+                    {starknetBalance?.symbol || "STRK"}
+                  </Text>
+                ) : (
+                  <Skeleton height="16px" width="60%" borderRadius="md" />
+                )}
               </Box>
               <Divider my="standard.sm" />
               <Box mt="standard.sm">
-                  <Text variant="small" color="content.support.default">
-                    STRK on Ethereum
-                  </Text>
-                  {isEthBalanceFetched ? <Text color="content.accent.default" variant="mediumStrong">
+                <Text variant="small" color="content.support.default">
+                  STRK on Ethereum
+                </Text>
+                {isEthBalanceFetched || !ethAddress ? (
+                  <Text color="content.accent.default" variant="mediumStrong">
                     {new Intl.NumberFormat().format(Number(ethBalance))}{" "}
                     {ethBalanceSymbol}
-                  </Text> : <Skeleton height="16px" width="60%" borderRadius="md" />}
-                </Box>
+                  </Text>
+                ) : (
+                  <Skeleton height="16px" width="60%" borderRadius="md" />
+                )}
+              </Box>
             </Box>
           </Box>
           <Box
@@ -511,7 +551,7 @@ export function Page() {
               <Button
                 variant="primary"
                 w="100%"
-                disabled={starkToWrap === 0}
+                disabled={starkToWrap === 0 && user}
                 onClick={wrapTokens}
               >
                 {activeTab === 0 ? "Wrap" : "Unwrap"}
