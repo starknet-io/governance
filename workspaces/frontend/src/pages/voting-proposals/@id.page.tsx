@@ -515,9 +515,10 @@ export function Page() {
         size="standard"
       >
         <SummaryItems.Root>
-          <SummaryItems.Item
-            label="Strategies"
-            value={parsedVotingStrategies}
+          <SummaryItems.StrategySummary
+            strategies={
+              (data?.proposal?.strategies || []).filter((s) => s) as any[]
+            }
           />
           <SummaryItems.LinkItem
             label="IPFS #"
@@ -536,10 +537,12 @@ export function Page() {
           />
 
           <SummaryItems.LinkItem
-            label="Txn Id"
-            link={`https://testnet.starkscan.co/tx/${data?.proposal?.tx}`}
+            label="Snapshot block #"
+            link={`https://etherscan.io/block/${data?.proposal?.snapshot}`}
             linkLabel={
-              data?.proposal?.tx ? truncateAddress(data.proposal.tx) : ""
+              data?.proposal?.snapshot
+                ? parseInt(data.proposal.snapshot, 10).toLocaleString()
+                : ""
             }
             isExternal={true}
           />
