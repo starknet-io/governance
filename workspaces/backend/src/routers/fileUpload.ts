@@ -4,6 +4,9 @@ import { router, protectedProcedure } from '../utils/trpc';
 import { z } from 'zod';
 import sanitize from "sanitize-filename";
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
+
+
 const s3 = new AWS.S3({
   endpoint: new AWS.Endpoint('https://sfo3.digitaloceanspaces.com'),
   credentials: {
@@ -31,6 +34,10 @@ export const fileUploadRouter = router({
 
       if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
         throw new Error('Invalid file type');
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        throw new Error('File size exceeds maximum limit of 1MB');
       }
 
       const filename = sanitize(file.originalname);
