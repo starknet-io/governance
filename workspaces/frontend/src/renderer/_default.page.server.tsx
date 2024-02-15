@@ -30,7 +30,7 @@ const snapshotLink = createHttpLink({
 })
 
 const snapshotXLink = createHttpLink({
-  uri: `${import.meta.env.VITE_APP_SNAPSHOTX_URL}/graphql`,
+  uri: `${import.meta.env.VITE_APP_SNAPSHOTX_URL}graphql`,
   fetch,
 })
 

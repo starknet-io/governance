@@ -30,10 +30,15 @@ const Socials = ({
 
   const userDelegate = trpc.users.isDelegate.useQuery({
     userId: user?.id || "",
+  }, {
+    enabled: !!user?.id
   });
   const socialsDelegate = trpc.socials.initiateSocialAuth.useQuery({
     delegateId,
+    userId: user?.id || "",
     origin: "discord",
+  }, {
+    enabled: !!user?.id,
   });
   const unlinkSocialDelegate = trpc.socials.unlinkDelegateSocial.useMutation({
     onSuccess: () => {
@@ -46,23 +51,26 @@ const Socials = ({
   const unlinkSocial = (
     origin: "telegram" | "discord" | "twitter" | "discourse",
   ) => {
-    unlinkSocialDelegate.mutateAsync({
-      delegateId: delegateId,
-      origin,
-    });
+    if (user?.id) {
+      unlinkSocialDelegate.mutateAsync({
+        delegateId: delegateId,
+        userId: user!.id,
+        origin,
+      });
+    }
   };
   const closeDiscourseModal = () => {
     setShowDiscourse(false);
   };
   if (
     (!isUserDelegate && !isUserDelegateCheckLoading) ||
-    isUserDelegateCheckLoading
+    isUserDelegateCheckLoading || !user?.id
   ) {
     return (
       <Flex justify="flex-start" gap="4px">
         <Box width="50%">
           <Text variant="small" color="content.default.default">
-            Socials
+            Social networks
           </Text>
         </Box>
         <Box width="50%">
@@ -113,6 +121,7 @@ const Socials = ({
           onDisconnect={() => unlinkSocial("discord")}
         />
         <TwitterLogin
+          userId={user.id}
           delegateId={delegateId}
           username={socialsDelegate?.data?.twitter?.username}
           isLoading={socialsDelegate?.isLoading}
@@ -120,6 +129,7 @@ const Socials = ({
           onDisconnect={() => unlinkSocial("twitter")}
         />
         <TelegramLogin
+          userId={user!.id}
           delegateId={delegateId}
           username={socialsDelegate?.data?.telegram?.username}
           onSuccess={socialsDelegate.refetch}
@@ -132,6 +142,7 @@ const Socials = ({
           onDisconnect={() => unlinkSocial("discourse")}
         />
         <DiscourseFormModal
+          userId={user.id}
           isOpen={showDiscourse}
           onClose={closeDiscourseModal}
           onSuccess={socialsDelegate.refetch}

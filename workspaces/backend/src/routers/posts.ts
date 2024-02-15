@@ -1,4 +1,4 @@
-import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
+import {router, publicProcedure, protectedProcedure, isAdmin} from '../utils/trpc';
 import { posts } from '../db/schema/posts';
 import { db } from '../db/db';
 import { desc, eq } from 'drizzle-orm';
@@ -17,6 +17,7 @@ export const postsRouter = router({
 
   savePost: protectedProcedure
     .input(postInsertSchema.omit({ id: true }))
+    .use(isAdmin)
     .mutation(async (opts) => {
       const insertedPost = await db
         .insert(posts)
@@ -77,6 +78,7 @@ export const postsRouter = router({
 
   editPost: protectedProcedure
     .input(postInsertSchema.required({ id: true }))
+    .use(isAdmin)
     .mutation(async (opts) => {
       const updatedPost = await db
         .update(posts)
@@ -94,6 +96,7 @@ export const postsRouter = router({
 
   deletePost: protectedProcedure
     .input(postInsertSchema.required({ id: true }).pick({ id: true }))
+    .use(isAdmin)
     .mutation(async (opts) => {
       await db.delete(posts).where(eq(posts.id, opts.input.id)).execute();
     }),

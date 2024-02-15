@@ -54,7 +54,7 @@ import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments/VotingProposalComments";
-import { useProposal } from "../../hooks/snapshotX/useProposal";
+import { useOldProposal } from "../../hooks/snapshotX/useOldProposal";
 import { useVotes } from "../../hooks/snapshotX/useVotes";
 import { AUTHENTICATORS_ENUM } from "../../hooks/snapshotX/constants";
 import { useSpace } from "../../hooks/snapshotX/useSpace";
@@ -74,6 +74,7 @@ import { useWallets } from "../../hooks/useWallets";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 import { getChecksumAddress } from "starknet";
+import {useOldVotes} from "../../hooks/snapshotX/useOldVotes";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -85,12 +86,8 @@ export function Page() {
   const isL1Voting = ethWallet?.id === primaryWallet?.id;
   const isL2Voting = starknetWallet?.id === primaryWallet?.id;
 
-  const { data, refetch } = useProposal({
-    proposal: pageContext.routeParams!.id
-      ? (`${import.meta.env.VITE_APP_SNAPSHOTX_SPACE!}/${
-          pageContext.routeParams!.id
-        }` as string)
-      : undefined,
+  const { data, refetch } = useOldProposal({
+    proposal: pageContext.routeParams!.id,
   });
 
   const { data: votingPower, isLoading: votingPowerLoading } = useVotingPower({
@@ -104,9 +101,9 @@ export function Page() {
       proposal: data?.proposal?.id,
     });
 
-  const vote = useVotes({
-    proposal: pageContext.routeParams!.id,
-    voter: ethWallet?.address as any,
+  const vote = useOldVotes({
+    proposal: pageContext.routeParams!.id.toString(),
+    voter: ethWallet?.address,
     skipField: "voter",
   });
 
@@ -115,17 +112,32 @@ export function Page() {
     voter: starknetWallet?.address as any,
     skipField: "voter",
   });
+  /*
+  TODO: Revert this
   const space = useSpace();
   const parsedVotingStrategies = parseStrategiesMetadata(
     space?.data?.strategies_parsed_metadata || [],
   ).join(", ");
+   */
 
+  const parsedVotingStrategies = [];
+
+  /*
+  TODO: revert real votes from SX when time
   const votes = useVotes({
     proposal: pageContext.routeParams!.id,
     skipField: "proposal",
   });
-
   console.log(votes);
+   */
+
+  console.log(vote)
+
+  const votes = trpc.votes.getOldVotesForProposal.useQuery({
+    proposalId: pageContext.routeParams!.id
+  })
+
+  console.log(votes?.data)
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -154,6 +166,8 @@ export function Page() {
 
   async function handleVote(choice: number, reason?: string) {
     try {
+      // TODO: revert this
+      /*
       if (walletClient == null) return;
       if (
         (isL1Voting && votingPower < MINIMUM_TOKENS_FOR_DELEGATION) ||
@@ -170,7 +184,6 @@ export function Page() {
       setIsOpen(false);
       setisConfirmOpen(true);
 
-      // PREPARE DATA HERE
       const strategiesMetadata = space.data.strategies_parsed_metadata.map(
         (strategy) => ({
           ...strategy.data,
@@ -234,6 +247,7 @@ export function Page() {
       await refetch();
       await vote.refetch();
       await votes.refetch();
+       */
     } catch (error: any) {
       // Handle error
       console.error(error);
@@ -291,24 +305,15 @@ export function Page() {
 
   const hasDelegated = false;
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
-  const showPastVotes = votes?.data?.votes && votes?.data?.votes.length > 0;
-  const pastVotes = votes?.data?.votes || [];
-  const userAddresses =
-    pastVotes.map((pastVote) => pastVote?.voter?.toLowerCase() || "") || [];
+  const showPastVotes = votes?.data && votes?.data?.length > 0;
+  const pastVotes = votes?.data || [];
   const { data: authorInfo } = trpc.users.getUser.useQuery({
     address: data?.proposal?.author || "",
   });
-  const { data: usersByAddresses } =
-    trpc.users.getUsersInfoByAddresses.useQuery({
-      addresses: userAddresses || [],
-    });
   const pastVotesWithUserInfo = pastVotes.map((pastVote) => {
     return {
       ...pastVote,
-      author:
-        pastVote?.voter && usersByAddresses?.[pastVote.voter.toLowerCase()]
-          ? usersByAddresses[pastVote.voter.toLowerCase()]
-          : {},
+      author: pastVote?.author?.author || {}
     };
   });
 
@@ -703,8 +708,8 @@ export function Page() {
                   View Snapshot info
                 </Link>
               </Box>
-              {data?.proposal?.metadata?.discussion &&
-              data?.proposal?.metadata?.discussion.length ? (
+              {data?.proposal?.discussion &&
+              data?.proposal?.discussion.length ? (
                 <Box
                   height="110px!important"
                   overflow="hidden"
@@ -881,7 +886,7 @@ export function Page() {
                   {data?.proposal?.choices.map((choice, index) => {
                     const totalVotes = data?.proposal?.scores?.reduce(
                       (a, b) => a! + b!,
-                      0n,
+                      0,
                     );
                     const voteCount = data?.proposal?.scores![index];
                     const userVote = false;
@@ -916,7 +921,7 @@ export function Page() {
                   <Heading
                     variant="h4"
                     mb={
-                      votes.data?.votes && votes.data.votes.length > 0
+                      votes.data && votes.data.length > 0
                         ? "standard.sm"
                         : "0px"
                     }
@@ -934,14 +939,14 @@ export function Page() {
                         }
                         address={vote?.voter as string}
                         voted={
-                          vote?.choice === 1
+                          vote?.votePreference === 1
                             ? "For"
-                            : vote?.choice === 2
+                            : vote?.votePreference === 2
                             ? "Against"
                             : "Abstain"
                         }
-                        comment={vote?.reason as string}
-                        voteCount={vote?.vp as number}
+                        comment={vote?.body as string}
+                        voteCount={vote?.voteCount as number}
                         signature={vote?.ipfs as string}
                       />
                     ))

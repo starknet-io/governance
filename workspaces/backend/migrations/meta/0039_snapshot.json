@@ -1,5 +1,5 @@
 {
-  "id": "db528f14-deda-424c-8c6a-dbab17fe7374",
+  "id": "b9a37225-46ce-40f3-b03f-819fa7acb6f7",
   "prevId": "90285099-7f22-403b-9467-7aade011bcb1",
   "version": "5",
   "dialect": "pg",
@@ -838,6 +838,86 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "old_votes": {
+      "name": "old_votes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "delegateId": {
+          "name": "delegateId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "proposalId": {
+          "name": "proposalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "body": {
+          "name": "body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "votePreference": {
+          "name": "votePreference",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "voteCount": {
+          "name": "voteCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "old_votes_delegateId_delegates_id_fk": {
+          "name": "old_votes_delegateId_delegates_id_fk",
+          "tableFrom": "old_votes",
+          "tableTo": "delegates",
+          "columnsFrom": [
+            "delegateId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "pages": {
       "name": "pages",
       "schema": "",
@@ -1239,7 +1319,7 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true,
-          "default": "'b5828104-01d0-4730-83f0-ee2a55791b07'"
+          "default": "'541620fd-498b-4adc-a041-6f3a123139da'"
         },
         "isConfirmed": {
           "name": "isConfirmed",
@@ -1375,24 +1455,6 @@
         "starknetAddress": {
           "name": "starknetAddress",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "ethAddress": {
-          "name": "ethAddress",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "isOnboarded": {
-          "name": "isOnboarded",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hasConnectedSecondaryWallet": {
-          "name": "hasConnectedSecondaryWallet",
-          "type": "boolean",
           "primaryKey": false,
           "notNull": false
         },

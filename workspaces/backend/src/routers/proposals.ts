@@ -1,13 +1,16 @@
 import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/db';
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
-import { GraphQLClient } from 'graphql-request';
+import { graphqlClient } from '../utils/graphqlClient';
 import { comments } from '../db/schema/comments';
 import { z } from 'zod';
 import { proposals } from '../db/schema/proposals';
 import { createInsertSchema } from 'drizzle-zod';
 import { Algolia } from '../utils/algolia';
-import { GET_PROPOSAL_QUERY, GET_PROPOSALS_QUERY } from '../queries/queries';
+import {
+  GET_SNAPSHOT_PROPOSAL_QUERY,
+  GET_SNAPSHOT_PROPOSALS_QUERY,
+} from '../queries/queries';
 import { transformProposalData } from '../queries/helpers';
 
 export interface IProposal {
@@ -30,19 +33,11 @@ export interface IProposalWithComments extends IProposal {
   }[];
 }
 
-const endpoint = process.env.SNAPSHOT_X_ENDPOINT! as string;
-const space = process.env.SNAPSHOT_X_SPACE;
+//const endpoint = process.env.SNAPSHOT_X_ENDPOINT! as string;
+const space = process.env.SNAPSHOT_SPACE;
 export interface IProposalWithCommentsCount extends IProposal {
   commentsCount: number;
 }
-
-
-const graphQLClient = new GraphQLClient(endpoint, {
-  headers: {
-    'Content-Type': 'application/json',
-    // Include any other headers your GraphQL server might require
-  },
-});
 
 const populateProposalsWithCommentsCount = async (
   proposals: IProposal[],
@@ -106,7 +101,7 @@ export const proposalsRouter = router({
         .where(eq(comments.proposalId, id))
         .then((result) => result[0]?.value || 0);
 
-      return commentsCount || 0
+      return commentsCount || 0;
     }),
 
   getProposalById: publicProcedure
@@ -115,7 +110,7 @@ export const proposalsRouter = router({
       const ourProposalData = await db.query.proposals.findFirst({
         where: eq(proposals.proposalId, opts.input.id),
       });
-      const data = (await graphQLClient.request(GET_PROPOSAL_QUERY, {
+      const data = (await graphqlClient.request(GET_SNAPSHOT_PROPOSAL_QUERY, {
         id: opts.input.id,
         space,
       })) as { proposal: IProposal };
@@ -148,7 +143,6 @@ export const proposalsRouter = router({
         .optional(),
     )
     .query(async (opts) => {
-
       const orderDirection =
         opts.input?.sortBy && opts.input?.sortBy !== 'most_discussed'
           ? opts.input?.sortBy
@@ -163,12 +157,16 @@ export const proposalsRouter = router({
         [];
 
       let mappedProposals: IProposal[];
-      const data = (await graphQLClient.request(GET_PROPOSALS_QUERY, {
-        space,
-        orderDirection,
-      })) as { proposals: IProposal[] };
 
-      const queriedProposals = transformProposalData(data || []) || [];
+      const { proposals: queriedProposals } = (await graphqlClient.request(
+        GET_SNAPSHOT_PROPOSALS_QUERY,
+        {
+          orderDirection,
+          first: 100,
+          skip: 0,
+          space,
+        },
+      )) as { proposals: IProposal[] };
 
       // Merge category data into the proposals array
       mappedProposals = queriedProposals.map((proposal: any) => ({

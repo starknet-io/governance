@@ -218,14 +218,30 @@ const UserProfileMenuComponent = (
     }
   };
 
+  const checkIfL1DelegatedToSelf = () => {
+    const address = delegatedToL1?.ethAddress || delegatedToL1?.address;
+    if (address) {
+      return address?.toLowerCase() === ethWallet?.address?.toLowerCase();
+    }
+
+    if (ethWallet?.address && delegatedToL1) {
+      return ethWallet.address.toLowerCase() === delegatedToL1.toLowerCase();
+    } else {
+      return false;
+    }
+  };
+
   const l2DelegatedToSelf = checkIfL2DelegatedToSelf();
+  const l1DelegatedToSelf = checkIfL1DelegatedToSelf();
+
+  console.log(l1DelegatedToSelf)
 
   return (
     <div ref={ref}>
       <VotingPowerModal
         isOpen={isVotingPowerModalOpen}
         onClose={() => setIsVotingPowerModalOpen(false)}
-        delegatedToL1={delegatedToL1}
+        delegatedToL1={!l1DelegatedToSelf ? delegatedToL1 : null}
         delegatedToL2={!l2DelegatedToSelf ? delegatedToL2 : null}
         delegatedToL1Name={delegatedToL1Name}
         delegatedToL2Name={delegatedToL2Name}

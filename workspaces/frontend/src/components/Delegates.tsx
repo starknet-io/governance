@@ -29,7 +29,7 @@ import { ethers } from "ethers";
 import { useAccount, useWaitForTransaction } from "wagmi";
 import { useL1StarknetDelegationDelegate } from "../wagmi/L1StarknetDelegation";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import { MINIMUM_TOKENS_FOR_DELEGATION } from "src/pages/delegates/profile/@id.page";
+import {DELEGATION_SUCCESS_EVENT, MINIMUM_TOKENS_FOR_DELEGATION} from "src/pages/delegates/profile/@id.page";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
@@ -196,6 +196,7 @@ export function Delegates({
   transformData = transformDataDefault,
 }: DelegatesProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isSelfDelegation, setIsSelfDelegation] = useState<boolean>(false);
   const { starknetWallet, ethWallet } = useWallets();
   const { primaryWallet, setPrimaryWallet } = useDynamicContext();
   const [inputAddress, setInputAddress] = useState("");
@@ -347,6 +348,14 @@ export function Delegates({
             variant="outline"
             onClick={() => setHelpMessage("connectWalletMessage")}
           >
+            Delegate to self
+          </Button>
+          <Button
+            width={{ base: "100%", md: "auto" }}
+            size={isMobile ? "standard" : "condensed"}
+            variant="outline"
+            onClick={() => setHelpMessage("connectWalletMessage")}
+          >
             Delegate to address
           </Button>
 
@@ -371,9 +380,21 @@ export function Delegates({
           size={isMobile ? "standard" : "condensed"}
           variant="outline"
           onClick={() => {
+            setIsOpen(true);
+            setIsSelfDelegation(true);
+          }}
+        >
+          Delegate to self
+        </Button>
+        <Button
+          width={{ base: "100%", md: "auto" }}
+          size={isMobile ? "standard" : "condensed"}
+          variant="outline"
+          onClick={() => {
             if (
               parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION
             ) {
+              setIsSelfDelegation(false);
               setIsStatusModalOpen(true);
               setStatusTitle("No voting power");
               setStatusDescription(
@@ -457,8 +478,10 @@ export function Delegates({
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
+          setIsSelfDelegation(false);
           setInputAddress("");
         }}
+        isSelfDelegation={isSelfDelegation}
         isLayer2Delegation={primaryWallet?.id === starknetWallet?.id}
         isConnected={primaryWallet !== null}
         receiverData={
@@ -492,10 +515,16 @@ export function Delegates({
               `You do not have enough tokens in your account to delegate. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} token to delegate.`,
             );
             setIsOpen(false);
+            setIsSelfDelegation(false);
           } else {
             if (primaryWallet?.id === starknetWallet?.id) {
-              delegateL2(starknetWallet.address!, l2InputAddress!)
-                .then()
+              const addressToDelegate = isSelfDelegation ? starknetWallet.address! : l2InputAddress!
+              delegateL2(starknetWallet.address!, addressToDelegate)
+                .then(() => {
+                  if (typeof window !== "undefined") {
+                    window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
+                  }
+                })
                 .catch((err) => {
                   setIsStatusModalOpen(true);
                   setStatusTitle("Delegating voting power failed");
@@ -507,8 +536,9 @@ export function Delegates({
                   );
                 });
             } else {
+              const addressToDelegate = isSelfDelegation ? ethWallet.address! : inputAddress!
               writeAsync?.({
-                args: [inputAddress as `0x${string}`],
+                args: [addressToDelegate as `0x${string}`],
               })
                 .then((tx) => {
                   setTxHash(tx.hash);
@@ -525,6 +555,7 @@ export function Delegates({
                 });
             }
             setIsOpen(false);
+            setIsSelfDelegation(false);
           }
         }}
       />
