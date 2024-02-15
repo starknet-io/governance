@@ -32,6 +32,7 @@ export const VotingPowerBreakdown = ({
   hasStarkWallet,
   isVotingPowerEthLoading,
   isVotingPowerStarknetLoading,
+  isStarknetBalanceLoading,
   balanceStark = 0,
   balanceEth = 0,
 }: Props) => {
@@ -107,9 +108,15 @@ export const VotingPowerBreakdown = ({
                   )}
                 </Box>
                 {!showBreakdown ? (
-                  <Text variant="small" color="content.support.default">
-                    {balanceStark} balance
-                  </Text>
+                  <>
+                    {isStarknetBalanceLoading ? (
+                      <Skeleton height="14px" width="50%" borderRadius="md" />
+                    ) : (
+                      <Text variant="small" color="content.support.default">
+                        {balanceStark} balance
+                      </Text>
+                    )}
+                  </>
                 ) : null}
               </Box>
             )}

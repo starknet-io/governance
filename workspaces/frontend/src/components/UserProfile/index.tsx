@@ -41,6 +41,7 @@ interface UserProfileMenuProps {
   isMenuOpen?: boolean;
   delegatedToL1: any;
   delegatedToL2: any;
+  isStarknetBalanceLoading?: boolean;
   delegatedToL1Loading: boolean;
   delegatedToL2Loading: boolean;
   isVotingPowerEthLoading: boolean;
@@ -78,6 +79,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   votingPowerStark,
   starknetBalance,
   hasEthWallet,
+  isStarknetBalanceLoading,
   hasStarkWallet,
 }: UserProfileMenuProps) => {
   return (
@@ -110,6 +112,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
         <VotingPowerBreakdown
           isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
           isvSTRKBalanceLoading={isvSTRKBalanceLoading}
+          isStarknetBalanceLoading={isStarknetBalanceLoading}
           hasEthWallet={hasEthWallet}
           hasStarkWallet={hasStarkWallet}
           votingPowerEth={votingPowerEth}
@@ -292,6 +295,7 @@ const UserProfileMenuComponent = (
             hasEthWallet={!!ethWallet?.id}
             hasStarkWallet={!!starknetWallet?.id}
             isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
+            isStarknetBalanceLoading={isStarknetBalanceLoading}
             isvSTRKBalanceLoading={isvSTRKBalanceLoading}
             onSave={onSave}
             onVotingPowerModalOpen={() => setIsVotingPowerModalOpen(true)}
@@ -326,6 +330,7 @@ const UserProfileMenuComponent = (
               user={user}
               isvSTRKBalanceLoading={isvSTRKBalanceLoading}
               onSave={onSave}
+              isStarknetBalanceLoading={isStarknetBalanceLoading}
               hasEthWallet={!!ethWallet?.id}
               hasStarkWallet={!!starknetWallet?.id}
               onVotingPowerModalOpen={() => setIsVotingPowerModalOpen(true)}
