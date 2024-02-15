@@ -35,7 +35,7 @@ const Socials = ({
   });
   const socialsDelegate = trpc.socials.initiateSocialAuth.useQuery({
     delegateId,
-    userId: user?.id || "",
+    id: user?.id || "",
     origin: "discord",
   }, {
     enabled: !!user?.id,
@@ -54,7 +54,7 @@ const Socials = ({
     if (user?.id) {
       unlinkSocialDelegate.mutateAsync({
         delegateId: delegateId,
-        userId: user!.id,
+        id: user!.id,
         origin,
       });
     }

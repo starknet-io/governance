@@ -36,7 +36,7 @@ export const socialsRouter = router({
   initiateSocialAuth: protectedProcedure
     .input(
       z.object({
-        userId: z.string(),
+        id: z.string(),
         delegateId: z.string().optional(),
         origin: z.string().optional(),
       }),
@@ -91,7 +91,7 @@ export const socialsRouter = router({
       return response;
     }),
   getTwitterAuthUrl: protectedProcedure
-    .input(z.object({ delegateId: z.string(), userId: z.string() }))
+    .input(z.object({ delegateId: z.string(), id: z.string() }))
     .use(hasPermission)
     .query(async ({ input }) => {
       const { delegateId } = input;
@@ -103,7 +103,7 @@ export const socialsRouter = router({
     }),
 
   unlinkDelegateSocial: protectedProcedure
-    .input(z.object({ origin: z.string(), delegateId: z.string(), userId: z.string() }))
+    .input(z.object({ origin: z.string(), delegateId: z.string(), id: z.string() }))
     .use(hasPermission)
     .mutation(async ({ input }) => {
       const { origin, delegateId } = input;
@@ -202,7 +202,7 @@ export const socialsRouter = router({
     .input(
       z.object({
         delegateId: z.string(),
-        userId: z.string(),
+        id: z.string(),
         telegramData: z.object({
           id: z.number(),
           first_name: z.string(),
@@ -318,7 +318,7 @@ export const socialsRouter = router({
       z.object({
         delegateId: z.string(),
         username: z.string(),
-        userId: z.string(),
+        id: z.string(),
       }),
     )
     .use(hasPermission)
