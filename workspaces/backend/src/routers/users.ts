@@ -142,6 +142,14 @@ export const usersRouter = router({
         profileImage,
       } = opts.input;
 
+      if (profileImage) {
+        if (!isValidProfileImageUrl(profileImage)) {
+          throw new Error(
+            'Invalid profile image URL. Please use an approved hosting service.',
+          );
+        }
+      }
+
       // Fetch the user by ID once instead of twice.
       const userById = await db.query.users.findFirst({
         where: eq(users.id, id),
@@ -326,3 +334,8 @@ export const usersRouter = router({
       return bannedUser[0];
     }),
 });
+
+function isValidProfileImageUrl(url: string): boolean {
+  const allowedDomain = 'https://governance.sfo3.digitaloceanspaces.com'; // Your DigitalOcean Spaces bucket URL
+  return url.startsWith(allowedDomain);
+}
