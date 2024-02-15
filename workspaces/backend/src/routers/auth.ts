@@ -33,7 +33,6 @@ export const authRouter = router({
         ensName: z.string().optional(),
         ensAvatar: z.string().optional(),
         isEth: z.boolean().optional(),
-        isStarknet: z.boolean().optional(),
       }),
     )
     .mutation(async (opts) => {
@@ -69,9 +68,6 @@ export const authRouter = router({
               starknetAddress = credential.address.toLowerCase();
             }
           });
-
-          console.log(ethAddress)
-          console.log(starknetAddress)
 
           if (!user) {
             await db.insert(users).values({
