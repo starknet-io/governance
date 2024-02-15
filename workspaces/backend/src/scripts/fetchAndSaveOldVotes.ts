@@ -33,10 +33,21 @@ async function saveOldVote(oldVoteData: OldVoteData, delegateId: string) {
         body: oldVoteData?.reason || '',
         voteCount: Math.round(oldVoteData?.vp) || 0,
         votePreference: oldVoteData.choice,
-        createdAt: new Date(),
+        createdAt: new Date(oldVoteData.created),
         updatedAt: new Date(),
       });
     } else {
+      await db
+        .update(oldVotes)
+        .set({
+          createdAt: new Date(oldVoteData.created),
+        })
+        .where(
+          and(
+            eq(oldVotes.delegateId, delegateId),
+            eq(oldVotes.proposalId, oldVoteData.proposal.id),
+          ),
+        );
       console.log('EXISTS FOR: ', delegateId, oldVoteData?.proposal?.id);
     }
   } catch (error) {
@@ -45,17 +56,15 @@ async function saveOldVote(oldVoteData: OldVoteData, delegateId: string) {
   }
 }
 
-const space = process.env.SNAPSHOT_SPACE;
-
 export async function getVotingProposals() {
   const query = `
-    query DelegateProposals {
+    query DelegateProposals($space: String!) {
       proposals(
         first: 20
         skip: 0
         orderBy: "created"
         orderDirection: asc
-        where: { space: "${space}" }
+        where: { space: $space }
       ) {
         id
         title
@@ -74,18 +83,22 @@ export async function getVotingProposals() {
       }
     }
   `;
-  const response: { proposals: any[] } = await graphqlClient.request(query);
+  const space = process.env.SNAPSHOT_SPACE || 'starknet.eth'; // Example fallback
+
+  const response: { proposals: any[] } = await graphqlClient.request(query, {
+    space,
+  });
   return response.proposals;
 }
 
 async function fetchAllVotesForProposal(proposalId: string) {
   const query = `
-    query DelegatesVotes {
+    query DelegatesVotes($proposalId: String!) {
       votes (
         first: 1000
         skip: 0
         where: {
-          proposal: "${proposalId}",
+          proposal: $proposalId,
         }
         orderBy: "created",
         orderDirection: desc
@@ -103,7 +116,10 @@ async function fetchAllVotesForProposal(proposalId: string) {
       }
     }`;
 
-  const response: { votes: OldVoteData[] } = await graphqlClient.request(query);
+  const response: { votes: OldVoteData[] } = await graphqlClient.request(
+    query,
+    { proposalId },
+  );
   return response.votes;
 }
 
