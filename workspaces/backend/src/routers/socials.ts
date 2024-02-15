@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from '../utils/trpc';
+import {router, protectedProcedure, hasPermission} from '../utils/trpc';
 import { db } from '../db/db';
 import axios from 'axios';
 import crypto from 'crypto';
@@ -36,10 +36,12 @@ export const socialsRouter = router({
   initiateSocialAuth: protectedProcedure
     .input(
       z.object({
+        userId: z.string(),
         delegateId: z.string().optional(),
         origin: z.string().optional(),
       }),
     )
+    .use(hasPermission)
     .query(async ({ input }) => {
       const { delegateId } = input;
 
@@ -89,7 +91,8 @@ export const socialsRouter = router({
       return response;
     }),
   getTwitterAuthUrl: protectedProcedure
-    .input(z.object({ delegateId: z.string() }))
+    .input(z.object({ delegateId: z.string(), userId: z.string() }))
+    .use(hasPermission)
     .query(async ({ input }) => {
       const { delegateId } = input;
       if (!delegateId) {
@@ -100,7 +103,8 @@ export const socialsRouter = router({
     }),
 
   unlinkDelegateSocial: protectedProcedure
-    .input(z.object({ origin: z.string(), delegateId: z.string() }))
+    .input(z.object({ origin: z.string(), delegateId: z.string(), userId: z.string() }))
+    .use(hasPermission)
     .mutation(async ({ input }) => {
       const { origin, delegateId } = input;
 
@@ -198,6 +202,7 @@ export const socialsRouter = router({
     .input(
       z.object({
         delegateId: z.string(),
+        userId: z.string(),
         telegramData: z.object({
           id: z.number(),
           first_name: z.string(),
@@ -209,6 +214,7 @@ export const socialsRouter = router({
         }),
       }),
     )
+    .use(hasPermission)
     .mutation(async ({ input }) => {
       const { delegateId, telegramData } = input;
 
@@ -312,8 +318,10 @@ export const socialsRouter = router({
       z.object({
         delegateId: z.string(),
         username: z.string(),
+        userId: z.string(),
       }),
     )
+    .use(hasPermission)
     .mutation(async ({ input }) => {
       const { delegateId, username } = input;
 

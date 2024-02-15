@@ -20,12 +20,14 @@ type DiscourseFormModalProps = {
   onClose: () => void;
   delagateId: string;
   onSuccess?: () => void;
+  userId: string;
 };
 
 export const DiscourseFormModal = ({
   isOpen,
   onClose,
   delagateId,
+  userId,
   onSuccess,
 }: DiscourseFormModalProps) => {
   const [discourseAddress, setDiscourseAddress] = useState("");
@@ -47,6 +49,7 @@ export const DiscourseFormModal = ({
     addDiscourse.mutateAsync(
       {
         delegateId,
+        userId,
         username,
       },
       {
