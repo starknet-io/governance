@@ -255,7 +255,7 @@ export function Page() {
   } = useUnwrapVSTRK();
 
   const wrapTokens = async () => {
-    if (!user) {
+    if (!starknetAddress) {
       setHelpMessage("connectWalletMessage");
       return;
     }
@@ -295,7 +295,7 @@ export function Page() {
 
   const handleSliderChange = (val) => {
     setSliderValue(val);
-    if (!user) {
+    if (!starknetAddress) {
       setHelpMessage("connectWalletMessage");
       return;
     }
@@ -551,7 +551,7 @@ export function Page() {
               <Button
                 variant="primary"
                 w="100%"
-                disabled={starkToWrap === 0 && user}
+                disabled={starkToWrap === 0 && starknetAddress}
                 onClick={wrapTokens}
               >
                 {activeTab === 0 ? "Wrap" : "Unwrap"}
