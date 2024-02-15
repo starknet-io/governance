@@ -55,9 +55,13 @@ export const VotingPowerBreakdown = ({
             <Text variant="mediumStrong" color="content.default.default">
               Total voting power
             </Text>
-            {!String(totalValue) ? <Skeleton height="24px" width="50%" borderRadius="md" /> : <Text variant="largeStrong" color="content.accent.default">
-              {totalValue}
-            </Text>}
+            {!String(totalValue) ? (
+              <Skeleton height="24px" width="50%" borderRadius="md" />
+            ) : (
+              <Text variant="largeStrong" color="content.accent.default">
+                {totalValue}
+              </Text>
+            )}
           </Box>
           {showBreakdown ? (
             <Icon as={ThunderIcon} fill="transparent" w="48px" h="48px" />
@@ -87,16 +91,26 @@ export const VotingPowerBreakdown = ({
                   <Text variant="small" color="content.support.default">
                     Starknet voting power
                   </Text>
-                  {!isVotingPowerStarknetLoading ? <Text color="content.accent.default" variant="mediumStrong">
-                    {balanceStark}
-                    <Tooltip label="Tooltip">
-                      <Icon color="#1A1523" ml="standard.xs" as={InfoCircleIcon} />
-                    </Tooltip>
-                  </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
+                  {!isVotingPowerStarknetLoading ? (
+                    <Text color="content.accent.default" variant="mediumStrong">
+                      {new Intl.NumberFormat().format(votingPowerStark)} vSTRK
+                      <Tooltip label="Tooltip">
+                        <Icon
+                          color="#1A1523"
+                          ml="standard.xs"
+                          as={InfoCircleIcon}
+                        />
+                      </Tooltip>
+                    </Text>
+                  ) : (
+                    <Skeleton height="24px" width="50%" borderRadius="md" />
+                  )}
                 </Box>
-                {!showBreakdown ? <Text variant="small" color="content.support.default">
-                {new Intl.NumberFormat().format(votingPowerStark)} STRK balance
-                </Text> : null}
+                {!showBreakdown ? (
+                  <Text variant="small" color="content.support.default">
+                    {balanceStark} balance
+                  </Text>
+                ) : null}
               </Box>
             )}
             {hasEthWallet && (
@@ -105,16 +119,26 @@ export const VotingPowerBreakdown = ({
                   <Text variant="small" color="content.support.default">
                     Ethereum voting power
                   </Text>
-                  {!isVotingPowerEthLoading ? <Text color="content.accent.default" variant="mediumStrong">
-                    {balanceEth} STRK
-                    <Tooltip label="Tooltip">
-                      <Icon color="#1A1523" ml="standard.xs" as={InfoCircleIcon} />
-                    </Tooltip>
-                  </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
+                  {!isVotingPowerEthLoading ? (
+                    <Text color="content.accent.default" variant="mediumStrong">
+                      {new Intl.NumberFormat().format(votingPowerEth)} STRK
+                      <Tooltip label="Tooltip">
+                        <Icon
+                          color="#1A1523"
+                          ml="standard.xs"
+                          as={InfoCircleIcon}
+                        />
+                      </Tooltip>
+                    </Text>
+                  ) : (
+                    <Skeleton height="24px" width="50%" borderRadius="md" />
+                  )}
                 </Box>
-                {!showBreakdown ? <Text variant="small" color="content.support.default">
-                  {new Intl.NumberFormat().format(votingPowerEth)} STRK balance
-                </Text> : null}
+                {!showBreakdown ? (
+                  <Text variant="small" color="content.support.default">
+                    {balanceEth} balance
+                  </Text>
+                ) : null}
               </Box>
             )}
           </Box>
@@ -137,7 +161,7 @@ export const VotingPowerBreakdown = ({
                     onClick={(e) => {
                       navigate("/manage-vstrk");
                       if (onClose) {
-                        onClose()
+                        onClose();
                       }
                     }}
                   >

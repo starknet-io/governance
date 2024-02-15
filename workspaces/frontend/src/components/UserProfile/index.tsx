@@ -28,6 +28,7 @@ interface IUser extends User {
 
 interface UserProfileMenuProps {
   onDisconnect: () => void;
+  isvSTRKBalanceLoading?: boolean;
   onVotingPowerModalOpen: () => void;
   user: IUser | null;
   onSave: (data: {
@@ -70,15 +71,16 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   onDisconnect,
   onVotingPowerModalOpen,
   user,
+  isvSTRKBalanceLoading,
+  isVotingPowerStarknetLoading,
   votingPowerEth,
   votingPowerStark,
+  starknetBalance,
+  vSTRKBalance,
   handleOpenModal,
   setEditUserProfile,
 }: UserProfileMenuProps) => {
   const { ethWallet, starknetWallet } = useWallets();
-  const starknetBalance = useStarknetBalance({
-    starknetAddress: starknetWallet?.address,
-  });
   const ethBalance = useBalanceData(ethWallet.address as `0x${string}`);
   return (
     <>
@@ -108,12 +110,14 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           <WalletButtons selectable profileVariant />
         </Box>
         <VotingPowerBreakdown
+          isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
+          isvSTRKBalanceLoading={isvSTRKBalanceLoading}
           hasEthWallet={!!ethWallet?.id}
           hasStarkWallet={!!starknetWallet?.id}
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
           onToggleExpand={onVotingPowerModalOpen}
-          balanceStark={`${starknetBalance?.balance?.balance} ${starknetBalance?.balance?.symbol}`}
+          balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
           balanceEth={`${new Intl.NumberFormat().format(
             ethBalance?.balance,
           )} ${ethBalance?.symbol}`}
@@ -234,7 +238,7 @@ const UserProfileMenuComponent = (
   const l2DelegatedToSelf = checkIfL2DelegatedToSelf();
   const l1DelegatedToSelf = checkIfL1DelegatedToSelf();
 
-  console.log(l1DelegatedToSelf)
+  console.log(l1DelegatedToSelf);
 
   return (
     <div ref={ref}>
@@ -287,6 +291,8 @@ const UserProfileMenuComponent = (
           <UserProfileContent
             onDisconnect={onDisconnect}
             user={user}
+            isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
+            isvSTRKBalanceLoading={isvSTRKBalanceLoading}
             onSave={onSave}
             onVotingPowerModalOpen={() => setIsVotingPowerModalOpen(true)}
             votingPowerEth={votingPowerEth}
@@ -318,6 +324,7 @@ const UserProfileMenuComponent = (
             <UserProfileContent
               onDisconnect={onDisconnect}
               user={user}
+              isvSTRKBalanceLoading={isvSTRKBalanceLoading}
               onSave={onSave}
               onVotingPowerModalOpen={() => setIsVotingPowerModalOpen(true)}
               votingPowerEth={votingPowerEth}
