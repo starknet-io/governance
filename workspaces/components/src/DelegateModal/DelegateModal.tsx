@@ -246,7 +246,7 @@ export const DelegateModal = ({
             )}
           </Swap.Root>
           {!canBeDelegatedOnSpecifiedLayer &&
-            (receiverDataL2 || receiverData) && (
+            (receiverDataL2 || receiverData) && !isSelfDelegation && (
               <Banner
                 label={`Delegate has only ${
                   l1Delegation ? "Starknet" : "Ethereum"
