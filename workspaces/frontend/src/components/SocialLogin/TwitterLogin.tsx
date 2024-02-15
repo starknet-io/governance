@@ -3,12 +3,14 @@ import { trpc } from "../../utils/trpc";
 
 const TwitterLogin = ({
   username,
+  userId,
   isLoading,
   isError,
   onDisconnect,
   delegateId
 }: {
   delegateId: string,
+  userId: string,
   username: string | null | undefined;
   redirectUrl?: string;
   isLoading?: boolean;
@@ -17,6 +19,7 @@ const TwitterLogin = ({
 }) => {
   const redirectUrl = trpc.socials.getTwitterAuthUrl.useQuery({
     delegateId,
+    userId,
   });
   const handleTwitterLogin = async () => {
     try {

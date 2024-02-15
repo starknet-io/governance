@@ -235,6 +235,12 @@ export const commentsRouter = router({
     .input(commentInsertSchema.omit({ id: true }))
     .mutation(async (opts) => {
       const commentText = opts.input.content;
+      const parentId = opts.input.parentId;
+
+      // Before proceeding, check for potential cycles
+      if (parentId) {
+        await checkForCommentCycle(parentId, opts.input.id);
+      }
 
       // Check for short comments
       if (commentText.length < 5) {
@@ -279,7 +285,6 @@ export const commentsRouter = router({
         insertedComment = insertedCommentResult[0];
       }
 
-      const parentId = opts.input.parentId;
       if (parentId) {
         const parentComment = await db.query.comments.findFirst({
           where: eq(comments.id, parentId),
@@ -335,21 +340,23 @@ export const commentsRouter = router({
     }),
 
   editComment: protectedProcedure
-    .input(commentInsertSchema.required({ id: true }))
+    .input(commentInsertSchema.required({ id: true, content: true }))
     .mutation(async (opts) => {
       const user = opts.ctx.user?.id;
       if (!user) {
         throw new Error('User not authenticated');
       }
 
-      if (profanity.exists(opts.input?.content || '')) {
+      const { content, id } = opts.input;
+
+      if (profanity.exists(content || '')) {
         throw new Error('Your comment contains inappropriate language.');
       }
 
       const originalComment = await db
         .select()
         .from(comments)
-        .where(eq(comments.id, opts.input.id))
+        .where(eq(comments.id, id))
         .execute();
       if (originalComment[0].userId !== user) {
         throw new Error('Permission denied: Can only edit your own comments');
@@ -357,8 +364,10 @@ export const commentsRouter = router({
 
       const updatedComment = await db
         .update(comments)
-        .set(opts.input)
-        .where(eq(comments.id, opts.input.id))
+        .set({
+          content,
+        })
+        .where(eq(comments.id, id))
         .returning();
 
       if (Array.isArray(updatedComment)) {
@@ -393,11 +402,17 @@ async function getLimitedReplies(
   commentId: number,
   userId: string | null,
   depth = 1,
+  processed = new Set(), // Add a Set to track processed IDs
 ): Promise<any> {
   if (depth > 3) {
     // Limiting the depth to 2 (replies and sub-replies)
     return [];
   }
+
+  if (processed.has(commentId)) {
+    throw new Error('Detected a cycle in the comments');
+  }
+  processed.add(commentId); // Mark this comment ID as processed
 
   const replies = await db.query.comments.findMany({
     where: eq(comments.parentId, commentId),
@@ -429,7 +444,12 @@ async function getLimitedReplies(
       })
       .from(comments)
       .where(eq(comments.parentId, reply.id));
-    reply.replies = await getLimitedReplies(reply.id, userId, depth + 1);
+    reply.replies = await getLimitedReplies(
+      reply.id,
+      userId,
+      depth + 1,
+      processed,
+    );
     reply.netVotes = reply.upvotes - reply.downvotes; // Simple subtraction here
     reply.totalReplyCount = totalReplyCount?.[0]?.value || 0;
     reply.remainingReplies = reply.totalReplyCount - reply.replies.length; // New field indicating remaining replies
@@ -443,5 +463,29 @@ async function getLimitedReplies(
     };
   } else {
     return replies;
+  }
+}
+
+async function checkForCommentCycle(
+  parentId: number,
+  originalCommentId: number,
+): Promise<void> {
+  let currentParentId = parentId;
+  const visitedComments = new Set();
+
+  while (currentParentId) {
+    if (visitedComments.has(currentParentId)) {
+      throw new Error('Detected a potential cycle in comment hierarchy.');
+    }
+    visitedComments.add(currentParentId);
+    const parentComment = await db.query.comments.findFirst({
+      where: eq(comments.id, currentParentId),
+    });
+    if (!parentComment || !parentComment.parentId) break;
+    currentParentId = parentComment.parentId;
+    // If the original comment (being replied to) is found chain, it's a cycle
+    if (currentParentId === originalCommentId) {
+      throw new Error('Detected a potential cycle in comment hierarchy.');
+    }
   }
 }

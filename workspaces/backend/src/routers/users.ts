@@ -1,4 +1,10 @@
-import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
+import {
+  router,
+  publicProcedure,
+  protectedProcedure,
+  isAdmin,
+  hasPermission,
+} from '../utils/trpc';
 import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
@@ -14,31 +20,6 @@ export const usersRouter = router({
       },
     }),
   ),
-
-  saveUser: publicProcedure
-    .input(
-      z.object({
-        address: z.string(),
-        walletName: z.string(),
-        walletProvider: z.string(),
-        publicIdentifier: z.string(),
-        dynamicId: z.string(),
-      }),
-    )
-    .mutation(async (opts) => {
-      const insertedUser = await db
-        .insert(users)
-        .values({
-          address: opts.input.address.toLowerCase(),
-          walletName: opts.input.walletName,
-          walletProvider: opts.input.walletProvider,
-          publicIdentifier: opts.input.publicIdentifier,
-          dynamicId: opts.input.dynamicId,
-          createdAt: new Date(),
-        })
-        .returning();
-      return insertedUser[0];
-    }),
 
   isDelegate: publicProcedure
     .input(
@@ -58,56 +39,13 @@ export const usersRouter = router({
       }
     }),
 
-  editUser: publicProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        address: z.string().optional(),
-        walletName: z.string().optional(),
-        walletProvider: z.string().optional(),
-        publicIdentifier: z.string().optional(),
-        dynamicId: z.string().optional(),
-        profileImage: z.string().optional() || z.null(),
-      }),
-    )
-    .mutation(async (opts) => {
-      const updatedUser = await db
-        .update(users)
-        .set({
-          address: opts.input.address
-            ? opts.input.address.toLowerCase()
-            : opts.input.address,
-          walletName: opts.input.walletName,
-          walletProvider: opts.input.walletProvider,
-          publicIdentifier: opts.input.publicIdentifier,
-          dynamicId: opts.input.dynamicId,
-          profileImage:
-            opts.input.profileImage === 'none' ? null : opts.input.profileImage,
-          updatedAt: new Date(),
-        })
-        .where(eq(users.id, opts.input.id))
-        .returning();
-      const user = updatedUser[0];
-      if (opts.input.profileImage) {
-        const delegate = await db.query.delegates.findFirst({
-          where: eq(delegates.userId, user.id),
-        });
-        if (delegate) {
-          await Algolia.updateObjectFromIndex({
-            refID: delegate.id,
-            avatar: opts.input.profileImage,
-          });
-        }
-      }
-      return user;
-    }),
-
   deleteUser: publicProcedure
     .input(
       z.object({
         id: z.string(),
       }),
     )
+    .use(isAdmin)
     .mutation(async (opts) => {
       await db.delete(users).where(eq(users.id, opts.input.id)).execute();
     }),
@@ -119,6 +57,7 @@ export const usersRouter = router({
         role: z.any(),
       }),
     )
+    .use(isAdmin)
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),
@@ -145,6 +84,7 @@ export const usersRouter = router({
         role: z.any(),
       }),
     )
+    .use(isAdmin)
     .mutation(async (opts) => {
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),
@@ -191,6 +131,7 @@ export const usersRouter = router({
         profileImage: z.optional(z.any()),
       }),
     )
+    .use(hasPermission)
     .mutation(async (opts) => {
       const {
         id,
@@ -200,6 +141,14 @@ export const usersRouter = router({
         hasConnectedSecondaryWallet,
         profileImage,
       } = opts.input;
+
+      if (profileImage) {
+        if (!isValidProfileImageUrl(profileImage)) {
+          throw new Error(
+            'Invalid profile image URL. Please use an approved hosting service.',
+          );
+        }
+      }
 
       // Fetch the user by ID once instead of twice.
       const userById = await db.query.users.findFirst({
@@ -231,7 +180,7 @@ export const usersRouter = router({
           ? { starknetAddress: starknetAddress !== '' ? starknetAddress : null }
           : {}),
         ...(ethereumAddress !== undefined
-          ? { ethereumAddress: ethereumAddress !== '' ? ethereumAddress : null }
+          ? { ethAddress: ethereumAddress !== '' ? ethereumAddress : null }
           : {}),
         // Conditionally include hasConnectedSecondaryWallet if it's provided.
         ...(hasConnectedSecondaryWallet !== undefined
@@ -385,3 +334,8 @@ export const usersRouter = router({
       return bannedUser[0];
     }),
 });
+
+function isValidProfileImageUrl(url: string): boolean {
+  const allowedDomain = 'https://governance.sfo3.digitaloceanspaces.com'; // Your DigitalOcean Spaces bucket URL
+  return url.startsWith(allowedDomain);
+}

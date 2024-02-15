@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from '../utils/trpc';
+import {router, protectedProcedure, hasPermission} from '../utils/trpc';
 import { db } from '../db/db';
 import axios from 'axios';
 import crypto from 'crypto';
@@ -36,12 +36,14 @@ export const socialsRouter = router({
   initiateSocialAuth: protectedProcedure
     .input(
       z.object({
+        userId: z.string(),
         delegateId: z.string().optional(),
         origin: z.string().optional(),
       }),
     )
+    .use(hasPermission)
     .query(async ({ input }) => {
-      const { delegateId, origin } = input;
+      const { delegateId } = input;
 
       if (!delegateId) {
         throw new Error('Delegate id is missing');
@@ -63,7 +65,19 @@ export const socialsRouter = router({
         discourse: { username: existingSocials?.discourse },
       };
 
-      const stateObject = { delegateId, origin };
+      const token = crypto.randomBytes(16).toString('hex');
+      // Save stateToken in the database associated with the user's session/identity
+      await db
+        .insert(oauthTokens)
+        .values({
+          token: token,
+          delegateId: delegateId,
+          provider: 'discord',
+          expiration: new Date(Date.now() + 300000), // 5 minutes from now
+        })
+        .execute();
+
+      const stateObject = { token };
       const serializedState = encodeURIComponent(JSON.stringify(stateObject));
 
       if (!response.discord.username) {
@@ -77,7 +91,8 @@ export const socialsRouter = router({
       return response;
     }),
   getTwitterAuthUrl: protectedProcedure
-    .input(z.object({ delegateId: z.string() }))
+    .input(z.object({ delegateId: z.string(), userId: z.string() }))
+    .use(hasPermission)
     .query(async ({ input }) => {
       const { delegateId } = input;
       if (!delegateId) {
@@ -88,7 +103,8 @@ export const socialsRouter = router({
     }),
 
   unlinkDelegateSocial: protectedProcedure
-    .input(z.object({ origin: z.string(), delegateId: z.string() }))
+    .input(z.object({ origin: z.string(), delegateId: z.string(), userId: z.string() }))
+    .use(hasPermission)
     .mutation(async ({ input }) => {
       const { origin, delegateId } = input;
 
@@ -123,9 +139,33 @@ export const socialsRouter = router({
     }),
 
   verifyDiscord: protectedProcedure
-    .input(z.object({ code: z.string(), delegateId: z.string() }))
+    .input(z.object({ code: z.string(), token: z.string() }))
     .mutation(async ({ input }) => {
-      const { code, delegateId } = input;
+      const { code, token } = input;
+
+      const tokenRecord = await db.query.oauthTokens.findFirst({
+        where: eq(oauthTokens.token, token),
+      });
+
+      if (!tokenRecord) {
+        throw new Error('Invalid or expired token');
+      }
+
+      // Check for token expiration
+      if (new Date(tokenRecord.expiration) < new Date()) {
+        // Optionally, delete the expired token record here to clean up
+        await db
+          .delete(oauthTokens)
+          .where(eq(oauthTokens.token, token))
+          .execute();
+        throw new Error('Token has expired');
+      }
+
+      // Ensure delegateId is present
+      const delegateId = tokenRecord?.delegateId;
+      if (!delegateId) {
+        throw new Error('Delegate not found');
+      }
 
       // Exchange the code for a Discord access token
       const tokens = await exchangeCodeForAccessToken(code);
@@ -151,12 +191,18 @@ export const socialsRouter = router({
         });
       }
 
-      return { discordUsername };
+      await db
+        .delete(oauthTokens)
+        .where(eq(oauthTokens.token, token))
+        .execute();
+
+      return { discordUsername, delegateId };
     }),
   verifyTelegram: protectedProcedure
     .input(
       z.object({
         delegateId: z.string(),
+        userId: z.string(),
         telegramData: z.object({
           id: z.number(),
           first_name: z.string(),
@@ -168,6 +214,7 @@ export const socialsRouter = router({
         }),
       }),
     )
+    .use(hasPermission)
     .mutation(async ({ input }) => {
       const { delegateId, telegramData } = input;
 
@@ -271,8 +318,10 @@ export const socialsRouter = router({
       z.object({
         delegateId: z.string(),
         username: z.string(),
+        userId: z.string(),
       }),
     )
+    .use(hasPermission)
     .mutation(async ({ input }) => {
       const { delegateId, username } = input;
 

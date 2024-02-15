@@ -7,8 +7,10 @@ const TelegramLogin = ({
   delegateId,
   onDisconnect,
   onSuccess,
+  userId,
 }: {
   username: string | null | undefined;
+  userId: string,
   delegateId: string;
   onDisconnect: () => void;
   onSuccess: () => any;
@@ -50,6 +52,7 @@ const TelegramLogin = ({
           verifyTelegram.mutateAsync(
             {
               delegateId,
+              userId,
               telegramData: data,
             },
             {

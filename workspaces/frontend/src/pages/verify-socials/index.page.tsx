@@ -32,15 +32,15 @@ export function Page() {
       if (stateObject.origin === "discord") {
         verifyDiscord.mutateAsync(
           {
-            delegateId: stateObject.delegateId,
+            token: stateObject.token,
             code: code,
           },
           {
-            onSuccess: () => {
-              navigate(`/delegates/profile/${stateObject.delegateId}`);
+            onSuccess: (res) => {
+              navigate(`/delegates/profile/${res.delegateId}`);
             },
             onError: () => {
-              navigate(`/delegates/profile/${stateObject.delegateId}`);
+              setError(true);
             },
           },
         );
