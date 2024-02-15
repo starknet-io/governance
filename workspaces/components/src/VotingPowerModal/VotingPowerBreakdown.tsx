@@ -5,6 +5,8 @@ import { Button } from "../Button";
 import { Link } from "../Link";
 import { ethers } from "ethers";
 import { navigate } from "vite-plugin-ssr/client/router";
+import { InfoCircleIcon } from "src/Icons";
+import { Tooltip } from "../Tooltip";
 
 type Props = {
   showBreakdown?: boolean;
@@ -16,6 +18,8 @@ type Props = {
   onClose?: () => void;
   isVotingPowerEthLoading: boolean;
   isVotingPowerStarknetLoading: boolean;
+  balanceStark: string;
+  balanceEth: string;
 };
 
 export const VotingPowerBreakdown = ({
@@ -27,7 +31,10 @@ export const VotingPowerBreakdown = ({
   hasEthWallet,
   hasStarkWallet,
   isVotingPowerEthLoading,
-  isVotingPowerStarknetLoading
+  isVotingPowerStarknetLoading,
+  isStarknetBalanceLoading,
+  balanceStark = 0,
+  balanceEth = 0,
 }: Props) => {
   const totalValue = ethers.utils.commify(
     (hasEthWallet ? votingPowerEth : 0n) +
@@ -49,9 +56,13 @@ export const VotingPowerBreakdown = ({
             <Text variant="mediumStrong" color="content.default.default">
               Total voting power
             </Text>
-            {!String(totalValue) ? <Skeleton height="24px" width="50%" borderRadius="md" /> : <Text variant="largeStrong" color="content.accent.default">
-              {totalValue}
-            </Text>}
+            {!String(totalValue) ? (
+              <Skeleton height="24px" width="50%" borderRadius="md" />
+            ) : (
+              <Text variant="largeStrong" color="content.accent.default">
+                {totalValue}
+              </Text>
+            )}
           </Box>
           {showBreakdown ? (
             <Icon as={ThunderIcon} fill="transparent" w="48px" h="48px" />
@@ -77,22 +88,64 @@ export const VotingPowerBreakdown = ({
           <Box>
             {hasStarkWallet && (
               <Box p="standard.sm">
-                <Text variant="small" color="content.support.default">
-                  Starknet voting power
-                </Text>
-                {!isVotingPowerStarknetLoading ? <Text color="content.accent.default" variant="mediumStrong">
-                  {new Intl.NumberFormat().format(votingPowerStark)}
-                </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
+                <Box>
+                  <Text variant="small" color="content.support.default">
+                    Starknet voting power
+                  </Text>
+                  {!isVotingPowerStarknetLoading ? (
+                    <Text color="content.accent.default" variant="mediumStrong">
+                      {new Intl.NumberFormat().format(votingPowerStark)} vSTRK
+                      <Tooltip label="Tooltip">
+                        <Icon
+                          color="#1A1523"
+                          ml="standard.xs"
+                          as={InfoCircleIcon}
+                        />
+                      </Tooltip>
+                    </Text>
+                  ) : (
+                    <Skeleton height="24px" width="50%" borderRadius="md" />
+                  )}
+                </Box>
+                {!showBreakdown ? (
+                  <>
+                    {isStarknetBalanceLoading ? (
+                      <Skeleton height="14px" width="50%" borderRadius="md" />
+                    ) : (
+                      <Text variant="small" color="content.support.default">
+                        {balanceStark} balance
+                      </Text>
+                    )}
+                  </>
+                ) : null}
               </Box>
             )}
             {hasEthWallet && (
               <Box p="standard.sm">
-                <Text variant="small" color="content.support.default">
-                  Ethereum voting power
-                </Text>
-                {!isVotingPowerEthLoading ? <Text color="content.accent.default" variant="mediumStrong">
-                  {new Intl.NumberFormat().format(votingPowerEth)}
-                </Text> : <Skeleton height="24px" width="50%" borderRadius="md" />}
+                <Box>
+                  <Text variant="small" color="content.support.default">
+                    Ethereum voting power
+                  </Text>
+                  {!isVotingPowerEthLoading ? (
+                    <Text color="content.accent.default" variant="mediumStrong">
+                      {new Intl.NumberFormat().format(votingPowerEth)} STRK
+                      <Tooltip label="Tooltip">
+                        <Icon
+                          color="#1A1523"
+                          ml="standard.xs"
+                          as={InfoCircleIcon}
+                        />
+                      </Tooltip>
+                    </Text>
+                  ) : (
+                    <Skeleton height="24px" width="50%" borderRadius="md" />
+                  )}
+                </Box>
+                {!showBreakdown ? (
+                  <Text variant="small" color="content.support.default">
+                    {balanceEth} balance
+                  </Text>
+                ) : null}
               </Box>
             )}
           </Box>
@@ -115,7 +168,7 @@ export const VotingPowerBreakdown = ({
                     onClick={(e) => {
                       navigate("/manage-vstrk");
                       if (onClose) {
-                        onClose()
+                        onClose();
                       }
                     }}
                   >

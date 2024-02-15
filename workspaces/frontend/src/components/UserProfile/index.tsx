@@ -19,6 +19,8 @@ import { VotingPowerBreakdown } from "@yukilabs/governance-components/src/Voting
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useWallets } from "../../hooks/useWallets";
 import { getChecksumAddress } from "starknet";
+import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
+import { useBalanceData } from "src/utils/hooks";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -26,6 +28,7 @@ interface IUser extends User {
 
 interface UserProfileMenuProps {
   onDisconnect: () => void;
+  isvSTRKBalanceLoading?: boolean;
   onVotingPowerModalOpen: () => void;
   user: IUser | null;
   onSave: (data: {
@@ -38,6 +41,7 @@ interface UserProfileMenuProps {
   isMenuOpen?: boolean;
   delegatedToL1: any;
   delegatedToL2: any;
+  isStarknetBalanceLoading?: boolean;
   delegatedToL1Loading: boolean;
   delegatedToL2Loading: boolean;
   isVotingPowerEthLoading: boolean;
@@ -68,12 +72,16 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   onDisconnect,
   onVotingPowerModalOpen,
   user,
+  ethBalance,
+  isvSTRKBalanceLoading,
+  isVotingPowerStarknetLoading,
   votingPowerEth,
   votingPowerStark,
-  handleOpenModal,
-  setEditUserProfile,
+  starknetBalance,
+  hasEthWallet,
+  isStarknetBalanceLoading,
+  hasStarkWallet,
 }: UserProfileMenuProps) => {
-  const { ethWallet, starknetWallet } = useWallets();
   return (
     <>
       <Box position="absolute" right="12px" top="12px" zIndex={0}>
@@ -86,7 +94,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           zIndex={2}
         />
       </Box>
-      <VStack spacing={"spacing.md"} align="stretch">
+      <VStack spacing={"standard.sm"} align="stretch">
         <AvatarWithText
           size="condensed"
           address={user?.address}
@@ -98,17 +106,24 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           subheaderText={truncateAddress(user?.address || "")}
           src={user?.profileImage ?? user?.ensAvatar ?? null}
         />
-        <Box mt="standard.md" mb="standard.sm">
+        <Box>
           <WalletButtons selectable profileVariant />
         </Box>
         <VotingPowerBreakdown
-          hasEthWallet={!!ethWallet?.id}
-          hasStarkWallet={!!starknetWallet?.id}
+          isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
+          isvSTRKBalanceLoading={isvSTRKBalanceLoading}
+          isStarknetBalanceLoading={isStarknetBalanceLoading}
+          hasEthWallet={hasEthWallet}
+          hasStarkWallet={hasStarkWallet}
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
           onToggleExpand={onVotingPowerModalOpen}
+          balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
+          balanceEth={`${new Intl.NumberFormat().format(
+            ethBalance?.balance,
+          )} ${ethBalance?.symbol}`}
         />
-        <Flex direction="column" mt="standard.md">
+        <Flex direction="column">
           <Button
             variant="secondary"
             size="condensed"
@@ -224,7 +239,7 @@ const UserProfileMenuComponent = (
   const l2DelegatedToSelf = checkIfL2DelegatedToSelf();
   const l1DelegatedToSelf = checkIfL1DelegatedToSelf();
 
-  console.log(l1DelegatedToSelf)
+  console.log(l1DelegatedToSelf);
 
   return (
     <div ref={ref}>
@@ -277,6 +292,11 @@ const UserProfileMenuComponent = (
           <UserProfileContent
             onDisconnect={onDisconnect}
             user={user}
+            hasEthWallet={!!ethWallet?.id}
+            hasStarkWallet={!!starknetWallet?.id}
+            isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
+            isStarknetBalanceLoading={isStarknetBalanceLoading}
+            isvSTRKBalanceLoading={isvSTRKBalanceLoading}
             onSave={onSave}
             onVotingPowerModalOpen={() => setIsVotingPowerModalOpen(true)}
             votingPowerEth={votingPowerEth}
@@ -308,7 +328,11 @@ const UserProfileMenuComponent = (
             <UserProfileContent
               onDisconnect={onDisconnect}
               user={user}
+              isvSTRKBalanceLoading={isvSTRKBalanceLoading}
               onSave={onSave}
+              isStarknetBalanceLoading={isStarknetBalanceLoading}
+              hasEthWallet={!!ethWallet?.id}
+              hasStarkWallet={!!starknetWallet?.id}
               onVotingPowerModalOpen={() => setIsVotingPowerModalOpen(true)}
               votingPowerEth={votingPowerEth}
               votingPowerStark={votingPowerStark}
