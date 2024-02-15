@@ -71,17 +71,15 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
   onDisconnect,
   onVotingPowerModalOpen,
   user,
+  ethBalance,
   isvSTRKBalanceLoading,
   isVotingPowerStarknetLoading,
   votingPowerEth,
   votingPowerStark,
   starknetBalance,
-  vSTRKBalance,
-  handleOpenModal,
-  setEditUserProfile,
+  hasEthWallet,
+  hasStarkWallet,
 }: UserProfileMenuProps) => {
-  const { ethWallet, starknetWallet } = useWallets();
-  const ethBalance = useBalanceData(ethWallet.address as `0x${string}`);
   return (
     <>
       <Box position="absolute" right="12px" top="12px" zIndex={0}>
@@ -112,8 +110,8 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
         <VotingPowerBreakdown
           isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
           isvSTRKBalanceLoading={isvSTRKBalanceLoading}
-          hasEthWallet={!!ethWallet?.id}
-          hasStarkWallet={!!starknetWallet?.id}
+          hasEthWallet={hasEthWallet}
+          hasStarkWallet={hasStarkWallet}
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
           onToggleExpand={onVotingPowerModalOpen}
@@ -291,6 +289,8 @@ const UserProfileMenuComponent = (
           <UserProfileContent
             onDisconnect={onDisconnect}
             user={user}
+            hasEthWallet={!!ethWallet?.id}
+            hasStarkWallet={!!starknetWallet?.id}
             isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
             isvSTRKBalanceLoading={isvSTRKBalanceLoading}
             onSave={onSave}
@@ -326,6 +326,8 @@ const UserProfileMenuComponent = (
               user={user}
               isvSTRKBalanceLoading={isvSTRKBalanceLoading}
               onSave={onSave}
+              hasEthWallet={!!ethWallet?.id}
+              hasStarkWallet={!!starknetWallet?.id}
               onVotingPowerModalOpen={() => setIsVotingPowerModalOpen(true)}
               votingPowerEth={votingPowerEth}
               votingPowerStark={votingPowerStark}
