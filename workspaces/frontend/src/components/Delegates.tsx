@@ -21,15 +21,19 @@ import {
   Flex,
   ArrowRightIcon,
   Select,
+  WrongAccountOrNetworkModal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
 import { ethers } from "ethers";
 import { useAccount, useWaitForTransaction } from "wagmi";
 import { useL1StarknetDelegationDelegate } from "../wagmi/L1StarknetDelegation";
 import { usePageContext } from "src/renderer/PageContextProvider";
-import {DELEGATION_SUCCESS_EVENT, MINIMUM_TOKENS_FOR_DELEGATION} from "src/pages/delegates/profile/@id.page";
+import {
+  DELEGATION_SUCCESS_EVENT,
+  MINIMUM_TOKENS_FOR_DELEGATION,
+} from "src/pages/delegates/profile/@id.page";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useHelpMessage } from "src/hooks/HelpMessage";
@@ -42,6 +46,8 @@ import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useWallets } from "../hooks/useWallets";
 import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
 import { findMatchingWallet } from "../utils/helpers";
+import { useActiveStarknetAccount } from "../hooks/starknet/useActiveStarknetAccount";
+import { getChecksumAddress } from "starknet";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -205,6 +211,8 @@ export function Delegates({
   const receiverDataL2 = useStarknetBalance({
     starknetAddress: l2InputAddress,
   });
+  const [isWrongAccount, setIsWrongAccount] = useState<boolean>(false);
+
   const [isValidAddress, setIsValidAddress] = useState(true);
   const senderData = useBalanceData(ethWallet?.address);
   const senderDataL2 = useStarknetBalance({
@@ -223,6 +231,7 @@ export function Delegates({
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [txHash, setTxHash] = useState("");
+  const activeStarknetAccount = useActiveStarknetAccount();
 
   const [helpMessage, setHelpMessage] = useHelpMessage();
   // listen to txn with delegation hash
@@ -509,6 +518,7 @@ export function Delegates({
         senderData={senderData}
         senderDataL2={senderDataL2?.balance}
         delegateTokens={() => {
+          setIsWrongAccount(false);
           if (parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION) {
             setIsStatusModalOpen(true);
             setStatusTitle("No voting power");
@@ -519,25 +529,37 @@ export function Delegates({
             setIsSelfDelegation(false);
           } else {
             if (primaryWallet?.id === starknetWallet?.id) {
-              const addressToDelegate = isSelfDelegation ? starknetWallet.address! : l2InputAddress!
-              delegateL2(starknetWallet.address!, addressToDelegate)
-                .then(() => {
-                  if (typeof window !== "undefined") {
-                    window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
-                  }
-                })
-                .catch((err) => {
-                  setIsStatusModalOpen(true);
-                  setStatusTitle("Delegating voting power failed");
-                  setStatusDescription(
-                    err.shortMessage ||
-                      err.message ||
-                      err.name ||
-                      "An error occurred",
-                  );
-                });
+              if (
+                getChecksumAddress(activeStarknetAccount || "") !==
+                getChecksumAddress(starknetWallet?.address || "")
+              ) {
+                setIsOpen(false);
+                setIsWrongAccount(true);
+              } else {
+                const addressToDelegate = isSelfDelegation
+                  ? starknetWallet.address!
+                  : l2InputAddress!;
+                delegateL2(starknetWallet.address!, addressToDelegate)
+                  .then(() => {
+                    if (typeof window !== "undefined") {
+                      window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
+                    }
+                  })
+                  .catch((err) => {
+                    setIsStatusModalOpen(true);
+                    setStatusTitle("Delegating voting power failed");
+                    setStatusDescription(
+                      err.shortMessage ||
+                        err.message ||
+                        err.name ||
+                        "An error occurred",
+                    );
+                  });
+              }
             } else {
-              const addressToDelegate = isSelfDelegation ? ethWallet.address! : inputAddress!
+              const addressToDelegate = isSelfDelegation
+                ? ethWallet.address!
+                : inputAddress!;
               writeAsync?.({
                 args: [addressToDelegate as `0x${string}`],
               })
@@ -714,7 +736,10 @@ export function Delegates({
                       onDelegateClick={() => {
                         if (user) {
                           if (
-                            delegate?.author?.address && !delegate?.author?.starknetAddress && starknetWallet?.address && !ethWallet?.address
+                            delegate?.author?.address &&
+                            !delegate?.author?.starknetAddress &&
+                            starknetWallet?.address &&
+                            !ethWallet?.address
                           ) {
                             setIsStatusModalOpen(true);
                             setStatusTitle("Delegation is not possible");
@@ -800,6 +825,12 @@ export function Delegates({
             </SimpleGrid>
           </InfiniteScroll>
         )}
+        <WrongAccountOrNetworkModal
+          isOpen={isWrongAccount}
+          onClose={() => setIsWrongAccount(false)}
+          expectedStarknetAddress={starknetWallet?.address}
+          starknetAddress={activeStarknetAccount}
+        />
       </Box>
     </>
   );

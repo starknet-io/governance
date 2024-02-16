@@ -41,7 +41,7 @@ export const WrongAccountOrNetworkModal = ({
               variant="mediumStrong"
               color="content.support.default"
             >
-              Your Governance Hub account is tied to
+              Your wallet has the wrong account active:
             </Text>
             <Text
               align="center"
@@ -57,7 +57,7 @@ export const WrongAccountOrNetworkModal = ({
               variant="mediumStrong"
               color="content.support.default"
             >
-              Expected account:
+              Your Governance Hub account is tied to:
             </Text>
             <Text
               align="center"
@@ -87,7 +87,7 @@ export const WrongAccountOrNetworkModal = ({
               variant="mediumStrong"
               color="content.support.default"
             >
-              Your Governance Hub account is tied to
+              Your wallet has the wrong account active:
             </Text>
             <Text
               align="center"
@@ -103,7 +103,7 @@ export const WrongAccountOrNetworkModal = ({
               variant="mediumStrong"
               color="content.support.default"
             >
-              Expected account:
+              Your Governance Hub account is tied to:
             </Text>
             <Text
               align="center"
