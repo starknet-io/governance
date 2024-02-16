@@ -186,6 +186,7 @@ export function Page() {
       );
       setStatusDescription("");
       setIsUndelegation(false);
+      window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 

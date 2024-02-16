@@ -263,6 +263,7 @@ export function Delegates({
       setStatusTitle("Voting power delegated successfully");
       setStatusDescription("");
       setL2InputAddress("");
+      window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
     }
   }, [
     isDelegationLoading,
