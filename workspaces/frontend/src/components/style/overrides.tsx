@@ -14,7 +14,7 @@ export const cssOverrides = `
 }
 .evm-network-control__container--error {
     border: 1px solid transparent;
-    color: white;
+    color: hsla(249, 4%, 30%, 0.7);
     cursor: auto;
 }
 
