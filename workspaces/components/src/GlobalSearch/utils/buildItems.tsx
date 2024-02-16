@@ -218,7 +218,7 @@ function VotingProposalItem({ data }: { data: ISearchItem }) {
               </Badge>
               <Text fontSize="smaller" color="#4A4A4F">
                 {format(new Date(proposalData.start * 1000), "yyyy-MM-dd")} •{" "}
-                {proposalData.comments.length} comments
+                {proposalData?.comments?.length || 0} comments
               </Text>
             </>
           ) : (
