@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Avatar, Box, Flex } from "@chakra-ui/react";
 import { Text } from "src/Text";
 import { Indenticon } from "src/Indenticon";
@@ -36,9 +37,24 @@ export const AvatarWithText = ({
   status,
   delegateProfile = false,
 }: Props) => {
+
+  const headerRef = useRef(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  const isEllipsisActive = (e) => {
+    return (e.offsetWidth < e.scrollWidth);
+  }
+
+  useEffect(() => {
+    if (headerRef.current && isEllipsisActive(headerRef.current)) {
+      setIsTruncated(true);
+    }
+  }, [headerText]);
+
   const renderHeaderText = (status: string | null | undefined, delegateProfile: boolean | null = false) => {
     const content = (
       <Heading
+        ref={headerRef}
         color="content.accent.default"
         lineHeight="24px"
         variant={size === "condensed" ? "h4" : "h3"}
@@ -58,7 +74,7 @@ export const AvatarWithText = ({
     return headerTooltipContent ? (
       <>
         <Tooltip label={headerTooltipContent} aria-label="Header Text">
-          {content}
+          dada {content}
         </Tooltip>
         {withCopy && !subheaderText && (
           <Flex alignItems="center" gap={0.5}>
@@ -147,8 +163,8 @@ export const AvatarWithText = ({
           alignItems="flex-start"
           width={delegateProfile ? "100%" : "calc(100% - 60px)"}
         >
-          <Box maxWidth={status && !delegateProfile ? "calc(100% - 80px)" : "calc(100% - 40px)"} {...(delegateProfile ? { order: "2" } : {})}>
-            <Box height="24px">{renderHeaderText(status)}</Box>
+          <Box maxWidth={status && !delegateProfile ? "calc(100% - 80px)" : "calc(100% - 40px)"} width="100%" {...(delegateProfile ? { order: "2" } : {})}>
+            <Box height="24px">{isTruncated ? <Tooltip label={headerText}>{renderHeaderText(status)}</Tooltip> : renderHeaderText(status)}</Box>
             {!delegateProfile ? <Box mt="-4px">{renderSubheaderText()}</Box> : null}
           </Box>
           {status ? <Badge
@@ -186,8 +202,8 @@ export const AvatarWithText = ({
         gap="standard.base"
         width="80%"
       >
-        <Flex flexDirection={"column"} justifyContent={"center"} flex={1}  maxWidth={status && !delegateProfile ? "calc(100% - 80px)" : "calc(100% - 40px)"} {...(delegateProfile ? { order: "2" } : {})}>
-          {renderHeaderText(status, delegateProfile)}
+        <Flex flexDirection={"column"} justifyContent={"center"} flex={1}  maxWidth={status && !delegateProfile ? "calc(100% - 80px)" : "calc(100% - 40px)"} width="100%" {...(delegateProfile ? { order: "2" } : {})}>
+          {isTruncated ? <Tooltip label={headerText}>{renderHeaderText(status, delegateProfile)}</Tooltip> : renderHeaderText(status, delegateProfile)}
           {!delegateProfile ? renderSubheaderText() : null}
         </Flex>
         {status ? <Badge

@@ -485,14 +485,17 @@ function NavItemWrapper({
   selectedPage,
   selectPage,
 }: NavItemWrapperProps) {
+  console.log('selectedPage ', selectedPage)
+  console.log('page ', page)
   const isSelectedPage = selectedPage?.id === page.id;
+  console.log('isSelectedPage ', isSelectedPage)
   const fontSize = isChild ? "12px" : "14px";
   const isChildTree = pl && Number(pl) == 5;
 
   return (
     <Button
       onClick={() => selectPage(page)}
-      variant="learnNavLink"
+      variant={isSelectedPage ? "learnNavLinkActive" : "learnNavLink"}
       fontWeight="medium"
       fontSize={fontSize}
       size="learnNavLink"

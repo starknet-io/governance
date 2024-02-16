@@ -19,10 +19,10 @@ const homeLinks = [
     link: "/learn/starknet's_progressive_governance",
   },
   {
-    title: "How to Vote",
+    title: "Wrap STRK to vSTRK to vote",
     description:
-      "The Hub is where the community propose, debate and vote on Starknet’s future.",
-    link: "/learn/how_to_vote",
+      "In order to vote or to designate a delegate to vote for you on Starknet, you need to wrap STRK as vSTRK using the Governance hub. You can unwrap anytime.",
+    link: "/learn/How_to_convert_between_STRK_and_vSTRK",
   },
   {
     title: "How to delegate voting power",

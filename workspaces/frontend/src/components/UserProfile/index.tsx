@@ -105,7 +105,7 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           }
           subheaderText={truncateAddress(user?.address || "")}
           src={user?.profileImage ?? user?.ensAvatar ?? null}
-        />
+        />dede
         <Box>
           <WalletButtons selectable profileVariant />
         </Box>

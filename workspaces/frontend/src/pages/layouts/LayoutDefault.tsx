@@ -184,7 +184,7 @@ function LayoutDefault(props: Props) {
         </Flex>
       </InfoModal>
       <InfoModal
-        title="Connect wallet"
+        title="Connect Starknet wallet"
         isOpen={helpMessage === "connectWalletMessage"}
         onClose={() => setHelpMessage(null)}
       >

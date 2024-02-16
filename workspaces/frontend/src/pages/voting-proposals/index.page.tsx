@@ -367,20 +367,11 @@ export function Page() {
                   <Proposal key={item?.id} data={item} />
                 ))
               ) : (
-                <Box position="absolute" inset="0">
+                <Box inset="0">
                   <EmptyState
                     type="votes"
                     title="No voting proposals"
                     minHeight="300px"
-                    action={
-                      <Button
-                        variant="primary"
-                        as="a"
-                        href="/voting-proposals/create"
-                      >
-                        Create first voting proposal
-                      </Button>
-                    }
                   />
                 </Box>
               )}
