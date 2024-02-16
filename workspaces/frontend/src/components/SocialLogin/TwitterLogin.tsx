@@ -19,7 +19,7 @@ const TwitterLogin = ({
 }) => {
   const redirectUrl = trpc.socials.getTwitterAuthUrl.useQuery({
     delegateId,
-    userId,
+    id: userId,
   });
   const handleTwitterLogin = async () => {
     try {

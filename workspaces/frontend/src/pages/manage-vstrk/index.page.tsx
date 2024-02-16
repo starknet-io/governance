@@ -40,6 +40,7 @@ import { useUnwrapVSTRK } from "../../hooks/starknet/useUnwrapVSTRK";
 import { useWallets } from "../../hooks/useWallets";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
+import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -155,15 +156,6 @@ const WrapModal = ({
                   >
                     Add the vSTRK token to your wallet to track your balance.
                   </Text>
-                  <Button
-                    variant="outline"
-                    onClick={(e) => {
-                      handleAddToWallet();
-                    }}
-                  >
-                    <WalletIcon mr="standard.xs" />
-                    Add to wallet
-                  </Button>
                 </Flex>
               ) : null}
             </>
@@ -200,6 +192,15 @@ export function Page() {
     useVotingPower({
       address: ethAddress,
     });
+
+  const { delegates: delegationDataL2 } = useStarknetDelegates({
+    starknetAddress,
+  });
+
+  const delegateTo =
+    delegationDataL2 && delegationDataL2.length && delegationDataL2 !== "0x00"
+      ? delegationDataL2
+      : starknetWallet?.address;
 
   const { data: votingPowerStarknet, isLoading: isVotingPowerStarknetLoading } =
     useVotingPower({
@@ -268,13 +269,13 @@ export function Page() {
     try {
       if (!isUnwrap) {
         setWrappedStark(starkToWrap);
-        await wrap(starknetAddress, starkToWrap);
+        await wrap(delegateTo, starkToWrap);
         if (typeof window !== "undefined") {
           window.dispatchEvent(new Event("wrapSuccess"));
         }
       } else {
         setWrappedStark(starkToWrap);
-        await unwrap(starknetAddress, starkToWrap);
+        await unwrap(delegateTo, starkToWrap);
         if (typeof window !== "undefined") {
           window.dispatchEvent(new Event("wrapSuccess"));
         }

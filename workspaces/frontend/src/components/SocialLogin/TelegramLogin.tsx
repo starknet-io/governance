@@ -52,7 +52,7 @@ const TelegramLogin = ({
           verifyTelegram.mutateAsync(
             {
               delegateId,
-              userId,
+              id: userId,
               telegramData: data,
             },
             {

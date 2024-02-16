@@ -141,7 +141,13 @@ export const GET_SNAPSHOT_PROPOSAL_QUERY = gql`
       start
       end
       snapshot
+      ipfs
       state
+      strategies {
+        name
+        network
+        params
+      }
       scores
       scores_total
       author

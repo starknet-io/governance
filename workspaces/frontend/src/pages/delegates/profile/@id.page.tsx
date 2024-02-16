@@ -80,6 +80,7 @@ export function Page() {
   const [isUndelegation, setIsUndelegation] = useState<boolean>(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   const [statusTitle, setStatusTitle] = useState<string>("");
+  const [isCustomError, setIsCustomError] = useState<boolean>(false);
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
   const { user } = usePageContext();
@@ -185,6 +186,7 @@ export function Page() {
       );
       setStatusDescription("");
       setIsUndelegation(false);
+      window.dispatchEvent(new Event(DELEGATION_SUCCESS_EVENT));
     }
   }, [isDelegationLoading, isDelegationError, isDelegationSuccess]);
 
@@ -440,7 +442,21 @@ export function Page() {
     isDelegation?: boolean;
     isUndelegation?: boolean;
   }) => {
-    if (layer === 1) {
+    setIsCustomError(false);
+    if (
+      !ethWallet?.address &&
+      starknetWallet?.address &&
+      delegate?.author?.address &&
+      !delegate?.author?.starknetAddress
+    ) {
+      setIsCustomError(true);
+      setIsStatusModalOpen(true);
+      setStatusTitle("Delegation is not possible");
+      setStatusDescription(
+        `This delegate hasn't linked a Starknet address to their profile. Currently, you can only delegate to them using an Ethereum wallet.`,
+      );
+      setIsOpen(false);
+    } else if (layer === 1) {
       if (isDelegation || (!isDelegation && !isUndelegation)) {
         if (
           parseFloat(senderData?.balance) < MINIMUM_TOKENS_FOR_DELEGATION &&
@@ -509,14 +525,17 @@ export function Page() {
     }
   };
 
-  const votesBreakdown = allVotes.reduce((acc, vote) => {
-    acc[vote.votePreference] = (acc[vote.votePreference] || 0) + 1;
-    return acc;
-  }, {
-    [1]: 0,
-    [2]: 0,
-    [3]: 0,
-  });
+  const votesBreakdown = allVotes.reduce(
+    (acc, vote) => {
+      acc[vote.votePreference] = (acc[vote.votePreference] || 0) + 1;
+      return acc;
+    },
+    {
+      [1]: 0,
+      [2]: 0,
+      [3]: 0,
+    },
+  );
 
   return (
     <ProfilePageLayout.Root>
@@ -631,6 +650,7 @@ export function Page() {
         isFail={
           (isDelegationError && isL1Delegation) ||
           (delegationL2Error && isL2Delegation) ||
+          isCustomError ||
           (isL1Delegation &&
             !!((!txHash || !txHash.length) && statusDescription?.length))
         }

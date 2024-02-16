@@ -246,8 +246,10 @@ const UserProfileMenuComponent = (
       <VotingPowerModal
         isOpen={isVotingPowerModalOpen}
         onClose={() => setIsVotingPowerModalOpen(false)}
-        delegatedToL1={!l1DelegatedToSelf ? delegatedToL1 : null}
-        delegatedToL2={!l2DelegatedToSelf ? delegatedToL2 : null}
+        delegatedToL1={delegatedToL1}
+        delegatedToL2={delegatedToL2}
+        selfDelegatedL1={l1DelegatedToSelf}
+        selfDelegatedL2={l2DelegatedToSelf}
         delegatedToL1Name={delegatedToL1Name}
         delegatedToL2Name={delegatedToL2Name}
         hasEthWallet={!!ethWallet?.id}

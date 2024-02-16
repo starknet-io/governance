@@ -71,10 +71,14 @@ export const DynamicProvider = (props: Props) => {
   };
 
   const handleClose = () => {
-    setIsOpenSecondaryWalletModal(false);
-    const delegateModalCheck = checkIfDelegateModalShouldAppear();
-    if (delegateModalCheck) {
-      setIsOpenDelegateOnboarding(true);
+    if (isOpenSecondaryWalletModal) {
+      setIsOpenSecondaryWalletModal(false);
+      const delegateModalCheck = checkIfDelegateModalShouldAppear();
+      if (delegateModalCheck) {
+        setIsOpenDelegateOnboarding(true);
+      }
+    } else {
+      setIsOpenSecondaryWalletModal(false);
     }
   };
 
@@ -87,8 +91,6 @@ export const DynamicProvider = (props: Props) => {
         authToken: params.authToken,
         ensName: params.user.ens?.name,
         ensAvatar: params.user.ens?.avatar,
-        isEth: params?.primaryWallet?.chain === "eip155",
-        isStarknet: params?.primaryWallet?.chain === "starknet",
       });
       utils.auth.currentUser.invalidate();
     },
@@ -97,42 +99,9 @@ export const DynamicProvider = (props: Props) => {
 
   const handleLinkEvent = async (walletAddress: string, isEth?: boolean) => {
     if (user) {
-      handleClose(true);
-      if (!isEth) {
-        await editUserProfile.mutateAsync(
-          {
-            id: user.id,
-            hasConnectedSecondaryWallet: true,
-            starknetAddress: walletAddress,
-          },
-          {
-            onSuccess: () => {
-              utils.auth.currentUser.invalidate();
-            },
-          },
-        );
-      } else {
-        await editUserProfile.mutateAsync(
-          {
-            id: user.id,
-            hasConnectedSecondaryWallet: true,
-            ethereumAddress: walletAddress,
-          },
-          {
-            onSuccess: () => {
-              utils.auth.currentUser.invalidate();
-            },
-          },
-        );
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (secondaryWallet?.address) {
       handleClose();
     }
-  }, [secondaryWallet?.address]);
+  };
 
   useEffect(() => {
     // Function to check and load the current wallet from localStorage
@@ -276,10 +245,15 @@ export const DynamicProvider = (props: Props) => {
               } else {
                 setCurrentWallet(null);
               }
+              if (params?.user?.verifiedCredentials.length > 1) {
+                setSecondaryWallet(params?.user?.verifiedCredentials[0]);
+              }
               setAuthUser(params);
             },
             onLinkSuccess: (params) => {
               const wallet = params?.wallet;
+              hasCalledAuthenticateUser.current = false;
+              setAuthUser(params);
               if (user && wallet) {
                 setSecondaryWallet(wallet);
               }

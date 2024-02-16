@@ -71,6 +71,7 @@ export const DelegateModal = ({
   isLayer2Delegation,
   handleWalletSelect,
 }: Props) => {
+  console.log(receiverDataL2);
   const [customAddress, setCustomAddress] = useState("");
   const l1Delegation =
     isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation);
@@ -90,7 +91,6 @@ export const DelegateModal = ({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(l1Delegation, l2Delegation);
     if (!isValidAddress(customAddress)) {
       if (l2Delegation) {
         setError("Not a valid starknet address");
@@ -151,7 +151,7 @@ export const DelegateModal = ({
               />
             ) : null}
             <Box>
-              {senderDataL2 ? (
+              {senderDataL2?.address ? (
                 <Swap.UserSummary
                   address={senderDataL2.address}
                   balance={senderDataL2.balance}
@@ -166,7 +166,7 @@ export const DelegateModal = ({
                 />
               ) : null}
             </Box>
-            {receiverData && l1Delegation && !isSelfDelegation ? (
+            {receiverData?.address && l1Delegation && !isSelfDelegation ? (
               <>
                 <Swap.Arrow />
                 <Text
@@ -185,7 +185,7 @@ export const DelegateModal = ({
                 />
               </>
             ) : null}
-            {receiverDataL2 && l2Delegation && !isSelfDelegation ? (
+            {receiverDataL2?.address && l2Delegation && !isSelfDelegation ? (
               <>
                 <Swap.Arrow />
                 <Text
@@ -204,8 +204,7 @@ export const DelegateModal = ({
                 />
               </>
             ) : null}
-            {!receiverData}
-            {!receiverData && !receiverDataL2 && !isSelfDelegation && (
+            {!receiverData?.address && !receiverDataL2 && !isSelfDelegation && (
               <>
                 <Swap.Arrow />
                 <Text
@@ -246,7 +245,8 @@ export const DelegateModal = ({
             )}
           </Swap.Root>
           {!canBeDelegatedOnSpecifiedLayer &&
-            (receiverDataL2 || receiverData) && !isSelfDelegation && (
+            (receiverDataL2?.address || receiverData) &&
+            !isSelfDelegation && (
               <Banner
                 label={`Delegate has only ${
                   l1Delegation ? "Starknet" : "Ethereum"
@@ -255,7 +255,7 @@ export const DelegateModal = ({
                 } wallet`}
               />
             )}
-          {(canBeDelegatedOnSpecifiedLayer || isSelfDelegation) ? (
+          {canBeDelegatedOnSpecifiedLayer || isSelfDelegation ? (
             isConnected && (
               <Button
                 type="submit"
@@ -274,7 +274,7 @@ export const DelegateModal = ({
                 (!customAddress ||
                   !!error ||
                   (!canBeDelegatedOnSpecifiedLayer &&
-                    (receiverDataL2 || receiverData))) &&
+                    (!!receiverDataL2?.address || !!receiverData?.address))) &&
                 !isSelfDelegation
               }
               onClick={() => {

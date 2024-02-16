@@ -32,9 +32,11 @@ type Props = {
 const DelegationComponent = ({
   delegatedTo,
   delegatedToName,
+  selfDelegated,
 }: {
   delegatedTo: any;
   delegatedToName: string | undefined;
+  selfDelegated?: boolean;
 }) => {
   return (
     <Box width="50%">
@@ -47,7 +49,10 @@ const DelegationComponent = ({
               href={`/delegates/profile/${delegatedTo?.delegationStatement?.id}`}
             >
               {delegatedToName ? (
-                truncateAddress(delegatedToName || "")
+                <>
+                  {truncateAddress(delegatedToName || "")}{" "}
+                  {selfDelegated ? " (you)" : ""}
+                </>
               ) : (
                 <Tooltip label={delegatedTo?.address || ""}>
                   {truncateAddress(delegatedTo?.address || "")}
@@ -61,7 +66,10 @@ const DelegationComponent = ({
             {delegatedTo?.address ? (
               <Flex>
                 <Tooltip label={delegatedTo?.address}>
-                  <Text>{truncateAddress(delegatedTo?.address || "")}</Text>
+                  <Text>
+                    {truncateAddress(delegatedTo?.address || "")}
+                    {selfDelegated ? " (you)" : ""}
+                  </Text>
                 </Tooltip>
                 <CopyToClipboard text={delegatedTo?.address} />
               </Flex>
@@ -71,7 +79,10 @@ const DelegationComponent = ({
               delegatedTo !== "0x00" ? (
               <Flex>
                 <Tooltip label={delegatedTo}>
-                  <Text>{truncateAddress(delegatedTo || "")}</Text>
+                  <Text>
+                    {truncateAddress(delegatedTo || "")}
+                    {selfDelegated ? " (you)" : ""}
+                  </Text>
                 </Tooltip>
                 <CopyToClipboard text={delegatedTo} />
               </Flex>
@@ -98,6 +109,8 @@ export const VotingPowerModal = ({
   balanceVStark = 0,
   isvSTRKBalanceLoading,
   isStarknetBalanceLoading,
+  selfDelegatedL1,
+  selfDelegatedL2,
   delegatedToL1,
   delegatedToL2,
   delegatedToL1Name,
@@ -200,6 +213,7 @@ export const VotingPowerModal = ({
                   <DelegationComponent
                     delegatedTo={delegatedToL2}
                     delegatedToName={delegatedToL2Name}
+                    selfDelegated={selfDelegatedL2}
                   />
                 ) : (
                   <Box width="50%">
@@ -259,6 +273,7 @@ export const VotingPowerModal = ({
                   <DelegationComponent
                     delegatedTo={delegatedToL1}
                     delegatedToName={delegatedToL1Name}
+                    selfDelegated={selfDelegatedL1}
                   />
                 ) : (
                   <Box width="50%">
