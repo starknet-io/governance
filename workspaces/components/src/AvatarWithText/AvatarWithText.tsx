@@ -74,7 +74,7 @@ export const AvatarWithText = ({
     return headerTooltipContent ? (
       <>
         <Tooltip label={headerTooltipContent} aria-label="Header Text">
-          dada {content}
+          {content}
         </Tooltip>
         {withCopy && !subheaderText && (
           <Flex alignItems="center" gap={0.5}>
