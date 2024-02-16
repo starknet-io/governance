@@ -71,10 +71,14 @@ export const DynamicProvider = (props: Props) => {
   };
 
   const handleClose = () => {
-    setIsOpenSecondaryWalletModal(false);
-    const delegateModalCheck = checkIfDelegateModalShouldAppear();
-    if (delegateModalCheck) {
-      setIsOpenDelegateOnboarding(true);
+    if (isOpenSecondaryWalletModal) {
+      setIsOpenSecondaryWalletModal(false);
+      const delegateModalCheck = checkIfDelegateModalShouldAppear();
+      if (delegateModalCheck) {
+        setIsOpenDelegateOnboarding(true);
+      }
+    } else {
+      setIsOpenSecondaryWalletModal(false);
     }
   };
 
@@ -87,8 +91,6 @@ export const DynamicProvider = (props: Props) => {
         authToken: params.authToken,
         ensName: params.user.ens?.name,
         ensAvatar: params.user.ens?.avatar,
-        isEth: params?.primaryWallet?.chain === "eip155",
-        isStarknet: params?.primaryWallet?.chain === "starknet",
       });
       utils.auth.currentUser.invalidate();
     },
@@ -100,12 +102,6 @@ export const DynamicProvider = (props: Props) => {
       handleClose();
     }
   };
-
-  useEffect(() => {
-    if (secondaryWallet?.address) {
-      handleClose();
-    }
-  }, [secondaryWallet?.address]);
 
   useEffect(() => {
     // Function to check and load the current wallet from localStorage

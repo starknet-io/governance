@@ -32,7 +32,6 @@ export const authRouter = router({
         authToken: z.string(),
         ensName: z.string().optional(),
         ensAvatar: z.string().optional(),
-        isEth: z.boolean().optional(),
       }),
     )
     .mutation(async (opts) => {

@@ -124,23 +124,13 @@ export const usersRouter = router({
     .input(
       z.object({
         id: z.string(),
-        hasConnectedSecondaryWallet: z.optional(z.boolean()),
         username: z.optional(z.any()),
-        starknetAddress: z.optional(z.any()),
-        ethereumAddress: z.optional(z.any()),
         profileImage: z.optional(z.any()),
       }),
     )
     .use(hasPermission)
     .mutation(async (opts) => {
-      const {
-        id,
-        username,
-        starknetAddress,
-        ethereumAddress,
-        hasConnectedSecondaryWallet,
-        profileImage,
-      } = opts.input;
+      const { id, username, profileImage } = opts.input;
 
       if (profileImage) {
         if (!isValidProfileImageUrl(profileImage)) {
@@ -175,17 +165,6 @@ export const usersRouter = router({
       const updates = {
         username: username === '' ? null : username || userById.username,
         profileImage: profileImage || userById.profileImage,
-        // Only include starknetAddress and ethereumAddress in the update if they are explicitly provided.
-        ...(starknetAddress !== undefined
-          ? { starknetAddress: starknetAddress !== '' ? starknetAddress : null }
-          : {}),
-        ...(ethereumAddress !== undefined
-          ? { ethAddress: ethereumAddress !== '' ? ethereumAddress : null }
-          : {}),
-        // Conditionally include hasConnectedSecondaryWallet if it's provided.
-        ...(hasConnectedSecondaryWallet !== undefined
-          ? { hasConnectedSecondaryWallet }
-          : {}),
       };
 
       await db.update(users).set(updates).where(eq(users.id, id)).returning();
