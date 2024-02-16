@@ -7,9 +7,15 @@ export const cssOverrides = `
   }
   .non-network-switching-supported-control {
     height: 36px!important;
+    gap: 0px!important;
   }
-.evm-network-control__network-name {
+.non-network-switching-supported-control__network-name {
   display:none!important;
+}
+.evm-network-control__container--error {
+    border: 1px solid transparent;
+    color: white;
+    cursor: auto;
 }
 
   .evm-network-control__container span {
