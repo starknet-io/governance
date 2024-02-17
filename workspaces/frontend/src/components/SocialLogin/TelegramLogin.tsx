@@ -65,7 +65,6 @@ const TelegramLogin = ({
               },
             },
           );
-          console.log(data);
         },
       );
     }
