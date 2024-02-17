@@ -43,6 +43,7 @@ export type PageContextCustom = {
   apolloIntialState: any;
   routeParams: any;
   user: IUser | null;
+  isUserLoading?: boolean;
   layout?: LayoutType;
 };
 
