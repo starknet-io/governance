@@ -46,6 +46,7 @@ import {
 import type { WalletConnector } from "@dynamic-labs/wallet-connector-core";
 import { getChecksumAddress } from "starknet";
 import { useWallets } from "../../../hooks/useWallets";
+import { useActiveStarknetAccount } from "../../../hooks/starknet/useActiveStarknetAccount";
 
 type Wallet = {
   address: string;
@@ -159,8 +160,7 @@ export const WalletButtons = ({
 
   const starknetWallet = findMatchingWallet(userWallets, "STARKNET");
   const ethWallet = findMatchingWallet(userWallets, "EVM");
-  const currentStarknetAccount =
-    typeof window !== "undefined" ? window?.starknet?.account?.address : "";
+  const currentStarknetAccount = useActiveStarknetAccount();
 
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   return (
