@@ -1,9 +1,4 @@
-import {
-  Box,
-  Flex,
-  SummaryItems,
-  Text,
-} from "@yukilabs/governance-components";
+import { Box, Flex, SummaryItems, Text } from "@yukilabs/governance-components";
 import { useState } from "react";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { trpc } from "../../utils/trpc";
@@ -28,18 +23,24 @@ const Socials = ({
   const { user } = usePageContext();
   const [showDiscourse, setShowDiscourse] = useState(false);
 
-  const userDelegate = trpc.users.isDelegate.useQuery({
-    userId: user?.id || "",
-  }, {
-    enabled: !!user?.id
-  });
-  const socialsDelegate = trpc.socials.initiateSocialAuth.useQuery({
-    delegateId,
-    id: user?.id || "",
-    origin: "discord",
-  }, {
-    enabled: !!user?.id,
-  });
+  const userDelegate = trpc.users.isDelegate.useQuery(
+    {
+      userId: user?.id || "",
+    },
+    {
+      enabled: !!user?.id,
+    },
+  );
+  const socialsDelegate = trpc.socials.initiateSocialAuth.useQuery(
+    {
+      delegateId,
+      id: user?.id || "",
+      origin: "discord",
+    },
+    {
+      enabled: !!user?.id,
+    },
+  );
   const unlinkSocialDelegate = trpc.socials.unlinkDelegateSocial.useMutation({
     onSuccess: () => {
       socialsDelegate.refetch();
@@ -64,7 +65,8 @@ const Socials = ({
   };
   if (
     (!isUserDelegate && !isUserDelegateCheckLoading) ||
-    isUserDelegateCheckLoading || !user?.id
+    isUserDelegateCheckLoading ||
+    !user?.id
   ) {
     return (
       <Flex justify="flex-start" gap="4px">
@@ -79,28 +81,28 @@ const Socials = ({
               <SummaryItems.Socials
                 label="twitter"
                 value={socials?.twitter}
-                isLoading={isUserDelegateCheckLoading}
+                isLoading={isUserDelegateCheckLoading && !!user?.id}
               />
             )}
             {socials?.discord && (
               <SummaryItems.Socials
                 label="discord"
                 value={socials?.discord}
-                isLoading={isUserDelegateCheckLoading}
+                isLoading={isUserDelegateCheckLoading && !!user?.id}
               />
             )}
             {socials?.telegram && (
               <SummaryItems.Socials
                 label="telegram"
                 value={socials?.telegram}
-                isLoading={isUserDelegateCheckLoading}
+                isLoading={isUserDelegateCheckLoading && !!user?.id}
               />
             )}
             {socials?.discourse && (
               <SummaryItems.Socials
                 label="discourse"
                 value={socials?.discourse}
-                isLoading={isUserDelegateCheckLoading}
+                isLoading={isUserDelegateCheckLoading && !!user?.id}
               />
             )}
           </SummaryItems.Root>
@@ -112,7 +114,9 @@ const Socials = ({
   return (
     <SummaryItems.Root direction={"column"}>
       <Flex direction="column" gap="standard.xs">
-        <Text variant="small" color="content.default.default">Social networks</Text>
+        <Text variant="small" color="content.default.default">
+          Social networks
+        </Text>
         <DiscordLogin
           username={socialsDelegate?.data?.discord?.username}
           redirectUrl={socialsDelegate?.data?.discord?.redirectUrl}
