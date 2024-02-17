@@ -49,10 +49,13 @@ import { navigate } from "vite-plugin-ssr/client/router";
 const authenticatedUrls = [
   "voting-proposals/create",
   "delegates/create",
+  "delegates/edit",
   "councils/create",
+  "councils/edit",
+  "learn/create",
 ];
 
-const adminUrls = ["voting-proposals/create", "councils/create"];
+const adminUrls = ["voting-proposals/create", "councils/create", "learn/create", "councils/edit"];
 
 export interface Props {
   readonly pageContext: PageContext;
