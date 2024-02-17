@@ -26,6 +26,7 @@ export function PageShell(props: Props) {
 
   const userQuery = useUserData();
   const user = userQuery.data;
+  const isUserLoading = userQuery.isLoading;
 
   useEffect(() => {
     const documentProps =
@@ -56,7 +57,7 @@ export function PageShell(props: Props) {
   }
   return (
     // <React.StrictMode>
-    <PageContextProvider pageContext={{ ...pageContext, user: user || null }}>
+    <PageContextProvider pageContext={{ ...pageContext, user: user || null, isUserLoading }}>
       <MessagesProvider>
         <ChakraProvider theme={theme}>
           <ApolloProvider client={props.apolloClient}>

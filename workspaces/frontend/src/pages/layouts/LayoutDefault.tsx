@@ -44,6 +44,19 @@ import {
 } from "@yukilabs/governance-components/src/Icons/UiIcons";
 import { useWallets } from "../../hooks/useWallets";
 import ConnectSecondaryWalletModal from "../../components/ConnectSecondaryWalletModal/ConnectSecondaryWalletModal";
+import { navigate } from "vite-plugin-ssr/client/router";
+
+const authenticatedUrls = [
+  "voting-proposals/create",
+  "delegates/create",
+  "delegates/edit",
+  "councils/create",
+  "councils/edit",
+  "learn/create",
+  "profile/settings"
+];
+
+const adminUrls = ["voting-proposals/create", "councils/create", "learn/create", "councils/edit"];
 
 export interface Props {
   readonly pageContext: PageContext;
@@ -54,7 +67,7 @@ function LayoutDefault(props: Props) {
   const { starknetWallet, ethWallet } = useWallets();
   const { children, pageContext } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user } = usePageContext();
+  const { user, isUserLoading } = usePageContext();
   const { data: userDelegate } = trpc.users.isDelegate.useQuery(
     {
       userId: user?.id,
@@ -77,6 +90,33 @@ function LayoutDefault(props: Props) {
       handleLogOut();
     }
   }, [user?.banned]);
+
+  useEffect(() => {
+    if (!isUserLoading) {
+      const urlPath = pageContext?.urlOriginal;
+      const redirectToHome = () => {
+        navigate("/");
+      };
+
+      if (!user) {
+        const isAuthRequiredPage = authenticatedUrls.some((path) =>
+          urlPath.includes(path),
+        );
+        if (isAuthRequiredPage) {
+          redirectToHome();
+        }
+      } else {
+        const isAdminPage = adminUrls.some((path) => urlPath.includes(path));
+        if (
+          isAdminPage &&
+          user.role !== "admin" &&
+          user.role !== "superadmin"
+        ) {
+          redirectToHome();
+        }
+      }
+    }
+  }, [user, pageContext?.urlOriginal, isUserLoading]);
 
   useEffect(() => {
     if (userDelegate && user) {

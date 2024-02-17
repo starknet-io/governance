@@ -23,6 +23,7 @@ import {
   AvatarWithText,
   Button,
   Text,
+  WrongAccountOrNetworkModal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import React, { useEffect, useState } from "react";
@@ -50,6 +51,7 @@ import { useStarknetDelegate } from "../../../hooks/starknet/useStarknetDelegati
 import { delegationAgreement } from "src/utils/data";
 import { getChecksumAddress } from "starknet";
 import { ethers } from "ethers";
+import { useActiveStarknetAccount } from "../../../hooks/starknet/useActiveStarknetAccount";
 
 export const DELEGATION_SUCCESS_EVENT = "delegationSuccess";
 
@@ -83,6 +85,7 @@ export function Page() {
   const [isCustomError, setIsCustomError] = useState<boolean>(false);
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [showAgreement, setShowAgreement] = useState<boolean>(false);
+  const [isWrongAccount, setIsWrongAccount] = useState<boolean>(false);
   const { user } = usePageContext();
   const { user: dynamicUser, walletConnector } = useDynamicContext();
   const { ethWallet, starknetWallet } = useWallets();
@@ -267,6 +270,7 @@ export function Page() {
   const proposals = gqlResponseProposalsByUser?.data || [];
 
   const senderData = useBalanceData(ethWallet?.address);
+  const activeStarknetWallet = useActiveStarknetAccount();
   const receiverData = useBalanceData(delegateAddress);
   const senderDataL2 = useStarknetBalance({
     starknetAddress: starknetWallet?.address,
@@ -443,6 +447,7 @@ export function Page() {
     isUndelegation?: boolean;
   }) => {
     setIsCustomError(false);
+    setIsWrongAccount(false);
     if (
       !ethWallet?.address &&
       starknetWallet?.address &&
@@ -487,6 +492,13 @@ export function Page() {
         setIsUndelegation(false);
       }
     } else if (layer === 2) {
+      if (
+        getChecksumAddress(activeStarknetWallet || "") !==
+        getChecksumAddress(starknetWallet?.address || "")
+      ) {
+        setIsWrongAccount(true);
+        return;
+      }
       if (isDelegation) {
         if (
           parseFloat(senderDataL2?.balance?.balance) <
@@ -1139,6 +1151,12 @@ export function Page() {
             )}
           </Box>
         </Stack>
+        <WrongAccountOrNetworkModal
+          isOpen={isWrongAccount}
+          onClose={() => setIsWrongAccount(false)}
+          expectedStarknetAddress={starknetWallet?.address}
+          starknetAddress={activeStarknetWallet}
+        />
       </ProfilePageLayout.About>
     </ProfilePageLayout.Root>
   );
