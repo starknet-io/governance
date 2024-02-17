@@ -209,7 +209,6 @@ export function Page() {
   const {
     balance: ethBalance,
     symbol: ethBalanceSymbol,
-    isFetched: isEthBalanceFetched,
   } = useBalanceData(ethAddress as `0x${string}`);
   const { balance: starknetBalance, loading: isStarknetBalanceLoading } =
     useStarknetBalance({
@@ -257,7 +256,7 @@ export function Page() {
 
   const wrapTokens = async () => {
     if (!starknetAddress) {
-      setHelpMessage("connectWalletMessage");
+      setHelpMessage("connectStarknetWalletMessage");
       return;
     }
     if (!isUnwrap) {
@@ -297,7 +296,7 @@ export function Page() {
   const handleSliderChange = (val) => {
     setSliderValue(val);
     if (!starknetAddress) {
-      setHelpMessage("connectWalletMessage");
+      setHelpMessage("connectStarknetWalletMessage");
       return;
     }
     if (isUnwrap) {
@@ -438,14 +437,9 @@ export function Page() {
                 <Text variant="small" color="content.support.default">
                   STRK on Ethereum
                 </Text>
-                {isEthBalanceFetched || !ethAddress ? (
-                  <Text color="content.accent.default" variant="mediumStrong">
-                    {new Intl.NumberFormat().format(Number(ethBalance))}{" "}
-                    {ethBalanceSymbol}
-                  </Text>
-                ) : (
-                  <Skeleton height="16px" width="60%" borderRadius="md" />
-                )}
+                <Text color="content.accent.default" variant="mediumStrong">
+                  {!ethAddress ? "-" : `${new Intl.NumberFormat().format(Number(ethBalance))} ${ethBalanceSymbol}`}
+                </Text>
               </Box>
             </Box>
           </Box>

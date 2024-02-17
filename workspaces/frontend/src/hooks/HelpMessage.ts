@@ -2,6 +2,7 @@ import { createStateContext } from "react-use";
 
 type HelpMessage =
   | "connectWalletMessage"
+  | "connectStarknetWalletMessage"
   | "connectWalletErrorMessage"
   | "noVotingPowerMessage"
   | "emailSubscription"

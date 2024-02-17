@@ -1,4 +1,4 @@
-import { Box, Flex, Icon } from "@chakra-ui/react";
+import { Box, Flex, Icon, Skeleton } from "@chakra-ui/react";
 import * as ProfileSummaryCard from "../ProfileSummaryCard/ProfileSummaryCard";
 import { Text } from "src/Text";
 import { Heading } from "src/Heading";
@@ -89,9 +89,10 @@ const UserSummary = ({
             {isSender && "Available balance"}
             {isReceiver && !isSender && "Voting power"}
           </Text>
+          {!balance ? <Skeleton height="14px" width="40%" mt="4px" /> :
           <Text variant="mediumStrong" color="content.default.default">
             {balance} {symbol}
-          </Text>
+          </Text>}
         </Flex>
       </Flex>
       {text === "Starknet Mainnet" ? <Flex

@@ -132,7 +132,7 @@ export const Slider: React.FC<SliderProps> = ({
         <SliderMark value={100} {...labelStyles}>
           <Box marginTop="-14px" bg="#ffffff" position="absolute">
             {sliderValue < 100 ? <GreaterAmountCircleIcon /> : null}
-            <Text
+            {sliderValue < 100 ? <Text
               variant="smallStrong"
               color="content.support.default"
               sx={{
@@ -142,28 +142,26 @@ export const Slider: React.FC<SliderProps> = ({
               }}
             >
               MAX
-            </Text>
+            </Text> : null}
           </Box>
         </SliderMark>
-        {interactionStarted ? (
-          <SliderMark
-            value={sliderValue}
-            textAlign="center"
-            bg="surface.accent.default"
-            color="#FBFBFB"
-            mt="14px"
-            ml="-5"
-            p="2px 8px"
-            borderRadius="standard.base"
-            fontSize="12px"
-            fontStyle="normal"
-            fontWeight={500}
-            lineHeight="20px"
-            letterSpacing="0.12px"
-          >
-            {sliderValue === 100 ? "MAX" : `${sliderValue}%`}
-          </SliderMark>
-        ) : null}
+        <SliderMark
+          value={sliderValue}
+          textAlign="center"
+          bg="surface.accent.default"
+          color="#FBFBFB"
+          mt="14px"
+          ml="-5"
+          p="2px 8px"
+          borderRadius="standard.base"
+          fontSize="12px"
+          fontStyle="normal"
+          fontWeight={500}
+          lineHeight="20px"
+          letterSpacing="0.12px"
+        >
+          {sliderValue === 100 ? "MAX" : `${sliderValue}%`}
+        </SliderMark>
         <SliderTrack bg="rgba(35, 25, 45, 0.10)" height="4px" zIndex="1">
           <SliderFilledTrack bg="surface.accent.default" zIndex="1" />
         </SliderTrack>
