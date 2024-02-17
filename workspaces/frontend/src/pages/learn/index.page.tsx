@@ -101,18 +101,18 @@ export function Page() {
 
   function flattenPages(pages) {
     let flatPages = [];
-  
+
     pages.sort((a, b) => a.orderNumber - b.orderNumber).forEach(page => {
       flatPages.push(page);
-  
+
       if (page.children) {
         flatPages = flatPages.concat(flattenPages(page.children));
       }
     });
-  
+
     return flatPages;
   }
-  
+
   useEffect(() => {
     if (selectedPage && pagesTree) {
       const sortedPages = flattenPages(pagesTree);
@@ -122,7 +122,7 @@ export function Page() {
       if (currentPage) {
         const previousPage = currentPageIndex > 0 ? sortedPages[currentPageIndex - 1] : null;
         const nextPage = currentPageIndex < sortedPages.length - 1 ? sortedPages[currentPageIndex + 1] : null;
-  
+
         setPreviousPage(previousPage || null);
         setNextPage(nextPage || null);
       }
@@ -492,7 +492,7 @@ function NavItemWrapper({
   return (
     <Button
       onClick={() => selectPage(page)}
-      variant="learnNavLink"
+      variant={isSelectedPage ? "learnNavLinkActive" : "learnNavLink"}
       fontWeight="medium"
       fontSize={fontSize}
       size="learnNavLink"

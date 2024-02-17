@@ -12,6 +12,7 @@ export type props = {
     | "special"
     | "textSmall"
     | "learnNavLink"
+    | "learnNavLinkActive"
     | "fill";
   children: React.ReactNode;
   toId?: string;

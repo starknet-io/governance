@@ -361,7 +361,6 @@ const VotingProposalComments = ({
 
   useEffect(() => {
     if (comments.data && comments.data?.comments && !comments.isLoading) {
-      console.log(allComments)
       setAllComments((prevComments) => {
         const newComments = comments.data.comments.filter(
           (comment) => !prevComments.some((prev) => prev.id === comment.id)

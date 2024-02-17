@@ -130,6 +130,7 @@ export function Page() {
             headerText={council?.name ?? "Council"}
             subheaderText={truncateAddress(councilAddress)}
             address={council?.address?.toLowerCase() ?? ""}
+            withCopy
             dropdownChildren={
               hasPermission(loggedUser?.role, [
                 ROLES.ADMIN,

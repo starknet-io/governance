@@ -389,6 +389,38 @@ export const buttonTheme = {
         },
       },
     },
+    learnNavLinkActive: {
+      position: "relative",
+      borderWidth: "0px",
+      borderColor: "transparent",
+      outlineWidth: 0,
+      bg: "surface.forms.hover",
+      color: "content.default.selected",
+      svg: {
+        fill: "content.default.selected",
+      },
+      boxShadow: " 0px 1px 1px 0px rgba(0, 0, 0, 0)",
+      _before: {
+        content: `""`,
+        position: "absolute",
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: "2px",
+        backgroundColor: "#1A1523",
+        borderTopRightRadius: "4px",
+        borderBottomRightRadius: "4px",
+        opacity: 1,
+        zIndex: 2,
+      },
+      _hover: {
+        bg: "surface.forms.hover",
+        color: "content.default.hover",
+        svg: {
+          fill: "content.default.hover",
+        },
+      },
+    },
     feedback: {
       borderColor: "border.link",
       bg: "surface.forms.default",
