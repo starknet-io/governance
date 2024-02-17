@@ -42,7 +42,7 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 
-const RECEIVING_AMOUNT_SUBTRACT = 0.01;
+const RECEIVING_AMOUNT_SUBTRACT = 0.00001;
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
