@@ -53,6 +53,7 @@ const authenticatedUrls = [
   "councils/create",
   "councils/edit",
   "learn/create",
+  "profile/settings"
 ];
 
 const adminUrls = ["voting-proposals/create", "councils/create", "learn/create", "councils/edit"];
