@@ -24,7 +24,8 @@ import {
   Button as GovernanceButton,
   IconButton,
   XIcon,
-  StatusModal
+  StatusModal,
+  WrongAccountOrNetworkModal,
 } from "@yukilabs/governance-components";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useForm } from "react-hook-form";
@@ -44,6 +45,8 @@ import {
 
 import type { WalletConnector } from "@dynamic-labs/wallet-connector-core";
 import { getChecksumAddress } from "starknet";
+import { useWallets } from "../../../hooks/useWallets";
+import { useActiveStarknetAccount } from "../../../hooks/starknet/useActiveStarknetAccount";
 
 type Wallet = {
   address: string;
@@ -157,6 +160,8 @@ export const WalletButtons = ({
 
   const starknetWallet = findMatchingWallet(userWallets, "STARKNET");
   const ethWallet = findMatchingWallet(userWallets, "EVM");
+  const currentStarknetAccount = useActiveStarknetAccount();
+
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   return (
     <Flex justifyContent="space-between" gap="standard.xs">
@@ -221,18 +226,11 @@ export const WalletButtons = ({
           }}
         />
       </Flex>
-      <StatusModal
+      <WrongAccountOrNetworkModal
         isOpen={isStatusModalOpen}
-        isPending={false}
-        isSuccess={false}
-        isFail={
-          true
-        }
-        onClose={() => {
-          setIsStatusModalOpen(false);
-        }}
-        title="Incorrect Starknet account"
-        description={`Your Starknet wallet does not have the correct account active. Please switch to ${starknetWallet?.address}`}
+        starknetAddress={currentStarknetAccount}
+        expectedStarknetAddress={starknetWallet?.address}
+        onClose={() => setIsStatusModalOpen(false)}
       />
     </Flex>
   );
@@ -242,7 +240,7 @@ export function Page() {
   const { user } = usePageContext();
   const { handleUpload } = useFileUpload();
   const utils = trpc.useContext();
-
+  const { starknetWallet } = useWallets();
   const toast = useToast();
 
   const {

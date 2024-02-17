@@ -11,11 +11,12 @@ export { NavGroup } from "./src/Navigation/NavGroup";
 export { NavItem } from "./src/Navigation/NavItem";
 export { SearchInput } from "./src/SearchInput";
 export { DelegateCard } from "./src/Card";
+export { WrongAccountOrNetworkModal } from "./src/WrongAccountModal";
 export { Tag } from "./src/Tag";
 export { ContentContainer, HomeContainer } from "./src/ContentContainer";
 export { IconButton, IconButtonWithBadge } from "./src/IconButton";
 export { Collapse } from "./src/Collapse";
-export { DelegateOnboardingModalBasic } from "./src/DelegateOnboardingModalBasic"
+export { DelegateOnboardingModalBasic } from "./src/DelegateOnboardingModalBasic";
 export { VoteButton } from "./src/VoteButton";
 export { VoteStat } from "./src/VoteStat";
 export { VoteComment } from "./src/VoteComment";
@@ -41,7 +42,7 @@ export { AvatarWithText } from "./src/AvatarWithText";
 export { Dropdown } from "./src/Dropdown";
 export { FormControlled, useFormErrorHandler } from "./src/FormControlled";
 export { Tooltip } from "./src/Tooltip";
-export { Tabs } from "./src/Tabs"
+export { Tabs } from "./src/Tabs";
 export { Select } from "./src/Select";
 export { Multiselect } from "./src/Multiselect";
 export { NotificationsMenu, NotificationItem } from "./src/Notifications";
