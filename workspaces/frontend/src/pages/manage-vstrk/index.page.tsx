@@ -112,7 +112,6 @@ const WrapModal = ({
               <SuccessIcon boxSize="104px" color="#30B37C" />
               <Heading variant="h3">All done!</Heading>
               <Flex
-                mb="standard.lg"
                 flexDirection="column"
                 alignItems="center"
                 gap="standard.xs"
@@ -139,26 +138,6 @@ const WrapModal = ({
                   Review transaction details{" "}
                 </Link>
               </Flex>
-              {!isArgentX ? (
-                <Flex
-                  alignItems="center"
-                  gap="standard.xs"
-                  alignSelf="stretch"
-                  p="0"
-                >
-                  <Text
-                    variant="mediumStrong"
-                    color="content.default.default"
-                    sx={{
-                      flex: "1 0 0",
-                      textWrap: "wrap",
-                      textAlign: "left",
-                    }}
-                  >
-                    Add the vSTRK token to your wallet to track your balance.
-                  </Text>
-                </Flex>
-              ) : null}
             </>
           )}
         </Flex>
@@ -285,7 +264,7 @@ export function Page() {
   };
 
   useEffect(() => {
-    debugger
+    debugger;
     if (starknetBalance?.rawBalance && !isUnwrap) {
       setStarkToWrap(parseFloat(starknetBalance?.rawBalance) / 2);
     } else if (vSTRKBalance?.rawBalance && isUnwrap) {
@@ -552,6 +531,7 @@ export function Page() {
                 </Text>
               </Flex>
             </Flex>
+            {/*
             <Box mb="standard.xl">
               <Flex gap="8px" alignItems="center">
                 <Icon as={GasIcon} color="content.default.default" />
@@ -560,6 +540,7 @@ export function Page() {
                 </Text>
               </Flex>
             </Box>
+            */}
             <Box w="100%">
               <Button
                 variant="primary"
