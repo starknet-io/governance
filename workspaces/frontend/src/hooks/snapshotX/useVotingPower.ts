@@ -64,7 +64,6 @@ export function useVotingPower({
         setData(fixedTo4Digits);
       }
       setData(scaledValue);
-      console.log(scaledValue);
     } catch (e) {
       console.error("Failed to load voting power", e);
       setData(0);

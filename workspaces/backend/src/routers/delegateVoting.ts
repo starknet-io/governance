@@ -14,8 +14,76 @@ const graphQLClientL2 = new GraphQLClient(
   },
 );
 
+const graphQLClient = new GraphQLClient('https://api-1.snapshotx.xyz/graphql', {
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 const L1_ENDPOINT =
   'https://api.studio.thegraph.com/query/23545/starknet-delegates/version/latest';
+
+function getUrl(uri: string) {
+  const IPFS_GATEWAY: string =
+    process.env.IPFS_GATEWAY || 'https://cloudflare-ipfs.com';
+  const ipfsGateway = `https://${IPFS_GATEWAY}`;
+  if (!uri) return null;
+  if (
+    !uri.startsWith('ipfs://') &&
+    !uri.startsWith('ipns://') &&
+    !uri.startsWith('https://') &&
+    !uri.startsWith('http://')
+  ) {
+    return `${ipfsGateway}/ipfs/${uri}`;
+  }
+
+  const uriScheme = uri.split('://')[0];
+  if (uriScheme === 'ipfs')
+    return uri.replace('ipfs://', `${ipfsGateway}/ipfs/`);
+  if (uriScheme === 'ipns')
+    return uri.replace('ipns://', `${ipfsGateway}/ipns/`);
+  return uri;
+}
+
+async function parseStrategyMetadata(metadata: string | null) {
+  if (metadata === null) return null;
+  if (!metadata.startsWith('ipfs://')) return JSON.parse(metadata);
+
+  const strategyUrl = getUrl(metadata);
+  if (!strategyUrl) return null;
+
+  const res = await fetch(strategyUrl);
+  return res.json();
+}
+
+function processStrategiesMetadata(
+  parsedMetadata: any[],
+  strategiesIndicies?: number[],
+) {
+  if (parsedMetadata.length === 0) return [];
+
+  const maxIndex = Math.max(
+    ...parsedMetadata.map((metadata) => metadata.index),
+  );
+
+  const metadataMap = Object.fromEntries(
+    parsedMetadata.map((metadata) => [
+      metadata.index,
+      {
+        name: metadata.data.name,
+        description: metadata.data.description,
+        decimals: metadata.data.decimals,
+        symbol: metadata.data.symbol,
+        token: metadata.data.token,
+        payload: metadata.data.payload,
+      },
+    ]),
+  );
+
+  strategiesIndicies =
+    strategiesIndicies || Array.from(Array(maxIndex + 1).keys());
+  return strategiesIndicies.map((index) => metadataMap[index]) || [];
+}
 
 export async function saveDelegateVotes(delegateData: any) {
   try {
@@ -52,6 +120,61 @@ export async function saveDelegateVotes(delegateData: any) {
 interface DelegateDataSnapshot {
   delegatedVotes: string;
   id: string;
+}
+
+async function getWhitelistStrategy() {
+  const spaceVar = process.env.SNAPSHOT_X_SPACE;
+
+  const query = `
+    query spaceQuery($space: String!) {
+       space(id: $space) {
+         strategies_indicies
+         strategies_parsed_metadata {
+          data {
+            symbol
+            name
+            decimals
+            payload
+            token
+          }
+          index
+        }
+       }
+     }
+  `;
+  try {
+    const spaceResponse: any = await graphQLClient.request(query, {
+      space: spaceVar,
+    });
+    const strategies = processStrategiesMetadata(
+      spaceResponse?.space?.strategies_parsed_metadata,
+      spaceResponse?.space?.strategies_indicies,
+    );
+
+    const whitelistStrategy = (strategies || []).find(
+      (strategy) => strategy?.name === 'Whitelist',
+    );
+    if (whitelistStrategy.payload) {
+      const delegateList = await parseStrategyMetadata(
+        whitelistStrategy.payload,
+      );
+      const whitelistDelegates = (delegateList?.tree || [])?.map(
+        (delegate: any) => {
+          const votesBigInt = BigInt(delegate.votingPower);
+          const divisor = BigInt(10 ** 18);
+          const scaledVotes = votesBigInt / divisor;
+          return {
+            address: delegate.address,
+            delegatedVotes: Number(scaledVotes),
+          };
+        },
+      );
+      return whitelistDelegates;
+    }
+    return [];
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function fetchAllDelegatesFromSnapshot({
@@ -136,10 +259,11 @@ async function fetchAllDelegatesPaginated(pageSize: number, page: number) {
 }
 
 export async function delegateVoting() {
-  const pageSize = 100;
+  const pageSize = 1000;
   let page = 0;
   let hasMore = true;
 
+  const delegatesWhitelist = await getWhitelistStrategy();
   const delegatesSnapshotL1: DelegateDataSnapshot[] =
     await fetchAllDelegatesFromSnapshot({ isL1: true });
   const delegatesSnapshotL2: DelegateDataSnapshot[] =
@@ -156,21 +280,34 @@ export async function delegateVoting() {
     }
 
     for (const localDelegate of localDelegatesBatch) {
-      const l1Delegate = delegatesSnapshotL1.find(
-        (d) => d.id.toLowerCase() === localDelegate.ethAddress?.toLowerCase(),
-      );
+      const l1Delegate = delegatesSnapshotL1.find((d) => {
+        return d.id.toLowerCase() === localDelegate.ethAddress.toLowerCase();
+      });
       const l2Delegate = delegatesSnapshotL2.find(
         (d) =>
           getChecksumAddress(d.id || '') ===
           getChecksumAddress(localDelegate.starknetAddress || ''),
       );
+      const whitelistDelegateL1 =
+        delegatesWhitelist.find((d: any) => {
+          return (
+            d.address.toLowerCase() === localDelegate?.ethAddress.toLowerCase()
+          );
+        })?.delegatedVotes || 0;
 
-      const votingPowerL1 = l1Delegate
-        ? parseInt(l1Delegate.delegatedVotes)
-        : 0;
-      const votingPowerL2 = l2Delegate
-        ? parseInt(l2Delegate.delegatedVotes)
-        : 0;
+      const whitelistDelegateL2 =
+        delegatesWhitelist.find(
+          (d: any) =>
+            getChecksumAddress(d.address || '') ===
+            getChecksumAddress(localDelegate.starknetAddress || ''),
+        )?.delegatedVotes || 0;
+
+      const votingPowerL1 =
+        Math.round(Number(l1Delegate?.delegatedVotes || 0)) + whitelistDelegateL1;
+      const votingPowerL2 =
+        Math.round(Number(l2Delegate?.delegatedVotes || 0)) + whitelistDelegateL2;
+
+      console.log(votingPowerL1, votingPowerL2);
 
       if (votingPowerL1 > 0) {
         console.log(localDelegate.ethAddress, 'L1', votingPowerL1);
