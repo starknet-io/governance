@@ -3,13 +3,13 @@ import { Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { waitForTransaction } from "../snapshotX/helpers";
-import {useWallets} from "../useWallets";
+import { useWallets } from "../useWallets";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 
 export const useWrapVSTRK = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<any>(null);
   const [success, setSuccess] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
   const { starknetWallet } = useWallets();
@@ -25,7 +25,7 @@ export const useWrapVSTRK = () => {
       return;
     }
 
-    if (!amount || amount < 1) {
+    if (!amount || amount < 0.000001) {
       setError("Amount must be greater than 0");
       setIsSubmitting(false);
       return;

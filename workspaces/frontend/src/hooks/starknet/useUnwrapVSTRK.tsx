@@ -3,7 +3,7 @@ import { Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { waitForTransaction } from "../snapshotX/helpers";
-import {useWallets} from "../useWallets";
+import { useWallets } from "../useWallets";
 
 const starkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
@@ -23,7 +23,7 @@ export const useUnwrapVSTRK = () => {
       return;
     }
 
-    if (!amount || amount < 1) {
+    if (!amount || amount < 0.000001) {
       setError("Amount must be greater than 0");
       return;
     }

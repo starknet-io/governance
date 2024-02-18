@@ -2,7 +2,6 @@ import { useWallets } from "../useWallets";
 
 export const useActiveStarknetAccount = () => {
   const { starknetWallet } = useWallets();
-
   if (!starknetWallet?.address) {
     return null;
   } else if (typeof window !== "undefined") {

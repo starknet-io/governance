@@ -42,7 +42,6 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 
-const RECEIVING_AMOUNT_SUBTRACT = 1;
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
@@ -159,6 +158,8 @@ const WrapModal = ({
   );
 };
 
+const RECEIVING_AMOUNT_SUBTRACT = 0.00001;
+
 export function Page() {
   const wallets = useUserWallets();
   const { user } = usePageContext();
@@ -263,8 +264,17 @@ export function Page() {
     }
   };
 
+  const formatNumber = (value, rawBalance) => {
+    if (rawBalance < 1) {
+      return value.toFixed(6); // up to 6 decimal places for values less than 1
+    } else if (rawBalance < 10) {
+      return value.toFixed(2); // up to 2 decimal places for values less than 10
+    } else {
+      return value.toFixed(1); // 1 decimal place for larger values
+    }
+  }
+
   useEffect(() => {
-    debugger;
     if (starknetBalance?.rawBalance && !isUnwrap) {
       setStarkToWrap(parseFloat(starknetBalance?.rawBalance) / 2);
     } else if (vSTRKBalance?.rawBalance && isUnwrap) {
@@ -281,7 +291,8 @@ export function Page() {
     }
     if (isUnwrap) {
       const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
-      setStarkToWrap(Math.floor((val / 100) * rawBalance));
+      const toSet = (val / 100) * rawBalance
+      setStarkToWrap(formatNumber(toSet, rawBalance));
     } else {
       const rawBalance = starknetBalance?.rawBalance
         ? Math.max(
@@ -289,7 +300,8 @@ export function Page() {
             0,
           )
         : 0;
-      setStarkToWrap(Math.floor((val / 100) * rawBalance));
+      const toSet = (val / 100) * rawBalance
+      setStarkToWrap(formatNumber(toSet, rawBalance));
     }
   };
   const handleStarkToWrapAmount = (amount: number) => {
@@ -485,7 +497,7 @@ export function Page() {
                 size="standard"
                 placeholder="0"
                 icon={<StarknetIcon />}
-                value={starkToWrap > 0 ? starkToWrap : ""}
+                value={starkToWrap >= 0 ? starkToWrap : ""}
                 onChange={(e) => {
                   if (isUnwrap) {
                     handleStarkToUnWrapAmount(e.target.value);
