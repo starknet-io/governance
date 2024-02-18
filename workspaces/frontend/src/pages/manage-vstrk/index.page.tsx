@@ -42,6 +42,7 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 
+const RECEIVING_AMOUNT_SUBTRACT = 0.00001;
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
@@ -301,7 +302,7 @@ export function Page() {
     }
     if (isUnwrap) {
       const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
-      setStarkToWrap(Math.floor((val / 100) * rawBalance));
+      setStarkToWrap(Math.floor((val / 100) * rawBalance) - RECEIVING_AMOUNT_SUBTRACT);
     } else {
       const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
       setStarkToWrap(Math.floor((val / 100) * rawBalance));
@@ -310,13 +311,13 @@ export function Page() {
   const handleStarkToWrapAmount = (amount: number) => {
     const toSet = Math.min(amount, starknetBalance?.rawBalance);
     const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
-    setStarkToWrap(toSet);
+    setStarkToWrap(toSet - RECEIVING_AMOUNT_SUBTRACT);
     setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
   };
   const handleStarkToUnWrapAmount = (amount: number) => {
     const toSet = Math.min(amount, vSTRKBalance?.rawBalance);
     const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
-    setStarkToWrap(toSet);
+    setStarkToWrap(toSet - RECEIVING_AMOUNT_SUBTRACT);
     setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
   };
 
@@ -501,8 +502,7 @@ export function Page() {
 
             <Box>
               <Slider
-                sliderValue={sliderValue}
-                setSliderValue={handleSliderChange}
+                onChange={handleSliderChange}
               />
             </Box>
             <Box mb="standard.sm">
