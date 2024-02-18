@@ -60,7 +60,8 @@ export function useVotingPower({
       if (scaledValue > 1) {
         setData(Math.round(scaledValue));
       } else {
-        setData(scaledValue);
+        const fixedTo4Digits = parseFloat(scaledValue.toFixed(4))
+        setData(fixedTo4Digits);
       }
       setData(scaledValue);
       console.log(scaledValue);
