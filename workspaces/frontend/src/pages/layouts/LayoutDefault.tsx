@@ -241,6 +241,24 @@ function LayoutDefault(props: Props) {
           Connect
         </Button>
       </InfoModal>
+      <InfoModal
+        title="Connect Starknet wallet"
+        isOpen={helpMessage === "connectStarknetWalletMessage"}
+        onClose={() => setHelpMessage(null)}
+      >
+        <Flex alignItems="center" justifyContent={"center"}>
+          <ConnectWalletIcon boxSize="84" />
+        </Flex>
+        <Button
+          variant="primary"
+          onClick={() => {
+            setShowAuthFlow(true);
+            setHelpMessage(null);
+          }}
+        >
+          Connect
+        </Button>
+      </InfoModal>
 
       <Drawer
         isOpen={isTablet ? isOpen : false}

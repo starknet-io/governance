@@ -7,7 +7,6 @@ import {
   SliderTrack,
   SliderFilledTrack,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { Text } from "../Text";
 
 interface SliderProps extends ChakraSliderProps {
@@ -88,7 +87,6 @@ export const Slider: React.FC<SliderProps> = ({
     ml: "-2",
     fontSize: "sm",
   };
-  const [interactionStarted, setInteractionStarted] = useState(false);
 
   const handleSliderChange = (val: number) => {
     setSliderValue(val);
@@ -97,11 +95,9 @@ export const Slider: React.FC<SliderProps> = ({
     <Box px="6px" pb="26px">
       <ChakraSlider
         {...props}
-        focusThumbOnChange={false}
-        value={sliderValue}
         onChange={(val) => handleSliderChange(val)}
-        onChangeStart={() => setInteractionStarted(true)}
-        onChangeEnd={() => setInteractionStarted(false)}
+        value={sliderValue}
+        focusThumbOnChange={false}
       >
         <SliderMark value={0} {...labelStyles}>
           <Box marginTop="-14px" bg="#ffffff" position="absolute">
@@ -132,38 +128,38 @@ export const Slider: React.FC<SliderProps> = ({
         <SliderMark value={100} {...labelStyles}>
           <Box marginTop="-14px" bg="#ffffff" position="absolute">
             {sliderValue < 100 ? <GreaterAmountCircleIcon /> : null}
-            <Text
-              variant="smallStrong"
-              color="content.support.default"
-              sx={{
-                position: "absolute",
-                top: "18px",
-                right: "-12px",
-              }}
-            >
-              MAX
-            </Text>
+            {sliderValue < 100 ? (
+              <Text
+                variant="smallStrong"
+                color="content.support.default"
+                sx={{
+                  position: "absolute",
+                  top: "18px",
+                  right: "-12px",
+                }}
+              >
+                MAX
+              </Text>
+            ) : null}
           </Box>
         </SliderMark>
-        {interactionStarted ? (
-          <SliderMark
-            value={sliderValue}
-            textAlign="center"
-            bg="surface.accent.default"
-            color="#FBFBFB"
-            mt="14px"
-            ml="-5"
-            p="2px 8px"
-            borderRadius="standard.base"
-            fontSize="12px"
-            fontStyle="normal"
-            fontWeight={500}
-            lineHeight="20px"
-            letterSpacing="0.12px"
-          >
-            {sliderValue === 100 ? "MAX" : `${sliderValue}%`}
-          </SliderMark>
-        ) : null}
+        <SliderMark
+          value={sliderValue}
+          textAlign="center"
+          bg="surface.accent.default"
+          color="#FBFBFB"
+          mt="14px"
+          ml="-5"
+          p="2px 8px"
+          borderRadius="standard.base"
+          fontSize="12px"
+          fontStyle="normal"
+          fontWeight={500}
+          lineHeight="20px"
+          letterSpacing="0.12px"
+        >
+          {sliderValue === 100 ? "MAX" : `${sliderValue}%`}
+        </SliderMark>
         <SliderTrack bg="rgba(35, 25, 45, 0.10)" height="4px" zIndex="1">
           <SliderFilledTrack bg="surface.accent.default" zIndex="1" />
         </SliderTrack>

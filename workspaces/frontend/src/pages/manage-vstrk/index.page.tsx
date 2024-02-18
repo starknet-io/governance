@@ -42,6 +42,7 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 
+const RECEIVING_AMOUNT_SUBTRACT = 1;
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
@@ -111,7 +112,6 @@ const WrapModal = ({
               <SuccessIcon boxSize="104px" color="#30B37C" />
               <Heading variant="h3">All done!</Heading>
               <Flex
-                mb="standard.lg"
                 flexDirection="column"
                 alignItems="center"
                 gap="standard.xs"
@@ -138,26 +138,6 @@ const WrapModal = ({
                   Review transaction details{" "}
                 </Link>
               </Flex>
-              {!isArgentX ? (
-                <Flex
-                  alignItems="center"
-                  gap="standard.xs"
-                  alignSelf="stretch"
-                  p="0"
-                >
-                  <Text
-                    variant="mediumStrong"
-                    color="content.default.default"
-                    sx={{
-                      flex: "1 0 0",
-                      textWrap: "wrap",
-                      textAlign: "left",
-                    }}
-                  >
-                    Add the vSTRK token to your wallet to track your balance.
-                  </Text>
-                </Flex>
-              ) : null}
             </>
           )}
         </Flex>
@@ -206,11 +186,9 @@ export function Page() {
     useVotingPower({
       address: starknetAddress,
     });
-  const {
-    balance: ethBalance,
-    symbol: ethBalanceSymbol,
-    isFetched: isEthBalanceFetched,
-  } = useBalanceData(ethAddress as `0x${string}`);
+  const { balance: ethBalance, symbol: ethBalanceSymbol } = useBalanceData(
+    ethAddress as `0x${string}`,
+  );
   const { balance: starknetBalance, loading: isStarknetBalanceLoading } =
     useStarknetBalance({
       starknetAddress,
@@ -257,7 +235,7 @@ export function Page() {
 
   const wrapTokens = async () => {
     if (!starknetAddress) {
-      setHelpMessage("connectWalletMessage");
+      setHelpMessage("connectStarknetWalletMessage");
       return;
     }
     if (!isUnwrap) {
@@ -286,6 +264,7 @@ export function Page() {
   };
 
   useEffect(() => {
+    debugger;
     if (starknetBalance?.rawBalance && !isUnwrap) {
       setStarkToWrap(parseFloat(starknetBalance?.rawBalance) / 2);
     } else if (vSTRKBalance?.rawBalance && isUnwrap) {
@@ -297,20 +276,33 @@ export function Page() {
   const handleSliderChange = (val) => {
     setSliderValue(val);
     if (!starknetAddress) {
-      setHelpMessage("connectWalletMessage");
+      setHelpMessage("connectStarknetWalletMessage");
       return;
     }
     if (isUnwrap) {
       const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
       setStarkToWrap(Math.floor((val / 100) * rawBalance));
     } else {
-      const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
+      const rawBalance = starknetBalance?.rawBalance
+        ? Math.max(
+            parseFloat(starknetBalance?.rawBalance) - RECEIVING_AMOUNT_SUBTRACT,
+            0,
+          )
+        : 0;
       setStarkToWrap(Math.floor((val / 100) * rawBalance));
     }
   };
   const handleStarkToWrapAmount = (amount: number) => {
-    const toSet = Math.min(amount, starknetBalance?.rawBalance);
-    const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
+    const toSet = Math.min(
+      amount,
+      starknetBalance?.rawBalance - RECEIVING_AMOUNT_SUBTRACT,
+    );
+    const rawBalance = starknetBalance?.rawBalance
+      ? Math.max(
+          parseFloat(starknetBalance?.rawBalance) - RECEIVING_AMOUNT_SUBTRACT,
+          0,
+        )
+      : 0;
     setStarkToWrap(toSet);
     setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
   };
@@ -438,14 +430,13 @@ export function Page() {
                 <Text variant="small" color="content.support.default">
                   STRK on Ethereum
                 </Text>
-                {isEthBalanceFetched || !ethAddress ? (
-                  <Text color="content.accent.default" variant="mediumStrong">
-                    {new Intl.NumberFormat().format(Number(ethBalance))}{" "}
-                    {ethBalanceSymbol}
-                  </Text>
-                ) : (
-                  <Skeleton height="16px" width="60%" borderRadius="md" />
-                )}
+                <Text color="content.accent.default" variant="mediumStrong">
+                  {!ethAddress
+                    ? "-"
+                    : `${new Intl.NumberFormat().format(
+                        Number(ethBalance),
+                      )} ${ethBalanceSymbol}`}
+                </Text>
               </Box>
             </Box>
           </Box>
@@ -540,6 +531,7 @@ export function Page() {
                 </Text>
               </Flex>
             </Flex>
+            {/*
             <Box mb="standard.xl">
               <Flex gap="8px" alignItems="center">
                 <Icon as={GasIcon} color="content.default.default" />
@@ -548,6 +540,7 @@ export function Page() {
                 </Text>
               </Flex>
             </Box>
+            */}
             <Box w="100%">
               <Button
                 variant="primary"
