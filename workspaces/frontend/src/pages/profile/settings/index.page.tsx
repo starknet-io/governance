@@ -165,7 +165,12 @@ export const WalletButtons = ({
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   return (
     <Flex justifyContent="space-between" gap="standard.xs">
-      <Flex direction="column" gap="standard.xl" flex="1" sx={{ "& button": { width: "100%" }}}>
+      <Flex
+        direction="column"
+        gap="standard.xl"
+        flex="1"
+        sx={{ "& button": { width: "100%" } }}
+      >
         {withLabel && (
           <Text
             variant="mediumStrong"
@@ -186,9 +191,9 @@ export const WalletButtons = ({
             try {
               if (typeof window !== "undefined") {
                 if (
-                  getChecksumAddress(
-                    window?.starknet?.account?.address || "",
-                  ) !== getChecksumAddress(starknetWallet?.address || "")
+                  getChecksumAddress(currentStarknetAccount || "") !==
+                    getChecksumAddress(starknetWallet?.address || "") &&
+                  currentStarknetAccount !== ""
                 ) {
                   setIsStatusModalOpen(true);
                   return;
@@ -201,7 +206,12 @@ export const WalletButtons = ({
           }}
         />
       </Flex>
-      <Flex direction="column" gap="standard.xl" flex="1" sx={{ "& button": { width: "100%" }}}>
+      <Flex
+        direction="column"
+        gap="standard.xl"
+        flex="1"
+        sx={{ "& button": { width: "100%" } }}
+      >
         {withLabel && (
           <Text
             variant="mediumStrong"
