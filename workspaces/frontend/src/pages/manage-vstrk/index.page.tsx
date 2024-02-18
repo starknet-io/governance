@@ -42,7 +42,7 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 
-const RECEIVING_AMOUNT_SUBTRACT = 0.00001;
+const RECEIVING_AMOUNT_SUBTRACT = 5;
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
 
@@ -207,10 +207,9 @@ export function Page() {
     useVotingPower({
       address: starknetAddress,
     });
-  const {
-    balance: ethBalance,
-    symbol: ethBalanceSymbol,
-  } = useBalanceData(ethAddress as `0x${string}`);
+  const { balance: ethBalance, symbol: ethBalanceSymbol } = useBalanceData(
+    ethAddress as `0x${string}`,
+  );
   const { balance: starknetBalance, loading: isStarknetBalanceLoading } =
     useStarknetBalance({
       starknetAddress,
@@ -286,6 +285,7 @@ export function Page() {
   };
 
   useEffect(() => {
+    debugger
     if (starknetBalance?.rawBalance && !isUnwrap) {
       setStarkToWrap(parseFloat(starknetBalance?.rawBalance) / 2);
     } else if (vSTRKBalance?.rawBalance && isUnwrap) {
@@ -302,22 +302,35 @@ export function Page() {
     }
     if (isUnwrap) {
       const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
-      setStarkToWrap(Math.floor((val / 100) * rawBalance) - RECEIVING_AMOUNT_SUBTRACT);
+      setStarkToWrap(Math.floor((val / 100) * rawBalance));
     } else {
-      const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
+      const rawBalance = starknetBalance?.rawBalance
+        ? Math.max(
+            parseFloat(starknetBalance?.rawBalance) - RECEIVING_AMOUNT_SUBTRACT,
+            0,
+          )
+        : 0;
       setStarkToWrap(Math.floor((val / 100) * rawBalance));
     }
   };
   const handleStarkToWrapAmount = (amount: number) => {
-    const toSet = Math.min(amount, starknetBalance?.rawBalance);
-    const rawBalance = parseFloat(starknetBalance?.rawBalance) || 0;
-    setStarkToWrap(toSet - RECEIVING_AMOUNT_SUBTRACT);
+    const toSet = Math.min(
+      amount,
+      starknetBalance?.rawBalance - RECEIVING_AMOUNT_SUBTRACT,
+    );
+    const rawBalance = starknetBalance?.rawBalance
+      ? Math.max(
+          parseFloat(starknetBalance?.rawBalance) - RECEIVING_AMOUNT_SUBTRACT,
+          0,
+        )
+      : 0;
+    setStarkToWrap(toSet);
     setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
   };
   const handleStarkToUnWrapAmount = (amount: number) => {
     const toSet = Math.min(amount, vSTRKBalance?.rawBalance);
     const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
-    setStarkToWrap(toSet - RECEIVING_AMOUNT_SUBTRACT);
+    setStarkToWrap(toSet);
     setSliderValue(Math.min(Math.floor((toSet / rawBalance) * 100), 100));
   };
 
@@ -439,7 +452,11 @@ export function Page() {
                   STRK on Ethereum
                 </Text>
                 <Text color="content.accent.default" variant="mediumStrong">
-                  {!ethAddress ? "-" : `${new Intl.NumberFormat().format(Number(ethBalance))} ${ethBalanceSymbol}`}
+                  {!ethAddress
+                    ? "-"
+                    : `${new Intl.NumberFormat().format(
+                        Number(ethBalance),
+                      )} ${ethBalanceSymbol}`}
                 </Text>
               </Box>
             </Box>
@@ -502,7 +519,8 @@ export function Page() {
 
             <Box>
               <Slider
-                onChange={handleSliderChange}
+                sliderValue={sliderValue}
+                setSliderValue={handleSliderChange}
               />
             </Box>
             <Box mb="standard.sm">
