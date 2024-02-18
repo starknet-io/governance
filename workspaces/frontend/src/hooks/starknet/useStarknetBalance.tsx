@@ -54,7 +54,6 @@ export const useStarknetBalance = ({
         const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
         const commifiedBalance = ethers.utils.commify(formattedBalance);
 
-
         setBalance({
           balance: commifiedBalance,
           rawBalance: formattedBalance,

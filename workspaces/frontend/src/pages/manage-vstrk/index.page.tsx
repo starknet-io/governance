@@ -41,6 +41,7 @@ import { useWallets } from "../../hooks/useWallets";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
+import {ethers} from "ethers";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -129,7 +130,7 @@ const WrapModal = ({
                 </Text>
                 <Link
                   isExternal
-                  href={`https://sepolia.starkscan.co/tx/${txHash || ""}`}
+                  href={`https://starkscan.co/tx/${txHash || ""}`}
                   variant="secondary"
                   size="small"
                   color="content.support.default"
@@ -399,9 +400,9 @@ export function Page() {
                   {!isVotingPowerEthereumLoading &&
                   !isVotingPowerStarknetLoading ? (
                     <Text variant="largeStrong" color="content.accent.default">
-                      {new Intl.NumberFormat().format(
-                        parseInt(votingPowerEthereum.toString()) +
-                          parseInt(votingPowerStarknet.toString()),
+                      {ethers.utils.commify(
+                        (votingPowerEthereum || 0) +
+                          (votingPowerStarknet || 0),
                       )}
                     </Text>
                   ) : (

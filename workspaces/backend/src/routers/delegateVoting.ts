@@ -15,7 +15,7 @@ const graphQLClientL2 = new GraphQLClient(
 );
 
 const L1_ENDPOINT =
-  'https://api.studio.thegraph.com/query/23545/sepolia-delegates/version/latest';
+  'https://api.studio.thegraph.com/query/23545/starknet-delegates/version/latest';
 
 export async function saveDelegateVotes(delegateData: any) {
   try {

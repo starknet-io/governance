@@ -262,7 +262,7 @@ export function Page() {
     });
 
   const totalVotingPower = ethers.utils.commify(
-    (votingPower || 0n) + (votingPowerL2 || 0n),
+    (votingPower || 0) + (votingPowerL2 || 0),
   );
 
   const gqlResponseProposalsByUser = trpc.proposals.getProposals.useQuery();

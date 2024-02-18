@@ -14,7 +14,7 @@ export function useVotingPower({
 }) {
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
 
-  const [data, setData] = useState(0n);
+  const [data, setData] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   const { data: spaceObj, loading: spaceLoading } = useQuery(GET_SPACE, {
@@ -31,10 +31,9 @@ export function useVotingPower({
       return;
     }
 
-    const strategiesMetadata = spaceObj.space.strategies_parsed_metadata.map(
-      (strategy) => ({
-        ...strategy.data,
-      }),
+    const strategiesMetadata = processStrategiesMetadata(
+      spaceObj.space.strategies_parsed_metadata,
+      spaceObj.space.strategies_indicies,
     );
     try {
       const vpData = await getVotingPowerCalculation(
@@ -44,18 +43,30 @@ export function useVotingPower({
         address,
         timestamp ? timestamp : null,
       );
-
-      const parsedData = vpData.reduce((acc, strategy) => {
-        const valueWithDecimals =
-          BigInt(strategy.value) / BigInt(10 ** strategy.decimals);
-        acc += valueWithDecimals;
-        return acc;
+      const maxDecimals = Math.max(
+        ...vpData.map((strategy) => strategy.decimals),
+      );
+      const totalRawValue = vpData.reduce((acc, strategy) => {
+        const valueBigInt = BigInt(strategy.value);
+        if (strategy.symbol === "Whitelist") {
+          return acc + valueBigInt;
+        }
+        const scaleFactor = BigInt(10 ** (maxDecimals - strategy.decimals));
+        return acc + valueBigInt * scaleFactor;
       }, 0n);
 
-      setData(parsedData);
+      const scaledValue =
+        parseFloat(totalRawValue.toString()) / Math.pow(10, maxDecimals);
+      if (scaledValue > 1) {
+        setData(Math.round(scaledValue));
+      } else {
+        setData(scaledValue);
+      }
+      setData(scaledValue);
+      console.log(scaledValue);
     } catch (e) {
-      console.warn("Failed to load voting power", e);
-      setData(0n);
+      console.error("Failed to load voting power", e);
+      setData(0);
     } finally {
       setIsLoading(false);
     }
@@ -83,4 +94,33 @@ export function useVotingPower({
     data,
     isLoading: isLoading || spaceLoading,
   };
+}
+
+function processStrategiesMetadata(
+  parsedMetadata: any[],
+  strategiesIndicies?: number[],
+) {
+  if (parsedMetadata.length === 0) return [];
+
+  const maxIndex = Math.max(
+    ...parsedMetadata.map((metadata) => metadata.index),
+  );
+
+  const metadataMap = Object.fromEntries(
+    parsedMetadata.map((metadata) => [
+      metadata.index,
+      {
+        name: metadata.data.name,
+        description: metadata.data.description,
+        decimals: metadata.data.decimals,
+        symbol: metadata.data.symbol,
+        token: metadata.data.token,
+        payload: metadata.data.payload,
+      },
+    ]),
+  );
+
+  strategiesIndicies =
+    strategiesIndicies || Array.from(Array(maxIndex + 1).keys());
+  return strategiesIndicies.map((index) => metadataMap[index]) || [];
 }
