@@ -124,6 +124,7 @@ export const GET_SPACE = gql`
           payload
           token
         }
+        index
       }
       voting_power_validation_strategy_strategies
       voting_power_validation_strategy_strategies_params

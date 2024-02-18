@@ -19,14 +19,7 @@ import {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const l1StarknetDelegationABI = [
-  {
-    stateMutability: 'nonpayable',
-    type: 'constructor',
-    inputs: [
-      { name: '_name', internalType: 'string', type: 'string' },
-      { name: '_symbol', internalType: 'string', type: 'string' },
-    ],
-  },
+  { stateMutability: 'nonpayable', type: 'constructor', inputs: [] },
   {
     type: 'event',
     anonymous: false,
@@ -106,6 +99,66 @@ export const l1StarknetDelegationABI = [
     type: 'event',
     anonymous: false,
     inputs: [
+      { name: 'role', internalType: 'bytes32', type: 'bytes32', indexed: true },
+      {
+        name: 'previousAdminRole',
+        internalType: 'bytes32',
+        type: 'bytes32',
+        indexed: true,
+      },
+      {
+        name: 'newAdminRole',
+        internalType: 'bytes32',
+        type: 'bytes32',
+        indexed: true,
+      },
+    ],
+    name: 'RoleAdminChanged',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'role', internalType: 'bytes32', type: 'bytes32', indexed: true },
+      {
+        name: 'account',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'RoleGranted',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'role', internalType: 'bytes32', type: 'bytes32', indexed: true },
+      {
+        name: 'account',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'RoleRevoked',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
       { name: 'from', internalType: 'address', type: 'address', indexed: true },
       { name: 'to', internalType: 'address', type: 'address', indexed: true },
       {
@@ -121,7 +174,21 @@ export const l1StarknetDelegationABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [],
+    name: 'DEFAULT_ADMIN_ROLE',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
     name: 'DOMAIN_SEPARATOR',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'MINTER_ROLE',
     outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
   },
   {
@@ -150,16 +217,6 @@ export const l1StarknetDelegationABI = [
     inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
     name: 'balanceOf',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'from', internalType: 'address', type: 'address' },
-      { name: 'value', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'burn',
-    outputs: [],
   },
   {
     stateMutability: 'view',
@@ -246,9 +303,36 @@ export const l1StarknetDelegationABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: 'role', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'getRoleAdmin',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
     name: 'getVotes',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'role', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'account', internalType: 'address', type: 'address' },
+    ],
+    name: 'grantRole',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: 'role', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'account', internalType: 'address', type: 'address' },
+    ],
+    name: 'hasRole',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
     stateMutability: 'nonpayable',
@@ -264,11 +348,11 @@ export const l1StarknetDelegationABI = [
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
-      { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'account', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'mint',
-    outputs: [],
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
     stateMutability: 'view',
@@ -305,6 +389,33 @@ export const l1StarknetDelegationABI = [
     ],
     name: 'permit',
     outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'role', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'account', internalType: 'address', type: 'address' },
+    ],
+    name: 'renounceRole',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'role', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'account', internalType: 'address', type: 'address' },
+    ],
+    name: 'revokeRole',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'interfaceId', internalType: 'bytes4', type: 'bytes4' }],
+    name: 'supportsInterface',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
     stateMutability: 'view',
@@ -377,6 +488,36 @@ export function useL1StarknetDelegationRead<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"DEFAULT_ADMIN_ROLE"`.
+ */
+export function useL1StarknetDelegationDefaultAdminRole<
+  TFunctionName extends 'DEFAULT_ADMIN_ROLE',
+  TSelectData = ReadContractResult<
+    typeof l1StarknetDelegationABI,
+    TFunctionName
+  >,
+>(
+  config: Omit<
+    UseContractReadConfig<
+      typeof l1StarknetDelegationABI,
+      TFunctionName,
+      TSelectData
+    >,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: l1StarknetDelegationABI,
+    functionName: 'DEFAULT_ADMIN_ROLE',
+    ...config,
+  } as UseContractReadConfig<
+    typeof l1StarknetDelegationABI,
+    TFunctionName,
+    TSelectData
+  >)
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"DOMAIN_SEPARATOR"`.
  */
 export function useL1StarknetDelegationDomainSeparator<
@@ -398,6 +539,36 @@ export function useL1StarknetDelegationDomainSeparator<
   return useContractRead({
     abi: l1StarknetDelegationABI,
     functionName: 'DOMAIN_SEPARATOR',
+    ...config,
+  } as UseContractReadConfig<
+    typeof l1StarknetDelegationABI,
+    TFunctionName,
+    TSelectData
+  >)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"MINTER_ROLE"`.
+ */
+export function useL1StarknetDelegationMinterRole<
+  TFunctionName extends 'MINTER_ROLE',
+  TSelectData = ReadContractResult<
+    typeof l1StarknetDelegationABI,
+    TFunctionName
+  >,
+>(
+  config: Omit<
+    UseContractReadConfig<
+      typeof l1StarknetDelegationABI,
+      TFunctionName,
+      TSelectData
+    >,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: l1StarknetDelegationABI,
+    functionName: 'MINTER_ROLE',
     ...config,
   } as UseContractReadConfig<
     typeof l1StarknetDelegationABI,
@@ -617,6 +788,36 @@ export function useL1StarknetDelegationGetPastVotes<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"getRoleAdmin"`.
+ */
+export function useL1StarknetDelegationGetRoleAdmin<
+  TFunctionName extends 'getRoleAdmin',
+  TSelectData = ReadContractResult<
+    typeof l1StarknetDelegationABI,
+    TFunctionName
+  >,
+>(
+  config: Omit<
+    UseContractReadConfig<
+      typeof l1StarknetDelegationABI,
+      TFunctionName,
+      TSelectData
+    >,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: l1StarknetDelegationABI,
+    functionName: 'getRoleAdmin',
+    ...config,
+  } as UseContractReadConfig<
+    typeof l1StarknetDelegationABI,
+    TFunctionName,
+    TSelectData
+  >)
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"getVotes"`.
  */
 export function useL1StarknetDelegationGetVotes<
@@ -638,6 +839,36 @@ export function useL1StarknetDelegationGetVotes<
   return useContractRead({
     abi: l1StarknetDelegationABI,
     functionName: 'getVotes',
+    ...config,
+  } as UseContractReadConfig<
+    typeof l1StarknetDelegationABI,
+    TFunctionName,
+    TSelectData
+  >)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"hasRole"`.
+ */
+export function useL1StarknetDelegationHasRole<
+  TFunctionName extends 'hasRole',
+  TSelectData = ReadContractResult<
+    typeof l1StarknetDelegationABI,
+    TFunctionName
+  >,
+>(
+  config: Omit<
+    UseContractReadConfig<
+      typeof l1StarknetDelegationABI,
+      TFunctionName,
+      TSelectData
+    >,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: l1StarknetDelegationABI,
+    functionName: 'hasRole',
     ...config,
   } as UseContractReadConfig<
     typeof l1StarknetDelegationABI,
@@ -728,6 +959,36 @@ export function useL1StarknetDelegationNumCheckpoints<
   return useContractRead({
     abi: l1StarknetDelegationABI,
     functionName: 'numCheckpoints',
+    ...config,
+  } as UseContractReadConfig<
+    typeof l1StarknetDelegationABI,
+    TFunctionName,
+    TSelectData
+  >)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"supportsInterface"`.
+ */
+export function useL1StarknetDelegationSupportsInterface<
+  TFunctionName extends 'supportsInterface',
+  TSelectData = ReadContractResult<
+    typeof l1StarknetDelegationABI,
+    TFunctionName
+  >,
+>(
+  config: Omit<
+    UseContractReadConfig<
+      typeof l1StarknetDelegationABI,
+      TFunctionName,
+      TSelectData
+    >,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: l1StarknetDelegationABI,
+    functionName: 'supportsInterface',
     ...config,
   } as UseContractReadConfig<
     typeof l1StarknetDelegationABI,
@@ -857,33 +1118,6 @@ export function useL1StarknetDelegationApprove<
 }
 
 /**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"burn"`.
- */
-export function useL1StarknetDelegationBurn<
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof l1StarknetDelegationABI,
-          'burn'
-        >['request']['abi'],
-        'burn',
-        TMode
-      > & { functionName?: 'burn' }
-    : UseContractWriteConfig<typeof l1StarknetDelegationABI, 'burn', TMode> & {
-        abi?: never
-        functionName?: 'burn'
-      } = {} as any,
-) {
-  return useContractWrite<typeof l1StarknetDelegationABI, 'burn', TMode>({
-    abi: l1StarknetDelegationABI,
-    functionName: 'burn',
-    ...config,
-  } as any)
-}
-
-/**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"decreaseAllowance"`.
  */
 export function useL1StarknetDelegationDecreaseAllowance<
@@ -985,6 +1219,37 @@ export function useL1StarknetDelegationDelegateBySig<
 }
 
 /**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"grantRole"`.
+ */
+export function useL1StarknetDelegationGrantRole<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof l1StarknetDelegationABI,
+          'grantRole'
+        >['request']['abi'],
+        'grantRole',
+        TMode
+      > & { functionName?: 'grantRole' }
+    : UseContractWriteConfig<
+        typeof l1StarknetDelegationABI,
+        'grantRole',
+        TMode
+      > & {
+        abi?: never
+        functionName?: 'grantRole'
+      } = {} as any,
+) {
+  return useContractWrite<typeof l1StarknetDelegationABI, 'grantRole', TMode>({
+    abi: l1StarknetDelegationABI,
+    functionName: 'grantRole',
+    ...config,
+  } as any)
+}
+
+/**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"increaseAllowance"`.
  */
 export function useL1StarknetDelegationIncreaseAllowance<
@@ -1073,6 +1338,72 @@ export function useL1StarknetDelegationPermit<
   return useContractWrite<typeof l1StarknetDelegationABI, 'permit', TMode>({
     abi: l1StarknetDelegationABI,
     functionName: 'permit',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"renounceRole"`.
+ */
+export function useL1StarknetDelegationRenounceRole<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof l1StarknetDelegationABI,
+          'renounceRole'
+        >['request']['abi'],
+        'renounceRole',
+        TMode
+      > & { functionName?: 'renounceRole' }
+    : UseContractWriteConfig<
+        typeof l1StarknetDelegationABI,
+        'renounceRole',
+        TMode
+      > & {
+        abi?: never
+        functionName?: 'renounceRole'
+      } = {} as any,
+) {
+  return useContractWrite<
+    typeof l1StarknetDelegationABI,
+    'renounceRole',
+    TMode
+  >({
+    abi: l1StarknetDelegationABI,
+    functionName: 'renounceRole',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"revokeRole"`.
+ */
+export function useL1StarknetDelegationRevokeRole<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof l1StarknetDelegationABI,
+          'revokeRole'
+        >['request']['abi'],
+        'revokeRole',
+        TMode
+      > & { functionName?: 'revokeRole' }
+    : UseContractWriteConfig<
+        typeof l1StarknetDelegationABI,
+        'revokeRole',
+        TMode
+      > & {
+        abi?: never
+        functionName?: 'revokeRole'
+      } = {} as any,
+) {
+  return useContractWrite<typeof l1StarknetDelegationABI, 'revokeRole', TMode>({
+    abi: l1StarknetDelegationABI,
+    functionName: 'revokeRole',
     ...config,
   } as any)
 }
@@ -1183,22 +1514,6 @@ export function usePrepareL1StarknetDelegationApprove(
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"burn"`.
- */
-export function usePrepareL1StarknetDelegationBurn(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof l1StarknetDelegationABI, 'burn'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: l1StarknetDelegationABI,
-    functionName: 'burn',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof l1StarknetDelegationABI, 'burn'>)
-}
-
-/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"decreaseAllowance"`.
  */
 export function usePrepareL1StarknetDelegationDecreaseAllowance(
@@ -1262,6 +1577,25 @@ export function usePrepareL1StarknetDelegationDelegateBySig(
 }
 
 /**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"grantRole"`.
+ */
+export function usePrepareL1StarknetDelegationGrantRole(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof l1StarknetDelegationABI, 'grantRole'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: l1StarknetDelegationABI,
+    functionName: 'grantRole',
+    ...config,
+  } as UsePrepareContractWriteConfig<
+    typeof l1StarknetDelegationABI,
+    'grantRole'
+  >)
+}
+
+/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"increaseAllowance"`.
  */
 export function usePrepareL1StarknetDelegationIncreaseAllowance(
@@ -1313,6 +1647,47 @@ export function usePrepareL1StarknetDelegationPermit(
     functionName: 'permit',
     ...config,
   } as UsePrepareContractWriteConfig<typeof l1StarknetDelegationABI, 'permit'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"renounceRole"`.
+ */
+export function usePrepareL1StarknetDelegationRenounceRole(
+  config: Omit<
+    UsePrepareContractWriteConfig<
+      typeof l1StarknetDelegationABI,
+      'renounceRole'
+    >,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: l1StarknetDelegationABI,
+    functionName: 'renounceRole',
+    ...config,
+  } as UsePrepareContractWriteConfig<
+    typeof l1StarknetDelegationABI,
+    'renounceRole'
+  >)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `functionName` set to `"revokeRole"`.
+ */
+export function usePrepareL1StarknetDelegationRevokeRole(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof l1StarknetDelegationABI, 'revokeRole'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: l1StarknetDelegationABI,
+    functionName: 'revokeRole',
+    ...config,
+  } as UsePrepareContractWriteConfig<
+    typeof l1StarknetDelegationABI,
+    'revokeRole'
+  >)
 }
 
 /**
@@ -1426,6 +1801,57 @@ export function useL1StarknetDelegationDelegateVotesChangedEvent(
     typeof l1StarknetDelegationABI,
     'DelegateVotesChanged'
   >)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `eventName` set to `"RoleAdminChanged"`.
+ */
+export function useL1StarknetDelegationRoleAdminChangedEvent(
+  config: Omit<
+    UseContractEventConfig<typeof l1StarknetDelegationABI, 'RoleAdminChanged'>,
+    'abi' | 'eventName'
+  > = {} as any,
+) {
+  return useContractEvent({
+    abi: l1StarknetDelegationABI,
+    eventName: 'RoleAdminChanged',
+    ...config,
+  } as UseContractEventConfig<
+    typeof l1StarknetDelegationABI,
+    'RoleAdminChanged'
+  >)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `eventName` set to `"RoleGranted"`.
+ */
+export function useL1StarknetDelegationRoleGrantedEvent(
+  config: Omit<
+    UseContractEventConfig<typeof l1StarknetDelegationABI, 'RoleGranted'>,
+    'abi' | 'eventName'
+  > = {} as any,
+) {
+  return useContractEvent({
+    abi: l1StarknetDelegationABI,
+    eventName: 'RoleGranted',
+    ...config,
+  } as UseContractEventConfig<typeof l1StarknetDelegationABI, 'RoleGranted'>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link l1StarknetDelegationABI}__ and `eventName` set to `"RoleRevoked"`.
+ */
+export function useL1StarknetDelegationRoleRevokedEvent(
+  config: Omit<
+    UseContractEventConfig<typeof l1StarknetDelegationABI, 'RoleRevoked'>,
+    'abi' | 'eventName'
+  > = {} as any,
+) {
+  return useContractEvent({
+    abi: l1StarknetDelegationABI,
+    eventName: 'RoleRevoked',
+    ...config,
+  } as UseContractEventConfig<typeof l1StarknetDelegationABI, 'RoleRevoked'>)
 }
 
 /**

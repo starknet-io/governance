@@ -71,7 +71,6 @@ export const DelegateModal = ({
   isLayer2Delegation,
   handleWalletSelect,
 }: Props) => {
-  console.log(receiverDataL2);
   const [customAddress, setCustomAddress] = useState("");
   const l1Delegation =
     isLayer1Delegation || (!isLayer1Delegation && !isLayer2Delegation);

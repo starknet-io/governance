@@ -405,7 +405,6 @@ const VotingProposalComments = ({
               <Box onClick={() => setHelpMessage("connectWalletMessage")}>
                 <CommentInput
                   onSend={async (comment) => {
-                    console.log(comment);
                   }}
                 />
               </Box>

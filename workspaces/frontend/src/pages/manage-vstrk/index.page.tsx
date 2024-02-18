@@ -41,6 +41,7 @@ import { useWallets } from "../../hooks/useWallets";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
+import { ethers } from "ethers";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -129,7 +130,7 @@ const WrapModal = ({
                 </Text>
                 <Link
                   isExternal
-                  href={`https://sepolia.starkscan.co/tx/${txHash || ""}`}
+                  href={`https://starkscan.co/tx/${txHash || ""}`}
                   variant="secondary"
                   size="small"
                   color="content.support.default"
@@ -272,7 +273,7 @@ export function Page() {
     } else {
       return value.toFixed(1); // 1 decimal place for larger values
     }
-  }
+  };
 
   useEffect(() => {
     if (starknetBalance?.rawBalance && !isUnwrap) {
@@ -291,7 +292,7 @@ export function Page() {
     }
     if (isUnwrap) {
       const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
-      const toSet = (val / 100) * rawBalance
+      const toSet = (val / 100) * rawBalance;
       setStarkToWrap(formatNumber(toSet, rawBalance));
     } else {
       const rawBalance = starknetBalance?.rawBalance
@@ -300,7 +301,7 @@ export function Page() {
             0,
           )
         : 0;
-      const toSet = (val / 100) * rawBalance
+      const toSet = (val / 100) * rawBalance;
       setStarkToWrap(formatNumber(toSet, rawBalance));
     }
   };
@@ -353,6 +354,14 @@ export function Page() {
     }
   };
 
+  const totalVotingPower = parseFloat(
+    (
+      (ethAddress ? votingPowerEthereum || 0 : 0) +
+      (starknetAddress ? votingPowerStarknet || 0 : 0)
+    ).toFixed(4),
+  );
+  const totalValue = ethers.utils.commify(totalVotingPower);
+
   return (
     <FormLayout>
       <Box width="100%">
@@ -399,10 +408,7 @@ export function Page() {
                   {!isVotingPowerEthereumLoading &&
                   !isVotingPowerStarknetLoading ? (
                     <Text variant="largeStrong" color="content.accent.default">
-                      {new Intl.NumberFormat().format(
-                        parseInt(votingPowerEthereum.toString()) +
-                          parseInt(votingPowerStarknet.toString()),
-                      )}
+                      {totalValue}
                     </Text>
                   ) : (
                     <Skeleton height="16px" width="50%" borderRadius="md" />

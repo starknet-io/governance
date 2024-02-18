@@ -103,12 +103,6 @@ const WalletDisplay = ({
         <Icon as={icon} />
         <Text variant="medium">{truncateAddress(wallet.address)}</Text>
         <Icon as={CheckIcon} />
-        <IconButton
-          variant="ghost"
-          aria-label={"unlink"}
-          icon={<XIcon />}
-          onClick={() => handleUnlinkWallet(wallet?.id)}
-        />
       </Flex>
     )
   ) : (

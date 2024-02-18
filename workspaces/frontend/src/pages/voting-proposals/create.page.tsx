@@ -153,13 +153,9 @@ export function Page() {
         }
         try {
           const result = await waitForTransaction(transaction.transaction_hash)
-          console.log(result)
-          console.log(receipt)
-          console.log(transaction)
           setIsSubmitting(false);
           setError("");
           await refetchProposals()
-          console.log(allProposals)
           navigate("/voting-proposals")
           /*
           await createProposal
