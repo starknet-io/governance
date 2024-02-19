@@ -24,6 +24,7 @@ type UserSummaryProps = {
   address?: string | null;
   ethAddress?: string | null;
   avatarString?: string | null;
+  imgUrl?: string | null;
   balance?: string | null;
   text?: string | null;
   symbol?: string;
@@ -43,6 +44,8 @@ const UserSummary = ({
   symbol = "STRK",
   isSelected = false,
   sx,
+  avatarString,
+  imgUrl,
   onClick,
 }: UserSummaryProps) => {
   return (
@@ -76,6 +79,7 @@ const UserSummary = ({
               ensName={ethAddress}
               address={shortAddress(address)}
               avatarString={address}
+              imgUrl={imgUrl}
               text={text}
             ></ProfileSummaryCard.Profile>
           </ProfileSummaryCard.Root>
