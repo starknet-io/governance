@@ -21,6 +21,7 @@ import { useWallets } from "../../hooks/useWallets";
 import { getChecksumAddress } from "starknet";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 import { useBalanceData } from "src/utils/hooks";
+import { formatVotingPower } from "../../utils/helpers";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -118,8 +119,10 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
           onToggleExpand={onVotingPowerModalOpen}
-          balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
-          balanceEth={`${new Intl.NumberFormat().format(
+          balanceStark={`${formatVotingPower(
+            starknetBalance?.balance,
+          )} ${starknetBalance?.symbol}`}
+          balanceEth={`${formatVotingPower(
             ethBalance?.balance,
           )} ${ethBalance?.symbol}`}
         />
@@ -254,7 +257,10 @@ const UserProfileMenuComponent = (
         delegatedToL2Name={delegatedToL2Name}
         hasEthWallet={!!ethWallet?.id}
         hasStarkWallet={!!starknetWallet?.id}
-        balanceEth={`${new Intl.NumberFormat().format(
+        balanceStark={`${formatVotingPower(
+          starknetBalance?.balance,
+        )} ${starknetBalance?.symbol}`}
+        balanceEth={`${formatVotingPower(
           ethBalance?.balance,
         )} ${ethBalance?.symbol}`}
         isBalanceEthFetched={ethBalance?.isFetched}
@@ -262,8 +268,7 @@ const UserProfileMenuComponent = (
         delegatedToL2Loading={delegatedToL2Loading}
         isVotingPowerEthLoading={isVotingPowerEthLoading}
         isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
-        balanceVStark={`${vSTRKBalance?.balance} ${vSTRKBalance?.symbol}`}
-        balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
+        balanceVStark={`${formatVotingPower(vSTRKBalance?.balance)} ${vSTRKBalance?.symbol}`}
         isvSTRKBalanceLoading={isvSTRKBalanceLoading}
         isStarknetBalanceLoading={isStarknetBalanceLoading}
         votingPowerEth={votingPowerEth}

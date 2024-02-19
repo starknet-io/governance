@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { InfoCircleIcon } from "src/Icons";
 import { Tooltip } from "../Tooltip";
+import {formatVotingPower} from "@yukilabs/governance-frontend/src/utils/helpers";
 
 type Props = {
   showBreakdown?: boolean;
@@ -42,6 +43,8 @@ export const VotingPowerBreakdown = ({
       (hasStarkWallet ? votingPowerStark || 0 : 0)
     ).toFixed(5),
   );
+  const votingPowerL1 = formatVotingPower(votingPowerEth)
+  const votingPowerL2 = formatVotingPower(votingPowerStark)
   const totalValue = ethers.utils.commify(totalVotingPower);
   return (
     <Box border="1px solid" borderColor="border.dividers" borderRadius="4px">
@@ -97,7 +100,7 @@ export const VotingPowerBreakdown = ({
                   </Text>
                   {!isVotingPowerStarknetLoading ? (
                     <Text color="content.accent.default" variant="mediumStrong">
-                      {votingPowerStark} vSTRK
+                      {votingPowerL1} vSTRK
                       <Tooltip label="Tooltip">
                         <Icon
                           color="#1A1523"
@@ -131,7 +134,7 @@ export const VotingPowerBreakdown = ({
                   </Text>
                   {!isVotingPowerEthLoading ? (
                     <Text color="content.accent.default" variant="mediumStrong">
-                      {votingPowerEth} STRK
+                      {votingPowerL2} STRK
                       <Tooltip label="Tooltip">
                         <Icon
                           color="#1A1523"

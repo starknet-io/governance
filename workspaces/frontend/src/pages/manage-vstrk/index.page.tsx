@@ -31,7 +31,7 @@ import {
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import { useBalanceData } from "../../utils/hooks";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
-import { findMatchingWallet } from "../../utils/helpers";
+import { findMatchingWallet, formatVotingPower } from "../../utils/helpers";
 import { WalletChainKey } from "../../utils/constants";
 import { GasIcon, useUserWallets } from "@dynamic-labs/sdk-react-core";
 import TabButton from "../../components/TabButton";
@@ -370,11 +370,9 @@ export function Page() {
     }
   };
 
-  const totalVotingPower = parseFloat(
-    (
-      (ethAddress ? votingPowerEthereum || 0 : 0) +
-      (starknetAddress ? votingPowerStarknet || 0 : 0)
-    ).toFixed(4),
+  const totalVotingPower = formatVotingPower(
+    (ethAddress ? votingPowerEthereum || 0 : 0) +
+      (starknetAddress ? votingPowerStarknet || 0 : 0),
   );
   const totalValue = ethers.utils.commify(totalVotingPower);
 
@@ -439,7 +437,7 @@ export function Page() {
                 </Text>
                 {!isvSTRKBalanceLoading ? (
                   <Text color="content.accent.default" variant="mediumStrong">
-                    {vSTRKBalance?.balance || 0}{" "}
+                    {formatVotingPower(vSTRKBalance?.balance || 0)}{" "}
                     {vSTRKBalance?.symbol || "STRK"}
                   </Text>
                 ) : (
@@ -452,7 +450,7 @@ export function Page() {
                 </Text>
                 {!isStarknetBalanceLoading ? (
                   <Text color="content.accent.default" variant="mediumStrong">
-                    {starknetBalance?.balance || 0}{" "}
+                    {formatVotingPower(starknetBalance?.balance || 0)}{" "}
                     {starknetBalance?.symbol || "STRK"}
                   </Text>
                 ) : (
@@ -467,9 +465,7 @@ export function Page() {
                 <Text color="content.accent.default" variant="mediumStrong">
                   {!ethAddress
                     ? "-"
-                    : `${new Intl.NumberFormat().format(
-                        Number(ethBalance),
-                      )} ${ethBalanceSymbol}`}
+                    : `${formatVotingPower(ethBalance)} ${ethBalanceSymbol}`}
                 </Text>
               </Box>
             </Box>

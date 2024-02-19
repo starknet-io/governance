@@ -34,7 +34,7 @@ import {
   useL1StarknetDelegationDelegates,
 } from "../../../wagmi/L1StarknetDelegation";
 import { useBalanceData } from "src/utils/hooks";
-import { hasPermission } from "src/utils/helpers";
+import { formatVotingPower, hasPermission } from "src/utils/helpers";
 import { truncateAddress } from "@yukilabs/governance-components/src/utils";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import * as ProfilePageLayout from "../../../components/ProfilePageLayout/ProfilePageLayout";
@@ -261,11 +261,15 @@ export function Page() {
       address: starknetAddress,
     });
 
-  const totalVotingPower = parseFloat(
-    ((votingPower || 0) + (votingPowerL2 || 0)).toFixed(5),
+  const totalVotingPower = formatVotingPower(
+    (votingPower || 0) + (votingPowerL2 || 0),
   );
+  const formattedVotingPowerL1 = formatVotingPower(votingPower);
+  const formattedVotingPowerL2 = formatVotingPower(votingPowerL2);
+  const commifiedVotingPowerL1 = ethers.utils.commify(formattedVotingPowerL1);
+  const commifiedVotingPowerL2 = ethers.utils.commify(formattedVotingPowerL2);
   const totalValue = ethers.utils.commify(totalVotingPower);
-  
+
   const gqlResponseProposalsByUser = trpc.proposals.getProposals.useQuery();
 
   const proposals = gqlResponseProposalsByUser?.data || [];
@@ -985,7 +989,7 @@ export function Page() {
               isTruncated={!!delegate?.author?.starknetAddress}
               label="Starknet address"
               value={delegate?.author?.starknetAddress || "None"}
-              additionalValue={votingPowerL2?.toString() || "0"}
+              additionalValue={commifiedVotingPowerL2 || "0"}
               isExtendable={true}
             />
             <SummaryItems.Item
@@ -994,7 +998,7 @@ export function Page() {
               isTruncated={!!ethAddress}
               label="Ethereum address"
               value={ethAddress || "None"}
-              additionalValue={votingPower?.toString() || "0"}
+              additionalValue={commifiedVotingPowerL1 || "0"}
               isExtendable={true}
             />
             <SummaryItems.Item
