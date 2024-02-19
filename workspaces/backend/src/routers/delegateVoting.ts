@@ -281,25 +281,25 @@ export async function delegateVoting() {
 
     for (const localDelegate of localDelegatesBatch) {
       const l1Delegate = delegatesSnapshotL1.find((d) => {
-        return d.id.toLowerCase() === localDelegate.ethAddress.toLowerCase();
+        return d?.id?.toLowerCase() === localDelegate?.ethAddress?.toLowerCase();
       });
       const l2Delegate = delegatesSnapshotL2.find(
         (d) =>
-          getChecksumAddress(d.id || '') ===
-          getChecksumAddress(localDelegate.starknetAddress || ''),
+          getChecksumAddress(d?.id || '') ===
+          getChecksumAddress(localDelegate?.starknetAddress || ''),
       );
       const whitelistDelegateL1 =
         delegatesWhitelist.find((d: any) => {
           return (
-            d.address.toLowerCase() === localDelegate?.ethAddress.toLowerCase()
+            d?.address?.toLowerCase() === localDelegate?.ethAddress?.toLowerCase()
           );
         })?.delegatedVotes || 0;
 
       const whitelistDelegateL2 =
         delegatesWhitelist.find(
           (d: any) =>
-            getChecksumAddress(d.address || '') ===
-            getChecksumAddress(localDelegate.starknetAddress || ''),
+            getChecksumAddress(d?.address || '') ===
+            getChecksumAddress(localDelegate?.starknetAddress || ''),
         )?.delegatedVotes || 0;
 
       const votingPowerL1 =
