@@ -51,7 +51,7 @@ export const useStarknetBalance = ({
           provider,
         );
         const rawBalance = await contract.balance_of(starknetAddress);
-        const decimals = await contract.decimals();
+        const decimals = 18;
         const symbol = await contract.symbol();
         const hex = BigNumber.from(symbol).toHexString();
         const symbolString = hexToString(hex as `0x${string}`);
