@@ -294,9 +294,17 @@ export function Page() {
 
   useEffect(() => {
     if (starknetBalance?.rawBalance && !isUnwrap) {
-      setStarkToWrap(parseFloat(starknetBalance?.rawBalance) / 2);
+      const toSet =
+        starknetBalance?.rawBalance < 0.1
+          ? parseFloat(starknetBalance?.rawBalance / 2).toFixed(5)
+          : parseFloat(starknetBalance?.rawBalance / 2).toFixed(2);
+      setStarkToWrap(toSet);
     } else if (vSTRKBalance?.rawBalance && isUnwrap) {
-      setStarkToWrap(parseFloat(vSTRKBalance?.rawBalance) / 2);
+      const toSet =
+        starknetBalance?.rawBalance < 0.1
+          ? parseFloat(vSTRKBalance?.rawBalance / 2).toFixed(5)
+          : parseFloat(vSTRKBalance?.rawBalance / 2).toFixed(2);
+      setStarkToWrap(toSet);
     }
     setSliderValue(50);
   }, [starknetBalance?.rawBalance, vSTRKBalance?.rawBalance, isUnwrap]);
