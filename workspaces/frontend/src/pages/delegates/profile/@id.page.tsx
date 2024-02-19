@@ -160,9 +160,7 @@ export function Page() {
     if (isDelegationLoading && dynamicUser && isL1Delegation) {
       setIsStatusModalOpen(true);
       setStatusTitle(
-        hasUserDelegatedTokensToThisDelegate
-          ? "Undelegating your votes"
-          : "Delegating your votes",
+        isUndelegation ? "Undelegating your votes" : "Delegating your votes",
       );
       setStatusDescription("");
     }
@@ -229,12 +227,13 @@ export function Page() {
     !delegateOwnProfileL2;
 
   const hasDelegatedOnL1 =
-    ethWallet?.id &&
-    ethAddress &&
+    ethWallet?.address &&
     delegationDataL1 &&
     delegationDataL1.length &&
-    delegationDataL1.toLowerCase() ===
-      delegate?.author?.address?.toLowerCase() &&
+    (delegationDataL1.toLowerCase() ===
+      delegate?.author?.address?.toLowerCase() ||
+      delegationDataL1.toLowerCase() ===
+        delegate?.author?.ethAddress?.toLowerCase()) &&
     delegationDataL1 !== "0x0000000000000000000000000000000000000000" &&
     !delegateOwnProfileL1;
 
@@ -453,6 +452,7 @@ export function Page() {
   }) => {
     setIsCustomError(false);
     setIsWrongAccount(false);
+    setIsUndelegation(false);
     if (
       !ethWallet?.address &&
       starknetWallet?.address &&
@@ -538,6 +538,7 @@ export function Page() {
           });
       }
     } else {
+      setIsUndelegation(false);
       setIsOpen(true);
     }
   };
@@ -575,14 +576,14 @@ export function Page() {
         receiverData={{
           ...receiverData,
           vp: votingPower,
-          avatarString: delegate?.author?.profileImage ||
-            delegate?.author?.ensAvatar,
+          avatarString:
+            delegate?.author?.profileImage || delegate?.author?.ensAvatar,
         }}
         receiverDataL2={{
           ...receiverDataL2?.balance,
           vp: votingPowerL2,
-          avatarString: delegate?.author?.profileImage ||
-            delegate?.author?.ensAvatar,
+          avatarString:
+            delegate?.author?.profileImage || delegate?.author?.ensAvatar,
         }}
         activeAddress={primaryWallet?.address}
         delegateTokens={() => {
@@ -802,7 +803,13 @@ export function Page() {
               mt={{ base: "standard.2xl" }}
               mb="0"
               width={{ base: "100%" }}
-              onClick={() => handleDelegation({ layer: null })}
+              onClick={() =>
+                handleDelegation({
+                  layer: null,
+                  isDelegation: true,
+                  isUndelegation: false,
+                })
+              }
             >
               Delegate
             </Button>
