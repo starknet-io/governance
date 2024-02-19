@@ -36,12 +36,14 @@ type Props = {
     ethAddress: string | undefined | null;
     symbol: string;
     vp?: number | undefined | null;
+    avatarString?: string;
   };
   receiverDataL2?: {
     address: string | undefined | null;
     balance: string | undefined;
     symbol: string;
     vp?: number | undefined | null;
+    avatarString?: string;
   };
   onClose: () => void;
   delegateTokens: () => void;
@@ -181,6 +183,7 @@ export const DelegateModal = ({
                   symbol={receiverData.symbol}
                   isReceiver
                   text={"To"}
+                  imgUrl={receiverData?.avatarString?.toString()}
                 />
               </>
             ) : null}
@@ -200,6 +203,7 @@ export const DelegateModal = ({
                   symbol={receiverDataL2.symbol}
                   isReceiver
                   text={"To"}
+                  avatarString={receiverDataL2?.avatarString?.toString()}
                 />
               </>
             ) : null}

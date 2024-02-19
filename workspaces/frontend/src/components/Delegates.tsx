@@ -308,11 +308,15 @@ export function Delegates({
     sortBy,
   });
 
+  const [clickedDelegate, setClickedDelegate] = useState<any>();
+
   const addVotingPowerToReceiver = () => {
     if (votingPower) {
       return {
         ...receiverData,
         vp: votingPower,
+        avatarString: clickedDelegate?.author?.profileImage ||
+          clickedDelegate?.author?.ensAvatar
       };
     }
     return receiverData;
@@ -323,6 +327,8 @@ export function Delegates({
       return {
         ...receiverDataL2?.balance,
         vp: l2VotingPower,
+        avatarString: clickedDelegate?.author?.profileImage ||
+          clickedDelegate?.author?.ensAvatar
       };
     }
     return receiverDataL2?.balance;
@@ -490,6 +496,7 @@ export function Delegates({
           setIsOpen(false);
           setIsSelfDelegation(false);
           setInputAddress("");
+          setClickedDelegate(null);
         }}
         isSelfDelegation={isSelfDelegation}
         isLayer2Delegation={primaryWallet?.id === starknetWallet?.id}
@@ -734,6 +741,7 @@ export function Delegates({
                     <DelegateCard
                       status={delegate.status}
                       onDelegateClick={() => {
+                        setClickedDelegate(delegate);
                         if (user) {
                           if (
                             delegate?.author?.address &&
