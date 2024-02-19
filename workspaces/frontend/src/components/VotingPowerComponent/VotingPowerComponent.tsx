@@ -54,9 +54,9 @@ const VotingPowerComponent = ({
             </>
           )}
           {!isCloseToZero && hasTooltip && (
-            <Tooltip label="Another label">
+            <>
               {votingPower} {unit}
-            </Tooltip>
+            </>
           )}
           {/* {isCloseToZero && (
             <Tooltip label={`${votingPower} ${unit}`}>
