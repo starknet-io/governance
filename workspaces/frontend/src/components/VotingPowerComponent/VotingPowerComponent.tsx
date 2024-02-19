@@ -8,6 +8,7 @@ const VotingPowerComponent = ({
   unit = "STRK",
   isLarge,
   isLoading,
+  primary,
   isSmall,
 }: {
   votingPower: any;
@@ -15,6 +16,7 @@ const VotingPowerComponent = ({
   isLoading?: boolean;
   isLarge?: boolean;
   isSmall?: boolean;
+  primary?: boolean;
 }) => {
   const isCloseToZero = votingPower < 0.1 && votingPower > 0;
 
@@ -29,7 +31,11 @@ const VotingPowerComponent = ({
       ) : (
         <Text
           variant={isSmall ? "small" : isLarge ? "largeStrong" : "mediumStrong"}
-          color={isSmall ? "content.support.default" : "content.accent.default"}
+          color={
+            isSmall && !primary
+              ? "content.support.default"
+              : "content.accent.default"
+          }
         >
           {isCloseToZero ? "~0" : votingPower} {unit}
           {isCloseToZero && (

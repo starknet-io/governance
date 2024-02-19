@@ -253,18 +253,14 @@ const UserProfileMenuComponent = (
         delegatedToL2Name={delegatedToL2Name}
         hasEthWallet={!!ethWallet?.id}
         hasStarkWallet={!!starknetWallet?.id}
-        balanceStark={`${formatVotingPower(
-          starknetBalance?.balance,
-        )} ${starknetBalance?.symbol}`}
-        balanceEth={`${formatVotingPower(
-          ethBalance?.balance,
-        )} ${ethBalance?.symbol}`}
+        balanceStark={starknetBalance}
+        balanceEth={ethBalance}
         isBalanceEthFetched={ethBalance?.isFetched}
         delegatedToL1Loading={delegatedToL1Loading}
         delegatedToL2Loading={delegatedToL2Loading}
         isVotingPowerEthLoading={isVotingPowerEthLoading}
         isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
-        balanceVStark={`${formatVotingPower(vSTRKBalance?.balance)} ${vSTRKBalance?.symbol}`}
+        balanceVStark={vSTRKBalance}
         isvSTRKBalanceLoading={isvSTRKBalanceLoading}
         isStarknetBalanceLoading={isStarknetBalanceLoading}
         votingPowerEth={votingPowerEth}
