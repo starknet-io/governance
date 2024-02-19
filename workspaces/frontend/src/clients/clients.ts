@@ -1,15 +1,15 @@
 import {
   clients,
-  starknetSepolia,
+  starknetMainnet,
 } from "@snapshot-labs/sx";
 
 import { RpcProvider, constants } from "starknet";
 
-const ethUrl = "https://rpcs.snapshotx.xyz/11155111";
+const ethUrl = "https://rpcs.snapshotx.xyz/1";
 const manaUrl = "https://mana.pizza";
 
 export const starkProvider = new RpcProvider({
-  nodeUrl: `https://starknet-sepolia.infura.io/v3/${
+  nodeUrl: `https://starknet-mainnet.infura.io/v3/${
     import.meta.env.VITE_APP_INFURA_API_KEY
   }`,
 });
@@ -18,7 +18,7 @@ export const clientConfig = {
   starkProvider,
   manaUrl,
   ethUrl,
-  networkConfig: starknetSepolia,
+  networkConfig: starknetMainnet,
 };
 
 export const starknetEvmClient = new clients.StarknetTx(clientConfig);

@@ -239,7 +239,7 @@ const UserProfileMenuComponent = (
   const l2DelegatedToSelf = checkIfL2DelegatedToSelf();
   const l1DelegatedToSelf = checkIfL1DelegatedToSelf();
 
-  console.log(l1DelegatedToSelf);
+  console.log();
 
   return (
     <div ref={ref}>

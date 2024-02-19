@@ -36,10 +36,13 @@ export const VotingPowerBreakdown = ({
   balanceStark = 0,
   balanceEth = 0,
 }: Props) => {
-  const totalValue = ethers.utils.commify(
-    (hasEthWallet ? votingPowerEth : 0n) +
-      (hasStarkWallet ? votingPowerStark : 0n),
+  const totalVotingPower = parseFloat(
+    (
+      (hasEthWallet ? votingPowerEth || 0 : 0) +
+      (hasStarkWallet ? votingPowerStark || 0 : 0)
+    ).toFixed(5),
   );
+  const totalValue = ethers.utils.commify(totalVotingPower);
   return (
     <Box border="1px solid" borderColor="border.dividers" borderRadius="4px">
       <Box
@@ -94,7 +97,7 @@ export const VotingPowerBreakdown = ({
                   </Text>
                   {!isVotingPowerStarknetLoading ? (
                     <Text color="content.accent.default" variant="mediumStrong">
-                      {new Intl.NumberFormat().format(votingPowerStark)} vSTRK
+                      {votingPowerStark} vSTRK
                       <Tooltip label="Tooltip">
                         <Icon
                           color="#1A1523"
@@ -128,7 +131,7 @@ export const VotingPowerBreakdown = ({
                   </Text>
                   {!isVotingPowerEthLoading ? (
                     <Text color="content.accent.default" variant="mediumStrong">
-                      {new Intl.NumberFormat().format(votingPowerEth)} STRK
+                      {votingPowerEth} STRK
                       <Tooltip label="Tooltip">
                         <Icon
                           color="#1A1523"

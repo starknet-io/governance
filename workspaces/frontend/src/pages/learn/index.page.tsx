@@ -71,7 +71,6 @@ const exampleResponse = [
 ];
 const slug = "voting_proposals";
 const result = findPageBySlug(exampleResponse, slug);
-console.log(result); // Logs the object with slug 'voting_proposals', or null if not found
 
 export function Page() {
   const [selectedPage, setSelectedPage] = useState<PageWithChildren | null>(

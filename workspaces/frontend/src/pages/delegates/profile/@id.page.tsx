@@ -261,10 +261,11 @@ export function Page() {
       address: starknetAddress,
     });
 
-  const totalVotingPower = ethers.utils.commify(
-    (votingPower || 0n) + (votingPowerL2 || 0n),
+  const totalVotingPower = parseFloat(
+    ((votingPower || 0) + (votingPowerL2 || 0)).toFixed(5),
   );
-
+  const totalValue = ethers.utils.commify(totalVotingPower);
+  
   const gqlResponseProposalsByUser = trpc.proposals.getProposals.useQuery();
 
   const proposals = gqlResponseProposalsByUser?.data || [];
@@ -875,7 +876,7 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingVotingPower || isLoadingVotingPowerL2}
               label="Voting Power"
-              value={totalVotingPower || "0"}
+              value={totalValue || "0"}
             />
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}

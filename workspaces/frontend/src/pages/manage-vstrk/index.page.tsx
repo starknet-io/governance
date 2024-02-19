@@ -12,6 +12,7 @@ import {
   Modal,
   Link,
   Skeleton,
+  Banner,
 } from "@yukilabs/governance-components";
 import { navigate } from "vite-plugin-ssr/client/router";
 import {
@@ -41,6 +42,7 @@ import { useWallets } from "../../hooks/useWallets";
 import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
+import { ethers } from "ethers";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -129,7 +131,7 @@ const WrapModal = ({
                 </Text>
                 <Link
                   isExternal
-                  href={`https://sepolia.starkscan.co/tx/${txHash || ""}`}
+                  href={`https://starkscan.co/tx/${txHash || ""}`}
                   variant="secondary"
                   size="small"
                   color="content.support.default"
@@ -143,15 +145,30 @@ const WrapModal = ({
       </Flex>
       {isSuccess ? (
         <Modal.Footer>
-          <Button
-            type="button"
-            variant="primary"
-            size="standard"
-            onClick={onClose}
-            width="100%"
-          >
-            Close
-          </Button>
+          {!isUnwrap ? (
+            <Button
+              type="button"
+              variant="primary"
+              size="standard"
+              mb="standard.sm"
+              onClick={() => {
+                navigate("/delegates");
+              }}
+              width="100%"
+            >
+              Continue to Delegate
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="primary"
+              size="standard"
+              onClick={onClose}
+              width="100%"
+            >
+              Close
+            </Button>
+          )}
         </Modal.Footer>
       ) : null}
     </Modal>
@@ -272,7 +289,7 @@ export function Page() {
     } else {
       return value.toFixed(1); // 1 decimal place for larger values
     }
-  }
+  };
 
   useEffect(() => {
     if (starknetBalance?.rawBalance && !isUnwrap) {
@@ -291,7 +308,7 @@ export function Page() {
     }
     if (isUnwrap) {
       const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
-      const toSet = (val / 100) * rawBalance
+      const toSet = (val / 100) * rawBalance;
       setStarkToWrap(formatNumber(toSet, rawBalance));
     } else {
       const rawBalance = starknetBalance?.rawBalance
@@ -300,7 +317,7 @@ export function Page() {
             0,
           )
         : 0;
-      const toSet = (val / 100) * rawBalance
+      const toSet = (val / 100) * rawBalance;
       setStarkToWrap(formatNumber(toSet, rawBalance));
     }
   };
@@ -353,6 +370,14 @@ export function Page() {
     }
   };
 
+  const totalVotingPower = parseFloat(
+    (
+      (ethAddress ? votingPowerEthereum || 0 : 0) +
+      (starknetAddress ? votingPowerStarknet || 0 : 0)
+    ).toFixed(4),
+  );
+  const totalValue = ethers.utils.commify(totalVotingPower);
+
   return (
     <FormLayout>
       <Box width="100%">
@@ -399,10 +424,7 @@ export function Page() {
                   {!isVotingPowerEthereumLoading &&
                   !isVotingPowerStarknetLoading ? (
                     <Text variant="largeStrong" color="content.accent.default">
-                      {new Intl.NumberFormat().format(
-                        parseInt(votingPowerEthereum.toString()) +
-                          parseInt(votingPowerStarknet.toString()),
-                      )}
+                      {totalValue}
                     </Text>
                   ) : (
                     <Skeleton height="16px" width="50%" borderRadius="md" />
@@ -553,6 +575,17 @@ export function Page() {
               </Flex>
             </Box>
             */}
+            {sliderValue === 100 && !isUnwrap && starknetWallet?.address ? (
+              <Box>
+                <Banner
+                  mb="standard.md"
+                  label={
+                    `You will retain ${RECEIVING_AMOUNT_SUBTRACT} STRK from your max amount for future\n` +
+                    `transaction gas costs.`
+                  }
+                />
+              </Box>
+            ) : null}
             <Box w="100%">
               <Button
                 variant="primary"
