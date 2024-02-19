@@ -420,14 +420,15 @@ export function Page() {
                   <Text variant="mediumStrong" color="content.default.default">
                     Total voting power
                   </Text>
-                  {!isVotingPowerEthereumLoading &&
-                  !isVotingPowerStarknetLoading ? (
-                    <Text variant="largeStrong" color="content.accent.default">
-                      {totalValue}
-                    </Text>
-                  ) : (
-                    <Skeleton height="16px" width="50%" borderRadius="md" />
-                  )}
+                  <VotingPowerComponent
+                    votingPower={totalValue}
+                    unit=""
+                    isLarge
+                    isLoading={
+                      isVotingPowerEthereumLoading ||
+                      isVotingPowerStarknetLoading
+                    }
+                  />
                 </Box>
               </Flex>
             </Box>

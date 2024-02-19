@@ -119,12 +119,8 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
           onToggleExpand={onVotingPowerModalOpen}
-          balanceStark={`${formatVotingPower(
-            starknetBalance?.balance,
-          )} ${starknetBalance?.symbol}`}
-          balanceEth={`${formatVotingPower(
-            ethBalance?.balance,
-          )} ${ethBalance?.symbol}`}
+          balanceStark={starknetBalance}
+          balanceEth={ethBalance}
         />
         <Flex direction="column">
           <Button
