@@ -144,12 +144,14 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   const { checkUserBalance } = useCheckBalance(ethWallet?.address as `0x${string}`);
 
   useEffect(() => {
-    checkUserBalance({
-      onFail: () => {
-        navigate("/delegates");
-      },
-    });
-  }, [ethWallet?.address]);
+    if (mode === "create") {
+      checkUserBalance({
+        onFail: () => {
+          navigate("/delegates");
+        },
+      });
+    }
+  }, [ethWallet?.address, mode]);
 
   useEffect(() => {
     if (mode === "edit" && isFetchingDelegateSuccess) {
