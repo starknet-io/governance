@@ -164,7 +164,7 @@ export const AvatarWithText = ({
           width={delegateProfile ? "100%" : "calc(100% - 60px)"}
         >
           <Box maxWidth={status && !delegateProfile ? "calc(100% - 80px)" : "calc(100% - 40px)"} width="100%" {...(delegateProfile ? { order: "2" } : {})}>
-            <Box height="24px">{isTruncated ? <Tooltip label={headerText}>{renderHeaderText(status)}</Tooltip> : renderHeaderText(status)}</Box>
+            <Box height="24px">{isTruncated ? <Tooltip shouldWrapChildren={false} label={headerText}>{renderHeaderText(status)}</Tooltip> : renderHeaderText(status)}</Box>
             {!delegateProfile ? <Box mt="-4px">{renderSubheaderText()}</Box> : null}
           </Box>
           {status ? <Badge
