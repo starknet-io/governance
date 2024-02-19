@@ -99,7 +99,7 @@ export const VotingPowerBreakdown = ({
                 <Box>
                   <Text variant="small" color="content.support.default">
                     Starknet voting power{" "}
-                    <Tooltip label="vSTRK is the voting token for Starknet.">
+                    <Tooltip label="Voting power delegated to you by yourself and others on Starknet.">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>
@@ -127,7 +127,7 @@ export const VotingPowerBreakdown = ({
                 <Box>
                   <Text variant="small" color="content.support.default">
                     Ethereum voting power{" "}
-                    <Tooltip label="vSTRK is the voting token for Starknet.">
+                    <Tooltip label="Voting power delegated to you by yourself and others on Ethereum.">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>

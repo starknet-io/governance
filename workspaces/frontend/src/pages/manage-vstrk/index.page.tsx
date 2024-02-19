@@ -446,7 +446,7 @@ export function Page() {
               <Box>
                 <Text variant="small" color="content.support.default">
                   vSTRK on Starknet{" "}
-                  <Tooltip label="vSTRK is the voting token for Starknet.">
+                  <Tooltip label="Total number of vSTRK tokens in your Starknet wallet.">
                     <InfoCircleIcon />
                   </Tooltip>
                 </Text>
@@ -461,7 +461,7 @@ export function Page() {
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
                   STRK on Starknet{" "}
-                  <Tooltip label="vSTRK is the voting token for Starknet.">
+                  <Tooltip label="Total number of STRK tokens in your Starknet wallet.">
                     <InfoCircleIcon />
                   </Tooltip>
                 </Text>
@@ -477,7 +477,7 @@ export function Page() {
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
                   STRK on Ethereum{" "}
-                  <Tooltip label="vSTRK is the voting token for Starknet.">
+                  <Tooltip label="Total number of STRK tokens in your Ethereum wallet.">
                     <InfoCircleIcon />
                   </Tooltip>
                 </Text>
