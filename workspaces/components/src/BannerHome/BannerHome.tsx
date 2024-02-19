@@ -119,6 +119,7 @@ export const BannerHome = ({
             overflowX="scroll"
             gridTemplateColumns="repeat(3, minmax(264px, 1fr))"
             p="standard.md"
+            pb="0"
             sx={{
               "> *:not(:last-child)": {
                 marginRight: "standard.md",

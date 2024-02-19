@@ -38,7 +38,6 @@ export function Page() {
         display="grid"
         gap="standard.3xl"
         mb="standard.3xl"
-        mt="16px"
       >
         <Box mt="standard.3xl">
           <Flex justifyContent="space-between" alignItems="flex-start">
