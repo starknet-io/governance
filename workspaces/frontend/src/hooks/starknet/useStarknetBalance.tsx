@@ -1,22 +1,27 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { BigNumber, ethers } from "ethers";
 import { Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { hexToString } from "viem";
+import {
+  useBalance,
+  BalanceInfo,
+} from "src/renderer/providers/BalanceProvider";
 
-const starknetContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
+const starknetContract = import.meta.env.VITE_APP_VSTRK_CONTRACT as string;
+
+interface UseStarknetBalanceProps {
+  starknetAddress: string;
+  starkContract?: string;
+}
 
 export const useStarknetBalance = ({
   starknetAddress,
   starkContract = starknetContract,
-}: {
-  starknetAddress: string;
-  starkContract?: string;
-}) => {
-  const [balance, setBalance] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+}: UseStarknetBalanceProps) => {
+  const { balance, setBalance, loading, setLoading, error, setError } =
+    useBalance();
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -35,7 +40,6 @@ export const useStarknetBalance = ({
       setError(null);
 
       try {
-        // Replace with actual StarkNet provider and contract address/ABI
         const provider = starkProvider;
         const contractAddress = starkContract;
         const { abi: starknetContractAbi } =
@@ -60,15 +64,17 @@ export const useStarknetBalance = ({
           decimals,
           symbol: symbolString,
           address: starknetAddress,
-        });
+        } as BalanceInfo);
       } catch (err) {
-        setError(err);
+        setError(err as Error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBalance();
+    if (!balance) {
+      fetchBalance();
+    }
 
     const onWrapSuccess = () => {
       fetchBalance();
@@ -80,7 +86,7 @@ export const useStarknetBalance = ({
     return () => {
       window.removeEventListener("wrapSuccess", onWrapSuccess);
     };
-  }, [starknetAddress]);
+  }, [starknetAddress, setBalance, setLoading, setError, balance]);
 
   return { balance, loading, error };
 };
