@@ -140,17 +140,18 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
     }, 10);
   };
 
-  const { data: user } = trpc.users.me.useQuery();
-  const { checkUserBalance } = useCheckBalance(user?.address as `0x${string}`);
   const { starknetWallet, ethWallet } = useWallets();
+  const { checkUserBalance } = useCheckBalance(ethWallet?.address as `0x${string}`);
 
   useEffect(() => {
-    checkUserBalance({
-      onFail: () => {
-        navigate("/delegates");
-      },
-    });
-  }, [checkUserBalance]);
+    if (mode === "create") {
+      checkUserBalance({
+        onFail: () => {
+          navigate("/delegates");
+        },
+      });
+    }
+  }, [ethWallet?.address, mode]);
 
   useEffect(() => {
     if (mode === "edit" && isFetchingDelegateSuccess) {

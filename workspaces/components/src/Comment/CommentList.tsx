@@ -64,7 +64,7 @@ export function daysAgo(date: Date): string {
   if (years > 0) {
     return `${years}y`;
   } else if (months > 0) {
-    return `${months}m`;
+    return `${months}mo`;
   } else if (weeks > 0) {
     return `${weeks}w`;
   } else if (days > 0) {
