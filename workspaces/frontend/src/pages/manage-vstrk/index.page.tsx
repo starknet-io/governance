@@ -145,32 +145,30 @@ const WrapModal = ({
       </Flex>
       {isSuccess ? (
         <Modal.Footer>
-          <Flex flexDirection="column" width="100%">
-            {!isUnwrap ? (
-              <Button
-                type="button"
-                variant="primary"
-                size="standard"
-                mb="standard.sm"
-                onClick={() => {
-                  navigate("/delegates");
-                }}
-                width="100%"
-              >
-                Continue to Delegate
-              </Button>
-            ) : (
-              <Button
-                type="button"
-                variant="primary"
-                size="standard"
-                onClick={onClose}
-                width="100%"
-              >
-                Close
-              </Button>
-            )}
-          </Flex>
+          {!isUnwrap ? (
+            <Button
+              type="button"
+              variant="primary"
+              size="standard"
+              mb="standard.sm"
+              onClick={() => {
+                navigate("/delegates");
+              }}
+              width="100%"
+            >
+              Continue to Delegate
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="primary"
+              size="standard"
+              onClick={onClose}
+              width="100%"
+            >
+              Close
+            </Button>
+          )}
         </Modal.Footer>
       ) : null}
     </Modal>
