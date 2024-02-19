@@ -141,6 +141,7 @@ export const VotingPowerModal = ({
         isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
         balanceStark={balanceStark}
         balanceEth={balanceEth}
+        showDetailedBalance={false}
       />
       <Box gap="standard.md">
         {hasStarkWallet && (
@@ -160,6 +161,8 @@ export const VotingPowerModal = ({
                     unit={balanceStark?.symbol}
                     isSmall
                     primary
+                    hasTooltip
+                    showBalanceText={false}
                   />
                 </Box>
               </Flex>
@@ -178,6 +181,8 @@ export const VotingPowerModal = ({
                 </Box>
                 <Box width="50%">
                   <VotingPowerComponent
+                    hasTooltip
+                    showBalanceText={false}
                     votingPower={formatVotingPower(balanceVStark?.balance)}
                     isLoading={isvSTRKBalanceLoading}
                     unit={balanceVStark?.symbol}
@@ -243,6 +248,8 @@ export const VotingPowerModal = ({
                     unit={balanceEth?.symbol}
                     isSmall
                     primary
+                    hasTooltip
+                    showBalanceText={false}
                   />
                 </Box>
               </Flex>

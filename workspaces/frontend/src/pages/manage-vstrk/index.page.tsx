@@ -13,12 +13,14 @@ import {
   Link,
   Skeleton,
   Banner,
+  Tooltip,
 } from "@yukilabs/governance-components";
 import { navigate } from "vite-plugin-ssr/client/router";
 import {
   WalletIcon,
   SuccessIcon,
   WarningIcon,
+  InfoCircleIcon,
 } from "@yukilabs/governance-components/src/Icons";
 import {
   Box,
@@ -430,7 +432,7 @@ export function Page() {
                   </Text>
                   <VotingPowerComponent
                     votingPower={totalValue}
-                    unit=""
+                    unit="STRK"
                     isLarge
                     isLoading={
                       isVotingPowerEthereumLoading ||
@@ -443,9 +445,14 @@ export function Page() {
             <Box py="standard.sm" px="standard.md">
               <Box>
                 <Text variant="small" color="content.support.default">
-                  vSTRK on Starknet
+                  vSTRK on Starknet{" "}
+                  <Tooltip label="vSTRK is the voting token for Starknet.">
+                    <InfoCircleIcon />
+                  </Tooltip>
                 </Text>
                 <VotingPowerComponent
+                  hasTooltip
+                  showBalanceText={false}
                   votingPower={formatVotingPower(vSTRKBalance?.balance || 0)}
                   unit={vSTRKBalance?.symbol}
                   isLoading={isvSTRKBalanceLoading}
@@ -453,9 +460,14 @@ export function Page() {
               </Box>
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
-                  STRK on Starknet
+                  STRK on Starknet{" "}
+                  <Tooltip label="vSTRK is the voting token for Starknet.">
+                    <InfoCircleIcon />
+                  </Tooltip>
                 </Text>
                 <VotingPowerComponent
+                  hasTooltip
+                  showBalanceText={false}
                   votingPower={formatVotingPower(starknetBalance?.balance || 0)}
                   unit={starknetBalance?.symbol}
                   isLoading={isStarknetBalanceLoading}
@@ -464,9 +476,14 @@ export function Page() {
               <Divider my="standard.sm" />
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
-                  STRK on Ethereum
+                  STRK on Ethereum{" "}
+                  <Tooltip label="vSTRK is the voting token for Starknet.">
+                    <InfoCircleIcon />
+                  </Tooltip>
                 </Text>
                 <VotingPowerComponent
+                  hasTooltip
+                  showBalanceText={false}
                   votingPower={
                     !ethBalance ? 0 : formatVotingPower(ethBalance || 0)
                   }
