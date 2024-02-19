@@ -43,6 +43,7 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { ethers } from "ethers";
+import VotingPowerComponent from "../../components/VotingPowerComponent/VotingPowerComponent";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -435,38 +436,33 @@ export function Page() {
                 <Text variant="small" color="content.support.default">
                   vSTRK on Starknet
                 </Text>
-                {!isvSTRKBalanceLoading ? (
-                  <Text color="content.accent.default" variant="mediumStrong">
-                    {formatVotingPower(vSTRKBalance?.balance || 0)}{" "}
-                    {vSTRKBalance?.symbol || "STRK"}
-                  </Text>
-                ) : (
-                  <Skeleton height="16px" width="60%" borderRadius="md" />
-                )}
+                <VotingPowerComponent
+                  votingPower={formatVotingPower(vSTRKBalance?.balance || 0)}
+                  unit={vSTRKBalance?.symbol}
+                  isLoading={isvSTRKBalanceLoading}
+                />
               </Box>
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
                   STRK on Starknet
                 </Text>
-                {!isStarknetBalanceLoading ? (
-                  <Text color="content.accent.default" variant="mediumStrong">
-                    {formatVotingPower(starknetBalance?.balance || 0)}{" "}
-                    {starknetBalance?.symbol || "STRK"}
-                  </Text>
-                ) : (
-                  <Skeleton height="16px" width="60%" borderRadius="md" />
-                )}
+                <VotingPowerComponent
+                  votingPower={formatVotingPower(starknetBalance?.balance || 0)}
+                  unit={starknetBalance?.symbol}
+                  isLoading={isStarknetBalanceLoading}
+                />
               </Box>
               <Divider my="standard.sm" />
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
                   STRK on Ethereum
                 </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
-                  {!ethAddress
-                    ? "-"
-                    : `${formatVotingPower(ethBalance)} ${ethBalanceSymbol}`}
-                </Text>
+                <VotingPowerComponent
+                  votingPower={
+                    !ethBalance ? 0 : formatVotingPower(ethBalance || 0)
+                  }
+                  unit={"STRK"}
+                />
               </Box>
             </Box>
           </Box>
