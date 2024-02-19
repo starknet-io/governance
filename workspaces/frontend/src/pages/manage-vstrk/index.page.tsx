@@ -13,12 +13,14 @@ import {
   Link,
   Skeleton,
   Banner,
+  Tooltip
 } from "@yukilabs/governance-components";
 import { navigate } from "vite-plugin-ssr/client/router";
 import {
   WalletIcon,
   SuccessIcon,
   WarningIcon,
+  InfoCircleIcon
 } from "@yukilabs/governance-components/src/Icons";
 import {
   Box,
@@ -435,7 +437,14 @@ export function Page() {
             <Box py="standard.sm" px="standard.md">
               <Box>
                 <Text variant="small" color="content.support.default">
-                  vSTRK on Starknet
+                  vSTRK on Starknet<Tooltip label="Total number of vSTRK tokens in your Starknet wallet.">
+                        <Icon
+                          color="#1A1523"
+                          ml="standard.xs"
+                          mb="2px"
+                          as={InfoCircleIcon}
+                        />
+                      </Tooltip>
                 </Text>
                 {!isvSTRKBalanceLoading ? (
                   <Text color="content.accent.default" variant="mediumStrong">
@@ -448,7 +457,14 @@ export function Page() {
               </Box>
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
-                  STRK on Starknet
+                  STRK on Starknet<Tooltip label="Total number of STRK tokens in your Starknet wallet.">
+                        <Icon
+                          color="#1A1523"
+                          ml="standard.xs"
+                          mb="2px"
+                          as={InfoCircleIcon}
+                        />
+                      </Tooltip>
                 </Text>
                 {!isStarknetBalanceLoading ? (
                   <Text color="content.accent.default" variant="mediumStrong">
@@ -462,7 +478,14 @@ export function Page() {
               <Divider my="standard.sm" />
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
-                  STRK on Ethereum
+                  STRK on Ethereum<Tooltip label="Total number of STRK tokens in your Ethereum wallet.">
+                      <Icon
+                        color="#1A1523"
+                        ml="standard.xs"
+                        mb="2px"
+                        as={InfoCircleIcon}
+                      />
+                    </Tooltip>
                 </Text>
                 <Text color="content.accent.default" variant="mediumStrong">
                   {!ethAddress

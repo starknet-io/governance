@@ -165,10 +165,11 @@ export const VotingPowerModal = ({
                 <Box width="50%">
                   <Text variant="small" color="content.support.default">
                     vSTRK balance
-                    <Tooltip label="Tooltip">
+                    <Tooltip label="Total number of vSTRK tokens in your wallet.">
                       <Icon
                         color="#1A1523"
                         ml="standard.xs"
+                        mb="2px"
                         as={InfoCircleIcon}
                       />
                     </Tooltip>

@@ -93,18 +93,18 @@ export const VotingPowerBreakdown = ({
               <Box p="standard.sm">
                 <Box>
                   <Text variant="small" color="content.support.default">
-                    Starknet voting power
+                    Starknet voting power<Tooltip label="Voting power delegated to you by yourself and others on Starknet.">
+                        <Icon
+                          color="#1A1523"
+                          ml="standard.xs"
+                          mb="2px"
+                          as={InfoCircleIcon}
+                        />
+                      </Tooltip>
                   </Text>
                   {!isVotingPowerStarknetLoading ? (
                     <Text color="content.accent.default" variant="mediumStrong">
                       {votingPowerStark} vSTRK
-                      <Tooltip label="Tooltip">
-                        <Icon
-                          color="#1A1523"
-                          ml="standard.xs"
-                          as={InfoCircleIcon}
-                        />
-                      </Tooltip>
                     </Text>
                   ) : (
                     <Skeleton height="24px" width="50%" borderRadius="md" />
@@ -127,18 +127,18 @@ export const VotingPowerBreakdown = ({
               <Box p="standard.sm">
                 <Box>
                   <Text variant="small" color="content.support.default">
-                    Ethereum voting power
+                    Ethereum voting power<Tooltip label="Voting power delegated to you by yourself and others on Ethereum.">
+                        <Icon
+                          color="#1A1523"
+                          ml="standard.xs"
+                          mb="2px"
+                          as={InfoCircleIcon}
+                        />
+                      </Tooltip>
                   </Text>
                   {!isVotingPowerEthLoading ? (
                     <Text color="content.accent.default" variant="mediumStrong">
                       {votingPowerEth} STRK
-                      <Tooltip label="Tooltip">
-                        <Icon
-                          color="#1A1523"
-                          ml="standard.xs"
-                          as={InfoCircleIcon}
-                        />
-                      </Tooltip>
                     </Text>
                   ) : (
                     <Skeleton height="24px" width="50%" borderRadius="md" />
