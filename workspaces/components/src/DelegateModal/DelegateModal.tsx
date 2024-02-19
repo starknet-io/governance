@@ -247,11 +247,11 @@ export const DelegateModal = ({
             (receiverDataL2?.address || receiverData) &&
             !isSelfDelegation && (
               <Banner
-                label={`Delegate has only ${
+                label={`This delegate hasn't linked a ${
                   l1Delegation ? "Starknet" : "Ethereum"
-                } address connected. You can delegate only from ${
-                  l1Delegation ? "Starknet" : "Ethereum"
-                } wallet`}
+                } address to their profile. Currently, you can only delegate to them using an ${
+                  l1Delegation ? "Ethereum" : "Starknet"
+                } wallet.`}
               />
             )}
           {canBeDelegatedOnSpecifiedLayer || isSelfDelegation ? (
