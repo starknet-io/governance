@@ -203,7 +203,7 @@ export const DelegateModal = ({
                   symbol={receiverDataL2.symbol}
                   isReceiver
                   text={"To"}
-                  avatarString={receiverDataL2?.avatarString?.toString()}
+                  imgUrl={receiverDataL2?.avatarString?.toString()}
                 />
               </>
             ) : null}
