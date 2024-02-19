@@ -10,6 +10,8 @@ const VotingPowerComponent = ({
   isLoading,
   primary,
   isSmall,
+  hasTooltip = false,
+  showBalanceText = true,
 }: {
   votingPower: any;
   unit?: string;
@@ -17,8 +19,10 @@ const VotingPowerComponent = ({
   isLarge?: boolean;
   isSmall?: boolean;
   primary?: boolean;
+  hasTooltip?: boolean;
+  showBalanceText?: boolean;
 }) => {
-  const isCloseToZero = votingPower < 0.1 && votingPower > 0;
+  const isCloseToZero = votingPower < 0.01 && votingPower > 0;
 
   return (
     <>
@@ -37,12 +41,28 @@ const VotingPowerComponent = ({
               : "content.accent.default"
           }
         >
-          {isCloseToZero ? "~0" : votingPower} {unit}
-          {isCloseToZero && (
+          {isCloseToZero && hasTooltip && (
+            <Tooltip label={`${votingPower} ${unit}`}>
+              ~0 {unit} {showBalanceText && "balance"}
+            </Tooltip>
+          )}
+          {isCloseToZero && !hasTooltip && `~0 ${unit}`}
+
+          {!isCloseToZero && !hasTooltip && (
+            <>
+              {votingPower} {unit}
+            </>
+          )}
+          {!isCloseToZero && hasTooltip && (
+            <Tooltip label="Another label">
+              {votingPower} {unit}
+            </Tooltip>
+          )}
+          {/* {isCloseToZero && (
             <Tooltip label={`${votingPower} ${unit}`}>
               <Icon color="#1A1523" ml="standard.xs" as={InfoCircleIcon} />
             </Tooltip>
-          )}
+          )} */}
         </Text>
       )}
     </>

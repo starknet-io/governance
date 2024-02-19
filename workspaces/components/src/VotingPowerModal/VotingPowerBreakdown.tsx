@@ -22,6 +22,7 @@ type Props = {
   isVotingPowerStarknetLoading: boolean;
   balanceStark: any;
   balanceEth: any;
+  showDetailedBalance?: boolean;
 };
 
 export const VotingPowerBreakdown = ({
@@ -37,6 +38,7 @@ export const VotingPowerBreakdown = ({
   isStarknetBalanceLoading,
   balanceStark,
   balanceEth,
+  showDetailedBalance = true,
 }: Props) => {
   const totalVotingPower = formatVotingPower(
     (hasEthWallet ? votingPowerEth || 0 : 0) +
@@ -62,8 +64,10 @@ export const VotingPowerBreakdown = ({
               Total voting power
             </Text>
             <VotingPowerComponent
+              hasTooltip
+              showBalanceText={false}
               votingPower={totalValue}
-              unit=""
+              unit="STRK"
               isLarge
               isLoading={!String(totalValue)}
             />
@@ -75,7 +79,7 @@ export const VotingPowerBreakdown = ({
               w="36px"
               h="36px"
               variant="secondary"
-              sx={{ background: "transparent" }}
+              // sx={{ background: "transparent" }}
               onClick={() => {
                 if (onToggleExpand) {
                   onToggleExpand();
@@ -94,36 +98,48 @@ export const VotingPowerBreakdown = ({
               <Box p="standard.sm">
                 <Box>
                   <Text variant="small" color="content.support.default">
-                    Starknet voting power
+                    Starknet voting power{" "}
+                    <Tooltip label="Voting power delegated to you by yourself and others on Starknet.">
+                      <InfoCircleIcon />
+                    </Tooltip>
                   </Text>
                   <VotingPowerComponent
-                    votingPower={formatVotingPower(votingPowerL1 || 0)}
+                    hasTooltip
+                    showBalanceText={false}
+                    votingPower={formatVotingPower(votingPowerL2 || 0)}
                     unit={"vSTRK"}
                     isLoading={isVotingPowerStarknetLoading}
                   />
                 </Box>
-                <VotingPowerComponent
-                  isSmall
-                  votingPower={formatVotingPower(balanceStark?.balance || 0)}
-                  unit={balanceStark?.symbol || "vSTRK"}
-                  isLoading={isStarknetBalanceLoading}
-                />
+                {showDetailedBalance && (
+                  <VotingPowerComponent
+                    isSmall
+                    hasTooltip
+                    votingPower={formatVotingPower(balanceStark?.balance || 0)}
+                    unit={balanceStark?.symbol || "vSTRK"}
+                    isLoading={isStarknetBalanceLoading}
+                  />
+                )}
               </Box>
             )}
             {hasEthWallet && (
-              <Box p="standard.sm">
+              <Box p="standard.sm" mt="-12px">
                 <Box>
                   <Text variant="small" color="content.support.default">
-                    Ethereum voting power
+                    Ethereum voting power{" "}
+                    <Tooltip label="Voting power delegated to you by yourself and others on Ethereum.">
+                      <InfoCircleIcon />
+                    </Tooltip>
                   </Text>
                   <VotingPowerComponent
-                    votingPower={formatVotingPower(votingPowerL2 || 0)}
+                    votingPower={formatVotingPower(votingPowerL1 || 0)}
                     unit={"STRK"}
                     isLoading={isVotingPowerEthLoading}
                   />
                 </Box>
                 {!showBreakdown ? (
                   <VotingPowerComponent
+                    hasTooltip
                     isSmall
                     votingPower={formatVotingPower(balanceEth?.balance || 0)}
                     unit={balanceEth?.symbol || "vSTRK"}

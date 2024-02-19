@@ -24,7 +24,7 @@ export const useUnwrapVSTRK = () => {
     }
 
     if (!amount || amount < 0.000001) {
-      setError("Amount must be greater than 0");
+      setError("Amount must be greater than 0.000001");
       return;
     }
 
