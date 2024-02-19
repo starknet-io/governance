@@ -12,6 +12,7 @@ import {
   Modal,
   Link,
   Skeleton,
+  Banner,
 } from "@yukilabs/governance-components";
 import { navigate } from "vite-plugin-ssr/client/router";
 import {
@@ -144,15 +145,30 @@ const WrapModal = ({
       </Flex>
       {isSuccess ? (
         <Modal.Footer>
-          <Button
-            type="button"
-            variant="primary"
-            size="standard"
-            onClick={onClose}
-            width="100%"
-          >
-            Close
-          </Button>
+          {!isUnwrap ? (
+            <Button
+              type="button"
+              variant="primary"
+              size="standard"
+              mb="standard.sm"
+              onClick={() => {
+                navigate("/delegates");
+              }}
+              width="100%"
+            >
+              Continue to Delegate
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="primary"
+              size="standard"
+              onClick={onClose}
+              width="100%"
+            >
+              Close
+            </Button>
+          )}
         </Modal.Footer>
       ) : null}
     </Modal>
@@ -559,6 +575,17 @@ export function Page() {
               </Flex>
             </Box>
             */}
+            {sliderValue === 100 && !isUnwrap && starknetWallet?.address ? (
+              <Box>
+                <Banner
+                  mb="standard.md"
+                  label={
+                    `You will retain ${RECEIVING_AMOUNT_SUBTRACT} STRK from your max amount for future\n` +
+                    `transaction gas costs.`
+                  }
+                />
+              </Box>
+            ) : null}
             <Box w="100%">
               <Button
                 variant="primary"
