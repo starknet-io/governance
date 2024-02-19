@@ -171,7 +171,7 @@ export const DelegateCard = ({
   telegram,
   status
 }: DelegateCardProps) => {
-  const votesFormatted = formatVotesAmount(votingPower) + " delegated votes";
+  const votesFormatted = formatVotesAmount(votingPower) + " voting power";
   const formattedDelegateStatement = extractParagraph(statement || "");
 
   return (
