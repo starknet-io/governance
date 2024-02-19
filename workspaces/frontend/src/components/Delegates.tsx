@@ -490,7 +490,7 @@ export function Delegates({
     });
   return (
     <>
-      <DelegateModal
+      {isOpen ? <DelegateModal
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
@@ -588,7 +588,7 @@ export function Delegates({
             setIsSelfDelegation(false);
           }
         }}
-      />
+      /> : null}
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
       <StatusModal
         isOpen={isStatusModalOpen}

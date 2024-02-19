@@ -6,11 +6,13 @@ import {
   FormLabel,
   Input,
   FormErrorMessage,
+  SkeletonCircle,
+  Skeleton,
+  Flex
 } from "@chakra-ui/react";
 import { Button } from "src/Button";
 import * as Swap from "../Swap/Swap";
 import { Text } from "../Text";
-import { Heading } from "../Heading";
 import { ethers } from "ethers";
 import { Modal } from "../Modal";
 import { validateStarknetAddress } from "@yukilabs/governance-frontend/src/utils/helpers";
@@ -120,6 +122,17 @@ export const DelegateModal = ({
     }
   };
 
+  const [loadingReceiver, setLoadingReceiver] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoadingReceiver(false);
+    }, 800);
+
+    return () => clearTimeout(timer); // clear the timer if the component is unmounted
+  }, []);
+
+
   const canBeDelegatedOnSpecifiedLayer =
     (receiverData && l1Delegation) || (receiverDataL2 && l2Delegation);
   return (
@@ -177,14 +190,37 @@ export const DelegateModal = ({
                 >
                   To delegate
                 </Text>
-                <Swap.UserSummary
+                {loadingReceiver ? (<Flex
+                  direction="row"
+                  width="100%"
+                  flex="1"
+                  boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.04)"
+                  border="1px solid"
+                  borderColor="border.forms"
+                  borderRadius="8px"
+                  bg="surface.forms.default"
+                  padding="standard.md"
+                >
+                  <SkeletonCircle size="6" mr="20px" />
+                  <Flex direction="row" justifyContent="space-between" flex="1">
+                    <Flex direction="column" gap="standard.sm">
+                      <Skeleton height="14px" width="30px" />
+                      <Skeleton height="14px" width="80px" />
+                    </Flex>
+                    <Flex direction="column" gap="standard.sm" alignItems="flex-end">
+                      <Skeleton height="14px" width="60px" />
+                      <Skeleton height="14px" width="80px" />
+                    </Flex>
+                  </Flex>
+                </Flex>
+                ) : (<Swap.UserSummary
                   address={receiverData.address}
                   balance={getTotalVotingPower(receiverData)}
                   symbol={receiverData.symbol}
                   isReceiver
                   text={"To"}
                   imgUrl={receiverData?.avatarString?.toString()}
-                />
+                />)}
               </>
             ) : null}
             {receiverDataL2?.address && l2Delegation && !isSelfDelegation ? (
@@ -197,7 +233,30 @@ export const DelegateModal = ({
                 >
                   To delegate
                 </Text>
-                <Swap.UserSummary
+                {loadingReceiver ? (<Flex
+                  direction="row"
+                  width="100%"
+                  flex="1"
+                  boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.04)"
+                  border="1px solid"
+                  borderColor="border.forms"
+                  borderRadius="8px"
+                  bg="surface.forms.default"
+                  padding="standard.md"
+                >
+                  <SkeletonCircle size="6" mr="20px" />
+                  <Flex direction="row" justifyContent="space-between" flex="1">
+                    <Flex direction="column" gap="standard.sm">
+                      <Skeleton height="14px" width="30px" />
+                      <Skeleton height="14px" width="80px" />
+                    </Flex>
+                    <Flex direction="column" gap="standard.sm" alignItems="flex-end">
+                      <Skeleton height="14px" width="60px" />
+                      <Skeleton height="14px" width="80px" />
+                    </Flex>
+                  </Flex>
+                </Flex>
+                ) : (<Swap.UserSummary
                   address={receiverDataL2.address}
                   balance={getTotalVotingPower(receiverDataL2)}
                   symbol={receiverDataL2.symbol}
