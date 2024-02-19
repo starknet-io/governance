@@ -1006,7 +1006,7 @@ export function Page() {
               isExtendable={true}
             />
             <SummaryItems.Item
-              label="Delegation agreement"
+              label="Delegate agreement"
               value={renderAgreementValue()}
             />
           </SummaryItems.Root>
