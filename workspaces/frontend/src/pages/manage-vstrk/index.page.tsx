@@ -31,7 +31,7 @@ import {
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
 import { useBalanceData } from "../../utils/hooks";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
-import { findMatchingWallet } from "../../utils/helpers";
+import { findMatchingWallet, formatVotingPower } from "../../utils/helpers";
 import { WalletChainKey } from "../../utils/constants";
 import { GasIcon, useUserWallets } from "@dynamic-labs/sdk-react-core";
 import TabButton from "../../components/TabButton";
@@ -43,6 +43,7 @@ import { usePageContext } from "../../renderer/PageContextProvider";
 import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { ethers } from "ethers";
+import VotingPowerComponent from "../../components/VotingPowerComponent/VotingPowerComponent";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -293,9 +294,17 @@ export function Page() {
 
   useEffect(() => {
     if (starknetBalance?.rawBalance && !isUnwrap) {
-      setStarkToWrap(parseFloat(starknetBalance?.rawBalance) / 2);
+      const toSet =
+        starknetBalance?.rawBalance < 0.1
+          ? parseFloat(starknetBalance?.rawBalance / 2).toFixed(5)
+          : parseFloat(starknetBalance?.rawBalance / 2).toFixed(2);
+      setStarkToWrap(toSet);
     } else if (vSTRKBalance?.rawBalance && isUnwrap) {
-      setStarkToWrap(parseFloat(vSTRKBalance?.rawBalance) / 2);
+      const toSet =
+        starknetBalance?.rawBalance < 0.1
+          ? parseFloat(vSTRKBalance?.rawBalance / 2).toFixed(5)
+          : parseFloat(vSTRKBalance?.rawBalance / 2).toFixed(2);
+      setStarkToWrap(toSet);
     }
     setSliderValue(50);
   }, [starknetBalance?.rawBalance, vSTRKBalance?.rawBalance, isUnwrap]);
@@ -370,11 +379,9 @@ export function Page() {
     }
   };
 
-  const totalVotingPower = parseFloat(
-    (
-      (ethAddress ? votingPowerEthereum || 0 : 0) +
-      (starknetAddress ? votingPowerStarknet || 0 : 0)
-    ).toFixed(4),
+  const totalVotingPower = formatVotingPower(
+    (ethAddress ? votingPowerEthereum || 0 : 0) +
+      (starknetAddress ? votingPowerStarknet || 0 : 0),
   );
   const totalValue = ethers.utils.commify(totalVotingPower);
 
@@ -421,14 +428,15 @@ export function Page() {
                   <Text variant="mediumStrong" color="content.default.default">
                     Total voting power
                   </Text>
-                  {!isVotingPowerEthereumLoading &&
-                  !isVotingPowerStarknetLoading ? (
-                    <Text variant="largeStrong" color="content.accent.default">
-                      {totalValue}
-                    </Text>
-                  ) : (
-                    <Skeleton height="16px" width="50%" borderRadius="md" />
-                  )}
+                  <VotingPowerComponent
+                    votingPower={totalValue}
+                    unit=""
+                    isLarge
+                    isLoading={
+                      isVotingPowerEthereumLoading ||
+                      isVotingPowerStarknetLoading
+                    }
+                  />
                 </Box>
               </Flex>
             </Box>
@@ -437,40 +445,33 @@ export function Page() {
                 <Text variant="small" color="content.support.default">
                   vSTRK on Starknet
                 </Text>
-                {!isvSTRKBalanceLoading ? (
-                  <Text color="content.accent.default" variant="mediumStrong">
-                    {vSTRKBalance?.balance || 0}{" "}
-                    {vSTRKBalance?.symbol || "STRK"}
-                  </Text>
-                ) : (
-                  <Skeleton height="16px" width="60%" borderRadius="md" />
-                )}
+                <VotingPowerComponent
+                  votingPower={formatVotingPower(vSTRKBalance?.balance || 0)}
+                  unit={vSTRKBalance?.symbol}
+                  isLoading={isvSTRKBalanceLoading}
+                />
               </Box>
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
                   STRK on Starknet
                 </Text>
-                {!isStarknetBalanceLoading ? (
-                  <Text color="content.accent.default" variant="mediumStrong">
-                    {starknetBalance?.balance || 0}{" "}
-                    {starknetBalance?.symbol || "STRK"}
-                  </Text>
-                ) : (
-                  <Skeleton height="16px" width="60%" borderRadius="md" />
-                )}
+                <VotingPowerComponent
+                  votingPower={formatVotingPower(starknetBalance?.balance || 0)}
+                  unit={starknetBalance?.symbol}
+                  isLoading={isStarknetBalanceLoading}
+                />
               </Box>
               <Divider my="standard.sm" />
               <Box mt="standard.sm">
                 <Text variant="small" color="content.support.default">
                   STRK on Ethereum
                 </Text>
-                <Text color="content.accent.default" variant="mediumStrong">
-                  {!ethAddress
-                    ? "-"
-                    : `${new Intl.NumberFormat().format(
-                        Number(ethBalance),
-                      )} ${ethBalanceSymbol}`}
-                </Text>
+                <VotingPowerComponent
+                  votingPower={
+                    !ethBalance ? 0 : formatVotingPower(ethBalance || 0)
+                  }
+                  unit={"STRK"}
+                />
               </Box>
             </Box>
           </Box>

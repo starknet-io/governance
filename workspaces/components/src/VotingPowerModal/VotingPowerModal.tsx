@@ -7,14 +7,16 @@ import { Tooltip } from "../Tooltip";
 import { CopyToClipboard } from "../CopyToClipboard";
 import { getChecksumAddress } from "starknet";
 import { InfoCircleIcon } from "src/Icons";
+import VotingPowerComponent from "@yukilabs/governance-frontend/src/components/VotingPowerComponent/VotingPowerComponent";
+import { formatVotingPower } from "@yukilabs/governance-frontend/src/utils/helpers";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  balanceEth: string;
+  balanceEth: any;
   isBalanceEthFetched: boolean;
-  balanceStark: string;
+  balanceStark: any;
   votingPowerEth: number;
   votingPowerStark: number;
   delegatedToL1: any;
@@ -104,9 +106,9 @@ export const VotingPowerModal = ({
   hasEthWallet,
   hasStarkWallet,
   isBalanceEthFetched,
-  balanceEth = 0,
-  balanceStark = 0,
-  balanceVStark = 0,
+  balanceEth,
+  balanceStark,
+  balanceVStark,
   isvSTRKBalanceLoading,
   isStarknetBalanceLoading,
   selfDelegatedL1,
@@ -152,13 +154,13 @@ export const VotingPowerModal = ({
                   </Text>
                 </Box>
                 <Box width="50%">
-                  {!isStarknetBalanceLoading ? (
-                    <Text variant="smallStrong" color="content.default.default">
-                      {balanceStark}
-                    </Text>
-                  ) : (
-                    <Skeleton height="24px" width="50%" borderRadius="md" />
-                  )}
+                  <VotingPowerComponent
+                    votingPower={formatVotingPower(balanceStark?.balance)}
+                    isLoading={isStarknetBalanceLoading}
+                    unit={balanceStark?.symbol}
+                    isSmall
+                    primary
+                  />
                 </Box>
               </Flex>
               <Flex>
@@ -175,13 +177,13 @@ export const VotingPowerModal = ({
                   </Text>
                 </Box>
                 <Box width="50%">
-                  {!isvSTRKBalanceLoading ? (
-                    <Text variant="smallStrong" color="content.default.default">
-                      {balanceVStark}
-                    </Text>
-                  ) : (
-                    <Skeleton height="24px" width="50%" borderRadius="md" />
-                  )}
+                  <VotingPowerComponent
+                    votingPower={formatVotingPower(balanceVStark?.balance)}
+                    isLoading={isvSTRKBalanceLoading}
+                    unit={balanceVStark?.symbol}
+                    isSmall
+                    primary
+                  />
                 </Box>
               </Flex>
               <Flex>
@@ -235,13 +237,13 @@ export const VotingPowerModal = ({
                   </Text>
                 </Box>
                 <Box width="50%">
-                  {isBalanceEthFetched ? (
-                    <Text variant="smallStrong" color="content.default.default">
-                      {balanceEth}
-                    </Text>
-                  ) : (
-                    <Skeleton height="16px" width="50%" borderRadius="md" />
-                  )}
+                  <VotingPowerComponent
+                    votingPower={formatVotingPower(balanceEth?.balance)}
+                    isLoading={!isBalanceEthFetched}
+                    unit={balanceEth?.symbol}
+                    isSmall
+                    primary
+                  />
                 </Box>
               </Flex>
               <Flex>

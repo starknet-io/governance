@@ -7,6 +7,8 @@ import { ethers } from "ethers";
 import { navigate } from "vite-plugin-ssr/client/router";
 import { InfoCircleIcon } from "src/Icons";
 import { Tooltip } from "../Tooltip";
+import { formatVotingPower } from "@yukilabs/governance-frontend/src/utils/helpers";
+import VotingPowerComponent from "@yukilabs/governance-frontend/src/components/VotingPowerComponent/VotingPowerComponent";
 
 type Props = {
   showBreakdown?: boolean;
@@ -18,8 +20,8 @@ type Props = {
   onClose?: () => void;
   isVotingPowerEthLoading: boolean;
   isVotingPowerStarknetLoading: boolean;
-  balanceStark: string;
-  balanceEth: string;
+  balanceStark: any;
+  balanceEth: any;
 };
 
 export const VotingPowerBreakdown = ({
@@ -33,15 +35,15 @@ export const VotingPowerBreakdown = ({
   isVotingPowerEthLoading,
   isVotingPowerStarknetLoading,
   isStarknetBalanceLoading,
-  balanceStark = 0,
-  balanceEth = 0,
+  balanceStark,
+  balanceEth,
 }: Props) => {
-  const totalVotingPower = parseFloat(
-    (
-      (hasEthWallet ? votingPowerEth || 0 : 0) +
-      (hasStarkWallet ? votingPowerStark || 0 : 0)
-    ).toFixed(5),
+  const totalVotingPower = formatVotingPower(
+    (hasEthWallet ? votingPowerEth || 0 : 0) +
+      (hasStarkWallet ? votingPowerStark || 0 : 0),
   );
+  const votingPowerL1 = formatVotingPower(votingPowerEth);
+  const votingPowerL2 = formatVotingPower(votingPowerStark);
   const totalValue = ethers.utils.commify(totalVotingPower);
   return (
     <Box border="1px solid" borderColor="border.dividers" borderRadius="4px">
@@ -59,13 +61,12 @@ export const VotingPowerBreakdown = ({
             <Text variant="mediumStrong" color="content.default.default">
               Total voting power
             </Text>
-            {!String(totalValue) ? (
-              <Skeleton height="24px" width="50%" borderRadius="md" />
-            ) : (
-              <Text variant="largeStrong" color="content.accent.default">
-                {totalValue}
-              </Text>
-            )}
+            <VotingPowerComponent
+              votingPower={totalValue}
+              unit=""
+              isLarge
+              isLoading={!String(totalValue)}
+            />
           </Box>
           {showBreakdown ? (
             <Icon as={ThunderIcon} fill="transparent" w="48px" h="48px" />
@@ -95,32 +96,18 @@ export const VotingPowerBreakdown = ({
                   <Text variant="small" color="content.support.default">
                     Starknet voting power
                   </Text>
-                  {!isVotingPowerStarknetLoading ? (
-                    <Text color="content.accent.default" variant="mediumStrong">
-                      {votingPowerStark} vSTRK
-                      <Tooltip label="Tooltip">
-                        <Icon
-                          color="#1A1523"
-                          ml="standard.xs"
-                          as={InfoCircleIcon}
-                        />
-                      </Tooltip>
-                    </Text>
-                  ) : (
-                    <Skeleton height="24px" width="50%" borderRadius="md" />
-                  )}
+                  <VotingPowerComponent
+                    votingPower={formatVotingPower(votingPowerL1 || 0)}
+                    unit={"vSTRK"}
+                    isLoading={isVotingPowerStarknetLoading}
+                  />
                 </Box>
-                {!showBreakdown ? (
-                  <>
-                    {isStarknetBalanceLoading ? (
-                      <Skeleton height="14px" width="50%" borderRadius="md" />
-                    ) : (
-                      <Text variant="small" color="content.support.default">
-                        {balanceStark} balance
-                      </Text>
-                    )}
-                  </>
-                ) : null}
+                <VotingPowerComponent
+                  isSmall
+                  votingPower={formatVotingPower(balanceStark?.balance || 0)}
+                  unit={balanceStark?.symbol || "vSTRK"}
+                  isLoading={isStarknetBalanceLoading}
+                />
               </Box>
             )}
             {hasEthWallet && (
@@ -129,25 +116,18 @@ export const VotingPowerBreakdown = ({
                   <Text variant="small" color="content.support.default">
                     Ethereum voting power
                   </Text>
-                  {!isVotingPowerEthLoading ? (
-                    <Text color="content.accent.default" variant="mediumStrong">
-                      {votingPowerEth} STRK
-                      <Tooltip label="Tooltip">
-                        <Icon
-                          color="#1A1523"
-                          ml="standard.xs"
-                          as={InfoCircleIcon}
-                        />
-                      </Tooltip>
-                    </Text>
-                  ) : (
-                    <Skeleton height="24px" width="50%" borderRadius="md" />
-                  )}
+                  <VotingPowerComponent
+                    votingPower={formatVotingPower(votingPowerL2 || 0)}
+                    unit={"STRK"}
+                    isLoading={isVotingPowerEthLoading}
+                  />
                 </Box>
                 {!showBreakdown ? (
-                  <Text variant="small" color="content.support.default">
-                    {balanceEth} balance
-                  </Text>
+                  <VotingPowerComponent
+                    isSmall
+                    votingPower={formatVotingPower(balanceEth?.balance || 0)}
+                    unit={balanceEth?.symbol || "vSTRK"}
+                  />
                 ) : null}
               </Box>
             )}

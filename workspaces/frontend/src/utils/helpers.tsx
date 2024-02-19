@@ -8,7 +8,7 @@ import {
   validateAndParseAddress,
   validateChecksumAddress,
 } from "starknet";
-import {WalletChain} from "./constants";
+import { WalletChain } from "./constants";
 
 export type PageDnD = {
   id: number;
@@ -97,7 +97,7 @@ export const validateStarknetAddress = (address: string) => {
 export const validateEmailAddress = (address: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(address);
-}
+};
 
 export function formatSlug(slug: string): string {
   return slug
@@ -119,4 +119,16 @@ export function extractAndFormatSlug(
 
 export const findMatchingWallet = (wallets: any[], key: "EVM" | "STARKNET") => {
   return wallets.find((wallet) => wallet.chain === WalletChain[key]);
+};
+
+export const formatVotingPower = (votingPowerReceived: any) => {
+  if (!votingPowerReceived || isNaN(votingPowerReceived)) {
+    return 0;
+  }
+  const votingPower = parseFloat(votingPowerReceived?.toString());
+  if (votingPower < 0.1) {
+    return votingPower.toFixed(5);
+  } else {
+    return votingPower.toFixed(2);
+  }
 };

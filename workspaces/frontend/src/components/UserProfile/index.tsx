@@ -21,6 +21,7 @@ import { useWallets } from "../../hooks/useWallets";
 import { getChecksumAddress } from "starknet";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 import { useBalanceData } from "src/utils/hooks";
+import { formatVotingPower } from "../../utils/helpers";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;
@@ -118,10 +119,8 @@ export const UserProfileContent: React.FC<UserProfileMenuProps> = ({
           votingPowerEth={votingPowerEth}
           votingPowerStark={votingPowerStark}
           onToggleExpand={onVotingPowerModalOpen}
-          balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
-          balanceEth={`${new Intl.NumberFormat().format(
-            ethBalance?.balance,
-          )} ${ethBalance?.symbol}`}
+          balanceStark={starknetBalance}
+          balanceEth={ethBalance}
         />
         <Flex direction="column">
           <Button
@@ -254,16 +253,14 @@ const UserProfileMenuComponent = (
         delegatedToL2Name={delegatedToL2Name}
         hasEthWallet={!!ethWallet?.id}
         hasStarkWallet={!!starknetWallet?.id}
-        balanceEth={`${new Intl.NumberFormat().format(
-          ethBalance?.balance,
-        )} ${ethBalance?.symbol}`}
+        balanceStark={starknetBalance}
+        balanceEth={ethBalance}
         isBalanceEthFetched={ethBalance?.isFetched}
         delegatedToL1Loading={delegatedToL1Loading}
         delegatedToL2Loading={delegatedToL2Loading}
         isVotingPowerEthLoading={isVotingPowerEthLoading}
         isVotingPowerStarknetLoading={isVotingPowerStarknetLoading}
-        balanceVStark={`${vSTRKBalance?.balance} ${vSTRKBalance?.symbol}`}
-        balanceStark={`${starknetBalance?.balance} ${starknetBalance?.symbol}`}
+        balanceVStark={vSTRKBalance}
         isvSTRKBalanceLoading={isvSTRKBalanceLoading}
         isStarknetBalanceLoading={isStarknetBalanceLoading}
         votingPowerEth={votingPowerEth}
