@@ -2,7 +2,10 @@ import { useState, useEffect, useContext } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_SPACE } from "./queries"; // Ensure the import path is correct
 import { getVotingPowerCalculation } from "./helpers"; // Ensure the import path is correct
-import { VotingPowerContext } from "src/renderer/providers/VotingPowerProvider"; // Adjust the import path as needed
+import { VotingPowerContext } from "src/renderer/providers/VotingPowerProvider";
+import { ethers } from "ethers";
+import { validateStarknetAddress } from "../../utils/helpers";
+import { getChecksumAddress } from "starknet"; // Adjust the import path as needed
 
 export function useVotingPower({
   address,
@@ -17,7 +20,16 @@ export function useVotingPower({
     useContext(VotingPowerContext);
   const [isLoading, setIsLoading] = useState(true);
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
-  const cacheKey = `${address}-${proposal}-${timestamp}`;
+  let formattedAddress = undefined;
+  if (address && address.length) {
+    if (ethers.utils.isAddress(address)) {
+      formattedAddress = address?.toLowerCase();
+    } else if (validateStarknetAddress(address)) {
+      formattedAddress = getChecksumAddress(address);
+    }
+  }
+
+  const cacheKey = `${formattedAddress}-${proposal}-${timestamp}`;
 
   const { data: spaceObj, loading: spaceLoading } = useQuery(GET_SPACE, {
     variables: { space },
@@ -86,7 +98,9 @@ export function useVotingPower({
     fetchVotingPower();
 
     // Event listener to re-fetch voting power when relevant events occur
-    const refetchOnEvent = () => fetchVotingPower();
+    const refetchOnEvent = () => {
+      setVotingPowerData((prevData) => ({}));
+    };
     window.addEventListener("delegationSuccess", refetchOnEvent);
     window.addEventListener("wrapSuccess", refetchOnEvent);
 
@@ -102,8 +116,7 @@ export function useVotingPower({
     spaceObj,
     spaceLoading,
     setVotingPowerData,
-    votingPowerData,
-    cacheKey,
+    votingPowerData?.[cacheKey],
   ]);
 
   return {

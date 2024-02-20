@@ -22,7 +22,7 @@ export const VotingPowerProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [votingPowerData, setVotingPowerData] = useState<VotingPowerData>({});
-
+  console.log('votingPowers:', votingPowerData)
   return (
     <VotingPowerContext.Provider
       value={{ votingPowerData, setVotingPowerData }}

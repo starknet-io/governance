@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { BigNumber, ethers } from "ethers";
 import { Contract, getChecksumAddress } from "starknet";
 import { starkProvider } from "../../clients/clients";
@@ -20,8 +20,18 @@ export const useStarknetBalance = ({
   starknetAddress,
   starkContract = starknetContract,
 }: UseStarknetBalanceProps) => {
-  const { balances, setBalances, loading, setLoading, error, setError } =
-    useBalance();
+  const hasEventListener = useRef(false);
+
+  const {
+    balances,
+    setBalances,
+    loading,
+    setLoading,
+    error,
+    setError,
+    isFetching,
+    setCount,
+  } = useBalance();
   // Generate a unique cache key
   const cacheKey = `${starkContract}-${getChecksumAddress(
     starknetAddress || "",
@@ -29,8 +39,7 @@ export const useStarknetBalance = ({
 
   useEffect(() => {
     const fetchBalance = async () => {
-      console.log("i am here", starknetAddress, starkContract);
-      if (!starknetAddress || !validateStarknetAddress(starknetAddress)) {
+      if (!starknetAddress || !starknetAddress.length || !validateStarknetAddress(starknetAddress)) {
         setBalances((prevBalances) => ({
           ...prevBalances,
           [cacheKey]: null,
@@ -38,13 +47,14 @@ export const useStarknetBalance = ({
         return;
       }
 
-      // Check if the balance for the cacheKey already exists
-      if (balances[cacheKey]) {
+      // Check if the balance for the cacheKey already exists or is loading
+      if (balances[cacheKey] || isFetching[cacheKey]) {
         return;
       }
+
+      isFetching[cacheKey] = true
       setLoading(true);
       setError(null);
-
       try {
         const provider = starkProvider;
         const contractAddress = starkContract;
@@ -77,6 +87,7 @@ export const useStarknetBalance = ({
       } catch (err) {
         setError(err as Error);
       } finally {
+        isFetching[cacheKey] = false
         setLoading(false);
       }
     };
@@ -87,18 +98,21 @@ export const useStarknetBalance = ({
       setBalances((prevBalances: any) => ({}));
     };
 
-    window.addEventListener("wrapSuccess", onWrapSuccess);
+    if (!hasEventListener.current) {
+      window.addEventListener("wrapSuccess", onWrapSuccess);
+      hasEventListener.current = true;
+    }
 
     // Cleanup the event listener
     return () => {
-      window.removeEventListener("wrapSuccess", onWrapSuccess);
+      if (hasEventListener.current) {
+        window.removeEventListener("wrapSuccess", onWrapSuccess);
+        hasEventListener.current = false;
+      }
     };
   }, [
     starknetAddress,
     starkContract,
-    setBalances,
-    setLoading,
-    setError,
     balances?.[cacheKey],
   ]);
 
