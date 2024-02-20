@@ -62,21 +62,21 @@ export function PageShell(props: Props) {
     <PageContextProvider
       pageContext={{ ...pageContext, user: user || null, isUserLoading }}
     >
-      <BalanceProvider>
-        <VotingPowerProvider>
-          <MessagesProvider>
-            <ChakraProvider theme={theme}>
-              <ApolloProvider client={props.apolloClient}>
-                <DynamicProvider>
+      <MessagesProvider>
+        <ChakraProvider theme={theme}>
+          <ApolloProvider client={props.apolloClient}>
+            <DynamicProvider>
+              <BalanceProvider>
+                <VotingPowerProvider>
                   <LayoutComponent pageContext={pageContext}>
                     {children}
                   </LayoutComponent>
-                </DynamicProvider>
-              </ApolloProvider>
-            </ChakraProvider>
-          </MessagesProvider>
-        </VotingPowerProvider>
-      </BalanceProvider>
+                </VotingPowerProvider>
+              </BalanceProvider>
+            </DynamicProvider>
+          </ApolloProvider>
+        </ChakraProvider>
+      </MessagesProvider>
     </PageContextProvider>
     // </React.StrictMode>
   );

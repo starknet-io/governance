@@ -1,9 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { useQuery } from "@apollo/client";
-import { GET_SPACE } from "./queries"; // Adjust the import path as needed
-import { getVotingPowerCalculation } from "./helpers"; // Ensure paths are correct
-import { VotingPowerContext } from "src/renderer/providers/VotingPowerProvider";
-// Adjust the import path as needed
+import { GET_SPACE } from "./queries"; // Ensure the import path is correct
+import { getVotingPowerCalculation } from "./helpers"; // Ensure the import path is correct
+import { VotingPowerContext } from "src/renderer/providers/VotingPowerProvider"; // Adjust the import path as needed
 
 export function useVotingPower({
   address,
@@ -16,7 +15,7 @@ export function useVotingPower({
 }) {
   const { votingPowerData, setVotingPowerData } =
     useContext(VotingPowerContext);
-  const [isLoading, setIsLoading] = useState(true); // Correctly define local isLoading state
+  const [isLoading, setIsLoading] = useState(true);
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
   const cacheKey = `${address}-${proposal}-${timestamp}`;
 
@@ -28,8 +27,7 @@ export function useVotingPower({
   });
 
   useEffect(() => {
-    const fetchVotingPower = async () => {
-      // Check if data for this address (and optionally proposal and timestamp) already exists
+    async function fetchVotingPower() {
       if (votingPowerData[cacheKey] || !address || !spaceObj?.space) {
         setIsLoading(false);
         return;
@@ -71,7 +69,6 @@ export function useVotingPower({
             ? Math.round(scaledValue)
             : parseFloat(scaledValue.toFixed(4));
 
-        // Update the global state with new voting power data
         setVotingPowerData((prevData) => ({
           ...prevData,
           [cacheKey]: {
@@ -84,9 +81,20 @@ export function useVotingPower({
       } finally {
         setIsLoading(false);
       }
-    };
+    }
 
     fetchVotingPower();
+
+    // Event listener to re-fetch voting power when relevant events occur
+    const refetchOnEvent = () => fetchVotingPower();
+    window.addEventListener("delegationSuccess", refetchOnEvent);
+    window.addEventListener("wrapSuccess", refetchOnEvent);
+
+    // Cleanup the event listeners
+    return () => {
+      window.removeEventListener("delegationSuccess", refetchOnEvent);
+      window.removeEventListener("wrapSuccess", refetchOnEvent);
+    };
   }, [
     address,
     proposal,
@@ -98,16 +106,9 @@ export function useVotingPower({
     cacheKey,
   ]);
 
-  // Determine if we're currently loading based on both the local loading state and the spaceLoading state
-  const currentlyLoading = isLoading || spaceLoading;
-  // Attempt to use cached data first; if unavailable, default to 0
-  const data = votingPowerData[cacheKey]
-    ? votingPowerData[cacheKey].votingPower
-    : 0;
-
   return {
-    data,
-    isLoading: currentlyLoading,
+    data: votingPowerData[cacheKey] ? votingPowerData[cacheKey].votingPower : 0,
+    isLoading: isLoading || spaceLoading,
   };
 }
 
