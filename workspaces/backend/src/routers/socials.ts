@@ -77,7 +77,7 @@ export const socialsRouter = router({
         })
         .execute();
 
-      const stateObject = { token };
+      const stateObject = { token, origin: 'discord' };
       const serializedState = encodeURIComponent(JSON.stringify(stateObject));
 
       if (!response.discord.username) {
