@@ -37,6 +37,7 @@ type Props = {
     symbol: string;
     vp?: number | undefined | null;
     avatarString?: string;
+    avatarAddress?: string;
   };
   receiverDataL2?: {
     address: string | undefined | null;
@@ -44,6 +45,7 @@ type Props = {
     symbol: string;
     vp?: number | undefined | null;
     avatarString?: string;
+    avatarAddress?: string;
   };
   onClose: () => void;
   delegateTokens: () => void;
@@ -183,6 +185,7 @@ export const DelegateModal = ({
                   symbol={receiverData.symbol}
                   isReceiver
                   text={"To"}
+                  avatarAddress={receiverData?.avatarAddress}
                   imgUrl={receiverData?.avatarString?.toString()}
                 />
               </>
@@ -203,7 +206,8 @@ export const DelegateModal = ({
                   symbol={receiverDataL2.symbol}
                   isReceiver
                   text={"To"}
-                  imgUrl={receiverDataL2?.avatarString?.toString()}
+                  avatarAddress={receiverDataL2?.avatarAddress}
+                  imgUrl={receiverData?.avatarString?.toString()}
                 />
               </>
             ) : null}

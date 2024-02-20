@@ -320,18 +320,21 @@ export function Delegates({
   });
 
   const [clickedDelegate, setClickedDelegate] = useState<any>();
-
   const addVotingPowerToReceiver = () => {
     if (votingPower) {
       return {
         ...receiverData,
         vp: votingPower,
+        avatarAddress: clickedDelegate?.author?.address,
         avatarString:
           clickedDelegate?.author?.profileImage ||
           clickedDelegate?.author?.ensAvatar,
       };
     }
-    return receiverData;
+    return {
+      ...receiverData,
+      avatarAddress: clickedDelegate?.author?.address
+    }
   };
 
   const addVotingPowerToReceiverL2 = () => {
@@ -339,12 +342,16 @@ export function Delegates({
       return {
         ...receiverDataL2?.balance,
         vp: l2VotingPower,
+        avatarAddress: clickedDelegate?.author?.address,
         avatarString:
           clickedDelegate?.author?.profileImage ||
           clickedDelegate?.author?.ensAvatar,
       };
     }
-    return receiverDataL2?.balance;
+    return {
+      ...receiverDataL2?.balance,
+      avatarAddress: clickedDelegate?.author?.address
+    }
   };
 
   const delegates =

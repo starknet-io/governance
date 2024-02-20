@@ -23,7 +23,7 @@ const shortAddress = (address: string | null) => {
 type UserSummaryProps = {
   address?: string | null;
   ethAddress?: string | null;
-  avatarString?: string | null;
+  avatarAddress?: string | null;
   imgUrl?: string | null;
   balance?: string | null;
   text?: string | null;
@@ -44,7 +44,7 @@ const UserSummary = ({
   symbol = "STRK",
   isSelected = false,
   sx,
-  avatarString,
+  avatarAddress,
   imgUrl,
   onClick,
 }: UserSummaryProps) => {
@@ -78,7 +78,7 @@ const UserSummary = ({
               size="xs"
               ensName={ethAddress}
               address={shortAddress(address)}
-              avatarString={address}
+              avatarString={avatarAddress}
               imgUrl={imgUrl}
               text={text}
             ></ProfileSummaryCard.Profile>

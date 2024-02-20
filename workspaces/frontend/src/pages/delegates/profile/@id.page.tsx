@@ -576,14 +576,16 @@ export function Page() {
         receiverData={{
           ...receiverData,
           vp: votingPower,
+          avatarAddress: delegate?.author?.address,
           avatarString:
             delegate?.author?.profileImage || delegate?.author?.ensAvatar,
         }}
         receiverDataL2={{
           ...receiverDataL2?.balance,
           vp: votingPowerL2,
+          avatarAddress: delegate?.author?.address,
           avatarString:
-            delegate?.author?.profileImage || delegate?.author?.ensAvatar,
+            delegate?.author?.profileImage || delegate?.author?.ensAvatar
         }}
         activeAddress={primaryWallet?.address}
         delegateTokens={() => {
