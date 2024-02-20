@@ -22,7 +22,7 @@ const homeLinks = [
     title: "Wrap STRK to vSTRK to vote",
     description:
       "In order to vote or to designate a delegate to vote for you on Starknet, you need to wrap STRK as vSTRK using the Governance hub. You can unwrap anytime.",
-    link: "/learn/How_to_convert_between_STRK_and_vSTRK",
+    link: "/learn/how_to_wrap_strk_and_unwrap_vstrk",
   },
   {
     title: "How to delegate voting power",
