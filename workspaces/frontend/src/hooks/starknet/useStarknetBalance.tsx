@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { BigNumber, ethers } from "ethers";
-import { Contract } from "starknet";
+import { Contract, getChecksumAddress } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { hexToString } from "viem";
@@ -20,22 +20,28 @@ export const useStarknetBalance = ({
   starknetAddress,
   starkContract = starknetContract,
 }: UseStarknetBalanceProps) => {
-  const { balance, setBalance, loading, setLoading, error, setError } =
+  const { balances, setBalances, loading, setLoading, error, setError } =
     useBalance();
+  // Generate a unique cache key
+  const cacheKey = `${starkContract}-${getChecksumAddress(
+    starknetAddress || "",
+  )}`;
 
   useEffect(() => {
     const fetchBalance = async () => {
-      if (!starknetAddress) {
-        setBalance(null);
+      console.log("i am here", starknetAddress, starkContract);
+      if (!starknetAddress || !validateStarknetAddress(starknetAddress)) {
+        setBalances((prevBalances) => ({
+          ...prevBalances,
+          [cacheKey]: null,
+        }));
         return;
       }
 
-      const isValidAddress = validateStarknetAddress(starknetAddress);
-      if (!isValidAddress) {
-        setBalance(null);
+      // Check if the balance for the cacheKey already exists
+      if (balances[cacheKey]) {
         return;
       }
-
       setLoading(true);
       setError(null);
 
@@ -58,13 +64,16 @@ export const useStarknetBalance = ({
         const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
         const commifiedBalance = ethers.utils.commify(formattedBalance);
 
-        setBalance({
-          balance: commifiedBalance,
-          rawBalance: formattedBalance,
-          decimals,
-          symbol: symbolString,
-          address: starknetAddress,
-        } as BalanceInfo);
+        setBalances((prevBalances: any) => ({
+          ...prevBalances,
+          [cacheKey]: {
+            balance: commifiedBalance,
+            rawBalance: formattedBalance,
+            decimals,
+            symbol: symbolString,
+            address: starknetAddress,
+          },
+        }));
       } catch (err) {
         setError(err as Error);
       } finally {
@@ -72,12 +81,10 @@ export const useStarknetBalance = ({
       }
     };
 
-    if (!balance) {
-      fetchBalance();
-    }
+    fetchBalance();
 
     const onWrapSuccess = () => {
-      fetchBalance();
+      setBalances((prevBalances: any) => ({}));
     };
 
     window.addEventListener("wrapSuccess", onWrapSuccess);
@@ -86,7 +93,14 @@ export const useStarknetBalance = ({
     return () => {
       window.removeEventListener("wrapSuccess", onWrapSuccess);
     };
-  }, [starknetAddress, setBalance, setLoading, setError, balance]);
+  }, [
+    starknetAddress,
+    starkContract,
+    setBalances,
+    setLoading,
+    setError,
+    balances?.[cacheKey],
+  ]);
 
-  return { balance, loading, error };
+  return { balance: balances?.[cacheKey], loading, error, cacheKey };
 };

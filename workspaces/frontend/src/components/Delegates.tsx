@@ -218,7 +218,6 @@ export function Delegates({
   const senderDataL2 = useStarknetBalance({
     starknetAddress: starknetWallet?.address,
   });
-  console.log("SENDER DATA", senderData);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState<boolean>(false);
   const [statusTitle, setStatusTitle] = useState<string>("");
   const [statusDescription, setStatusDescription] = useState<string>("");
