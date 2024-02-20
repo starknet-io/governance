@@ -52,10 +52,27 @@ export const SocialButton = ({
   return (
     <Flex alignItems="center" justifyContent="space-between">
       <Flex gap="standard.xs" alignItems="center">
-        <Text variant="bodySmall">
-          {label} {username && <span> - </span>}
-        </Text>
-        {username && <Text variant="bodySmallStrong">{username}</Text>}
+        {username && !readonly ? (
+          <Icon
+            as={
+              provider === "twitter"
+                ? TwitterIcon
+                : provider === "discourse"
+                ? DiscourseIcon
+                : provider === "discord"
+                ? DiscordIcon
+                : provider === "telegram"
+                ? TelegramIcon
+                : TwitterIcon
+            }
+            w={"20px"}
+            h={"20px"}
+            color="#4A4A4F"
+          />
+        ) : <Text variant="bodySmall">
+        {label} {username && <span> - </span>}
+      </Text>}
+        {username && <Text variant="bodySmallStrong">@{username}</Text>}
       </Flex>
       {username && !readonly ? (
         <Button
