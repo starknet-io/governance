@@ -19,9 +19,6 @@ import { VotingPowerBreakdown } from "@yukilabs/governance-components/src/Voting
 import { navigate } from "vite-plugin-ssr/client/router";
 import { useWallets } from "../../hooks/useWallets";
 import { getChecksumAddress } from "starknet";
-import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
-import { useBalanceData } from "src/utils/hooks";
-import { formatVotingPower } from "../../utils/helpers";
 
 interface IUser extends User {
   delegationStatement: Delegate | null;

@@ -9,6 +9,7 @@ import { MessagesProvider } from "./providers/MessagesProvider";
 import { DynamicProvider } from "./providers/DynamicProvider";
 import { layouts } from "src/pages/layouts";
 import { BalanceProvider } from "./providers/BalanceProvider";
+import { VotingPowerProvider } from "./providers/VotingPowerProvider";
 
 interface Props {
   readonly pageContext: PageContext;
@@ -62,17 +63,19 @@ export function PageShell(props: Props) {
       pageContext={{ ...pageContext, user: user || null, isUserLoading }}
     >
       <BalanceProvider>
-        <MessagesProvider>
-          <ChakraProvider theme={theme}>
-            <ApolloProvider client={props.apolloClient}>
-              <DynamicProvider>
-                <LayoutComponent pageContext={pageContext}>
-                  {children}
-                </LayoutComponent>
-              </DynamicProvider>
-            </ApolloProvider>
-          </ChakraProvider>
-        </MessagesProvider>
+        <VotingPowerProvider>
+          <MessagesProvider>
+            <ChakraProvider theme={theme}>
+              <ApolloProvider client={props.apolloClient}>
+                <DynamicProvider>
+                  <LayoutComponent pageContext={pageContext}>
+                    {children}
+                  </LayoutComponent>
+                </DynamicProvider>
+              </ApolloProvider>
+            </ChakraProvider>
+          </MessagesProvider>
+        </VotingPowerProvider>
       </BalanceProvider>
     </PageContextProvider>
     // </React.StrictMode>

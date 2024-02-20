@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useQuery } from "@apollo/client";
-import { GET_SPACE } from "./queries";
-import { getVotingPowerCalculation } from "./helpers";
+import { GET_SPACE } from "./queries"; // Adjust the import path as needed
+import { getVotingPowerCalculation } from "./helpers"; // Ensure paths are correct
+import { VotingPowerContext } from "src/renderer/providers/VotingPowerProvider";
+// Adjust the import path as needed
 
 export function useVotingPower({
   address,
@@ -12,10 +14,11 @@ export function useVotingPower({
   proposal?: number;
   timestamp?: number;
 }) {
+  const { votingPowerData, setVotingPowerData } =
+    useContext(VotingPowerContext);
+  const [isLoading, setIsLoading] = useState(true); // Correctly define local isLoading state
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
-
-  const [data, setData] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const cacheKey = `${address}-${proposal}-${timestamp}`;
 
   const { data: spaceObj, loading: spaceLoading } = useQuery(GET_SPACE, {
     variables: { space },
@@ -24,75 +27,87 @@ export function useVotingPower({
     context: { clientName: "snapshotX" },
   });
 
-  const fetchVotingPower = async () => {
-    if (!address || !spaceObj?.space || !address.length) {
-      setData(0);
-      setIsLoading(false);
-      return;
-    }
-
-    const strategiesMetadata = processStrategiesMetadata(
-      spaceObj.space.strategies_parsed_metadata,
-      spaceObj.space.strategies_indicies,
-    );
-    try {
-      const vpData = await getVotingPowerCalculation(
-        spaceObj.space.strategies,
-        spaceObj.space.strategies_params,
-        strategiesMetadata,
-        address,
-        timestamp ? timestamp : null,
-      );
-      const maxDecimals = Math.max(
-        ...vpData.map((strategy) => strategy.decimals),
-      );
-      const totalRawValue = vpData.reduce((acc, strategy) => {
-        const valueBigInt = BigInt(strategy.value);
-        if (strategy.symbol === "Whitelist") {
-          return acc + valueBigInt;
-        }
-        const scaleFactor = BigInt(10 ** (maxDecimals - strategy.decimals));
-        return acc + valueBigInt * scaleFactor;
-      }, 0n);
-
-      const scaledValue =
-        parseFloat(totalRawValue.toString()) / Math.pow(10, maxDecimals);
-      if (scaledValue > 1) {
-        setData(Math.round(scaledValue));
-      } else {
-        const fixedTo4Digits = parseFloat(scaledValue.toFixed(4))
-        setData(fixedTo4Digits);
-      }
-      setData(scaledValue);
-    } catch (e) {
-      console.error("Failed to load voting power", e);
-      setData(0);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchVotingPower = async () => {
+      // Check if data for this address (and optionally proposal and timestamp) already exists
+      if (votingPowerData[cacheKey] || !address || !spaceObj?.space) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const strategiesMetadata = processStrategiesMetadata(
+          spaceObj.space.strategies_parsed_metadata,
+          spaceObj.space.strategies_indicies,
+        );
+
+        const vpData = await getVotingPowerCalculation(
+          spaceObj.space.strategies,
+          spaceObj.space.strategies_params,
+          strategiesMetadata,
+          address,
+          timestamp,
+        );
+
+        const maxDecimals = Math.max(
+          ...vpData.map((strategy) => strategy.decimals),
+        );
+        const totalRawValue = vpData.reduce((acc, strategy) => {
+          const valueBigInt = BigInt(strategy.value);
+          const scaleFactor = BigInt(10 ** (maxDecimals - strategy.decimals));
+          return (
+            acc +
+            (strategy.symbol === "Whitelist"
+              ? valueBigInt
+              : valueBigInt * scaleFactor)
+          );
+        }, 0n);
+
+        const scaledValue =
+          parseFloat(totalRawValue.toString()) / Math.pow(10, maxDecimals);
+        const finalValue =
+          scaledValue > 1
+            ? Math.round(scaledValue)
+            : parseFloat(scaledValue.toFixed(4));
+
+        // Update the global state with new voting power data
+        setVotingPowerData((prevData) => ({
+          ...prevData,
+          [cacheKey]: {
+            votingPower: finalValue,
+            isLoading: false,
+          },
+        }));
+      } catch (e) {
+        console.error("Failed to load voting power", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchVotingPower();
+  }, [
+    address,
+    proposal,
+    timestamp,
+    spaceObj,
+    spaceLoading,
+    setVotingPowerData,
+    votingPowerData,
+    cacheKey,
+  ]);
 
-    // Event listener to re-fetch voting power when delegation is successful
-    const onDelegationSuccess = () => {
-      fetchVotingPower();
-    };
-
-    window.addEventListener("delegationSuccess", onDelegationSuccess);
-    window.addEventListener("wrapSuccess", onDelegationSuccess);
-
-    // Cleanup the event listener
-    return () => {
-      window.removeEventListener("delegationSuccess", onDelegationSuccess);
-      window.removeEventListener("wrapSuccess", onDelegationSuccess);
-    };
-  }, [address, spaceObj, timestamp]);
+  // Determine if we're currently loading based on both the local loading state and the spaceLoading state
+  const currentlyLoading = isLoading || spaceLoading;
+  // Attempt to use cached data first; if unavailable, default to 0
+  const data = votingPowerData[cacheKey]
+    ? votingPowerData[cacheKey].votingPower
+    : 0;
 
   return {
     data,
-    isLoading: isLoading || spaceLoading,
+    isLoading: currentlyLoading,
   };
 }
 
