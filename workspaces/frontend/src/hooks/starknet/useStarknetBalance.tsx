@@ -47,8 +47,10 @@ export const useStarknetBalance = ({
           provider,
         );
         const rawBalance = await contract.balance_of(starknetAddress);
-        const decimals = 18;
-        const symbol = starkContract === starknetContract ? "vSTRK" : "STRK";
+        const decimals = 18n;
+        const symbol =
+          starkContract === starknetContract ? "0x765354524b" : "0x5354524b";
+
         const hex = BigNumber.from(symbol).toHexString();
         const symbolString = hexToString(hex as `0x${string}`);
         const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
