@@ -533,7 +533,13 @@ export const ArrowDownCircleIcon = ({ color, ...rest }: UiIconProps) => (
     </g>
   </Icon>
 );
-
+export const ArrowRightUpIcon = ({ color, ...rest }: UiIconProps) => (
+  <Icon viewBox="0 0 14 14" {...rest}>
+    <g id="wrapper">
+      <path id="Union" fillRule="evenodd" fill={color ? color : "#1A1523"} clipRule="evenodd" d="M5.83867 3.33347C5.42447 3.33055 5.08632 3.66396 5.0834 4.07816C5.08048 4.49237 5.41389 4.83051 5.82809 4.83343L8.09013 4.84938L3.58222 9.35729C3.28933 9.65018 3.28933 10.1251 3.58222 10.4179C3.87511 10.7108 4.34999 10.7108 4.64288 10.4179L9.15047 5.91036L9.16674 8.17218C9.16971 8.58638 9.50791 8.91974 9.92211 8.91677C10.3363 8.91379 10.6697 8.57559 10.6667 8.16139L10.6375 4.10664C10.6346 3.6966 10.3029 3.36494 9.89284 3.36205L5.83867 3.33347Z"/>
+    </g>
+  </Icon>
+);
 export const BellIcon = ({ color, ...rest }: UiIconProps) => (
   <Icon viewBox="0 0 20 20" {...rest}>
     <path

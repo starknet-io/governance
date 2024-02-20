@@ -108,6 +108,7 @@ export {
   PlusCircleIcon,
   MinusCircleIcon,
   ArrowRightIcon,
+  ArrowRightUpIcon,
   ExternalLinkLargeIcon,
   ArrowRightLargeIcon,
   StarknetOutlineIcon,

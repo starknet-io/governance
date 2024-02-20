@@ -24,6 +24,7 @@ import {
   Button,
   Text,
   WrongAccountOrNetworkModal,
+  ArrowRightUpIcon
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
 import React, { useEffect, useState } from "react";
@@ -302,31 +303,20 @@ export function Page() {
           </Text>
           <Button
             top="-1px"
-            left="-6px"
+            left="-2px"
             variant="textSmall"
             onClick={() => setShowAgreement(true)}
             sx={{
               fontWeight: 600,
+              "& svg": {
+                width: "14px",
+                height: "14px",
+                ml: "standard.2xs"
+              }
             }}
           >
             View
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g id="wrapper">
-                <path
-                  id="Union"
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M5.8394 3.33352C5.4252 3.33059 5.08705 3.66401 5.08413 4.07821C5.08121 4.49241 5.41462 4.83056 5.82883 4.83348L8.09086 4.84943L3.58295 9.35733C3.29006 9.65023 3.29006 10.1251 3.58295 10.418C3.87584 10.7109 4.35072 10.7109 4.64361 10.418L9.1512 5.91041L9.16747 8.17222C9.17045 8.58643 9.50864 8.91979 9.92284 8.91681C10.337 8.91383 10.6704 8.57564 10.6674 8.16144L10.6383 4.10668C10.6353 3.69665 10.3036 3.36499 9.89357 3.3621L5.8394 3.33352Z"
-                  fill="#1A1523"
-                />
-              </g>
-            </svg>
+            <ArrowRightUpIcon />
           </Button>
         </Flex>
       );
