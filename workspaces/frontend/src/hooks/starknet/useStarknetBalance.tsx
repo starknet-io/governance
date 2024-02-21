@@ -39,7 +39,11 @@ export const useStarknetBalance = ({
 
   useEffect(() => {
     const fetchBalance = async () => {
-      if (!starknetAddress || !starknetAddress.length || !validateStarknetAddress(starknetAddress)) {
+      if (
+        !starknetAddress ||
+        !starknetAddress.length ||
+        !validateStarknetAddress(starknetAddress)
+      ) {
         setBalances((prevBalances) => ({
           ...prevBalances,
           [cacheKey]: null,
@@ -52,7 +56,7 @@ export const useStarknetBalance = ({
         return;
       }
 
-      isFetching[cacheKey] = true
+      isFetching[cacheKey] = true;
       setLoading(true);
       setError(null);
       try {
@@ -67,8 +71,9 @@ export const useStarknetBalance = ({
           provider,
         );
         const rawBalance = await contract.balance_of(starknetAddress);
-        const decimals = 18;
-        const symbol = await contract.symbol();
+        const decimals = 18n;
+        const symbol =
+          starkContract === starknetContract ? "0x765354524b" : "0x5354524b";
         const hex = BigNumber.from(symbol).toHexString();
         const symbolString = hexToString(hex as `0x${string}`);
         const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
@@ -87,7 +92,7 @@ export const useStarknetBalance = ({
       } catch (err) {
         setError(err as Error);
       } finally {
-        isFetching[cacheKey] = false
+        isFetching[cacheKey] = false;
         setLoading(false);
       }
     };
@@ -110,11 +115,7 @@ export const useStarknetBalance = ({
         hasEventListener.current = false;
       }
     };
-  }, [
-    starknetAddress,
-    starkContract,
-    balances?.[cacheKey],
-  ]);
+  }, [starknetAddress, starkContract, balances?.[cacheKey]]);
 
   return { balance: balances?.[cacheKey], loading, error, cacheKey };
 };
