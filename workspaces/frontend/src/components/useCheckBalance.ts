@@ -1,13 +1,25 @@
 import { useToast } from "@chakra-ui/react";
 import { useCallback } from "react";
 import { useBalanceData } from "src/utils/hooks";
+import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
 
-const DELEGATE_CREATION_MINIMUM = 0.00001;
-const DELEGATE_CREATION_TOKEN = "ETH";
+const DELEGATE_CREATION_MINIMUM = 1;
+const DELEGATE_CREATION_TOKEN = "STRK";
+const starknetContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 
-export const useCheckBalance = (userAaddress: string) => {
+export const useCheckBalance = ({
+  ethAddress,
+  starknetAddress,
+}: {
+  ethAddress?: string;
+  starknetAddress?: string;
+}) => {
   const toast = useToast();
-  const userBalance = useBalanceData(userAaddress as `0x${string}`, true);
+  const ethBalanceData = useBalanceData(ethAddress as `0x${string}`, false);
+  const { balance: starknetBalance } = useStarknetBalance({
+    starknetAddress,
+    starkContract: starknetContract,
+  });
   const checkUserBalance = useCallback(
     ({
       onSuccess,
@@ -16,23 +28,31 @@ export const useCheckBalance = (userAaddress: string) => {
       onSuccess?: () => void;
       onFail?: () => void;
     }) => {
-      if (userBalance.isFetched) {
-        if (parseFloat(userBalance?.balance) < DELEGATE_CREATION_MINIMUM) {
+      const ethLoaded = ethBalanceData.isFetched || !ethAddress;
+      if (ethLoaded && !starknetBalance?.loading) {
+        const hasSufficientEthBalance =
+          ethBalanceData?.balance &&
+          parseFloat(ethBalanceData?.balance) >= DELEGATE_CREATION_MINIMUM;
+        const hasSufficientStarknetBalance =
+          starknetBalance?.rawBalance &&
+          parseFloat(starknetBalance?.rawBalance) >= DELEGATE_CREATION_MINIMUM;
+
+        if (hasSufficientEthBalance || hasSufficientStarknetBalance) {
+          onSuccess?.();
+        } else {
           toast({
             position: "top-right",
             title: `Insufficient Balance`,
-            description: `You must have at least ${DELEGATE_CREATION_MINIMUM} ${DELEGATE_CREATION_TOKEN} to create a delegate profile`,
+            description: `You must have at least ${DELEGATE_CREATION_MINIMUM} ${DELEGATE_CREATION_TOKEN} in either Ethereum or Starknet to create a delegate profile`,
             status: "error",
             duration: 9000,
             isClosable: true,
           });
           onFail?.();
-        } else {
-          onSuccess?.();
         }
       }
     },
-    [userBalance.isFetched, userBalance?.balance],
+    [ethBalanceData.isFetched, ethBalanceData?.balance, starknetBalance],
   );
 
   return { checkUserBalance };
