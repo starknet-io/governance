@@ -131,13 +131,9 @@ export function Page() {
   console.log(votes);
    */
 
-  console.log(vote);
-
   const votes = trpc.votes.getOldVotesForProposal.useQuery({
     proposalId: pageContext.routeParams!.id,
   });
-
-  console.log(votes?.data);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
