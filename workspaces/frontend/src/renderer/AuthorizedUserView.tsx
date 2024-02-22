@@ -99,7 +99,12 @@ const AuthorizedUserView = () => {
 
   const address = user?.address?.toLowerCase() || "";
 
-  const delegate = trpc.delegates.getDelegateByAddress.useQuery({ address });
+  const delegate = trpc.delegates.getDelegateByAddress.useQuery(
+    { address },
+    {
+      enabled: !!(address && address?.length),
+    },
+  );
 
   const delegationStatement = delegate.data?.delegationStatement;
 

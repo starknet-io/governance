@@ -74,7 +74,7 @@ import { useWallets } from "../../hooks/useWallets";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 import { getChecksumAddress } from "starknet";
-import {useOldVotes} from "../../hooks/snapshotX/useOldVotes";
+import { useOldVotes } from "../../hooks/snapshotX/useOldVotes";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -131,13 +131,13 @@ export function Page() {
   console.log(votes);
    */
 
-  console.log(vote)
+  console.log(vote);
 
   const votes = trpc.votes.getOldVotesForProposal.useQuery({
-    proposalId: pageContext.routeParams!.id
-  })
+    proposalId: pageContext.routeParams!.id,
+  });
 
-  console.log(votes?.data)
+  console.log(votes?.data);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -313,7 +313,7 @@ export function Page() {
   const pastVotesWithUserInfo = pastVotes.map((pastVote) => {
     return {
       ...pastVote,
-      author: pastVote?.author?.author || {}
+      author: pastVote?.author?.author || {},
     };
   });
 
@@ -348,9 +348,14 @@ export function Page() {
     );
   };
 
-  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegationDataL1,
-  });
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery(
+    {
+      address: delegationDataL1,
+    },
+    {
+      enabled: !!delegationDataL1,
+    },
+  );
   const delegatedToL2 = trpc.delegates.getDelegateByAddress.useQuery(
     {
       address: delegationDataL2,
