@@ -21,7 +21,6 @@ export const subscriptionsRouter = router({
         email: z.string().email(),
       }),
     )
-    .use(hasPermission)
     .mutation(async (opts) => {
       const { id: userId } = opts.ctx.user;
       const { req } = opts.ctx;
@@ -126,7 +125,6 @@ export const subscriptionsRouter = router({
         email: z.string().email().optional(),
       }),
     )
-    .use(hasPermission)
     .mutation(async (opts) => {
       const { id: userId } = opts.ctx.user;
       const { email } = opts.input;
