@@ -1,4 +1,4 @@
-import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
+import { router, publicProcedure } from '../utils/trpc';
 import { snips } from '../db/schema/snips';
 import { db } from '../db/db';
 import { desc, eq } from 'drizzle-orm';
