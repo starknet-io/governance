@@ -21,9 +21,6 @@ export const useCheckBalance = ({
       starknetAddress,
       starkContract: starknetContract,
     });
-  console.log("Starknet Balance Loading:", starknetBalanceLoading);
-  console.log("Ethereum Balance Data:", ethBalanceData);
-  console.log("Starknet Balance:", starknetBalance);
 
   const checkUserBalance = useCallback(
     ({
@@ -33,10 +30,7 @@ export const useCheckBalance = ({
       onSuccess?: () => void;
       onFail?: () => void;
     }) => {
-      console.log("Checking user balance...");
       const ethLoaded = ethBalanceData.isFetched || !ethAddress;
-      console.log("Ethereum Data Loaded:", ethLoaded);
-      console.log("Starknet Balance Loading:", starknetBalanceLoading);
 
       if (ethLoaded && !starknetBalanceLoading && starknetBalance) {
         const hasSufficientEthBalance =
@@ -70,7 +64,12 @@ export const useCheckBalance = ({
         }
       }
     },
-    [ethBalanceData.isFetched, ethBalanceData?.balance, starknetBalance],
+    [
+      ethBalanceData.isFetched,
+      ethBalanceData?.balance,
+      starknetBalance,
+      starknetBalanceLoading,
+    ],
   );
 
   return { checkUserBalance };
