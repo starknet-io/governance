@@ -1,4 +1,4 @@
-import {router, protectedProcedure, hasPermission} from '../utils/trpc';
+import { router, protectedProcedure, hasPermission } from '../utils/trpc';
 import { db } from '../db/db';
 import axios from 'axios';
 import crypto from 'crypto';
@@ -37,13 +37,12 @@ export const socialsRouter = router({
     .input(
       z.object({
         id: z.string(),
-        delegateId: z.string().optional(),
         origin: z.string().optional(),
       }),
     )
     .use(hasPermission)
-    .query(async ({ input }) => {
-      const { delegateId } = input;
+    .query(async (opts) => {
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
 
       if (!delegateId) {
         throw new Error('Delegate id is missing');
@@ -91,10 +90,11 @@ export const socialsRouter = router({
       return response;
     }),
   getTwitterAuthUrl: protectedProcedure
-    .input(z.object({ delegateId: z.string(), id: z.string() }))
+    .input(z.object({ id: z.string() }))
     .use(hasPermission)
-    .query(async ({ input }) => {
-      const { delegateId } = input;
+    .query(async (opts) => {
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
+
       if (!delegateId) {
         throw new Error('Delegate id is missing');
       }
@@ -103,10 +103,11 @@ export const socialsRouter = router({
     }),
 
   unlinkDelegateSocial: protectedProcedure
-    .input(z.object({ origin: z.string(), delegateId: z.string(), id: z.string() }))
+    .input(z.object({ origin: z.string(), id: z.string() }))
     .use(hasPermission)
-    .mutation(async ({ input }) => {
-      const { origin, delegateId } = input;
+    .mutation(async (opts) => {
+      const { origin } = opts.input;
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
 
       const validOrigins: SocialNetwork[] = [
         'twitter',
@@ -215,8 +216,9 @@ export const socialsRouter = router({
       }),
     )
     .use(hasPermission)
-    .mutation(async ({ input }) => {
-      const { delegateId, telegramData } = input;
+    .mutation(async (opts) => {
+      const { telegramData } = opts.input;
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
 
       // Perform Telegram data verification
       const isVerified = await verifyTelegramData(telegramData);
@@ -316,14 +318,14 @@ export const socialsRouter = router({
   addDiscourse: protectedProcedure
     .input(
       z.object({
-        delegateId: z.string(),
         username: z.string(),
         id: z.string(),
       }),
     )
     .use(hasPermission)
-    .mutation(async ({ input }) => {
-      const { delegateId, username } = input;
+    .mutation(async (opts) => {
+      const { username } = opts.input;
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
 
       // Fetch or update the socials table
       const existingSocials = await db.query.socials.findFirst({

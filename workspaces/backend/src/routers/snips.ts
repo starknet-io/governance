@@ -17,9 +17,9 @@ export const snipsRouter = router({
       with: {
         author: true,
         comments: true,
-      }
-    })
-    return data
+      },
+    });
+    return data;
   }),
 
   getSNIP: publicProcedure
@@ -31,50 +31,12 @@ export const snipsRouter = router({
           author: true,
           comments: {
             with: {
-              author: true
+              author: true,
             },
-            orderBy: [desc(comments.createdAt)]
-          }
+            orderBy: [desc(comments.createdAt)],
+          },
         },
-      })
+      });
       return data;
-    }),
-
-  createSNIP: protectedProcedure
-    .input(snipInsertSchema.omit({ id: true, type: true, status: true }))
-    .mutation(async (opts) => {
-      const insertedSnip = await db
-        .insert(snips)
-        .values({
-          ...opts.input,
-          type: 'snip',
-          status: 'Draft',
-          userId: opts.ctx.user?.id
-        })
-        .returning();
-
-
-      return insertedSnip[0];
-    }),
-
-  editProposal: publicProcedure
-    .input(snipInsertSchema.required({ id: true }))
-    .mutation(async (opts) => {
-      const updatedSnip = await db
-        .update(snips)
-        .set(opts.input)
-        .where(eq(snips.id, opts.input.id))
-        .returning();
-
-      return updatedSnip[0];
-    }),
-
-  deleteProposal: publicProcedure
-    .input(snipInsertSchema.required({ id: true }).pick({ id: true }))
-    .mutation(async (opts) => {
-      await db
-        .delete(snips)
-        .where(eq(snips.id, opts.input.id))
-        .execute();
     }),
 });

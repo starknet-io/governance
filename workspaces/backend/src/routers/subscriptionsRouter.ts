@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from '../utils/trpc';
+import {router, protectedProcedure, hasPermission} from '../utils/trpc';
 import { db } from '../db/db';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,6 +21,7 @@ export const subscriptionsRouter = router({
         email: z.string().email(),
       }),
     )
+    .use(hasPermission)
     .mutation(async (opts) => {
       const { id: userId } = opts.ctx.user;
       const { req } = opts.ctx;
@@ -125,6 +126,7 @@ export const subscriptionsRouter = router({
         email: z.string().email().optional(),
       }),
     )
+    .use(hasPermission)
     .mutation(async (opts) => {
       const { id: userId } = opts.ctx.user;
       const { email } = opts.input;
