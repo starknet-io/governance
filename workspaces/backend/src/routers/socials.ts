@@ -202,7 +202,6 @@ export const socialsRouter = router({
   verifyTelegram: protectedProcedure
     .input(
       z.object({
-        delegateId: z.string(),
         id: z.string(),
         telegramData: z.object({
           id: z.number(),
