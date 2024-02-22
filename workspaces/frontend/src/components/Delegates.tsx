@@ -234,6 +234,8 @@ export function Delegates({
   const activeStarknetAccount = useActiveStarknetAccount();
 
   const [helpMessage, setHelpMessage] = useHelpMessage();
+  const isL1Delegation = primaryWallet?.id === ethWallet?.id;
+  const isL2Delegation = primaryWallet?.id === starknetWallet?.id;
   // listen to txn with delegation hash
   const {
     isLoading: isDelegationLoading,
@@ -251,13 +253,19 @@ export function Delegates({
 
   // handle delegation cases
   useEffect(() => {
-    if (isDelegationLoading || isDelegationL2Loading) {
+    if (
+      (isDelegationLoading && isL1Delegation) ||
+      (isDelegationL2Loading && isL2Delegation)
+    ) {
       setIsStatusModalOpen(true);
       setStatusTitle("Delegating voting power");
       setStatusDescription("");
     }
 
-    if (isDelegationError || delegationL2Error) {
+    if (
+      (isDelegationError && isL1Delegation) ||
+      (delegationL2Error && isL2Delegation)
+    ) {
       setIsStatusModalOpen(true);
       setStatusTitle("Delegating voting power failed");
       setStatusDescription(
@@ -267,7 +275,10 @@ export function Delegates({
       setL2InputAddress("");
     }
 
-    if (isDelegationSuccess || isDelegationL2Success) {
+    if (
+      (isDelegationSuccess && isL1Delegation) ||
+      (isDelegationL2Success && isL2Delegation)
+    ) {
       setIsStatusModalOpen(true);
       setStatusTitle("Voting power delegated successfully");
       setStatusDescription("");
@@ -315,8 +326,9 @@ export function Delegates({
       return {
         ...receiverData,
         vp: votingPower,
-        avatarString: clickedDelegate?.author?.profileImage ||
-          clickedDelegate?.author?.ensAvatar
+        avatarString:
+          clickedDelegate?.author?.profileImage ||
+          clickedDelegate?.author?.ensAvatar,
       };
     }
     return receiverData;
@@ -327,8 +339,9 @@ export function Delegates({
       return {
         ...receiverDataL2?.balance,
         vp: l2VotingPower,
-        avatarString: clickedDelegate?.author?.profileImage ||
-          clickedDelegate?.author?.ensAvatar
+        avatarString:
+          clickedDelegate?.author?.profileImage ||
+          clickedDelegate?.author?.ensAvatar,
       };
     }
     return receiverDataL2?.balance;
@@ -592,11 +605,17 @@ export function Delegates({
       <ConfirmModal isOpen={isLoading} onClose={() => setIsOpen(false)} />
       <StatusModal
         isOpen={isStatusModalOpen}
-        isPending={isDelegationLoading || isDelegationL2Loading}
-        isSuccess={isDelegationSuccess || isDelegationL2Success}
+        isPending={
+          (isDelegationLoading && isL1Delegation) ||
+          (isDelegationL2Loading && isL2Delegation)
+        }
+        isSuccess={
+          (isDelegationSuccess && isL1Delegation) ||
+          (isDelegationL2Success && isL2Delegation)
+        }
         isFail={
-          isDelegationError ||
-          delegationL2Error ||
+          (isDelegationError && isL1Delegation) ||
+          (delegationL2Error && isL2Delegation) ||
           !!((!txHash || !txHash.length) && statusDescription?.length)
         }
         onClose={() => {

@@ -13,7 +13,7 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.meta.outputs.version }}
+      image: ${{ steps.meta.outputs.tags }}
     environment:
       name: production-frontend
     steps:
@@ -24,17 +24,24 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: registry.digitalocean.com/governance/frontend-prod
+          images: europe-west9-docker.pkg.dev/governance-production/governance/prod
           flavor: latest=false
           tags: |
             type=ref,event=tag
 
-      - name: Login to DO Container Registry
-        uses: docker/login-action@v2
+      - uses: 'google-github-actions/auth@v2'
+        id: auth
         with:
-          registry: registry.digitalocean.com
-          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          token_format: access_token
+          project_id: 'governance-production'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS_PROD }}'
+
+      - name: Login to GAR
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west9-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -59,19 +66,35 @@ jobs:
             VITE_APP_ALGOLIA_PUBLIC_API_KEY=${{ secrets.VITE_APP_ALGOLIA_PUBLIC_API_KEY }}
             VITE_APP_ALGOLIA_INDEX=${{ vars.VITE_APP_ALGOLIA_INDEX }}
             VITE_APP_TELEGRAM_BOT_KEY=${{ secrets.VITE_APP_TELEGRAM_BOT_KEY }}
-
+            VITE_APP_STARKNET_REGISTRY=${{ vars.VITE_APP_STARKNET_REGISTRY }}
+            VITE_APP_SNAPSHOTX_SPACE=${{ vars.VITE_APP_SNAPSHOTX_SPACE }}
+            VITE_APP_STARKNET_L2_CONTRACT=${{ vars.VITE_APP_STARKNET_L2_CONTRACT }}
+            VITE_APP_SNAPSHOTX_URL=${{ vars.VITE_APP_SNAPSHOTX_URL }}
+            VITE_APP_IPFS_GATEWAY=${{ vars.VITE_APP_IPFS_GATEWAY }}
+            VITE_APP_INFURA_API_KEY=${{ secrets.VITE_APP_INFURA_API_KEY }}
+            VITE_APP_PASS_CORS_KEY=${{ vars.VITE_APP_PASS_CORS_KEY }}
+            VITE_APP_VSTRK_CONTRACT=${{ vars.VITE_APP_VSTRK_CONTRACT }}
+            VITE_APP_STRK_CONTRACT=${{ vars.VITE_APP_STRK_CONTRACT }}
+            VITE_APP_TW_CLIENT_ID=${{ vars.VITE_APP_TW_CLIENT_ID }}
   Deploy-production:
     needs: Build
     runs-on: ubuntu-latest
     env:
-      tag: ${{ needs.Build.outputs.tag }}
+      image: ${{ needs.Build.outputs.image }}
     environment:
       name: production-frontend
       url: https://governance.yuki-labs.dev
     steps:
-      - name: DigitalOcean App Platform deployment
-        uses: digitalocean/app_action@v1.1.5
+      - uses: 'google-github-actions/auth@v2'
+        id: auth
         with:
-          app_name: frontend-production
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "frontend","image":{"registry_type": "DOCR","repository": "frontend-prod","tag": "${{ env.tag }}"}}]'
+          token_format: access_token
+          project_id: 'governance-production'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS_PROD }}'
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: governance
+          image: ${{ env.image }}
+          region: europe-west9

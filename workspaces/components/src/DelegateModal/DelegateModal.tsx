@@ -121,7 +121,7 @@ export const DelegateModal = ({
   };
 
   const canBeDelegatedOnSpecifiedLayer =
-    (receiverData && l1Delegation) || (receiverDataL2 && l2Delegation);
+    (receiverData?.address && l1Delegation) || (receiverDataL2?.address && l2Delegation);
   return (
     <Modal
       maxHeight={"85%"}
@@ -248,13 +248,13 @@ export const DelegateModal = ({
             )}
           </Swap.Root>
           {!canBeDelegatedOnSpecifiedLayer &&
-            (receiverDataL2?.address || receiverData) &&
+            (receiverDataL2?.address || receiverData?.address) &&
             !isSelfDelegation && (
               <Banner
                 label={`This delegate hasn't linked a ${
-                  l1Delegation ? "Starknet" : "Ethereum"
+                  l2Delegation ? "Starknet" : "Ethereum"
                 } address to their profile. Currently, you can only delegate to them using an ${
-                  l1Delegation ? "Ethereum" : "Starknet"
+                  l2Delegation ? "Ethereum" : "Starknet"
                 } wallet.`}
               />
             )}

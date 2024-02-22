@@ -409,7 +409,9 @@ const VotingProposalComments = ({
                 />
               </Box>
             ) : (
-              <Banner label="Comments are now closed." />
+              <Box mb="standard.md">
+                <Banner label="Comments are now closed." />
+              </Box>
             )}
           </FormControl>
         </Box>
