@@ -141,7 +141,10 @@ export const DelegateForm: React.FC<DelegateFormProps> = ({
   };
 
   const { starknetWallet, ethWallet } = useWallets();
-  const { checkUserBalance } = useCheckBalance(ethWallet?.address as `0x${string}`);
+  const { checkUserBalance } = useCheckBalance({
+    ethAddress: ethWallet?.address,
+    starknetAddress: starknetWallet?.address,
+  });
 
   useEffect(() => {
     if (mode === "create") {

@@ -350,7 +350,10 @@ export function Delegates({
   const delegates =
     trpc.delegates.getDelegatesWithSortingAndFilters.useQuery(filtersState);
   const { user } = usePageContext();
-  const { checkUserBalance } = useCheckBalance(user?.address as `0x${string}`);
+  const { checkUserBalance } = useCheckBalance({
+    ethAddress: ethWallet?.address,
+    starknetAddress: starknetWallet?.address,
+  });
   const userDelegate = trpc.users.isDelegate.useQuery(
     {
       userId: user?.id || "",
