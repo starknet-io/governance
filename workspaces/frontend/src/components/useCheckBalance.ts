@@ -16,10 +16,15 @@ export const useCheckBalance = ({
 }) => {
   const toast = useToast();
   const ethBalanceData = useBalanceData(ethAddress as `0x${string}`, false);
-  const { balance: starknetBalance } = useStarknetBalance({
-    starknetAddress,
-    starkContract: starknetContract,
-  });
+  const { balance: starknetBalance, loading: starknetBalanceLoading } =
+    useStarknetBalance({
+      starknetAddress,
+      starkContract: starknetContract,
+    });
+  console.log("Starknet Balance Loading:", starknetBalanceLoading);
+  console.log("Ethereum Balance Data:", ethBalanceData);
+  console.log("Starknet Balance:", starknetBalance);
+
   const checkUserBalance = useCallback(
     ({
       onSuccess,
@@ -28,14 +33,27 @@ export const useCheckBalance = ({
       onSuccess?: () => void;
       onFail?: () => void;
     }) => {
+      console.log("Checking user balance...");
       const ethLoaded = ethBalanceData.isFetched || !ethAddress;
-      if (ethLoaded && !starknetBalance?.loading) {
+      console.log("Ethereum Data Loaded:", ethLoaded);
+      console.log("Starknet Balance Loading:", starknetBalanceLoading);
+
+      if (ethLoaded && !starknetBalanceLoading && starknetBalance) {
         const hasSufficientEthBalance =
           ethBalanceData?.balance &&
           parseFloat(ethBalanceData?.balance) >= DELEGATE_CREATION_MINIMUM;
         const hasSufficientStarknetBalance =
           starknetBalance?.rawBalance &&
           parseFloat(starknetBalance?.rawBalance) >= DELEGATE_CREATION_MINIMUM;
+
+        console.log(
+          "Has Sufficient Ethereum Balance:",
+          hasSufficientEthBalance,
+        );
+        console.log(
+          "Has Sufficient Starknet Balance:",
+          hasSufficientStarknetBalance,
+        );
 
         if (hasSufficientEthBalance || hasSufficientStarknetBalance) {
           onSuccess?.();
