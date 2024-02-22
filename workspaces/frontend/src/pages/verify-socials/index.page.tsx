@@ -22,17 +22,15 @@ export function Page() {
   const oauthToken = urlParams ? urlParams.get("oauth_token") : "";
   const oauthVerifier = urlParams ? urlParams.get("oauth_verifier") : "";
   const stateObject =
-    urlParams && urlParams.get("state")
-      ? JSON.parse(urlParams.get("state") || "")
-      : "";
-
+    urlParams && urlParams.get("state") ? urlParams.get("state") : null;
+  console.log(stateObject);
   useEffect(() => {
     if (code && code.length) {
       window.history.replaceState(null, "", window.location.pathname);
-      if (stateObject.origin === "discord") {
+      if (stateObject) {
         verifyDiscord.mutateAsync(
           {
-            token: stateObject.token,
+            state: stateObject,
             code: code,
           },
           {

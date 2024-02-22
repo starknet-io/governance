@@ -48,7 +48,6 @@ export const DiscourseFormModal = ({
   }) => {
     addDiscourse.mutateAsync(
       {
-        delegateId,
         id: userId,
         username,
       },

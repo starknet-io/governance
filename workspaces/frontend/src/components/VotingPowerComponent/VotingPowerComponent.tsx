@@ -56,6 +56,7 @@ const VotingPowerComponent = ({
           {!isCloseToZero && hasTooltip && (
             <>
               {votingPower} {unit}
+              {showBalanceText && " balance"}
             </>
           )}
           {/* {isCloseToZero && (

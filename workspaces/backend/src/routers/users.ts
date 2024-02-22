@@ -59,6 +59,10 @@ export const usersRouter = router({
     )
     .use(isAdmin)
     .mutation(async (opts) => {
+      const requester = opts.ctx.user;
+      if (opts.input.role === "superadmin" && requester.role !== 'superadmin') {
+        throw new Error("Insufficient permissions.");
+      }
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),
       });
@@ -86,6 +90,10 @@ export const usersRouter = router({
     )
     .use(isAdmin)
     .mutation(async (opts) => {
+      const requester = opts.ctx.user;
+      if (opts.input.role === "superadmin" && requester.role !== 'superadmin') {
+        throw new Error("Insufficient permissions.");
+      }
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),
       });
@@ -238,34 +246,6 @@ export const usersRouter = router({
       return usersByAddress;
     }),
 
-  editUserProfileByAddress: protectedProcedure
-    .input(
-      z.object({
-        address: z.string(),
-        username: z.string().optional(),
-        starknetAddress: z.string().optional(),
-      }),
-    )
-    .mutation(async (opts) => {
-      const user = await db.query.users.findFirst({
-        where: eq(users.address, opts.input.address.toLowerCase()),
-      });
-
-      if (!user) {
-        throw new Error('NOT_FOUND');
-      }
-
-      await db
-        .update(users)
-        .set({
-          username: opts.input.username,
-          starknetAddress: opts.input.starknetAddress,
-          updatedAt: new Date(),
-        })
-        .where(eq(users.address, opts.input.address.toLowerCase()));
-
-      return;
-    }),
   banUser: protectedProcedure
     .input(
       z.object({

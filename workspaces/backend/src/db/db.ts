@@ -51,7 +51,7 @@ const db = drizzle(pool, {
     ...members,
     ...socials,
     ...oauthTokens,
-    ...oldVotes
+    ...oldVotes,
   },
 });
 

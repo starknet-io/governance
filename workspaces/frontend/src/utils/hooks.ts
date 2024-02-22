@@ -23,6 +23,7 @@ export const useBalanceData = (
   return {
     address,
     balance: balance?.formatted ?? "0",
+    balanceRaw: parseFloat(balance?.formatted || "0"),
     ethAddress: ensName ?? address,
     symbol: balance?.symbol ?? import.meta.env.VITE_APP_DELEGATION_SYMBOL,
     isFetched,
