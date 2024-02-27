@@ -34,7 +34,6 @@ export const subscriptionsRouter = router({
       const existingSubscription = await db.query.subscribers.findFirst({
         where: eq(subscribers.userId, userId),
       });
-      console.log(existingSubscription)
 
       if (existingSubscription) {
         throw new Error('User is already subscribed');
@@ -51,7 +50,7 @@ export const subscriptionsRouter = router({
         .returning();
       const mailgunDomain = process.env.MAILGUN_DOMAIN || '';
       const withEmailMailgunDomain = `@${mailgunDomain}`;
-      const hostname = getUrlBasedOnHost(req.hostname);
+      const hostname = getUrlBasedOnHost(req.host);
 
       if (newSubscription && newSubscription[0]) {
         await mg.messages.create(mailgunDomain, {
