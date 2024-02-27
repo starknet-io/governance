@@ -23,6 +23,7 @@ import { EmptyState } from "../EmptyState";
 import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
 import { EmailSubscriptionModal } from "../EmailSubscriptionModal";
 import { InfoModal } from "../InfoModal";
+import { usePageContext } from "@yukilabs/governance-frontend/src/renderer/PageContextProvider";
 
 type DropdownProps = {
   notifications: any[];
@@ -93,6 +94,7 @@ export const NotificationsMenu = () => {
     error: notificationsError,
     markAsRead,
   } = useFetchNotifications();
+  const { user } = usePageContext();
   const [isAllSelected, setIsAllSelected] = useState(true);
   const [isUnreadSelected, setIsUnreadSelected] = useState(false);
   const hasUnread = notifications?.some((notification) => !notification.read);
@@ -147,7 +149,7 @@ export const NotificationsMenu = () => {
   const handleConfirmUnsubscribe = async () => {
     try {
       await unsubscribeToEmail.mutateAsync({
-        email: email.data as string,
+        userId: user?.id as string,
       });
       await email.refetch();
       onCloseConfirmUnsubscribe();
@@ -251,13 +253,13 @@ to receive notifications`}
               w={"400px"}
               borderRadius="8px"
               sx={{
-                '@media (max-width: 567px)': {
+                "@media (max-width: 567px)": {
                   height: "calc(100vh - 58px)",
                   marginTop: "3px",
                   marginLeft: "-48px",
                   borderRadius: 0,
-                  width: "100vw"
-                }
+                  width: "100vw",
+                },
               }}
             >
               <Flex
@@ -328,9 +330,9 @@ to receive notifications`}
               ) : (
                 <Flex
                   sx={{
-                    '@media (max-width: 567px)': {
-                      height: "calc(100vh - 207px)"
-                    }
+                    "@media (max-width: 567px)": {
+                      height: "calc(100vh - 207px)",
+                    },
                   }}
                 >
                   <EmptyState
