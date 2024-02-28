@@ -12,19 +12,28 @@ import { getUserByJWT } from './utils/helpers';
 import multer from 'multer';
 import { delegateRouter } from './routers/delegates';
 import { notificationsRouter } from './routers/notifications';
-//import rateLimit from 'express-rate-limit';
+import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
-// 15 mins -> 250 reqs
-/*
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 250,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
+  keyGenerator: (req: express.Request): string => {
+    const xForwardedFor = req.headers['x-forwarded-for'];
+    const xRealIp = req.headers['x-real-ip'];
+    if (typeof xForwardedFor === 'string') {
+      return xForwardedFor.split(',').shift() || req.ip; // Take the first IP in the list
+    } else if (typeof xRealIp === 'string') {
+      return xRealIp || req.ip;
+    }
+    return req.ip;
+  }
 });
- */
+
 
 dotenv.config();
 
@@ -33,6 +42,7 @@ const upload = multer({ storage: storage });
 
 const app: Express = express();
 const port = process.env.PORT || 8000;
+app.set('trust proxy', 1); // if behind one proxy like GCP load balancer
 
 const fetchUserMiddleware = async (
   req: express.Request,
@@ -60,7 +70,7 @@ const fetchUserMiddleware = async (
 app.use(cookieParser());
 app.use(fetchUserMiddleware);
 // Rate limiter
-//app.use(limiter);
+app.use(limiter);
 morgan.token('decoded-url', (req: any) => decodeURIComponent(req.originalUrl));
 
 app.use(
