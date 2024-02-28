@@ -1,4 +1,4 @@
-import {router, protectedProcedure, hasPermission} from '../utils/trpc';
+import { router, protectedProcedure, hasPermission } from '../utils/trpc';
 import { db } from '../db/db';
 import axios from 'axios';
 import crypto from 'crypto';
@@ -37,13 +37,12 @@ export const socialsRouter = router({
     .input(
       z.object({
         id: z.string(),
-        delegateId: z.string().optional(),
         origin: z.string().optional(),
       }),
     )
     .use(hasPermission)
-    .query(async ({ input }) => {
-      const { delegateId } = input;
+    .query(async (opts) => {
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
 
       if (!delegateId) {
         throw new Error('Delegate id is missing');
@@ -77,24 +76,28 @@ export const socialsRouter = router({
         })
         .execute();
 
-      const stateObject = { token };
-      const serializedState = encodeURIComponent(JSON.stringify(stateObject));
+      opts.ctx.res.cookie('oauth_state', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
 
       if (!response.discord.username) {
         response.discord.redirectUrl = `https://discord.com/api/oauth2/authorize?client_id=${
           process.env.DISCORD_CLIENT_ID
         }&response_type=code&redirect_uri=${encodeURIComponent(
           process.env.DISCORD_REDIRECT_URI!,
-        )}&scope=identify&state=${serializedState}`;
+        )}&scope=identify&state=${token}`;
       }
 
       return response;
     }),
   getTwitterAuthUrl: protectedProcedure
-    .input(z.object({ delegateId: z.string(), id: z.string() }))
+    .input(z.object({ id: z.string() }))
     .use(hasPermission)
-    .query(async ({ input }) => {
-      const { delegateId } = input;
+    .query(async (opts) => {
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
+
       if (!delegateId) {
         throw new Error('Delegate id is missing');
       }
@@ -103,10 +106,11 @@ export const socialsRouter = router({
     }),
 
   unlinkDelegateSocial: protectedProcedure
-    .input(z.object({ origin: z.string(), delegateId: z.string(), id: z.string() }))
+    .input(z.object({ origin: z.string(), id: z.string() }))
     .use(hasPermission)
-    .mutation(async ({ input }) => {
-      const { origin, delegateId } = input;
+    .mutation(async (opts) => {
+      const { origin } = opts.input;
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
 
       const validOrigins: SocialNetwork[] = [
         'twitter',
@@ -139,30 +143,17 @@ export const socialsRouter = router({
     }),
 
   verifyDiscord: protectedProcedure
-    .input(z.object({ code: z.string(), token: z.string() }))
-    .mutation(async ({ input }) => {
-      const { code, token } = input;
+    .input(z.object({ code: z.string(), state: z.string() }))
+    .mutation(async (opts) => {
+      const { state, code } = opts.input;
 
-      const tokenRecord = await db.query.oauthTokens.findFirst({
-        where: eq(oauthTokens.token, token),
-      });
-
-      if (!tokenRecord) {
-        throw new Error('Invalid or expired token');
+      const stateTokenFromCookie = opts.ctx.req.cookies['oauth_state'];
+      if (state !== stateTokenFromCookie) {
+        throw new Error('State token mismatch');
       }
 
-      // Check for token expiration
-      if (new Date(tokenRecord.expiration) < new Date()) {
-        // Optionally, delete the expired token record here to clean up
-        await db
-          .delete(oauthTokens)
-          .where(eq(oauthTokens.token, token))
-          .execute();
-        throw new Error('Token has expired');
-      }
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
 
-      // Ensure delegateId is present
-      const delegateId = tokenRecord?.delegateId;
       if (!delegateId) {
         throw new Error('Delegate not found');
       }
@@ -190,18 +181,13 @@ export const socialsRouter = router({
           discord: discordUsername,
         });
       }
-
-      await db
-        .delete(oauthTokens)
-        .where(eq(oauthTokens.token, token))
-        .execute();
+      opts.ctx.res.clearCookie('oauth_state');
 
       return { discordUsername, delegateId };
     }),
   verifyTelegram: protectedProcedure
     .input(
       z.object({
-        delegateId: z.string(),
         id: z.string(),
         telegramData: z.object({
           id: z.number(),
@@ -215,8 +201,9 @@ export const socialsRouter = router({
       }),
     )
     .use(hasPermission)
-    .mutation(async ({ input }) => {
-      const { delegateId, telegramData } = input;
+    .mutation(async (opts) => {
+      const { telegramData } = opts.input;
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
 
       // Perform Telegram data verification
       const isVerified = await verifyTelegramData(telegramData);
@@ -316,14 +303,14 @@ export const socialsRouter = router({
   addDiscourse: protectedProcedure
     .input(
       z.object({
-        delegateId: z.string(),
         username: z.string(),
         id: z.string(),
       }),
     )
     .use(hasPermission)
-    .mutation(async ({ input }) => {
-      const { delegateId, username } = input;
+    .mutation(async (opts) => {
+      const { username } = opts.input;
+      const delegateId = opts.ctx.user?.delegationStatement?.id;
 
       // Fetch or update the socials table
       const existingSocials = await db.query.socials.findFirst({
