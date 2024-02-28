@@ -1,4 +1,4 @@
-import {router, protectedProcedure } from '../utils/trpc';
+import {router, protectedProcedure, hasPermission} from '../utils/trpc';
 import { db } from '../db/db';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
@@ -122,21 +122,19 @@ export const subscriptionsRouter = router({
   unsubscribe: protectedProcedure
     .input(
       z.object({
-        email: z.string().email().optional(),
+        userId: z.string()
       }),
     )
+    .use(hasPermission)
     .mutation(async (opts) => {
       const { id: userId } = opts.ctx.user;
-      const { email } = opts.input;
 
       if (!userId) {
         throw new Error('Unauthorized');
       }
 
       // If email is provided, use it to find subscription, otherwise use userId
-      const condition = email
-        ? eq(subscribers.email, email)
-        : eq(subscribers.userId, userId);
+      const condition = eq(subscribers.userId, userId);
 
       // Delete the subscription record
       await db.delete(subscribers).where(condition).execute();

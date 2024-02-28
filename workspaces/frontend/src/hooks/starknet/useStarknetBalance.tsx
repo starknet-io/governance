@@ -1,88 +1,111 @@
-import { useState, useEffect } from "react";
+// useStarknetBalance.js
+
+import { useEffect } from "react";
 import { BigNumber, ethers } from "ethers";
-import { Contract } from "starknet";
+import { getChecksumAddress, Contract } from "starknet";
 import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { hexToString } from "viem";
+import { useBalance } from "src/renderer/providers/BalanceProvider";
 
-const starknetContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
+const starknetContract = import.meta.env.VITE_APP_VSTRK_CONTRACT as string;
+
+interface UseStarknetBalanceProps {
+  starknetAddress: string;
+  starkContract?: string;
+}
 
 export const useStarknetBalance = ({
   starknetAddress,
   starkContract = starknetContract,
-}: {
-  starknetAddress: string;
-  starkContract?: string;
-}) => {
-  const [balance, setBalance] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+}: UseStarknetBalanceProps) => {
+  const {
+    balances,
+    setBalances,
+    loading,
+    setLoading,
+    error,
+    setError,
+    addActiveCacheKey,
+    removeActiveCacheKey,
+    isFetching,
+  } = useBalance();
 
-  useEffect(() => {
-    const fetchBalance = async () => {
-      if (!starknetAddress) {
-        setBalance(null);
+  const cacheKey = `${starkContract}-${getChecksumAddress(
+    starknetAddress || "",
+  )}`;
+
+  const fetchBalance = async (forceUpdate = false) => {
+    if (
+      !starknetAddress ||
+      !validateStarknetAddress(starknetAddress) ||
+      balances[cacheKey] ||
+      isFetching[cacheKey]
+    ) {
+      if (!forceUpdate) {
         return;
       }
+    }
 
-      const isValidAddress = validateStarknetAddress(starknetAddress);
-      if (!isValidAddress) {
-        setBalance(null);
-        return;
-      }
+    setLoading(true);
+    setError(null);
 
-      setLoading(true);
-      setError(null);
+    try {
+      isFetching[cacheKey] = true;
+      const provider = starkProvider;
+      const contractAddress = starkContract;
+      const { abi: starknetContractAbi } =
+        await provider.getClassAt(contractAddress);
+      const contract = new Contract(
+        starknetContractAbi,
+        contractAddress,
+        provider,
+      );
+      const rawBalance = await contract.balance_of(starknetAddress);
+      const decimals = 18n;
+      const symbol =
+        starkContract === starknetContract ? "0x765354524b" : "0x5354524B";
+      const hex = BigNumber.from(symbol).toHexString();
+      const symbolString = hexToString(hex as `0x${string}`);
+      const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
+      const commifiedBalance = ethers.utils.commify(formattedBalance);
 
-      try {
-        // Replace with actual StarkNet provider and contract address/ABI
-        const provider = starkProvider;
-        const contractAddress = starkContract;
-        const { abi: starknetContractAbi } =
-          await starkProvider.getClassAt(contractAddress);
-
-        const contract = new Contract(
-          starknetContractAbi,
-          contractAddress,
-          provider,
-        );
-        const rawBalance = await contract.balance_of(starknetAddress);
-        const decimals = 18n;
-        const symbol =
-          starkContract === starknetContract ? "0x765354524b" : "0x5354524b";
-
-        const hex = BigNumber.from(symbol).toHexString();
-        const symbolString = hexToString(hex as `0x${string}`);
-        const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
-        const commifiedBalance = ethers.utils.commify(formattedBalance);
-
-        setBalance({
+      setBalances((prevBalances) => ({
+        ...prevBalances,
+        [cacheKey]: {
           balance: commifiedBalance,
           rawBalance: formattedBalance,
           decimals,
           symbol: symbolString,
           address: starknetAddress,
-        });
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+        },
+      }));
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+      isFetching[cacheKey] = false;
+    }
+  };
 
+  useEffect(() => {
+    const isNewKey = addActiveCacheKey(cacheKey);
+    if (isNewKey) {
+      const onWrapSuccess = () => {
+        fetchBalance(true);
+      };
+      window.addEventListener("wrapSuccess", onWrapSuccess);
+
+      return () => {
+        window.removeEventListener("wrapSuccess", onWrapSuccess);
+        removeActiveCacheKey(cacheKey);
+      };
+    }
+  }, [starknetAddress, starkContract, cacheKey]);
+
+  useEffect(() => {
     fetchBalance();
+  }, [cacheKey]);
 
-    const onWrapSuccess = () => {
-      fetchBalance();
-    };
-
-    window.addEventListener("wrapSuccess", onWrapSuccess);
-
-    // Cleanup the event listener
-    return () => {
-      window.removeEventListener("wrapSuccess", onWrapSuccess);
-    };
-  }, [starknetAddress]);
-
-  return { balance, loading, error };
+  return { balance: balances[cacheKey], loading, error, cacheKey };
 };
