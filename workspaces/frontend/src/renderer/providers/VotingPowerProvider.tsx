@@ -1,5 +1,11 @@
 // src/contexts/VotingPowerProvider.tsx
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useRef,
+} from "react";
 
 interface VotingPowerData {
   [key: string]: {
@@ -12,6 +18,9 @@ interface VotingPowerData {
 interface VotingPowerContextType {
   votingPowerData: VotingPowerData;
   setVotingPowerData: React.Dispatch<React.SetStateAction<VotingPowerData>>;
+  addActiveCacheKey: (key: string) => boolean;
+  removeActiveCacheKey: (key: string) => void;
+  isFetching: { [key: string]: boolean };
 }
 
 export const VotingPowerContext = createContext<
@@ -22,10 +31,28 @@ export const VotingPowerProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [votingPowerData, setVotingPowerData] = useState<VotingPowerData>({});
+  const activeCacheKeys = useRef(new Set<string>());
+  const isFetching = useRef<{ [key: string]: boolean }>({});
+  const addActiveCacheKey = (key: string): boolean => {
+    if (activeCacheKeys.current.has(key)) {
+      return false;
+    }
+    activeCacheKeys.current.add(key);
+    return true;
+  };
+
+  const removeActiveCacheKey = (key: string) => {
+    activeCacheKeys.current.delete(key);
+  };
+  const value = {
+    votingPowerData,
+    setVotingPowerData,
+    addActiveCacheKey,
+    removeActiveCacheKey,
+    isFetching: isFetching.current,
+  };
   return (
-    <VotingPowerContext.Provider
-      value={{ votingPowerData, setVotingPowerData }}
-    >
+    <VotingPowerContext.Provider value={value}>
       {children}
     </VotingPowerContext.Provider>
   );
