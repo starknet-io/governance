@@ -32,7 +32,7 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
+  Skeleton,
   Username,
   PastVote,
 } from "@yukilabs/governance-components";
@@ -302,6 +302,8 @@ export function Page() {
     votingPowerL2 > 0 &&
     !hasVotedL2 &&
     !hasDelegatedOnL2;
+
+  const isVotingProposalLoading = !data || !data?.proposal;
 
   const hasDelegated = false;
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
@@ -576,162 +578,180 @@ export function Page() {
       <VoteLayout.Root>
         <VoteLayout.LeftSide>
           <VoteLayout.Content>
-            <Flex
-              gap="0"
-              direction={{ base: "column" }}
-              color="content.default.default"
-            >
-              <Box mb="standard.2xl" display={{ lg: "none" }}>
-                <BackButton
-                  buttonText="Voting proposals"
-                  urlStart={["/voting-proposals/"]}
-                  href="/voting-proposals"
-                  pageContext={pageContext}
-                />
-              </Box>
-              <Flex alignItems="center" width="100%">
-                <Flex flex="1">
-                  <Heading
-                    color="content.accent.default"
-                    variant="h2"
-                    mb="standard.md"
-                  >
-                    {data?.proposal?.title}
-                  </Heading>
+            {isVotingProposalLoading ? (
+              <Box display="flex" flexDirection="column" gap="12px" mb="18px">
+                <Flex gap="20px" alignItems="center">
+                  <Flex flex="1" direction="column">
+                    {/* Header Text */}
+                    <Skeleton height="36px" width="70%" mb="standard.md" />
+                    {/* Subheader Text */}
+                    <Skeleton height="16px" width="50%" mb="standard.md" />
+                    <Skeleton height="16px" width="50%" mb="standard.2xl" />
+                  </Flex>
                 </Flex>
-
-                <Box marginLeft="auto">
-                  <MoreActions>
-                    {!user?.isAuthenticatedWithAWallet ? (
-                      <ChakraButton
-                        variant="ghost"
-                        width={"100%"}
-                        justifyContent={"flex-start"}
-                        padding={0}
-                        minHeight={"33px"}
-                        paddingLeft={"10px"}
-                        fontWeight={"400"}
-                        textColor={"#1a1523"}
-                        onClick={() => setHelpMessage("connectWalletMessage")}
-                      >
-                        Report
-                      </ChakraButton>
-                    ) : (
-                      <ChakraButton
-                        variant="ghost"
-                        data-tally-open="mKx1xD"
-                        data-tally-emoji-text="👋"
-                        data-tally-emoji-animation="wave"
-                        data-proposal={
-                          typeof window !== "undefined"
-                            ? window.location.href
-                            : ""
-                        }
-                        width={"100%"}
-                        justifyContent={"flex-start"}
-                        padding={0}
-                        minHeight={"33px"}
-                        paddingLeft={"10px"}
-                        fontWeight={"400"}
-                        textColor={"#1a1523"}
-                      >
-                        Report
-                      </ChakraButton>
-                    )}
-                  </MoreActions>
-                </Box>
-              </Flex>
-              <Flex
-                gap="standard.sm"
-                flexWrap={"wrap"}
-                rowGap="standard.sm"
-                mb="standard.md"
+                <Skeleton height="24px" width="100%" borderRadius="md" />
+                <Skeleton height="24px" width="100%" borderRadius="md" />
+                <Skeleton height="16px" width="50%" borderRadius="md" />
+                <Skeleton height="24px" width="100%" borderRadius="md" />
+                <Skeleton height="44px" width="100%" borderRadius="md" />
+              </Box>
+            ) : (<Flex
+                gap="0"
+                direction={{ base: "column" }}
+                color="content.default.default"
               >
-                <Flex gap="standard.sm" paddingTop="0" alignItems="center">
-                  <Stat.Root>
-                    <Stat.Status status={data?.proposal?.state} />
-                  </Stat.Root>
-                  <Text variant="small" color="content.default.default">
-                    •
-                  </Text>
-                  {/* toDo get user images / display names */}
-                  <Username
-                    withCopy
-                    src={authorInfo?.profileImage || null}
-                    displayName={
-                      authorInfo?.username ||
-                      authorInfo?.ensName ||
-                      truncateAddress(`${data?.proposal?.author}`)
-                    }
-                    address={`${data?.proposal?.author}`}
-                    showTooltip={!authorInfo?.username || !authorInfo?.ensName}
-                    tooltipContent={`${data?.proposal?.author}`}
-                  />
-                </Flex>
-                <Flex gap="standard.xs" paddingTop="0" alignItems="center">
-                  <Text
-                    display={{ base: "none", md: "inline-block" }}
-                    variant="small"
-                    color="content.default.default"
-                  >
-                    •
-                  </Text>
-                  <Stat.Root>
-                    <Stat.Date
-                      date={
-                        data?.proposal?.start
-                          ? new Date(data?.proposal?.start * 1000)
-                          : undefined
-                      }
-                    />
-                  </Stat.Root>
-                  <Text variant="small" color="content.default.default">
-                    •
-                  </Text>
-                  <Stat.Root>
-                    <Stat.Link
-                      href="#discussion"
-                      label={`${commentCountData || 0} comments`}
-                    />
-                  </Stat.Root>
-                  {/* <Text variant="small" color="content.default.default">
-                    •
-                  </Text>
-                  <Stat.Root>
-                    <Stat.Text label={`Category`} />
-                  </Stat.Root> */}
-                </Flex>
-              </Flex>
-              <Box>
-                <Link
-                  as="button"
-                  size="small"
-                  onClick={() => setIsInfoOpen(true)}
-                >
-                  View Snapshot info
-                </Link>
-              </Box>
-              {data?.proposal?.discussion &&
-              data?.proposal?.discussion.length ? (
-                <Box
-                  height="110px!important"
-                  overflow="hidden"
-                  mt="standard.2xl"
-                >
-                  <Iframely
-                    id={import.meta.env.VITE_APP_IFRAMELY_ID}
-                    url={`${data?.proposal?.discussion}`}
+                <Box mb="standard.2xl" display={{ lg: "none" }}>
+                  <BackButton
+                    buttonText="Voting proposals"
+                    urlStart={["/voting-proposals/"]}
+                    href="/voting-proposals"
+                    pageContext={pageContext}
                   />
                 </Box>
-              ) : (
-                <></>
-              )}
+                <Flex alignItems="center" width="100%">
+                  <Flex flex="1">
+                    <Heading
+                      color="content.accent.default"
+                      variant="h2"
+                      mb="standard.md"
+                    >
+                      {data?.proposal?.title}
+                    </Heading>
+                  </Flex>
 
-              <Box mt="standard.2xl">
-                <MarkdownRenderer content={data?.proposal?.body || ""} />
-              </Box>
-              <Divider my="standard.2xl" />
-            </Flex>
+                  <Box marginLeft="auto">
+                    <MoreActions>
+                      {!user?.isAuthenticatedWithAWallet ? (
+                        <ChakraButton
+                          variant="ghost"
+                          width={"100%"}
+                          justifyContent={"flex-start"}
+                          padding={0}
+                          minHeight={"33px"}
+                          paddingLeft={"10px"}
+                          fontWeight={"400"}
+                          textColor={"#1a1523"}
+                          onClick={() => setHelpMessage("connectWalletMessage")}
+                        >
+                          Report
+                        </ChakraButton>
+                      ) : (
+                        <ChakraButton
+                          variant="ghost"
+                          data-tally-open="mKx1xD"
+                          data-tally-emoji-text="👋"
+                          data-tally-emoji-animation="wave"
+                          data-proposal={
+                            typeof window !== "undefined"
+                              ? window.location.href
+                              : ""
+                          }
+                          width={"100%"}
+                          justifyContent={"flex-start"}
+                          padding={0}
+                          minHeight={"33px"}
+                          paddingLeft={"10px"}
+                          fontWeight={"400"}
+                          textColor={"#1a1523"}
+                        >
+                          Report
+                        </ChakraButton>
+                      )}
+                    </MoreActions>
+                  </Box>
+                </Flex>
+                <Flex
+                  gap="standard.sm"
+                  flexWrap={"wrap"}
+                  rowGap="standard.sm"
+                  mb="standard.md"
+                >
+                  <Flex gap="standard.sm" paddingTop="0" alignItems="center">
+                    <Stat.Root>
+                      <Stat.Status status={data?.proposal?.state} />
+                    </Stat.Root>
+                    <Text variant="small" color="content.default.default">
+                      •
+                    </Text>
+                    {/* toDo get user images / display names */}
+                    <Username
+                      withCopy
+                      src={authorInfo?.profileImage || null}
+                      displayName={
+                        authorInfo?.username ||
+                        authorInfo?.ensName ||
+                        truncateAddress(`${data?.proposal?.author}`)
+                      }
+                      address={`${data?.proposal?.author}`}
+                      showTooltip={!authorInfo?.username || !authorInfo?.ensName}
+                      tooltipContent={`${data?.proposal?.author}`}
+                    />
+                  </Flex>
+                  <Flex gap="standard.xs" paddingTop="0" alignItems="center">
+                    <Text
+                      display={{ base: "none", md: "inline-block" }}
+                      variant="small"
+                      color="content.default.default"
+                    >
+                      •
+                    </Text>
+                    <Stat.Root>
+                      <Stat.Date
+                        date={
+                          data?.proposal?.start
+                            ? new Date(data?.proposal?.start * 1000)
+                            : undefined
+                        }
+                      />
+                    </Stat.Root>
+                    <Text variant="small" color="content.default.default">
+                      •
+                    </Text>
+                    <Stat.Root>
+                      <Stat.Link
+                        href="#discussion"
+                        label={`${commentCountData || 0} comments`}
+                      />
+                    </Stat.Root>
+                    {/* <Text variant="small" color="content.default.default">
+                      •
+                    </Text>
+                    <Stat.Root>
+                      <Stat.Text label={`Category`} />
+                    </Stat.Root> */}
+                  </Flex>
+                </Flex>
+                <Box>
+                  <Link
+                    as="button"
+                    size="small"
+                    onClick={() => setIsInfoOpen(true)}
+                  >
+                    View Snapshot info
+                  </Link>
+                </Box>
+                {data?.proposal?.discussion &&
+                data?.proposal?.discussion.length ? (
+                  <Box
+                    height="110px!important"
+                    overflow="hidden"
+                    mt="standard.2xl"
+                  >
+                    <Iframely
+                      id={import.meta.env.VITE_APP_IFRAMELY_ID}
+                      url={`${data?.proposal?.discussion}`}
+                    />
+                  </Box>
+                ) : (
+                  <></>
+                )}
+
+                <Box mt="standard.2xl">
+                  <MarkdownRenderer content={data?.proposal?.body || ""} />
+                </Box>
+                <Divider my="standard.2xl" />
+              </Flex>
+            )}
           </VoteLayout.Content>
           <VotingProposalComments
             proposalId={pageContext.routeParams!.id}
