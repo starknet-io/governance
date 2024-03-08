@@ -73,7 +73,8 @@ export function useVotingPower({
         ...vpData.map((strategy) => strategy.decimals),
       );
       const totalRawValue = vpData.reduce((acc, strategy) => {
-        const valueBigInt = BigInt(strategy.value);
+        const valueAsString = strategy.value.toString();
+        const valueBigInt = BigInt(valueAsString);
         const scaleFactor = BigInt(10 ** (maxDecimals - strategy.decimals));
         return (
           acc +
