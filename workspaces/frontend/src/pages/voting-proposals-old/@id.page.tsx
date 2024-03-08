@@ -54,6 +54,7 @@ import { Button as ChakraButton, Select } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments/VotingProposalComments";
+import { useOldProposal } from "../../hooks/snapshotX/useOldProposal";
 import { useVotes } from "../../hooks/snapshotX/useVotes";
 import { AUTHENTICATORS_ENUM } from "../../hooks/snapshotX/constants";
 import { useSpace } from "../../hooks/snapshotX/useSpace";
@@ -73,8 +74,7 @@ import { useWallets } from "../../hooks/useWallets";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 import { getChecksumAddress } from "starknet";
-import { useProposal } from "../../hooks/snapshotX/useProposal";
-import { useActiveStarknetAccount } from "../../hooks/starknet/useActiveStarknetAccount";
+import {useOldVotes} from "../../hooks/snapshotX/useOldVotes";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -86,7 +86,7 @@ export function Page() {
   const isL1Voting = ethWallet?.id === primaryWallet?.id;
   const isL2Voting = starknetWallet?.id === primaryWallet?.id;
 
-  const { data, refetch } = useProposal({
+  const { data, refetch } = useOldProposal({
     proposal: pageContext.routeParams!.id,
   });
 
@@ -101,7 +101,7 @@ export function Page() {
       proposal: data?.proposal?.id,
     });
 
-  const vote = useVotes({
+  const vote = useOldVotes({
     proposal: pageContext.routeParams!.id.toString(),
     voter: ethWallet?.address,
     skipField: "voter",
@@ -112,19 +112,34 @@ export function Page() {
     voter: starknetWallet?.address as any,
     skipField: "voter",
   });
+  /*
+  TODO: Revert this
   const space = useSpace();
   const parsedVotingStrategies = parseStrategiesMetadata(
     space?.data?.strategies_parsed_metadata || [],
   ).join(", ");
+   */
 
-  const { data: votes } = useVotes({
+  const parsedVotingStrategies = [];
+
+  /*
+  TODO: revert real votes from SX when time
+  const votes = useVotes({
     proposal: pageContext.routeParams!.id,
     skipField: "proposal",
   });
-
   console.log(votes);
+   */
 
-  const address = ethWallet?.address;
+  console.log(vote)
+
+  const votes = trpc.votes.getOldVotesForProposal.useQuery({
+    proposalId: pageContext.routeParams!.id
+  })
+
+  console.log(votes?.data)
+
+  const address = walletClient?.account.address as `0x${string}` | undefined;
 
   const delegation = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
@@ -151,6 +166,8 @@ export function Page() {
 
   async function handleVote(choice: number, reason?: string) {
     try {
+      // TODO: revert this
+      /*
       if (walletClient == null) return;
       if (
         (isL1Voting && votingPower < MINIMUM_TOKENS_FOR_DELEGATION) ||
@@ -212,15 +229,8 @@ export function Page() {
         });
       } else {
         if (typeof window !== "undefined") {
-          const isBraavos = starknetWallet?.connector?.name === "Braavos";
-          let activeStarknetAccount = null;
-          if (isBraavos) {
-            activeStarknetAccount = window?.starknet_braavos?.account;
-          } else {
-            activeStarknetAccount = window?.starknet?.account;
-          }
           receipt = await starkSigClient.vote({
-            signer: activeStarknetAccount,
+            signer: window.starknet.account,
             data: params,
           });
         }
@@ -237,6 +247,7 @@ export function Page() {
       await refetch();
       await vote.refetch();
       await votes.refetch();
+       */
     } catch (error: any) {
       // Handle error
       console.error(error);
@@ -302,7 +313,7 @@ export function Page() {
   const pastVotesWithUserInfo = pastVotes.map((pastVote) => {
     return {
       ...pastVote,
-      author: pastVote?.author?.author || {},
+      author: pastVote?.author?.author || {}
     };
   });
 
@@ -876,7 +887,10 @@ export function Page() {
                   </Heading>
 
                   {data?.proposal?.choices.map((choice, index) => {
-                    const totalVotes = 0
+                    const totalVotes = data?.proposal?.scores?.reduce(
+                      (a, b) => a! + b!,
+                      0,
+                    );
                     const voteCount = data?.proposal?.scores![index];
                     const userVote = false;
                     const strategies = data?.proposal?.strategies;

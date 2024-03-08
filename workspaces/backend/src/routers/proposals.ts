@@ -8,10 +8,13 @@ import { proposals } from '../db/schema/proposals';
 import { createInsertSchema } from 'drizzle-zod';
 import { Algolia } from '../utils/algolia';
 import {
+  GET_PROPOSAL_QUERY,
+  GET_PROPOSALS_QUERY,
   GET_SNAPSHOT_PROPOSAL_QUERY,
   GET_SNAPSHOT_PROPOSALS_QUERY,
 } from '../queries/queries';
-import { transformProposalData } from '../queries/helpers';
+import { transformProposal, transformProposalData } from '../queries/helpers';
+import { GraphQLClient } from 'graphql-request';
 
 export interface IProposal {
   id: string;
@@ -27,6 +30,14 @@ export interface IProposal {
   space: { id: string; name: string };
 }
 
+const endpoint = process.env.SNAPSHOT_X_ENDPOINT!;
+
+export const graphqlClientSnapshotX = new GraphQLClient(endpoint, {
+  headers: {
+    //'x-api-key': process.env.SNAPSHOT_API_KEY!,
+  },
+});
+
 export interface IProposalWithComments extends IProposal {
   comments: {
     [x: string]: any;
@@ -35,6 +46,7 @@ export interface IProposalWithComments extends IProposal {
 
 //const endpoint = process.env.SNAPSHOT_X_ENDPOINT! as string;
 const space = process.env.SNAPSHOT_SPACE;
+const spaceX = process.env.SNAPSHOT_X_SPACE;
 export interface IProposalWithCommentsCount extends IProposal {
   commentsCount: number;
 }
@@ -104,6 +116,33 @@ export const proposalsRouter = router({
       return commentsCount || 0;
     }),
 
+  getProposalSnashotXProposalById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async (opts) => {
+      const ourProposalData = await db.query.proposals.findFirst({
+        where: eq(proposals.proposalId, opts.input.id),
+      });
+      const data = (await graphqlClientSnapshotX.request(GET_PROPOSAL_QUERY, {
+        proposal_id: opts.input.id,
+        space: spaceX,
+      })) as { proposal: IProposal };
+      const totalComments = await db.query.comments.findMany({
+        where: eq(proposals.proposalId, opts.input.id),
+      });
+
+      const foundProposal = data?.proposal || {};
+
+      const transformedProposal = transformProposal(foundProposal);
+
+      return {
+        status: transformedProposal.state,
+        comments: totalComments.length,
+        startDate: transformedProposal.start,
+        backendProposalData: ourProposalData,
+        transformedProposal,
+      };
+    }),
+
   getProposalById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async (opts) => {
@@ -168,8 +207,21 @@ export const proposalsRouter = router({
         },
       )) as { proposals: IProposal[] };
 
+      const proposalData = (await graphqlClientSnapshotX.request(
+        GET_PROPOSALS_QUERY,
+        {
+          orderDirection,
+          first: 100,
+          skip: 0,
+          space: spaceX,
+        },
+      )) as { proposals: IProposal[] };
+      const newProposals = transformProposalData(proposalData);
+
+      const allProposals = [...newProposals, ...queriedProposals];
+
       // Merge category data into the proposals array
-      mappedProposals = queriedProposals.map((proposal: any) => ({
+      mappedProposals = allProposals.map((proposal: any) => ({
         ...proposal,
       }));
 
