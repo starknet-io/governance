@@ -8,6 +8,8 @@ import { theme } from "@yukilabs/governance-components";
 import { MessagesProvider } from "./providers/MessagesProvider";
 import { DynamicProvider } from "./providers/DynamicProvider";
 import { layouts } from "src/pages/layouts";
+import { BalanceProvider } from "./providers/BalanceProvider";
+import { VotingPowerProvider } from "./providers/VotingPowerProvider";
 
 interface Props {
   readonly pageContext: PageContext;
@@ -57,14 +59,20 @@ export function PageShell(props: Props) {
   }
   return (
     // <React.StrictMode>
-    <PageContextProvider pageContext={{ ...pageContext, user: user || null, isUserLoading }}>
+    <PageContextProvider
+      pageContext={{ ...pageContext, user: user || null, isUserLoading }}
+    >
       <MessagesProvider>
         <ChakraProvider theme={theme}>
           <ApolloProvider client={props.apolloClient}>
             <DynamicProvider>
-              <LayoutComponent pageContext={pageContext}>
-                {children}
-              </LayoutComponent>
+              <BalanceProvider>
+                <VotingPowerProvider>
+                  <LayoutComponent pageContext={pageContext}>
+                    {children}
+                  </LayoutComponent>
+                </VotingPowerProvider>
+              </BalanceProvider>
             </DynamicProvider>
           </ApolloProvider>
         </ChakraProvider>

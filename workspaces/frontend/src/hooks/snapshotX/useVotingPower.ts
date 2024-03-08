@@ -1,7 +1,14 @@
-import { useState, useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { useQuery } from "@apollo/client";
-import { GET_SPACE } from "./queries";
-import { getVotingPowerCalculation } from "./helpers";
+import { GET_SPACE } from "./queries"; // Ensure the import path is correct
+import { getVotingPowerCalculation } from "./helpers"; // Ensure the import path is correct
+import {
+  useVotingPowerContext,
+  VotingPowerContext,
+} from "src/renderer/providers/VotingPowerProvider";
+import { ethers } from "ethers";
+import { validateStarknetAddress } from "../../utils/helpers";
+import { getChecksumAddress } from "starknet"; // Adjust the import path as needed
 
 export function useVotingPower({
   address,
@@ -12,10 +19,24 @@ export function useVotingPower({
   proposal?: number;
   timestamp?: number;
 }) {
+  const {
+    votingPowerData,
+    setVotingPowerData,
+    addActiveCacheKey,
+    removeActiveCacheKey,
+    isFetching,
+  } = useVotingPowerContext();
+
   const space = import.meta.env.VITE_APP_SNAPSHOTX_SPACE;
 
-  const [data, setData] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  let formattedAddress;
+  if (address && ethers.utils.isAddress(address)) {
+    formattedAddress = address.toLowerCase();
+  } else if (address && validateStarknetAddress(address)) {
+    formattedAddress = getChecksumAddress(address);
+  }
+
+  const cacheKey = `${formattedAddress}-${proposal}-${timestamp}`;
 
   const { data: spaceObj, loading: spaceLoading } = useQuery(GET_SPACE, {
     variables: { space },
@@ -24,75 +45,95 @@ export function useVotingPower({
     context: { clientName: "snapshotX" },
   });
 
-  const fetchVotingPower = async () => {
-    if (!address || !spaceObj?.space || !address.length) {
-      setData(0);
-      setIsLoading(false);
+  const fetchVotingPower = async (forceUpdate = false) => {
+    if (!address || !spaceObj) {
       return;
     }
-
-    const strategiesMetadata = processStrategiesMetadata(
-      spaceObj.space.strategies_parsed_metadata,
-      spaceObj.space.strategies_indicies,
-    );
+    if (votingPowerData[cacheKey] || isFetching[cacheKey]) {
+      if (!forceUpdate) {
+        return;
+      }
+    }
+    isFetching[cacheKey] = true;
     try {
+      const strategiesMetadata = processStrategiesMetadata(
+        spaceObj.space.strategies_parsed_metadata,
+        spaceObj.space.strategies_indicies,
+      );
+
       const vpData = await getVotingPowerCalculation(
         spaceObj.space.strategies,
         spaceObj.space.strategies_params,
         strategiesMetadata,
         address,
-        timestamp ? timestamp : null,
+        timestamp,
       );
+
       const maxDecimals = Math.max(
         ...vpData.map((strategy) => strategy.decimals),
       );
       const totalRawValue = vpData.reduce((acc, strategy) => {
         const valueBigInt = BigInt(strategy.value);
-        if (strategy.symbol === "Whitelist") {
-          return acc + valueBigInt;
-        }
         const scaleFactor = BigInt(10 ** (maxDecimals - strategy.decimals));
-        return acc + valueBigInt * scaleFactor;
+        return (
+          acc +
+          (strategy.symbol === "Whitelist"
+            ? valueBigInt
+            : valueBigInt * scaleFactor)
+        );
       }, 0n);
 
       const scaledValue =
         parseFloat(totalRawValue.toString()) / Math.pow(10, maxDecimals);
-      if (scaledValue > 1) {
-        setData(Math.round(scaledValue));
-      } else {
-        const fixedTo4Digits = parseFloat(scaledValue.toFixed(4))
-        setData(fixedTo4Digits);
-      }
-      setData(scaledValue);
+      const finalValue =
+        scaledValue > 1
+          ? parseFloat(scaledValue.toFixed(2))
+          : parseFloat(scaledValue.toFixed(4));
+
+      console.log(finalValue)
+
+      setVotingPowerData((prevData) => ({
+        ...prevData,
+        [cacheKey]: {
+          votingPower: finalValue,
+          isLoading: false
+        },
+      }));
     } catch (e) {
       console.error("Failed to load voting power", e);
-      setData(0);
     } finally {
-      setIsLoading(false);
+      console.log("I finished calculation of voting power for: ", cacheKey);
+      isFetching[cacheKey] = false;
     }
   };
 
   useEffect(() => {
-    fetchVotingPower();
+    if (!address) {
+      return
+    }
+    const isNewCacheKey = addActiveCacheKey(cacheKey);
+    if (isNewCacheKey) {
+      const refetchVotingPower = () => fetchVotingPower(true);
+      window.addEventListener("delegationSuccess", refetchVotingPower);
+      window.addEventListener("wrapSuccess", refetchVotingPower);
 
-    // Event listener to re-fetch voting power when delegation is successful
-    const onDelegationSuccess = () => {
+      return () => {
+        window.removeEventListener("delegationSuccess", refetchVotingPower);
+        window.removeEventListener("wrapSuccess", refetchVotingPower);
+        removeActiveCacheKey(cacheKey);
+      };
+    }
+  }, [address, proposal, timestamp, spaceObj, cacheKey]);
+
+  useEffect(() => {
+    if (address) {
       fetchVotingPower();
-    };
-
-    window.addEventListener("delegationSuccess", onDelegationSuccess);
-    window.addEventListener("wrapSuccess", onDelegationSuccess);
-
-    // Cleanup the event listener
-    return () => {
-      window.removeEventListener("delegationSuccess", onDelegationSuccess);
-      window.removeEventListener("wrapSuccess", onDelegationSuccess);
-    };
-  }, [address, spaceObj, timestamp]);
+    }
+  }, [cacheKey, address, proposal, spaceObj, timestamp]);
 
   return {
-    data,
-    isLoading: isLoading || spaceLoading,
+    data: votingPowerData[cacheKey]?.votingPower || 0,
+    isLoading: isFetching[cacheKey] || spaceLoading,
   };
 }
 

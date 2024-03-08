@@ -319,6 +319,10 @@ export function Page() {
     }
     if (isUnwrap) {
       const rawBalance = parseFloat(vSTRKBalance?.rawBalance) || 0;
+      if (val > 99.9) {
+        setStarkToWrap(rawBalance);
+        return;
+      }
       const toSet = (val / 100) * rawBalance;
       setStarkToWrap(formatNumber(toSet, rawBalance));
     } else {
@@ -328,6 +332,10 @@ export function Page() {
             0,
           )
         : 0;
+      if (val > 99.9) {
+        setStarkToWrap(rawBalance);
+        return;
+      }
       const toSet = (val / 100) * rawBalance;
       setStarkToWrap(formatNumber(toSet, rawBalance));
     }
