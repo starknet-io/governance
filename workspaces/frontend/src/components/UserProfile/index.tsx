@@ -209,7 +209,14 @@ const UserProfileMenuComponent = (
         return false;
       }
     }
+    if (delegatedToL2?.starknetAddress) {
+      return (
+        getChecksumAddress(starknetWallet.address || "") ===
+        getChecksumAddress(delegatedToL2.starknetAddress || "")
+      );
+    }
     if (starknetWallet?.address && delegatedToL2) {
+
       return (
         getChecksumAddress(starknetWallet.address || "") ===
         getChecksumAddress(delegatedToL2 || "")
@@ -234,8 +241,6 @@ const UserProfileMenuComponent = (
 
   const l2DelegatedToSelf = checkIfL2DelegatedToSelf();
   const l1DelegatedToSelf = checkIfL1DelegatedToSelf();
-
-  console.log();
 
   return (
     <div ref={ref}>

@@ -39,7 +39,6 @@ import {
 import * as VoteLayout from "../../components/VotingProposals/VotingProposal/PageLayout";
 import { usePageContext } from "src/renderer/PageContextProvider";
 import { formatDate } from "@yukilabs/governance-components/src/utils/helpers";
-import { useWalletClient } from "wagmi";
 import { providers } from "ethers";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { trpc } from "src/utils/trpc";
@@ -74,11 +73,10 @@ import { useWallets } from "../../hooks/useWallets";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 import { getChecksumAddress } from "starknet";
-import {useOldVotes} from "../../hooks/snapshotX/useOldVotes";
+import { useOldVotes } from "../../hooks/snapshotX/useOldVotes";
 
 export function Page() {
   const pageContext = usePageContext();
-  const { data: walletClient } = useWalletClient();
   const [helpMessage, setHelpMessage] = useHelpMessage();
   const { ethWallet, starknetWallet } = useWallets();
   const { primaryWallet, setPrimaryWallet } = useDynamicContext();
@@ -131,15 +129,12 @@ export function Page() {
   console.log(votes);
    */
 
-  console.log(vote)
 
   const votes = trpc.votes.getOldVotesForProposal.useQuery({
-    proposalId: pageContext.routeParams!.id
-  })
+    proposalId: pageContext.routeParams!.id,
+  });
 
-  console.log(votes?.data)
-
-  const address = walletClient?.account.address as `0x${string}` | undefined;
+  const address = ethWallet?.address as `0x${string}` | undefined;
 
   const delegation = useL1StarknetDelegationDelegates({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
@@ -313,7 +308,7 @@ export function Page() {
   const pastVotesWithUserInfo = pastVotes.map((pastVote) => {
     return {
       ...pastVote,
-      author: pastVote?.author?.author || {}
+      author: pastVote?.author?.author || {},
     };
   });
 
@@ -348,9 +343,14 @@ export function Page() {
     );
   };
 
-  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
-    address: delegationDataL1,
-  });
+  const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery(
+    {
+      address: delegationDataL1,
+    },
+    {
+      enabled: addres && address.length,
+    },
+  );
   const delegatedToL2 = trpc.delegates.getDelegateByAddress.useQuery(
     {
       address: delegationDataL2,

@@ -35,11 +35,16 @@ const DelegationComponent = ({
   delegatedTo,
   delegatedToName,
   selfDelegated,
+  isStarknet,
 }: {
   delegatedTo: any;
   delegatedToName: string | undefined;
   selfDelegated?: boolean;
+  isStarknet?: boolean;
 }) => {
+  const address = isStarknet
+    ? delegatedTo?.starknetAddress || delegatedTo?.address
+    : delegatedTo?.address;
   return (
     <Box width="50%">
       <Text variant="smallStrong" color="content.default.default">
@@ -65,15 +70,15 @@ const DelegationComponent = ({
           </Flex>
         ) : (
           <>
-            {delegatedTo?.address ? (
+            {address ? (
               <Flex>
-                <Tooltip label={delegatedTo?.address}>
+                <Tooltip label={address}>
                   <Text>
-                    {truncateAddress(delegatedTo?.address || "")}
+                    {truncateAddress(address || "")}
                     {selfDelegated ? " (you)" : ""}
                   </Text>
                 </Tooltip>
-                <CopyToClipboard text={delegatedTo?.address} />
+                <CopyToClipboard text={address} />
               </Flex>
             ) : delegatedTo &&
               delegatedTo.length &&
@@ -219,6 +224,7 @@ export const VotingPowerModal = ({
                 {!delegatedToL2Loading ? (
                   <DelegationComponent
                     delegatedTo={delegatedToL2}
+                    isStarknet
                     delegatedToName={delegatedToL2Name}
                     selfDelegated={selfDelegatedL2}
                   />

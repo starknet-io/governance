@@ -891,7 +891,7 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingVotingPower || isLoadingVotingPowerL2}
               label="Voting Power"
-              value={totalValue || "0"}
+              value={`${totalValue} STRK` || "0 STRK"}
             />
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
