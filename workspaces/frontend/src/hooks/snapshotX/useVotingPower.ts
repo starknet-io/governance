@@ -91,8 +91,6 @@ export function useVotingPower({
           ? parseFloat(scaledValue.toFixed(2))
           : parseFloat(scaledValue.toFixed(4));
 
-      console.log(finalValue)
-
       setVotingPowerData((prevData) => ({
         ...prevData,
         [cacheKey]: {
@@ -103,7 +101,6 @@ export function useVotingPower({
     } catch (e) {
       console.error("Failed to load voting power", e);
     } finally {
-      console.log("I finished calculation of voting power for: ", cacheKey);
       isFetching[cacheKey] = false;
     }
   };
