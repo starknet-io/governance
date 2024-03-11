@@ -134,8 +134,6 @@ export function Page() {
     proposalId: pageContext.routeParams!.id,
   });
 
-  console.log(votes?.data);
-
   const address = ethWallet?.address as `0x${string}` | undefined;
 
   const delegation = useL1StarknetDelegationDelegates({
