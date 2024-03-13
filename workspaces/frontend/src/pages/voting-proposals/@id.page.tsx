@@ -62,7 +62,10 @@ import {
   starkProvider,
   starkSigClient,
 } from "../../clients/clients";
-import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
+import {
+  processStrategiesMetadata,
+  useVotingPower,
+} from "../../hooks/snapshotX/useVotingPower";
 import {
   parseStrategiesMetadata,
   prepareStrategiesForSignature,
@@ -113,8 +116,13 @@ export function Page() {
     skipField: "voter",
   });
   const space = useSpace();
+  const processedStrategies = processStrategiesMetadata(
+    space?.data?.strategies_parsed_metadata,
+    space?.data?.strategies_indicies,
+  );
+  console.log(processedStrategies)
   const parsedVotingStrategies = parseStrategiesMetadata(
-    space?.data?.strategies_parsed_metadata || [],
+    processedStrategies || [],
   ).join(", ");
 
   const { data: votes } = useVotes({
@@ -506,7 +514,10 @@ export function Page() {
         size="standard"
       >
         <SummaryItems.Root>
-          <SummaryItems.StrategySummary strategies={[]} />
+          <SummaryItems.Item
+            label="Strategies"
+            value={parsedVotingStrategies}
+          />
           <SummaryItems.LinkItem
             label="IPFS #"
             link={`https://snapshot.4everland.link/ipfs//${data?.proposal?.ipfs}`}

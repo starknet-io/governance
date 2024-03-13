@@ -99,8 +99,9 @@ export const transformProposal = (proposal: any) => {
     id: proposal.proposal_id,
     ipfs: proposal?.metadata?.id,
     choices: ["For", "Against", "Abstain"],
-    scores_total: parseFloat(
-      BigInt(proposal.scores_total || 0n).toString()) / Math.pow(10, 18),
+    scores_total:
+      parseFloat(BigInt(proposal.scores_total || 0n).toString()) /
+      Math.pow(10, 18),
     scores: [
       parseFloat(BigInt(proposal.scores_1 || 0n).toString()) / Math.pow(10, 18),
       parseFloat(BigInt(proposal.scores_2 || 0n).toString()) / Math.pow(10, 18),
@@ -233,7 +234,7 @@ export const parseStrategiesToHumanReadableFormat = (strategies = []) => {
 
 export const parseStrategiesMetadata = (strategies) => {
   return strategies.map((strategy) => {
-    return `${strategy?.data?.name} - ${strategy?.data?.symbol}`;
+    return `${strategy?.name} - ${strategy?.symbol}`;
   });
 };
 
