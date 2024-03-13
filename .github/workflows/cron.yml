@@ -2,7 +2,8 @@ name: cron deployment
 
 on:
   push:
-    branches: ['dev']
+    branches:
+      - dev
     paths:
       - 'workspaces/cron/**'
   workflow_dispatch:
