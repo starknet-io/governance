@@ -216,9 +216,13 @@ export const proposalsRouter = router({
           space: spaceX,
         },
       )) as { proposals: IProposal[] };
+      const oldProposals = queriedProposals.map((qp) => ({
+        ...qp,
+        isOld: true,
+      }));
       const newProposals = transformProposalData(proposalData);
 
-      const allProposals = [...newProposals, ...queriedProposals];
+      const allProposals = [...newProposals, ...oldProposals];
 
       // Merge category data into the proposals array
       mappedProposals = allProposals.map((proposal: any) => ({

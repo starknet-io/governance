@@ -16,7 +16,7 @@ import {
   useFilterState,
   Link,
   Flex,
-  Select
+  Select,
 } from "@yukilabs/governance-components";
 import { Grid } from "@chakra-ui/react";
 import { trpc } from "src/utils/trpc";
@@ -93,11 +93,10 @@ type SortingTypes = "desc" | "asc" | "most_discussed" | "" | undefined;
 
 export function Proposal({ data }: any) {
   const count = data?.commentsCount || 0;
-
   return (
     <ListRow.Root
       key={data.id}
-      href={`/voting-proposals/${data.id}`}
+      href={`/voting-proposals${data.isOld ? "-old" : ""}/${data.id}`}
       flexDir={{
         base: "column",
         xl: "row",
@@ -294,7 +293,9 @@ export function Page() {
           <AppBar.Root>
             <AppBar.Group mobileDirection="row" gap="standard.sm">
               <Box minWidth={"52px"}>
-                <Text variant="mediumStrong" color="content.default.default">Sort by</Text>
+                <Text variant="mediumStrong" color="content.default.default">
+                  Sort by
+                </Text>
               </Box>
               <Select
                 size={isMobile ? "md" : "sm"}
@@ -312,9 +313,8 @@ export function Page() {
                 }}
                 options={SORTING_OPTIONS.map((option) => ({
                   value: option.value,
-                  label: option.label
-                }
-                ))}
+                  label: option.label,
+                }))}
               />
               <Popover placement="bottom-start">
                 <FilterPopoverIcon
@@ -377,7 +377,11 @@ export function Page() {
               )}
             </ListRow.Container>
           </Box>
-          <Flex justifyContent={"flex-end"} gap="standard.base" mt="standard.xl">
+          <Flex
+            justifyContent={"flex-end"}
+            gap="standard.base"
+            mt="standard.xl"
+          >
             <Text pt="1px" color="content.support.default" variant="small">
               Voting proposals powered by{" "}
             </Text>

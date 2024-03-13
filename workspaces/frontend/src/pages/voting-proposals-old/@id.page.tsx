@@ -55,36 +55,17 @@ import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments/VotingProposalComments";
 import { useOldProposal } from "../../hooks/snapshotX/useOldProposal";
-import { useVotes } from "../../hooks/snapshotX/useVotes";
-import { AUTHENTICATORS_ENUM } from "../../hooks/snapshotX/constants";
-import { useSpace } from "../../hooks/snapshotX/useSpace";
-import {
-  ethSigClient,
-  starkProvider,
-  starkSigClient,
-} from "../../clients/clients";
 import { useVotingPower } from "../../hooks/snapshotX/useVotingPower";
-import {
-  parseStrategiesMetadata,
-  prepareStrategiesForSignature,
-  waitForTransaction,
-} from "../../hooks/snapshotX/helpers";
 import { useL1StarknetDelegationDelegates } from "../../wagmi/L1StarknetDelegation";
 import { useWallets } from "../../hooks/useWallets";
-import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
-import { getChecksumAddress } from "starknet";
-import {useOldVotes} from "../../hooks/snapshotX/useOldVotes";
+import { useOldVotes } from "../../hooks/snapshotX/useOldVotes";
 
 export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
   const [helpMessage, setHelpMessage] = useHelpMessage();
   const { ethWallet, starknetWallet } = useWallets();
-  const { primaryWallet, setPrimaryWallet } = useDynamicContext();
-
-  const isL1Voting = ethWallet?.id === primaryWallet?.id;
-  const isL2Voting = starknetWallet?.id === primaryWallet?.id;
 
   const { data, refetch } = useOldProposal({
     proposal: pageContext.routeParams!.id,
@@ -95,32 +76,11 @@ export function Page() {
     proposal: data?.proposal?.id,
   });
 
-  const { data: votingPowerL2, isLoading: votingPowerLoadingL2 } =
-    useVotingPower({
-      address: starknetWallet?.address as string,
-      proposal: data?.proposal?.id,
-    });
-
   const vote = useOldVotes({
     proposal: pageContext.routeParams!.id.toString(),
     voter: ethWallet?.address,
     skipField: "voter",
   });
-
-  const voteL2 = useVotes({
-    proposal: pageContext.routeParams!.id,
-    voter: starknetWallet?.address as any,
-    skipField: "voter",
-  });
-  /*
-  TODO: Revert this
-  const space = useSpace();
-  const parsedVotingStrategies = parseStrategiesMetadata(
-    space?.data?.strategies_parsed_metadata || [],
-  ).join(", ");
-   */
-
-  const parsedVotingStrategies = [];
 
   /*
   TODO: revert real votes from SX when time
@@ -131,13 +91,13 @@ export function Page() {
   console.log(votes);
    */
 
-  console.log(vote)
+  console.log(vote);
 
   const votes = trpc.votes.getOldVotesForProposal.useQuery({
-    proposalId: pageContext.routeParams!.id
-  })
+    proposalId: pageContext.routeParams!.id,
+  });
 
-  console.log(votes?.data)
+  console.log(votes?.data);
 
   const address = walletClient?.account.address as `0x${string}` | undefined;
 
@@ -150,10 +110,6 @@ export function Page() {
 
   const delegationDataL1 = delegation?.data;
 
-  const { delegates: delegationDataL2 } = useStarknetDelegates({
-    starknetAddress: starknetWallet?.address,
-  });
-
   const userBalance = useBalanceData(address);
   const starknetBalance = useStarknetBalance({
     starknetAddress: starknetWallet?.address,
@@ -163,102 +119,6 @@ export function Page() {
     trpc.proposals.getProposalCommentCount.useQuery({
       id: pageContext.routeParams!.id,
     });
-
-  async function handleVote(choice: number, reason?: string) {
-    try {
-      // TODO: revert this
-      /*
-      if (walletClient == null) return;
-      if (
-        (isL1Voting && votingPower < MINIMUM_TOKENS_FOR_DELEGATION) ||
-        (isL2Voting && votingPowerL2 < MINIMUM_TOKENS_FOR_DELEGATION)
-      ) {
-        setIsStatusModalOpen(true);
-        setStatusTitle("No voting power");
-        setStatusDescription(
-          `You do not have enough tokens in your account to vote. You need at least ${MINIMUM_TOKENS_FOR_DELEGATION} tokens to vote.`,
-        );
-        setIsOpen(false);
-        return;
-      }
-      setIsOpen(false);
-      setisConfirmOpen(true);
-
-      const strategiesMetadata = space.data.strategies_parsed_metadata.map(
-        (strategy) => ({
-          ...strategy.data,
-        }),
-      );
-      const preparedStrategies = await prepareStrategiesForSignature(
-        space.data.strategies as string[],
-        strategiesMetadata as any[],
-      );
-
-      let convertedChoice = 1;
-
-      if (choice === 2) {
-        convertedChoice = 0;
-      }
-      if (choice === 3) {
-        convertedChoice = 2;
-      }
-      const params = {
-        authenticator:
-          primaryWallet?.id === ethWallet?.id
-            ? AUTHENTICATORS_ENUM.EVM_SIGNATURE
-            : AUTHENTICATORS_ENUM.STARKNET_SIGNATURE,
-        space: space.data.id,
-        proposal: pageContext.routeParams.id!,
-        choice: convertedChoice,
-        metadataUri: "",
-        strategies: preparedStrategies,
-      };
-
-      const web3 = new providers.Web3Provider(walletClient.transport);
-      const starknetProvider = starkProvider;
-
-      const deeplink = walletConnector?.getDeepLink();
-      if (deeplink) {
-        window.location.href = deeplink;
-      }
-      let receipt = null;
-      if (primaryWallet?.id === ethWallet?.id) {
-        receipt = await ethSigClient.vote({
-          signer: web3.getSigner(),
-          data: params,
-        });
-      } else {
-        if (typeof window !== "undefined") {
-          receipt = await starkSigClient.vote({
-            signer: window.starknet.account,
-            data: params,
-          });
-        }
-      }
-      const transaction = await starkSigClient.send(receipt);
-      if (!transaction.transaction_hash) {
-        setStatusTitle("Voting failed");
-        setStatusDescription("An error occurred");
-        return false;
-      }
-      await waitForTransaction(transaction.transaction_hash);
-      setisConfirmOpen(false);
-      setisSuccessModalOpen(true);
-      await refetch();
-      await vote.refetch();
-      await votes.refetch();
-       */
-    } catch (error: any) {
-      // Handle error
-      console.error(error);
-      setIsStatusModalOpen(true);
-      setStatusTitle("Voting failed");
-      setStatusDescription(
-        error?.error_description || error?.error || "An error occurred",
-      );
-      setisConfirmOpen(false);
-    }
-  }
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
@@ -271,37 +131,15 @@ export function Page() {
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [isConnectedModal, setIsConnectedModal] = useState<boolean>(false);
   const { user, setShowAuthFlow, walletConnector } = useDynamicContext();
-  //const hasVoted = vote.data && vote.data.votes?.[0];
-  const hasVoted = false;
-  const canVote = true;
-  //const canVote =
-  //  data?.proposal?.state === "active" && votingPower > 0 && !hasVoted;
-
+  const hasVoted = vote.data && vote.data.votes?.[0];
   const delegateOwnProfileL1 =
     delegationDataL1?.toLowerCase() === ethWallet?.address?.toLowerCase();
-  const delegateOwnProfileL2 =
-    getChecksumAddress(delegationDataL2?.toLowerCase() || "") ===
-    getChecksumAddress(starknetWallet?.address?.toLowerCase() || "");
-  const hasDelegatedOnL2 =
-    delegationDataL2 && delegationDataL2.length && !delegateOwnProfileL2;
   const hasDelegatedOnL1 =
     delegationDataL1 &&
     delegationDataL1.length &&
     delegationDataL1 !== "0x0000000000000000000000000000000000000000" &&
     !delegateOwnProfileL1;
   const hasVotedL1 = vote.data && vote.data.votes?.[0];
-  const hasVotedL2 = voteL2.data && voteL2.data.votes?.[0];
-
-  const canVoteL1 =
-    data?.proposal?.state === "active" &&
-    votingPower > 0 &&
-    !hasVotedL1 &&
-    !hasDelegatedOnL1;
-  const canVoteL2 =
-    data?.proposal?.state === "active" &&
-    votingPowerL2 > 0 &&
-    !hasVotedL2 &&
-    !hasDelegatedOnL2;
 
   const hasDelegated = false;
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
@@ -313,7 +151,7 @@ export function Page() {
   const pastVotesWithUserInfo = pastVotes.map((pastVote) => {
     return {
       ...pastVote,
-      author: pastVote?.author?.author || {}
+      author: pastVote?.author?.author || {},
     };
   });
 
@@ -351,58 +189,13 @@ export function Page() {
   const delegatedTo = trpc.delegates.getDelegateByAddress.useQuery({
     address: delegationDataL1,
   });
-  const delegatedToL2 = trpc.delegates.getDelegateByAddress.useQuery(
-    {
-      address: delegationDataL2,
-    },
-    {
-      enabled: !!delegationDataL2,
-    },
-  );
 
   const renderBannerBasedOnDelegation = () => {
-    if (hasDelegatedOnL1 && !hasDelegatedOnL2) {
+    if (hasDelegatedOnL1) {
       return (
         <>
           Your voting power of {userBalance.balance} {userBalance.symbol} is
           currently assigned to delegate{" "}
-          <Link
-            fontSize="small"
-            fontWeight="normal"
-            href={`/delegates/profile/${delegatedTo?.data?.delegationStatement?.id}`}
-          >
-            {truncateAddress(delegation.data! || "")}
-          </Link>
-        </>
-      );
-    } else if (hasDelegatedOnL2 && !hasDelegatedOnL1) {
-      return (
-        <>
-          Your voting power of {starknetBalance?.balance?.balance}{" "}
-          {starknetBalance?.balance?.symbol} is currently assigned to delegate{" "}
-          <Link
-            fontSize="small"
-            fontWeight="normal"
-            href={`/delegates/profile/${delegatedToL2?.data?.delegationStatement?.id}`}
-          >
-            {truncateAddress(delegationDataL2 || "")}
-          </Link>
-        </>
-      );
-    } else if (hasDelegatedOnL2 && hasDelegatedOnL1) {
-      return (
-        <>
-          Your voting power of {starknetBalance?.balance?.balance}{" "}
-          {starknetBalance?.balance?.symbol} is currently assigned to delegate{" "}
-          <Link
-            fontSize="small"
-            fontWeight="normal"
-            href={`/delegates/profile/${delegatedToL2?.data?.delegationStatement?.id}`}
-          >
-            {truncateAddress(delegationDataL2 || "")}
-          </Link>{" "}
-          and {userBalance.balance} {userBalance.symbol} is currently assigned
-          to delegate{" "}
           <Link
             fontSize="small"
             fontWeight="normal"
@@ -431,32 +224,6 @@ export function Page() {
             voteCount={votingPower as number}
             choice={vote.data.votes[0].choice}
           />
-        ) : canVoteL1 ? (
-          <VoteReview
-            choice={currentChoice}
-            isSelected={primaryWallet?.id === ethWallet?.id}
-            voteCount={votingPower as number}
-            setWalletCallback={async () => {
-              await setPrimaryWallet(ethWallet?.id);
-            }}
-          />
-        ) : null}
-        {hasVotedL2 ? (
-          <PastVote
-            isStarknet
-            voteCount={votingPowerL2 as number}
-            choice={voteL2.data.votes[0].choice}
-          />
-        ) : canVoteL2 ? (
-          <VoteReview
-            choice={currentChoice}
-            isSelected={primaryWallet?.id === starknetWallet?.id}
-            voteCount={votingPowerL2 as number}
-            isStarknet
-            setWalletCallback={async () => {
-              await setPrimaryWallet(starknetWallet?.id);
-            }}
-          />
         ) : null}
         <FormControl id="comment" mt="standard.xl">
           <FormLabel fontSize="14px" color={"content.default.default"}>
@@ -478,12 +245,7 @@ export function Page() {
           />
         </FormControl>
         <Modal.Footer>
-          <Button
-            type="submit"
-            variant="primary"
-            size="standard"
-            onClick={() => handleVote(currentChoice, comment)}
-          >
+          <Button type="submit" variant="primary" size="standard">
             Submit vote
           </Button>
         </Modal.Footer>
@@ -752,38 +514,12 @@ export function Page() {
                     Cast your vote
                   </Heading>
                 )}
-                {(!hasVotedL1 && canVoteL1) || (!hasVotedL2 && canVoteL2) ? (
-                  <Heading
-                    color="content.accent.default"
-                    variant="h4"
-                    mb="standard.md"
-                  >
-                    Cast your vote
-                  </Heading>
-                ) : null}
-                {votingPower === 0 &&
-                  votingPowerL2 === 0 &&
-                  user &&
-                  data?.proposal?.state !== "closed" &&
-                  !votingPowerLoading &&
-                  !votingPowerLoadingL2 &&
-                  !hasVotedL2 &&
-                  !hasVotedL1 &&
-                  !shouldShowHasDelegated && (
-                    <>
-                      <Banner label="You cannot vote as it seems you didn’t have any voting power when this Snapshot was taken." />
-                      <Divider mb="standard.2xl" />
-                    </>
-                  )}
-
-                {(hasDelegatedOnL1 || hasDelegatedOnL2) &&
-                  data?.proposal?.state !== "closed" && (
-                    <>
-                      <Banner label={renderBannerBasedOnDelegation()} />
-
-                      <Divider mb="standard.2xl" />
-                    </>
-                  )}
+                {hasDelegatedOnL1 && data?.proposal?.state !== "closed" && (
+                  <>
+                    <Banner label={renderBannerBasedOnDelegation()} />
+                    <Divider mb="standard.2xl" />
+                  </>
+                )}
 
                 {vote.data && vote.data.votes?.[0] && (
                   <>
@@ -799,82 +535,6 @@ export function Page() {
                     <Divider mb="standard.2xl" />
                   </>
                 )}
-                {voteL2.data && voteL2.data.votes?.[0] && (
-                  <>
-                    <Banner
-                      label={`You voted ${
-                        voteL2.data.votes[0].choice === 1
-                          ? data?.proposal?.choices?.[0] || "For"
-                          : voteL2.data.votes[0].choice === 2
-                          ? data?.proposal?.choices?.[1] || "Against"
-                          : data?.proposal?.choices?.[2] || "Abstain"
-                      } using ${
-                        voteL2.data.votes[0].vp
-                      } votes on Starknet (L2)`}
-                    />
-                    <Divider mb="standard.2xl" />
-                  </>
-                )}
-                {(canVoteL2 || canVoteL1) &&
-                user &&
-                data?.proposal?.state !== "closed" ? (
-                  <Flex
-                    mb="40px"
-                    gap="standard.sm"
-                    display="flex"
-                    flexDirection={{ base: "column", xl: "row" }}
-                    justifyContent="space-around"
-                  >
-                    {data.proposal?.choices.map((choice, index) => (
-                      <VoteButton
-                        key={choice}
-                        onClick={async () => {
-                          setcurrentChoice(index + 1);
-                          if (
-                            hasVotedL1 &&
-                            starknetWallet?.id &&
-                            primaryWallet?.id !== starknetWallet?.id
-                          ) {
-                            await setPrimaryWallet(starknetWallet?.id);
-                          }
-                          if (
-                            hasVotedL2 &&
-                            ethWallet?.id &&
-                            primaryWallet?.id !== ethWallet?.id
-                          ) {
-                            await setPrimaryWallet(ethWallet?.id);
-                          }
-                          setIsOpen(true);
-                        }}
-                        active={vote?.data?.votes?.[0]?.choice === index + 1}
-                        // @ts-expect-error todo
-                        type={choice}
-                        label={`${choice}`}
-                      />
-                    ))}
-                  </Flex>
-                ) : !user && data?.proposal?.state !== "closed" ? (
-                  <Flex
-                    mb="40px"
-                    gap="standard.sm"
-                    display="flex"
-                    flexDirection={{ base: "column", xl: "row" }}
-                    justifyContent="space-around"
-                  >
-                    {data.proposal?.choices.map((choice) => (
-                      <VoteButton
-                        key={choice}
-                        onClick={() => {
-                          setHelpMessage("connectWalletMessage");
-                        }}
-                        // @ts-expect-error todo
-                        type={choice}
-                        label={`${choice}`}
-                      />
-                    ))}
-                  </Flex>
-                ) : null}
-
                 <Box>
                   <Heading
                     color="content.accent.default"

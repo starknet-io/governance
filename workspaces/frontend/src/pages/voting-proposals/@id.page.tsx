@@ -294,8 +294,8 @@ export function Page() {
 
   const hasDelegated = false;
   const shouldShowHasDelegated = hasDelegated && !hasVoted && !canVote;
-  const showPastVotes = votes?.data && votes?.data?.length > 0;
-  const pastVotes = votes?.data || [];
+  const showPastVotes = votes?.votes && votes?.votes?.length > 0;
+  const pastVotes = votes?.votes || [];
   const { data: authorInfo } = trpc.users.getUser.useQuery({
     address: data?.proposal?.author || "",
   });
@@ -406,6 +406,8 @@ export function Page() {
     }
   };
 
+  console.log(votes);
+
   return (
     <>
       <Modal
@@ -506,7 +508,7 @@ export function Page() {
         <SummaryItems.Root>
           <SummaryItems.StrategySummary
             strategies={
-              (data?.proposal?.strategies || []).filter((s) => s) as any[]
+              []
             }
           />
           <SummaryItems.LinkItem
@@ -876,7 +878,7 @@ export function Page() {
                   </Heading>
 
                   {data?.proposal?.choices.map((choice, index) => {
-                    const totalVotes = 0
+                    const totalVotes = data?.proposal?.scores_total;
                     const voteCount = data?.proposal?.scores![index];
                     const userVote = false;
                     const strategies = data?.proposal?.strategies;
@@ -928,14 +930,14 @@ export function Page() {
                         }
                         address={vote?.voter as string}
                         voted={
-                          vote?.votePreference === 1
+                          vote?.choice === 1
                             ? "For"
-                            : vote?.votePreference === 2
+                            : vote?.choice === 2
                             ? "Against"
                             : "Abstain"
                         }
                         comment={vote?.body as string}
-                        voteCount={vote?.voteCount as number}
+                        voteCount={vote?.vp as number}
                         signature={vote?.ipfs as string}
                       />
                     ))
