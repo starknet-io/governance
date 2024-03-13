@@ -506,11 +506,7 @@ export function Page() {
         size="standard"
       >
         <SummaryItems.Root>
-          <SummaryItems.StrategySummary
-            strategies={
-              []
-            }
-          />
+          <SummaryItems.StrategySummary strategies={[]} />
           <SummaryItems.LinkItem
             label="IPFS #"
             link={`https://snapshot.4everland.link/ipfs//${data?.proposal?.ipfs}`}
@@ -528,13 +524,9 @@ export function Page() {
           />
 
           <SummaryItems.LinkItem
-            label="Snapshot block #"
-            link={`https://etherscan.io/block/${data?.proposal?.snapshot}`}
-            linkLabel={
-              data?.proposal?.snapshot
-                ? parseInt(data.proposal.snapshot, 10).toLocaleString()
-                : ""
-            }
+            label="Txn hash"
+            link={`https://starkscan.co/tx/${data?.proposal?.tx}`}
+            linkLabel={truncateAddress(data?.proposal?.tx || "")}
             isExternal={true}
           />
         </SummaryItems.Root>
