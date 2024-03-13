@@ -120,7 +120,6 @@ export function Page() {
     space?.data?.strategies_parsed_metadata,
     space?.data?.strategies_indicies,
   );
-  console.log(processedStrategies)
   const parsedVotingStrategies = parseStrategiesMetadata(
     processedStrategies || [],
   ).join(", ");
@@ -130,7 +129,6 @@ export function Page() {
     skipField: "proposal",
   });
 
-  console.log(votes);
 
   const address = ethWallet?.address;
 
@@ -413,8 +411,6 @@ export function Page() {
       return <></>;
     }
   };
-
-  console.log(votes);
 
   return (
     <>
