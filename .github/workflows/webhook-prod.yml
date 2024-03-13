@@ -21,17 +21,24 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: registry.digitalocean.com/governance/webhook-prod
+          images: europe-west9-docker.pkg.dev/governance-production/webhook/prod
           flavor: latest=false
           tags: |
             type=ref,event=tag
 
-      - name: Login to DO Container Registry
-        uses: docker/login-action@v2
+      - uses: 'google-github-actions/auth@v2'
+        id: auth
         with:
-          registry: registry.digitalocean.com
-          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          token_format: access_token
+          project_id: 'governance-production'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS_PROD }}'
+
+      - name: Login to GAR
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west9-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -41,18 +48,24 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          secrets: |
-            "certificate=${{ secrets.CERTIFICATE_WEBHOOK }}"
 
-  Deploy-production:
+  Deploy-dev:
     needs: Build
     runs-on: ubuntu-latest
     env:
       tag: ${{ needs.Build.outputs.tag }}
     steps:
-      - name: DigitalOcean App Platform deployment
-        uses: digitalocean/app_action@v1.1.5
+      - uses: 'google-github-actions/auth@v2'
+        id: auth
         with:
-          app_name: backend-production
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          images: '[{"name": "webhook","image":{"registry_type": "DOCR","repository": "webhook-prod","tag": "${{ env.tag }}"}}]'
+          token_format: access_token
+          project_id: 'governance-production'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS_PROD }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+
+      - name: 'deploy'
+        run: 'gcloud compute instances update-container webhook --zone=europe-west9-c --container-image europe-west9-docker.pkg.dev/governance-production/webhook/prod:${{ env.tag }}'
