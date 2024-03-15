@@ -73,7 +73,8 @@ export function useVotingPower({
         ...vpData.map((strategy) => strategy.decimals),
       );
       const totalRawValue = vpData.reduce((acc, strategy) => {
-        const valueBigInt = BigInt(strategy.value);
+        const valueAsString = strategy.value.toString();
+        const valueBigInt = BigInt(valueAsString);
         const scaleFactor = BigInt(10 ** (maxDecimals - strategy.decimals));
         return (
           acc +
@@ -90,8 +91,6 @@ export function useVotingPower({
           ? parseFloat(scaledValue.toFixed(2))
           : parseFloat(scaledValue.toFixed(4));
 
-      console.log(finalValue)
-
       setVotingPowerData((prevData) => ({
         ...prevData,
         [cacheKey]: {
@@ -102,7 +101,6 @@ export function useVotingPower({
     } catch (e) {
       console.error("Failed to load voting power", e);
     } finally {
-      console.log("I finished calculation of voting power for: ", cacheKey);
       isFetching[cacheKey] = false;
     }
   };

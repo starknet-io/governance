@@ -19,6 +19,7 @@ import { findMatchingWallet } from "../utils/helpers";
 import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
 import { useStarknetDelegates } from "../hooks/starknet/useStarknetDelegates";
 import { useWallets } from "../hooks/useWallets";
+import { getChecksumAddress } from "starknet";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 
@@ -79,7 +80,7 @@ const AuthorizedUserView = () => {
       address: delegationData ? delegationData.toLowerCase() : "",
     },
     {
-      enabled: !!hasDelegationData,
+      enabled: !!(delegationData && delegationData?.length),
     },
   );
 
@@ -88,7 +89,7 @@ const AuthorizedUserView = () => {
       starknetAddress: delegationDataL2 ? delegationDataL2.toLowerCase() : "",
     },
     {
-      enabled: !!hasDelegationDataL2,
+      enabled: !!(delegationDataL2 && delegationDataL2.length),
     },
   );
 
@@ -98,8 +99,18 @@ const AuthorizedUserView = () => {
     addr && addr !== "0x0000000000000000000000000000000000000000";
 
   const address = user?.address?.toLowerCase() || "";
-
-  const delegate = trpc.delegates.getDelegateByAddress.useQuery({ address });
+  const isStarknetPrimary =
+    getChecksumAddress(address || "") ===
+    getChecksumAddress(starknetAddress || "");
+  const delegate = trpc.delegates.getDelegateByAddress.useQuery(
+    {
+      address: !isStarknetPrimary ? address : undefined,
+      starknetAddress: isStarknetPrimary ? address : undefined,
+    },
+    {
+      enabled: !!(address && address.length),
+    },
+  );
 
   const delegationStatement = delegate.data?.delegationStatement;
 
@@ -224,7 +235,7 @@ const AuthorizedUserView = () => {
           delegatedToL2={
             delegatedToL2?.data ? delegatedToL2?.data : delegationDataL2
           }
-          delegatedToL1Loading={delegatedTo.isLoading}
+          delegatedToL1Loading={delegationData ? delegatedTo.isLoading : false}
           delegatedToL2Loading={delegatedToL2.isLoading}
           onDisconnect={handleDisconnect}
           user={user}

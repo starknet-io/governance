@@ -308,7 +308,7 @@ export function Page() {
   const pastVotesWithUserInfo = pastVotes.map((pastVote) => {
     return {
       ...pastVote,
-      author: pastVote?.author?.author || {},
+      author: pastVote?.author?.author || {}
     };
   });
 
