@@ -1,4 +1,8 @@
-import { defaultNetwork, starknetMainnet, getStarknetStrategy } from "@snapshot-labs/sx";
+import {
+  defaultNetwork,
+  starknetMainnet,
+  getStarknetStrategy,
+} from "@snapshot-labs/sx";
 import { clientConfig, starkProvider as provider } from "../../clients/clients";
 import {
   constants as starknetConstants,
@@ -85,7 +89,7 @@ function getProposalState(proposal: any, current: number) {
   return "active";
 }
 
-export const transformProposal = (proposal) => {
+export const transformProposal = (proposal: any) => {
   const timeNow = Date.now();
   return {
     ...proposal,
@@ -95,10 +99,13 @@ export const transformProposal = (proposal) => {
     id: proposal.proposal_id,
     ipfs: proposal?.metadata?.id,
     choices: ["For", "Against", "Abstain"],
+    scores_total:
+      parseFloat(BigInt(proposal.scores_total || 0n).toString()) /
+      Math.pow(10, 18),
     scores: [
-      BigInt(proposal.scores_1 || 0n) / BigInt(10 ** 18),
-      BigInt(proposal.scores_2 || 0n) / BigInt(10 ** 18),
-      BigInt(proposal.scores_3 || 0n) / BigInt(10 ** 18),
+      parseFloat(BigInt(proposal.scores_1 || 0n).toString()) / Math.pow(10, 18),
+      parseFloat(BigInt(proposal.scores_2 || 0n).toString()) / Math.pow(10, 18),
+      parseFloat(BigInt(proposal.scores_3 || 0n).toString()) / Math.pow(10, 18),
     ],
     state: getProposalState(proposal, timeNow),
   };
@@ -106,11 +113,11 @@ export const transformProposal = (proposal) => {
 
 export const transformVote = (vote: any) => {
   const { vp } = vote;
-  const valueWithDecimals = vp ? BigInt(vp) / BigInt(10 ** 18) : 0n;
+  const scaledValue = parseFloat(BigInt(vp).toString()) / Math.pow(10, 18);
   return {
     ...vote,
     voter: vote.voter.id,
-    vp: valueWithDecimals,
+    vp: scaledValue,
   };
 };
 
@@ -192,7 +199,6 @@ export const getVotingPowerCalculation = async (
         strategiesMetadata[i].payload,
       );
 
-
       const value = await strategy.getVotingPower(
         address,
         voterAddress,
@@ -228,7 +234,7 @@ export const parseStrategiesToHumanReadableFormat = (strategies = []) => {
 
 export const parseStrategiesMetadata = (strategies) => {
   return strategies.map((strategy) => {
-    return `${strategy?.data?.name} - ${strategy?.data?.symbol}`;
+    return `${strategy?.name} - ${strategy?.symbol}`;
   });
 };
 

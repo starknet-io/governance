@@ -135,11 +135,11 @@ export function useVotingPower({
   };
 }
 
-function processStrategiesMetadata(
+export function processStrategiesMetadata(
   parsedMetadata: any[],
   strategiesIndicies?: number[],
 ) {
-  if (parsedMetadata.length === 0) return [];
+  if (!parsedMetadata || parsedMetadata?.length === 0) return [];
 
   const maxIndex = Math.max(
     ...parsedMetadata.map((metadata) => metadata.index),

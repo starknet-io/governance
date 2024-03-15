@@ -26,10 +26,13 @@ export const transformProposal = (proposal: any) => {
     id: proposal.proposal_id,
     choices: ['For', 'Against', 'Abstain'],
     ipfs: proposal.metadata.id,
+    scores_total:
+      parseFloat(BigInt(proposal.scores_total || 0n).toString()) /
+      Math.pow(10, 18),
     scores: [
-      parseFloat(proposal.scores_1),
-      parseFloat(proposal.scores_2),
-      parseFloat(proposal.scores_3),
+      parseFloat(BigInt(proposal.scores_1 || 0n).toString()) / Math.pow(10, 18),
+      parseFloat(BigInt(proposal.scores_2 || 0n).toString()) / Math.pow(10, 18),
+      parseFloat(BigInt(proposal.scores_3 || 0n).toString()) / Math.pow(10, 18),
     ],
     state: getProposalState(proposal, timeNow),
   };
