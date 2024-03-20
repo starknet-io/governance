@@ -348,7 +348,7 @@ export function Page() {
       address: delegationDataL1,
     },
     {
-      enabled: addres && address.length,
+      enabled: !!(address && address.length),
     },
   );
   const delegatedToL2 = trpc.delegates.getDelegateByAddress.useQuery(
