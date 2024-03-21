@@ -25,12 +25,21 @@ import { useFileUpload } from "src/hooks/useFileUpload";
 import { useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import { FormLayout } from "src/components/FormsCommon/FormLayout";
-import {AUTHENTICATORS_ENUM} from "../../hooks/snapshotX/constants";
-import {useSpace} from "../../hooks/snapshotX/useSpace";
-import {pinPineapple, prepareStrategiesForSignature, waitForTransaction} from "../../hooks/snapshotX/helpers";
-import {ethSigClient, starkProvider, starkSigClient} from "../../clients/clients";
-import {useProposals} from "../../hooks/snapshotX/useProposals";
+import { AUTHENTICATORS_ENUM } from "../../hooks/snapshotX/constants";
+import { useSpace } from "../../hooks/snapshotX/useSpace";
+import {
+  pinPineapple,
+  prepareStrategiesForSignature,
+  waitForTransaction,
+} from "../../hooks/snapshotX/helpers";
+import {
+  ethSigClient,
+  starkProvider,
+  starkSigClient,
+} from "../../clients/clients";
+import { useProposals } from "../../hooks/snapshotX/useProposals";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { useWallets } from "../../hooks/useWallets";
 
 interface FieldValues {
   // type: ProposalType;
@@ -43,10 +52,12 @@ interface FieldValues {
 
 export function Page() {
   const { data: walletClient } = useWalletClient();
+  const { primaryWallet } = useDynamicContext();
+  const { ethWallet, starknetWallet } = useWallets();
   const { editor, handleEditorChange, editorValue } = useMarkdownEditor("");
   const { handleUpload } = useFileUpload();
   const [error, setError] = useState("");
-  const { data: allProposals, refetch: refetchProposals } = useProposals()
+  const { data: allProposals, refetch: refetchProposals } = useProposals();
   const { walletConnector } = useDynamicContext();
   const createProposal = trpc.proposals.createProposal.useMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -111,52 +122,72 @@ export function Page() {
           execution: [],
         });
         if (!pinned || !pinned.cid) return false;
-        console.log('IPFS', pinned);
+        console.log("IPFS", pinned);
         // PREPARE DATA HERE
-        const strategiesMetadata = space.data.voting_power_validation_strategies_parsed_metadata.map(
-          (strategy) => ({
-            ...strategy.data,
-          }),
-        );
+        const strategiesMetadata =
+          space.data.voting_power_validation_strategies_parsed_metadata.map(
+            (strategy) => ({
+              ...strategy.data,
+            }),
+          );
         const preparedStrategies = await prepareStrategiesForSignature(
           space.data.voting_power_validation_strategy_strategies as string[],
           strategiesMetadata as any[],
         );
 
         const params = {
-          authenticator: AUTHENTICATORS_ENUM.EVM_SIGNATURE,
+          authenticator:
+            primaryWallet?.id === ethWallet?.id
+              ? AUTHENTICATORS_ENUM.EVM_SIGNATURE
+              : AUTHENTICATORS_ENUM.STARKNET_SIGNATURE,
           space: space.data.id,
           executionStrategy: {
-            addr: '0x0000000000000000000000000000000000000000',
-            params: []
+            addr: "0x0000000000000000000000000000000000000000",
+            params: [],
           },
           strategies: preparedStrategies,
-          metadataUri: `ipfs://${pinned.cid}`
-        }
+          metadataUri: `ipfs://${pinned.cid}`,
+        };
 
         const web3 = new providers.Web3Provider(walletClient.transport);
         const deeplink = walletConnector?.getDeepLink();
         if (deeplink) {
           window.location.href = deeplink;
         }
-
-        const receipt = await ethSigClient.propose({
-          signer: web3.getSigner(),
-          data: params,
-        });
+        let receipt = null;
+        if (primaryWallet?.id === ethWallet?.id) {
+          receipt = await ethSigClient.propose({
+            signer: web3.getSigner(),
+            data: params,
+          });
+        } else {
+          if (typeof window !== "undefined") {
+            const isBraavos = starknetWallet?.connector?.name === "Braavos";
+            let activeStarknetAccount = null;
+            if (isBraavos) {
+              activeStarknetAccount = window?.starknet_braavos?.account;
+            } else {
+              activeStarknetAccount = window?.starknet?.account;
+            }
+            receipt = await starkSigClient.propose({
+              signer: activeStarknetAccount,
+              data: params,
+            });
+          }
+        }
         const transaction = await starkSigClient.send(receipt);
-        console.log(receipt)
-        console.log(transaction)
+        console.log(receipt);
+        console.log(transaction);
         if (!transaction.transaction_hash) {
-          setError("Error creating proposal")
-          return false
+          setError("Error creating proposal");
+          return false;
         }
         try {
-          const result = await waitForTransaction(transaction.transaction_hash)
+          const result = await waitForTransaction(transaction.transaction_hash);
           setIsSubmitting(false);
           setError("");
-          await refetchProposals()
-          navigate("/voting-proposals")
+          await refetchProposals();
+          navigate("/voting-proposals");
           /*
           await createProposal
             .mutateAsync(proposalData)
@@ -172,15 +203,15 @@ export function Page() {
            */
         } catch (error) {
           // Handle error
-          console.log(error)
+          console.log(error);
           setIsSubmitting(false);
           // error.description is actual error from snapshot
         }
       } catch (error: any) {
         // Handle error
-        console.log(error)
+        console.log(error);
         setIsSubmitting(false);
-        setError(`Error: ${error?.error_description}`);
+        setError(`Error: ${error?.error_description || error?.message}`);
       }
     },
     () => onErrorSubmit(errors),
