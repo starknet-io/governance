@@ -7677,16 +7677,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@snapshot-labs/snapshot-metrics@npm:^1.3.1":
-  version: 1.4.0
-  resolution: "@snapshot-labs/snapshot-metrics@npm:1.4.0"
+"@snapshot-labs/snapshot-metrics@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@snapshot-labs/snapshot-metrics@npm:1.4.1"
   dependencies:
     express-prom-bundle: ^6.6.0
     node-fetch: ^2.7.0
     prom-client: ^14.2.0
   peerDependencies:
     express: ^4.0.0
-  checksum: 012dc42b23a1cc4c235facb5964ded4b95b6ed64fdba15d6b8af25eb119a0f74775974b82a216408255761b82b6432a17941b81bd9efb2ec12f9e56b12198a0e
+  checksum: 5751b128e2677043ed6ef558e8d0f57bef50ecb6f7f6a4689955972cea6ff66b2eb0ac0883d1f3dd73780e4ef882263eee1066eb5f254d8ef16d6e0ff6e02eb7
   languageName: node
   linkType: hard
 
@@ -25204,7 +25204,7 @@ __metadata:
     "@pusher/push-notifications-server": ^1.2.5
     "@snapshot-labs/eslint-config": ^0.1.0-beta.13
     "@snapshot-labs/prettier-config": ^0.1.0-beta.11
-    "@snapshot-labs/snapshot-metrics": ^1.3.1
+    "@snapshot-labs/snapshot-metrics": ^1.4.1
     "@snapshot-labs/snapshot-sentry": ^1.5.1
     "@snapshot-labs/snapshot.js": ^0.7.4
     "@types/express": ^4.17.11
