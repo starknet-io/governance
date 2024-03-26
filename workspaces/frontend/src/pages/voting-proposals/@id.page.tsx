@@ -110,9 +110,11 @@ export function Page() {
     skipField: "voter",
   });
 
+  const l2Address = starknetWallet?.address ? getChecksumAddress(starknetWallet?.address).toLowerCase() : null
+
   const voteL2 = useVotes({
     proposal: pageContext.routeParams!.id,
-    voter: starknetWallet?.address as any,
+    voter: l2Address,
     skipField: "voter",
   });
   const space = useSpace();
@@ -128,7 +130,6 @@ export function Page() {
     proposal: pageContext.routeParams!.id,
     skipField: "proposal",
   });
-
 
   const address = ethWallet?.address;
 
@@ -242,7 +243,8 @@ export function Page() {
       setisSuccessModalOpen(true);
       await refetch();
       await vote.refetch();
-      await votes.refetch();
+      await voteL2.refetch();
+      //await votes.refetch();
     } catch (error: any) {
       // Handle error
       console.error(error);
@@ -308,7 +310,7 @@ export function Page() {
   const pastVotesWithUserInfo = pastVotes.map((pastVote) => {
     return {
       ...pastVote,
-      author: pastVote?.author?.author || {}
+      author: pastVote?.author?.author || {},
     };
   });
 
@@ -910,11 +912,7 @@ export function Page() {
                 <Box mb="standard.2xl">
                   <Heading
                     variant="h4"
-                    mb={
-                      votes.data && votes.data.length > 0
-                        ? "standard.sm"
-                        : "0px"
-                    }
+                    mb={pastVotes?.length > 0 ? "standard.sm" : "0px"}
                   >
                     Votes
                   </Heading>
@@ -938,6 +936,7 @@ export function Page() {
                         comment={vote?.body as string}
                         voteCount={vote?.vp as number}
                         signature={vote?.ipfs as string}
+                        tx={vote?.tx as string}
                       />
                     ))
                   ) : (

@@ -1,6 +1,7 @@
 import { Box, Flex, Icon } from "@chakra-ui/react";
 import { Button } from "src/Button";
 import {
+  ExternalLinkIcon,
   SignatureIcon,
   VoteAbstainIcon,
   VoteAgainstIcon,
@@ -36,6 +37,7 @@ export const VoteComment = ({
   comment,
   author,
   signature,
+  tx,
 }: Props) => {
   const formatVotes = formatVotesAmount(voteCount);
 
@@ -102,21 +104,39 @@ export const VoteComment = ({
               {formatVotes} votes
             </Text>
           </Flex>
-          <Box as="span" top="1px" position="relative">
-            <Link
-              href={`https://signator.io/view?ipfs=${signature}` || ""}
-              size="small"
-              isExternal
-              hasArrow={false}
-              padding="0"
-              borderBottom={"0"}
-              sx={{
-                _hover: { textDecoration: "none", borderBottom: "none" },
-              }}
-            >
-              <SignatureIcon boxSize="24px" />
-            </Link>
-          </Box>
+          {tx ? (
+            <Box as="span" top="1px" position="relative">
+              <Link
+                href={`https://starkscan.co/tx/${tx}`}
+                size="small"
+                isExternal
+                hasArrow={false}
+                padding="0"
+                borderBottom={"0"}
+                sx={{
+                  _hover: { textDecoration: "none", borderBottom: "none" },
+                }}
+              >
+                <ExternalLinkIcon color="#86848D" boxSize="16px" />
+              </Link>
+            </Box>
+          ) : (
+            <Box as="span" top="1px" position="relative">
+              <Link
+                href={`https://signator.io/view?ipfs=${signature}` || ""}
+                size="small"
+                isExternal
+                hasArrow={false}
+                padding="0"
+                borderBottom={"0"}
+                sx={{
+                  _hover: { textDecoration: "none", borderBottom: "none" },
+                }}
+              >
+                <SignatureIcon boxSize="24px" />
+              </Link>
+            </Box>
+          )}
         </Flex>
       </Flex>
       <Box maxWidth={{ base: "500px", md: "800px", lg: "380px" }}>
