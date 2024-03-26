@@ -2,7 +2,8 @@ name: front deployment
 
 on:
   push:
-    branches: ['dev', 'snapshot']
+    branches:
+      - dev
     paths:
       - 'workspaces/frontend/**'
       - 'workspaces/components/**'
@@ -97,29 +98,5 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: governance
-          image: ${{ env.image }}
-          region: europe-west9
-
-  Deploy-snapshot:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/snapshot'
-    needs: Build
-    runs-on: ubuntu-latest
-    env:
-      image: ${{ needs.Build.outputs.image }}
-    environment:
-      name: snapshot-frontend
-      url: https://snapshot.yuki-labs.dev
-    steps:
-      - uses: 'google-github-actions/auth@v2'
-        id: auth
-        with:
-          token_format: access_token
-          project_id: 'governance-development'
-          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: governance-snapshot
           image: ${{ env.image }}
           region: europe-west9
