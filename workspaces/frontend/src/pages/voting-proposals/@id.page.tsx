@@ -35,6 +35,7 @@ import {
   MenuItem,
   Username,
   PastVote,
+  WrongAccountOrNetworkModal,
 } from "@yukilabs/governance-components";
 import * as VoteLayout from "../../components/VotingProposals/VotingProposal/PageLayout";
 import { usePageContext } from "src/renderer/PageContextProvider";
@@ -110,7 +111,9 @@ export function Page() {
     skipField: "voter",
   });
 
-  const l2Address = starknetWallet?.address ? getChecksumAddress(starknetWallet?.address).toLowerCase() : null
+  const l2Address = starknetWallet?.address
+    ? getChecksumAddress(starknetWallet?.address).toLowerCase()
+    : null;
 
   const voteL2 = useVotes({
     proposal: pageContext.routeParams!.id,
@@ -156,9 +159,11 @@ export function Page() {
       id: pageContext.routeParams!.id,
     });
 
+  const activeStarknetWallet = useActiveStarknetAccount();
+  const [isWrongAccount, setIsWrongAccount] = useState<boolean>(false);
+
   async function handleVote(choice: number, reason?: string) {
     try {
-      if (walletClient == null) return;
       if (
         (isL1Voting && votingPower < MINIMUM_TOKENS_FOR_DELEGATION) ||
         (isL2Voting && votingPowerL2 < MINIMUM_TOKENS_FOR_DELEGATION)
@@ -204,7 +209,6 @@ export function Page() {
         strategies: preparedStrategies,
       };
 
-      const web3 = new providers.Web3Provider(walletClient.transport);
       const starknetProvider = starkProvider;
 
       const deeplink = walletConnector?.getDeepLink();
@@ -213,6 +217,13 @@ export function Page() {
       }
       let receipt = null;
       if (primaryWallet?.id === ethWallet?.id) {
+        if (!walletClient) {
+          setStatusTitle("Voting failed");
+          setStatusDescription("Ethereum account not connected");
+          return false;
+        }
+        const web3 = new providers.Web3Provider(walletClient.transport);
+
         receipt = await ethSigClient.vote({
           signer: web3.getSigner(),
           data: params,
@@ -451,7 +462,15 @@ export function Page() {
             voteCount={votingPowerL2 as number}
             isStarknet
             setWalletCallback={async () => {
-              await setPrimaryWallet(starknetWallet?.id);
+              setIsWrongAccount(false);
+              if (
+                getChecksumAddress(starknetWallet?.address) !==
+                getChecksumAddress(activeStarknetWallet)
+              ) {
+                setIsWrongAccount(true);
+              } else {
+                await setPrimaryWallet(starknetWallet?.id);
+              }
             }}
           />
         ) : null}
@@ -995,6 +1014,12 @@ export function Page() {
           </VoteLayout.VoteWidget>
         </VoteLayout.RightSide>
       </VoteLayout.Root>
+      <WrongAccountOrNetworkModal
+        isOpen={isWrongAccount}
+        onClose={() => setIsWrongAccount(false)}
+        expectedStarknetAddress={starknetWallet?.address}
+        starknetAddress={activeStarknetWallet}
+      />
     </>
   );
 }
