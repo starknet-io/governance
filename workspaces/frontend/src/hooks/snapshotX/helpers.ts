@@ -103,9 +103,9 @@ export const transformProposal = (proposal: any) => {
       parseFloat(BigInt(proposal.scores_total || 0n).toString()) /
       Math.pow(10, 18),
     scores: [
-      parseFloat(BigInt(proposal.scores_1 || 0n).toString()) / Math.pow(10, 18),
-      parseFloat(BigInt(proposal.scores_2 || 0n).toString()) / Math.pow(10, 18),
-      parseFloat(BigInt(proposal.scores_3 || 0n).toString()) / Math.pow(10, 18),
+      (parseFloat(BigInt(proposal.scores_1 || 0n).toString()) / Math.pow(10, 18)).toFixed(2),
+      (parseFloat(BigInt(proposal.scores_2 || 0n).toString()) / Math.pow(10, 18)).toFixed(2),
+      (parseFloat(BigInt(proposal.scores_3 || 0n).toString()) / Math.pow(10, 18)).toFixed(2),
     ],
     state: getProposalState(proposal, timeNow),
   };
@@ -113,7 +113,7 @@ export const transformProposal = (proposal: any) => {
 
 export const transformVote = (vote: any) => {
   const { vp } = vote;
-  const scaledValue = parseFloat(BigInt(vp).toString()) / Math.pow(10, 18);
+  const scaledValue = (parseFloat(BigInt(vp).toString()) / Math.pow(10, 18)).toFixed(2);
   return {
     ...vote,
     voter: vote.voter.id,
