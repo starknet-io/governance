@@ -302,7 +302,7 @@ export function Page() {
   const hasVotedL1 = vote.data && vote.data.votes?.[0];
   const hasVotedL2 = voteL2.data && voteL2.data.votes?.[0];
 
-  console.log(votingPower)
+  console.log(votingPower);
 
   const canVoteL1 =
     data?.proposal?.state === "active" &&
@@ -581,6 +581,7 @@ export function Page() {
       </InfoModal>
       <ConfirmModal
         isOpen={isConfirmOpen}
+        isStarknet={primaryWallet?.id === starknetWallet?.id}
         onClose={() => setisConfirmOpen(false)}
       />
       <InfoModal
