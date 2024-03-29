@@ -162,6 +162,8 @@ export function Page() {
   const activeStarknetWallet = useActiveStarknetAccount();
   const [isWrongAccount, setIsWrongAccount] = useState<boolean>(false);
 
+  console.log(walletClient);
+
   async function handleVote(choice: number, reason?: string) {
     try {
       if (
@@ -299,6 +301,8 @@ export function Page() {
     !delegateOwnProfileL1;
   const hasVotedL1 = vote.data && vote.data.votes?.[0];
   const hasVotedL2 = voteL2.data && voteL2.data.votes?.[0];
+
+  console.log(votingPower)
 
   const canVoteL1 =
     data?.proposal?.state === "active" &&
@@ -445,6 +449,15 @@ export function Page() {
             isSelected={primaryWallet?.id === ethWallet?.id}
             voteCount={votingPower as number}
             setWalletCallback={async () => {
+              setIsWrongAccount(false);
+              if (walletClient?.account?.address) {
+                if (
+                  walletClient?.account?.address?.toLowerCase() !==
+                  ethWallet?.address?.toLowerCase()
+                ) {
+                  setIsWrongAccount(true);
+                }
+              }
               await setPrimaryWallet(ethWallet?.id);
             }}
           />
@@ -1019,6 +1032,8 @@ export function Page() {
         onClose={() => setIsWrongAccount(false)}
         expectedStarknetAddress={starknetWallet?.address}
         starknetAddress={activeStarknetWallet}
+        ethAddress={walletClient?.account?.address}
+        expectedEthAddress={ethWallet?.address}
       />
     </>
   );
