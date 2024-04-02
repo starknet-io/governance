@@ -178,7 +178,7 @@ const WrapModal = ({
   );
 };
 
-const RECEIVING_AMOUNT_SUBTRACT = 0.00001;
+const RECEIVING_AMOUNT_SUBTRACT = 0.3;
 
 export function Page() {
   const wallets = useUserWallets();
