@@ -11127,7 +11127,7 @@ __metadata:
     sortablejs: ^1.15.0
     storybook: ^7.1.1
     storybook-addon-dark-mode-toggle: ^0.0.6
-    vite: ^4.3.9
+    vite: ^4.5.3
     vite-tsconfig-paths: ^4.2.0
     yuki-ultra-boring-avatars: 1.0.1
   languageName: unknown
@@ -11199,7 +11199,7 @@ __metadata:
     superjson: ^1.13.1
     use-debounce: ^9.0.4
     viem: ^1.5.0
-    vite: ^4.3.9
+    vite: ^4.5.3
     vite-node: 0.31.1
     vite-plugin-node-stdlib-browser: ^0.2.1
     vite-plugin-ssr: 0.4.131
@@ -27721,7 +27721,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^3.0.0 || ^4.0.0, vite@npm:^4.3.9":
+"vite@npm:^3.0.0 || ^4.0.0":
   version: 4.4.11
   resolution: "vite@npm:4.4.11"
   dependencies:
@@ -27758,6 +27758,46 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: c22145c8385343a629cd546054b9da6eee60327540102bdfd1ad897fd2e78e0763ce6a18a9d84fdefde9da8fd2427d3bec9eb2697b47cf4068c7b4b52f7e3e6a
+  languageName: node
+  linkType: hard
+
+"vite@npm:^4.5.3":
+  version: 4.5.3
+  resolution: "vite@npm:4.5.3"
+  dependencies:
+    esbuild: ^0.18.10
+    fsevents: ~2.3.2
+    postcss: ^8.4.27
+    rollup: ^3.27.1
+  peerDependencies:
+    "@types/node": ">= 14"
+    less: "*"
+    lightningcss: ^1.21.0
+    sass: "*"
+    stylus: "*"
+    sugarss: "*"
+    terser: ^5.4.0
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    less:
+      optional: true
+    lightningcss:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+    sugarss:
+      optional: true
+    terser:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: fd3f512ce48ca2a1fe60ad0376283b832de9272725fdbc65064ae9248f792de87b0f27a89573115e23e26784800daca329f8a9234d298ba6f60e808a9c63883c
   languageName: node
   linkType: hard
 
