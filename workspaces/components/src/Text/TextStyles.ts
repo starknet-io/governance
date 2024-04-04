@@ -21,6 +21,11 @@ export const textTheme = defineStyleConfig({
       lineHeight: "20px",
       fontWeight: 400,
     },
+    bodySmallMedium: {
+      fontSize: "12px",
+      lineHeight: "20px",
+      fontWeight: 500,
+    },
     bodySmallStrong: {
       fontSize: "12px",
       lineHeight: "20px",

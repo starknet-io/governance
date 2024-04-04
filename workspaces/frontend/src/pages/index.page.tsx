@@ -53,7 +53,7 @@ export function Page() {
     totalSupply: true,
   });
   const totalSupplyL1 = useTotalSupply(
-    "0xca14007eff0db1f8135f4c25b34de49ab0d42766",
+    import.meta.env.VITE_APP_STARKNET_REGISTRY,
   );
   return (
     <Box width="100%">
@@ -66,6 +66,7 @@ export function Page() {
         STRKTotal={formatVotingPower(
           starkTotalBalance?.balance?.rawBalance || "0",
         )}
+        l1StrkTotal={totalSupplyL1}
       />
       <HomeContainer
         position={"relative"}

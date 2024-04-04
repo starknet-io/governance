@@ -30,14 +30,10 @@ export const useBalanceData = (
   };
 };
 
-export const useTotalSupply = (
-  address,
-) => {
+export const useTotalSupply = (address: `0x${string}`) => {
   const { data: tokenInfo }: any = useToken({
     address,
     chainId: 1,
   });
-  console.log(tokenInfo);
-  const initialData = tokenInfo?.initialData || {};
-  return initialData?.totalSupply || 0;
+  return tokenInfo?.totalSupply?.formatted || "0";
 };

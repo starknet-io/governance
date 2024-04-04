@@ -5,7 +5,8 @@ import { Text } from "src/Text";
 import { HomePageCard } from "src/Card/HomePageCard";
 import { HomeContainer } from "src/ContentContainer";
 import React from "react";
-import { CoinsV2, DelegatesV2 } from "../Icons/UiIcons";
+import { CoinsV2, DelegatesV2, InfoCircleIcon } from "../Icons/UiIcons";
+import { Tooltip } from "../Tooltip";
 
 type Props = {
   title?: string;
@@ -15,6 +16,7 @@ type Props = {
   l2Delegated: string;
   vSTRKTotal: any;
   STRKTotal: any;
+  l1StrkTotal: any;
 };
 
 export const BannerHome = ({
@@ -25,7 +27,22 @@ export const BannerHome = ({
   l1Delegated,
   vSTRKTotal,
   STRKTotal,
+  l1StrkTotal,
 }: Props) => {
+  // Convert string props to numbers for calculation
+  const vSTRKTotalNum = parseFloat(vSTRKTotal);
+  const STRKTotalNum = parseFloat(STRKTotal);
+
+  // Calculate the percentage
+  const vSTRKOfTotalSTRKPercentage = STRKTotalNum
+    ? (vSTRKTotalNum / STRKTotalNum) * 100
+    : 0;
+
+  // Format the result for display
+  const formattedPercentage = new Intl.NumberFormat("en", {
+    maximumFractionDigits: 2, // Limit decimal places to 2
+  }).format(vSTRKOfTotalSTRKPercentage);
+
   return (
     <>
       <Box
@@ -102,15 +119,15 @@ export const BannerHome = ({
           </Flex>
         </HomeContainer>
       </Box>
-      <Box pos="relative" zIndex="100" mx={"20px"} maxW={"min(100vw, 1240px)"}>
+      <Box pos="relative" zIndex="100">
         <HomeContainer
-          position="relative"
+          display="grid"
           zIndex="2"
           transform={{
             base: "translateY(-70px)",
             md: "translateY(-50%)",
           }}
-          px="0px"
+          px="1rem"
           mb={{
             base: "-50px",
             md: "-80px",
@@ -124,37 +141,91 @@ export const BannerHome = ({
             px={"standard.sm"}
           >
             <Box p={"standard.md"}>
-              <SimpleGrid columns={5}>
-                <Box>
+              <SimpleGrid
+                columns={{
+                  base: 2,
+                  md: 4,
+                  lg: 5,
+                }}
+                spacingX="10px"
+                spacingY="10px"
+              >
+                <Box gridColumn={{ base: "1 / -1", lg: "auto" }}>
                   <Icon as={CoinsV2} width={"32px"} height={"32px"} />
                   <Text variant={"medium"} color={"content.default.default"}>
                     STRK
                   </Text>
                 </Box>
                 <Box>
-                  <Heading variant={"h3"}>
+                  <Heading
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
                     {new Intl.NumberFormat("en", {
                       maximumFractionDigits: 2,
                     }).format(vSTRKTotal)}
                   </Heading>
-                  <Text variant="bodySmall" color="content.accent.default">
+                  <Text
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                    display="flex"
+                    gap={"4px"}
+                  >
                     vSTRK
+                    <Tooltip label="something">
+                      <InfoCircleIcon />
+                    </Tooltip>
                   </Text>
                 </Box>
                 <Box>
-                  <Heading variant={"h3"}>
+                  <Heading
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
                     {new Intl.NumberFormat("en", {
                       maximumFractionDigits: 2,
                     }).format(STRKTotal)}
                   </Heading>
-                  <Text variant="bodySmall" color="content.accent.default">
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
                     STRK L2
+                    <Tooltip label="something">
+                      <InfoCircleIcon />
+                    </Tooltip>
                   </Text>
                 </Box>
                 <Box>
-                  <Heading variant={"h3"}>/</Heading>
-                  <Text variant="bodySmall" color="content.accent.default">
+                  <Heading
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    {new Intl.NumberFormat("en", {
+                      maximumFractionDigits: 2,
+                    }).format(l1StrkTotal)}
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
                     STRK L1
+                    <Tooltip label="something">
+                      <InfoCircleIcon />
+                    </Tooltip>
                   </Text>
                 </Box>
                 <Box></Box>
@@ -162,35 +233,107 @@ export const BannerHome = ({
             </Box>
             <Box w={"100%"} h={"1px"} background={"border.forms"} />
             <Box p={"standard.md"}>
-              <SimpleGrid columns={5}>
-                <Box>
+              <SimpleGrid
+                spacingX="10px"
+                spacingY="10px"
+                columns={{
+                  base: 2,
+                  md: 4,
+                  lg: 5,
+                }}
+              >
+                <Box gridColumn={{ md: "1 / -1", lg: "auto" }}>
                   <Icon as={DelegatesV2} width={"32px"} height={"32px"} />
                   <Text variant={"medium"} color={"content.default.default"}>
                     Delegated
                   </Text>
                 </Box>
                 <Box>
-                  <Heading variant={"h3"}>{l2Delegated}</Heading>
-                  <Text variant="bodySmall" color="content.accent.default">
+                  <Heading
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    {l2Delegated}
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
                     vSTRK Delegated
+                    <Tooltip label="something">
+                      <InfoCircleIcon />
+                    </Tooltip>
                   </Text>
                 </Box>
                 <Box>
-                  <Heading variant={"h3"}>{l1Delegated}</Heading>
-                  <Text variant="bodySmall" color="content.accent.default">
+                  <Heading
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    {l1Delegated}
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
                     L1 STRK delegated
+                    <Tooltip label="something">
+                      <InfoCircleIcon />
+                    </Tooltip>
                   </Text>
                 </Box>
                 <Box>
-                  <Heading variant={"h3"}>16,304,058</Heading>
-                  <Text variant="bodySmall" color="content.accent.default">
+                  <Heading
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    ?
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
                     Self Delegated
+                    <Tooltip label="something">
+                      <InfoCircleIcon />
+                    </Tooltip>
                   </Text>
                 </Box>
                 <Box>
-                  <Heading variant={"h3"}>16,304,058</Heading>
-                  <Text variant="bodySmall" color="content.accent.default">
+                  <Heading
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    {formattedPercentage} %
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
                     vSTRK of total STRK
+                    <Tooltip label="something">
+                      <InfoCircleIcon />
+                    </Tooltip>
                   </Text>
                 </Box>
               </SimpleGrid>
