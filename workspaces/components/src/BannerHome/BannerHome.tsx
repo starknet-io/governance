@@ -124,13 +124,11 @@ export const BannerHome = ({
           display="grid"
           zIndex="2"
           transform={{
-            base: "translateY(-70px)",
-            md: "translateY(-50%)",
+            base: "translateY(-100px)",
           }}
           px="1rem"
           mb={{
-            base: "-50px",
-            md: "-80px",
+            base: "-100px",
           }}
         >
           <Box
@@ -163,6 +161,10 @@ export const BannerHome = ({
                       base: "16px",
                       md: "21px",
                     }}
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
                   >
                     {new Intl.NumberFormat("en", {
                       maximumFractionDigits: 2,
@@ -183,6 +185,10 @@ export const BannerHome = ({
                 <Box>
                   <Heading
                     variant={"h3"}
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
                     fontSize={{
                       base: "16px",
                       md: "21px",
@@ -206,6 +212,10 @@ export const BannerHome = ({
                 </Box>
                 <Box>
                   <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
                     variant={"h3"}
                     fontSize={{
                       base: "16px",
@@ -242,7 +252,7 @@ export const BannerHome = ({
                   lg: 5,
                 }}
               >
-                <Box gridColumn={{ md: "1 / -1", lg: "auto" }}>
+                <Box gridColumn={{ base: "1 / -1", lg: "auto" }}>
                   <Icon as={DelegatesV2} width={"32px"} height={"32px"} />
                   <Text variant={"medium"} color={"content.default.default"}>
                     Delegated
@@ -250,6 +260,10 @@ export const BannerHome = ({
                 </Box>
                 <Box>
                   <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
                     variant={"h3"}
                     fontSize={{
                       base: "16px",
@@ -272,6 +286,10 @@ export const BannerHome = ({
                 </Box>
                 <Box>
                   <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
                     variant={"h3"}
                     fontSize={{
                       base: "16px",
@@ -294,6 +312,10 @@ export const BannerHome = ({
                 </Box>
                 <Box>
                   <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
                     variant={"h3"}
                     fontSize={{
                       base: "16px",
@@ -316,6 +338,10 @@ export const BannerHome = ({
                 </Box>
                 <Box>
                   <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
                     variant={"h3"}
                     fontSize={{
                       base: "16px",
