@@ -6,6 +6,7 @@ export const stats = pgTable('stats', {
   delegatedVSTRK: text('delegatedVSTRK', ).default("0"),
   delegatedSTRK: text('delegatedSTRK', ).default("0"),
   selfDelegated: text('selfDelegated', ).default("0"),
+  totalVotingPower: text('totalVotingPower').default("0"),
   createdAt: timestamp('createdAt', { withTimezone: true })
     .notNull()
     .defaultNow(),

@@ -288,6 +288,35 @@ async function collectL1Data(delegates: DelegateDataSnapshot[]) {
   console.log('L1 total: ', total);
 }
 
+async function calculateTotalVotingPower(
+  whitelist: any[],
+  l1Vp: any[],
+  l2Vp: any[],
+) {
+  let totalVotingPower = whitelist.reduce((acc, val) => {
+    acc = acc + parseFloat(val?.delegatedVotes);
+    return acc;
+  }, 0);
+  console.log('whitelist: ', totalVotingPower);
+  totalVotingPower =
+    totalVotingPower +
+    l1Vp.reduce((acc, val) => {
+      acc = acc + parseFloat(val?.delegatedVotes);
+      return acc;
+    }, 0);
+  console.log('whitelist + l1: ', totalVotingPower);
+  totalVotingPower =
+    totalVotingPower +
+    l2Vp.reduce((acc, val) => {
+      acc = acc + parseFloat(val?.delegatedVotes);
+      return acc;
+    }, 0);
+  console.log('whitelist + l1 + l2: ', totalVotingPower);
+  await db.update(stats).set({
+    totalVotingPower,
+  });
+}
+
 export async function delegateVoting() {
   const pageSize = 1000;
   let page = 0;
@@ -297,20 +326,24 @@ export async function delegateVoting() {
     limit: 1, // We only need to check if at least one exists, so limit to 1
   });
   if (dashboardStats.length === 0) {
-    console.log('inserting')
+    console.log('inserting');
     await db.insert(stats).values({
       delegatedVSTRK: '0',
       delegatedSTRK: '0',
-    })
+    });
   }
   const delegatesWhitelist = await getWhitelistStrategy();
   const delegatesSnapshotL1: DelegateDataSnapshot[] =
     await fetchAllDelegatesFromSnapshot({ isL1: true });
   const delegatesSnapshotL2: DelegateDataSnapshot[] =
     await fetchAllDelegatesFromSnapshot({ isL2: true });
-  console.log(delegatesSnapshotL2.length);
   await collectL2Data(delegatesSnapshotL2);
   await collectL1Data(delegatesSnapshotL1);
+  await calculateTotalVotingPower(
+    delegatesWhitelist,
+    delegatesSnapshotL1,
+    delegatesSnapshotL2,
+  );
   while (hasMore) {
     const localDelegatesBatch = await fetchAllDelegatesPaginated(
       pageSize,
