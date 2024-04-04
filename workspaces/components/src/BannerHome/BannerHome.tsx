@@ -1,40 +1,30 @@
-import { Box, SimpleGrid } from "@chakra-ui/react";
+import { Box, SimpleGrid, Flex, Icon } from "@chakra-ui/react";
 import { Pattern } from "./Pattern";
 import { Heading } from "src/Heading";
 import { Text } from "src/Text";
 import { HomePageCard } from "src/Card/HomePageCard";
 import { HomeContainer } from "src/ContentContainer";
+import React from "react";
+import { CoinsV2, DelegatesV2 } from "../Icons/UiIcons";
 
 type Props = {
   title?: string;
   tagline?: string;
   strapline?: string;
+  l1Delegated: string;
+  l2Delegated: string;
+  vSTRKTotal: any;
+  STRKTotal: any;
 };
 
-const homeLinks = [
-  {
-    title: "Starknet’s progressive governance",
-    description:
-      "A decentralized network that strives to evolve over time needs to have progressively evolving decentralized governance mechanisms to support protocol upgrades.",
-    link: "/learn/starknet's_progressive_governance",
-  },
-  {
-    title: "Wrap STRK to vSTRK to vote",
-    description:
-      "In order to vote or to designate a delegate to vote for you on Starknet, you need to wrap STRK as vSTRK using the Governance hub. You can unwrap anytime.",
-    link: "/learn/how_to_wrap_strk_and_unwrap_vstrk",
-  },
-  {
-    title: "How to delegate voting power",
-    description:
-      "If you are a STRK token holder, you can select a delegate to vote in your place for protocol changes.",
-    link: "/learn/how_to_delegate_voting_power",
-  },
-];
 export const BannerHome = ({
   strapline = "Starknet",
   title = "Governance Hub",
   tagline = "Where the community propose, debate and vote on the direction of Starknet",
+  l2Delegated,
+  l1Delegated,
+  vSTRKTotal,
+  STRKTotal,
 }: Props) => {
   return (
     <>
@@ -55,7 +45,13 @@ export const BannerHome = ({
             md: "64px",
           }}
         >
-          <Box pos="relative">
+          <Box
+            pos="relative"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            textAlign="center"
+          >
             <Heading
               letterSpacing="-0.48px"
               variant="h2"
@@ -92,14 +88,21 @@ export const BannerHome = ({
               </svg>
             </Box>
           </Box>
-          <Box maxW={400} mt="8px">
-            <Text fontWeight="600" lineHeight={1.5} color="#0B0B4C">
-              {tagline}
-            </Text>
-          </Box>
+          <Flex
+            w={"100%"}
+            alignItems="center"
+            justifyContent="center"
+            textAlign="center"
+          >
+            <Box maxW={400} mt="8px">
+              <Text fontWeight="600" lineHeight={1.5} color="#0B0B4C">
+                {tagline}
+              </Text>
+            </Box>
+          </Flex>
         </HomeContainer>
       </Box>
-      <Box pos="relative">
+      <Box pos="relative" zIndex="100" mx={"20px"} maxW={"min(100vw, 1240px)"}>
         <HomeContainer
           position="relative"
           zIndex="2"
@@ -113,34 +116,86 @@ export const BannerHome = ({
             md: "-80px",
           }}
         >
-          <SimpleGrid
-            columns={3}
-            // gap="standard.md" // gap causing overflow on tablet
-            overflowX="scroll"
-            gridTemplateColumns="repeat(3, minmax(264px, 1fr))"
-            p="standard.md"
-            pb="0"
-            sx={{
-              "> *:not(:last-child)": {
-                marginRight: "standard.md",
-              },
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-              scrollbarWidth: "none",
-              overflowStyle: "none",
-              msOverflowStyle: "none",
-            }}
+          <Box
+            background="white"
+            borderRadius={"8px"}
+            border={"1px solid"}
+            borderColor={"border.forms"}
+            px={"standard.sm"}
           >
-            {homeLinks.map((link) => (
-              <HomePageCard
-                key={link.title}
-                title={link.title}
-                description={link.description}
-                link={link.link}
-              />
-            ))}
-          </SimpleGrid>
+            <Box p={"standard.md"}>
+              <SimpleGrid columns={5}>
+                <Box>
+                  <Icon as={CoinsV2} width={"32px"} height={"32px"} />
+                  <Text variant={"medium"} color={"content.default.default"}>
+                    STRK
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading variant={"h3"}>
+                    {new Intl.NumberFormat("en", {
+                      maximumFractionDigits: 2,
+                    }).format(vSTRKTotal)}
+                  </Heading>
+                  <Text variant="bodySmall" color="content.accent.default">
+                    vSTRK
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading variant={"h3"}>
+                    {new Intl.NumberFormat("en", {
+                      maximumFractionDigits: 2,
+                    }).format(STRKTotal)}
+                  </Heading>
+                  <Text variant="bodySmall" color="content.accent.default">
+                    STRK L2
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading variant={"h3"}>/</Heading>
+                  <Text variant="bodySmall" color="content.accent.default">
+                    STRK L1
+                  </Text>
+                </Box>
+                <Box></Box>
+              </SimpleGrid>
+            </Box>
+            <Box w={"100%"} h={"1px"} background={"border.forms"} />
+            <Box p={"standard.md"}>
+              <SimpleGrid columns={5}>
+                <Box>
+                  <Icon as={DelegatesV2} width={"32px"} height={"32px"} />
+                  <Text variant={"medium"} color={"content.default.default"}>
+                    Delegated
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading variant={"h3"}>{l2Delegated}</Heading>
+                  <Text variant="bodySmall" color="content.accent.default">
+                    vSTRK Delegated
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading variant={"h3"}>{l1Delegated}</Heading>
+                  <Text variant="bodySmall" color="content.accent.default">
+                    L1 STRK delegated
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading variant={"h3"}>16,304,058</Heading>
+                  <Text variant="bodySmall" color="content.accent.default">
+                    Self Delegated
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading variant={"h3"}>16,304,058</Heading>
+                  <Text variant="bodySmall" color="content.accent.default">
+                    vSTRK of total STRK
+                  </Text>
+                </Box>
+              </SimpleGrid>
+            </Box>
+          </Box>
         </HomeContainer>
       </Box>
     </>

@@ -288,6 +288,13 @@
       "when": 1707896460950,
       "tag": "0040_lumpy_hammerhead",
       "breakpoints": false
+    },
+    {
+      "idx": 41,
+      "version": "5",
+      "when": 1712059127242,
+      "tag": "0041_familiar_scourge",
+      "breakpoints": false
     }
   ]
 }

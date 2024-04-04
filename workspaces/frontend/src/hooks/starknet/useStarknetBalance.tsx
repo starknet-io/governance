@@ -13,11 +13,13 @@ const starknetContract = import.meta.env.VITE_APP_VSTRK_CONTRACT as string;
 interface UseStarknetBalanceProps {
   starknetAddress: string;
   starkContract?: string;
+  totalSupply?: boolean;
 }
 
 export const useStarknetBalance = ({
   starknetAddress,
   starkContract = starknetContract,
+  totalSupply = false,
 }: UseStarknetBalanceProps) => {
   const {
     balances,
@@ -33,12 +35,12 @@ export const useStarknetBalance = ({
 
   const cacheKey = `${starkContract}-${getChecksumAddress(
     starknetAddress || "",
-  )}`;
+  )}-${totalSupply}`;
 
   const fetchBalance = async (forceUpdate = false) => {
     if (
-      !starknetAddress ||
-      !validateStarknetAddress(starknetAddress) ||
+      ((!starknetAddress || !validateStarknetAddress(starknetAddress)) &&
+        !totalSupply) ||
       balances[cacheKey] ||
       isFetching[cacheKey]
     ) {
@@ -61,7 +63,9 @@ export const useStarknetBalance = ({
         contractAddress,
         provider,
       );
-      const rawBalance = await contract.balance_of(starknetAddress);
+      const rawBalance = totalSupply
+        ? await contract.totalSupply()
+        : await contract.balance_of(starknetAddress);
       const decimals = 18n;
       const symbol =
         starkContract === starknetContract ? "0x765354524b" : "0x5354524B";
@@ -101,7 +105,7 @@ export const useStarknetBalance = ({
         removeActiveCacheKey(cacheKey);
       };
     }
-  }, [starknetAddress, starkContract, cacheKey]);
+  }, [starknetAddress, starkContract, cacheKey, totalSupply]);
 
   useEffect(() => {
     fetchBalance();
