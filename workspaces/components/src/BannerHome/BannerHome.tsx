@@ -88,7 +88,7 @@ export const BannerHome = ({
                 {title}
               </Box>
             </Heading>
-            <Box pos="absolute" top={-2} left={-3}>
+            <Box pos="absolute" top={-2} left={"calc(50% - 118px)"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
