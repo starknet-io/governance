@@ -171,27 +171,32 @@ export const LearnBanner = () => {
       <Box pos="relative">
         <HomeContainer position="relative" zIndex="2" px="0px">
           <SimpleGrid
-            columns={3}
-            // gap="standard.md" // gap causing overflow on tablet
+            spacing="10px" // Adjust spacing as needed
+            gridTemplateColumns={{
+              base: "repeat(auto-fill, minmax(264px, 1fr))", // 1 column on mobile
+              md: "repeat(2, minmax(0, 1fr))", // 2 columns on tablet
+              lg: "repeat(3, minmax(0, 1fr))", // 3 columns on desktop
+            }}
             overflowX="scroll"
-            gridTemplateColumns="repeat(3, minmax(264px, 1fr))"
             pb="0"
             sx={{
-              "> *:not(:last-child)": {
-                marginRight: "standard.md",
-              },
               "&::-webkit-scrollbar": {
                 display: "none",
               },
               scrollbarWidth: "none",
               overflowStyle: "none",
               msOverflowStyle: "none",
+              "> *:not(:last-child)": {
+                base: { marginRight: 0 }, // No margin right on mobile
+                md: { marginRight: "standard.md" }, // Adjust as needed for tablet and desktop
+              },
             }}
           >
-            {homeLinks.map((link) => (
+            {homeLinks.map((link, i) => (
               <HomePageCard
                 key={link.title}
                 title={link.title}
+                isFullWidth={i === 2}
                 description={link.description}
                 link={link.link}
               />
