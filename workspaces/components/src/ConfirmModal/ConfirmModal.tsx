@@ -1,5 +1,5 @@
 import { Box, Flex, Img, Spinner } from "@chakra-ui/react";
-import Argent from './Argent.png'
+import Argent from "./Argent.png";
 import { Modal } from "../Modal";
 
 type Props = {
@@ -30,13 +30,6 @@ export const ConfirmModal = ({
         position="relative"
       >
         <Spinner size="xxl" />
-        <Box position="absolute" left="50%" ml="-27px" top="50%" mt="-27px">
-          <Img
-            width="54px"
-            src={isStarknet ? Argent : imgUrl}
-            alt="wallet provider"
-          />
-        </Box>
       </Flex>
     </Modal>
   );

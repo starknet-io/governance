@@ -47,6 +47,7 @@ import type { WalletConnector } from "@dynamic-labs/wallet-connector-core";
 import { getChecksumAddress } from "starknet";
 import { useWallets } from "../../../hooks/useWallets";
 import { useActiveStarknetAccount } from "../../../hooks/starknet/useActiveStarknetAccount";
+import { useWalletClient } from "wagmi";
 
 type Wallet = {
   address: string;
@@ -142,6 +143,7 @@ export const WalletButtons = ({
   profileVariant?: boolean;
 }) => {
   const userWallets = useUserWallets();
+  const { data: walletClient } = useWalletClient();
   const walletConnectors = userWallets.map(({ connector }) => connector);
   const { user } = usePageContext();
   const { setPrimaryWallet, primaryWallet, handleUnlinkWallet } =
@@ -231,6 +233,13 @@ export const WalletButtons = ({
           isSelectable={selectable}
           onClick={async () => {
             try {
+              if (
+                walletClient?.account?.address?.toLowerCase() !==
+                ethWallet?.address?.toLowerCase()
+              ) {
+                setIsStatusModalOpen(true);
+                return;
+              }
               await setPrimaryWallet(ethWallet.id);
             } catch (err) {
               console.error(err);
@@ -240,6 +249,8 @@ export const WalletButtons = ({
       </Flex>
       <WrongAccountOrNetworkModal
         isOpen={isStatusModalOpen}
+        ethAddress={walletClient?.account?.address}
+        expectedEthAddress={ethWallet?.address}
         starknetAddress={currentStarknetAccount}
         expectedStarknetAddress={starknetWallet?.address}
         onClose={() => setIsStatusModalOpen(false)}
