@@ -124,7 +124,7 @@ interface DelegateDataSnapshot {
 }
 
 async function getWhitelistStrategy() {
-  const spaceVar = process.env.SNAPSHOT_X_SPACE;
+  const spaceVar = "0x05702362b68a350c1cae8f2a529d74fdbb502369ddcebfadac7e91da37636947"//process.env.SNAPSHOT_X_SPACE;
 
   const query = `
     query spaceQuery($space: String!) {
@@ -317,6 +317,31 @@ async function calculateTotalVotingPower(
   });
 }
 
+async function calculateTotalVoters(
+  whitelist: any[],
+  l1Vp: DelegateDataSnapshot[],
+  l2Vp: DelegateDataSnapshot[],
+) {
+  const allAddresses = [
+    ...whitelist.map((d) => d.address.toLowerCase()),
+    ...l1Vp.map((d) => d.id.toLowerCase()),
+    ...l2Vp.map((d) => getChecksumAddress(d.id).toLowerCase()),
+  ];
+
+  const uniqueAddresses = new Set(allAddresses);
+  const totalVoters = uniqueAddresses.size;
+
+  console.log('Total unique voters:', totalVoters);
+
+  try {
+    await db.update(stats).set({ totalVoters: totalVoters.toString() });
+    console.log('Total voters count updated successfully');
+  } catch (error) {
+    console.error('Error updating total voters count:', error);
+    throw error;
+  }
+}
+
 export async function delegateVoting() {
   const pageSize = 1000;
   let page = 0;
@@ -344,6 +369,12 @@ export async function delegateVoting() {
     delegatesSnapshotL1,
     delegatesSnapshotL2,
   );
+  await calculateTotalVoters(
+    delegatesWhitelist,
+    delegatesSnapshotL1,
+    delegatesSnapshotL2,
+  );
+
   while (hasMore) {
     const localDelegatesBatch = await fetchAllDelegatesPaginated(
       pageSize,

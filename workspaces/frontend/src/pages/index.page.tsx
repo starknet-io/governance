@@ -33,7 +33,7 @@ export function Page() {
     sortBy: "desc",
   });
 
-  const { data: stats } = trpc.stats.getStats.useQuery({});
+  const { data: stats } = trpc.stats.getStats.useQuery();
   const formattedL2Delegated = new Intl.NumberFormat("en-US", {
     style: "decimal",
     maximumFractionDigits: 2,

@@ -177,7 +177,7 @@ export const BannerHome = ({
                     gap={"4px"}
                   >
                     vSTRK
-                    <Tooltip label="something">
+                    <Tooltip label="Total supply of vSTRK token">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>
@@ -205,7 +205,7 @@ export const BannerHome = ({
                     color="content.accent.default"
                   >
                     STRK L2
-                    <Tooltip label="something">
+                    <Tooltip label="Total supply of STRK token">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>
@@ -233,7 +233,7 @@ export const BannerHome = ({
                     color="content.accent.default"
                   >
                     STRK L1
-                    <Tooltip label="something">
+                    <Tooltip label="Total supply of STRK on Ethereum">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>
@@ -279,7 +279,7 @@ export const BannerHome = ({
                     color="content.accent.default"
                   >
                     vSTRK Delegated
-                    <Tooltip label="something">
+                    <Tooltip label="Total amount of vSTRK Delegated">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>
@@ -305,7 +305,7 @@ export const BannerHome = ({
                     color="content.accent.default"
                   >
                     L1 STRK delegated
-                    <Tooltip label="something">
+                    <Tooltip label="Total amount of STRK on delegated on Ethereum">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>
@@ -357,7 +357,7 @@ export const BannerHome = ({
                     color="content.accent.default"
                   >
                     vSTRK of total STRK
-                    <Tooltip label="something">
+                    <Tooltip label="Ratio of vSTRK:STRK">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>

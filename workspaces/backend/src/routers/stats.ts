@@ -7,6 +7,8 @@ export const statsRouter = router({
     return {
       l2Delegated: parseFloat(dashboardStats?.delegatedVSTRK || '0'),
       l1Delegated: parseFloat(dashboardStats?.delegatedSTRK || '0'),
+      totalVotingPower: parseFloat(dashboardStats?.totalVotingPower || '0'),
+      totalVoters: parseFloat(dashboardStats?.totalVoters || '0'),
     };
   }),
 });

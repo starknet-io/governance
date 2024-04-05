@@ -292,15 +292,8 @@
     {
       "idx": 41,
       "version": "5",
-      "when": 1712059127242,
-      "tag": "0041_familiar_scourge",
-      "breakpoints": false
-    },
-    {
-      "idx": 42,
-      "version": "5",
-      "when": 1712228284301,
-      "tag": "0042_condemned_firebird",
+      "when": 1712229483165,
+      "tag": "0041_hesitant_madripoor",
       "breakpoints": false
     }
   ]
