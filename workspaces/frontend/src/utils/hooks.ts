@@ -1,4 +1,4 @@
-import { useBalance, useEnsName } from "wagmi";
+import { useBalance, useEnsName, useToken } from "wagmi";
 
 export const useBalanceData = (
   address: `0x${string}` | undefined,
@@ -28,4 +28,12 @@ export const useBalanceData = (
     symbol: balance?.symbol ?? import.meta.env.VITE_APP_DELEGATION_SYMBOL,
     isFetched,
   };
+};
+
+export const useTotalSupply = (address: `0x${string}`) => {
+  const { data: tokenInfo }: any = useToken({
+    address,
+    chainId: 1,
+  });
+  return tokenInfo?.totalSupply?.formatted || "0";
 };

@@ -6,6 +6,7 @@ export interface LocalTextProps extends TextProps {
     | "cardBody"
     | "body"
     | "bodySmall"
+    | "bodySmallMedium"
     | "bodySmallStrong"
     | "bodyMedium"
     | "bodyMediumStrong"

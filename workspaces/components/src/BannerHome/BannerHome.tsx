@@ -1,41 +1,48 @@
-import { Box, SimpleGrid } from "@chakra-ui/react";
+import { Box, SimpleGrid, Flex, Icon } from "@chakra-ui/react";
 import { Pattern } from "./Pattern";
 import { Heading } from "src/Heading";
 import { Text } from "src/Text";
 import { HomePageCard } from "src/Card/HomePageCard";
 import { HomeContainer } from "src/ContentContainer";
+import React from "react";
+import { CoinsV2, DelegatesV2, InfoCircleIcon } from "../Icons/UiIcons";
+import { Tooltip } from "../Tooltip";
 
 type Props = {
   title?: string;
   tagline?: string;
   strapline?: string;
+  l1Delegated: string;
+  l2Delegated: string;
+  vSTRKTotal: any;
+  STRKTotal: any;
+  l1StrkTotal: any;
 };
 
-const homeLinks = [
-  {
-    title: "Starknet’s progressive governance",
-    description:
-      "A decentralized network that strives to evolve over time needs to have progressively evolving decentralized governance mechanisms to support protocol upgrades.",
-    link: "/learn/starknet's_progressive_governance",
-  },
-  {
-    title: "Wrap STRK to vSTRK to vote",
-    description:
-      "In order to vote or to designate a delegate to vote for you on Starknet, you need to wrap STRK as vSTRK using the Governance hub. You can unwrap anytime.",
-    link: "/learn/how_to_wrap_strk_and_unwrap_vstrk",
-  },
-  {
-    title: "How to delegate voting power",
-    description:
-      "If you are a STRK token holder, you can select a delegate to vote in your place for protocol changes.",
-    link: "/learn/how_to_delegate_voting_power",
-  },
-];
 export const BannerHome = ({
   strapline = "Starknet",
   title = "Governance Hub",
   tagline = "Where the community propose, debate and vote on the direction of Starknet",
+  l2Delegated,
+  l1Delegated,
+  vSTRKTotal,
+  STRKTotal,
+  l1StrkTotal,
 }: Props) => {
+  // Convert string props to numbers for calculation
+  const vSTRKTotalNum = parseFloat(vSTRKTotal);
+  const STRKTotalNum = parseFloat(STRKTotal);
+
+  // Calculate the percentage
+  const vSTRKOfTotalSTRKPercentage = STRKTotalNum
+    ? (vSTRKTotalNum / STRKTotalNum) * 100
+    : 0;
+
+  // Format the result for display
+  const formattedPercentage = new Intl.NumberFormat("en", {
+    maximumFractionDigits: 2, // Limit decimal places to 2
+  }).format(vSTRKOfTotalSTRKPercentage);
+
   return (
     <>
       <Box
@@ -55,7 +62,13 @@ export const BannerHome = ({
             md: "64px",
           }}
         >
-          <Box pos="relative">
+          <Box
+            pos="relative"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            textAlign="center"
+          >
             <Heading
               letterSpacing="-0.48px"
               variant="h2"
@@ -75,7 +88,7 @@ export const BannerHome = ({
                 {title}
               </Box>
             </Heading>
-            <Box pos="absolute" top={-2} left={-3}>
+            <Box pos="absolute" top={-2} left={"calc(50% - 118px)"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -92,55 +105,266 @@ export const BannerHome = ({
               </svg>
             </Box>
           </Box>
-          <Box maxW={400} mt="8px">
-            <Text fontWeight="600" lineHeight={1.5} color="#0B0B4C">
-              {tagline}
-            </Text>
-          </Box>
+          <Flex
+            w={"100%"}
+            alignItems="center"
+            justifyContent="center"
+            textAlign="center"
+          >
+            <Box maxW={400} mt="8px">
+              <Text fontWeight="600" lineHeight={1.5} color="#0B0B4C">
+                {tagline}
+              </Text>
+            </Box>
+          </Flex>
         </HomeContainer>
       </Box>
-      <Box pos="relative">
+      <Box pos="relative" zIndex="100">
         <HomeContainer
-          position="relative"
+          display="grid"
           zIndex="2"
           transform={{
-            base: "translateY(-70px)",
-            md: "translateY(-50%)",
+            base: "translateY(-100px)",
           }}
-          px="0px"
+          px="1rem"
           mb={{
-            base: "-50px",
-            md: "-80px",
+            base: "-100px",
           }}
         >
-          <SimpleGrid
-            columns={3}
-            // gap="standard.md" // gap causing overflow on tablet
-            overflowX="scroll"
-            gridTemplateColumns="repeat(3, minmax(264px, 1fr))"
-            p="standard.md"
-            pb="0"
-            sx={{
-              "> *:not(:last-child)": {
-                marginRight: "standard.md",
-              },
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-              scrollbarWidth: "none",
-              overflowStyle: "none",
-              msOverflowStyle: "none",
-            }}
+          <Box
+            background="white"
+            borderRadius={"8px"}
+            border={"1px solid"}
+            borderColor={"border.forms"}
+            px={"standard.sm"}
           >
-            {homeLinks.map((link) => (
-              <HomePageCard
-                key={link.title}
-                title={link.title}
-                description={link.description}
-                link={link.link}
-              />
-            ))}
-          </SimpleGrid>
+            <Box p={"standard.md"}>
+              <SimpleGrid
+                columns={{
+                  base: 2,
+                  md: 4,
+                  lg: 5,
+                }}
+                spacingX="10px"
+                spacingY="10px"
+              >
+                <Box gridColumn={{ base: "1 / -1", lg: "auto" }}>
+                  <Icon as={CoinsV2} width={"32px"} height={"32px"} />
+                  <Text variant={"medium"} color={"content.default.default"}>
+                    STRK
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
+                  >
+                    {new Intl.NumberFormat("en", {
+                      maximumFractionDigits: 2,
+                    }).format(vSTRKTotal)}
+                  </Heading>
+                  <Text
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                    display="flex"
+                    gap={"4px"}
+                  >
+                    vSTRK
+                    <Tooltip label="Total supply of vSTRK token">
+                      <InfoCircleIcon />
+                    </Tooltip>
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading
+                    variant={"h3"}
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    {new Intl.NumberFormat("en", {
+                      maximumFractionDigits: 2,
+                    }).format(STRKTotal)}
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
+                    STRK L2
+                    <Tooltip label="Total supply of STRK token">
+                      <InfoCircleIcon />
+                    </Tooltip>
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    {new Intl.NumberFormat("en", {
+                      maximumFractionDigits: 2,
+                    }).format(l1StrkTotal)}
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
+                    STRK L1
+                    <Tooltip label="Total supply of STRK on Ethereum">
+                      <InfoCircleIcon />
+                    </Tooltip>
+                  </Text>
+                </Box>
+                <Box></Box>
+              </SimpleGrid>
+            </Box>
+            <Box w={"100%"} h={"1px"} background={"border.forms"} />
+            <Box p={"standard.md"}>
+              <SimpleGrid
+                spacingX="10px"
+                spacingY="10px"
+                columns={{
+                  base: 2,
+                  md: 4,
+                  lg: 5,
+                }}
+              >
+                <Box gridColumn={{ base: "1 / -1", lg: "auto" }}>
+                  <Icon as={DelegatesV2} width={"32px"} height={"32px"} />
+                  <Text variant={"medium"} color={"content.default.default"}>
+                    Delegated
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    {l2Delegated}
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
+                    vSTRK Delegated
+                    <Tooltip label="Total amount of vSTRK Delegated">
+                      <InfoCircleIcon />
+                    </Tooltip>
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    {l1Delegated}
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
+                    L1 STRK delegated
+                    <Tooltip label="Total amount of STRK on delegated on Ethereum">
+                      <InfoCircleIcon />
+                    </Tooltip>
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    ?
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
+                    Self Delegated
+                    <Tooltip label="something">
+                      <InfoCircleIcon />
+                    </Tooltip>
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading
+                    lineHeight={{
+                      base: "1.5rem",
+                      md: "2rem",
+                    }}
+                    variant={"h3"}
+                    fontSize={{
+                      base: "16px",
+                      md: "21px",
+                    }}
+                  >
+                    {formattedPercentage} %
+                  </Heading>
+                  <Text
+                    display="flex"
+                    gap={"4px"}
+                    variant="bodySmallMedium"
+                    color="content.accent.default"
+                  >
+                    vSTRK of total STRK
+                    <Tooltip label="Ratio of vSTRK:STRK">
+                      <InfoCircleIcon />
+                    </Tooltip>
+                  </Text>
+                </Box>
+              </SimpleGrid>
+            </Box>
+          </Box>
         </HomeContainer>
       </Box>
     </>

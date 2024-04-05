@@ -51,7 +51,7 @@ import {
   SuccessIcon,
   WalletIcon,
 } from "@yukilabs/governance-components/src/Icons";
-import { Button as ChakraButton, Select } from "@chakra-ui/react";
+import { Button as ChakraButton, Select, SimpleGrid } from "@chakra-ui/react";
 import { BackButton } from "src/components/Header/BackButton";
 import { useHelpMessage } from "src/hooks/HelpMessage";
 import VotingProposalComments from "../../components/VotingProposals/VotingProposalComments/VotingProposalComments";
@@ -86,6 +86,7 @@ export function Page() {
   const [helpMessage, setHelpMessage] = useHelpMessage();
   const { ethWallet, starknetWallet } = useWallets();
   const { primaryWallet, setPrimaryWallet } = useDynamicContext();
+  const { data: stats } = trpc.stats.getStats.useQuery();
 
   const isL1Voting = ethWallet?.id === primaryWallet?.id;
   const isL2Voting = starknetWallet?.id === primaryWallet?.id;
@@ -161,7 +162,6 @@ export function Page() {
 
   const activeStarknetWallet = useActiveStarknetAccount();
   const [isWrongAccount, setIsWrongAccount] = useState<boolean>(false);
-
 
   async function handleVote(choice: number, reason?: string) {
     try {
@@ -424,6 +424,25 @@ export function Page() {
     } else {
       return <></>;
     }
+  };
+
+  const formatPercentageForVotes = () => {
+    if (!stats?.totalVoters) {
+      return 0;
+    }
+    const allVoters = stats?.totalVoters || 0;
+    const total = (pastVotes?.length * 1.0) / allVoters * 100.0;
+    return `${total.toFixed(4)}%`;
+  };
+
+  const formatPercentageForVotingPower = () => {
+    if (!stats?.totalVotingPower) {
+      return 0;
+    }
+    const totalVotes = data?.proposal?.scores_total;
+    const allVotingPower = stats?.totalVotingPower || 0;
+    const total = (totalVotes * 1.0) / allVotingPower * 100.0;
+    return `${total.toFixed(7)}%`;
   };
 
   return (
@@ -931,6 +950,56 @@ export function Page() {
                       />
                     );
                   })}
+                </Box>
+                <Box mt={4}>
+                  <SimpleGrid columns={2}>
+                    <Box>
+                      <Heading
+                        lineHeight={{
+                          base: "1.5rem",
+                          md: "2rem",
+                        }}
+                        variant={"h3"}
+                        fontSize={{
+                          base: "16px",
+                          md: "21px",
+                        }}
+                      >
+                        {formatPercentageForVotingPower()}
+                      </Heading>
+                      <Text
+                        display="flex"
+                        gap={"4px"}
+                        variant="bodySmallMedium"
+                        color="content.default.default"
+                      >
+                        % of total voting power
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Heading
+                        lineHeight={{
+                          base: "1.5rem",
+                          md: "2rem",
+                        }}
+                        variant={"h3"}
+                        fontSize={{
+                          base: "16px",
+                          md: "21px",
+                        }}
+                      >
+                        {formatPercentageForVotes()}
+                      </Heading>
+                      <Text
+                        display="flex"
+                        gap={"4px"}
+                        variant="bodySmallMedium"
+                        color="content.default.default"
+                      >
+                        % of total voters
+                      </Text>
+                    </Box>
+                  </SimpleGrid>
                 </Box>
                 <Divider
                   mb="standard.2xl"

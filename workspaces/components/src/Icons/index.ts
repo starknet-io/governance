@@ -85,7 +85,9 @@ import {
   EthereumIcon,
   CommunityLinksIcon,
   BlogPostsIcon,
-  InfoCircleIcon
+  InfoCircleIcon,
+  CoinsV2,
+  DelegatesV2
 } from "./UiIcons";
 
 export {

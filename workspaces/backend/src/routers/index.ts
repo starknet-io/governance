@@ -14,6 +14,7 @@ import { fileUploadRouter } from './fileUpload';
 import { notificationsRouter } from './notifications';
 import { subscriptionsRouter } from './subscriptionsRouter';
 import { socialsRouter } from './socials';
+import { statsRouter } from "./stats";
 
 export const appRouter = router({
   comments: commentsRouter,
@@ -30,6 +31,7 @@ export const appRouter = router({
   notifications: notificationsRouter,
   subscriptions: subscriptionsRouter,
   socials: socialsRouter,
+  stats: statsRouter,
 });
 
 export type AppRouter = typeof appRouter;

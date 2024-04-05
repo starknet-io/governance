@@ -23,6 +23,7 @@ import * as notificationUsers from './schema/notificationUsers';
 import * as socials from './schema/socials';
 import * as oauthTokens from './schema/oauthTokens';
 import * as oldVotes from './schema/oldVotes';
+import * as stats from './schema/stats';
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ const db = drizzle(pool, {
     ...socials,
     ...oauthTokens,
     ...oldVotes,
+    ...stats,
   },
 });
 

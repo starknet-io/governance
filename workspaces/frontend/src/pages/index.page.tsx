@@ -17,6 +17,9 @@ import {
 import { Delegates } from "src/components/Delegates";
 import { trpc } from "src/utils/trpc";
 import { Proposal, VotingPropsSkeleton } from "./voting-proposals/index.page";
+import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
+import { formatVotingPower } from "../utils/helpers";
+import { useTotalSupply } from "../utils/hooks";
 // import img from '../images/social-home.png'
 
 export function Page() {
@@ -30,9 +33,41 @@ export function Page() {
     sortBy: "desc",
   });
 
+  const { data: stats } = trpc.stats.getStats.useQuery();
+  const formattedL2Delegated = new Intl.NumberFormat("en-US", {
+    style: "decimal",
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(stats?.l2Delegated || 0);
+  const formattedL1Delegated = new Intl.NumberFormat("en-US", {
+    style: "decimal",
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(stats?.l1Delegated || 0);
+  const vStarkTotalBalance = useStarknetBalance({
+    starkContract: import.meta.env.VITE_APP_VSTRK_CONTRACT,
+    totalSupply: true,
+  });
+  const starkTotalBalance = useStarknetBalance({
+    starkContract: import.meta.env.VITE_APP_STRK_CONTRACT,
+    totalSupply: true,
+  });
+  const totalSupplyL1 = useTotalSupply(
+    import.meta.env.VITE_APP_STARKNET_REGISTRY,
+  );
   return (
     <Box width="100%">
-      <BannerHome />
+      <BannerHome
+        l2Delegated={formattedL2Delegated}
+        l1Delegated={formattedL1Delegated}
+        vSTRKTotal={formatVotingPower(
+          vStarkTotalBalance?.balance?.rawBalance || "0",
+        )}
+        STRKTotal={formatVotingPower(
+          starkTotalBalance?.balance?.rawBalance || "0",
+        )}
+        l1StrkTotal={totalSupplyL1}
+      />
       <HomeContainer
         position={"relative"}
         display="grid"

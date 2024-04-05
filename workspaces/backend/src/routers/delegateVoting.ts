@@ -4,6 +4,7 @@ import { delegateVotes } from '../db/schema/delegatesVotes';
 import { eq } from 'drizzle-orm';
 import axios from 'axios';
 import { getChecksumAddress } from 'starknet';
+import { stats } from '../db/schema/stats';
 
 const graphQLClientL2 = new GraphQLClient(
   'https://starknet-delegates.checkpoint.fyi',
@@ -123,7 +124,7 @@ interface DelegateDataSnapshot {
 }
 
 async function getWhitelistStrategy() {
-  const spaceVar = process.env.SNAPSHOT_X_SPACE;
+  const spaceVar = "0x05702362b68a350c1cae8f2a529d74fdbb502369ddcebfadac7e91da37636947"//process.env.SNAPSHOT_X_SPACE;
 
   const query = `
     query spaceQuery($space: String!) {
@@ -154,7 +155,7 @@ async function getWhitelistStrategy() {
     const whitelistStrategy = (strategies || []).find(
       (strategy) => strategy?.name === 'Whitelist',
     );
-    if (whitelistStrategy.payload) {
+    if (whitelistStrategy?.payload) {
       const delegateList = await parseStrategyMetadata(
         whitelistStrategy.payload,
       );
@@ -193,6 +194,15 @@ async function fetchAllDelegatesFromSnapshot({
       }
     }
   `;
+  const queryL2 = `
+    query Delegates {
+      delegates(orderBy: delegatedVotes, orderDirection: desc, first: 100000) {
+        id
+        delegatedVotes
+        delegatedVotesRaw
+      }
+    }
+  `;
   try {
     if (isL1) {
       const response = await axios.post(
@@ -210,7 +220,7 @@ async function fetchAllDelegatesFromSnapshot({
       );
       return response.data.data.delegates;
     } else if (isL2) {
-      const response: any = await graphQLClientL2.request(query);
+      const response: any = await graphQLClientL2.request(queryL2);
       return response?.delegates || [];
     } else {
       return [];
@@ -258,16 +268,112 @@ async function fetchAllDelegatesPaginated(pageSize: number, page: number) {
   }
 }
 
+async function collectL2Data(delegates: DelegateDataSnapshot[]) {
+  const total = delegates.reduce((acc, delegate) => {
+    const votes = parseFloat(delegate?.delegatedVotes);
+    acc += votes;
+    return acc;
+  }, 0);
+  await db.update(stats).set({ delegatedVSTRK: total.toFixed(2).toString() });
+  console.log('L2 total: ', parseFloat(total.toFixed(2)));
+}
+
+async function collectL1Data(delegates: DelegateDataSnapshot[]) {
+  const total = delegates.reduce((acc, delegate) => {
+    const votes = Math.round(Number(delegate?.delegatedVotes || 0));
+    acc += votes;
+    return acc;
+  }, 0);
+  await db.update(stats).set({ delegatedSTRK: total.toFixed(2).toString() });
+  console.log('L1 total: ', total);
+}
+
+async function calculateTotalVotingPower(
+  whitelist: any[],
+  l1Vp: any[],
+  l2Vp: any[],
+) {
+  let totalVotingPower = whitelist.reduce((acc, val) => {
+    acc = acc + parseFloat(val?.delegatedVotes);
+    return acc;
+  }, 0);
+  console.log('whitelist: ', totalVotingPower);
+  totalVotingPower =
+    totalVotingPower +
+    l1Vp.reduce((acc, val) => {
+      acc = acc + parseFloat(val?.delegatedVotes);
+      return acc;
+    }, 0);
+  console.log('whitelist + l1: ', totalVotingPower);
+  totalVotingPower =
+    totalVotingPower +
+    l2Vp.reduce((acc, val) => {
+      acc = acc + parseFloat(val?.delegatedVotes);
+      return acc;
+    }, 0);
+  console.log('whitelist + l1 + l2: ', totalVotingPower);
+  await db.update(stats).set({
+    totalVotingPower,
+  });
+}
+
+async function calculateTotalVoters(
+  whitelist: any[],
+  l1Vp: DelegateDataSnapshot[],
+  l2Vp: DelegateDataSnapshot[],
+) {
+  const allAddresses = [
+    ...whitelist.map((d) => d.address.toLowerCase()),
+    ...l1Vp.map((d) => d.id.toLowerCase()),
+    ...l2Vp.map((d) => getChecksumAddress(d.id).toLowerCase()),
+  ];
+
+  const uniqueAddresses = new Set(allAddresses);
+  const totalVoters = uniqueAddresses.size;
+
+  console.log('Total unique voters:', totalVoters);
+
+  try {
+    await db.update(stats).set({ totalVoters: totalVoters.toString() });
+    console.log('Total voters count updated successfully');
+  } catch (error) {
+    console.error('Error updating total voters count:', error);
+    throw error;
+  }
+}
+
 export async function delegateVoting() {
   const pageSize = 1000;
   let page = 0;
   let hasMore = true;
 
+  const dashboardStats = await db.query.stats.findMany({
+    limit: 1, // We only need to check if at least one exists, so limit to 1
+  });
+  if (dashboardStats.length === 0) {
+    console.log('inserting');
+    await db.insert(stats).values({
+      delegatedVSTRK: '0',
+      delegatedSTRK: '0',
+    });
+  }
   const delegatesWhitelist = await getWhitelistStrategy();
   const delegatesSnapshotL1: DelegateDataSnapshot[] =
     await fetchAllDelegatesFromSnapshot({ isL1: true });
   const delegatesSnapshotL2: DelegateDataSnapshot[] =
     await fetchAllDelegatesFromSnapshot({ isL2: true });
+  await collectL2Data(delegatesSnapshotL2);
+  await collectL1Data(delegatesSnapshotL1);
+  await calculateTotalVotingPower(
+    delegatesWhitelist,
+    delegatesSnapshotL1,
+    delegatesSnapshotL2,
+  );
+  await calculateTotalVoters(
+    delegatesWhitelist,
+    delegatesSnapshotL1,
+    delegatesSnapshotL2,
+  );
 
   while (hasMore) {
     const localDelegatesBatch = await fetchAllDelegatesPaginated(
@@ -281,7 +387,9 @@ export async function delegateVoting() {
 
     for (const localDelegate of localDelegatesBatch) {
       const l1Delegate = delegatesSnapshotL1.find((d) => {
-        return d?.id?.toLowerCase() === localDelegate?.ethAddress?.toLowerCase();
+        return (
+          d?.id?.toLowerCase() === localDelegate?.ethAddress?.toLowerCase()
+        );
       });
       const l2Delegate = delegatesSnapshotL2.find(
         (d) =>
@@ -291,7 +399,8 @@ export async function delegateVoting() {
       const whitelistDelegateL1 =
         delegatesWhitelist.find((d: any) => {
           return (
-            d?.address?.toLowerCase() === localDelegate?.ethAddress?.toLowerCase()
+            d?.address?.toLowerCase() ===
+            localDelegate?.ethAddress?.toLowerCase()
           );
         })?.delegatedVotes || 0;
 
@@ -303,17 +412,19 @@ export async function delegateVoting() {
         )?.delegatedVotes || 0;
 
       const votingPowerL1 =
-        Math.round(Number(l1Delegate?.delegatedVotes || 0)) + whitelistDelegateL1;
+        Math.round(Number(l1Delegate?.delegatedVotes || 0)) +
+        whitelistDelegateL1;
       const votingPowerL2 =
-        Math.round(Number(l2Delegate?.delegatedVotes || 0)) + whitelistDelegateL2;
+        Math.round(Number(l2Delegate?.delegatedVotes || 0)) +
+        whitelistDelegateL2;
 
-      console.log(votingPowerL1, votingPowerL2);
+      //console.log(votingPowerL1, votingPowerL2);
 
       if (votingPowerL1 > 0) {
-        console.log(localDelegate.ethAddress, 'L1', votingPowerL1);
+        //console.log(localDelegate.ethAddress, 'L1', votingPowerL1);
       }
       if (votingPowerL2 > 0) {
-        console.log(localDelegate.starknetAddress, 'L2', votingPowerL2);
+        //console.log(localDelegate.starknetAddress, 'L2', votingPowerL2);
       }
 
       // Combine the logic for saving/updating the delegate votes here

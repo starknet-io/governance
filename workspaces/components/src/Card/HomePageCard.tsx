@@ -14,15 +14,19 @@ type HomePageCardProps = {
   description: string;
   link: string;
   isExternal?: boolean;
+  isFullWidth?: boolean;
 };
 export const HomePageCard = ({
   title,
   description,
   link,
   isExternal,
+  isFullWidth,
 }: HomePageCardProps) => {
   return (
-    <LinkBox>
+    <LinkBox
+      gridColumn={{ sm: isFullWidth ? "1 / -1" : undefined, lg: "auto" }}
+    >
       <Card variant="homePage" height="full">
         <LinkOverlay href={link} isExternal={isExternal}>
           <CardHeader>{title}</CardHeader>
