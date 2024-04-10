@@ -8991,10 +8991,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:^10.36.0":
-  version: 10.40.0
-  resolution: "@trpc/server@npm:10.40.0"
-  checksum: 343d765002573b7f0d800de76b9d649de4245174454198ecd39fe7b98db07f09e6aadfcaab2f2654780826e996f1b28abe82b55965dce91f80b666e5864d17da
+"@trpc/server@npm:^10.45.2":
+  version: 10.45.2
+  resolution: "@trpc/server@npm:10.45.2"
+  checksum: 30b92853c45747a376bbbd5c4eef71fea17a2b22e83ba7e694fb13cc99b15d1f24a17aa9124346074618fb5cee8d13434aa16cdf24af82f5e8acabdecfee0ca2
   languageName: node
   linkType: hard
 
@@ -11023,7 +11023,7 @@ __metadata:
   resolution: "@yukilabs/governance-backend@workspace:workspaces/backend"
   dependencies:
     "@2toad/profanity": ^2.2.0
-    "@trpc/server": ^10.36.0
+    "@trpc/server": ^10.45.2
     "@types/cookie-parser": ^1.4.3
     "@types/cors": ^2.8.13
     "@types/dotenv": ^8.2.0
@@ -11160,7 +11160,7 @@ __metadata:
     "@tanstack/react-query": ^4.32.0
     "@trpc/client": ^10.36.0
     "@trpc/react-query": ^10.36.0
-    "@trpc/server": ^10.36.0
+    "@trpc/server": ^10.45.2
     "@types/compression": ^1.7.2
     "@types/gapi": ^0.0.44
     "@types/itty-router-extras": ^0.4.0
