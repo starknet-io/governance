@@ -22,7 +22,8 @@ import { Algolia } from '../utils/algolia';
 import { delegateVotes } from '../db/schema/delegatesVotes';
 import { socials } from '../db/schema/socials';
 import { profanity } from '@2toad/profanity';
-import {getChecksumAddress} from "starknet";
+import { getChecksumAddress } from 'starknet';
+import { Parser } from 'json2csv';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -128,6 +129,63 @@ export const delegateRouter = router({
 
       return insertedDelegateRecord;
     }),
+  generateDelegatesCSV: protectedProcedure.mutation(async (opts) => {
+    // Query to fetch delegate details
+    const delegatesData = await db.query.delegates.findMany({
+      with: {
+        author: true,
+        delegateVotes: true,
+        pastVotes: true,
+      },
+    });
+
+    console.log(delegatesData);
+
+    function formatPastVoting(pastVoting: any) {
+      // Convert object to array of strings ["Key: Value", ...]
+      const votingEntries = Object.entries(pastVoting).map(([key, value]) => {
+        return `${key}:${value}`;
+      });
+
+      // Join all entries with a comma and a space
+      return votingEntries.join(', ');
+    }
+
+    // Transform data to match CSV format
+    const csvData = delegatesData.map((delegate: any) => {
+      const pastVoting = {
+        For: 0,
+        Abstain: 0,
+        Against: 0,
+      };
+      for (const pastVote of delegate.pastVotes) {
+        if (pastVote.votePreference === 1) {
+          pastVoting['For'] = pastVoting['For'] + 1;
+        } else if (pastVote.votePreference === 2) {
+          pastVoting['Against'] = pastVoting['Against'] + 1;
+        } else {
+          pastVoting['Abstain'] = pastVoting['Abstain'] + 1;
+        }
+      }
+      const formattedVoting = formatPastVoting(pastVoting);
+      return {
+        name: delegate?.author?.username || delegate?.author?.ensName || 'N/A',
+        ethAddress: delegate?.author?.ethAddress || delegate?.author?.address,
+        starknetAddress: delegate?.author?.starknetAddress,
+        votingPowerL1: delegate.delegateVotes?.votingPowerLayerOne || 0,
+        votingPowerL2: delegate.delegateVotes?.votingPowerLayerTwo || 0,
+        votes: formattedVoting,
+      };
+    });
+
+    // Convert JSON to CSV
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(csvData);
+
+    // Optionally save or directly send the CSV file
+    // For example, return it as a plain text (CSV) response:
+    return csv;
+  }),
   // For some reason, when there is both author: true and customAgreement: true, we get an error
   getDelegateById: publicProcedure
     .input(
@@ -329,7 +387,10 @@ export const delegateRouter = router({
       const condition = opts.input.address
         ? eq(users.address, opts.input.address)
         : opts.input.starknetAddress
-        ? eq(users.starknetAddress, getChecksumAddress(opts.input.starknetAddress))
+        ? eq(
+            users.starknetAddress,
+            getChecksumAddress(opts.input.starknetAddress),
+          )
         : null;
       if (!condition) {
         throw new Error('Delegate not found');

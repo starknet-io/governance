@@ -36,14 +36,28 @@ export function Page() {
   const { data: stats } = trpc.stats.getStats.useQuery();
   const formattedL2Delegated = new Intl.NumberFormat("en-US", {
     style: "decimal",
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
   }).format(stats?.l2Delegated || 0);
   const formattedL1Delegated = new Intl.NumberFormat("en-US", {
     style: "decimal",
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
   }).format(stats?.l1Delegated || 0);
+  const selfDelegatedPercentage =
+    stats?.l2Delegated &&
+    stats?.l1Delegated &&
+    stats?.l2Delegated + stats?.l1Delegated !== 0
+      ? new Intl.NumberFormat("en-US", {
+          style: "decimal",
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+        }).format(
+          (stats?.selfDelegatedTotal /
+            (stats?.l2Delegated + stats?.l1Delegated)) *
+            100 || 0,
+        )
+      : 0;
   const vStarkTotalBalance = useStarknetBalance({
     starkContract: import.meta.env.VITE_APP_VSTRK_CONTRACT,
     totalSupply: true,
@@ -52,21 +66,21 @@ export function Page() {
     starkContract: import.meta.env.VITE_APP_STRK_CONTRACT,
     totalSupply: true,
   });
-  const totalSupplyL1 = useTotalSupply(
-    import.meta.env.VITE_APP_STARKNET_REGISTRY,
-  );
+  // const totalSupplyL1 = useTotalSupply(
+  //   import.meta.env.VITE_APP_STARKNET_REGISTRY,
+  // );
   return (
     <Box width="100%">
       <BannerHome
         l2Delegated={formattedL2Delegated}
         l1Delegated={formattedL1Delegated}
+        selfDelegatedPercentage={selfDelegatedPercentage}
         vSTRKTotal={formatVotingPower(
           vStarkTotalBalance?.balance?.rawBalance || "0",
         )}
         STRKTotal={formatVotingPower(
           starkTotalBalance?.balance?.rawBalance || "0",
         )}
-        l1StrkTotal={totalSupplyL1}
       />
       <HomeContainer
         position={"relative"}

@@ -10,8 +10,6 @@ export function useProposal({ proposal }: { proposal: string | undefined }) {
     context: { clientName: "snapshotX" }, // Adding context to route the query to the second link
   });
 
-  console.log(data)
-
   const parsedData = data?.proposal ? transformProposal(data?.proposal) : {};
 
   return { data: { proposal: parsedData }, loading, refetch, error };

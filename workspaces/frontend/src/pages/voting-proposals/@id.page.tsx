@@ -188,7 +188,10 @@ export function Page() {
       const preparedStrategies = await prepareStrategiesForSignature(
         space.data.strategies as string[],
         strategiesMetadata as any[],
+        space?.data?.strategies_indicies || [],
       );
+
+      console.log(preparedStrategies)
 
       let convertedChoice = 1;
 
@@ -204,11 +207,12 @@ export function Page() {
             ? AUTHENTICATORS_ENUM.EVM_SIGNATURE
             : AUTHENTICATORS_ENUM.STARKNET_SIGNATURE,
         space: space.data.id,
-        proposal: pageContext.routeParams.id!,
+        proposal: parseInt(pageContext.routeParams.id!),
         choice: convertedChoice,
-        metadataUri: "",
         strategies: preparedStrategies,
       };
+
+      console.log(params)
 
       const starknetProvider = starkProvider;
 
