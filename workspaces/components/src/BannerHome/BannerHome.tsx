@@ -239,7 +239,7 @@ export const BannerHome = ({
                       md: "21px",
                     }}
                   >
-                    {formattedPercentage} %
+                    {formattedPercentage}%
                   </Heading>
                   <Text
                     display="flex"
@@ -346,7 +346,7 @@ export const BannerHome = ({
                     color="content.accent.default"
                   >
                     Self Delegated
-                    <Tooltip label="something">
+                    <Tooltip label="Percantage of STRK that holders delegated to themselves">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>

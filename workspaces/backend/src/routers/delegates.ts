@@ -135,19 +135,48 @@ export const delegateRouter = router({
       with: {
         author: true,
         delegateVotes: true,
+        pastVotes: true,
       },
     });
 
     console.log(delegatesData);
 
+    function formatPastVoting(pastVoting: any) {
+      // Convert object to array of strings ["Key: Value", ...]
+      const votingEntries = Object.entries(pastVoting).map(([key, value]) => {
+        return `${key}:${value}`;
+      });
+
+      // Join all entries with a comma and a space
+      return votingEntries.join(', ');
+    }
+
     // Transform data to match CSV format
-    const csvData = delegatesData.map((delegate: any) => ({
-      name: delegate?.author?.username || delegate?.author?.ensName || 'N/A',
-      ethAddress: delegate?.author?.ethAddress || delegate?.author?.address,
-      starknetAddress: delegate?.author?.starknetAddress,
-      votingPowerL1: delegate.delegateVotes?.votingPowerLayerOne || 0,
-      votingPowerL2: delegate.delegateVotes?.votingPowerLayerTwo || 0,
-    }));
+    const csvData = delegatesData.map((delegate: any) => {
+      const pastVoting = {
+        For: 0,
+        Abstain: 0,
+        Against: 0,
+      };
+      for (const pastVote of delegate.pastVotes) {
+        if (pastVote.votePreference === 1) {
+          pastVoting['For'] = pastVoting['For'] + 1;
+        } else if (pastVote.votePreference === 2) {
+          pastVoting['Against'] = pastVoting['Against'] + 1;
+        } else {
+          pastVoting['Abstain'] = pastVoting['Abstain'] + 1;
+        }
+      }
+      const formattedVoting = formatPastVoting(pastVoting);
+      return {
+        name: delegate?.author?.username || delegate?.author?.ensName || 'N/A',
+        ethAddress: delegate?.author?.ethAddress || delegate?.author?.address,
+        starknetAddress: delegate?.author?.starknetAddress,
+        votingPowerL1: delegate.delegateVotes?.votingPowerLayerOne || 0,
+        votingPowerL2: delegate.delegateVotes?.votingPowerLayerTwo || 0,
+        votes: formattedVoting,
+      };
+    });
 
     // Convert JSON to CSV
     const json2csvParser = new Parser();

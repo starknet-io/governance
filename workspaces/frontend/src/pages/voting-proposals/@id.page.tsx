@@ -191,6 +191,8 @@ export function Page() {
         space?.data?.strategies_indicies || [],
       );
 
+      console.log(preparedStrategies)
+
       let convertedChoice = 1;
 
       if (choice === 2) {
@@ -205,9 +207,8 @@ export function Page() {
             ? AUTHENTICATORS_ENUM.EVM_SIGNATURE
             : AUTHENTICATORS_ENUM.STARKNET_SIGNATURE,
         space: space.data.id,
-        proposal: pageContext.routeParams.id!,
+        proposal: parseInt(pageContext.routeParams.id!),
         choice: convertedChoice,
-        metadataUri: "",
         strategies: preparedStrategies,
       };
 
