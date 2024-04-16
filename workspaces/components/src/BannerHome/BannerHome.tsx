@@ -20,6 +20,7 @@ type Props = {
   vSTRKTotal: any;
   STRKTotal: any;
   l1StrkTotal: any;
+  selfDelegatedPercentage: any;
 };
 
 export const BannerHome = ({
@@ -30,6 +31,7 @@ export const BannerHome = ({
   l1Delegated,
   vSTRKTotal,
   STRKTotal,
+  selfDelegatedPercentage,
 }: Props) => {
   // Convert string props to numbers for calculation
   const vSTRKTotalNum = Math.floor(parseFloat(vSTRKTotal));
@@ -335,7 +337,7 @@ export const BannerHome = ({
                       md: "21px",
                     }}
                   >
-                    ?
+                    {selfDelegatedPercentage}%
                   </Heading>
                   <Text
                     display="flex"
@@ -352,7 +354,12 @@ export const BannerHome = ({
               </SimpleGrid>
             </Box>
           </Box>
-          <Flex justifyContent="flex-end" w={"100%"} alignItems="center" my={"8px"}>
+          <Flex
+            justifyContent="flex-end"
+            w={"100%"}
+            alignItems="center"
+            my={"8px"}
+          >
             <Text
               display="flex"
               gap={"4px"}
@@ -363,7 +370,9 @@ export const BannerHome = ({
               Delegate and voting power data
             </Text>
             <button onClick={handleDownload}>
-              <Text variant="bodySmallStrong" fontWeight={"700"}>Download CSV</Text>
+              <Text variant="bodySmallStrong" fontWeight={"700"}>
+                Download CSV
+              </Text>
             </button>
           </Flex>
         </HomeContainer>

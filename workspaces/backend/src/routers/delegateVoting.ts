@@ -124,7 +124,8 @@ interface DelegateDataSnapshot {
 }
 
 async function getWhitelistStrategy() {
-  const spaceVar = "0x05702362b68a350c1cae8f2a529d74fdbb502369ddcebfadac7e91da37636947"//process.env.SNAPSHOT_X_SPACE;
+  const spaceVar =
+    '0x05702362b68a350c1cae8f2a529d74fdbb502369ddcebfadac7e91da37636947'; //process.env.SNAPSHOT_X_SPACE;
 
   const query = `
     query spaceQuery($space: String!) {
@@ -181,9 +182,11 @@ async function getWhitelistStrategy() {
 async function fetchAllDelegatesFromSnapshot({
   isL1,
   isL2,
+  isSelfDelegation,
 }: {
   isL1?: boolean;
   isL2?: boolean;
+  isSelfDelegation?: boolean;
 }) {
   const query = `
     query Delegates {
@@ -200,6 +203,17 @@ async function fetchAllDelegatesFromSnapshot({
         id
         delegatedVotes
         delegatedVotesRaw
+      }
+    }
+  `;
+  const querySelfDelegation = `
+    query SelfDelegationDelegates {
+      tokenholders(first: 100000) {
+        id
+        tokenBalance
+        delegate {
+          id
+        }
       }
     }
   `;
@@ -222,6 +236,9 @@ async function fetchAllDelegatesFromSnapshot({
     } else if (isL2) {
       const response: any = await graphQLClientL2.request(queryL2);
       return response?.delegates || [];
+    } else if (isSelfDelegation) {
+      const response: any = await graphQLClientL2.request(querySelfDelegation);
+      return response?.tokenholders || [];
     } else {
       return [];
     }
@@ -342,6 +359,19 @@ async function calculateTotalVoters(
   }
 }
 
+async function calculateSelfDelegatedTotal(tokenHolders: any[]){
+  const total = tokenHolders.reduce((acc, tokenholder) => {
+    if (tokenholder?.id && tokenholder?.tokenBalance && (tokenholder?.id === tokenholder?.delegate?.id)) {
+      acc = acc + parseFloat(tokenholder?.tokenBalance)
+    }
+    return acc
+  }, 0)
+  await db.update(stats).set({
+    selfDelegatedTotal: total,
+  });
+  console.log('self delegated: ', total)
+}
+
 export async function delegateVoting() {
   const pageSize = 1000;
   let page = 0;
@@ -362,6 +392,8 @@ export async function delegateVoting() {
     await fetchAllDelegatesFromSnapshot({ isL1: true });
   const delegatesSnapshotL2: DelegateDataSnapshot[] =
     await fetchAllDelegatesFromSnapshot({ isL2: true });
+  const tokenHolders = await fetchAllDelegatesFromSnapshot({ isSelfDelegation: true })
+  await calculateSelfDelegatedTotal(tokenHolders)
   await collectL2Data(delegatesSnapshotL2);
   await collectL1Data(delegatesSnapshotL1);
   await calculateTotalVotingPower(
