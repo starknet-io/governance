@@ -11134,6 +11134,7 @@ __metadata:
     date-fns: ^2.30.0
     dayzed: ^3.2.3
     dnd-kit-sortable-tree: ^0.1.73
+    file-saver: ^2.0.5
     framer-motion: ^10.15.0
     he: ^1.2.0
     is-hotkey: ^0.2.0
