@@ -188,6 +188,7 @@ export function Page() {
       const preparedStrategies = await prepareStrategiesForSignature(
         space.data.strategies as string[],
         strategiesMetadata as any[],
+        space?.data?.strategies_indicies || [],
       );
 
       let convertedChoice = 1;
@@ -209,6 +210,8 @@ export function Page() {
         metadataUri: "",
         strategies: preparedStrategies,
       };
+
+      console.log(params)
 
       const starknetProvider = starkProvider;
 

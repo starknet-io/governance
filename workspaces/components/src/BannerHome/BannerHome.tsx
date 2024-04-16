@@ -27,11 +27,10 @@ export const BannerHome = ({
   l1Delegated,
   vSTRKTotal,
   STRKTotal,
-  l1StrkTotal,
 }: Props) => {
   // Convert string props to numbers for calculation
-  const vSTRKTotalNum = parseFloat(vSTRKTotal);
-  const STRKTotalNum = parseFloat(STRKTotal);
+  const vSTRKTotalNum = Math.floor(parseFloat(vSTRKTotal));
+  const STRKTotalNum = Math.floor(parseFloat(STRKTotal));
 
   // Calculate the percentage
   const vSTRKOfTotalSTRKPercentage = STRKTotalNum
@@ -40,7 +39,7 @@ export const BannerHome = ({
 
   // Format the result for display
   const formattedPercentage = new Intl.NumberFormat("en", {
-    maximumFractionDigits: 2, // Limit decimal places to 2
+    maximumFractionDigits: 0, // Limit decimal places to 2
   }).format(vSTRKOfTotalSTRKPercentage);
 
   return (
@@ -167,7 +166,7 @@ export const BannerHome = ({
                     }}
                   >
                     {new Intl.NumberFormat("en", {
-                      maximumFractionDigits: 2,
+                      maximumFractionDigits: 0,
                     }).format(vSTRKTotal)}
                   </Heading>
                   <Text
@@ -195,7 +194,7 @@ export const BannerHome = ({
                     }}
                   >
                     {new Intl.NumberFormat("en", {
-                      maximumFractionDigits: 2,
+                      maximumFractionDigits: 0,
                     }).format(STRKTotal)}
                   </Heading>
                   <Text
@@ -222,9 +221,7 @@ export const BannerHome = ({
                       md: "21px",
                     }}
                   >
-                    {new Intl.NumberFormat("en", {
-                      maximumFractionDigits: 2,
-                    }).format(l1StrkTotal)}
+                    {formattedPercentage} %
                   </Heading>
                   <Text
                     display="flex"
@@ -232,8 +229,8 @@ export const BannerHome = ({
                     variant="bodySmallMedium"
                     color="content.accent.default"
                   >
-                    STRK L1
-                    <Tooltip label="Total supply of STRK on Ethereum">
+                    vSTRK of total STRK
+                    <Tooltip label="Ratio of vSTRK:STRK">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>
@@ -332,32 +329,6 @@ export const BannerHome = ({
                   >
                     Self Delegated
                     <Tooltip label="something">
-                      <InfoCircleIcon />
-                    </Tooltip>
-                  </Text>
-                </Box>
-                <Box>
-                  <Heading
-                    lineHeight={{
-                      base: "1.5rem",
-                      md: "2rem",
-                    }}
-                    variant={"h3"}
-                    fontSize={{
-                      base: "16px",
-                      md: "21px",
-                    }}
-                  >
-                    {formattedPercentage} %
-                  </Heading>
-                  <Text
-                    display="flex"
-                    gap={"4px"}
-                    variant="bodySmallMedium"
-                    color="content.accent.default"
-                  >
-                    vSTRK of total STRK
-                    <Tooltip label="Ratio of vSTRK:STRK">
                       <InfoCircleIcon />
                     </Tooltip>
                   </Text>

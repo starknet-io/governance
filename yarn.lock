@@ -7604,6 +7604,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@shutter-network/shutter-crypto@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@shutter-network/shutter-crypto@npm:1.0.1"
+  dependencies:
+    browser-or-node: ^2.0.0
+  checksum: 7b8fbea5da6383fee116586f9cccfae9694b90d0964b0eb1080544d7dabb506b302d12a009d753853da492a9b1b10fc3c6a295e4e16361802fdb6700403edb13
+  languageName: node
+  linkType: hard
+
 "@sinclair/typebox@npm:^0.27.8":
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
@@ -7743,9 +7752,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@snapshot-labs/sx@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@snapshot-labs/sx@npm:0.1.1"
+"@snapshot-labs/sx@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@snapshot-labs/sx@npm:0.1.2"
   dependencies:
     "@ethersproject/abi": ^5.7.0
     "@ethersproject/abstract-signer": ^5.7.0
@@ -7757,16 +7766,19 @@ __metadata:
     "@ethersproject/hash": ^5.6.1
     "@ethersproject/keccak256": ^5.7.0
     "@ethersproject/providers": ^5.7.0
+    "@ethersproject/random": ^5.7.0
     "@ethersproject/solidity": ^5.7.0
+    "@ethersproject/strings": ^5.7.0
     "@ethersproject/wallet": ^5.7.0
     "@openzeppelin/merkle-tree": ^1.0.5
+    "@shutter-network/shutter-crypto": 1.0.1
     bn.js: ^5.2.1
     cross-fetch: ^3.1.5
     micro-starknet: ^0.2.3
     randombytes: ^2.1.0
     snake-case: ^3.0.4
     starknet: 5.25.0
-  checksum: 92ff603defd3834394fd57a91293c51b43e1e9981abd1225d6431ae94a6adab22d62b4d2999b179e26ada1f6d1804ee328e0b07f11670a62fbc234c33df27764
+  checksum: db518df02a1db8fb928cf64756dbe29a11d769921ba56bdcbef8605c1d62e5a4d24d9f3dba0802c010a18ad9e48abe778ad23fdbf75ffcfc7aeffc0b7c4b693b
   languageName: node
   linkType: hard
 
@@ -11156,7 +11168,7 @@ __metadata:
     "@hookform/resolvers": ^3.3.1
     "@snapshot-labs/pineapple": ^1.1.0
     "@snapshot-labs/snapshot.js": ^0.8.0
-    "@snapshot-labs/sx": ^0.1.1
+    "@snapshot-labs/sx": ^0.1.2
     "@tanstack/react-query": ^4.32.0
     "@trpc/client": ^10.36.0
     "@trpc/react-query": ^10.36.0
@@ -12507,6 +12519,13 @@ __metadata:
   version: 1.2.1
   resolution: "browser-assert@npm:1.2.1"
   checksum: 8b2407cd04c1ed592cf892dec35942b7d72635829221e0788c9a16c4d2afa8b7156bc9705b1c4b32c30d88136c576fda3cbcb8f494d6f865264c706ea8798d92
+  languageName: node
+  linkType: hard
+
+"browser-or-node@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "browser-or-node@npm:2.1.1"
+  checksum: b1650b579345574d2c1905c73d385915a032523066ef9589036cf129b23b27b85096b6713476dffb88feb83cda798ed0774363e699117aa2724a0409adea25aa
   languageName: node
   linkType: hard
 

@@ -154,16 +154,17 @@ export function getUrl(uri: string) {
 export const prepareStrategiesForSignature = async (
   strategies: string[],
   strategiesMetadata: any[],
+  strategyIndicies: number[],
 ) => {
   const strategiesWithMetadata = await Promise.all(
     strategies.map(async (strategy, i) => {
       const metadata = await parseStrategyMetadata(
-        strategiesMetadata[i].payload,
+        strategiesMetadata[strategyIndicies[i]].payload,
       );
 
       return {
         address: strategy,
-        index: i,
+        index: strategyIndicies[i],
         metadata,
       };
     }),
