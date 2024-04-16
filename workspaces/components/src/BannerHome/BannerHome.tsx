@@ -8,8 +8,10 @@ import React from "react";
 import { CoinsV2, DelegatesV2, InfoCircleIcon } from "../Icons/UiIcons";
 import { Tooltip } from "../Tooltip";
 import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
-import { saveAs } from "file-saver";
 import { Button } from "../Button";
+import pkg from 'file-saver';
+const { saveAs } = pkg;
+
 
 type Props = {
   title?: string;

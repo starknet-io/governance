@@ -47,6 +47,7 @@ export function Page() {
   const selfDelegatedPercentage =
     stats?.l2Delegated &&
     stats?.l1Delegated &&
+    stats?.selfDelegatedTotal &&
     stats?.l2Delegated + stats?.l1Delegated !== 0
       ? new Intl.NumberFormat("en-US", {
           style: "decimal",
