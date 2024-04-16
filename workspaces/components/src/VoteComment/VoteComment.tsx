@@ -105,7 +105,7 @@ export const VoteComment = ({
             </Text>
           </Flex>
           {tx ? (
-            <Box as="span" top="1px" position="relative">
+            <Box as="span" top="-1px" position="relative">
               <Link
                 href={`https://starkscan.co/tx/${tx}`}
                 size="small"

@@ -7,6 +7,9 @@ import { HomeContainer } from "src/ContentContainer";
 import React from "react";
 import { CoinsV2, DelegatesV2, InfoCircleIcon } from "../Icons/UiIcons";
 import { Tooltip } from "../Tooltip";
+import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
+import { saveAs } from "file-saver";
+import { Button } from "../Button";
 
 type Props = {
   title?: string;
@@ -31,6 +34,7 @@ export const BannerHome = ({
   // Convert string props to numbers for calculation
   const vSTRKTotalNum = Math.floor(parseFloat(vSTRKTotal));
   const STRKTotalNum = Math.floor(parseFloat(STRKTotal));
+  const downloadCsv = trpc.delegates.generateDelegatesCSV.useMutation({});
 
   // Calculate the percentage
   const vSTRKOfTotalSTRKPercentage = STRKTotalNum
@@ -41,6 +45,18 @@ export const BannerHome = ({
   const formattedPercentage = new Intl.NumberFormat("en", {
     maximumFractionDigits: 0, // Limit decimal places to 2
   }).format(vSTRKOfTotalSTRKPercentage);
+
+  const handleDownload = async () => {
+    try {
+      const data = await downloadCsv.mutateAsync({});
+      // Convert the CSV string to a Blob
+      const blob = new Blob([data], { type: "text/csv" });
+      saveAs(blob, "delegates.csv");
+      console.log(blob);
+    } catch (error) {
+      console.error("Error downloading the CSV file:", error);
+    }
+  };
 
   return (
     <>
@@ -336,6 +352,20 @@ export const BannerHome = ({
               </SimpleGrid>
             </Box>
           </Box>
+          <Flex justifyContent="flex-end" w={"100%"} alignItems="center" my={"8px"}>
+            <Text
+              display="flex"
+              gap={"4px"}
+              pr={"4px"}
+              variant="bodySmallMedium"
+              color="content.default.default"
+            >
+              Delegate and voting power data
+            </Text>
+            <button onClick={handleDownload}>
+              <Text variant="bodySmallStrong" fontWeight={"700"}>Download CSV</Text>
+            </button>
+          </Flex>
         </HomeContainer>
       </Box>
     </>
