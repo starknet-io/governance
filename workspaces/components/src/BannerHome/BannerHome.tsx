@@ -9,9 +9,8 @@ import { CoinsV2, DelegatesV2, InfoCircleIcon } from "../Icons/UiIcons";
 import { Tooltip } from "../Tooltip";
 import { trpc } from "@yukilabs/governance-frontend/src/utils/trpc";
 import { Button } from "../Button";
-import pkg from 'file-saver';
+import pkg from "file-saver";
 const { saveAs } = pkg;
-
 
 type Props = {
   title?: string;
@@ -32,6 +31,7 @@ export const BannerHome = ({
   l2Delegated,
   l1Delegated,
   vSTRKTotal,
+  onDownloadNotConnected,
   STRKTotal,
   selfDelegatedPercentage,
 }: Props) => {
@@ -51,14 +51,18 @@ export const BannerHome = ({
   }).format(vSTRKOfTotalSTRKPercentage);
 
   const handleDownload = async () => {
-    try {
-      const data = await downloadCsv.mutateAsync({});
-      // Convert the CSV string to a Blob
-      const blob = new Blob([data], { type: "text/csv" });
-      saveAs(blob, "delegates.csv");
-      console.log(blob);
-    } catch (error) {
-      console.error("Error downloading the CSV file:", error);
+    if (onDownloadNotConnected) {
+      onDownloadNotConnected();
+    } else {
+      try {
+        const data = await downloadCsv.mutateAsync({});
+        // Convert the CSV string to a Blob
+        const blob = new Blob([data], { type: "text/csv" });
+        saveAs(blob, "delegates.csv");
+        console.log(blob);
+      } catch (error) {
+        console.error("Error downloading the CSV file:", error);
+      }
     }
   };
 

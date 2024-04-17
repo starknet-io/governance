@@ -191,8 +191,6 @@ export function Page() {
         space?.data?.strategies_indicies || [],
       );
 
-      console.log(preparedStrategies)
-
       let convertedChoice = 1;
 
       if (choice === 2) {
@@ -211,8 +209,6 @@ export function Page() {
         choice: convertedChoice,
         strategies: preparedStrategies,
       };
-
-      console.log(params)
 
       const starknetProvider = starkProvider;
 
@@ -930,7 +926,6 @@ export function Page() {
                       ? `Current results`
                       : "Final Results"}
                   </Heading>
-
                   {data?.proposal?.choices.map((choice, index) => {
                     const totalVotes = data?.proposal?.scores_total;
                     const voteCount = data?.proposal?.scores![index];
