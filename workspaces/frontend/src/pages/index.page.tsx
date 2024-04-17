@@ -13,13 +13,14 @@ import {
   Text,
   ArrowRightIcon,
 } from "@yukilabs/governance-components";
-
+import { useHelpMessage } from "src/hooks/HelpMessage";
 import { Delegates } from "src/components/Delegates";
 import { trpc } from "src/utils/trpc";
 import { Proposal, VotingPropsSkeleton } from "./voting-proposals/index.page";
 import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
 import { formatVotingPower } from "../utils/helpers";
 import { useTotalSupply } from "../utils/hooks";
+import { usePageContext } from "../renderer/PageContextProvider";
 // import img from '../images/social-home.png'
 
 export function Page() {
@@ -32,6 +33,8 @@ export function Page() {
     filters: [],
     sortBy: "desc",
   });
+  const [helpMessage, setHelpMessage] = useHelpMessage();
+  const { user } = usePageContext();
 
   const { data: stats } = trpc.stats.getStats.useQuery();
   const formattedL2Delegated = new Intl.NumberFormat("en-US", {
@@ -73,6 +76,9 @@ export function Page() {
   return (
     <Box width="100%">
       <BannerHome
+        onDownloadNotConnected={
+          user ? null : () => setHelpMessage("connectWalletMessage")
+        }
         l2Delegated={formattedL2Delegated}
         l1Delegated={formattedL1Delegated}
         selfDelegatedPercentage={selfDelegatedPercentage}
