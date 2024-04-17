@@ -103,9 +103,18 @@ export const transformProposal = (proposal: any) => {
       parseFloat(BigInt(proposal.scores_total || 0n).toString()) /
       Math.pow(10, 18),
     scores: [
-      (parseFloat(BigInt(proposal.scores_1 || 0n).toString()) / Math.pow(10, 18)).toFixed(4),
-      (parseFloat(BigInt(proposal.scores_2 || 0n).toString()) / Math.pow(10, 18)).toFixed(4),
-      (parseFloat(BigInt(proposal.scores_3 || 0n).toString()) / Math.pow(10, 18)).toFixed(4),
+      (
+        parseFloat(BigInt(proposal.scores_1 || 0n).toString()) /
+        Math.pow(10, 18)
+      ).toFixed(4),
+      (
+        parseFloat(BigInt(proposal.scores_2 || 0n).toString()) /
+        Math.pow(10, 18)
+      ).toFixed(4),
+      (
+        parseFloat(BigInt(proposal.scores_3 || 0n).toString()) /
+        Math.pow(10, 18)
+      ).toFixed(4),
     ],
     state: getProposalState(proposal, timeNow),
   };
@@ -113,7 +122,9 @@ export const transformProposal = (proposal: any) => {
 
 export const transformVote = (vote: any) => {
   const { vp } = vote;
-  const scaledValue = (parseFloat(BigInt(vp).toString()) / Math.pow(10, 18)).toFixed(4);
+  const scaledValue = (
+    parseFloat(BigInt(vp).toString()) / Math.pow(10, 18)
+  ).toFixed(4);
   return {
     ...vote,
     voter: vote.voter.id,
@@ -154,17 +165,20 @@ export function getUrl(uri: string) {
 export const prepareStrategiesForSignature = async (
   strategies: string[],
   strategiesMetadata: any[],
-  strategyIndicies: number[],
+  strategyIndicies?: number[],
 ) => {
   const strategiesWithMetadata = await Promise.all(
     strategies.map(async (strategy, i) => {
       const metadata = await parseStrategyMetadata(
-        strategiesMetadata[strategyIndicies[i]].payload,
+        strategiesMetadata[
+          strategyIndicies && strategyIndicies?.[i] ? strategyIndicies[i] : i
+        ].payload,
       );
 
       return {
         address: strategy,
-        index: strategyIndicies[i],
+        index:
+          strategyIndicies && strategyIndicies?.[i] ? strategyIndicies[i] : i,
         metadata,
       };
     }),
