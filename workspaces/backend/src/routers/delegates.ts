@@ -23,7 +23,6 @@ import { delegateVotes } from '../db/schema/delegatesVotes';
 import { socials } from '../db/schema/socials';
 import { profanity } from '@2toad/profanity';
 import { getChecksumAddress } from 'starknet';
-import { Parser } from 'json2csv';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -130,7 +129,31 @@ export const delegateRouter = router({
       return insertedDelegateRecord;
     }),
   generateDelegatesCSV: protectedProcedure.mutation(async (opts) => {
-    // Query to fetch delegate details
+    // Fetch statistics
+    const dashboardStats = await db.query.stats.findFirst({});
+    const statsData = {
+      l2Delegated: parseFloat(dashboardStats?.delegatedVSTRK || '0'),
+      l1Delegated: parseFloat(dashboardStats?.delegatedSTRK || '0'),
+      selfDelegatedTotal: parseFloat(dashboardStats?.selfDelegatedTotal || '0'),
+      totalVotingPower: parseFloat(dashboardStats?.totalVotingPower || '0'),
+      totalVoters: parseFloat(dashboardStats?.totalVoters || '0'),
+    };
+
+    // Prepare stats CSV content
+    let csvContent = '';
+    csvContent +=
+      'L2 Delegated, L1 Delegated, Self Delegated, Total Voting Power, Total Voters\n';
+    csvContent += `${Math.floor(statsData.l2Delegated)}, ${Math.floor(statsData.l1Delegated)}, ${
+      (statsData.selfDelegatedTotal * 100.0 /
+      (statsData.l2Delegated + statsData.l1Delegated || 1)).toFixed(2)
+    }%, ${Math.floor(statsData.totalVotingPower)}, ${statsData.totalVoters}\n`;
+    csvContent += '\n'; // Empty line for separation
+
+    // Prepare headers for delegates section
+    csvContent +=
+      'Delegate Name, ETH Address, StarkNet Address, Voting Power L1, Voting Power L2, Votes\n';
+
+    // Fetch delegate details
     const delegatesData = await db.query.delegates.findMany({
       with: {
         author: true,
@@ -139,53 +162,44 @@ export const delegateRouter = router({
       },
     });
 
-    console.log(delegatesData);
-
     function formatPastVoting(pastVoting: any) {
-      // Convert object to array of strings ["Key: Value", ...]
       const votingEntries = Object.entries(pastVoting).map(([key, value]) => {
-        return `${key}:${value}`;
+        return `${key}: ${value}`;
       });
-
-      // Join all entries with a comma and a space
       return votingEntries.join(', ');
     }
 
-    // Transform data to match CSV format
-    const csvData = delegatesData.map((delegate: any) => {
+    // Map delegate data and append to csvContent
+    delegatesData.forEach((delegate: any) => {
       const pastVoting = {
         For: 0,
         Abstain: 0,
         Against: 0,
       };
-      for (const pastVote of delegate.pastVotes) {
+      delegate.pastVotes.forEach((pastVote: any) => {
         if (pastVote.votePreference === 1) {
-          pastVoting['For'] = pastVoting['For'] + 1;
+          pastVoting['For'] += 1;
         } else if (pastVote.votePreference === 2) {
-          pastVoting['Against'] = pastVoting['Against'] + 1;
+          pastVoting['Against'] += 1;
         } else {
-          pastVoting['Abstain'] = pastVoting['Abstain'] + 1;
+          pastVoting['Abstain'] += 1;
         }
-      }
+      });
       const formattedVoting = formatPastVoting(pastVoting);
-      return {
-        name: delegate?.author?.username || delegate?.author?.ensName || 'N/A',
-        ethAddress: delegate?.author?.ethAddress || delegate?.author?.address,
-        starknetAddress: delegate?.author?.starknetAddress,
-        votingPowerL1: delegate.delegateVotes?.votingPowerLayerOne || 0,
-        votingPowerL2: delegate.delegateVotes?.votingPowerLayerTwo || 0,
-        votes: formattedVoting,
-      };
+      csvContent += `${
+        delegate?.author?.username || delegate?.author?.ensName || 'N/A'
+      }, ${
+        delegate?.author?.ethAddress || delegate?.author?.address
+      }, ${delegate?.author?.starknetAddress}, ${
+        delegate.delegateVotes?.votingPowerLayerOne || 0
+      }, ${
+        delegate.delegateVotes?.votingPowerLayerTwo || 0
+      }, ${formattedVoting}\n`;
     });
 
-    // Convert JSON to CSV
-    const json2csvParser = new Parser();
-    const csv = json2csvParser.parse(csvData);
-
-    // Optionally save or directly send the CSV file
-    // For example, return it as a plain text (CSV) response:
-    return csv;
+    return csvContent;
   }),
+
   // For some reason, when there is both author: true and customAgreement: true, we get an error
   getDelegateById: publicProcedure
     .input(
