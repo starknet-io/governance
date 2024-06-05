@@ -431,7 +431,7 @@ export function Page() {
       return 0;
     }
     const allVoters = stats?.totalVoters || 0;
-    const total = (pastVotes?.length * 1.0) / allVoters * 100.0;
+    const total = ((pastVotes?.length * 1.0) / allVoters) * 100.0;
     return `${total.toFixed(4)}%`;
   };
 
@@ -441,7 +441,7 @@ export function Page() {
     }
     const totalVotes = data?.proposal?.scores_total;
     const allVotingPower = stats?.totalVotingPower || 0;
-    const total = (totalVotes * 1.0) / allVotingPower * 100.0;
+    const total = ((totalVotes * 1.0) / allVotingPower) * 100.0;
     return `${total.toFixed(7)}%`;
   };
 
@@ -462,6 +462,7 @@ export function Page() {
         ) : canVoteL1 ? (
           <VoteReview
             choice={currentChoice}
+            startTimestamp={data?.proposal?.start}
             isSelected={primaryWallet?.id === ethWallet?.id}
             voteCount={votingPower as number}
             setWalletCallback={async () => {
@@ -527,6 +528,10 @@ export function Page() {
             type="submit"
             variant="primary"
             size="standard"
+            disabled={
+              primaryWallet?.address === ethWallet?.address &&
+              data.proposal.start + 900 - Math.floor(Date.now() / 1000) > 0
+            }
             onClick={() => handleVote(currentChoice, comment)}
           >
             Submit vote
