@@ -36,6 +36,7 @@ export const waitForTransaction = async (txId: string) => {
 
       const successStates = [
         TransactionFinalityStatus.ACCEPTED_ON_L1,
+        TransactionFinalityStatus.RECEIVED,
         TransactionFinalityStatus.ACCEPTED_ON_L2,
       ];
 

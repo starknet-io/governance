@@ -359,60 +359,6 @@ Links
                 placeholder="Basic"
               />
             </FormControlled>
-
-            <FormControlled
-              name="votingPeriod"
-              label="Voting period"
-              isRequired
-              errorMessage={errors?.votingPeriod?.message}
-              isInvalid={!!errors.votingPeriod}
-              ref={(ref) => setErrorRef("votingPeriod", ref)}
-            >
-              <Stack spacing="12px" direction={{ base: "row" }}>
-                <Box width="100%">
-                  <Controller
-                    control={control}
-                    name="votingPeriod"
-                    rules={{
-                      required: "Voting period is required.",
-                      validate: (value) => {
-                        // Check if both start and end dates are selected
-                        if (
-                          !value ||
-                          value.length !== 2 ||
-                          !value[0] ||
-                          !value[1]
-                        ) {
-                          return "Both start and end dates are required.";
-                        }
-                        // Check if start date/time is before the end date/time
-                        else if (value[0] >= value[1]) {
-                          return "Start date/time must be before the end date/time.";
-                        }
-                        // If user didn't select a time, use default
-                        else if (!selectedTime || selectedTime.length !== 2) {
-                          setSelectedTime(["12:00 AM", "12:00 AM"]);
-                        }
-                        return true;
-                      },
-                    }}
-                    render={({ field, fieldState }) => (
-                      <ChakraDatePicker
-                        single={false}
-                        showTimePicker={true}
-                        range={true}
-                        date={field.value}
-                        onDateChange={field.onChange}
-                        isInvalid={fieldState.invalid}
-                        errorMessage={fieldState?.error?.message}
-                        selectedTime={selectedTime}
-                        setSelectedTime={setSelectedTime}
-                      />
-                    )}
-                  />
-                </Box>
-              </Stack>
-            </FormControlled>
             <Box display="flex" justifyContent="flex-end">
               <Button
                 type="submit"
