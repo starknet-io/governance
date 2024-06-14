@@ -65,7 +65,7 @@ export const SupportModal = ({ isOpen = false, onClose }: Props) => {
           />
           <LinkBox
             icon={<DiscordIcon boxSize="32px" mr="3px" />}
-            href="https://discord.com/invite/qypnmzkhbc"
+            href="https://discord.gg/starknet-community"
             label="Starknet Discord"
           />
         </Flex>
