@@ -75,7 +75,7 @@
     "superjson": "^1.13.1",
     "use-debounce": "^9.0.4",
     "viem": "^1.5.0",
-    "vite": "^4.3.9",
+    "vite": "^5.3.1",
     "vite-node": "0.31.1",
     "vite-plugin-node-stdlib-browser": "^0.2.1",
     "vite-plugin-ssr": "0.4.131",
