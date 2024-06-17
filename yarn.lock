@@ -3507,19 +3507,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dynamic-labs/wagmi-connector@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@dynamic-labs/wagmi-connector@npm:1.0.2"
+"@dynamic-labs/wagmi-connector@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@dynamic-labs/wagmi-connector@npm:2.2.0"
   peerDependencies:
-    "@dynamic-labs/rpc-providers": 1.0.2
-    "@dynamic-labs/sdk-react-core": 1.0.2
-    "@dynamic-labs/types": 1.0.2
-    "@dynamic-labs/wallet-connector-core": 1.0.2
+    "@dynamic-labs/logger": 2.2.0
+    "@dynamic-labs/rpc-providers": 2.2.0
+    "@dynamic-labs/sdk-react-core": 2.2.0
+    "@dynamic-labs/types": 2.2.0
+    "@dynamic-labs/wallet-connector-core": 2.2.0
+    "@wagmi/core": ^2.6.4
     eventemitter3: 5.0.1
-    react: ^17.0.2 || ^18.0.0
-    viem: ^1.1.0
-    wagmi: ^1.4.12
-  checksum: adb4dde543d5d97db1490969021fd07f9909cb22593ead1dad1046ae96ec7cf2112e6782d9b6725f4caa48a05d86adc5636e57a3b22ddcab1caf5f9042a8f0b7
+    react: ^18.0.0
+    viem: ^2.7.6
+    wagmi: ^2.5.7
+  checksum: c276722bf5e81eee59de5434adc779311a97633c9368552db3067728eff56768d09463ce87d9e48b13cca153fedfa5ed8a4a3464b064a4cd90f092f8833da6b0
   languageName: node
   linkType: hard
 
@@ -11175,7 +11177,7 @@ __metadata:
     "@dynamic-labs/multi-wallet": ^1.0.2
     "@dynamic-labs/sdk-react-core": ^1.0.2
     "@dynamic-labs/starknet": ^1.0.2
-    "@dynamic-labs/wagmi-connector": ^1.0.2
+    "@dynamic-labs/wagmi-connector": ^2.2.0
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
     "@ethersproject/providers": ^5.7.2

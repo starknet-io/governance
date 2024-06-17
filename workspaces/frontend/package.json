@@ -21,7 +21,7 @@
     "@dynamic-labs/multi-wallet": "^1.0.2",
     "@dynamic-labs/sdk-react-core": "^1.0.2",
     "@dynamic-labs/starknet": "^1.0.2",
-    "@dynamic-labs/wagmi-connector": "^1.0.2",
+    "@dynamic-labs/wagmi-connector": "^2.2.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@ethersproject/providers": "^5.7.2",
