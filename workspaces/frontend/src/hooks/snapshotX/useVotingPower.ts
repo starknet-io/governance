@@ -78,7 +78,7 @@ export function useVotingPower({
         const scaleFactor = BigInt(10 ** (maxDecimals - strategy.decimals));
         return (
           acc +
-          (strategy.symbol === "Whitelist"
+          (strategy.symbol.toUpperCase() === "WHITELIST"
             ? valueBigInt
             : valueBigInt * scaleFactor)
         );
@@ -95,7 +95,7 @@ export function useVotingPower({
         ...prevData,
         [cacheKey]: {
           votingPower: finalValue,
-          isLoading: false
+          isLoading: false,
         },
       }));
     } catch (e) {
@@ -107,7 +107,7 @@ export function useVotingPower({
 
   useEffect(() => {
     if (!address) {
-      return
+      return;
     }
     const isNewCacheKey = addActiveCacheKey(cacheKey);
     if (isNewCacheKey) {

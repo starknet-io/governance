@@ -234,6 +234,7 @@ export const DynamicProvider = (props: Props) => {
             ZeroDevSmartWalletConnectors,
             StarknetWalletConnectors,
           ],
+          siweStatement: "Welcome to Governance Hub. Signing is the only way we can truly know that you are the owner of the wallet you are connecting. Signing is a safe, gas-less transaction that does not in any way give Governance Hub permission to perform any transactions with your wallet.",
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {
