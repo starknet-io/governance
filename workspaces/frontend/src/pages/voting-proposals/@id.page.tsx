@@ -60,6 +60,7 @@ import { AUTHENTICATORS_ENUM } from "../../hooks/snapshotX/constants";
 import { useSpace } from "../../hooks/snapshotX/useSpace";
 import {
   ethSigClient,
+  starknetEvmClient,
   starkProvider,
   starkSigClient,
 } from "../../clients/clients";
@@ -203,7 +204,7 @@ export function Page() {
         authenticator:
           primaryWallet?.id === ethWallet?.id
             ? AUTHENTICATORS_ENUM.EVM_SIGNATURE
-            : AUTHENTICATORS_ENUM.STARKNET_SIGNATURE,
+            : AUTHENTICATORS_ENUM.STARKNET_TRANSACTION,
         space: space.data.id,
         proposal: parseInt(pageContext.routeParams.id!),
         choice: convertedChoice,
@@ -238,19 +239,25 @@ export function Page() {
           } else {
             activeStarknetAccount = window?.starknet?.account;
           }
-          receipt = await starkSigClient.vote({
-            signer: activeStarknetAccount,
+          receipt = await starknetEvmClient.vote(activeStarknetAccount, {
             data: params,
           });
         }
       }
-      const transaction = await starkSigClient.send(receipt);
-      if (!transaction.transaction_hash) {
+      let transaction = null;
+      let transactionHash = null;
+      if (!receipt?.transaction_hash) {
+        transaction = await starkSigClient.send(receipt);
+        transactionHash = transaction.transaction_hash;
+      } else {
+        transactionHash = receipt.transaction_hash;
+      }
+      if (!transactionHash) {
         setStatusTitle("Voting failed");
         setStatusDescription("An error occurred");
         return false;
       }
-      await waitForTransaction(transaction.transaction_hash);
+      await waitForTransaction(transactionHash);
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
       await refetch();
