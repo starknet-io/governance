@@ -211,7 +211,6 @@ export function Page() {
         strategies: preparedStrategies,
       };
 
-
       const starknetProvider = starkProvider;
 
       const deeplink = walletConnector?.getDeepLink();
