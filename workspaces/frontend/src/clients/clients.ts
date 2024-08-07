@@ -6,7 +6,7 @@ import {
 import { RpcProvider, constants } from "starknet";
 
 const ethUrl = `https://mainnet.infura.io/v3/${import.meta.env.VITE_APP_INFURA_API_KEY}`;
-const manaUrl = "https://mana.pizza";
+const manaUrl = "https://mana.box";
 
 export const starkProvider = new RpcProvider({
   nodeUrl: `https://starknet-mainnet.infura.io/v3/${
