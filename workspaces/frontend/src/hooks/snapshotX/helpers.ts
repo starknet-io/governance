@@ -20,7 +20,7 @@ export const waitForTransaction = async (txId: string) => {
       try {
         tx = await provider.getTransactionReceipt(txId);
       } catch (e) {
-        if (retries > 20) {
+        if (retries > 30) {
           clearInterval(timer);
           reject();
         }
