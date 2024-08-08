@@ -163,6 +163,8 @@ export function Page() {
 
   const activeStarknetWallet = useActiveStarknetAccount();
   const [isWrongAccount, setIsWrongAccount] = useState<boolean>(false);
+  const saveVote = trpc.votes.saveVote.useMutation();  // Define the TRPC mutation
+
 
   async function handleVote(choice: number, reason?: string) {
     try {
@@ -260,6 +262,13 @@ export function Page() {
       await waitForTransaction(transactionHash);
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
+      // Save the vote and comment to the backend
+// Save the vote and comment to the backend via TRPC mutation
+      await saveVote.mutateAsync({
+        proposalId: pageContext.routeParams.id!,
+        voterAddress: primaryWallet!.address.toLowerCase(),
+        comment
+      });
       await refetch();
       await vote.refetch();
       await voteL2.refetch();
@@ -1043,7 +1052,7 @@ export function Page() {
                             ? "Against"
                             : "Abstain"
                         }
-                        comment={vote?.body as string}
+                        comment={vote?.comment as string}
                         voteCount={vote?.vp as number}
                         signature={vote?.ipfs as string}
                         tx={vote?.tx as string}

@@ -1,6 +1,8 @@
 import { useQuery } from "@apollo/client";
 import { GET_VOTES_QUERY } from "./queries";
 import { transformVotes } from "./helpers";
+import { trpc } from "../../utils/trpc";
+import { getChecksumAddress } from "starknet";
 
 type SkippableField = "voter" | "proposal";
 
@@ -35,7 +37,34 @@ export function useVotes({
     context: { clientName: "snapshotX" }, // Adding context to route the query to the second link
   });
 
+  const {
+    data: commentData,
+    isLoading: commentLoading,
+    error: commentError,
+  } = trpc.votes.getNonEmptyCommentsForProposal.useQuery(
+    {
+      proposalId: proposal,
+    },
+    {
+      enabled: !!proposal,
+    },
+  );
   const transformedVotes = transformVotes(data);
 
-  return { data: { votes: transformedVotes }, loading, refetch, error };
+  // Efficiently merge votes with comments
+  const mergedVotes = transformedVotes.map((vote) => ({
+    ...vote,
+    comment:
+      commentData?.find((comment) => {
+        let address = vote.voter;
+        let commentAddress = comment.voterAddress;
+        if (address.length > 42) {
+          address = getChecksumAddress(address);
+          commentAddress = getChecksumAddress(commentAddress);
+        }
+        return address === commentAddress;
+      })?.comment || null,
+  }));
+
+  return { data: { votes: mergedVotes }, loading, refetch, error };
 }
