@@ -40,7 +40,6 @@ export const VoteComment = ({
   tx,
 }: Props) => {
   const formatVotes = formatVotesAmount(voteCount);
-
   const renderAuthorOrAddress = () => {
     const content = (
       <CopyToClipboard text={address}>
