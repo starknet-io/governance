@@ -62,7 +62,7 @@ export function useVotes({
           address = getChecksumAddress(address);
           commentAddress = getChecksumAddress(commentAddress);
         }
-        return address === commentAddress;
+        return address.toLowerCase() === commentAddress.toLowerCase();
       })?.comment || null,
   }));
 
