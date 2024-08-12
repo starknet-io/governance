@@ -1,7 +1,7 @@
 import { router, publicProcedure, protectedProcedure } from '../utils/trpc';
 import { votes } from '../db/schema/votes';
 import { db } from '../db/db';
-import { eq, not } from 'drizzle-orm';
+import {and, eq, not} from 'drizzle-orm';
 import { z } from 'zod';
 import { oldVotes } from '../db/schema/oldVotes';
 
@@ -81,9 +81,10 @@ export const votesRouter = router({
 
       // Fetch comments that are not null or empty and match the proposalId
       const comments = await db.query.votes.findMany({
-        where: (votes) =>
-          eq(votes.proposalId, proposalId) &&
-          not(eq(votes.comment, '')),
+        where: and(
+          eq(votes.proposalId, proposalId),
+          not(eq(votes.comment, ''))
+        ),
         orderBy: (votes, { desc }) => [desc(votes.createdAt)],
         limit: 100,
       });

@@ -163,8 +163,7 @@ export function Page() {
 
   const activeStarknetWallet = useActiveStarknetAccount();
   const [isWrongAccount, setIsWrongAccount] = useState<boolean>(false);
-  const saveVote = trpc.votes.saveVote.useMutation();  // Define the TRPC mutation
-
+  const saveVote = trpc.votes.saveVote.useMutation(); // Define the TRPC mutation
 
   async function handleVote(choice: number, reason?: string) {
     try {
@@ -263,11 +262,11 @@ export function Page() {
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
       // Save the vote and comment to the backend
-// Save the vote and comment to the backend via TRPC mutation
+      // Save the vote and comment to the backend via TRPC mutation
       await saveVote.mutateAsync({
         proposalId: pageContext.routeParams.id!,
         voterAddress: primaryWallet!.address.toLowerCase(),
-        comment
+        comment,
       });
       await refetch();
       await vote.refetch();
@@ -1094,11 +1093,17 @@ export function Page() {
                     mb="8px"
                   >
                     Voting starts{" "}
-                    {`${formatDate(
-                      data?.proposal?.start ?? 0,
-                      "yyyy-MM-dd",
-                      true,
-                    )}`}
+                    {data?.proposal?.start ? (
+                      <>
+                        {`${formatDate(
+                          data?.proposal?.start,
+                          "yyyy-MM-dd",
+                          true,
+                        )}`}
+                      </>
+                    ) : (
+                      "in ..."
+                    )}
                   </Heading>
                   <Text
                     textAlign="center"
