@@ -51,8 +51,6 @@ export function useVotes({
   );
   const transformedVotes = transformVotes(data);
 
-  console.log(transformedVotes, commentData)
-
   // Efficiently merge votes with comments
   const mergedVotes = transformedVotes.map((vote) => ({
     ...vote,
