@@ -8,13 +8,14 @@ import {
 import { z } from 'zod';
 import { users } from '../db/schema/users';
 import { db } from '../db/db';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, inArray, ne } from 'drizzle-orm';
 import { delegates } from '../db/schema/delegates';
 import { Algolia } from '../utils/algolia';
 
 export const usersRouter = router({
   getAll: protectedProcedure.query(() =>
     db.query.users.findMany({
+      where: ne(users.role, 'user'),
       with: {
         delegationStatement: true,
       },
@@ -60,14 +61,21 @@ export const usersRouter = router({
     .use(isAdmin)
     .mutation(async (opts) => {
       const requester = opts.ctx.user;
-      if (opts.input.role === "superadmin" && requester.role !== 'superadmin') {
-        throw new Error("Insufficient permissions.");
+      if (opts.input.role === 'superadmin' && requester.role !== 'superadmin') {
+        throw new Error('Insufficient permissions.');
       }
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),
       });
       if (user) {
-        throw new Error('User already exists');
+        const updatedUser = await db
+          .update(users)
+          .set({
+            role: opts.input.role,
+          })
+          .where(eq(users.address, opts.input.address.toLowerCase()))
+          .returning();
+        return updatedUser[0];
       } else {
         const createdUser = await db
           .insert(users)
@@ -91,8 +99,8 @@ export const usersRouter = router({
     .use(isAdmin)
     .mutation(async (opts) => {
       const requester = opts.ctx.user;
-      if (opts.input.role === "superadmin" && requester.role !== 'superadmin') {
-        throw new Error("Insufficient permissions.");
+      if (opts.input.role === 'superadmin' && requester.role !== 'superadmin') {
+        throw new Error('Insufficient permissions.');
       }
       const user = await db.query.users.findFirst({
         where: eq(users.address, opts.input.address.toLowerCase()),
