@@ -170,11 +170,18 @@ export const prepareStrategiesForSignature = async (
 ) => {
   const strategiesWithMetadata = await Promise.all(
     strategies.map(async (strategy, i) => {
-      const metadata = await parseStrategyMetadata(
-        strategiesMetadata[
-          strategyIndicies && strategyIndicies?.[i] ? strategyIndicies[i] : i
-        ].payload,
-      );
+      let metadata = null;
+      if (!strategyIndicies) {
+        metadata = await parseStrategyMetadata(
+          strategiesMetadata[strategiesMetadata.length - 1].payload,
+        );
+      } else {
+        metadata = await parseStrategyMetadata(
+          strategiesMetadata[
+            strategyIndicies && strategyIndicies?.[i] ? strategyIndicies[i] : i
+          ].payload,
+        );
+      }
 
       return {
         address: strategy,
