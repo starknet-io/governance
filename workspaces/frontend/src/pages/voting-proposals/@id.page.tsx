@@ -210,6 +210,7 @@ export function Page() {
         proposal: parseInt(pageContext.routeParams.id!),
         choice: convertedChoice,
         strategies: preparedStrategies,
+        metadataUri: "",
       };
 
       const starknetProvider = starkProvider;

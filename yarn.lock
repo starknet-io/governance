@@ -11317,23 +11317,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abi-wan-kanabi-v2@npm:abi-wan-kanabi@^2.1.0":
-  version: 2.1.0
-  resolution: "abi-wan-kanabi@npm:2.1.0"
-  dependencies:
-    ansicolors: ^0.3.2
-    cardinal: ^2.1.1
-    fs-extra: ^10.0.0
-    rome: ^12.1.3
-    typescript: ^5.2.2
-    yargs: ^17.7.2
-  bin:
-    generate: dist/generate.js
-  checksum: 817197abf8cb29c8b22018719506652e418609c5b5c5c777b2a3e9aa54afe7ef835523f55497e73c12821d36d8fb328dfb17263558e97f5319d0b80fe9151cc3
-  languageName: node
-  linkType: hard
-
-"abi-wan-kanabi@npm:^1.0.1, abi-wan-kanabi@npm:^1.0.3":
+"abi-wan-kanabi-v1@npm:abi-wan-kanabi@^1.0.3, abi-wan-kanabi@npm:^1.0.1, abi-wan-kanabi@npm:^1.0.3":
   version: 1.0.3
   resolution: "abi-wan-kanabi@npm:1.0.3"
   dependencies:
@@ -11345,6 +11329,20 @@ __metadata:
   bin:
     generate: dist/generate.js
   checksum: 03b03c507424f239a7832e310ffbb35568448f0eebbe19e8caf56b03962ad6c047db8c84c3e7487d1ff9c97b0b00733ac9579c3cc640179d2eeacc5558316237
+  languageName: node
+  linkType: hard
+
+"abi-wan-kanabi-v2@npm:abi-wan-kanabi@^2.1.1":
+  version: 2.2.2
+  resolution: "abi-wan-kanabi@npm:2.2.2"
+  dependencies:
+    ansicolors: ^0.3.2
+    cardinal: ^2.1.1
+    fs-extra: ^10.0.0
+    yargs: ^17.7.2
+  bin:
+    generate: dist/generate.js
+  checksum: 4cf69171887c243a4b5857653f791f3b2042eba93a7326fe03120355cb9f0e29944b91650f96ad739bffad7d8ec9d88c71eeb0debe57df3cd905a1b7c9c2c4a8
   languageName: node
   linkType: hard
 
@@ -25586,19 +25584,19 @@ __metadata:
   linkType: hard
 
 "starknet@npm:^5.25.0":
-  version: 5.26.1
-  resolution: "starknet@npm:5.26.1"
+  version: 5.29.0
+  resolution: "starknet@npm:5.29.0"
   dependencies:
     "@noble/curves": ~1.3.0
     "@scure/base": ~1.1.3
     "@scure/starknet": ~1.0.0
-    abi-wan-kanabi: ^1.0.3
-    abi-wan-kanabi-v2: "npm:abi-wan-kanabi@^2.1.0"
+    abi-wan-kanabi-v1: "npm:abi-wan-kanabi@^1.0.3"
+    abi-wan-kanabi-v2: "npm:abi-wan-kanabi@^2.1.1"
     isomorphic-fetch: ^3.0.0
     lossless-json: ^2.0.8
     pako: ^2.0.4
     url-join: ^4.0.1
-  checksum: a9d4b0569cf4c6ce56c030d5462ae2dbe4843a3e505683b5cf1dcc619321a9c4c90581f46c0f397bc6ba2718ca5c929c269ebe55c67ac60da8512505e7fe777d
+  checksum: ea44bcc7f7db76ef878a557658e289bd25383b6fbcc9d59153dcf1bd0e014f41484fa5faa95e09ce0bd3c5933833fc867fb5be325f5b55ae1531a2cd29915594
   languageName: node
   linkType: hard
 
@@ -26839,7 +26837,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.1, typescript@npm:^5.2.2":
+"typescript@npm:^5.1":
   version: 5.3.3
   resolution: "typescript@npm:5.3.3"
   bin:
@@ -26869,7 +26867,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^5.1#~builtin<compat/typescript>, typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
+"typescript@patch:typescript@^5.1#~builtin<compat/typescript>":
   version: 5.3.3
   resolution: "typescript@patch:typescript@npm%3A5.3.3#~builtin<compat/typescript>::version=5.3.3&hash=5da071"
   bin:
