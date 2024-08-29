@@ -30,7 +30,7 @@ export interface IProposal {
   space: { id: string; name: string };
 }
 
-const endpoint = process.env.SNAPSHOT_X_ENDPOINT!;
+const endpoint = 'https://api.snapshot.box/';
 
 export const graphqlClientSnapshotX = new GraphQLClient(endpoint, {
   headers: {
