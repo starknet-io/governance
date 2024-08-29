@@ -387,10 +387,10 @@ export function Page() {
             </Text>
             <Link
               size="small"
-              href="https://snapshotx.xyz/#/sn:0x05702362b68a350c1cae8f2a529d74fdbb502369ddcebfadac7e91da37636947"
+              href="https://snapshot.box/#/sn:0x009fedaf0d7a480d21a27683b0965c0f8ded35b3f1cac39827a25a06a8a682a4"
               isExternal
             >
-              SnapshotX
+              Snapshot X
             </Link>
           </Flex>
         </Box>
