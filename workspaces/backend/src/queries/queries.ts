@@ -6,7 +6,7 @@ export const GET_PROPOSALS_QUERY = gql`
     $orderDirection: OrderDirection!
   ) {
     proposals(
-      where: { space: $space }
+      where: { space: $space, cancelled: false }
       orderDirection: $orderDirection
       orderBy: start
     ) {
