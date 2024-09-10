@@ -68,8 +68,8 @@ export const GET_PROPOSAL_QUERY = gql`
 `;
 
 export const GET_VOTES_QUERY = gql(`
-  query VoteQuery($where: Vote_filter) {
-    votes(where: $where) {
+  query VoteQuery($where: Vote_filter, $first: Int = 50) {
+    votes(where: $where, first: $first) {
       choice
       proposal
       tx
