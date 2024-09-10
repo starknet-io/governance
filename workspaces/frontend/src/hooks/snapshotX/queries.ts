@@ -51,6 +51,7 @@ export const GET_PROPOSAL_QUERY = gql`
       scores_2
       scores_3
       completed
+      strategies_indicies
       vetoed
       executed
       cancelled
