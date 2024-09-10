@@ -190,7 +190,7 @@ export function Page() {
       const preparedStrategies = await prepareStrategiesForSignature(
         space.data.strategies as string[],
         strategiesMetadata as any[],
-        space?.data?.strategies_indicies || [],
+        data?.proposal?.strategies_indicies || space?.data?.strategies_indicies || [],
       );
 
       let convertedChoice = 1;
