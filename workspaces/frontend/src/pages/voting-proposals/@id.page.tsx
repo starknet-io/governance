@@ -188,7 +188,7 @@ export function Page() {
         }),
       );
       const preparedStrategies = await prepareStrategiesForSignature(
-        data?.proposal?.strategies as string[],
+        data?.proposal?.strategies || space.data.strategies as string[],
         strategiesMetadata as any[],
         data?.proposal?.strategies_indicies || space?.data?.strategies_indicies || [],
       );
