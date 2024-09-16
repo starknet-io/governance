@@ -188,9 +188,11 @@ export function Page() {
         }),
       );
       const preparedStrategies = await prepareStrategiesForSignature(
-        data?.proposal?.strategies || space.data.strategies as string[],
+        data?.proposal?.strategies || (space.data.strategies as string[]),
         strategiesMetadata as any[],
-        data?.proposal?.strategies_indicies || space?.data?.strategies_indicies || [],
+        data?.proposal?.strategies_indicies ||
+          space?.data?.strategies_indicies ||
+          [],
       );
 
       let convertedChoice = 1;
@@ -447,7 +449,9 @@ export function Page() {
       return 0;
     }
     const allVoters = stats?.totalVoters || 0;
-    const total = ((pastVotes?.length * 1.0) / allVoters) * 100.0;
+    console.log(allVoters, data?.proposal?.vote_count)
+    const total =
+      (((data?.proposal?.vote_count || 0) * 1.0) / allVoters) * 100.0;
     return `${total.toFixed(4)}%`;
   };
 

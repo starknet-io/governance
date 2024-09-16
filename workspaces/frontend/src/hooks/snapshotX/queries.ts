@@ -63,6 +63,7 @@ export const GET_PROPOSAL_QUERY = gql`
         body
         discussion
       }
+      vote_count
     }
   }
 `;

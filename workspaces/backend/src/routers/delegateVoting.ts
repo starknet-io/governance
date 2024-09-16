@@ -15,7 +15,7 @@ const graphQLClientL2 = new GraphQLClient(
   },
 );
 
-const graphQLClient = new GraphQLClient('https://api-1.snapshotx.xyz/graphql', {
+const graphQLClient = new GraphQLClient('https://api.snapshot.box/graphql', {
   headers: {
     'Content-Type': 'application/json',
   },
