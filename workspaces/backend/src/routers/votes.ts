@@ -74,10 +74,11 @@ export const votesRouter = router({
     .input(
       z.object({
         proposalId: z.string(),
+        limit: z.number().optional(),
       }),
     )
     .query(async (opts) => {
-      const { proposalId } = opts.input;
+      const { proposalId, limit } = opts.input;
 
       // Fetch comments that are not null or empty and match the proposalId
       const comments = await db.query.votes.findMany({
@@ -86,7 +87,7 @@ export const votesRouter = router({
           not(eq(votes.comment, ''))
         ),
         orderBy: (votes, { desc }) => [desc(votes.createdAt)],
-        limit: 100,
+        limit: limit || 100,
       });
 
       if (!comments) {
