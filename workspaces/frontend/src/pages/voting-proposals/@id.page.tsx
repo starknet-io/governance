@@ -449,7 +449,6 @@ export function Page() {
       return 0;
     }
     const allVoters = stats?.totalVoters || 0;
-    console.log(allVoters, data?.proposal?.vote_count)
     const total =
       (((data?.proposal?.vote_count || 0) * 1.0) / allVoters) * 100.0;
     return `${total.toFixed(4)}%`;
