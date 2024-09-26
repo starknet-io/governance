@@ -73,6 +73,18 @@ const delegateInterests: Record<string, string> = {
   defi: "DeFi",
 };
 
+const formatVotes = (votes, proposals) => {
+  return votes.map((vote) => {
+    const foundProposal = proposals.find((prop) => prop.id === vote.proposal);
+    return {
+      ...vote,
+      title: foundProposal?.title,
+      votePreference: vote.choice,
+      voteCount: vote.vp,
+    };
+  });
+};
+
 // Extract this to some constants file
 export const MINIMUM_TOKENS_FOR_DELEGATION = 0;
 
@@ -244,10 +256,24 @@ export function Page() {
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY,
   });
 
-  const { data: votesData, loading: votesLoading } = useVotes({
-    voter: delegateAddress,
+  const formattedL1Address = ethAddress
+    ? ethers.utils.getAddress(ethAddress)
+    : null;
+  const formattedL2Address = starknetAddress
+    ? getChecksumAddress(starknetAddress).toLowerCase()
+    : null;
+
+  const { data: votesDataL1, loading: votesLoadingL1 } = useVotes({
+    voter: formattedL1Address,
     skipField: "voter",
   });
+
+  const { data: votesDataL2, loading: votesLoadingL2 } = useVotes({
+    voter: formattedL2Address,
+    skipField: "voter",
+  });
+
+  const { data: allProposals, loading: loadingProposals } = useProposals();
 
   const { data: votingPower, isLoading: isLoadingVotingPower } = useVotingPower(
     {
@@ -282,9 +308,12 @@ export function Page() {
   const receiverDataL2 = useStarknetBalance({
     starknetAddress: starknetAddress,
   });
-
-  const allVotes = delegateResponse?.data?.pastVotes || [];
-
+  const oldVotes = delegateResponse?.data?.pastVotes || [];
+  const l1Votes =
+    formatVotes(votesDataL1?.votes || [], allProposals || []) || [];
+  const l2Votes =
+    formatVotes(votesDataL2?.votes || [], allProposals || []) || [];
+  const allVotes = [...l1Votes, ...l2Votes, ...oldVotes];
   const isL1Delegation = primaryWallet?.id === ethWallet?.id;
   const isL2Delegation = primaryWallet?.id === starknetWallet?.id;
 
