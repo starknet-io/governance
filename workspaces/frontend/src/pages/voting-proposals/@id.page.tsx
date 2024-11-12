@@ -451,7 +451,7 @@ export function Page() {
     const allVoters = stats?.totalVoters || 0;
     const total =
       (((data?.proposal?.vote_count || 0) * 1.0) / allVoters) * 100.0;
-    return `${total.toFixed(4)}%`;
+    return `${total.toFixed(2)}%`;
   };
 
   const formatPercentageForVotingPower = () => {
@@ -461,7 +461,7 @@ export function Page() {
     const totalVotes = data?.proposal?.scores_total;
     const allVotingPower = stats?.totalVotingPower || 0;
     const total = ((totalVotes * 1.0) / allVotingPower) * 100.0;
-    return `${total.toFixed(7)}%`;
+    return `${total.toFixed(2)}%`;
   };
 
   return (
@@ -911,7 +911,7 @@ export function Page() {
                           }
                           setIsOpen(true);
                         }}
-                        active={vote?.data?.votes?.[0]?.choice === index + 1}
+                        active={false}
                         // @ts-expect-error todo
                         type={choice}
                         label={`${choice}`}
