@@ -16,6 +16,7 @@
     "update-algolia-delegates": "ts-node --transpile-only src/scripts/updateDelegateUsernames.ts",
     "fetch-voting-power": "ts-node --transpile-only src/routers/delegateVoting.ts",
     "process-old-votes": "ts-node --transpile-only src/scripts/fetchAndSaveOldVotes.ts",
+    "delegates-export": "ts-node --transpile-only src/scripts/delegatesExport.ts",
     "migration:generate": "drizzle-kit generate:pg",
     "migration:run": "drizzle-kit push:pg",
     "migration:revert": "drizzle-kit drop"
