@@ -6,6 +6,9 @@ dotenv.config();
 import { GraphQLClient, gql } from 'graphql-request';
 import { db } from '../db/db';
 import { getChecksumAddress } from 'starknet';
+import { eq } from 'drizzle-orm';
+import { oldVotes } from '../db/schema/oldVotes';
+import { delegateVotes } from '../db/schema/delegatesVotes';
 
 /***************************************
  * GraphQL QUERIES
@@ -46,7 +49,7 @@ const graphQLClient = new GraphQLClient(SNAPSHOT_ENDPOINT, {
 });
 
 /***************************************
- * 2) parseChoice: numeric -> textual
+ * 2) parseChoice: numeric -> 'for' | 'against' | 'abstain'
  **************************************/
 function parseChoice(choice: number | undefined): 'for' | 'against' | 'abstain' {
   switch (choice) {
@@ -63,12 +66,11 @@ function parseChoice(choice: number | undefined): 'for' | 'against' | 'abstain' 
 
 /***************************************
  * 3) DB: fetch all delegates
- *    We load "author" so we can get author.username
  **************************************/
 async function fetchAllDelegates() {
   return db.query.delegates.findMany({
     with: {
-      author: true, // includes .username from the users table
+      author: true, // includes .username, .ensName, .ethAddress, .starknetAddress, etc.
     },
   });
 }
@@ -90,60 +92,69 @@ async function fetchVotesForProposal(space: string, proposalIdNum: number) {
     space,
     proposal: proposalIdNum,
   };
-  const data: any = await graphQLClient.request(GET_VOTES_FOR_PROPOSAL_QUERY, variables);
+  const data: any = await graphQLClient.request(
+    GET_VOTES_FOR_PROPOSAL_QUERY,
+    variables,
+  );
   return data?.votes || [];
 }
 
 /***************************************
- * 6) Compare a single vote's address
- *    against a single delegate's addresses
+ * 6) Build a map: normalized address -> delegateId
  **************************************/
-function matchesDelegate(
-  voteAddress: string,
-  addressType: number | undefined,
-  delegate: any,
-): boolean {
-  const { ethAddress, address, starknetAddress } = delegate.author || {};
+function normalizeAddress(address: string, isStarknet: boolean): string {
+  if (!address) return '';
+  try {
+    if (isStarknet) {
+      // Use checksummed address for Starknet
+      return getChecksumAddress(address);
+    } else {
+      // Lowercase for Ethereum
+      return address.toLowerCase();
+    }
+  } catch {
+    // If checksumming fails, fallback
+    return '';
+  }
+}
 
-  // We'll test each possible address
-  const candidateAddresses: { val: string | undefined; isStarknet: boolean }[] = [
-    { val: ethAddress, isStarknet: false },
-    { val: address, isStarknet: false },
-    { val: starknetAddress, isStarknet: true },
-  ];
+function buildAddressMap(delegates: any[]) {
+  // Key: normalized address (Starknet or ETH)
+  // Value: delegateId
+  const addressMap = new Map<string, string>();
 
-  for (const candidate of candidateAddresses) {
-    if (!candidate.val) continue;
+  for (const delegate of delegates) {
+    const { id, author } = delegate;
+    if (!author) continue;
 
-    if (addressType === 0 && candidate.isStarknet) {
-      // Starknet -> compare checksummed
-      try {
-        const c1 = getChecksumAddress(voteAddress);
-        const c2 = getChecksumAddress(candidate.val);
-        if (c1 === c2) return true;
-      } catch {
-        // If getChecksumAddress fails, skip
-      }
-    } else if (addressType !== 0 && !candidate.isStarknet) {
-      // Ethereum -> case-insensitive compare
-      if (voteAddress.toLowerCase() === candidate.val.toLowerCase()) {
-        return true;
-      }
+    // Possibly multiple addresses
+    const ethAddr = author.ethAddress || author.address; // fallback for ETH
+    const starknetAddr = author.starknetAddress;
+
+    // ETH -> store as lowercase
+    if (ethAddr) {
+      const normEth = normalizeAddress(ethAddr, false);
+      if (normEth) addressMap.set(normEth, id);
+    }
+
+    // Starknet -> store checksummed
+    if (starknetAddr) {
+      const normSn = normalizeAddress(starknetAddr, true);
+      if (normSn) addressMap.set(normSn, id);
     }
   }
 
-  return false;
+  return addressMap;
 }
 
 /***************************************
  * 6.5) Convert raw 1e18-based value to float
- *     and round to 2 decimals
  **************************************/
 function formatUnits(rawValue: string | number | bigint, decimals = 18): number {
   const valueStr = typeof rawValue === 'string' ? rawValue : rawValue.toString();
   const valueBigInt = BigInt(valueStr);
 
-  // If length of number is <= decimals, we need to pad zeros for integer part
+  // If length of number is <= decimals, pad zeros
   const str = valueBigInt.toString();
   if (str.length <= decimals) {
     const padZeros = '0'.repeat(decimals - str.length);
@@ -167,8 +178,10 @@ export async function logAllVotes() {
     const allDelegates = await fetchAllDelegates();
     console.log(`Fetched ${allDelegates.length} delegates from DB.\n`);
 
-    // 2a. Create a map: delegateId -> entire delegate object
-    //     so we can easily look up username later.
+    // 2a. Build a single map for fast address -> delegateId lookups
+    const addressMap = buildAddressMap(allDelegates);
+
+    // 2b. Also keep a quick map from delegateId -> delegate record
     const delegateMapById = new Map<string, (typeof allDelegates)[number]>();
     for (const delegate of allDelegates) {
       delegateMapById.set(delegate.id, delegate);
@@ -178,16 +191,14 @@ export async function logAllVotes() {
     const proposals = await fetchAllProposals(space);
     console.log(`Found ${proposals.length} proposals in space "${space}".\n`);
 
-    // We'll store *all* rows here
-    const allRows: {
+    // We'll store all new (Snapshot) votes here
+    const allNewVotes: {
       delegateId: string | null;
+      proposalId: string;
+      voteOption: 'for' | 'against' | 'abstain';
+      votingPower: number;
       address: string;
       addressType: number | undefined;
-      proposalId: string;
-      voteOption: string;
-      votingPower: number;
-      comment: string | null;
-      created: number | null;
     }[] = [];
 
     // 4. For each proposal, fetch votes
@@ -199,90 +210,126 @@ export async function logAllVotes() {
       }
 
       const rawVotes = await fetchVotesForProposal(space, proposalIdNum);
-
       for (const rawVote of rawVotes) {
-        const { choice, proposal, voter, vp, created } = rawVote;
+        const { choice, proposal, voter, vp } = rawVote;
         const voteOption = parseChoice(choice);
 
-        // voter { id, address_type, vote_count }
+        // Voter info
         const voteAddress = voter?.id || '';
         const addressType = voter?.address_type;
+        const isStarknet = addressType === 0;
 
-        // Attempt to match with a delegate from DB
-        let matchedDelegateId: string | null = null;
+        // Single map lookup -> delegateId
+        const norm = normalizeAddress(voteAddress, isStarknet);
+        const matchedDelegateId = addressMap.get(norm) || null;
 
-        // Naive approach: loop all delegates
-        for (const delegate of allDelegates) {
-          if (matchesDelegate(voteAddress, addressType, delegate)) {
-            matchedDelegateId = delegate.id;
-            break; // stop after first match
-          }
-        }
-
-        // Round to 2 decimals
+        // Convert vp from 1e18
         const rawFloat = formatUnits(vp || '0', 18);
         const votingPower = Math.round(rawFloat * 100) / 100;
 
-        allRows.push({
+        allNewVotes.push({
           delegateId: matchedDelegateId,
-          address: voteAddress,
-          addressType,
           proposalId: proposal?.toString() || proposalIdNum.toString(),
           voteOption,
           votingPower,
-          comment: null,
-          created,
+          address: voteAddress,
+          addressType,
         });
       }
     }
 
-    // 5. Filter out votes where delegateId === null
-    const matchedVotes = allRows.filter((row) => row.delegateId !== null);
+    // 5. Filter out new votes where delegateId === null
+    const matchedNewVotes = allNewVotes.filter((v) => v.delegateId !== null);
 
-    // 6. Group by delegate ID
-    //    Key = delegateId, Value = array of votes
-    const votesByDelegate = new Map<string, typeof matchedVotes>();
-    for (const row of matchedVotes) {
-      // row.delegateId is not null here, so we can use non-null assertion
-      const dId = row.delegateId as string;
-      if (!votesByDelegate.has(dId)) {
-        votesByDelegate.set(dId, []);
+    // 6. Group matched new votes by delegate ID
+    const newVotesByDelegate = new Map<string, typeof matchedNewVotes>();
+    for (const v of matchedNewVotes) {
+      const dId = v.delegateId as string;
+      if (!newVotesByDelegate.has(dId)) {
+        newVotesByDelegate.set(dId, []);
       }
-      votesByDelegate.get(dId)!.push(row);
+      newVotesByDelegate.get(dId)!.push(v);
     }
 
-    // 7. Output
+    // 7. For each matched delegate, merge old & new votes in a single array
     console.log(
-      `\nFound ${matchedVotes.length} total matched votes for delegates. Grouping by delegate...`,
+      `\nFound ${matchedNewVotes.length} total matched new votes. Now retrieving old votes & merging...\n`,
     );
 
-    // We'll display each delegate's votes in a table
-    for (const [delegateId, votes] of votesByDelegate.entries()) {
-      // Lookup the delegate record so we can see the username
+    for (const [delegateId, newVotes] of newVotesByDelegate.entries()) {
+      // The delegate record
       const delegateRecord = delegateMapById.get(delegateId);
-      const username = delegateRecord?.author?.username || delegateRecord?.author?.ensName || delegateId;
+      const username =
+        delegateRecord?.author?.username ||
+        delegateRecord?.author?.ensName ||
+        delegateId;
 
-      console.log(`\nDelegate: ${username} | Total Votes: ${votes.length}`);
+      // 1) Fetch old (legacy) votes
+      const legacyVotes = await db.query.oldVotes.findMany({
+        where: eq(oldVotes.delegateId, delegateId),
+      });
+
+      // 2) Transform old votes to the same shape
+      const oldTransformed = legacyVotes.map((lv) => ({
+        delegateId,
+        proposalId: lv.proposalId || '',
+        voteOption: parseChoice(lv.votePreference),
+        votingPower: lv.voteCount ?? 0,
+        // We'll just store the DB's ethAddress or fallback for old votes
+        // Because old = Ethereum
+        address:
+          delegateRecord?.author?.ethAddress ||
+          delegateRecord?.author?.address ||
+          '0x???',
+        addressType: 1, // indicates Ethereum
+      }));
+
+      // 3) Merge new + old
+      const combinedVotes = [...newVotes, ...oldTransformed];
+
+      // 4) Calculate total breakdown across old + new
+      const totalFor = combinedVotes.filter((v) => v.voteOption === 'for').length;
+      const totalAgainst = combinedVotes.filter((v) => v.voteOption === 'against').length;
+      const totalAbstain = combinedVotes.filter((v) => v.voteOption === 'abstain').length;
+
+      // 5) Fetch voting power from delegateVotes table for L1 / L2
+      const dvRecord = await db.query.delegateVotes.findFirst({
+        where: eq(delegateVotes.delegateId, delegateId),
+      });
+      const l1Power = dvRecord?.votingPowerLayerOne || 0;
+      const l2Power = dvRecord?.votingPowerLayerTwo || 0;
+
+      // 6) Print summary info
+      console.log(`\nDelegate: ${username}`);
+      console.log(
+        `Voting Power L1: ${l1Power} | Voting Power L2: ${l2Power} | Combined Votes: For=${totalFor} Against=${totalAgainst} Abstain=${totalAbstain} | Total Combined Votes: ${combinedVotes.length}`,
+      );
+
+      // 7) Print a single table with all merged votes
+      const ethAddress = delegateRecord?.author?.ethAddress || delegateRecord?.author?.address || '';
+      const starknetAddress = delegateRecord?.author?.starknetAddress || '';
+
+      console.log('\nAll Votes (Old + New):');
       console.table(
-        votes.map((v) => ({
-          address: v.address,
-          addressType: v.addressType === 0 ? 'Starknet' : 'Ethereum',
-          proposalId: v.proposalId,
-          voteOption: v.voteOption,
-          votingPower: v.votingPower,
-          created: v.created,
+        combinedVotes.map((cv) => ({
+          proposalId: cv.proposalId,
+          voteOption: cv.voteOption,
+          votingPower: cv.votingPower,
+          addressType: cv.addressType === 0 ? 'Starknet' : 'Eth',
+          ethAddress,
+          starknetAddress,
         })),
       );
     }
 
-    console.log('\nDone logging votes per matched delegate!');
+    console.log('\nDone logging combined votes per matched delegate!');
   } catch (error) {
     console.error('Error in logAllVotes:', error);
     process.exit(1);
   }
 }
 
-/** Optional self-run if invoked directly */
+/** Optional: self-run if invoked directly */
 if (require.main === module) {
   logAllVotes()
     .then(() => process.exit(0))
