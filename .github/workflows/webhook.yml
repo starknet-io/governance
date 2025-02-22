@@ -21,7 +21,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: europe-west9-docker.pkg.dev/governance-development/webhook/dev
+          images: europe-west9-docker.pkg.dev/gov-hub-450611/webhook/dev
           flavor: latest=false
           tags: |
             type=ref,suffix=-{{sha}},event=branch
@@ -30,7 +30,7 @@ jobs:
         id: auth
         with:
           token_format: access_token
-          project_id: 'governance-development'
+          project_id: 'gov-hub-450611'
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
       - name: Login to GAR
@@ -61,7 +61,7 @@ jobs:
         id: auth
         with:
           token_format: access_token
-          project_id: 'governance-development'
+          project_id: 'gov-hub-450611'
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
       - name: 'Set up Cloud SDK'
