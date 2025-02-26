@@ -21,7 +21,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: europe-west9-docker.pkg.dev/governance-production/cron/prod
+          images: europe-west9-docker.pkg.dev/gov-hub-prod/cron/prod
           flavor: latest=false
           tags: |
             type=ref,event=tag
@@ -30,7 +30,7 @@ jobs:
         id: auth
         with:
           token_format: access_token
-          project_id: 'governance-production'
+          project_id: 'gov-hub-prod'
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS_PROD }}'
 
       - name: Login to GAR
@@ -58,7 +58,7 @@ jobs:
         id: auth
         with:
           token_format: access_token
-          project_id: 'governance-production'
+          project_id: 'gov-hub-prod'
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS_PROD }}'
 
       - name: 'Set up Cloud SDK'
