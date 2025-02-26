@@ -80,6 +80,8 @@ import { useStarknetBalance } from "../../hooks/starknet/useStarknetBalance";
 import { getChecksumAddress } from "starknet";
 import { useProposal } from "../../hooks/snapshotX/useProposal";
 import { useActiveStarknetAccount } from "../../hooks/starknet/useActiveStarknetAccount";
+import pkg from "file-saver";
+const { saveAs } = pkg;
 
 export function Page() {
   const pageContext = usePageContext();
@@ -164,6 +166,33 @@ export function Page() {
   const activeStarknetWallet = useActiveStarknetAccount();
   const [isWrongAccount, setIsWrongAccount] = useState<boolean>(false);
   const saveVote = trpc.votes.saveVote.useMutation(); // Define the TRPC mutation
+
+  const downloadCsvDetailed = trpc.delegates.generateDetailedCSV.useMutation(
+    {},
+  );
+  const onDownloadNotConnected = () => {
+    return user ? null : () => setHelpMessage("connectWalletMessage");
+  };
+  const handleDownloadDetailed = async () => {
+    if (!user) {
+      onDownloadNotConnected();
+    } else {
+      try {
+        const data = await downloadCsvDetailed.mutateAsync({
+          proposalId: pageContext.routeParams!.id,
+        });
+        // Convert the CSV string to a Blob
+        const blob = new Blob([data], { type: "text/csv" });
+        saveAs(
+          blob,
+          `delegates_for_proposal_${pageContext.routeParams!.id}.csv`,
+        );
+        console.log(blob);
+      } catch (error) {
+        console.error("Error downloading the CSV file:", error);
+      }
+    }
+  };
 
   async function handleVote(choice: number, reason?: string) {
     try {
@@ -1024,6 +1053,11 @@ export function Page() {
                     </Box>
                   </SimpleGrid>
                 </Box>
+                <button onClick={handleDownloadDetailed}>
+                  <Text variant="bodySmallStrong" fontWeight={"700"}>
+                    Download CSV
+                  </Text>
+                </button>
                 <Divider
                   mb="standard.2xl"
                   mt="standard.2xl"
