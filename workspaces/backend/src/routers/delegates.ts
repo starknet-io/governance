@@ -23,6 +23,7 @@ import { delegateVotes } from '../db/schema/delegatesVotes';
 import { socials } from '../db/schema/socials';
 import { profanity } from '@2toad/profanity';
 import { getChecksumAddress } from 'starknet';
+import { exportVotesCSV } from '../scripts/delegatesExport';
 
 const delegateInsertSchema = createInsertSchema(delegates);
 
@@ -128,6 +129,20 @@ export const delegateRouter = router({
 
       return insertedDelegateRecord;
     }),
+  generateDetailedCSV: protectedProcedure
+    .input(
+      z.object({
+        proposalId: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      // 3. We'll use the specific proposal ID provided
+      const proposalIdNum = parseInt(opts.input.proposalId, 10);
+      if (Number.isNaN(proposalIdNum)) {
+        throw new Error('Invalid proposal ID');
+      }
+      return exportVotesCSV(proposalIdNum);
+    }),
   generateDelegatesCSV: protectedProcedure.mutation(async (opts) => {
     // Fetch statistics
     const dashboardStats = await db.query.stats.findFirst({});
@@ -143,10 +158,14 @@ export const delegateRouter = router({
     let csvContent = '';
     csvContent +=
       'L2 Delegated, L1 Delegated, Self Delegated, Total Voting Power, Total Voters\n';
-    csvContent += `${Math.floor(statsData.l2Delegated)}, ${Math.floor(statsData.l1Delegated)}, ${
-      (statsData.selfDelegatedTotal * 100.0 /
-      (statsData.l2Delegated + statsData.l1Delegated || 1)).toFixed(2)
-    }%, ${Math.floor(statsData.totalVotingPower)}, ${statsData.totalVoters}\n`;
+    csvContent += `${Math.floor(statsData.l2Delegated)}, ${Math.floor(
+      statsData.l1Delegated,
+    )}, ${(
+      (statsData.selfDelegatedTotal * 100.0) /
+      (statsData.l2Delegated + statsData.l1Delegated || 1)
+    ).toFixed(2)}%, ${Math.floor(statsData.totalVotingPower)}, ${
+      statsData.totalVoters
+    }\n`;
     csvContent += '\n'; // Empty line for separation
 
     // Prepare headers for delegates section

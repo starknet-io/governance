@@ -22,7 +22,7 @@ const graphQLClient = new GraphQLClient('https://api.snapshot.box/graphql', {
 });
 
 const L1_ENDPOINT =
-  'https://api.studio.thegraph.com/query/23545/starknet-delegates/version/latest';
+  'https://api.studio.thegraph.com/query/23545/delegates/version/latest';
 
 function getUrl(uri: string) {
   const IPFS_GATEWAY: string =
