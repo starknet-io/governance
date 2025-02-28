@@ -67,4 +67,4 @@ jobs:
           version: '>= 363.0.0'
 
       - name: 'deploy'
-        run: 'gcloud compute instances update-container cron --zone=europe-west9-c --container-image europe-west9-docker.pkg.dev/governance-development/cron/dev:${{ env.tag }}'
+        run: 'gcloud compute instances update-container cron --zone=europe-west9-b --container-image europe-west9-docker.pkg.dev/gov-hub-450611/cron/dev:${{ env.tag }}'
