@@ -37,7 +37,7 @@
     "remark-gfm": "^3.0.0",
     "remark-slate": "^1.8.6",
     "slate": "^0.94.1",
-    "slate-history": "^0.93.0",
+    "slate-history": "^0.110.3",
     "slate-hyperscript": "^0.77.0",
     "slate-md-serializer": "^5.5.4",
     "slate-react": "^0.97.2",
