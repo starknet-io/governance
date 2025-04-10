@@ -21,7 +21,7 @@
     "@dnd-kit/utilities": "^3.2.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "aws-sdk": "^2.1451.0",
+    "aws-sdk": "^2.1692.0",
     "concurrently": "^8.2.0",
     "eslint": "^8.46.0",
     "eslint-plugin-react": "^7.33.1",
