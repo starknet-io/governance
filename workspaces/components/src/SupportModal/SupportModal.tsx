@@ -1,8 +1,4 @@
-import {
-  Button,
-  Flex,
-  Stack,
-} from "@chakra-ui/react";
+import { Button, Flex, Stack } from "@chakra-ui/react";
 import {
   StarknetCommunityIcon,
   StarknetIcon,
@@ -36,9 +32,8 @@ export const SupportModal = ({ isOpen = false, onClose }: Props) => {
       <>
         <Stack spacing="standard.xl">
           <Text variant="medium">
-            Check out to following links to learn more about Starknet and the
-            Starknet ecosystem, further engage in discussions, search for
-            events near you, and ask for Starknet support.
+            Check out the following links to learn more about Starknet, search
+            for events near you and engage in community discussions.
           </Text>
           {/* <Text variant="medium">
             The first thing you should know is that we are decentralized. This
