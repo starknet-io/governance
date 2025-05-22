@@ -30,12 +30,12 @@ const homeLinks = [
       "A decentralized network that strives to evolve over time needs to have progressively evolving decentralized governance mechanisms to support protocol upgrades.",
     link: "/learn/starknet's_progressive_governance",
   },
-  {
-    title: "Wrap STRK to vSTRK to vote",
-    description:
-      "In order to vote or to designate a delegate to vote for you on Starknet, you need to wrap STRK as vSTRK using the Governance hub. You can unwrap anytime.",
-    link: "/learn/how_to_wrap_strk_and_unwrap_vstrk",
-  },
+  // {
+  //   title: "Wrap STRK to vSTRK to vote",
+  //   description:
+  //     "In order to vote or to designate a delegate to vote for you on Starknet, you need to wrap STRK as vSTRK using the Governance hub. You can unwrap anytime.",
+  //   link: "/learn/how_to_wrap_strk_and_unwrap_vstrk",
+  // },
   {
     title: "How to delegate voting power",
     description:
@@ -105,7 +105,7 @@ export const LearnBanner = () => {
           <Heading variant="h2" size="3xl">
             {data.title}
           </Heading>
-          <Flex
+          {/* <Flex
             fontSize="12px"
             lineHeight="20px"
             fontWeight={500}
@@ -126,7 +126,7 @@ export const LearnBanner = () => {
             </Flex>
             <Text>•</Text>
             <Text>{data.author.date}</Text>
-          </Flex>
+          </Flex> */}
         </Box>
         <Box>
           <Heading

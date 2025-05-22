@@ -292,7 +292,7 @@ export function Page() {
                   }
                 />
               </Stat.Root> */}
-                <Username
+                {/* <Username
                   address={selectedPage?.author?.address}
                   size="condensed"
                   src={
@@ -313,7 +313,7 @@ export function Page() {
                 />
                 <Text variant="small" color="content.default.default">
                   •
-                </Text>
+                </Text> */}
 
                 <Stat.Root>
                   <Stat.Date date={selectedPage?.createdAt} />
