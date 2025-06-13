@@ -34,8 +34,11 @@ import {
   useL1StarknetDelegationDelegates,
 } from "../../../wagmi/L1StarknetDelegation";
 import { useBalanceData } from "src/utils/hooks";
-import { formatVotingPower, hasPermission } from "src/utils/helpers";
-import { truncateAddress } from "@yukilabs/governance-components/src/utils";
+import { hasPermission } from "src/utils/helpers";
+import {
+  formatVotesAmount,
+  truncateAddress,
+} from "@yukilabs/governance-components/src/utils";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import * as ProfilePageLayout from "../../../components/ProfilePageLayout/ProfilePageLayout";
 import { BackButton } from "src/components/Header/BackButton";
@@ -286,14 +289,11 @@ export function Page() {
       address: starknetAddress,
     });
 
-  const totalVotingPower = formatVotingPower(
+  const displayFormattedVotingPowerL1 = formatVotesAmount(votingPower);
+  const displayFormattedVotingPowerL2 = formatVotesAmount(votingPowerL2);
+  const displayFormattedTotalVotingPower = formatVotesAmount(
     (votingPower || 0) + (votingPowerL2 || 0),
   );
-  const formattedVotingPowerL1 = formatVotingPower(votingPower);
-  const formattedVotingPowerL2 = formatVotingPower(votingPowerL2);
-  const commifiedVotingPowerL1 = ethers.utils.commify(formattedVotingPowerL1);
-  const commifiedVotingPowerL2 = ethers.utils.commify(formattedVotingPowerL2);
-  const totalValue = ethers.utils.commify(totalVotingPower);
 
   const gqlResponseProposalsByUser = trpc.proposals.getProposals.useQuery();
 
@@ -920,7 +920,7 @@ export function Page() {
             <SummaryItems.Item
               isLoading={isLoadingVotingPower || isLoadingVotingPowerL2}
               label="Voting Power"
-              value={`${totalValue} STRK` || "0 STRK"}
+              value={`${displayFormattedTotalVotingPower} STRK` || "0 STRK"}
             />
             <SummaryItems.Item
               isLoading={isLoadingGqlResponse}
@@ -1029,7 +1029,7 @@ export function Page() {
               isTruncated={!!delegate?.author?.starknetAddress}
               label="Starknet address"
               value={delegate?.author?.starknetAddress || "None"}
-              additionalValue={commifiedVotingPowerL2 || "0"}
+              additionalValue={displayFormattedVotingPowerL2 || "0"}
               isExtendable={true}
             />
             <SummaryItems.Item
@@ -1038,7 +1038,7 @@ export function Page() {
               isTruncated={!!ethAddress}
               label="Ethereum address"
               value={ethAddress || "None"}
-              additionalValue={commifiedVotingPowerL1 || "0"}
+              additionalValue={displayFormattedVotingPowerL1 || "0"}
               isExtendable={true}
             />
             <SummaryItems.Item
