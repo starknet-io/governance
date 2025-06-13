@@ -24,7 +24,7 @@ import {
   WrongAccountOrNetworkModal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useBalanceData } from "src/utils/hooks";
 import { ethers } from "ethers";
 import { useAccount, useWaitForTransaction } from "wagmi";
@@ -48,6 +48,7 @@ import { useStarknetBalance } from "../hooks/starknet/useStarknetBalance";
 import { findMatchingWallet } from "../utils/helpers";
 import { useActiveStarknetAccount } from "../hooks/starknet/useActiveStarknetAccount";
 import { getChecksumAddress } from "starknet";
+import { useDebouncedCallback } from "use-debounce";
 
 export const delegateNames = {
   cairo_dev: "Cairo Dev",
@@ -223,6 +224,7 @@ export function Delegates({
   const [statusDescription, setStatusDescription] = useState<string>("");
   const [allDelegates, setAllDelegates] = useState([]);
   const [hasMoreDelegates, setHasMoreDelegates] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const { isLoading, writeAsync } = useL1StarknetDelegationDelegate({
     address: import.meta.env.VITE_APP_STARKNET_REGISTRY! as `0x${string}`,
@@ -487,15 +489,99 @@ export function Delegates({
           setHasMoreDelegates(true);
         }
       }
+      setIsLoadingMore(false);
     }
   }, [delegates.data, delegates.isLoading]);
 
   const fetchMoreData = () => {
+    if (isLoadingMore || delegates.isLoading) return;
+
+    setIsLoadingMore(true);
     setFiltersState((prevState) => {
       const newOffset = prevState.offset + prevState.limit;
       return { ...prevState, offset: newOffset };
     });
   };
+
+  // Check if more data should be loaded when content doesn't fill viewport
+  useEffect(() => {
+    if (
+      hasMoreDelegates &&
+      !disableFetch &&
+      allDelegates.length > 0 &&
+      !delegates.isLoading
+    ) {
+      const checkIfMoreDataNeeded = () => {
+        // Check if the document height is smaller than the viewport height
+        const documentHeight = document.documentElement.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+
+        // Add a small buffer (50px) to account for potential layout shifts
+        const isScrollable = documentHeight > viewportHeight + 50;
+        const isAtBottom = scrollTop + viewportHeight >= documentHeight - 100;
+
+        // If content doesn't fill the viewport and we have more data to load
+        // OR if we're at the bottom and there's more data
+        if (
+          (!isScrollable || isAtBottom) &&
+          hasMoreDelegates &&
+          !delegates.isLoading
+        ) {
+          fetchMoreData();
+        }
+      };
+
+      checkIfMoreDataNeeded();
+      // Check after a short delay to ensure DOM is updated
+      const timeoutId = setTimeout(checkIfMoreDataNeeded, 200);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [
+    allDelegates.length,
+    hasMoreDelegates,
+    disableFetch,
+    delegates.isLoading,
+    delegates.data,
+  ]);
+
+  const debouncedFetchMoreData = useDebouncedCallback(fetchMoreData, 100);
+
+  // Add scroll event listener to handle cases where InfiniteScroll doesn't trigger
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        hasMoreDelegates &&
+        !disableFetch &&
+        !delegates.isLoading &&
+        !isLoadingMore
+      ) {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const viewportHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+
+        // Trigger loading when user is near the bottom (within 200px)
+        if (scrollTop + viewportHeight >= documentHeight - 200) {
+          debouncedFetchMoreData();
+        }
+      }
+    };
+
+    // Add scroll listener
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [
+    hasMoreDelegates,
+    disableFetch,
+    delegates.isLoading,
+    isLoadingMore,
+    debouncedFetchMoreData,
+  ]);
 
   const { isMobile } = useIsMobile();
 
