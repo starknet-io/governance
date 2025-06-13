@@ -24,7 +24,7 @@ import {
   WrongAccountOrNetworkModal,
 } from "@yukilabs/governance-components";
 import { trpc } from "src/utils/trpc";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect, useCallback } from "react";
 import { useBalanceData } from "src/utils/hooks";
 import { ethers } from "ethers";
 import { useAccount, useWaitForTransaction } from "wagmi";
@@ -493,7 +493,7 @@ export function Delegates({
     }
   }, [delegates.data, delegates.isLoading]);
 
-  const fetchMoreData = () => {
+  const fetchMoreData = useCallback(() => {
     if (isLoadingMore || delegates.isLoading) return;
 
     setIsLoadingMore(true);
@@ -501,10 +501,10 @@ export function Delegates({
       const newOffset = prevState.offset + prevState.limit;
       return { ...prevState, offset: newOffset };
     });
-  };
+  }, [isLoadingMore, delegates.isLoading]);
 
   // Check if more data should be loaded when content doesn't fill viewport
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (
       hasMoreDelegates &&
       !disableFetch &&
@@ -534,9 +534,6 @@ export function Delegates({
       };
 
       checkIfMoreDataNeeded();
-      // Check after a short delay to ensure DOM is updated
-      const timeoutId = setTimeout(checkIfMoreDataNeeded, 200);
-      return () => clearTimeout(timeoutId);
     }
   }, [
     allDelegates.length,
@@ -544,37 +541,29 @@ export function Delegates({
     disableFetch,
     delegates.isLoading,
     delegates.data,
+    fetchMoreData,
   ]);
 
   const debouncedFetchMoreData = useDebouncedCallback(fetchMoreData, 100);
 
-  // Add scroll event listener to handle cases where InfiniteScroll doesn't trigger
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        hasMoreDelegates &&
-        !disableFetch &&
-        !delegates.isLoading &&
-        !isLoadingMore
-      ) {
-        const scrollTop =
-          window.pageYOffset || document.documentElement.scrollTop;
-        const viewportHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
+  // Memoized scroll handler for better performance
+  const handleScroll = useCallback(() => {
+    if (
+      hasMoreDelegates &&
+      !disableFetch &&
+      !delegates.isLoading &&
+      !isLoadingMore
+    ) {
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const viewportHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
 
-        // Trigger loading when user is near the bottom (within 200px)
-        if (scrollTop + viewportHeight >= documentHeight - 200) {
-          debouncedFetchMoreData();
-        }
+      // Trigger loading when user is near the bottom (within 200px)
+      if (scrollTop + viewportHeight >= documentHeight - 200) {
+        debouncedFetchMoreData();
       }
-    };
-
-    // Add scroll listener
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    }
   }, [
     hasMoreDelegates,
     disableFetch,
@@ -582,6 +571,16 @@ export function Delegates({
     isLoadingMore,
     debouncedFetchMoreData,
   ]);
+
+  // Add scroll event listener to handle cases where InfiniteScroll doesn't trigger
+  useEffect(() => {
+    // Add scroll listener
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
 
   const { isMobile } = useIsMobile();
 
