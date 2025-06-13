@@ -546,8 +546,7 @@ export function Delegates({
 
   const debouncedFetchMoreData = useDebouncedCallback(fetchMoreData, 100);
 
-  // Memoized scroll handler for better performance
-  const handleScroll = useCallback(() => {
+  const handleScrollAndResize = useCallback(() => {
     if (
       hasMoreDelegates &&
       !disableFetch &&
@@ -559,8 +558,13 @@ export function Delegates({
       const viewportHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
 
-      // Trigger loading when user is near the bottom (within 200px)
-      if (scrollTop + viewportHeight >= documentHeight - 200) {
+      // Check if we're near the bottom
+      const isNearBottom = scrollTop + viewportHeight >= documentHeight - 200;
+
+      // Check if content doesn't fill viewport
+      const contentDoesntFillViewport = documentHeight <= viewportHeight + 50;
+
+      if (isNearBottom || contentDoesntFillViewport) {
         debouncedFetchMoreData();
       }
     }
@@ -572,15 +576,17 @@ export function Delegates({
     debouncedFetchMoreData,
   ]);
 
-  // Add scroll event listener to handle cases where InfiniteScroll doesn't trigger
+  // Combined useEffect for both scroll and resize events
   useEffect(() => {
-    // Add scroll listener
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScrollAndResize, { passive: true });
+
+    window.addEventListener("resize", handleScrollAndResize, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScrollAndResize);
+      window.removeEventListener("resize", handleScrollAndResize);
     };
-  }, [handleScroll]);
+  }, [handleScrollAndResize]);
 
   const { isMobile } = useIsMobile();
 
