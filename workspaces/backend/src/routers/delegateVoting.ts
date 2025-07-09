@@ -130,7 +130,7 @@ async function getWhitelistStrategy() {
   const query = `
     query spaceQuery($space: String!) {
        space(id: $space) {
-         strategies_indicies
+         strategies_indices
          strategies_parsed_metadata {
           data {
             symbol
@@ -150,7 +150,7 @@ async function getWhitelistStrategy() {
     });
     const strategies = processStrategiesMetadata(
       spaceResponse?.space?.strategies_parsed_metadata,
-      spaceResponse?.space?.strategies_indicies,
+      spaceResponse?.space?.strategies_indices,
     );
 
     const whitelistStrategy = (strategies || []).find(

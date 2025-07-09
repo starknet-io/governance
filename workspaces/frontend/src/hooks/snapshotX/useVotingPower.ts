@@ -58,7 +58,7 @@ export function useVotingPower({
     try {
       const strategiesMetadata = processStrategiesMetadata(
         spaceObj.space.strategies_parsed_metadata,
-        spaceObj.space.strategies_indicies,
+        spaceObj.space.strategies_indices,
       );
 
       const vpData = await getVotingPowerCalculation(
