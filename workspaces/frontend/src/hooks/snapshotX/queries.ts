@@ -51,7 +51,7 @@ export const GET_PROPOSAL_QUERY = gql`
       scores_2
       scores_3
       completed
-      strategies_indicies
+      strategies_indices
       vetoed
       executed
       cancelled
@@ -108,7 +108,7 @@ export const GET_SPACE = gql`
         }
       }
       authenticators
-      strategies_indicies
+      strategies_indices
       strategies_metadata
       authenticators
       metadata {

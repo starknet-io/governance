@@ -127,7 +127,7 @@ export function Page() {
   const space = useSpace();
   const processedStrategies = processStrategiesMetadata(
     space?.data?.strategies_parsed_metadata,
-    space?.data?.strategies_indicies,
+    space?.data?.strategies_indices,
   );
   const parsedVotingStrategies = parseStrategiesMetadata(
     processedStrategies || [],
@@ -219,8 +219,8 @@ export function Page() {
       const preparedStrategies = await prepareStrategiesForSignature(
         data?.proposal?.strategies || (space.data.strategies as string[]),
         strategiesMetadata as any[],
-        data?.proposal?.strategies_indicies ||
-          space?.data?.strategies_indicies ||
+        data?.proposal?.strategies_indices ||
+          space?.data?.strategies_indices ||
           [],
       );
 
