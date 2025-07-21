@@ -46,6 +46,7 @@ import { useHelpMessage } from "../../hooks/HelpMessage";
 import { useStarknetDelegates } from "../../hooks/starknet/useStarknetDelegates";
 import { ethers } from "ethers";
 import VotingPowerComponent from "../../components/VotingPowerComponent/VotingPowerComponent";
+import { formatVotesAmount } from "@yukilabs/governance-components/src/utils";
 
 const starkContract = import.meta.env.VITE_APP_STRK_CONTRACT;
 const vStarkContract = import.meta.env.VITE_APP_VSTRK_CONTRACT;
@@ -389,11 +390,11 @@ export function Page() {
     }
   };
 
-  const totalVotingPower = formatVotingPower(
+  const totalValue = formatVotesAmount(
     (ethAddress ? votingPowerEthereum || 0 : 0) +
       (starknetAddress ? votingPowerStarknet || 0 : 0),
   );
-  const totalValue = ethers.utils.commify(totalVotingPower);
+  // const totalValue = ethers.utils.commify(totalVotingPower);
 
   return (
     <FormLayout>
