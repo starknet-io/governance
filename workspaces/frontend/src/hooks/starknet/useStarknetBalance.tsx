@@ -7,6 +7,7 @@ import { starkProvider } from "../../clients/clients";
 import { validateStarknetAddress } from "../../utils/helpers";
 import { hexToString } from "viem";
 import { useBalance } from "src/renderer/providers/BalanceProvider";
+import { formatVotesAmount } from "@yukilabs/governance-components/src/utils";
 
 const starknetContract = import.meta.env.VITE_APP_VSTRK_CONTRACT as string;
 
@@ -72,7 +73,8 @@ export const useStarknetBalance = ({
       const hex = BigNumber.from(symbol).toHexString();
       const symbolString = hexToString(hex as `0x${string}`);
       const formattedBalance = ethers.utils.formatUnits(rawBalance, decimals);
-      const commifiedBalance = ethers.utils.commify(formattedBalance);
+      const commifiedBalance = formatVotesAmount(formattedBalance);
+      // const commifiedBalance = ethers.utils.commify(formattedBalance);
 
       setBalances((prevBalances) => ({
         ...prevBalances,

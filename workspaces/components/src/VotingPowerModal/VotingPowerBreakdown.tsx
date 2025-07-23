@@ -9,6 +9,7 @@ import { InfoCircleIcon } from "src/Icons";
 import { Tooltip } from "../Tooltip";
 import { formatVotingPower } from "@yukilabs/governance-frontend/src/utils/helpers";
 import VotingPowerComponent from "@yukilabs/governance-frontend/src/components/VotingPowerComponent/VotingPowerComponent";
+import { formatVotesAmount } from "src/utils";
 
 type Props = {
   showBreakdown?: boolean;
@@ -46,7 +47,9 @@ export const VotingPowerBreakdown = ({
   );
   const votingPowerL1 = formatVotingPower(votingPowerEth);
   const votingPowerL2 = formatVotingPower(votingPowerStark);
-  const totalValue = ethers.utils.commify(totalVotingPower);
+  const totalValue = formatVotesAmount(totalVotingPower);
+  // const totalValue = ethers.utils.commify(totalVotingPower);
+
   return (
     <Box border="1px solid" borderColor="border.dividers" borderRadius="4px">
       <Box
