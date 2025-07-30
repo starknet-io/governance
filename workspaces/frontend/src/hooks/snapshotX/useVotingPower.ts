@@ -76,9 +76,11 @@ export function useVotingPower({
         const valueAsString = strategy.value.toString();
         const valueBigInt = BigInt(valueAsString);
         const scaleFactor = BigInt(10 ** (maxDecimals - strategy.decimals));
+
         return (
           acc +
-          (strategy.symbol.toUpperCase() === "WHITELIST"
+          (strategy.symbol.toUpperCase() === "WHITELIST" ||
+          strategy.symbol.toUpperCase() === "STAKERS"
             ? valueBigInt
             : valueBigInt * scaleFactor)
         );
