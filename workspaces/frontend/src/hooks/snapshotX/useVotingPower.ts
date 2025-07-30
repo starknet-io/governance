@@ -72,13 +72,19 @@ export function useVotingPower({
       const maxDecimals = Math.max(
         ...vpData.map((strategy) => strategy.decimals),
       );
+
+      const fixedStrategyDecimals = 18;
+
       const totalRawValue = vpData.reduce((acc, strategy) => {
         const valueAsString = strategy.value.toString();
         const valueBigInt = BigInt(valueAsString);
-        const scaleFactor = BigInt(10 ** (maxDecimals - strategy.decimals));
+        const scaleFactor = BigInt(10 ** (maxDecimals - fixedStrategyDecimals));
+
+        // @todo change to snapshot precalculated voting power
         return (
           acc +
-          (strategy.symbol.toUpperCase() === "WHITELIST"
+          (strategy.symbol.toUpperCase() === "WHITELIST" ||
+          strategy.symbol.toUpperCase() === "STAKERS"
             ? valueBigInt
             : valueBigInt * scaleFactor)
         );

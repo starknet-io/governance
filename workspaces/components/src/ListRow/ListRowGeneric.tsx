@@ -189,7 +189,6 @@ const PastVotes = ({
     mt: "-2px",
   };
   const renderIconBasedOnVotePreference = () => {
-    console.log("vote preference ", votePreference);
     switch (votePreference) {
       case "for":
         return <VoteForIcon {...iconProps} boxSize="18px" color="#30B37C" />;
