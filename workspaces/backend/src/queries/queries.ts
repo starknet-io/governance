@@ -4,9 +4,14 @@ export const GET_PROPOSALS_QUERY = gql`
   query Proposals_Snapshot_X(
     $space: String!
     $orderDirection: OrderDirection!
+    $excludeProposalIds: [Int!]
   ) {
     proposals(
-      where: { space: $space, cancelled: false }
+      where: {
+        space: $space
+        cancelled: false
+        proposal_id_not_in: $excludeProposalIds
+      }
       orderDirection: $orderDirection
       orderBy: start
     ) {

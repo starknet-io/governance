@@ -186,6 +186,7 @@ export type ProposalWhere = {
   flagged?: InputMaybe<Scalars['Boolean']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   id_in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  proposal_id_not_in?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
   ipfs?: InputMaybe<Scalars['String']['input']>;
   ipfs_in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   network?: InputMaybe<Scalars['String']['input']>;
