@@ -142,7 +142,7 @@ export const BannerHome = ({
           </Flex>
         </HomeContainer>
       </Box>
-      <Box pos="relative" zIndex="100">
+      {/* <Box pos="relative" zIndex="100">
         <HomeContainer
           display="grid"
           zIndex="2"
@@ -382,7 +382,7 @@ export const BannerHome = ({
             </button>
           </Flex>
         </HomeContainer>
-      </Box>
+      </Box> */}
     </>
   );
 };
