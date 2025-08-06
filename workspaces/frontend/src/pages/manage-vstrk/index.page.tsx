@@ -407,37 +407,10 @@ export function Page() {
           <PageTitle
             learnMoreLink={"/learn"}
             title="Manage vSTRK"
-            description="Wrap STRK for vSTRK to vote and delegate on the Starknet network in the Governance Hub."
+            description="Unwrap vSTRK to STRK here"
             maxW={undefined}
             mb={0}
           />
-        </Flex>
-        <Flex
-          alignItems="center"
-          gap="standard.md"
-          mb="standard.lg"
-          flexWrap="wrap"
-        >
-          <Link
-            href="https://voyager.online/staking-dashboard"
-            isExternal
-            variant="secondary"
-            size="small"
-            color="content.support.default"
-            _hover={{ color: "content.default.default" }}
-          >
-            Voyager Staking Dashboard
-          </Link>
-          <Link
-            href="https://dashboard.endur.fi/"
-            isExternal
-            variant="secondary"
-            size="small"
-            color="content.support.default"
-            _hover={{ color: "content.default.default" }}
-          >
-            Endur Dashboard
-          </Link>
         </Flex>
         <Flex
           alignItems="flex-start"
@@ -546,16 +519,16 @@ export function Page() {
               borderColor="border.dividers"
               mb="standard.lg"
             >
-              <TabButton
+              {/* <TabButton
                 onSelect={() => setActiveTab(0)}
                 isSelected={activeTab === 0}
                 label="Wrap"
-              />
-              {/* <TabButton
+              /> */}
+              <TabButton
                 onSelect={() => setActiveTab(1)}
                 isSelected={activeTab === 1}
                 label="Unwrap"
-              /> */}
+              />
             </Flex>
             <Flex mb="standard.md" gap="standard.sm" flexDirection="column">
               <Text variant="mediumStrong" color="content.default.default">

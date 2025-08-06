@@ -86,7 +86,7 @@ export const NavigationMenu = ({
             <NavItem
               active={pageContext.urlOriginal === "/manage-vstrk"}
               icon={<MoneyIcon />}
-              label="Wrap vSTRK"
+              label="Unwrap vSTRK"
               href="/manage-vstrk"
             />
 
