@@ -92,6 +92,11 @@ export const NavigationMenu = ({
 
             {[
               {
+                href: "/staked-strk",
+                label: "Staked STRK",
+                icon: <MoneyIcon />,
+              },
+              {
                 href: "/voting-proposals",
                 label: "Voting proposals",
                 icon: <ProposalsIcon />,
