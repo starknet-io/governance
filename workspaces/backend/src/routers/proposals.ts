@@ -214,6 +214,7 @@ export const proposalsRouter = router({
           first: 100,
           skip: 0,
           space: spaceX,
+          excludeProposalIds: [1, 2, 4, 7],
         },
       )) as { proposals: IProposal[] };
       const oldProposals = queriedProposals.map((qp) => ({
