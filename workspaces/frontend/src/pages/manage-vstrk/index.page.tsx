@@ -223,7 +223,7 @@ export function Page() {
     });
   const [sliderValue, setSliderValue] = useState(50);
   const [helpMessage, setHelpMessage] = useHelpMessage();
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(1);
   const [starkToWrap, setStarkToWrap] = useState(0);
   const [wrappedStark, setWrappedStark] = useState(0);
   const isUnwrap = activeTab === 1;
@@ -406,8 +406,8 @@ export function Page() {
         >
           <PageTitle
             learnMoreLink={"/learn"}
-            title="Manage vSTRK"
-            description="Unwrap vSTRK to STRK here"
+            title="vSTRK is being deprecated"
+            description="Starknet is transitioning to a simplified governance system using staked STRK tokens. vSTRK will no longer have voting power and the wrapping interface will be disabled. If you currently hold vSTRK tokens, please unwrap them back to STRK using the interface below."
             maxW={undefined}
             mb={0}
           />

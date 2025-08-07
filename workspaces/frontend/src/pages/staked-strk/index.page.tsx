@@ -36,7 +36,13 @@ export function Page() {
 
         <Box mb="standard.xl">
           <Text variant="mediumStrong" color="content.support.default">
-            Stake on Starknet&apos;s decentralization
+            Stake your STRK tokens to secure Starknet&apos;s decentralization
+            and earn rewards. Staked STRK tokens can also be used to participate
+            in governance voting.
+          </Text>
+          <br />
+          <Text variant="mediumStrong" color="content.support.default">
+            Choose your preferred staking platform below.
           </Text>
         </Box>
 
