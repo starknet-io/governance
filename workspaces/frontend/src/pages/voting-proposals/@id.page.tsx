@@ -83,6 +83,8 @@ import { useActiveStarknetAccount } from "../../hooks/starknet/useActiveStarknet
 import pkg from "file-saver";
 const { saveAs } = pkg;
 
+import * as Sentry from "@sentry/react";
+
 export function Page() {
   const pageContext = usePageContext();
   const { data: walletClient } = useWalletClient();
@@ -196,10 +198,35 @@ export function Page() {
 
   async function handleVote(choice: number, reason?: string) {
     try {
+      // Log the start of voting process
+      Sentry.addBreadcrumb({
+        category: "voting",
+        message: "Starting vote process",
+        level: "info",
+        data: {
+          choice,
+          reason,
+          isL1Voting,
+          isL2Voting,
+          votingPower,
+          votingPowerL2,
+          primaryWalletId: primaryWallet?.id,
+          ethWalletId: ethWallet?.id,
+          starknetWalletId: starknetWallet?.id,
+        },
+      });
+
       if (
         (isL1Voting && votingPower < MINIMUM_TOKENS_FOR_DELEGATION) ||
         (isL2Voting && votingPowerL2 < MINIMUM_TOKENS_FOR_DELEGATION)
       ) {
+        Sentry.addBreadcrumb({
+          category: "voting",
+          message: "Insufficient voting power",
+          level: "warning",
+          data: { votingPower, votingPowerL2, MINIMUM_TOKENS_FOR_DELEGATION },
+        });
+
         setIsStatusModalOpen(true);
         setStatusTitle("No voting power");
         setStatusDescription(
@@ -208,6 +235,22 @@ export function Page() {
         setIsOpen(false);
         return;
       }
+
+      // Log wallet state before proceeding
+      Sentry.addBreadcrumb({
+        category: "voting",
+        message: "Wallet state check",
+        level: "info",
+        data: {
+          walletClient: !!walletClient,
+          primaryWallet: primaryWallet,
+          ethWallet: ethWallet,
+          starknetWallet: starknetWallet,
+          walletConnector: !!walletConnector,
+          deeplink: !!walletConnector?.getDeepLink(),
+        },
+      });
+
       setIsOpen(false);
       setisConfirmOpen(true);
 
@@ -244,26 +287,88 @@ export function Page() {
         metadataUri: "",
       };
 
+      // Log voting parameters
+      Sentry.addBreadcrumb({
+        category: "voting",
+        message: "Voting parameters prepared",
+        level: "info",
+        data: {
+          authenticator: params.authenticator,
+          space: params.space,
+          proposal: params.proposal,
+          choice: params.choice,
+          strategiesCount: preparedStrategies.length,
+        },
+      });
+
       const starknetProvider = starkProvider;
 
       const deeplink = walletConnector?.getDeepLink();
       if (deeplink) {
+        Sentry.addBreadcrumb({
+          category: "voting",
+          message: "Redirecting to deeplink",
+          level: "info",
+          data: { deeplink },
+        });
         window.location.href = deeplink;
       }
+
       let receipt = null;
       if (primaryWallet?.id === ethWallet?.id) {
+        // Log Ethereum voting attempt
+        Sentry.addBreadcrumb({
+          category: "voting",
+          message: "Attempting Ethereum vote (EthereumSig)",
+          level: "info",
+          data: { walletClient: !!walletClient },
+        });
+
         if (!walletClient) {
+          Sentry.captureMessage(
+            "Ethereum wallet client not available",
+            "error",
+          );
           setStatusTitle("Voting failed");
           setStatusDescription("Ethereum account not connected");
           return false;
         }
         const web3 = new providers.Web3Provider(walletClient.transport);
 
-        receipt = await ethSigClient.vote({
-          signer: web3.getSigner(),
-          data: params,
-        });
+        try {
+          receipt = await ethSigClient.vote({
+            signer: web3.getSigner(),
+            data: params,
+          });
+
+          Sentry.addBreadcrumb({
+            category: "voting",
+            message: "Ethereum vote signature received (EthereumSig)",
+            level: "info",
+            data: {
+              receipt: !!receipt,
+              transactionHash: receipt?.transaction_hash,
+            },
+          });
+        } catch (signError) {
+          Sentry.captureException(signError, {
+            tags: { votingType: "ethereum EthereumSig", step: "signature" },
+            extra: { params, walletClient: !!walletClient },
+          });
+          throw signError;
+        }
       } else {
+        // Log Starknet voting attempt
+        Sentry.addBreadcrumb({
+          category: "voting",
+          message: "Attempting Starknet vote (starknetTX)",
+          level: "info",
+          data: {
+            isBraavos: starknetWallet?.connector?.name === "Braavos",
+            hasStarknetWallet: !!starknetWallet,
+          },
+        });
+
         if (typeof window !== "undefined") {
           const isBraavos = starknetWallet?.connector?.name === "Braavos";
           let activeStarknetAccount = null;
@@ -272,39 +377,208 @@ export function Page() {
           } else {
             activeStarknetAccount = window?.starknet?.account;
           }
-          receipt = await starknetEvmClient.vote(activeStarknetAccount, {
-            data: params,
+
+          Sentry.addBreadcrumb({
+            category: "voting",
+            message: "Starknet account details (starknetTX)",
+            level: "info",
+            data: {
+              isBraavos,
+              hasActiveAccount: !!activeStarknetAccount,
+              accountAddress: activeStarknetAccount?.address,
+            },
           });
+
+          try {
+            receipt = await starknetEvmClient.vote(activeStarknetAccount, {
+              data: params,
+            });
+
+            Sentry.addBreadcrumb({
+              category: "voting",
+              message: "Starknet vote completed (startnetTX)",
+              level: "info",
+              data: {
+                receipt: !!receipt,
+                transactionHash: receipt?.transaction_hash,
+              },
+            });
+          } catch (starknetError) {
+            Sentry.captureException(starknetError, {
+              tags: { votingType: "starknet startnetTX", step: "vote" },
+              extra: { params, activeStarknetAccount: !!activeStarknetAccount },
+            });
+            throw starknetError;
+          }
         }
       }
+
+      // Log receipt processing
+      Sentry.addBreadcrumb({
+        category: "voting",
+        message: "Processing receipt (StarknetSig)",
+        level: "info",
+        data: {
+          hasReceipt: !!receipt,
+          hasTransactionHash: !!receipt?.transaction_hash,
+        },
+      });
+
       let transaction = null;
       let transactionHash = null;
       if (!receipt?.transaction_hash) {
-        transaction = await starkSigClient.send(receipt);
-        transactionHash = transaction.transaction_hash;
+        try {
+          transaction = await starkSigClient.send(receipt);
+          transactionHash = transaction.transaction_hash;
+
+          Sentry.addBreadcrumb({
+            category: "voting",
+            message: "Transaction sent via StarknetSig",
+            level: "info",
+            data: {
+              transactionHash,
+              hasTransaction: !!transaction,
+            },
+          });
+        } catch (sendError) {
+          Sentry.captureException(sendError, {
+            tags: {
+              votingType: "starknet StarknetSig",
+              step: "send_transaction",
+            },
+            extra: { receipt },
+          });
+          throw sendError;
+        }
       } else {
         transactionHash = receipt.transaction_hash;
+
+        Sentry.addBreadcrumb({
+          category: "voting",
+          message: "Using existing transaction hash",
+          level: "info",
+          data: { transactionHash },
+        });
       }
+
       if (!transactionHash) {
+        Sentry.captureMessage(
+          "No transaction hash available after vote processing",
+          "error",
+        );
         setStatusTitle("Voting failed");
         setStatusDescription("An error occurred");
         return false;
       }
-      await waitForTransaction(transactionHash);
+
+      // Log transaction waiting
+      Sentry.addBreadcrumb({
+        category: "voting",
+        message: "Waiting for transaction confirmation",
+        level: "info",
+        data: { transactionHash },
+      });
+
+      try {
+        await waitForTransaction(transactionHash);
+
+        Sentry.addBreadcrumb({
+          category: "voting",
+          message: "Transaction confirmed",
+          level: "info",
+          data: { transactionHash },
+        });
+      } catch (waitError) {
+        Sentry.captureException(waitError, {
+          tags: { votingType: "mixed", step: "wait_transaction" },
+          extra: { transactionHash },
+        });
+        throw waitError;
+      }
+
       setisConfirmOpen(false);
       setisSuccessModalOpen(true);
-      // Save the vote and comment to the backend
-      // Save the vote and comment to the backend via TRPC mutation
-      await saveVote.mutateAsync({
-        proposalId: pageContext.routeParams.id!,
-        voterAddress: primaryWallet!.address.toLowerCase(),
-        comment,
+
+      // Log backend save attempt
+      Sentry.addBreadcrumb({
+        category: "voting",
+        message: "Saving vote to backend",
+        level: "info",
+        data: {
+          proposalId: pageContext.routeParams.id!,
+          voterAddress: primaryWallet?.address,
+          hasComment: !!comment,
+        },
       });
-      await refetch();
-      await vote.refetch();
-      await voteL2.refetch();
-      //await votes.refetch();
+
+      // Save the vote and comment to the backend via TRPC mutation
+      try {
+        await saveVote.mutateAsync({
+          proposalId: pageContext.routeParams.id!,
+          voterAddress: primaryWallet!.address.toLowerCase(),
+          comment,
+        });
+
+        Sentry.addBreadcrumb({
+          category: "voting",
+          message: "Vote saved to backend successfully",
+          level: "info",
+        });
+      } catch (saveError) {
+        Sentry.captureException(saveError, {
+          tags: { votingType: "mixed", step: "save_backend" },
+          extra: { proposalId: pageContext.routeParams.id! },
+        });
+        // Don't throw here as the vote was successful, just log the backend save failure
+      }
+
+      // Log refetch attempts
+      Sentry.addBreadcrumb({
+        category: "voting",
+        message: "Refreshing data",
+        level: "info",
+      });
+
+      try {
+        await refetch();
+        await vote.refetch();
+        await voteL2.refetch();
+      } catch (refetchError) {
+        Sentry.captureException(refetchError, {
+          tags: { votingType: "mixed", step: "refetch_data" },
+        });
+        // Don't throw here as the vote was successful
+      }
+
+      Sentry.addBreadcrumb({
+        category: "voting",
+        message: "Vote process completed successfully",
+        level: "info",
+      });
     } catch (error: any) {
+      // Log the error with detailed context
+      Sentry.captureException(error, {
+        tags: {
+          votingType: isL1Voting ? "ethereum" : "starknet",
+          step: "vote_execution",
+        },
+        extra: {
+          choice,
+          reason,
+          isL1Voting,
+          isL2Voting,
+          votingPower,
+          votingPowerL2,
+          primaryWalletId: primaryWallet?.id,
+          ethWalletId: ethWallet?.id,
+          starknetWalletId: starknetWallet?.id,
+          walletClient: !!walletClient,
+          walletConnector: !!walletConnector,
+          errorMessage: error?.message,
+          errorStack: error?.stack,
+        },
+      });
+
       // Handle error
       console.error(error);
       setIsStatusModalOpen(true);
