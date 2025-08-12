@@ -390,6 +390,8 @@ export function Page() {
           });
 
           try {
+            Sentry.captureMessage("stakrnetEvmClient vote attempt", "debug");
+
             receipt = await starknetEvmClient.vote(activeStarknetAccount, {
               data: params,
             });
@@ -409,9 +411,13 @@ export function Page() {
               extra: { params, activeStarknetAccount: !!activeStarknetAccount },
             });
             throw starknetError;
+          } finally {
+            Sentry.captureMessage("stakrnetEvmClient vote finally", "debug");
           }
         }
       }
+
+      Sentry.captureMessage("after vote", "debug");
 
       // Log receipt processing
       Sentry.addBreadcrumb({
@@ -587,6 +593,8 @@ export function Page() {
         error?.error_description || error?.error || "An error occurred",
       );
       setisConfirmOpen(false);
+    } finally {
+      Sentry.captureMessage("vote hanlde finally", "debug");
     }
   }
 
