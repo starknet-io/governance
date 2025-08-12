@@ -76,6 +76,8 @@ jobs:
             VITE_APP_VSTRK_CONTRACT=${{ vars.VITE_APP_VSTRK_CONTRACT }}
             VITE_APP_STRK_CONTRACT=${{ vars.VITE_APP_STRK_CONTRACT }}
             VITE_APP_TW_CLIENT_ID=${{ vars.VITE_APP_TW_CLIENT_ID }}
+            VITE_APP_SENTRY_AUTH_TOKEN=${{ secrets.VITE_APP_SENTRY_AUTH_TOKEN }}
+            VITE_APP_ENVIRONMENT=${{ 'production' }}
   Deploy-production:
     needs: Build
     runs-on: ubuntu-latest

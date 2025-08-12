@@ -9,22 +9,31 @@ import {
 } from "@apollo/client";
 import { TrpcProvider } from "./providers/TrpcProvider";
 import fetch from "cross-fetch";
+import * as Sentry from "@sentry/react";
 
 export const clientRouting = true;
 export const hydrationCanBeAborted = true;
 
 let root: ReactDOM.Root;
 
+Sentry.init({
+  dsn: "https://5102b55dbc166eb6a6489609dd5a24ee@o4509830166413312.ingest.de.sentry.io/4509830167527504",
+  environment: "development",
+  tracesSampleRate: 1.0,
+});
+
 export async function render(pageContext: PageContextClient) {
   const { Page, pageProps } = pageContext;
   const apolloClient = makeApolloClient(pageContext.apolloIntialState);
 
   const page = (
-    <TrpcProvider>
-      <PageShell pageContext={pageContext} apolloClient={apolloClient}>
-        <Page {...pageProps} />
-      </PageShell>
-    </TrpcProvider>
+    <Sentry.ErrorBoundary>
+      <TrpcProvider>
+        <PageShell pageContext={pageContext} apolloClient={apolloClient}>
+          <Page {...pageProps} />
+        </PageShell>
+      </TrpcProvider>
+    </Sentry.ErrorBoundary>
   );
   const container = document.getElementById("page-view")!;
 
