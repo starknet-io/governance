@@ -519,11 +519,11 @@ export function Page() {
               borderColor="border.dividers"
               mb="standard.lg"
             >
-              <TabButton
+              {/* <TabButton
                 onSelect={() => setActiveTab(0)}
                 isSelected={activeTab === 0}
                 label="Wrap"
-              />
+              /> */}
               <TabButton
                 onSelect={() => setActiveTab(1)}
                 isSelected={activeTab === 1}
