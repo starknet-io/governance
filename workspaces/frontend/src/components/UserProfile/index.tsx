@@ -200,10 +200,12 @@ const UserProfileMenuComponent = (
     if (delegatedToL2?.delegationStatement) {
       if (delegatedToL2?.delegationStatement?.starknetAddress) {
         return (
-          getChecksumAddress(starknetWallet.address || "") ===
-          getChecksumAddress(
-            delegatedToL2?.delegationStatement?.starknetAddress || "",
-          )
+          starknetWallet.address &&
+          delegatedToL2?.delegationStatement?.starknetAddress &&
+          getChecksumAddress(starknetWallet.address) ===
+            getChecksumAddress(
+              delegatedToL2.delegationStatement.starknetAddress,
+            )
         );
       } else {
         return false;
@@ -211,15 +213,18 @@ const UserProfileMenuComponent = (
     }
     if (delegatedToL2?.starknetAddress) {
       return (
-        getChecksumAddress(starknetWallet.address || "") ===
-        getChecksumAddress(delegatedToL2.starknetAddress || "")
+        starknetWallet.address &&
+        delegatedToL2.starknetAddress &&
+        getChecksumAddress(starknetWallet.address) ===
+          getChecksumAddress(delegatedToL2.starknetAddress)
       );
     }
     if (starknetWallet?.address && delegatedToL2) {
-
       return (
-        getChecksumAddress(starknetWallet.address || "") ===
-        getChecksumAddress(delegatedToL2 || "")
+        starknetWallet.address &&
+        delegatedToL2 &&
+        getChecksumAddress(starknetWallet.address) ===
+          getChecksumAddress(delegatedToL2)
       );
     } else {
       return false;

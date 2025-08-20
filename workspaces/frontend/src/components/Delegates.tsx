@@ -644,8 +644,10 @@ export function Delegates({
           } else {
             if (primaryWallet?.id === starknetWallet?.id) {
               if (
-                getChecksumAddress(activeStarknetAccount || "") !==
-                getChecksumAddress(starknetWallet?.address || "")
+                activeStarknetAccount &&
+                starknetWallet?.address &&
+                getChecksumAddress(activeStarknetAccount) !==
+                  getChecksumAddress(starknetWallet.address)
               ) {
                 setIsOpen(false);
                 setIsWrongAccount(true);

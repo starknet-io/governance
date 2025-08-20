@@ -618,8 +618,10 @@ export function Page() {
   const delegateOwnProfileL1 =
     delegationDataL1?.toLowerCase() === ethWallet?.address?.toLowerCase();
   const delegateOwnProfileL2 =
-    getChecksumAddress(delegationDataL2?.toLowerCase() || "") ===
-    getChecksumAddress(starknetWallet?.address?.toLowerCase() || "");
+    delegationDataL2 &&
+    starknetWallet?.address &&
+    getChecksumAddress(delegationDataL2.toLowerCase()) ===
+      getChecksumAddress(starknetWallet.address.toLowerCase());
   const hasDelegatedOnL2 =
     delegationDataL2 && delegationDataL2.length && !delegateOwnProfileL2;
   const hasDelegatedOnL1 =
