@@ -18,6 +18,9 @@ let root: ReactDOM.Root;
 
 Sentry.init({
   dsn: "https://5102b55dbc166eb6a6489609dd5a24ee@o4509830166413312.ingest.de.sentry.io/4509830167527504",
+  enabled:
+    import.meta.env.VITE_APP_ENVIRONMENT === "production" ||
+    import.meta.env.VITE_APP_ENVIRONMENT === "development",
   environment: import.meta.env.VITE_APP_ENVIRONMENT,
   tracesSampleRate: 1.0,
 });

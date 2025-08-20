@@ -9,11 +9,18 @@ import {
   TransactionExecutionStatus,
   TransactionFinalityStatus,
 } from "starknet";
-import { create } from "ipfs-http-client";
 import { pin } from "@snapshot-labs/pineapple";
 import { STRATEGIES_ENUM } from "./constants";
 
-const client = create({ url: "https://api.thegraph.com/ipfs/api/v0" });
+// Lazy load IPFS client to avoid SSR issues
+let client: any = null;
+const getIpfsClient = async () => {
+  if (!client && typeof window !== "undefined") {
+    const { create } = await import("ipfs-http-client");
+    client = create({ url: "https://api.thegraph.com/ipfs/api/v0" });
+  }
+  return client;
+};
 
 export const waitForTransaction = async (txId: string) => {
   let retries = 0;
@@ -54,7 +61,11 @@ export const waitForTransaction = async (txId: string) => {
 };
 
 export async function pinGraph(payload: any) {
-  const res = await client.add(JSON.stringify(payload), { pin: true });
+  const ipfsClient = await getIpfsClient();
+  if (!ipfsClient) {
+    throw new Error("IPFS client not available in SSR context");
+  }
+  const res = await ipfsClient.add(JSON.stringify(payload), { pin: true });
 
   return {
     provider: "graph",
