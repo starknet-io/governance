@@ -73,7 +73,7 @@ const snapshotXLink = createHttpLink({
 
 function makeApolloClient() {
   const apolloClient = new ApolloClient({
-    ssrMode: true,
+    ssrMode: false,
     link: ApolloLink.split(
       (operation) => operation.getContext().clientName === "snapshotX",
       snapshotXLink,
