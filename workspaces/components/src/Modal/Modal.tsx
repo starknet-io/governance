@@ -10,6 +10,7 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import { Heading } from "../Heading";
+import { Text } from "../Text";
 interface CustomModalProps extends Omit<ModalProps, "children"> {
   title?: string;
   children: React.ReactNode;
@@ -18,6 +19,7 @@ interface CustomModalProps extends Omit<ModalProps, "children"> {
   overflowY?: "hidden" | "auto" | "scroll" | undefined;
   mobile?: "full" | "auto";
   maxHeight?: string;
+  subtitle?: string;
 }
 interface CustomModalFooterProps {
   children?: React.ReactNode;
@@ -35,6 +37,7 @@ export const Modal = ({
   overflowY = "auto",
   maxHeight,
   withCloseButton = true,
+  subtitle,
   ...modalProps
 }: CustomModalProps) => {
   return (
@@ -96,6 +99,19 @@ export const Modal = ({
             >
               {title}
             </Heading>
+
+            {subtitle && (
+              <Text
+                textAlign="center"
+                pl={8}
+                pr={8}
+                variant="bodyLargeSoft"
+                color="text.secondary"
+                mt={2}
+              >
+                {subtitle}
+              </Text>
+            )}
             {withCloseButton && (
               <ModalCloseButton
                 top="12px"
