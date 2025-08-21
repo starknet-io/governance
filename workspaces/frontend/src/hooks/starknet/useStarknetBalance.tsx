@@ -34,9 +34,9 @@ export const useStarknetBalance = ({
     isFetching,
   } = useBalance();
 
-  const cacheKey = `${starkContract}-${getChecksumAddress(
-    starknetAddress || "",
-  )}-${totalSupply}`;
+  const cacheKey = `${starkContract}-${
+    starknetAddress ? getChecksumAddress(starknetAddress) : "no-address"
+  }-${totalSupply}`;
 
   const fetchBalance = async (forceUpdate = false) => {
     if (

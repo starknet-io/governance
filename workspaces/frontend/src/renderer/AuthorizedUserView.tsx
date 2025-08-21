@@ -36,7 +36,8 @@ const AuthorizedUserView = () => {
   const [isUserModalOpen, setIsModalOpen] = useState(false);
   const { handleLogOut } = useDynamicContext();
   const { handleUpload } = useFileUpload();
-  const { user } = usePageContext();
+  const pageContextData = usePageContext();
+  const user = pageContextData?.user;
   const { isMobile } = useIsMobile();
 
   const { data: votingPowerEthereum, isLoading: isVotingPowerEthLoading } =
@@ -100,8 +101,9 @@ const AuthorizedUserView = () => {
 
   const address = user?.address?.toLowerCase() || "";
   const isStarknetPrimary =
-    getChecksumAddress(address || "") ===
-    getChecksumAddress(starknetAddress || "");
+    address &&
+    starknetAddress &&
+    getChecksumAddress(address) === getChecksumAddress(starknetAddress);
   const delegate = trpc.delegates.getDelegateByAddress.useQuery(
     {
       address: !isStarknetPrimary ? address : undefined,

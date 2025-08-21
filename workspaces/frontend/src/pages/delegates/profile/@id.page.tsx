@@ -226,12 +226,16 @@ export function Page() {
   const delegateOwnProfileL1 =
     delegationDataL1?.toLowerCase() === ethWallet?.address?.toLowerCase();
   const delegateOwnProfileL2 =
-    getChecksumAddress(delegationDataL2?.toLowerCase() || "") ===
-    getChecksumAddress(starknetWallet?.address?.toLowerCase() || "");
+    delegationDataL2 &&
+    starknetWallet?.address &&
+    getChecksumAddress(delegationDataL2.toLowerCase()) ===
+      getChecksumAddress(starknetWallet.address.toLowerCase());
 
   const delegatedToDelegateL2 =
-    getChecksumAddress(delegationDataL2?.toLowerCase() || "") ===
-    getChecksumAddress(delegate?.author?.starknetAddress?.toLowerCase() || "");
+    delegationDataL2 &&
+    delegate?.author?.starknetAddress &&
+    getChecksumAddress(delegationDataL2.toLowerCase()) ===
+      getChecksumAddress(delegate.author.starknetAddress.toLowerCase());
 
   const hasDelegatedOnL2 =
     starknetWallet?.id &&
@@ -527,8 +531,10 @@ export function Page() {
       }
     } else if (layer === 2) {
       if (
-        getChecksumAddress(activeStarknetWallet || "") !==
-        getChecksumAddress(starknetWallet?.address || "")
+        activeStarknetWallet &&
+        starknetWallet?.address &&
+        getChecksumAddress(activeStarknetWallet) !==
+          getChecksumAddress(starknetWallet.address)
       ) {
         setIsWrongAccount(true);
         return;

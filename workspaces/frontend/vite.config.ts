@@ -9,7 +9,6 @@ import { sentryVitePlugin } from "@sentry/vite-plugin";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
 
-  console.log("sentry token chuj", env.VITE_APP_SENTRY_AUTH_TOKEN);
   return {
     publicDir: path.resolve(__dirname, "../../public"),
     plugins: [
@@ -23,10 +22,32 @@ export default defineConfig(({ mode }) => {
         authToken: env.VITE_APP_SENTRY_AUTH_TOKEN,
       }),
     ],
+
     optimizeDeps: {
-      include: ["@snapshot-labs/sx"],
+      exclude: ["starknet"],
       esbuildOptions: {
-        format: "esm", // or 'cjs' depending on the package
+        format: "esm",
+        target: "esnext",
+      },
+    },
+    define: {
+      "process.env.NODE_ENV": JSON.stringify(
+        process.env.NODE_ENV || "development",
+      ),
+    },
+    resolve: {
+      conditions: ["import", "module", "default"],
+      mainFields: ["module", "main"],
+      alias: {
+        starknet: path.resolve(
+          __dirname,
+          "../../node_modules/starknet/dist/index.mjs",
+        ),
+      },
+    },
+    server: {
+      fs: {
+        allow: [".."],
       },
     },
 
@@ -42,6 +63,7 @@ export default defineConfig(({ mode }) => {
         "react-use",
         "react-syntax-highlighter",
         "@snapshot-labs/sx",
+        "starknet",
       ],
     },
   } as UserConfig;

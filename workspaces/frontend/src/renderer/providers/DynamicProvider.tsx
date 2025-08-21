@@ -22,6 +22,10 @@ import {
 import { useFileUpload } from "src/hooks/useFileUpload";
 import { usePageContext } from "../PageContextProvider";
 import ConnectSecondaryWalletModal from "../../components/ConnectSecondaryWalletModal/ConnectSecondaryWalletModal";
+import { hash } from "starknet";
+
+const { computeHashOnElements } = hash;
+
 interface Props {
   // readonly pageContext: PageContext;
   readonly children: React.ReactNode;
@@ -38,7 +42,6 @@ interface AuthSuccessParams {
 
 export const DynamicProvider = (props: Props) => {
   const { children } = props;
-  const pageContext = usePageContext();
   const [authUser, setAuthUser] = useState<AuthSuccessParams | null>(null);
   const [secondaryWallet, setSecondaryWallet] = useState<any>(null);
   const [isOpenSecondaryWalletModal, setIsOpenSecondaryWalletModal] =
@@ -54,7 +57,8 @@ export const DynamicProvider = (props: Props) => {
   const editUserProfile = trpc.users.editUserProfile.useMutation();
   const hasCalledAuthenticateUser = useRef(false);
   const utils = trpc.useContext();
-  const { user } = usePageContext();
+  const pageContextData = usePageContext();
+  const user = pageContextData?.user;
   const { handleUpload } = useFileUpload();
 
   const { data: userDelegate } = trpc.users.isDelegate.useQuery(
@@ -67,7 +71,7 @@ export const DynamicProvider = (props: Props) => {
   );
 
   const checkIfDelegateModalShouldAppear = () => {
-    return !pageContext.urlOriginal.startsWith("/delegates");
+    return !pageContextData?.urlOriginal?.startsWith("/delegates");
   };
 
   const handleClose = () => {
@@ -234,7 +238,8 @@ export const DynamicProvider = (props: Props) => {
             ZeroDevSmartWalletConnectors,
             StarknetWalletConnectors,
           ],
-          siweStatement: "Welcome to Governance Hub. Signing is the only way we can truly know that you are the owner of the wallet you are connecting. Signing is a safe, gas-less transaction that does not in any way give Governance Hub permission to perform any transactions with your wallet.",
+          siweStatement:
+            "Welcome to Governance Hub. Signing is the only way we can truly know that you are the owner of the wallet you are connecting. Signing is a safe, gas-less transaction that does not in any way give Governance Hub permission to perform any transactions with your wallet.",
           environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {

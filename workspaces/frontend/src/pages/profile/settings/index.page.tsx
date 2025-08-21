@@ -195,8 +195,10 @@ export const WalletButtons = ({
             try {
               if (typeof window !== "undefined") {
                 if (
-                  getChecksumAddress(currentStarknetAccount || "") !==
-                    getChecksumAddress(starknetWallet?.address || "") &&
+                  currentStarknetAccount &&
+                  starknetWallet?.address &&
+                  getChecksumAddress(currentStarknetAccount) !==
+                    getChecksumAddress(starknetWallet.address) &&
                   currentStarknetAccount !== ""
                 ) {
                   setIsStatusModalOpen(true);
