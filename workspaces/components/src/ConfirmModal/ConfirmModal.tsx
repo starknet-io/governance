@@ -1,5 +1,4 @@
-import { Box, Flex, Img, Spinner } from "@chakra-ui/react";
-import Argent from "./Argent.png";
+import { Flex, Spinner } from "@chakra-ui/react";
 import { Modal } from "../Modal";
 
 type Props = {
@@ -21,6 +20,7 @@ export const ConfirmModal = ({
       isOpen={isOpen}
       onClose={onClose}
       title="Confirm transaction in wallet"
+      subtitle="It may take a while to open your wallet, please be patient"
     >
       <Flex
         minHeight="144px"

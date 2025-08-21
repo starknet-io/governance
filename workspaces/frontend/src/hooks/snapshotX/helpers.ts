@@ -2,6 +2,7 @@ import {
   defaultNetwork,
   starknetMainnet,
   getStarknetStrategy,
+  StrategyConfig,
 } from "@snapshot-labs/sx";
 import { clientConfig, starkProvider as provider } from "../../clients/clients";
 import {
@@ -178,7 +179,7 @@ export const prepareStrategiesForSignature = async (
   strategies: string[],
   strategiesMetadata: any[],
   strategyIndicies?: number[],
-) => {
+): Promise<StrategyConfig[]> => {
   const strategiesWithMetadata = await Promise.all(
     strategies.map(async (strategy, i) => {
       let metadata = null;
@@ -193,13 +194,15 @@ export const prepareStrategiesForSignature = async (
           ].payload,
         );
       }
-
-      return {
+      const newStrategy: StrategyConfig = {
         address: strategy,
         index:
           strategyIndicies && strategyIndicies?.[i] ? strategyIndicies[i] : i,
         metadata,
+        params: "",
       };
+
+      return newStrategy;
     }),
   );
   return strategiesWithMetadata;
