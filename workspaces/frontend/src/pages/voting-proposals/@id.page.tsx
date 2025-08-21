@@ -84,6 +84,7 @@ import pkg from "file-saver";
 const { saveAs } = pkg;
 
 import * as Sentry from "@sentry/react";
+import { Vote } from "@snapshot-labs/sx";
 
 export function Page() {
   const pageContext = usePageContext();
@@ -275,7 +276,7 @@ export function Page() {
       if (choice === 3) {
         convertedChoice = 2;
       }
-      const params = {
+      const params: Vote = {
         authenticator:
           primaryWallet?.id === ethWallet?.id
             ? AUTHENTICATORS_ENUM.EVM_SIGNATURE
