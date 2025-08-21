@@ -240,8 +240,7 @@ export const DynamicProvider = (props: Props) => {
           ],
           siweStatement:
             "Welcome to Governance Hub. Signing is the only way we can truly know that you are the owner of the wallet you are connecting. Signing is a safe, gas-less transaction that does not in any way give Governance Hub permission to perform any transactions with your wallet.",
-          // environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
-          environmentId: "61c5221e-cad8-4641-a482-740ac48fbfd8",
+          environmentId: import.meta.env.VITE_APP_DYNAMIC_ID,
           eventsCallbacks: {
             onAuthSuccess: (params: AuthSuccessParams) => {
               const primaryWalletChain = params?.primaryWallet?.chain;
