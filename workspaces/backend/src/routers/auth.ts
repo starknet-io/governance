@@ -25,6 +25,27 @@ dotenv.config();
 
 const publicKey = process.env.DYNAMIC_PUBLIC_KEY || '';
 
+// SECURITY (F-23): Algorithms list is pinned explicitly to ES256 (issued by Dynamic).
+// Without this restriction, jsonwebtoken accepts arbitrary algorithms specified in the token header,
+// opening the classic JWT algorithm-confusion surface (e.g. `alg: none` or HMAC downgrade).
+export const DYNAMIC_JWT_ALGORITHMS: jwt.Algorithm[] = ['ES256'];
+
+// SECURITY (F-02): The session cookie requires SameSite=None when SPA and API reside on
+// different domains. Because browsers send SameSite=None cookies with cross-site requests,
+// CSRF protection is enforced via strict Origin validation in `src/index.ts`.
+// Set COOKIE_SAMESITE=lax for single-origin deployments for stronger isolation.
+const cookieSameSite = (process.env.COOKIE_SAMESITE === 'lax' ? 'lax' : 'none') as
+  | 'lax'
+  | 'strict'
+  | 'none';
+
+const SESSION_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: true,
+  sameSite: cookieSameSite,
+  path: '/',
+} as const;
+
 export const authRouter = router({
   authUser: publicProcedure
     .input(
@@ -39,7 +60,7 @@ export const authRouter = router({
       try {
         const decodedToken = await new Promise<DecodedToken>(
           (resolve, reject) => {
-            jwt.verify(token, publicKey, (err, decoded) => {
+            jwt.verify(token, publicKey, { algorithms: DYNAMIC_JWT_ALGORITHMS }, (err, decoded) => {
               if (err) {
                 reject(err);
               } else {
@@ -48,7 +69,7 @@ export const authRouter = router({
             });
           },
         );
-        if (decodedToken.verified_credentials?.[0].address) {
+        if (decodedToken.verified_credentials?.[0]?.address) {
           const lowerCaseAddress =
             decodedToken.verified_credentials[0].address.toLowerCase();
 
@@ -56,21 +77,20 @@ export const authRouter = router({
             where: eq(users.address, lowerCaseAddress),
           });
 
-          let ethAddress = null;
-          let starknetAddress = null;
+          let ethAddress: string | null = null;
+          let starknetAddress: string | null = null;
 
-          // Iterate over verified credentials to find eth and starknet addresses
-          decodedToken.verified_credentials?.forEach(credential => {
-            if (credential.chain === 'eip155') { // Ethereum address
+          decodedToken.verified_credentials?.forEach((credential) => {
+            if (credential.chain === 'eip155') {
               ethAddress = credential.address.toLowerCase();
-            } else if (credential.chain === 'starknet') { // StarkNet address
+            } else if (credential.chain === 'starknet') {
               starknetAddress = credential.address.toLowerCase();
             }
           });
 
           if (!user) {
             await db.insert(users).values({
-              address: lowerCaseAddress, // save address as lowercase
+              address: lowerCaseAddress,
               walletName: decodedToken.verified_credentials?.[0].wallet_name,
               walletProvider:
                 decodedToken.verified_credentials?.[0].wallet_provider,
@@ -102,12 +122,12 @@ export const authRouter = router({
               .where(
                 eq(
                   users.address,
-                  lowerCaseAddress, // save address as lowercase,
+                  lowerCaseAddress,
                 ),
               );
           }
         }
-        opts.ctx.res.cookie('JWT', opts.input.authToken, { httpOnly: true, sameSite: 'none', secure: true });
+        opts.ctx.res.cookie('JWT', opts.input.authToken, SESSION_COOKIE_OPTIONS);
         return;
       } catch (err) {
         console.error(err);
@@ -119,7 +139,7 @@ export const authRouter = router({
     }),
 
   logout: publicProcedure.mutation(async (opts) => {
-    opts.ctx.res.clearCookie('JWT');
+    opts.ctx.res.clearCookie('JWT', { path: '/', secure: true, sameSite: cookieSameSite });
     opts.ctx.req.user = null;
     return;
   }),

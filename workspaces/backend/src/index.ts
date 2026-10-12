@@ -12,19 +12,8 @@ import { getUserByJWT } from './utils/helpers';
 import multer from 'multer';
 import { delegateRouter } from './routers/delegates';
 import { notificationsRouter } from './routers/notifications';
-//import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
-
-// 15 mins -> 250 reqs
-/*
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 250,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
-});
- */
 
 dotenv.config();
 
@@ -56,49 +45,74 @@ const fetchUserMiddleware = async (
   next();
 };
 
-// Xss defense
+app.use(helmet());
 app.use(cookieParser());
 app.use(fetchUserMiddleware);
-// Rate limiter
-//app.use(limiter);
-morgan.token('decoded-url', (req: any) => decodeURIComponent(req.originalUrl));
 
+morgan.token('decoded-url', (req: any) => decodeURIComponent(req.originalUrl));
 app.use(
   morgan(':method :decoded-url :status :response-time ms\n', {
     skip: function (req: any, res: any) {
-      return res.statusCode < 400; // Skip logging if status code is less than 400
+      return res.statusCode < 400;
     },
   }),
 );
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS!.split(',') : [];
+// SECURITY (F-02): Normalized origin allowlist for credentialed browser requests.
+const allowedOrigins: string[] = (process.env.ALLOWED_ORIGINS ?? '')
+  .split(',')
+  .map((origin: string) => origin.trim().replace(/\/+$/, '').toLowerCase())
+  .filter((origin: string) => origin.length > 0);
 
-const checkOriginMiddleware = (req: any, res: any, next: any) => {
-  if (!allowedOrigins.length) {
-    next()
-  } else {
-    const origin = req.headers.origin || req.headers['x-forwarded-for'];
-    if (allowedOrigins.includes(origin)) {
-      next();
-    } else {
-      return res.status(403).send('Access Denied');
-    }
+/**
+ * Resolves request origin against the explicit allowlist.
+ * Never falls back to client-spoofable headers like X-Forwarded-For.
+ */
+const isOriginAllowed = (req: any): boolean => {
+  const rawOrigin = req.headers.origin;
+  if (!rawOrigin) return false;
+
+  const origin: string = String(rawOrigin).replace(/\/+$/, '').toLowerCase();
+  if (allowedOrigins.length === 0) {
+    // Fail-closed default: if no allowlist is configured, cross-origin requests are rejected.
+    return false;
   }
+  return allowedOrigins.includes(origin);
 };
 
-app.use(checkOriginMiddleware);
+/**
+ * Rejects state-changing requests whose Origin is not allowlisted to prevent CSRF.
+ */
+const checkOriginMiddleware = (req: any, res: any, next: any) => {
+  const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS'];
+  if (SAFE_METHODS.includes(req.method)) {
+    next();
+    return;
+  }
 
-
-// Headers
-app.use(helmet());
+  if (!isOriginAllowed(req)) {
+    res.status(403).send('Access Denied');
+    return;
+  }
+  next();
+};
 
 app.use(
   cors({
-    origin: true,
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      if (!origin) {
+        // Same-origin or non-browser caller (curl, server-to-server).
+        callback(null, false);
+        return;
+      }
+      const normalized: string = origin.replace(/\/+$/, '').toLowerCase();
+      callback(null, allowedOrigins.includes(normalized));
+    },
     credentials: true,
   }),
 );
 
+app.use(checkOriginMiddleware);
 
 app.get('/health', (req, res) => res.sendStatus(200));
 
