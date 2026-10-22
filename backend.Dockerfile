@@ -1,4 +1,4 @@
-FROM node:18.18.0-bullseye-slim
+FROM node:22.23.4-bookworm-slim
 RUN apt-get update && apt-get upgrade -y
 
 WORKDIR /app

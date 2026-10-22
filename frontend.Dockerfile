@@ -1,4 +1,4 @@
-FROM node:18.18.0-bullseye-slim
+FROM node:22.23.4-bookworm-slim
 
 ARG VITE_APP_GOOGLE_TAG_ID
 ARG VITE_APP_SNAPSHOT_SPACE
